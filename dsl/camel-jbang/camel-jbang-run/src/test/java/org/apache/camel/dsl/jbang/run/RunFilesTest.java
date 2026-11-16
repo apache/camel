@@ -53,6 +53,17 @@ class RunFilesTest {
         assertThat(RunFiles.skipFile("orders.camel.yaml", List.of(), "")).isFalse();
     }
 
+    @Test
+    void anExcludeWithAFolderMatchesThePath() {
+        // the file name was matched only, so routes/** or sub/skip.camel.yaml never matched (CAMEL-26930)
+        assertThat(RunFiles.skipFile("sub/skip.camel.yaml", List.of("sub/skip.camel.yaml"), "")).isTrue();
+        assertThat(RunFiles.skipFile("./sub/skip.camel.yaml", List.of("sub/**"), "")).isTrue();
+        assertThat(RunFiles.skipFile("sub/b.camel.yaml", List.of("sub/skip.camel.yaml"), "")).isFalse();
+        // a pattern without a folder matches the file name, in any folder, as before
+        assertThat(RunFiles.skipFile("sub/skip.camel.yaml", List.of("skip.camel.yaml"), "")).isTrue();
+        assertThat(RunFiles.skipFile("a.camel.yaml", List.of("*.xml"), "")).isFalse();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "orders.camel.yaml", "orders.yaml", "citrus.yaml", "orders.camel.xml", "Orders.java", "orders.groovy",

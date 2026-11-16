@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -35,20 +36,22 @@ import org.apache.camel.spi.SendHook;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper for the places in Camel that send an {@link Exchange} to the producer of an {@link Endpoint}: the
  * {@code SendProcessor}, the {@link org.apache.camel.spi.ProducerCache} (used by {@code toD}, {@code enrich},
  * {@code wireTap}, {@code routingSlip} and the {@link org.apache.camel.ProducerTemplate}), the recipient list and the
  * deferred producers.
- * <p/>
+ * <p>
  * It fires the {@link CamelEvent.ExchangeSendingEvent} before the send and the {@link CamelEvent.ExchangeSentEvent},
  * with the time taken, after it ({@link #notifySending(Exchange, Endpoint)} and
  * {@link #notifySent(Exchange, Endpoint, StopWatch)}), and calls the producer with the {@link SendHook} of the
  * {@link CamelContext}, if one is installed, around it
  * ({@link #process(Exchange, Endpoint, AsyncProcessor, AsyncCallback)}).
  * {@link #send(Exchange, Endpoint, AsyncProcessor, AsyncCallback)} does both.
- * <p/>
+ * <p>
  * The events and the hook are apart because some places fire the events once per send and call the producer inside an
  * error handler that can call it again: the recipient list and the routing slip. The hook runs where the producer is
  * called, so it runs inside that error handler, for every attempt.
@@ -93,7 +96,7 @@ public final class SendHelper {
     /**
      * Sends the exchange to the producer: fires the {@link CamelEvent.ExchangeSendingEvent}, calls the producer with
      * the {@link SendHook} around it, and fires the {@link CamelEvent.ExchangeSentEvent} before the callback is called.
-     * <p/>
+     * <p>
      * An exception the producer throws, instead of calling the callback, is thrown to the caller, without the sent
      * event, as when the producer is called directly.
      *
@@ -120,10 +123,12 @@ public final class SendHelper {
     /**
      * Calls the producer with the {@link SendHook} of the {@link CamelContext} around it. Without a hook this is
      * {@code producer.process(exchange, callback)}.
-     * <p/>
+     * <p>
      * With a hook, see {@link SendHook} for what the hook can do. An exception the producer throws, instead of calling
      * the callback, is set on the exchange, the hook's {@link SendHook#afterSend(Exchange, Endpoint)} is called, and
-     * the exception is thrown to the caller, as without a hook.
+     * the exception is thrown to the caller, as without a hook. An exception the producer throws after it called the
+     * callback is thrown to the caller as it is: the exchange, which is already continued, is left alone, and the hook
+     * is not called after the send a second time.
      *
      * @param  exchange the exchange
      * @param  endpoint the endpoint of the producer
@@ -171,15 +176,22 @@ public final class SendHelper {
      * One send with a hook. The hook is called before the producer, the producer is called right away, after a delay
      * (that this thread waits for), or not at all, and then the hook is called after it and the callback is called,
      * each exactly once.
-     * <p/>
+     * <p>
      * With several hooks (a {@link CompositeSendHook}) the hooks are asked one by one, see {@link CompositeSendHook}:
      * the send keeps how many were asked, so only those are called after it, in the reverse order.
-     * <p/>
+     * <p>
      * When a hook returns {@link SendHook#SEND_TWICE}, the message is copied before the first send, and when the first
      * send succeeded the copy is sent again: by this thread when the first send completed synchronously, else by the
      * thread that completed it, so the exchange is on one thread at a time. The hooks are called after the second send.
      */
     private static final class HookedSend implements AsyncCallback {
+
+        private static final Logger LOG = LoggerFactory.getLogger(HookedSend.class);
+        private static final AtomicIntegerFieldUpdater<HookedSend> STATE
+                = AtomicIntegerFieldUpdater.newUpdater(HookedSend.class, "state");
+        private static final int RUNNING = 0;
+        private static final int HANDED_OFF = 1;
+        private static final int COMPLETED = 2;
 
         // the one hook, or null when there are several
         private final SendHook hook;
@@ -197,6 +209,9 @@ public final class SendHelper {
         private Exception existing;
         // the copy of the message for the second send, while the first one runs
         private Message again;
+        // RUNNING, then HANDED_OFF when the first of two sends completed on another thread (which makes the second
+        // send), then COMPLETED once the send is completed (the callback, or a throw of the producer before it)
+        private volatile int state;
 
         private HookedSend(SendHook hook, Exchange exchange, Endpoint endpoint, AsyncProcessor producer,
                            AsyncCallback callback) {
@@ -260,18 +275,37 @@ public final class SendHelper {
                 }
             }
 
+            // whether the producer of the first of two sends is running (and not the second send)
+            boolean firstOfTwo = false;
             try {
                 if (!twice) {
                     return producer.process(exchange, this);
                 }
                 again = copyForSecondSend();
+                firstOfTwo = true;
                 if (!producer.process(exchange, this::firstSendDone)) {
                     // the first send goes on asynchronously: the thread that completes it makes the second send
                     return false;
                 }
+                firstOfTwo = false;
                 // the first send completed on this thread, which makes the second send
                 return secondSend(true);
             } catch (RuntimeException e) {
+                if (!STATE.compareAndSet(this, RUNNING, COMPLETED)) {
+                    if (firstOfTwo) {
+                        // the producer completed the first of two sends (HANDED_OFF) and then threw: the thread that
+                        // completed it makes the second send and completes the send, maybe still running, so this
+                        // thread leaves the exchange alone and tells the caller the send goes on asynchronously
+                        LOG.warn("The producer of {} threw an exception after it completed the first of two sends. This"
+                                 + " exception is ignored.",
+                                endpoint, e);
+                        return false;
+                    }
+                    // the producer called the callback and then threw: the send is not completed again, and the
+                    // exception is not set on the exchange. The caller, which knows that its callback was called,
+                    // handles it
+                    throw e;
+                }
                 // the caller handles a producer that throws as it does without a hook
                 again = null;
                 exchange.setException(e);
@@ -305,12 +339,26 @@ public final class SendHelper {
             if (doneSync) {
                 return;
             }
+            if (!STATE.compareAndSet(this, RUNNING, HANDED_OFF)) {
+                // the producer threw after it called this callback, and the throw completed the send first
+                LOG.warn("The producer of {} completed the first send after the send was completed (more than once, or"
+                         + " after it threw). This is ignored.",
+                        endpoint);
+                return;
+            }
             try {
                 secondSend(false);
             } catch (RuntimeException e) {
+                if (!STATE.compareAndSet(this, HANDED_OFF, COMPLETED)) {
+                    // the producer called the callback of the second send and then threw
+                    LOG.warn("The producer of {} threw an exception after it completed the exchange. This exception is"
+                             + " ignored.",
+                            endpoint, e);
+                    return;
+                }
                 // the producer threw instead of calling the callback: the send fails
                 exchange.setException(e);
-                done(false);
+                complete(false);
             }
         }
 
@@ -395,6 +443,20 @@ public final class SendHelper {
          */
         @Override
         public void done(boolean doneSync) {
+            int current = state;
+            while (current != COMPLETED) {
+                if (STATE.compareAndSet(this, current, COMPLETED)) {
+                    complete(doneSync);
+                    return;
+                }
+                current = state;
+            }
+            // the producer calls the callback more than once, or after it threw: the hooks are not called again, and
+            // the call is passed on to the callback of the caller, as without a hook
+            callback.done(doneSync);
+        }
+
+        private void complete(boolean doneSync) {
             afterSend();
             callback.done(doneSync);
         }

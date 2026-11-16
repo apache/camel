@@ -51,6 +51,25 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     void disconnect() throws GenericFileOperationFailedException;
 
     /**
+     * Disconnects from the remote server when the producer stops.
+     * <p>
+     * Another thread can still run an operation at that time. As long as the shutdown of Camel is not forced, such as
+     * when a producer cache evicts the producer, this method should wait for it, as {@link #disconnect()} does: it can
+     * be a healthy but slow upload. Once the shutdown is forced, the operation is one that the shutdown gave up waiting
+     * for, such as an upload that hangs as long as the server does not answer: unlike {@link #disconnect()}, this
+     * method should then not wait for it without bound, but disconnect anyway, so that the operation fails.
+     * <p>
+     * The default implementation disconnects as {@link #disconnect()} does, when connected.
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    default void disconnectOnStop() throws GenericFileOperationFailedException {
+        if (isConnected()) {
+            disconnect();
+        }
+    }
+
+    /**
      * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
      *
      * @throws GenericFileOperationFailedException can be thrown

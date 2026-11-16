@@ -81,6 +81,9 @@ class InfraPsTest extends InfraCommandTestSupport {
         String out = printer.getOutput();
         assertFalse(out.contains("kafka"), "no service rows should be printed when nothing is running, was: " + out);
         assertFalse(out.contains("minio"), "no service rows should be printed when nothing is running, was: " + out);
+        // CAMEL-26931: it printed the header of the table only
+        assertFalse(out.contains("IMPLEMENTATION"), "no table header when nothing is running, was: " + out);
+        assertTrue(printer.getStderr().contains("No running infrastructure services"), printer.getStderr());
     }
 
     @Test

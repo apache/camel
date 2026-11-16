@@ -16,22 +16,23 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -78,8 +79,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
-
-import static org.apache.camel.util.IOHelper.buffered;
 
 @CommandDefinition(name = "debug", description = "Debug local Camel integration", generateHelp = true,
                    footer = {
@@ -152,7 +151,9 @@ public class Debug extends Run {
     private Process spawnProcess;
     private InputStream spawnOutput;
     private InputStream spawnError;
-    private final List<String> logBuffer = new ArrayList<>(100);
+    // the output of the spawned process, read all the time, so it never blocks on a full pipe
+    private OutputTail logTail;
+    private OutputTail errorTail;
     private final AtomicBoolean logUpdated = new AtomicBoolean();
     private SuspendedRow suspendedRow = new SuspendedRow();
     private final AtomicBoolean waitForUser = new AtomicBoolean();
@@ -203,14 +204,19 @@ public class Debug extends Run {
         tableHelper.setShowExchangeProperties(showExchangeProperties);
         tableHelper.setShowExchangeVariables(showExchangeVariables);
 
-        // read log input
-        final AtomicBoolean quit = new AtomicBoolean();
-        if (logLines > 0) {
-            Thread t = new Thread(() -> {
-                doReadLog(quit);
-            }, "ReadLog");
-            t.start();
+        // read the output of the spawned process; also with --log-lines=0, so it does not block on a full pipe
+        if (spawnOutput != null) {
+            logTail = new OutputTail(100, () -> {
+                if (logLines > 0) {
+                    logUpdated.set(true);
+                }
+            }).start(spawnOutput, "ReadLog");
         }
+        if (spawnError != null) {
+            errorTail = new OutputTail(1000, null).start(spawnError, "ReadError");
+        }
+
+        final AtomicBoolean quit = new AtomicBoolean();
 
         // read CLI input from user
         Thread t2 = new Thread(() -> doRead(quit), "ReadCommand");
@@ -222,19 +228,9 @@ public class Debug extends Run {
                 // wait a little bit before loading again
                 Thread.sleep(100);
             } else if (exit == -1) {
-                // maybe failed on startup, so dump log buffer
-                for (String line : logBuffer) {
-                    printer().println(line);
-                }
-                // and any error
-                if (spawnError != null) {
-                    try {
-                        String text = IOHelper.loadText(spawnError);
-                        printer().println(text);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
+                // maybe failed on startup, so dump the last of its log and errors
+                printTail(logTail);
+                printTail(errorTail);
                 return debugExitCode();
             }
         } while (exit == 0 && !quit.get());
@@ -279,29 +275,15 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void doReadLog(AtomicBoolean quit) {
-        do {
-            if (spawnOutput != null) {
-                InputStreamReader isr = new InputStreamReader(spawnOutput);
-                try {
-                    BufferedReader reader = buffered(isr);
-                    while (true) {
-                        String line = reader.readLine();
-                        if (line != null) {
-                            while (logBuffer.size() >= 100) {
-                                logBuffer.remove(0);
-                            }
-                            logBuffer.add(line);
-                            logUpdated.set(true);
-                        } else {
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        } while (!quit.get());
+    // the process has ended: wait a little for the rest of its output, then print what is kept
+    private void printTail(OutputTail tail) throws InterruptedException {
+        if (tail == null) {
+            return;
+        }
+        tail.awaitEnd(2000);
+        for (String line : tail.lines()) {
+            printer().println(line);
+        }
     }
 
     private void doRead(AtomicBoolean quit) {
@@ -591,7 +573,7 @@ public class Debug extends Run {
         cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         // remove args from debug that are not supported by run
-        removeDebugOnlyOptions(cmds);
+        cmds = withoutDebugOnlyOptions(cmds);
 
         // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
         cmds.add("--prop=camel.debug.enabled=true");
@@ -622,13 +604,38 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void removeDebugOnlyOptions(List<String> cmds) {
-        // only check Debug.class (not super classes)
-        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
-            String n1 = "--" + fc.getName();
-            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-            return c.startsWith(n1) || c.startsWith(n2);
-        }));
+    /**
+     * The arguments for camel run: without the options that only camel debug has. Each goes by its exact name, with its
+     * value (--breakpoint=tick, or --breakpoint tick).
+     * <p>
+     * CAMEL-26930: any argument that started with the name of a field went, such as --source-dir=... for the field
+     * source. The value of --breakpoint tick stayed, and camel run took it for a file.
+     */
+    static List<String> withoutDebugOnlyOptions(List<String> args) {
+        // only the options of Debug (not of its super classes), and whether they take a value
+        Map<String, Boolean> options = new HashMap<>();
+        for (Field field : Debug.class.getDeclaredFields()) {
+            Option option = field.getAnnotation(Option.class);
+            if (option != null) {
+                options.put("--" + option.name(), option.hasValue());
+                for (String alias : option.aliases()) {
+                    options.put("--" + alias, option.hasValue());
+                }
+            }
+        }
+        List<String> answer = new ArrayList<>(args.size());
+        for (int i = 0; i < args.size(); i++) {
+            String arg = args.get(i);
+            int eq = arg.indexOf('=');
+            Boolean hasValue = options.get(eq > 0 ? arg.substring(0, eq) : arg);
+            if (hasValue == null) {
+                answer.add(arg);
+            } else if (eq < 0 && hasValue && i + 1 < args.size() && !args.get(i + 1).startsWith("-")) {
+                // its value
+                i++;
+            }
+        }
+        return answer;
     }
 
     protected int doWatch() {
@@ -652,6 +659,7 @@ public class Debug extends Run {
 
         if (logLines > 0) {
             // log last 10 lines
+            List<String> logBuffer = logTail != null ? logTail.lines() : List.of();
             int start = Math.max(logBuffer.size() - logLines, 0);
             for (int i = start; i < start + logLines; i++) {
                 String line = "";

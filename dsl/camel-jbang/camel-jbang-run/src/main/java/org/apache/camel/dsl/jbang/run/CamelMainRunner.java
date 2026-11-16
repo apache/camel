@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -32,7 +31,6 @@ import org.apache.camel.dsl.jbang.run.common.MavenCommand;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
-import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Model;
 
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG;
@@ -207,6 +205,9 @@ final class CamelMainRunner {
         if (request.chaos) {
             addDependency(model, "org.apache.camel", "camel-chaos");
         }
+        if (request.sanitizer) {
+            addDependency(model, "org.apache.camel", "camel-sanitizer");
+        }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
 
@@ -263,26 +264,22 @@ final class CamelMainRunner {
         List<String> args = new ArrayList<>();
         String reloadDir;
         String pattern;
+        boolean recursive;
         if (request.sourceDir != null) {
             reloadDir = request.sourceDir;
-            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir);
+            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir) + RunPipeline.reloadExcludes(request.excludes);
+            recursive = true;
         } else {
-            // use the directory of the first file that is in another folder than the current dir
-            reloadDir = ".";
-            StringJoiner sj = new StringJoiner(",");
-            for (String f : files) {
-                String path = FileUtil.onlyPath(f);
-                if (path != null && !path.equals(".camel-jbang") && ".".equals(reloadDir)) {
-                    reloadDir = path;
-                }
-                sj.add(FileUtil.stripPath(f));
-            }
-            pattern = sj.toString();
+            // the folder that has all the files, not the one of the first file in another folder (CAMEL-26930)
+            RunPipeline.ReloadFolder reload = RunPipeline.reloadFolder(files);
+            reloadDir = reload.directory();
+            pattern = reload.pattern();
+            recursive = reload.recursive();
         }
         args.add("-Dcamel.main.routesReloadEnabled=true");
         args.add("-Dcamel.main.routesReloadDirectory=" + Paths.get(reloadDir).toAbsolutePath().normalize());
         args.add("-Dcamel.main.routesReloadPattern=" + pattern);
-        args.add("-Dcamel.main.routesReloadDirectoryRecursive=" + (request.sourceDir != null ? "true" : "false"));
+        args.add("-Dcamel.main.routesReloadDirectoryRecursive=" + recursive);
         args.add("-Dcamel.main.routesReloadRemoveAllRoutes=true");
         return args;
     }

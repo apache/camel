@@ -63,7 +63,7 @@ public final class ResourceHelper {
      * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
      *
      * @param  uri the URI
-     * @return     <tt>true</tt> if the URI starts with a scheme
+     * @return     <code>true</code> if the URI starts with a scheme
      */
     public static boolean hasScheme(String uri) {
         if (uri == null) {
@@ -78,7 +78,7 @@ public final class ResourceHelper {
      * Gets the scheme from the URI (e.g. file:, classpath: or http:)
      *
      * @param  uri the uri
-     * @return     the scheme, or <tt>null</tt> if no scheme
+     * @return     the scheme, or <code>null</code> if no scheme
      */
     public static String getScheme(String uri) {
         if (hasScheme(uri)) {
@@ -90,19 +90,22 @@ public final class ResourceHelper {
 
     /**
      * Resolves the mandatory resource.
-     * <p/>
+     * <p>
      * The resource uri can refer to the following systems to be loaded from
      * <ul>
-     * <il>file:nameOfFile - to refer to the file system</il> <il>classpath:nameOfFile - to refer to the classpath
-     * (default)</il> <il>http:uri - to load the resource using HTTP</il> <il>ref:nameOfBean - to lookup the resource in
-     * the {@link org.apache.camel.spi.Registry}</il> <il>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to
-     * lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il> <il><customProtocol>:uri - to
-     * lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>, on how
-     * to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
+     * <li>file:nameOfFile - to refer to the file system</li>
+     * <li>classpath:nameOfFile - to refer to the classpath (default)</li>
+     * <li>http:uri - to load the resource using HTTP</li>
+     * <li>ref:nameOfBean - to look up the resource in the {@link org.apache.camel.spi.Registry}</li>
+     * <li>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to look up a bean in the
+     * {@link org.apache.camel.spi.Registry} and call the method</li>
+     * <li>&lt;customProtocol&gt;:uri - to look up the resource using a custom {@link java.net.URLStreamHandler}
+     * registered for the &lt;customProtocol&gt;, on how to register it see
+     * {@link java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)}</li>
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
-     * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
+     * <p>
+     * If possible, it is recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the Camel Context
      * @param  uri                 URI of the resource
@@ -121,13 +124,13 @@ public final class ResourceHelper {
 
     /**
      * Resolves the resource.
-     * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
+     * <p>
+     * If possible, it is recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the camel context
      * @param  uri                 URI of the resource
      * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage. Or
-     *                             <tt>null</tt> if not found.
+     *                             <code>null</code> if not found.
      * @throws java.io.IOException is thrown if error loading the resource
      */
     public static InputStream resolveResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
@@ -160,7 +163,8 @@ public final class ResourceHelper {
      *
      * @param  camelContext                   the camel context
      * @param  uri                            uri of the resource
-     * @return                                the resource as an {@link java.net.URL}. Or <tt>null</tt> if not found.
+     * @return                                the resource as an {@link java.net.URL}. Or <code>null</code> if not
+     *                                        found.
      * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveResourceAsUrl(CamelContext camelContext, String uri) throws MalformedURLException {
@@ -190,7 +194,7 @@ public final class ResourceHelper {
      *
      * @param  camelContext the camel context
      * @param  uri          the uri of the resource
-     * @return              the {@link Resource}. Or <tt>null</tt> if not found
+     * @return              the {@link Resource}. Or <code>null</code> if not found
      */
     public static Resource resolveResource(CamelContext camelContext, String uri) {
         if (uri.startsWith(RESOURCE)) {
@@ -204,7 +208,7 @@ public final class ResourceHelper {
      * Is the given uri a classpath uri?
      *
      * @param  uri the uri
-     * @return     <tt>true</tt> if the uri starts with <tt>classpath:</tt> or has no scheme and therefore would
+     * @return     <code>true</code> if the uri starts with <code>classpath:</code> or has no scheme and therefore would
      *             otherwise be loaded from classpath by default.
      */
     public static boolean isClasspathUri(String uri) {
@@ -218,7 +222,7 @@ public final class ResourceHelper {
      * Is the given uri a http uri?
      *
      * @param  uri the uri
-     * @return     <tt>true</tt> if the uri starts with <tt>http:</tt> or <tt>https:</tt>
+     * @return     <code>true</code> if the uri starts with <code>http:</code> or <code>https:</code>
      */
     public static boolean isHttpUri(String uri) {
         if (ObjectHelper.isEmpty(uri)) {
@@ -314,7 +318,7 @@ public final class ResourceHelper {
 
     /**
      * Create a {@link Resource} from a {@link String}.
-     * </p>
+     * <p>
      * The implementation delegates to {@link #fromBytes(String, byte[])} by encoding the string as bytes with
      * {@link String#getBytes(Charset)} and {@link StandardCharsets#UTF_8} as charset.
      *

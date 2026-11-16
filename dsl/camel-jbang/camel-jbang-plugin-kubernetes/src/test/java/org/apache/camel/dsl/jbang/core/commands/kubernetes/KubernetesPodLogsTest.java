@@ -67,6 +67,30 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
         Assertions.assertEquals(0, exit);
     }
 
+    @Test
+    public void theLogOfAFinishedPodIsReadOnce() throws Exception {
+        // the phase of a finished pod is Succeeded or Failed: the check for Terminated, which is no phase, made the
+        // command read the log again every 2 seconds (CAMEL-26934)
+        Pod pod = new PodBuilder()
+                .withNewMetadata()
+                .withName("job")
+                .withLabels(Map.of(BaseTrait.KUBERNETES_LABEL_NAME, "job"))
+                .endMetadata()
+                .withNewStatus()
+                .withPhase("Succeeded")
+                .endStatus()
+                .build();
+        kubernetesClient.pods().resource(pod).create();
+
+        var podLog = createCommand();
+        podLog.name = "job";
+        long start = System.currentTimeMillis();
+        podLog.doCall();
+
+        Assertions.assertTrue(System.currentTimeMillis() - start < 2000, "no retry for a finished pod");
+        Assertions.assertFalse(printer.getOutput().contains("Retry"), printer.getOutput());
+    }
+
     private KubernetesPodLogs createCommand() {
         KubernetesPodLogs command = new KubernetesPodLogs(new CamelJBangMain().withPrinter(printer));
         command.withClient(kubernetesClient);

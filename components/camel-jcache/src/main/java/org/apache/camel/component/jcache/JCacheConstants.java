@@ -33,7 +33,7 @@ public interface JCacheConstants {
     @Metadata(label = "consumer", description = "The old value of the cache entry", javaType = "Object")
     String OLD_VALUE = "CamelJCacheOldValue";
     @Metadata(label = "producer", description = "The EntryProcessor to invoke",
-              javaType = "EntryProcessor<Object, Object, Object>")
+              javaType = "javax.cache.processor.EntryProcessor<Object, Object, Object>")
     String ENTRY_PROCESSOR = "CamelJCacheEntryProcessor";
     @Metadata(label = "producer", description = "The additional arguments to pass to the EntryProcessor",
               javaType = "Collection<Object>")

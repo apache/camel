@@ -29,9 +29,9 @@ public final class RawParameterHelper {
     }
 
     /**
-     * Traverses the given parameters, and resolve any parameter values which uses the RAW token syntax:
-     * <tt>key=RAW(value)</tt>. This method will then remove the RAW tokens, and replace the content of the value, with
-     * just the value.
+     * Traverses the given parameters, and resolves any parameter values which use the RAW token syntax:
+     * <code>key=RAW(value)</code>. This method will then remove the RAW tokens, and replace the content of the value,
+     * with just the value.
      *
      * The value can refer to a simple expression using $simple{xxx} syntax which allows to refer to passwords defined
      * as ENV variables etc.

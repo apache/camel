@@ -219,7 +219,7 @@ public class XPathExpression extends NamespaceAwareExpression {
 
         /**
          * Class for document type to use
-         * <p/>
+         * <p>
          * The default value is org.w3c.dom.Document
          */
         public Builder documentType(Class<?> documentType) {
@@ -234,7 +234,7 @@ public class XPathExpression extends NamespaceAwareExpression {
 
         /**
          * Name of class for document type
-         * <p/>
+         * <p>
          * The default value is org.w3c.dom.Document
          */
         public Builder documentTypeName(String documentTypeName) {
@@ -244,7 +244,7 @@ public class XPathExpression extends NamespaceAwareExpression {
 
         /**
          * Sets the class name of the result type (type from output)
-         * <p/>
+         * <p>
          * The default result type is NodeSet
          */
         public Builder resultQName(String resultQName) {
@@ -254,7 +254,7 @@ public class XPathExpression extends NamespaceAwareExpression {
 
         /**
          * Sets the class name of the result type (type from output)
-         * <p/>
+         * <p>
          * The default result type is NodeSet
          */
         public Builder resultQName(ResultQName resultQName) {
@@ -315,7 +315,7 @@ public class XPathExpression extends NamespaceAwareExpression {
          * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
          * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
          * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
-         * <p/>
+         * <p>
          * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
          * thread-safety issues which can be prevented by turning this option on.
          */
@@ -329,7 +329,7 @@ public class XPathExpression extends NamespaceAwareExpression {
          * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
          * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
          * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
-         * <p/>
+         * <p>
          * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
          * thread-safety issues which can be prevented by turning this option on.
          */

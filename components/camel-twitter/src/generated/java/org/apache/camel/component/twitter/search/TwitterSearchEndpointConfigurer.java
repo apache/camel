@@ -53,6 +53,8 @@ public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "filterold":
         case "filterOld": target.getProperties().setFilterOld(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "httpproxyhost":
         case "httpProxyHost": target.getProperties().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "httpproxypassword":
@@ -134,6 +136,8 @@ public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "filterold":
         case "filterOld": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "httpproxyhost":
         case "httpProxyHost": return java.lang.String.class;
         case "httpproxypassword":
@@ -216,6 +220,8 @@ public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "filterold":
         case "filterOld": return target.getProperties().isFilterOld();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "httpproxyhost":
         case "httpProxyHost": return target.getProperties().getHttpProxyHost();
         case "httpproxypassword":

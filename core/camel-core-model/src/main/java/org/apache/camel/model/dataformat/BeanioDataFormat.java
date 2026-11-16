@@ -243,7 +243,7 @@ public class BeanioDataFormat extends DataFormatDefinition {
 
         /**
          * The charset to use.
-         * <p/>
+         * <p>
          * Is by default the JVM platform default charset.
          */
         public BeanioDataFormat.Builder encoding(String encoding) {

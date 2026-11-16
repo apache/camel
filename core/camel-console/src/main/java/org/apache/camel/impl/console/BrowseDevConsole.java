@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -119,8 +120,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
         for (Endpoint endpoint : endpoints) {
-            if (endpoint instanceof BrowsableEndpoint be
-                    && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
+            if (endpoint instanceof BrowsableEndpoint be && (filter == null || matches(endpoint, filter))) {
 
                 if (dump) {
                     List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
@@ -172,8 +172,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
         for (Endpoint endpoint : endpoints) {
-            if (endpoint instanceof BrowsableEndpoint be
-                    && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
+            if (endpoint instanceof BrowsableEndpoint be && (filter == null || matches(endpoint, filter))) {
                 if (dump) {
                     List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
                     int queueSize = list != null ? list.size() : 0;
@@ -225,4 +224,12 @@ public class BrowseDevConsole extends AbstractDevConsole {
         return JsonRecordSupport.toJsonObject(response);
     }
 
+    /**
+     * Whether the endpoint matches the filter: the endpoint URI with or without the // of the scheme (camel cmd browse
+     * --endpoint=seda:foo, the example of its help, matched none, as the URI is seda://foo), or a pattern.
+     */
+    private boolean matches(Endpoint endpoint, String filter) {
+        return PatternHelper.matchPattern(endpoint.getEndpointUri(), filter)
+                || EndpointHelper.matchEndpoint(getCamelContext(), endpoint.getEndpointUri(), filter);
+    }
 }

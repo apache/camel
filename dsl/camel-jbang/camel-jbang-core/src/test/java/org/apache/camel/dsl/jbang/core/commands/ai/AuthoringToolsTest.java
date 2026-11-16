@@ -80,7 +80,7 @@ class AuthoringToolsTest {
         assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_validate_source",
                 "camel_get_files",
                 "camel_write_file", "camel_edit_file", "camel_run", "camel_control", "camel_get_log", "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_project_overview",
+                "camel_eval_expression", "camel_dependency_for_class", "camel_project_overview",
                 "camel_save_project_summary"), names);
         for (ToolDescriptor td : shared) {
             assertTrue(td.name().startsWith("camel_"), td.name());
@@ -93,7 +93,7 @@ class AuthoringToolsTest {
         }
         for (String reading : List.of("camel_catalog_doc", "camel_catalog_sample", "camel_get_files", "camel_get_log",
                 "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source",
+                "camel_eval_expression", "camel_dependency_for_class", "camel_validate_source",
                 "camel_project_overview")) {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }
@@ -147,6 +147,63 @@ class AuthoringToolsTest {
         assertTrue(e.getMessage().contains("directory is required"), e.getMessage());
         assertThrows(ToolExecutionException.class, () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
                 Map.of("directory", dir.toString(), "file", "missing.yaml")));
+    }
+
+    @Test
+    void aLargeFileIsReadInParts(@TempDir Path dir) throws IOException {
+        // a 3.6 MB file was an answer of 4.5 MB, about a million tokens (CAMEL-26932)
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= 5000; i++) {
+            sb.append("line ").append(i).append('\n');
+        }
+        Files.writeString(dir.resolve("big.log"), sb.toString());
+
+        JsonObject first = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString(), "file", "big.log"));
+        assertTrue(first.getString("content").startsWith("line 1\nline 2\n"));
+        assertTrue(first.getString("content").endsWith("line 2000\n"));
+        assertEquals(5000, first.getInteger("lines"));
+        assertEquals(1, first.getInteger("from"));
+        assertEquals(2000, first.getInteger("to"));
+        assertEquals("The content is lines 1 to 2000 of 5000; call camel_get_files with offset=2001 for the next lines",
+                first.getString("message"));
+
+        JsonObject part = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", 4999, "limit", 10));
+        assertEquals("line 4999\nline 5000\n", part.getString("content"));
+        assertEquals("The content is lines 4999 to 5000 of 5000", part.getString("message"));
+
+        JsonObject past = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", 6000));
+        assertEquals("", past.getString("content"));
+        assertEquals("The file has 5000 lines, so there are none from line 6000", past.getString("message"));
+
+        assertThrows(ToolExecutionException.class, () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", "ten")));
+    }
+
+    @Test
+    void aSmallFileIsReadAsItIs(@TempDir Path dir) throws IOException {
+        // line endings and no newline at the end, as they are in the file
+        Files.writeString(dir.resolve("crlf.properties"), "a=1\r\nb=2");
+
+        JsonObject file = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "crlf.properties"));
+
+        assertEquals("a=1\r\nb=2", file.getString("content"));
+        assertNull(file.get("message"));
+        assertNull(file.get("lines"));
+    }
+
+    @Test
+    void aLineLongerThanAnAnswerIsCut(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("one.json"), "x".repeat(AuthoringTools.READ_CHARS + 10) + "\nsecond\n");
+
+        JsonObject file = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString(), "file", "one.json"));
+
+        assertEquals(AuthoringTools.READ_CHARS + 1, file.getString("content").length());
+        assertEquals("The content is lines 1 to 1 of 2 (line 1 is cut after " + AuthoringTools.READ_CHARS
+                     + " characters); call camel_get_files with offset=2 for the next lines",
+                file.getString("message"));
     }
 
     /** A file consumer moves the files it read into .camel, which the listing skips: the folder looked empty. */
@@ -522,23 +579,6 @@ class AuthoringToolsTest {
         assertEquals("component", first.getString("kind"));
         assertTrue(first.getString("name").contains("mqtt"), first.toJson());
         assertNotNull(first.get("syntax"));
-    }
-
-    @Test
-    void errorDiagnoseNamesTheExceptionAndTheComponent() {
-        String error = "org.apache.camel.ResolveEndpointFailedException: Failed to resolve endpoint:"
-                       + " timer://tick?periodd=1000 due to: There are 1 parameters that couldn't be set on the endpoint";
-        JsonObject result = call("camel_error_diagnose", new ToolContext(), Map.of("error", error));
-        JsonObject summary = result.getMap("summary");
-        assertTrue(summary.getBoolean("diagnosed"));
-        JsonObject ex = (JsonObject) result.getCollection("identifiedExceptions").iterator().next();
-        assertEquals("ResolveEndpointFailedException", ex.getString("exception"));
-        assertFalse(ex.getCollection("suggestedFixes").isEmpty());
-        assertTrue(result.getCollection("identifiedComponents").stream()
-                .anyMatch(c -> "timer".equals(((JsonObject) c).getString("name"))), result.toJson());
-        JsonObject none = call("camel_error_diagnose", new ToolContext(), Map.of("error", "nothing camel here"))
-                .getMap("summary");
-        assertFalse(none.getBoolean("diagnosed"));
     }
 
     @Test

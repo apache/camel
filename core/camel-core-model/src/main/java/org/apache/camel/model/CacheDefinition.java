@@ -32,10 +32,10 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Caches the result of the nested processing steps using a read-through pattern.
- * <p/>
+ * <p>
  * On cache hit (key found), the cached value is set as the message body and the nested steps are skipped. On cache
  * miss, the nested steps execute normally and the resulting message body is stored in the cache under the computed key.
- * <p/>
+ * <p>
  * Cache errors are handled gracefully — they are logged but never propagate to the exchange. Failed exchanges (those
  * with an exception) are never cached.
  *

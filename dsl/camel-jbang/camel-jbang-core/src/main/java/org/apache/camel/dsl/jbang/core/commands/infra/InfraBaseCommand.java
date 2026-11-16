@@ -45,8 +45,10 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
@@ -158,7 +160,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     // not a file we recognise, so neither report nor prune it
                     continue;
                 }
-                if (!aliveCheck.test(pidNumber)) {
+                // a pid file older than the process with its pid is left over from a service that is gone, and the
+                // pid is now of another process, which infra stop --kill would kill (CAMEL-26931)
+                if (!aliveCheck.test(pidNumber) || isReusedPid(pidNumber, pidFile)) {
                     pruneStaleFiles(camelDir, sn, pid);
                     continue;
                 }
@@ -176,12 +180,22 @@ public abstract class InfraBaseCommand extends CamelCommand {
     }
 
     /**
+     * Whether the pid file was last written before the process with the pid started, as {@link ProcessHelper#isStale}
+     * finds for the files of an integration (CAMEL-26911).
+     */
+    private static boolean isReusedPid(long pid, Path pidFile) {
+        return ProcessHandle.of(pid).map(ph -> ProcessHelper.isStale(ph, pidFile)).orElse(false);
+    }
+
+    /**
      * Removes the pid and log files left behind by an instance whose process is gone, so it stops being reported as
      * running.
      */
     private void pruneStaleFiles(Path camelDir, String service, String pid) {
         PathUtils.deleteFile(camelDir.resolve(getJsonFileName(service, pid)));
         PathUtils.deleteFile(camelDir.resolve(getLogFileName(service, pid)));
+        // and the output of a service that ran in the background
+        BackgroundLog.remove(Long.parseLong(pid));
     }
 
     /**
@@ -327,6 +341,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     parseServiceData(row.serviceData()), row.uiSupported()))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
+        } else if (rows.isEmpty() && showPidColumn()) {
+            // camel infra ps printed only the header of the table (CAMEL-26931)
+            printer().printDiagnostic("No running infrastructure services");
         } else {
             int tw = terminalWidth();
             // Size DESCRIPTION to fill the terminal: measure the other columns so it gets the exact remainder.

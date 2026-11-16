@@ -39,7 +39,7 @@ public final class PropertyConfigurerHelper {
      *
      * @param  context the camel context
      * @param  target  the target object for which we need a {@link org.apache.camel.spi.PropertyConfigurer}
-     * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
+     * @return         the resolved configurer, or <code>null</code> if no configurer could be found
      */
     public static PropertyConfigurer resolvePropertyConfigurer(CamelContext context, Object target) {
         ObjectHelper.notNull(target, "target");
@@ -64,7 +64,7 @@ public final class PropertyConfigurerHelper {
      *
      * @param  context    the camel context
      * @param  targetType the target object type for which we need a {@link org.apache.camel.spi.PropertyConfigurer}
-     * @return            the resolved configurer, or <tt>null</tt> if no configurer could be found
+     * @return            the resolved configurer, or <code>null</code> if no configurer could be found
      */
     public static PropertyConfigurer resolvePropertyConfigurer(CamelContext context, Class<?> targetType) {
         ObjectHelper.notNull(targetType, "targetType");
@@ -109,7 +109,7 @@ public final class PropertyConfigurerHelper {
      * @param  context the camel context
      * @param  target  the target object for which we need a {@link org.apache.camel.spi.PropertyConfigurer}
      * @param  type    the specific type of {@link org.apache.camel.spi.PropertyConfigurer}
-     * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
+     * @return         the resolved configurer, or <code>null</code> if no configurer could be found
      */
     public static <T> T resolvePropertyConfigurer(CamelContext context, Object target, Class<T> type) {
         ObjectHelper.notNull(target, "target");

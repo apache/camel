@@ -21,17 +21,24 @@ import org.apache.camel.spi.Metadata;
 
 public final class GridFsConstants {
 
-    @Metadata(label = "consumer", description = "The content type of the file.", javaType = "String")
+    @Metadata(description = "(producer) The content type that findOne read from the metadata of the file."
+                            + " (consumer) The content type of the file.",
+              javaType = "String")
     public static final String FILE_CONTENT_TYPE = Exchange.FILE_CONTENT_TYPE;
-    @Metadata(label = "consumer", description = "The size of the file.", javaType = "long")
+    @Metadata(description = "(producer) The size of the file that findOne found. (consumer) The size of the file.",
+              javaType = "long")
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
-    @Metadata(label = "consumer", description = "The upload date of the file.", javaType = "Date")
+    @Metadata(description = "(producer) The upload date of the file that findOne found. (consumer) The upload date of"
+                            + " the file.",
+              javaType = "Date")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
     @Metadata(description = "(producer) The name of the file: the name that create gives the file, and the file that"
                             + " findOne, remove, listAll and count look for. (consumer) The name of the file that was found.",
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
-    @Metadata(label = "producer", description = "The content type of the file.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The content type to store in the metadata of the file that create uploads.",
+              javaType = "String")
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
     @Metadata(label = "producer", description = "The file name produced.", javaType = "String")
     public static final String FILE_NAME_PRODUCED = Exchange.FILE_NAME_PRODUCED;

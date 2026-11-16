@@ -41,3 +41,4 @@ camel.main.name=hello
 camel.main.routesIncludePattern=file:src/test/resources/golden/yaml/hello.camel.yaml
 
 # override properties
+camel.jbang.stub=component:*

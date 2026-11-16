@@ -45,6 +45,28 @@ public interface MyBatisEndpointBuilderFactory {
             return (AdvancedMyBatisEndpointConsumerBuilder) this;
         }
         /**
+         * Store the query result in a header instead of the message body. By
+         * default, outputHeader == null and the query result is stored in the
+         * message body, any existing content in the message body is discarded.
+         * If outputHeader is set, the value is used as the name of the header
+         * to store the query result and the original message body is preserved.
+         * Setting outputHeader will also omit populating the default
+         * CamelMyBatisResult header since it would be the same as outputHeader
+         * all the time. On a polling consumer, each polled row is stored in
+         * this header instead of the message body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointConsumerBuilder outputHeader(String outputHeader) {
+            doSetProperty("outputHeader", outputHeader);
+            return this;
+        }
+        /**
          * This option is intended to split results returned by the database
          * pool into the batches and deliver them in multiple exchanges. This
          * integer defines the maximum messages to deliver in single exchange.
@@ -382,6 +404,48 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
             return this;
         }
         /**
@@ -888,6 +952,28 @@ public interface MyBatisEndpointBuilderFactory {
         }
 
         /**
+         * Store the query result in a header instead of the message body. By
+         * default, outputHeader == null and the query result is stored in the
+         * message body, any existing content in the message body is discarded.
+         * If outputHeader is set, the value is used as the name of the header
+         * to store the query result and the original message body is preserved.
+         * Setting outputHeader will also omit populating the default
+         * CamelMyBatisResult header since it would be the same as outputHeader
+         * all the time. On a polling consumer, each polled row is stored in
+         * this header instead of the message body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
+            doSetProperty("outputHeader", outputHeader);
+            return this;
+        }
+        /**
          * The executor type to be used while executing statements. simple -
          * executor does nothing special. reuse - executor reuses prepared
          * statements. batch - executor reuses statements and batches updates.
@@ -939,27 +1025,6 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder inputHeader(String inputHeader) {
             doSetProperty("inputHeader", inputHeader);
-            return this;
-        }
-        /**
-         * Store the query result in a header instead of the message body. By
-         * default, outputHeader == null and the query result is stored in the
-         * message body, any existing content in the message body is discarded.
-         * If outputHeader is set, the value is used as the name of the header
-         * to store the query result and the original message body is preserved.
-         * Setting outputHeader will also omit populating the default
-         * CamelMyBatisResult header since it would be the same as outputHeader
-         * all the time.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputHeader the value to set
-         * @return the dsl builder
-         */
-        default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
-            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -1063,6 +1128,28 @@ public interface MyBatisEndpointBuilderFactory {
             return (AdvancedMyBatisEndpointBuilder) this;
         }
 
+        /**
+         * Store the query result in a header instead of the message body. By
+         * default, outputHeader == null and the query result is stored in the
+         * message body, any existing content in the message body is discarded.
+         * If outputHeader is set, the value is used as the name of the header
+         * to store the query result and the original message body is preserved.
+         * Setting outputHeader will also omit populating the default
+         * CamelMyBatisResult header since it would be the same as outputHeader
+         * all the time. On a polling consumer, each polled row is stored in
+         * this header instead of the message body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointBuilder outputHeader(String outputHeader) {
+            doSetProperty("outputHeader", outputHeader);
+            return this;
+        }
     }
 
     /**

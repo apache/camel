@@ -37,9 +37,9 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Looks up the beans that Camel ships out of the box (aggregation strategies, idempotent and aggregation repositories,
  * header filter strategies, ...) from the metadata the build tools generate into every JAR that has such beans:
- * <tt>META-INF/services/org/apache/camel/bean.properties</tt> lists the bean names, and
- * <tt>META-INF/services/org/apache/camel/bean/&lt;Name&gt;.json</tt> has the class, the interface and the artifact.
- * <p/>
+ * <code>META-INF/services/org/apache/camel/bean.properties</code> lists the bean names, and
+ * <code>META-INF/services/org/apache/camel/bean/&lt;Name&gt;.json</code> has the class, the interface and the artifact.
+ * <p>
  * The metadata is read when a class cannot be found, so the error can say which built-in bean was likely meant. The
  * classpath is scanned on each call; this is an error-path helper and not meant for hot paths.
  */
@@ -96,7 +96,7 @@ public final class PojoBeanHelper {
 
     /**
      * The built-in bean with the given name, matched case-insensitively by the simple class name or by the fully
-     * qualified class name, or <tt>null</tt> if there is none.
+     * qualified class name, or <code>null</code> if there is none.
      */
     public static PojoBean findByName(CamelContext camelContext, String name) {
         if (name == null || name.isBlank()) {
@@ -135,9 +135,10 @@ public final class PojoBeanHelper {
      * is in the same JAR as the bean, so a built-in bean whose JAR is missing gets the generic hint.
      *
      * @param  camelContext the camel context
-     * @param  className    the class that was not found (fully qualified or simple name), or a <tt>#class:</tt>
+     * @param  className    the class that was not found (fully qualified or simple name), or a <code>#class:</code>
      *                      reference to it; anything else (a bean name) gives no hint
-     * @param  expectedType the interface the class was expected to implement, or <tt>null</tt> (or Object) if unknown
+     * @param  expectedType the interface the class was expected to implement, or <code>null</code> (or Object) if
+     *                      unknown
      * @return              the hint, in parentheses with a leading space, or an empty string if there is nothing to say
      */
     public static String classNotFoundHint(CamelContext camelContext, String className, Class<?> expectedType) {
@@ -180,7 +181,7 @@ public final class PojoBeanHelper {
 
     /**
      * The class named by a ClassNotFoundException or NoClassDefFoundError in the cause chain, in dotted form, or
-     * <tt>null</tt> if the failure is not a missing class.
+     * <code>null</code> if the failure is not a missing class.
      */
     public static String missingClassName(Throwable e) {
         for (Throwable t = e; t != null; t = t.getCause()) {

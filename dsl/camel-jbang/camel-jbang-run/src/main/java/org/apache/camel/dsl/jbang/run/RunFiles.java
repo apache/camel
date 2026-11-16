@@ -75,8 +75,7 @@ public final class RunFiles {
             "- routeTemplate:", "- route-template:",
             "- templatedRoute:", "templated-route:",
             "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:",
-            "Pipe" // special for camel-k pipe
+            "- rest:", "- beans:"
     };
 
     private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS
@@ -148,6 +147,11 @@ public final class RunFiles {
             return false;
         }
 
+        // the path as given, for an exclude with a folder such as routes/** (CAMEL-26930)
+        String given = name.replace('\\', '/');
+        while (given.startsWith("./")) {
+            given = given.substring(2);
+        }
         // flatten file
         name = FileUtil.stripPath(name);
 
@@ -184,7 +188,7 @@ public final class RunFiles {
         }
 
         // is the file excluded?
-        if (isExcluded(name, excludes)) {
+        if (isExcluded(name, excludes) || isExcluded(given, excludes)) {
             return true;
         }
 

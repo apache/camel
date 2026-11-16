@@ -19,6 +19,7 @@ camel.jbang.javaVersion=21
 camel.jbang.kameletsVersion=${kamelets.version}
 camel.main.name=excludes
 camel.main.routesIncludePattern=file\:src/test/resources/golden/excludes/**?optional\=true
+camel.main.routesExcludePattern=file\:src/test/resources/golden/excludes/**/*.xml
 
 # initial properties
 camel.component.kamelet.location=classpath:kamelets
@@ -38,6 +39,7 @@ camel.jbang.springBootVersion=${spring-boot.version}
 camel.jbang.verbose=false
 camel.main.modeline=true
 camel.main.name=excludes
+camel.main.routesExcludePattern=file:src/test/resources/golden/excludes/**/*.xml
 camel.main.routesIncludePattern=file:src/test/resources/golden/excludes/**?optional=true
 
 # override properties

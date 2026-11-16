@@ -269,6 +269,35 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void theRequestKnowsTheOptionsGivenOnTheCommandLine() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--trace", "--console", "--logging-level=DEBUG", "--camel-version=4.23.0",
+                "route.yaml");
+
+        RunRequest request = command.toRunRequest(Path.of("."));
+
+        assertThat(request.givenOptions).contains("trace", "console", "logging-level", "camel-version")
+                .doesNotContain("health", "metrics", "stub");
+        assertThat(request.given("trace")).isTrue();
+        assertThat(request.given("health")).isFalse();
+    }
+
+    @Test
+    void theLoggingOptionsGivenOnTheCommandLineWinOverTheApplicationProperties() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--logging-level=DEBUG", "route.yaml");
+        Properties properties = new Properties();
+        properties.setProperty("loggingLevel", "WARN");
+        properties.setProperty("loggingJson", "true");
+
+        command.applyProfileProperties(command.toRunRequest(null), properties);
+
+        assertThat(command.loggingOptions.loggingLevel).isEqualTo("DEBUG");
+        // not given: the file
+        assertThat(command.loggingOptions.loggingJson).isTrue();
+    }
+
+    @Test
     void theBackgroundAndDebugPropertiesStartAnotherJvm() {
         Run command = new Run(new CamelJBangMain());
         CommandLineTestHelper.parse(command, "route.yaml");
@@ -305,6 +334,20 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(pb.environment()).containsEntry(Run.SPAWNED_RUN, "true");
     }
 
+    @Test
+    void theBackgroundAndDebugOptionsGivenOnTheCommandLineWinOverTheProperties() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--background-wait=1000", "--jvm-debug=5005", "route.yaml");
+        command.spawned = false;
+
+        command.applyProfileProperties(command.toRunRequest(null), backgroundAndDebugProperties());
+
+        assertThat(command.backgroundWait).isEqualTo(1000);
+        assertThat(command.jvmDebugPort).isEqualTo(5005);
+        // not given: the file
+        assertThat(command.background).isTrue();
+    }
+
     private static Properties backgroundAndDebugProperties() {
         Properties properties = new Properties();
         properties.setProperty("camel.jbang.background", "true");
@@ -325,10 +368,11 @@ class RunTest extends CamelCommandBaseTestSupport {
     void sourceDirReloadPatternLeavesTheDataDirsOut() {
         // CAMEL-25670: the routes read and write the files of a data folder, which must not reload them
         // CAMEL-26494: nor must the test folder, with the Citrus tests of the project, which are not routes
-        assertThat(RunPipeline.sourceDirReloadPattern(null)).isEqualTo("*,!test/**");
-        assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!test/**,!inbox/**");
+        String ignored = "!*.log,!target/**,!.git/**,!.camel/**,!.camel-jbang/**";
+        assertThat(RunPipeline.sourceDirReloadPattern(null)).isEqualTo("*,!test/**," + ignored);
+        assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!test/**," + ignored + ",!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
-                .isEqualTo("*,!test/**,!inbox/**,!archive/**,!data/in/**");
+                .isEqualTo("*,!test/**," + ignored + ",!inbox/**,!archive/**,!data/in/**");
     }
 
     @Test
@@ -386,6 +430,23 @@ class RunTest extends CamelCommandBaseTestSupport {
             command = new Run(new CamelJBangMain().withPrinter(quiet));
             CommandLineTestHelper.parse(command, args);
             command.warnChaosOffWithProfileProd();
+            assertThat(quiet.getOutput()).isEmpty();
+        }
+    }
+
+    @Test
+    void sanitizerWithProfileProdSaysThatTheSanitizerStaysOff() {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "--sanitizer", "--profile=prod", "route.yaml");
+        command.warnSanitizerOffWithProfileProd();
+        assertThat(printer.getStderr()).contains("WARN: camel-sanitizer stays off with profile prod");
+
+        // not with profile dev, nor without --sanitizer
+        for (String[] args : new String[][] { { "--sanitizer", "route.yaml" }, { "--profile=prod", "route.yaml" } }) {
+            StringPrinter quiet = new StringPrinter();
+            command = new Run(new CamelJBangMain().withPrinter(quiet));
+            CommandLineTestHelper.parse(command, args);
+            command.warnSanitizerOffWithProfileProd();
             assertThat(quiet.getOutput()).isEmpty();
         }
     }

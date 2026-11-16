@@ -37,11 +37,11 @@ public class DaprConstants {
     @Metadata(label = "producer", description = "The headers for HTTP requests", javaType = "Map<String, String>")
     public static final String HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
     @Metadata(label = "producer", description = "The HttpExtension object for service invocation. Takes precedence over verb",
-              javaType = "HttpExtension")
+              javaType = "io.dapr.client.domain.HttpExtension")
     public static final String HTTP_EXTENSION = HEADER_PREFIX + "HttpExtension";
     @Metadata(label = "producer", description = "The state operation to perform on the state store. " +
                                                 "Required for DaprOperation.state operation",
-              javaType = "StateOperation", defaultValue = "get",
+              javaType = "org.apache.camel.component.dapr.StateOperation", defaultValue = "get",
               enums = "save, saveBulk, get, getBulk, delete, executeTransaction")
     public static final String STATE_OPERATION = HEADER_PREFIX + "StateOperation";
     @Metadata(label = "producer",
@@ -79,12 +79,13 @@ public class DaprConstants {
                             + " enables allowSecretStoreAndKeyFromHeaders=true (disabled by default).",
               javaType = "Map<String, String>")
     public static final String METADATA = HEADER_PREFIX + "Metadata";
-    @Metadata(label = "producer", description = "List of states for bulk save operation", javaType = "List<State<?>>")
+    @Metadata(label = "producer", description = "List of states for bulk save operation",
+              javaType = "List<io.dapr.client.domain.State<?>>")
     public static final String STATES = HEADER_PREFIX + "States";
     @Metadata(label = "producer", description = "List of keys for bulk get operation", javaType = "List<String>")
     public static final String KEYS = HEADER_PREFIX + "Keys";
     @Metadata(label = "producer", description = "List of transactions for execute transactions state operations",
-              javaType = "List<TransactionalStateOperation<?>>")
+              javaType = "List<io.dapr.client.domain.TransactionalStateOperation<?>>")
     public static final String TRANSACTIONS = HEADER_PREFIX + "Transactions";
     @Metadata(label = "common",
               description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying " +
@@ -117,7 +118,8 @@ public class DaprConstants {
                                                 "(for events where data_base64 is used instead of data)",
               javaType = "byte[]")
     public static final String BINARY_DATA = HEADER_PREFIX + "BinaryData";
-    @Metadata(label = "consumer", description = "Gets the timestamp of when the event occurred", javaType = "OffsetDateTime")
+    @Metadata(label = "consumer", description = "Gets the timestamp of when the event occurred",
+              javaType = "java.time.OffsetDateTime")
     public static final String TIME = HEADER_PREFIX + "Time";
     @Metadata(label = "consumer", description = "Gets tracing info for following the event across services " +
                                                 "(includes trace ID and span ID)",
@@ -140,7 +142,7 @@ public class DaprConstants {
     public static final String RAW_CONFIG_RESPONSE = HEADER_PREFIX + "RawConfigResponse";
     @Metadata(label = "producer", description = "The lock operation to perform on the store. " +
                                                 "Required for DaprOperation.lock operation",
-              javaType = "LockOperation", defaultValue = "tryLock",
+              javaType = "org.apache.camel.component.dapr.LockOperation", defaultValue = "tryLock",
               enums = "tryLock, unlock")
     public static final String LOCK_OPERATION = HEADER_PREFIX + "LockOperation";
     @Metadata(label = "producer", description = "The lock store name", javaType = "String")
@@ -153,8 +155,9 @@ public class DaprConstants {
     public static final String EXPIRY_IN_SECONDS = HEADER_PREFIX + "ExpiryInSeconds";
     @Metadata(label = "producer", description = "The workflow operation to perform." +
                                                 "Required for DaprOperation.workflow operation",
-              javaType = "WorkflowOperation", defaultValue = "scheduleNew",
-              enums = "scheduleNew")
+              javaType = "org.apache.camel.component.dapr.WorkflowOperation", defaultValue = "scheduleNew",
+              enums = "scheduleNew, terminate, purge, suspend, resume, state, waitForInstanceStart, "
+                      + "waitForInstanceCompletion, raiseEvent")
     public static final String WORKFLOW_OPERATION = HEADER_PREFIX + "WorkflowOperation";
     @Metadata(label = "producer", description = "The FQCN of the class which implements io.dapr.workflows.Workflow",
               javaType = "String")
@@ -163,7 +166,7 @@ public class DaprConstants {
     public static final String WORKFLOW_VERSION = HEADER_PREFIX + "WorkflowVersion";
     @Metadata(label = "producer", description = "The instance ID of the workflow", javaType = "String")
     public static final String WORKFLOW_INSTANCE_ID = HEADER_PREFIX + "WorkflowInstanceId";
-    @Metadata(label = "producer", description = "The start time of the new workflow", javaType = "Instant")
+    @Metadata(label = "producer", description = "The start time of the new workflow", javaType = "java.time.Instant")
     public static final String WORKFLOW_START_TIME = HEADER_PREFIX + "WorkflowStartTime";
     @Metadata(label = "producer", description = "Reason for suspending/resuming the workflow instance", javaType = "String")
     public static final String REASON = HEADER_PREFIX + "SuspendReason";
@@ -175,9 +178,11 @@ public class DaprConstants {
     public static final String GET_WORKFLOW_IO = HEADER_PREFIX + "GetWorkflowIO";
     @Metadata(label = "producer", description = "The workflow name", javaType = "String")
     public static final String WORKFLOW_NAME = HEADER_PREFIX + "WorkflowName";
-    @Metadata(label = "producer", description = "Gets the workflow instance's creation time in UTC", javaType = "Instant")
+    @Metadata(label = "producer", description = "Gets the workflow instance's creation time in UTC",
+              javaType = "java.time.Instant")
     public static final String WORKFLOW_CREATED_AT = HEADER_PREFIX + "WorkflowCreatedAt";
-    @Metadata(label = "producer", description = "Gets the workflow instance's last updated time in UTC", javaType = "Instant")
+    @Metadata(label = "producer", description = "Gets the workflow instance's last updated time in UTC",
+              javaType = "java.time.Instant")
     public static final String WORKFLOW_UPDATED_AT = HEADER_PREFIX + "WorkflowUpdatedAt";
     @Metadata(label = "producer", description = "Gets the workflow instance's serialized input, if any", javaType = "String")
     public static final String WORKFLOW_SERIALIZED_INPUT = HEADER_PREFIX + "WorkflowSerializedInput";
@@ -193,7 +198,7 @@ public class DaprConstants {
               javaType = "boolean")
     public static final String IS_WORKFLOW_COMPLETED = HEADER_PREFIX + "IsWorkflowCompleted";
     @Metadata(label = "producer", description = "The amount of time to wait for the workflow instance to start/complete",
-              javaType = "Duration")
+              javaType = "java.time.Duration")
     public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
     @Metadata(label = "producer", description = "The name of the event. Event names are case-insensitive",
               javaType = "String")

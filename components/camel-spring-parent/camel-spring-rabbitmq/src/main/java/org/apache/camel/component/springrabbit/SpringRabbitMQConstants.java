@@ -38,7 +38,8 @@ public final class SpringRabbitMQConstants {
     @Metadata(description = "The routing key that was used when publishing the message.", javaType = "String",
               label = "consumer")
     public static final String ROUTING_KEY = "CamelSpringRabbitmqRoutingKey";
-    @Metadata(description = "The message delivery mode.", javaType = "MessageDeliveryMode", enums = "NON_PERSISTENT,PERSISTENT")
+    @Metadata(description = "The message delivery mode.", javaType = "org.springframework.amqp.core.MessageDeliveryMode",
+              enums = "NON_PERSISTENT,PERSISTENT")
     public static final String DELIVERY_MODE = "CamelSpringRabbitmqDeliveryMode";
     @Metadata(description = "Application-specific message type.", javaType = "String")
     public static final String TYPE = "CamelSpringRabbitmqType";

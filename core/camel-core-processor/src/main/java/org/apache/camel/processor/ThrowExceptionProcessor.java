@@ -17,6 +17,9 @@
 package org.apache.camel.processor;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -29,12 +32,24 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
 public class ThrowExceptionProcessor extends BaseProcessorSupport
         implements Traceable, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThrowExceptionProcessor.class);
+
+    // The exception instances that throwException steps are configured with (also by ref, which is looked up when the
+    // route is created): each is one object shared by all the messages. Kept by the exception, and not on the
+    // exchange, as the exception can reach another exchange without the properties of the one it was thrown on (such
+    // as from a copy of the exchange by the topic load balancer). Weak keys, so an instance is not kept after its route
+    // is removed. Throwable does not override equals, so the set is by identity.
+    private static final Set<Throwable> SHARED_EXCEPTIONS
+            = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     private String id;
     private String routeId;
@@ -53,6 +68,10 @@ public class ThrowExceptionProcessor extends BaseProcessorSupport
         this.exception = exception;
         this.type = type;
         this.message = message;
+        if (exception != null && (type == null || message == null)) {
+            // the instance is set on every message (see process)
+            SHARED_EXCEPTIONS.add(exception);
+        }
     }
 
     @Override
@@ -83,6 +102,40 @@ public class ThrowExceptionProcessor extends BaseProcessorSupport
 
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Whether the exception is an instance a throwException step is configured with: one object shared by all the
+     * messages, to which Camel must not add the exceptions of a message as suppressed (it would keep them all).
+     * <p>
+     * Internal API, for the processors of Camel.
+     *
+     * @param  exception the exception
+     * @return           <code>true</code> if the exception is shared by all the messages
+     */
+    public static boolean isSharedException(Throwable exception) {
+        return exception != null && SHARED_EXCEPTIONS.contains(exception);
+    }
+
+    /**
+     * Adds the other exception as suppressed to the exception the exchange failed with, unless that is an instance a
+     * throwException step is configured with (see {@link #isSharedException(Throwable)}): then the other exception is
+     * logged instead.
+     * <p>
+     * Internal API, for the processors of Camel.
+     *
+     * @param exchange  the exchange
+     * @param exception the exception the exchange failed with
+     * @param other     the other exception, such as from a doFinally that failed too
+     */
+    public static void addSuppressed(Exchange exchange, Throwable exception, Throwable other) {
+        if (isSharedException(exception)) {
+            LOG.warn("Exchange: {} failed with {}, the exception instance of a throwException step which all the messages"
+                     + " share, so this other exception is logged and not added to it as suppressed. Caused by: {}",
+                    exchange.getExchangeId(), exception, other.getMessage(), other);
+        } else {
+            exception.addSuppressed(other);
+        }
     }
 
     @Override

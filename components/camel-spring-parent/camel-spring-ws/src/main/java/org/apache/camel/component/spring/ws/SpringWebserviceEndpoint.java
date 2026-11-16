@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Access external web services as a client or expose your own web services.
+ * Expose SOAP services, or send requests to SOAP services, using Spring Web Services.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
              syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",

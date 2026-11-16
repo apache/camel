@@ -22,12 +22,15 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
+import org.apache.camel.dsl.jbang.core.common.CamelVersionCheck;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
+import org.apache.camel.main.download.DownloadException;
 
 /**
  * The Camel version and runtime a validation answers for (CAMEL-24711): the catalog of that version and runtime, as
@@ -60,6 +63,19 @@ public class CatalogVersionMixin {
      * Loads the catalog of the version and runtime asked for; the built-in catalog when none is.
      */
     public Loaded load() throws Exception {
+        try {
+            return doLoad();
+        } catch (DownloadException e) {
+            // a version that was never released says so, and is not found (CAMEL-26931)
+            CliException notFound = CamelVersionCheck.notFound(e, runtime, camelVersion);
+            if (notFound != null) {
+                throw notFound;
+            }
+            throw e;
+        }
+    }
+
+    private Loaded doLoad() throws Exception {
         if (RuntimeType.springBoot == runtime) {
             String version = camelVersion != null ? camelVersion : new DefaultCamelCatalog().getCatalogVersion();
             return new Loaded(

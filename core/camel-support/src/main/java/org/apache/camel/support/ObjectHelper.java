@@ -160,7 +160,7 @@ public final class ObjectHelper {
 
     /**
      * Returns the value as a number if it is a {@link Number}, or a String with a decimal number, otherwise
-     * <tt>null</tt>.
+     * <code>null</code>.
      */
     private static Number asNumber(Object value) {
         if (value instanceof Number number) {
@@ -585,8 +585,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Parses the text as a long, or <tt>null</tt> if the number has too many digits to fit in a {@link Long}. The text
-     * is expected to be checked with {@link #isNumber(String)} first, so overflow is the only way this fails.
+     * Parses the text as a long, or <code>null</code> if the number has too many digits to fit in a {@link Long}. The
+     * text is expected to be checked with {@link #isNumber(String)} first, so overflow is the only way this fails.
      */
     private static Long toLong(String text) {
         try {
@@ -852,8 +852,8 @@ public final class ObjectHelper {
     /**
      * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
      * comma, or a primitive type array; otherwise to simplify the caller's code, we just create a singleton collection
-     * iterator over a single value
-     * <p/>
+     * iterator over a single value.
+     * <p>
      * Will default use comma for String separating String values. This method does <b>not</b> allow empty values
      *
      * @param  value the value
@@ -866,8 +866,8 @@ public final class ObjectHelper {
     /**
      * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
      * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
-     * singleton collection iterator over a single value
-     * <p/>
+     * singleton collection iterator over a single value.
+     * <p>
      * This method does <b>not</b> allow empty values
      *
      * @param  value     the value
@@ -927,8 +927,8 @@ public final class ObjectHelper {
     /**
      * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
      * values separated by comma, or a primitive type array; otherwise to simplify the caller's code, we just create a
-     * singleton collection iterator over a single value
-     * <p/>
+     * singleton collection iterator over a single value.
+     * <p>
      * Will default use comma for String separating String values. This method does <b>not</b> allow empty values
      *
      * @param  value the value
@@ -941,8 +941,8 @@ public final class ObjectHelper {
     /**
      * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
      * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
-     * just create a singleton collection iterator over a single value
-     * <p/>
+     * just create a singleton collection iterator over a single value.
+     * <p>
      * This method does <b>not</b> allow empty values
      *
      * @param  value     the value
@@ -956,11 +956,11 @@ public final class ObjectHelper {
     /**
      * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
      * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
-     * just create a singleton collection iterator over a single value
+     * just create a singleton collection iterator over a single value.
      *
-     * </p>
+     * <p>
      * In case of primitive type arrays the returned {@code Iterator} iterates over the corresponding Java primitive
-     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * wrapper objects of the given elements inside the {@code value} array. That way we get an autoboxing of the
      * primitive types here for free as it's also the case in Java language itself.
      *
      * @param  value            the value
@@ -978,11 +978,11 @@ public final class ObjectHelper {
     /**
      * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
      * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
-     * just create a singleton collection iterator over a single value
+     * just create a singleton collection iterator over a single value.
      *
-     * </p>
+     * <p>
      * In case of primitive type arrays the returned {@code Iterator} iterates over the corresponding Java primitive
-     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * wrapper objects of the given elements inside the {@code value} array. That way we get an autoboxing of the
      * primitive types here for free as it's also the case in Java language itself.
      *
      * @param  value            the value
@@ -1003,11 +1003,11 @@ public final class ObjectHelper {
     /**
      * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
      * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
-     * singleton collection iterator over a single value
+     * singleton collection iterator over a single value.
      *
-     * </p>
+     * <p>
      * In case of primitive type arrays the returned {@code Iterable} iterates over the corresponding Java primitive
-     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * wrapper objects of the given elements inside the {@code value} array. That way we get an autoboxing of the
      * primitive types here for free as it's also the case in Java language itself.
      *
      * @param  value            the value
@@ -1025,10 +1025,10 @@ public final class ObjectHelper {
     /**
      * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
      * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
-     * singleton collection iterator over a single value
-     * </p>
+     * singleton collection iterator over a single value.
+     * <p>
      * In case of primitive type arrays the returned {@code Iterable} iterates over the corresponding Java primitive
-     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * wrapper objects of the given elements inside the {@code value} array. That way we get an autoboxing of the
      * primitive types here for free as it's also the case in Java language itself.
      *
      * @param  value            the value

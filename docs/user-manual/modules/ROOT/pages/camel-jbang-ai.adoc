@@ -29,6 +29,11 @@ camel ask
 This opens a `ask>` prompt where you can have a multi-turn conversation,
 with the AI maintaining context across questions.
 
+The history of the chat is sent with every question, so it is kept bounded, as in the AI panel of the TUI: a tool
+result is cut at 18,000 characters, once a question is answered the tool results of the questions before the previous
+one are shrunk to their start, and the chat keeps the last 20 questions. A question that fails (the model cannot be
+reached, or gives no answer within `--max-iterations`) leaves no trace in the history, so you can ask again.
+
 === What the AI can do
 
 The agent has access to tools that let it:
@@ -58,6 +63,18 @@ camel ask "show me the route structure" --show-tools
 With a question, the answer is the only output on stdout, so a script can use it: the model in use, the tool calls of
 `--show-tools` and the token usage of `--show-stats` are printed on stderr. `camel ask` exits with `1` when the LLM
 cannot answer, such as when it is not reachable or the call fails.
+
+The code in an answer is checked against the Camel catalog, because it is what you copy. An invalid simple expression gets
+the model one turn to fix it. What does not exist in the code blocks is printed on stderr under the answer, one
+`Check:` line each: a key or an option the YAML DSL does not have, an option the component of an endpoint does not
+have, and a `camel.*` key that is not a Camel option. For example:
+
+[source,text]
+----
+Check: code block 1, line 4: `deleteAfterRead` is not an option of the `file` component (did you mean `delete`?)
+----
+
+In a chat, the model is told of them with your next question, so its next answer does not repeat them.
 
 === What asks first
 

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -87,6 +92,40 @@ class InfraStopTest extends InfraCommandTestSupport {
                 .hasMessage("No running infra service matches: ftp")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
         assertThat(pidFile("kafka", 1234)).exists();
+    }
+
+    @Test
+    void aPidFileOlderThanTheProcessOfItsPidIsNotTheService() throws Exception {
+        // the service was killed hard and its pid is now of another process, here this JVM: infra stop --kill killed
+        // that process (CAMEL-26931)
+        long pid = ProcessHandle.current().pid();
+        writePidFile("kafka", pid, "{}");
+        writeLogFile("kafka", pid, "started");
+        Instant started = ProcessHandle.current().info().startInstant().orElseThrow();
+        Files.setLastModifiedTime(pidFile("kafka", pid), FileTime.from(started.minus(1, ChronoUnit.HOURS)));
+
+        InfraStop command = command("kafka");
+        command.aliveCheck = p -> true;
+
+        assertThatThrownBy(command::doCall)
+                .isInstanceOf(CliException.class)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(printer.getStdout()).doesNotContain("Shutting down");
+        // the files it left behind are removed
+        assertThat(pidFile("kafka", pid)).doesNotExist();
+        assertThat(logFile("kafka", pid)).doesNotExist();
+    }
+
+    @Test
+    void aPidFileWrittenByTheProcessIsTheService() throws Exception {
+        long pid = ProcessHandle.current().pid();
+        writePidFile("kafka", pid, "{}");
+
+        InfraStop command = command("kafka");
+        command.aliveCheck = p -> true;
+
+        assertThat(command.doCall()).isZero();
+        assertThat(printer.getStdout()).isEqualTo("Shutting down external services (PID: " + pid + ")");
     }
 
     @Test

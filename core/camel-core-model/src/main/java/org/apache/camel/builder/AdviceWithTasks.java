@@ -448,12 +448,12 @@ public final class AdviceWithTasks {
     }
 
     /**
-     * Gets the outputs to use with advice with from the given child/parent
-     * <p/>
-     * This implementation deals with that outputs can be abstract and retrieves the <i>correct</i> parent output.
+     * Gets the outputs to use with advice with from the given child/parent.
+     * <p>
+     * This implementation deals with outputs that can be abstract and retrieves the <i>correct</i> parent output.
      *
      * @param  node the node
-     * @return      <tt>null</tt> if not outputs to be used
+     * @return      <code>null</code> if no outputs are to be used
      */
     private static List<ProcessorDefinition<?>> getOutputs(ProcessorDefinition<?> node, RouteDefinition route) {
         if (node == null) {

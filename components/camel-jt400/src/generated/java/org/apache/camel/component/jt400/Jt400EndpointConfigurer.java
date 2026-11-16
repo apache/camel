@@ -46,6 +46,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "guiavailable":
         case "guiAvailable": target.getConfiguration().setGuiAvailable(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "keyed": target.getConfiguration().setKeyed(property(camelContext, boolean.class, value)); return true;
@@ -114,6 +116,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "greedy": return boolean.class;
         case "guiavailable":
         case "guiAvailable": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "keyed": return boolean.class;
@@ -183,6 +187,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "greedy": return target.isGreedy();
         case "guiavailable":
         case "guiAvailable": return target.getConfiguration().isGuiAvailable();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "keyed": return target.getConfiguration().isKeyed();

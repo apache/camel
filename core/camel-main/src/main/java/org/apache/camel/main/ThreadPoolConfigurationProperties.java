@@ -110,7 +110,9 @@ public class ThreadPoolConfigurationProperties implements BootstrapCloseable {
     /**
      * Sets the default maximum number of tasks in the work queue.
      *
-     * Use -1 or an unbounded queue
+     * Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the
+     * rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a scheduled thread pool, 0 or -1 means
+     * the queue is not limited.
      */
     public void setMaxQueueSize(Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;

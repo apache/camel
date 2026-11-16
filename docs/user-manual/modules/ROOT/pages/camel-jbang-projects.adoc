@@ -233,7 +233,8 @@ Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 
 === Copying dependency JARs
 
-Copy required JARs to a folder (defaults to `lib/`):
+Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,
+so the folder has one version of each library:
 
 [source,bash]
 ----
@@ -277,6 +278,14 @@ camel plugin add forage
 camel plugin get
 camel plugin delete <plugin-name>
 ----
+
+`camel plugin add` checks that a plugin it does not know (neither a plugin of the Apache Camel project nor a known
+community plugin) can be loaded before it stores it: a name such as `kubernets` exits with code `3` and the plugins of a
+similar name. Give `--gav` for a plugin of your own. A stored plugin that cannot be loaded no longer fails `camel run`
+and `camel export`: they warn and go on without it. This includes a plugin built for another Camel version, whose
+classes (or only those of its exporter or run customizer) do not link with this Camel CLI: the warning says so, and the
+plugin's own command fails with the same reason. Run `camel plugin add <plugin-name>` to select a release built for
+this Camel version, or remove the plugin with `camel plugin delete <plugin-name>`.
 
 === Custom plugin configuration
 
@@ -412,7 +421,8 @@ camel generate rest --input=petstore.yaml --dto --runtime=quarkus --package=com.
 ----
 
 `--routes` also generates a route for each operation (YAML only), and `--dto` generates Java data objects
-for the schemas of the specification.
+for the schemas of the specification. Each generated route has a `log` step that says it is not implemented yet: the
+routes run as they are (`camel run petstore-rest.yaml`), and you replace that step with the implementation.
 
 === JSON schema
 
@@ -420,9 +430,11 @@ Generate JSON Schema definitions from Java objects for use with visual developme
 
 [source,bash]
 ----
-camel generate schema fhir org.hl7.fhir.r4.model.Patient
-Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
+camel generate schema fhir org.hl7.fhir.r4.model.Patient > patient-schema.json
 ----
+
+The schema is printed on stdout; `--output=patient-schema.json` writes it to a file instead. `--verbose` tells on
+stderr what the command does (the dependencies it downloads, the class it loads), so stdout stays the schema.
 
 == Version management
 
@@ -449,6 +461,9 @@ Or set a persistent version override:
 camel version set 3.18.2
 camel version set --reset
 ----
+
+`camel version set` checks in the Maven repositories that the version exists, and refuses one that does not
+(exit code 3). `--reset` removes the `camel-version`, `kamelets-version`, `repos` and `runtime` settings.
 
 IMPORTANT: You cannot combine `camel version set` with `--camel-version`.
 

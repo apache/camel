@@ -24,7 +24,7 @@ public class IBMCOSEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("apiKey");
         props.add("autoCreateBucket");
         props.add("autocloseBody");
@@ -46,6 +46,7 @@ public class IBMCOSEndpointUriFactory extends org.apache.camel.support.component
         props.add("exchangePattern");
         props.add("fileName");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("inProgressRepository");
         props.add("includeBody");
         props.add("includeFolders");

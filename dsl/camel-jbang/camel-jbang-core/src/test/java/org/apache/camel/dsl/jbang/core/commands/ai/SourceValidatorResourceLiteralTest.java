@@ -101,11 +101,4 @@ class SourceValidatorResourceLiteralTest {
                             + " scheme, 'resource:order.json' instead of 'resource:file:order.json'");
     }
 
-    @Test
-    void theDiagnoserNamesTheReturnedLiteral() {
-        var out = ErrorDiagnoser.diagnose(
-                "com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'resource': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')",
-                new org.apache.camel.catalog.DefaultCamelCatalog());
-        assertThat(out.toJson()).contains("JsonParseException").contains("resolveResource: true");
-    }
 }

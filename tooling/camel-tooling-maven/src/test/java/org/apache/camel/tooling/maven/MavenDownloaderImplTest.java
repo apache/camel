@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -1250,5 +1251,23 @@ class MavenDownloaderImplTest {
                 new SocketTimeoutException("Read timed out")));
         assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(new IOException("Not found")));
         assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(null));
+    }
+
+    @Test
+    void testCamelDefaults() throws Exception {
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenSettingsLocation("false");
+            downloader.build();
+
+            Map<String, Object> config = downloader.getRepositorySystemSession().getConfigProperties();
+            assertCamelDefault("60000", config, "aether.connector.requestTimeout");
+            assertCamelDefault("bf", config, "aether.dependencyCollector.impl");
+            assertCamelDefault("10", config, "aether.dependencyCollector.bf.threads");
+        }
+    }
+
+    // a system property wins over the default of Camel (the CI build sets aether.connector.requestTimeout=300000)
+    private static void assertCamelDefault(String expected, Map<String, Object> config, String key) {
+        assertEquals(System.getProperty(key, expected), String.valueOf(config.get(key)), key);
     }
 }

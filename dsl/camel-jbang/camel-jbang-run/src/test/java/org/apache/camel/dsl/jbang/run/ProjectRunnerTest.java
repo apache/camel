@@ -426,6 +426,103 @@ class ProjectRunnerTest {
     }
 
     @Test
+    void aSpringBootRunWithTheSanitizerAddsCamelSanitizerAndSwitchesItOn() throws Exception {
+        RunRequest request = request();
+        request.runtime = RuntimeType.springBoot;
+        request.profile = "dev";
+        request.sanitizer = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            List<String> cmd = started.get(0).command();
+            Path project = Path.of(cmd.get(3)).getParent();
+            // there is no starter: plain camel-sanitizer
+            assertThat(project.resolve("pom.xml")).content().contains("<artifactId>camel-sanitizer</artifactId>")
+                    .doesNotContain("camel-sanitizer-starter");
+            // Spring Boot has no Camel profile dev, so the sanitizer is switched on by the run
+            assertThat(cmd).contains("-Dspring-boot.run.jvmArguments=-Dcamel.sanitizer.enabled=true");
+            // and not by the exported project
+            assertThat(project.resolve("src/main/resources/application.properties")).content()
+                    .doesNotContain("camel.sanitizer");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void aSpringBootRunWithTheSanitizerAndProfileProdKeepsItOff() throws Exception {
+        RunRequest request = request();
+        request.runtime = RuntimeType.springBoot;
+        request.profile = "prod";
+        request.sanitizer = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            List<String> cmd = started.get(0).command();
+            // the dependency is still added (the sanitizer logs that it stays off), but the run does not switch it on
+            assertThat(Path.of(cmd.get(3)).getParent().resolve("pom.xml")).content()
+                    .contains("<artifactId>camel-sanitizer</artifactId>");
+            assertThat(cmd).noneMatch(a -> a.contains("camel.sanitizer.enabled"));
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingSpringBootProjectRunsWithTheSanitizer() throws Exception {
+        RunRequest request = existingProject(RuntimeType.springBoot);
+        request.profile = "dev";
+        request.sanitizer = true;
+        Path project = dir.resolve("project");
+        Files.writeString(project.resolve("pom.xml"), """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>com.acme</groupId>
+                  <artifactId>orders</artifactId>
+                  <version>1.0</version>
+                  <dependencyManagement>
+                    <dependencies>
+                      <dependency>
+                        <groupId>org.apache.camel.springboot</groupId>
+                        <artifactId>camel-spring-boot-bom</artifactId>
+                        <version>${camel.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                      </dependency>
+                    </dependencies>
+                  </dependencyManagement>
+                </project>
+                """);
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            // camel-spring-boot-bom does not manage camel-sanitizer, which gets the version the BOM is imported with
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("<artifactId>camel-sanitizer</artifactId>", "<version>${camel.version}</version>");
+            assertThat(started.get(0).command().get(4)).contains("-Dcamel.sanitizer.enabled=true");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingCamelMainProjectRunsWithTheSanitizer() throws Exception {
+        RunRequest request = existingProject(RuntimeType.main);
+        request.profile = "dev";
+        request.sanitizer = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            // profile dev switches it on: no JVM argument for it
+            assertThat(dir.resolve("project").resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("<artifactId>camel-sanitizer</artifactId>");
+            assertThat(started.get(0).command()).noneMatch(a -> a.contains("camel.sanitizer"));
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
     void theCamelVersionOfASpringBootProjectWithoutTheBomIsThisCamel() {
         assertThat(SpringBootRunner.camelVersion(new Model())).isEqualTo(new DefaultCamelCatalog().getCatalogVersion());
     }

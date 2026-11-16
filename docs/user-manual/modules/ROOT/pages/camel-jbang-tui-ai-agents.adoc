@@ -164,8 +164,8 @@ The MCP server exposes two kinds of tools. The `camel_` tools are the Camel auth
 `camel mcp` server (see xref:camel-jbang-mcp.adoc[]): catalog documentation with the endpoint URI rules and the
 simple syntax (`camel_catalog_doc`, `camel_catalog_find`), source validation (`camel_validate_source`), reading
 and writing the source files (`camel_get_files`, `camel_write_file`), running an integration in dev mode and
-controlling it (`camel_run`, `camel_control`), its log and failed exchanges (`camel_get_log`, `camel_get_errors`),
-expression evaluation (`camel_eval_expression`) and error diagnosis (`camel_error_diagnose`). They are defined
+controlling it (`camel_run`, `camel_control`), its log and failed exchanges (`camel_get_log`, `camel_get_errors`)
+and expression evaluation (`camel_eval_expression`). They are defined
 once in the Camel CLI, so an agent gets the same tools, names and answers through either server; in the TUI
 they work on the selected integration unless a `directory` or `name` argument says otherwise, and a write goes
 through the TUI's confirm dialog or live replay. The `tui_` tools are the ones only the TUI can offer, organized

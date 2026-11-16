@@ -24,7 +24,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(52);
+        Set<String> props = new HashSet<>(53);
         props.add("accessKey");
         props.add("amazonKinesisAsyncClient");
         props.add("amazonKinesisClient");
@@ -41,6 +41,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("iteratorType");
         props.add("kclDisableCloudwatchMetricsExport");

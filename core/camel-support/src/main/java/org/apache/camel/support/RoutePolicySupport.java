@@ -103,8 +103,8 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * stopped.
      *
      * @see    #stopConsumer(Consumer)
-     * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already
-     *         suspend or stopped
+     * @return <code>true</code> if the consumer was suspended or stopped, <code>false</code> if the consumer was
+     *         already suspended or stopped
      */
     public boolean suspendOrStopConsumer(Consumer consumer) throws Exception {
         return ServiceHelper.suspendService(consumer);
@@ -117,8 +117,8 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * started.
      *
      * @see    #startConsumer(Consumer)
-     * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed
-     *         or started
+     * @return <code>true</code> if the consumer was resumed or started, <code>false</code> if the consumer was already
+     *         resumed or started
      */
     public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
         return ServiceHelper.resumeService(consumer);
@@ -127,12 +127,12 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     /**
      * Whether this policy may resume or start the consumer of the route, after it has suspended or stopped the consumer
      * itself (for example to throttle).
-     * <p/>
+     * <p>
      * This is not allowed when the route controller has suspended or stopped the route, or is suspending or stopping
      * it, or when Camel is shutting down, as the consumer must then stay suspended or stopped.
      *
      * @param  route the route
-     * @return       <tt>true</tt> if the consumer may be resumed or started, <tt>false</tt> otherwise
+     * @return       <code>true</code> if the consumer may be resumed or started, <code>false</code> otherwise
      */
     protected boolean isResumeOrStartConsumerAllowed(Route route) {
         CamelContext context = route.getCamelContext();

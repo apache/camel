@@ -56,7 +56,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
              consumerPrefix = "consumer", category = { Category.CLOUD, Category.FILE, Category.API }, lenientProperties = true,
              headersClass = BoxConstants.class)
 @Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
-                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,healthCheckMaxPollDuration,bridgeErrorHandler")
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.box.sdk.BoxEvent",
                                    description = "events/listen is the only consumer: one message per event of the Box"
                                                  + " event stream, a BoxEvent"),

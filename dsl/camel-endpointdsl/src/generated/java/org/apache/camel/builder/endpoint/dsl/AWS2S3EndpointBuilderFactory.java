@@ -917,6 +917,48 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
          * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
@@ -1453,6 +1495,36 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointConsumerBuilder customerKeyMD5(String customerKeyMD5) {
             doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**
@@ -2792,6 +2864,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2911,36 +3013,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointProducerBuilder useAwsKMS(String useAwsKMS) {
             doSetProperty("useAwsKMS", useAwsKMS);
-            return this;
-        }
-        /**
-         * Define if Customer Key must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param useCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(boolean useCustomerKey) {
-            doSetProperty("useCustomerKey", useCustomerKey);
-            return this;
-        }
-        /**
-         * Define if Customer Key must be used or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param useCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(String useCustomerKey) {
-            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**
@@ -3614,6 +3686,36 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointBuilder customerKeyMD5(String customerKeyMD5) {
             doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**

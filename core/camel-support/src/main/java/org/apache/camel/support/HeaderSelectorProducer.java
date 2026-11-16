@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A selector-based producer which uses a header value to determine which processor should be invoked.
- * <p/>
+ * <p>
  * A value that has no method fails the exchange with an {@link IllegalArgumentException}.
  *
  * @see org.apache.camel.spi.InvokeOnHeader

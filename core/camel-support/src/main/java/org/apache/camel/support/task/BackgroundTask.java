@@ -144,7 +144,16 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                 unschedule(false);
                 LOG.trace("Task {} succeeded and the current task is unscheduled: {}", getName(), latch.getCount());
             }
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before: thrown on, without releasing the caller of run()
+            throw e;
+        } catch (Exception | Error e) {
+            // also an Error (such as a NoClassDefFoundError of a client library the supplier connects with), which would
+            // otherwise end the schedule without releasing the caller
+            if (e instanceof Error) {
+                // nothing reads the Future it is thrown on to, and the task leaves the registry here: log it once
+                LOG.warn("Task {} failed with an error and is not attempted again: {}", getName(), e, e);
+            }
             status = Status.Failed;
             completed.set(false);
             cause = e;
@@ -186,12 +195,12 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
      * removes it from the {@link TaskManagerRegistry}. A scheduled task deregisters itself from one of its runs, which
      * is not going to happen once the schedule is cancelled, so cancelling the returned {@link Future} directly leaves
      * the task behind in the registry.
-     * <p/>
+     * <p>
      * This does not wait for an attempt that is already running: with {@code mayInterruptIfRunning} false, a supplier
      * call that is in progress runs to completion after this method returns. {@link #isRunning()} answers for the
      * schedule and turns false here even then, so {@link #isAttempting()} is the one to ask whether an attempt is still
      * in flight.
-     * <p/>
+     * <p>
      * A task that already completed, failed or exhausted its budget keeps the outcome of its last run. Only the
      * schedule of a task that is still {@link Status#Active} is cancelled, which turns it {@link Status#Inactive}.
      *

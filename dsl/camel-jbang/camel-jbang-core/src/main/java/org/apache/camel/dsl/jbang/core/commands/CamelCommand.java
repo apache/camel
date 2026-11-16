@@ -18,9 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandResult;
@@ -43,6 +46,9 @@ import org.jline.jansi.AnsiConsole;
 import org.jline.jansi.AnsiMode;
 
 public abstract class CamelCommand implements Command<CommandInvocation>, CommandTree.ParsedCommandAware {
+
+    // an ANSI escape code (CSI), such as the colors of the Jansi Ansi builder
+    private static final Pattern ANSI_CODE = Pattern.compile("\\x1B\\[[0-9;:?]*[ -/]*[@-~]");
 
     // the model of the options of this command, and the tree it runs in (set when the command line is built)
     private ProcessedCommand<?, ?> processedCommand;
@@ -166,6 +172,22 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         ProcessedOption option = findOption(name);
         Object holder = option != null ? holderOf(option) : null;
         return holder != null ? option.getFieldValue(holder) : null;
+    }
+
+    /**
+     * The names of the options given on the command line (without {@code --}), such as {@code trace}; empty when the
+     * command was not parsed by aesh.
+     */
+    protected Set<String> givenOptions() {
+        Set<String> answer = new HashSet<>();
+        if (processedCommand != null) {
+            for (ProcessedOption option : processedCommand.getOptions()) {
+                if (!option.getValues().isEmpty()) {
+                    answer.add(option.name());
+                }
+            }
+        }
+        return answer;
     }
 
     /**
@@ -309,7 +331,9 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * CLI that runs the command in its own JVM and keeps its output (see {@link CliRunner}).
      */
     protected void printColored(Object text) {
-        if (printsToConsole()) {
+        if (printsToConsole() && stripsColorsItself()) {
+            printer().print(withoutColors(text));
+        } else if (printsToConsole()) {
             AnsiConsole.out().print(text);
         } else {
             printer().print(String.valueOf(text));
@@ -320,7 +344,9 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * Prints a line with colors (ANSI escape codes), see {@link #printColored(Object)}.
      */
     protected void printlnColored(Object text) {
-        if (printsToConsole()) {
+        if (printsToConsole() && stripsColorsItself()) {
+            printer().println(withoutColors(text));
+        } else if (printsToConsole()) {
             AnsiConsole.out().println(text);
         } else {
             printer().println(String.valueOf(text));
@@ -334,7 +360,40 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * (CAMEL-26911).
      */
     protected boolean colorsStripped() {
-        return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
+        return printsToConsole() && (stripsColorsItself() || AnsiConsole.out().getMode() == AnsiMode.Strip);
+    }
+
+    /**
+     * Whether the command leaves out the colors itself, instead of the console. When the output is not a terminal, the
+     * console would leave them out too, but finding that out builds a JLine terminal, which costs more than most
+     * commands take to print (CAMEL-26937). Not when the console is told how to print the colors
+     * ({@code -Djansi.mode}).
+     */
+    private static boolean stripsColorsItself() {
+        return !EnvironmentHelper.hasTerminal()
+                && System.getProperty(AnsiConsole.JANSI_MODE) == null
+                && System.getProperty(AnsiConsole.JANSI_OUT_MODE) == null;
+    }
+
+    // the text without the ANSI escape codes of its colors
+    private static String withoutColors(Object text) {
+        return ANSI_CODE.matcher(String.valueOf(text)).replaceAll("");
+    }
+
+    /**
+     * Whether the command prints in colors: as --logging-color says when it is given, else only when it prints to a
+     * terminal, as the default of the option is colors. In a file or a pipe, which an AI agent or a script reads, the
+     * ANSI codes of the colors are noise (CAMEL-26929). A command that prints to another printer than the console keeps
+     * its option.
+     *
+     * @param  loggingColor the --logging-color option
+     * @return              whether to print in colors
+     */
+    protected boolean colorOutput(boolean loggingColor) {
+        if (!loggingColor || isOptionGiven("--logging-color")) {
+            return loggingColor;
+        }
+        return !printsToConsole() || EnvironmentHelper.hasTerminal();
     }
 
     private boolean printsToConsole() {
@@ -347,8 +406,8 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
 
     protected void printConfigurationValues(String header) {
         if (processedCommand != null) {
-            final Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
+            // the global user configuration with the local one laid over it, as the option defaults come from it
+            final Properties configProperties = CommandLineHelper.loadUserConfiguration(printer());
             List<String> lines = new ArrayList<>();
             for (ProcessedOption opt : processedCommand.getOptions()) {
                 Object holder = holderOf(opt);

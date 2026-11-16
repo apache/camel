@@ -214,19 +214,19 @@ public class SoapDataFormat extends DataFormatDefinition {
 
         /**
          * Refers to an element strategy to lookup from the registry.
-         * <p/>
-         * An element name strategy is used for two purposes. The first is to find a xml element name for a given object
-         * and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for
-         * a given soap fault name.
-         * <p/>
+         * <p>
+         * An element name strategy is used for two purposes. The first is to find an xml element name for a given
+         * object and soap action when marshaling the object into a SOAP message. The second is to find an Exception
+         * class for a given soap fault name.
+         * <p>
          * The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed
          * qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name
          * and namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is
          * used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice
          * interface to determine the type name and to find the exception class for a SOAP fault
-         * <p/>
-         * All three classes is located in the package name org.apache.camel.dataformat.soap.name
-         * <p/>
+         * <p>
+         * All three classes are located in the package name org.apache.camel.dataformat.soap.name
+         * <p>
          * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will
          * want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
          * QNameStrategy or TypeNameStrategy.
@@ -238,7 +238,7 @@ public class SoapDataFormat extends DataFormatDefinition {
 
         /**
          * SOAP version should either be 1.1 or 1.2.
-         * <p/>
+         * <p>
          * Is by default 1.1
          */
         public Builder version(String version) {
@@ -248,19 +248,19 @@ public class SoapDataFormat extends DataFormatDefinition {
 
         /**
          * Sets an element strategy instance to use.
-         * <p/>
-         * An element name strategy is used for two purposes. The first is to find a xml element name for a given object
-         * and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for
-         * a given soap fault name.
-         * <p/>
+         * <p>
+         * An element name strategy is used for two purposes. The first is to find an xml element name for a given
+         * object and soap action when marshaling the object into a SOAP message. The second is to find an Exception
+         * class for a given soap fault name.
+         * <p>
          * The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed
          * qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name
          * and namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is
          * used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice
          * interface to determine the type name and to find the exception class for a SOAP fault
-         * <p/>
-         * All three classes is located in the package name org.apache.camel.dataformat.soap.name
-         * <p/>
+         * <p>
+         * All three classes are located in the package name org.apache.camel.dataformat.soap.name
+         * <p>
          * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will
          * want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
          * QNameStrategy or TypeNameStrategy.

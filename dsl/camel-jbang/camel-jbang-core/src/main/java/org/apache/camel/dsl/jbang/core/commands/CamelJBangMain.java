@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,6 @@ import org.aesh.command.parser.CommandLineParserException;
 import org.aesh.command.validator.OptionValidatorException;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
-import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -79,6 +79,7 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
+import org.apache.camel.dsl.jbang.run.common.CliLogging;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
@@ -109,7 +110,12 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     // the plugins whose commands were added, to add them to a new command line too
     private final List<Plugin> plugins = new CopyOnWriteArrayList<>();
 
+    /**
+     * The main method of the CLI that JBang runs (camel-jbang-main/dist/CamelJBang.java).
+     */
     public static void run(String... args) {
+        // before anything creates a logger
+        CliLogging.install();
         run(new CamelJBangMain(), args);
     }
 
@@ -269,9 +275,6 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     CommandTree createCommandLine(String only) {
         // the help of --help is printed with the printer of the CLI too
         CommandTree commandLine = new CommandTree(this).setOutput(text -> out.print(text));
-        if (shouldCreate(only, "bind")) {
-            commandLine.addSubcommand("bind", new CommandTree(new Bind(this)));
-        }
         if (shouldCreate(only, "catalog")) {
             commandLine.addSubcommand("catalog", new CommandTree(new CatalogCommand(this))
                     .addSubcommand("component", new CommandTree(new CatalogComponent(this)))
@@ -404,6 +407,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("rest", new CommandTree(new ListRest(this)))
                     .addSubcommand("route", new CommandTree(new CamelRouteStatus(this)))
                     .addSubcommand("route-controller", new CommandTree(new RouteControllerAction(this)))
+                    .addSubcommand("sanitizer", new CommandTree(new ListSanitizer(this)))
                     .addSubcommand("service", new CommandTree(new ListService(this)))
                     .addSubcommand("source", new CommandTree(new CamelSourceAction(this)))
                     .addSubcommand("sql-trace", new CommandTree(new ListSqlTrace(this)))
@@ -583,6 +587,18 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     /**
+     * The plugins that this CLI has built in (the Camel launcher embeds some), and that contribute to the given
+     * command, such as the test plugin, whose exporter adds the Citrus tests to camel export. The plugins of the plugin
+     * configuration are not among them.
+     *
+     * @param  target the command, such as run or export
+     * @return        the plugins, none by default
+     */
+    public Collection<Plugin> getEmbeddedPlugins(String target) {
+        return List.of();
+    }
+
+    /**
      * Called just before the command line is executed
      */
     public void preExecute(CommandTree commandLine, String[] args) {
@@ -620,15 +636,9 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     void printAvailablePlugins() {
-        // check if the plugin banner is disabled via global config
-        boolean[] enabled = { true };
-        CommandLineHelper.loadProperties(properties -> {
-            String v = properties.getProperty("camel.jbang.plugin.banner");
-            if ("false".equalsIgnoreCase(v)) {
-                enabled[0] = false;
-            }
-        });
-        if (!enabled[0]) {
+        // check if the plugin banner is disabled via the user configuration
+        String banner = CommandLineHelper.loadUserConfiguration(getOut()).getProperty("camel.jbang.plugin.banner");
+        if ("false".equalsIgnoreCase(banner)) {
             return;
         }
 

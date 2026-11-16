@@ -4330,7 +4330,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The sort criteria.
          * 
-         * The option is a: {@code Bson or Document} type.
+         * The option is a: {@code org.bson.conversions.Bson or
+         * org.bson.Document} type.
          * 
          * Group: producer
          * 
@@ -4366,7 +4367,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The list of dynamic indexes to create on the fly.
          * 
-         * The option is a: {@code List<Bson>} type.
+         * The option is a: {@code List<org.bson.conversions.Bson>} type.
          * 
          * Group: producer
          * 

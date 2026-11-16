@@ -860,6 +860,20 @@ public interface PQCEndpointBuilderFactory {
             return "CamelPQCKeyId";
         }
         /**
+         * The key ID of the new key, for the rotateKey operation. Required by
+         * that operation, which rotates the key held under CamelPQCKeyId into
+         * this one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCNewKeyId}.
+         */
+        public String pQCNewKeyId() {
+            return "CamelPQCNewKeyId";
+        }
+        /**
          * The generated key pair.
          * 
          * The option is a: {@code java.security.KeyPair} type.

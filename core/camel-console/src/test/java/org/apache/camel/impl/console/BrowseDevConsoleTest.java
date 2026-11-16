@@ -62,6 +62,22 @@ public class BrowseDevConsoleTest extends ContextTestSupport {
     }
 
     @Test
+    public void testBrowseConsoleFilterWithoutTheSlashesOfTheScheme() throws Exception {
+        // camel cmd browse --endpoint=seda:queue1, as its help shows, matched none: the URI is seda://queue1
+        template.sendBody("direct:start", "Message 1");
+
+        DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("browse");
+        JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of(BrowseDevConsole.FILTER, "seda:queue1"));
+
+        JsonArray browse = out.getCollection("browse");
+        Assertions.assertEquals(1, browse.size(), out.toJson());
+        Assertions.assertEquals("seda://queue1", ((JsonObject) browse.get(0)).getString("endpointUri"));
+        // a pattern still matches
+        out = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of(BrowseDevConsole.FILTER, "seda*"));
+        Assertions.assertEquals(2, out.getCollection("browse").size(), out.toJson());
+    }
+
+    @Test
     public void testBrowseConsoleJson() throws Exception {
         // Send some messages to the seda queue
         template.sendBody("direct:start", "Message 1");

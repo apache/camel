@@ -544,11 +544,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                                     = getEndpoint().getClient().changeMessageVisibilityBatch(request);
                             if (br.hasFailed()) {
                                 br.failed().forEach(failedEntry -> {
-                                    if (failedEntry.code().equals(RECEIPT_HANDLE_IS_INVALID)) {
-                                        LOG.debug("Extended visibility window for request entry failed with invalid handle.",
-                                                br.failed());
+                                    if (RECEIPT_HANDLE_IS_INVALID.equals(failedEntry.code())) {
+                                        LOG.debug("Visibility window not extended for {}: invalid handle", failedEntry.id());
                                     } else {
-                                        LOG.warn("Extended visibility window for request entry failed: {}", br.failed());
+                                        LOG.warn("Extended visibility window for request entry failed: {}", failedEntry);
                                     }
                                 });
                             }

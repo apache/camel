@@ -20,7 +20,8 @@ import org.apache.camel.spi.Metadata;
 
 public interface WatsonDiscoveryConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "WatsonDiscoveryOperations")
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.ibm.watson.discovery.WatsonDiscoveryOperations")
     String OPERATION = "CamelIBMWatsonDiscoveryOperation";
 
     // Query parameters

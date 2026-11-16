@@ -23,10 +23,13 @@ import java.util.Optional;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CachedFakePlugin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.FakePluginDownloader;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
@@ -101,6 +104,21 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals("{\"plugins\":{\"foo\":{\"name\":\"foo\",\"command\":\"foo\"," +
                                 "\"description\":\"Plugin foo called with command foo\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
+    }
+
+    @Test
+    public void aPluginThatCannotBeLoadedIsNotAdded() throws Exception {
+        // camel plugin add kubernets said added, and every camel run and camel export failed after (CAMEL-26931)
+        TestPluginAdd command = newCommand();
+        command.name = "kubernets";
+        command.downloadFails = true;
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().startsWith("Unknown plugin: kubernets. Did you mean: kubernetes"),
+                e.getMessage());
+        Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
     @Test
@@ -192,6 +210,24 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
 
         Assertions.assertTrue(
                 printer.getStderr().contains("Cannot download org.example.plugins:camel-jbang-plugin-fixture:1.6.2"),
+                printer.getStderr());
+        Assertions.assertEquals(before, PluginHelper.getOrCreatePluginConfig().toJson());
+    }
+
+    @Test
+    public void shouldNotChangeConfigWhenSelectedReleaseDoesNotLink() throws Exception {
+        downloader.release("1.6.2", "4.22.2", null);
+        String before = PluginHelper.getOrCreatePluginConfig().toJson();
+
+        TestPluginAdd command = newFixtureCommand();
+        command.doesNotLink = true;
+        // before, the NoClassDefFoundError failed camel plugin add (CAMEL-26964)
+        Assertions.assertEquals(1, command.doCall());
+
+        Assertions.assertTrue(
+                printer.getStderr().contains("Cannot load org.example.plugins:camel-jbang-plugin-fixture:1.6.2: it does not"
+                                             + " link with Camel 4.22.0 and may be built for another version:"
+                                             + " NoClassDefFoundError org/apache/camel/dsl/jbang/core/common/Printer"),
                 printer.getStderr());
         Assertions.assertEquals(before, PluginHelper.getOrCreatePluginConfig().toJson());
     }
@@ -357,6 +393,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         private final List<String> downloaded = new ArrayList<>();
         private String cli = "4.22.0";
         private boolean downloadFails;
+        private boolean doesNotLink;
 
         TestPluginAdd(CamelJBangMain main, DependencyDownloader downloader) {
             super(main);
@@ -374,8 +411,12 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         }
 
         @Override
-        Optional<Plugin> downloadPlugin(String dependency) {
+        Optional<Plugin> downloadPlugin(String dependency, Printer printer) {
             downloaded.add(dependency);
+            if (doesNotLink) {
+                // a release built for another Camel version, whose classes refer to one that moved
+                throw new NoClassDefFoundError("org/apache/camel/dsl/jbang/core/common/Printer");
+            }
             return downloadFails ? Optional.empty() : Optional.of(new CachedFakePlugin());
         }
     }

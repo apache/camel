@@ -31,7 +31,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getKubernetesClient;
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait.KUBERNETES_LABEL_NAME;
 
 @CommandDefinition(name = "delete",
@@ -48,7 +47,8 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             printer().printErr("Missing required --name option or integration name");
             return CliExitCode.USAGE;
         }
-        var client = getKubernetesClient();
+        // the cluster of --kube-config when it is given (CAMEL-26934: the default context was used)
+        var client = client();
         namespace = Optional.ofNullable(namespace).orElse(client.getNamespace());
         namespace = Optional.ofNullable(namespace).orElse("default");
         printer().printf("Deleting resources in namespace '%s' with name: %s%n", namespace, name);
@@ -58,6 +58,12 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         try {
             // delete Deployment cascades to pod
             deleteStatuses.addAll(client.apps().deployments().inNamespace(namespace).withLabels(labels).delete());
+            // delete CronJob, which cascades to its jobs and pods (CAMEL-26934: a CronJob was never deleted)
+            try {
+                deleteStatuses.addAll(client.batch().v1().cronjobs().inNamespace(namespace).withLabels(labels).delete());
+            } catch (Exception ex) {
+                // ignore, as for the ingresses and the Knative services
+            }
             // delete service
             deleteStatuses.addAll(client.services().inNamespace(namespace).withLabels(labels).delete());
             // delete configmap
@@ -84,7 +90,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             } catch (Exception ex) {
                 // ignore
             }
-            ClusterType clusterType = KubernetesHelper.discoverClusterType();
+            ClusterType clusterType = KubernetesHelper.discoverClusterType(client);
             if (ClusterType.OPENSHIFT == clusterType) {
                 // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig cascade delete to Build and ConfigMap
                 OpenShiftClient ocpClient = client.adapt(OpenShiftClient.class);

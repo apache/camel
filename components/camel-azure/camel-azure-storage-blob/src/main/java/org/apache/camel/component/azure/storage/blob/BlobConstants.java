@@ -29,13 +29,14 @@ public final class BlobConstants {
     public static final String BLOB_OPERATION = HEADER_PREFIX + "Operation";
     @Metadata(label = "producer",
               description = "(uploadBlockBlob, commitBlobBlockList, createAppendBlob, createPageBlob) Additional parameters for a set of operations.",
-              javaType = "BlobHttpHeaders")
+              javaType = "com.azure.storage.blob.models.BlobHttpHeaders")
     public static final String BLOB_HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
     @Metadata(label = "consumer", description = "The E Tag of the blob", javaType = "String")
     public static final String E_TAG = HEADER_PREFIX + "ETag";
-    @Metadata(label = "consumer", description = "Creation time of the blob.", javaType = "OffsetDateTime")
+    @Metadata(label = "consumer", description = "Creation time of the blob.", javaType = "java.time.OffsetDateTime")
     public static final String CREATION_TIME = HEADER_PREFIX + "CreationTime";
-    @Metadata(label = "consumer", description = "Datetime when the blob was last modified.", javaType = "OffsetDateTime")
+    @Metadata(label = "consumer", description = "Datetime when the blob was last modified.",
+              javaType = "java.time.OffsetDateTime")
     public static final String LAST_MODIFIED = HEADER_PREFIX + "LastModified";
     @Metadata(label = "consumer", description = "Content type specified for the blob.", javaType = "String")
     public static final String CONTENT_TYPE = HEADER_PREFIX + "ContentType";
@@ -103,7 +104,7 @@ public final class BlobConstants {
               javaType = "String")
     public static final String COPY_PROGRESS = HEADER_PREFIX + "CopyProgress";
     @Metadata(label = "consumer", description = "Datetime when the last copy operation on the blob completed.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String COPY_COMPILATION_TIME = HEADER_PREFIX + "CopyCompletionTime";
     @Metadata(label = "consumer", description = "Description of the last copy operation on the blob.", javaType = "String")
     public static final String COPY_STATUS_DESCRIPTION = HEADER_PREFIX + "CopyStatusDescription";
@@ -117,18 +118,19 @@ public final class BlobConstants {
     public static final String IS_INCREMENTAL_COPY = HEADER_PREFIX + "IsIncrementalCopy";
     @Metadata(description = "(producer) (uploadBlockBlob, commitBlobBlockList) Defines values for AccessTier.\n"
                             + "(consumer) Access tier of the blob.",
-              javaType = "AccessTier")
+              javaType = "com.azure.storage.blob.models.AccessTier")
     public static final String ACCESS_TIER = HEADER_PREFIX + "AccessTier";
     @Metadata(label = "consumer",
               description = "Flag indicating if the access tier of the blob was inferred from properties of the blob.",
               javaType = "boolean")
     public static final String IS_ACCESS_TIER_INFRRRED = HEADER_PREFIX + "IsAccessTierInferred";
-    @Metadata(label = "consumer", description = "Archive status of the blob.", javaType = "ArchiveStatus")
+    @Metadata(label = "consumer", description = "Archive status of the blob.",
+              javaType = "com.azure.storage.blob.models.ArchiveStatus")
     public static final String ARCHIVE_STATUS = HEADER_PREFIX + "ArchiveStatus";
     public static final String ENCRYPTION_KEY_SHA_256 = HEADER_PREFIX + "EncryptionKeySha256";
     public static final String ENCRYPTION_SCOPE = HEADER_PREFIX + "EncryptionScope";
     @Metadata(label = "consumer", description = "Datetime when the access tier of the blob last changed.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String ACCESS_TIER_CHANGE_TIME = HEADER_PREFIX + "accessTierChangeTime";
     @Metadata(description = "(producer) (Operations related to container and blob) Operations related to container and blob| Metadata to associate with the container or blob.\n"
                             + "(consumer) Additional metadata associated with the blob.",
@@ -140,7 +142,7 @@ public final class BlobConstants {
               javaType = "String")
     public static final String APPEND_OFFSET = HEADER_PREFIX + "AppendOffset";
     @Metadata(label = "consumer", description = "Returns non-parsed httpHeaders that can be used by the user.",
-              javaType = "HttpHeaders")
+              javaType = "com.azure.core.http.HttpHeaders")
     public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
     @Metadata(label = "consumer", description = "The downloaded filename from the operation `downloadBlobToFile`.",
               javaType = "String")
@@ -150,10 +152,10 @@ public final class BlobConstants {
     // headers to be retrieved
     @Metadata(label = "producer",
               description = "(listBlobs) Defines options available to configure the behavior of a call to listBlobsFlatSegment on a `BlobContainerClient` object.",
-              javaType = "ListBlobsOptions")
+              javaType = "com.azure.storage.blob.models.ListBlobsOptions")
     public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";
     @Metadata(label = "producer", description = "(listBlobs) The details for listing specific blobs",
-              javaType = "BlobListDetails")
+              javaType = "com.azure.storage.blob.models.BlobListDetails")
     public static final String BLOB_LIST_DETAILS = HEADER_PREFIX + "ListDetails";
     @Metadata(label = "producer",
               description = "(listBlobs,getBlob) Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.",
@@ -172,24 +174,25 @@ public final class BlobConstants {
     public static final String MAX_RESULTS_PER_PAGE = HEADER_PREFIX + "MaxResultsPerPage";
     @Metadata(label = "producer",
               description = "(All) An optional timeout value beyond which a `RuntimeException` will be raised.",
-              javaType = "Duration")
+              javaType = "java.time.Duration")
     public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
     @Metadata(label = "producer",
               description = "(createContainer) Specifies how the data in this container is available to the public. Pass `null` for no public access.",
-              javaType = "PublicAccessType")
+              javaType = "com.azure.storage.blob.models.PublicAccessType")
     public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";
     @Metadata(label = "producer",
               description = "(Operations related to container and blob) This contains values which will restrict the successful operation of a variety of requests to the conditions present. "
                             +
                             "These conditions are entirely optional.",
-              javaType = "BlobRequestConditions")
+              javaType = "com.azure.storage.blob.models.BlobRequestConditions")
     public static final String BLOB_REQUEST_CONDITION = HEADER_PREFIX + "RequestCondition";
     @Metadata(label = "producer",
               description = "(Operations related to container and blob) Override/set the container name on the exchange headers.",
               javaType = "String")
     public static final String BLOB_CONTAINER_NAME = HEADER_PREFIX + "BlobContainerName";
-    @Metadata(label = "producer",
-              description = "(Operations related to blob) Override/set the blob name on the exchange headers.",
+    @Metadata(label = "common",
+              description = "(producer) Override/set the blob name on the exchange headers, for the operations related"
+                            + " to a blob. (consumer) The name of the blob that was consumed.",
               javaType = "String")
     public static final String BLOB_NAME = HEADER_PREFIX + "BlobName";
     @Metadata(label = "producer",
@@ -201,7 +204,7 @@ public final class BlobConstants {
                             +
                             "the start offset must be a modulus of 512 and the end offset must be a modulus of 512 - 1." +
                             " Examples of valid byte ranges are 0-511, 512-1023, etc.",
-              javaType = "PageRange")
+              javaType = "com.azure.storage.blob.models.PageRange")
     public static final String PAGE_BLOB_RANGE = HEADER_PREFIX + "PageBlobRange";
     @Metadata(label = "producer",
               description = "(createPageBlob, resizePageBlob) Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary.",
@@ -230,11 +233,11 @@ public final class BlobConstants {
     public static final String DELETE_SNAPSHOT_OPTION_TYPE = HEADER_PREFIX + "DeleteSnapshotsOptionType";
     @Metadata(label = "producer",
               description = "(listBlobContainers) A `ListBlobContainersOptions` which specifies what data should be returned by the service.",
-              javaType = "ListBlobContainersOptions")
+              javaType = "com.azure.storage.blob.models.ListBlobContainersOptions")
     public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
     @Metadata(label = "producer",
               description = "(downloadBlobToFile, uploadBlockBlobChunked) `ParallelTransferOptions` to use to download to file or upload from file. Number of parallel transfers parameter is ignored for downloads.",
-              javaType = "ParallelTransferOptions")
+              javaType = "com.azure.storage.blob.models.ParallelTransferOptions")
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
     @Metadata(label = "producer",
               description = "(uploadBlockBlobChunked) The local file path to upload. Can be provided as a File, Path, or String in the message body, or via this header.",
@@ -271,17 +274,17 @@ public final class BlobConstants {
               description = "(getChangeFeed) It filters the results to return events approximately after the start time. " +
                             "Note: A few events belonging to the previous hour can also be returned. " +
                             "A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String CHANGE_FEED_START_TIME = HEADER_PREFIX + "ChangeFeedStartTime";
     @Metadata(label = "producer",
               description = "(getChangeFeed) It filters  the results to return events approximately before the end time. " +
                             "Note: A few events belonging to the next hour can also be returned. " +
                             "A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String CHANGE_FEED_END_TIME = HEADER_PREFIX + "ChangeFeedEndTime";
     @Metadata(label = "producer",
               description = "(getChangeFeed) This gives additional context that is passed through the Http pipeline during the service call.",
-              javaType = "Context")
+              javaType = "com.azure.core.util.Context")
     public static final String CHANGE_FEED_CONTEXT = HEADER_PREFIX + "Context";
     @Metadata(description = "The snapshot identifier. On createBlobSnapshot it is set on the exchange as the"
                             + " id of the newly created snapshot. On read operations (getBlob, downloadBlobToFile,"

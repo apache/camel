@@ -64,7 +64,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     @Arguments(description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                              + "Camel integration",
-               paramLabel = "<files>")
+               paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Option(name = "json", hasValue = false, description = "Output in JSON Format")

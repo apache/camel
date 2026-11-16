@@ -17,22 +17,21 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * camel transform route: a route in another DSL, printed or written to a file or directory.
@@ -89,6 +88,28 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void yamlToAJavaFileNamesTheClassAfterTheFile() throws Exception {
+        // CAMEL-26931: --output=Out.java got a class named after the route file, which does not compile
+        Path yaml = Files.writeString(dir.resolve("hello.camel.yaml"), YAML);
+        Path out = dir.resolve("Out.java");
+
+        assertThat(command(List.of(yaml.toString()), "--format=java", "--output=" + out).doCall()).isZero();
+
+        assertThat(Files.readString(out)).contains("public class Out extends RouteBuilder");
+    }
+
+    @Test
+    void aJavaFileWhoseNameIsNoClassNameKeepsTheClassName() throws Exception {
+        // a qualified name, such as My.Route, would give class My.Route, which does not compile
+        Path yaml = Files.writeString(dir.resolve("hello.camel.yaml"), YAML);
+        Path out = dir.resolve("My.Route.java");
+
+        assertThat(command(List.of(yaml.toString()), "--format=java", "--output=" + out).doCall()).isZero();
+
+        assertThat(Files.readString(out)).contains("extends RouteBuilder").doesNotContain("class My.Route");
+    }
+
+    @Test
     void yamlToJavaFilesInADirectory() throws Exception {
         Path one = Files.writeString(dir.resolve("hello.camel.yaml"), YAML);
         Path two = Files.writeString(dir.resolve("bye.camel.yaml"), YAML.replace("hello", "bye"));
@@ -124,16 +145,17 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
                 .hasMessage("--format must be xml, yaml or java, was: json");
     }
 
-    @Test
-    void aFileThatDoesNotExistIsNotFound() {
-        TransformRoute command = command(List.of(dir.resolve("nope.camel.yaml").toString()), "--format=java");
+    @ParameterizedTest
+    @ValueSource(strings = { "--format=java", "--format=xml", "--format=yaml" })
+    void aFileThatDoesNotExistIsNotFound(String format) {
+        // for xml and yaml it exited 1 without saying which file (CAMEL-26931)
+        String file = dir.resolve("nope.camel.yaml").toString();
+        TransformRoute command = command(List.of(file), format);
 
-        Throwable e = catchThrowable(command::doCall);
-
-        assertThat(e).isInstanceOf(NoSuchFileException.class);
-        // which the CLI ends with exit code 66
-        assertThat(new CliExecutionExceptionHandler(new CamelJBangMain()).getExitCode(e))
-                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThatThrownBy(command::doCall)
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND))
+                .hasMessage("File does not exist: " + file);
     }
 
     @Test

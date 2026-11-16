@@ -13,7 +13,7 @@ ${java.home}/bin/java
 -Dcamel.main.profile=dev
 -Dcamel.main.routesReloadEnabled=true
 -Dcamel.main.routesReloadDirectory=${basedir}/src/test/resources/golden/mixed
--Dcamel.main.routesReloadPattern=*,!test/**
+-Dcamel.main.routesReloadPattern=*,!test/**,!*.log,!target/**,!.git/**,!.camel/**,!.camel-jbang/**
 -Dcamel.main.routesReloadDirectoryRecursive=true
 -Dcamel.main.routesReloadRemoveAllRoutes=true
 -jar

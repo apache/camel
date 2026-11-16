@@ -673,6 +673,20 @@ public interface HuggingFaceEndpointBuilderFactory {
         public String huggingFaceOutput() {
             return "CamelHuggingFaceOutput";
         }
+        /**
+         * For the chat task, clears the stored conversation history of the
+         * current memory id before the request is built. The memory id is read
+         * from the header named by the memoryIdHeader option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ChatClearHistory}.
+         */
+        public String chatClearHistory() {
+            return "CamelChatClearHistory";
+        }
     }
     static HuggingFaceEndpointBuilder endpointBuilder(String componentName, String path) {
         class HuggingFaceEndpointBuilderImpl extends AbstractEndpointBuilder implements HuggingFaceEndpointBuilder, AdvancedHuggingFaceEndpointBuilder {

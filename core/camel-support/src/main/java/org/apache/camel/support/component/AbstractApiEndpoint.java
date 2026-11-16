@@ -23,13 +23,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.ApiEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -48,8 +50,8 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         extends ScheduledPollEndpoint
         implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
-    // thread pool executor with Endpoint Class name as keys
-    private static final Map<String, ExecutorService> EXECUTOR_SERVICE_MAP = new ConcurrentHashMap<>();
+    // guards the lookup and creation of the thread pools of the API endpoints of a CamelContext
+    private static final Lock EXECUTOR_SERVICES_LOCK = new ReentrantLock();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -309,45 +311,50 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     private static ExecutorService getExecutorService(
             Class<? extends AbstractApiEndpoint> endpointClass, CamelContext context, String threadProfileName) {
 
-        // lookup executorService for extending class name
-        final String endpointClassName = endpointClass.getName();
-        ExecutorService executorService = EXECUTOR_SERVICE_MAP.get(endpointClassName);
-
-        // CamelContext will shutdown thread pool when it shutdown so we can
-        // lazy create it on demand
-        // but in case of hot-deploy or the likes we need to be able to
-        // re-create it (its a shared static instance)
-        if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
-            final ExecutorServiceManager manager = context.getExecutorServiceManager();
-
-            // try to lookup a pool first based on profile
-            ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
-                    threadProfileName);
-            if (poolProfile == null) {
-                poolProfile = manager.getDefaultThreadPoolProfile();
+        // one pool per endpoint class per CamelContext, created and shut down by its ExecutorServiceManager
+        EXECUTOR_SERVICES_LOCK.lock();
+        try {
+            final ExtendedCamelContext ecc = context.getCamelContextExtension();
+            ExecutorServices executorServices = ecc.getContextPlugin(ExecutorServices.class);
+            if (executorServices == null) {
+                executorServices = new ExecutorServices();
+                ecc.addContextPlugin(ExecutorServices.class, executorServices);
             }
 
-            // create a new pool using the custom or default profile
-            executorService = manager.newScheduledThreadPool(endpointClass, threadProfileName, poolProfile);
+            // lookup executorService for extending class name
+            final String endpointClassName = endpointClass.getName();
+            ExecutorService executorService = executorServices.pools.get(endpointClassName);
+            if (executorService == null || executorService.isShutdown()) {
+                final ExecutorServiceManager manager = context.getExecutorServiceManager();
 
-            EXECUTOR_SERVICE_MAP.put(endpointClassName, executorService);
+                // try to lookup a pool first based on profile
+                ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
+                        threadProfileName);
+                if (poolProfile == null) {
+                    poolProfile = manager.getDefaultThreadPoolProfile();
+                }
+
+                // create a new pool using the custom or default profile
+                executorService = manager.newScheduledThreadPool(endpointClass, threadProfileName, poolProfile);
+
+                executorServices.pools.put(endpointClassName, executorService);
+            }
+
+            return executorService;
+        } finally {
+            EXECUTOR_SERVICES_LOCK.unlock();
         }
-
-        return executorService;
     }
 
     public final ExecutorService getExecutorService() {
-        if (executorService == null) {
-            lock.lock();
-            try {
-                if (executorService == null) {
-                    executorService = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
-                }
-            } finally {
-                lock.unlock();
-            }
+        ExecutorService answer = executorService;
+        // the pool is shut down when the CamelContext stops, and this endpoint may be used again after a restart
+        if (answer == null || answer.isShutdown()) {
+            // the lookup returns the same pool to every endpoint of this class in the CamelContext
+            answer = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
+            executorService = answer;
         }
-        return executorService;
+        return answer;
     }
 
     /**
@@ -356,4 +363,12 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
      * @return thread profile name to use.
      */
     protected abstract String getThreadProfileName();
+
+    /**
+     * The thread pools of the API endpoints of one CamelContext, with the endpoint class name as key (a context
+     * plugin).
+     */
+    private static final class ExecutorServices {
+        private final Map<String, ExecutorService> pools = new HashMap<>();
+    }
 }

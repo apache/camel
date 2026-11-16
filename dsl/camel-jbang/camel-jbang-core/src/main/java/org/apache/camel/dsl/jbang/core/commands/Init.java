@@ -29,10 +29,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
+import javax.lang.model.SourceVersion;
+
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -62,7 +65,7 @@ import static org.apache.camel.dsl.jbang.run.common.GitHubHelper.fetchGithubUrls
 public class Init extends CamelCommand {
 
     private Path filePath; // Defined only for file path completion; the field never used
-    @Argument(description = "Name of integration file (or a github link)", paramLabel = "<file>")
+    @Argument(description = "Name of integration file (or a github link)", paramLabel = "file")
     private String file;
 
     @Option(name = "list", hasValue = false, description = "List available templates")
@@ -85,9 +88,6 @@ public class Init extends CamelCommand {
 
     @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
-
-    @Option(name = "pipe", hasValue = false, description = "When creating a yaml file should it be created as a Pipe CR")
-    private boolean pipe;
 
     @Option(name = "repo", aliases = { "repos" },
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
@@ -134,16 +134,19 @@ public class Init extends CamelCommand {
         }
 
         String ext = FileUtil.onlyExt(file, false);
-        if ("yaml".equals(ext) && pipe) {
-            ext = "init-pipe.yaml";
-        }
-
         if (fromKamelet != null && !"kamelet.yaml".equals(ext)) {
             printer().printErr("When extending from an existing Kamelet then file must have extension .kamelet.yaml");
             return CliExitCode.USAGE;
         }
 
         String name = FileUtil.onlyName(file, false);
+        if ("java".equals(ext) && !SourceVersion.isName(name)) {
+            // the class of the file would not compile (CAMEL-26931: my-route.java, 1bad.java)
+            throw CliException.usage(name + " is not a Java class name: name the file like a class, such as MyRoute.java");
+        }
+        // the kind of a Kamelet from its file name, not the path: src/main/resources/kamelets/my-filter.kamelet.yaml
+        // became a source, as resources contains source (CAMEL-26931)
+        String fileName = FileUtil.stripPath(file);
         InputStream is = null;
         if ("kamelet.yaml".equals(ext)) {
             if (fromKamelet != null) {
@@ -152,9 +155,9 @@ public class Init extends CamelCommand {
                 }
                 // load existing kamelet
                 is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion, repositories);
-            } else if (file.contains("source")) {
+            } else if (fileName.contains("source")) {
                 ext = "kamelet-source.yaml";
-            } else if (file.contains("sink")) {
+            } else if (fileName.contains("sink")) {
                 ext = "kamelet-sink.yaml";
             } else {
                 ext = "kamelet-action.yaml";
@@ -193,9 +196,10 @@ public class Init extends CamelCommand {
             Path dirPath = Paths.get(directory);
             Files.createDirectories(dirPath);
         }
+        // in the directory, also for a file given as ./x.yaml (CAMEL-26931: it was written in the current directory)
         Path targetPath = Paths.get(file);
         if (!targetPath.isAbsolute()) {
-            targetPath = Paths.get(directory, file);
+            targetPath = Paths.get(directory, file).normalize();
         }
         content = content.replace("{{ .Name }}", name);
         content = content.replace("[=Name]", name);
@@ -226,11 +230,7 @@ public class Init extends CamelCommand {
         // in case of using relative paths in the file name
         Path parentPath = targetPath.getParent();
         if (parentPath != null) {
-            if (".".equals(parentPath.getFileName().toString())) {
-                targetPath = Paths.get(file);
-            } else {
-                Files.createDirectories(parentPath);
-            }
+            Files.createDirectories(parentPath);
         }
         if (existsAlready(targetPath)) {
             return CliExitCode.FAILURE;
@@ -311,12 +311,6 @@ public class Init extends CamelCommand {
         kamelets.put("kamelet-action.yaml", "Kamelet action processor (my-action.kamelet.yaml)");
         categories.put("Kamelets", kamelets);
 
-        Map<String, String> pipes = new LinkedHashMap<>();
-        pipes.put("init-pipe.yaml", "Pipe CR connecting source and sink (my-pipe.yaml --pipe)");
-        pipes.put("pipe.yaml", "Pipe resource (my-pipe.pipe.yaml)");
-        pipes.put("integration.yaml", "Integration CR (my-integration.integration.yaml)");
-        categories.put("Pipes and CRs", pipes);
-
         Map<String, String> restDsl = new LinkedHashMap<>();
         restDsl.put("rest-dsl.yaml", "REST DSL with OpenAPI (my-api.rest-dsl.yaml)");
         categories.put("REST", restDsl);
@@ -348,9 +342,6 @@ public class Init extends CamelCommand {
                 new String[] { "kamelet-source.yaml", "Kamelet source connector", ".kamelet.yaml" },
                 new String[] { "kamelet-sink.yaml", "Kamelet sink connector", ".kamelet.yaml" },
                 new String[] { "kamelet-action.yaml", "Kamelet action processor", ".kamelet.yaml" }));
-        List<String[]> pipeTemplates = new ArrayList<>();
-        pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
-        categories.put("Pipes and CRs", pipeTemplates);
 
         Scanner scanner = new Scanner(input);
 
@@ -407,9 +398,6 @@ public class Init extends CamelCommand {
             } else {
                 defaultName = "my-action.kamelet.yaml";
             }
-        } else if (selected[0].contains("pipe")) {
-            defaultName = "my-pipe.yaml";
-            pipe = true;
         }
 
         // Step 3: Prompt for filename

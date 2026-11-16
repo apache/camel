@@ -2,7 +2,7 @@
 :doctitle: SEDA
 :shortname: seda
 :artifactid: camel-seda
-:description: Asynchronously call another endpoint from any Camel Context in the same JVM.
+:description: Asynchronously call another endpoint from the same Camel Context.
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

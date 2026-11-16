@@ -27,8 +27,8 @@ import org.apache.camel.util.json.JsonObject;
 
 /**
  * Reference data for diagnosing Camel errors: the known Camel exceptions with their descriptions, common causes,
- * suggested fixes and documentation links. Used by the shared {@code camel_error_diagnose} tool in the
- * {@link ToolRegistry} and by the camel-jbang-mcp diagnose resources.
+ * suggested fixes and documentation links. Used by the camel-jbang-mcp diagnose resources
+ * ({@code camel://error/exception-catalog} and {@code camel://error/exception/{name}}).
  */
 public class DiagnoseData {
 

@@ -27,11 +27,11 @@ import org.apache.camel.spi.StepHook;
 /**
  * A {@link StepHook} that asks several hooks, in their {@link Ordered order} (lower first; a hook that does not
  * implement {@link Ordered} has order 0, and hooks with the same order keep the order they were given in).
- * <p/>
+ * <p>
  * The hooks are asked one after the other: a hook that throws an exception, or sets one on the exchange, fails the
  * step, and the hooks after it are not asked. A hook that returns a reserved negative value fails the step as well. The
  * delays of the hooks add up: the step waits for their sum, once, after all the hooks were asked.
- * <p/>
+ * <p>
  * It is immutable: the {@link org.apache.camel.CamelContext} creates a new one when a hook is added or removed (see
  * {@link org.apache.camel.ExtendedCamelContext#addStepHook(StepHook)}).
  *

@@ -118,6 +118,8 @@ public class CamelSpanAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         CamelProcess process = findOne(name);
         this.pid = process.pid();
 

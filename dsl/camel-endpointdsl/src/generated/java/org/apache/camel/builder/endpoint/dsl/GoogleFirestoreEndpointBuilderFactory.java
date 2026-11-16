@@ -345,6 +345,48 @@ public interface GoogleFirestoreEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default GoogleFirestoreEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default GoogleFirestoreEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
          * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
@@ -1324,7 +1366,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseDocumentId}.
@@ -1337,7 +1379,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseDocumentPath}.
@@ -1350,7 +1392,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseCreateTime}.
@@ -1363,7 +1405,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseUpdateTime}.
@@ -1376,7 +1418,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseReadTime}.

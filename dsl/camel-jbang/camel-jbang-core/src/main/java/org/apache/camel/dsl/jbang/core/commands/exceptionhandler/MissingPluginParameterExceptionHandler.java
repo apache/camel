@@ -17,9 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -35,6 +38,8 @@ public class MissingPluginParameterExceptionHandler {
 
     private final CamelJBangMain main;
 
+    private static final Pattern MISSING_ARGUMENT = Pattern.compile("(.+) (?:is|are) required for this command\\.?");
+
     public MissingPluginParameterExceptionHandler(CamelJBangMain main) {
         this.main = main;
     }
@@ -48,7 +53,16 @@ public class MissingPluginParameterExceptionHandler {
     public int handleParseException(Exception ex, String[] args, CommandTree root) {
         Printer err = main.getOut();
         CommandTree command = commandOf(root, args);
-        String message = ex.getMessage();
+        for (Throwable c = ex.getCause(); c != null; c = c.getCause()) {
+            if (c instanceof CliException cli) {
+                // an error of the CLI while parsing, such as a value of the user configuration an option does not
+                // take: its message says what to fix, which the message of the parser does not (CAMEL-26931)
+                err.printErr(cli.getMessage());
+                printJsonError(command, args, cli.getExitCode(), cli.getMessage());
+                return cli.getExitCode();
+            }
+        }
+        String message = missingArgument(ex.getMessage());
         if (command.getCommand() instanceof UsageErrorHandler handler) {
             Integer exitCode = handler.usageError(message, args);
             if (exitCode != null) {
@@ -84,6 +98,19 @@ public class MissingPluginParameterExceptionHandler {
         }
         printJsonError(command, args, CliExitCode.USAGE, message);
         return CliExitCode.USAGE;
+    }
+
+    /**
+     * The message of the parser for a missing argument says "{description} is required for this command" (or "are" for
+     * several), which reads badly for most descriptions ("Service name are required for this command"): it is "Missing
+     * argument: {description}", and the usage under it names the argument (CAMEL-26931).
+     */
+    static String missingArgument(String message) {
+        if (message == null || message.startsWith("Option:")) {
+            return message;
+        }
+        Matcher m = MISSING_ARGUMENT.matcher(message);
+        return m.matches() ? "Missing argument: " + m.group(1) : message;
     }
 
     private static String synopsisOf(CommandTree command) {

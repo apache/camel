@@ -40,6 +40,8 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteErrorFrame;
 import org.apache.camel.diagram.TopologyErrorFrame;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.FlowAnimation;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.FlowFeed;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 
@@ -62,6 +64,8 @@ final class RouteDiagramZoom {
     static final String PROP_GROUP_FOLDS = "camel.tui.groupFolds";
     /** Whether the mini panels over the diagram (the map and the route tree) are shown: false when hidden. */
     static final String PROP_DIAGRAM_PANELS = "camel.tui.diagramPanels";
+    /** Whether the messages move through the route diagram (w): false when turned off. */
+    static final String PROP_DIAGRAM_FLOW = "camel.tui.diagramFlow";
 
     /** The selected step to select again once the route is laid out anew, and its row on the screen. */
     record Restore(int index, int row, int screenRow) {
@@ -77,6 +81,9 @@ final class RouteDiagramZoom {
     private volatile RouteDensity density = DEFAULT;
     private volatile boolean fit;
     private volatile boolean panels = true;
+    // the messages moving through the route on screen: drawn and moved on the UI thread only
+    private final FlowAnimation flow = new FlowAnimation();
+    private volatile FlowFeed flowFeed;
     // the routes the History tab laid out whole, to lay them out again when the zoom changes
     private volatile Whole whole;
 
@@ -105,6 +112,7 @@ final class RouteDiagramZoom {
         try {
             zoom.setting(TuiUserConfig.read(PROP_ROUTE_ZOOM));
             zoom.panels = !"false".equals(TuiUserConfig.read(PROP_DIAGRAM_PANELS));
+            zoom.flow.setEnabled(!"false".equals(TuiUserConfig.read(PROP_DIAGRAM_FLOW)));
             zoom.foldSetting(TuiUserConfig.read(PROP_ROUTE_FOLDS));
             String groups = TuiUserConfig.read(PROP_GROUP_FOLDS);
             if (groups != null && !groups.isBlank()) {
@@ -125,6 +133,7 @@ final class RouteDiagramZoom {
         try {
             TuiUserConfig.write(PROP_ROUTE_ZOOM, setting());
             TuiUserConfig.write(PROP_DIAGRAM_PANELS, panels ? null : "false");
+            TuiUserConfig.write(PROP_DIAGRAM_FLOW, flow.isEnabled() ? null : "false");
             TuiUserConfig.write(PROP_ROUTE_FOLDS, foldSetting());
             TuiUserConfig.write(PROP_GROUP_FOLDS, foldedGroups.isEmpty() ? null : String.join(",", foldedGroups));
         } catch (RuntimeException e) {
@@ -186,6 +195,22 @@ final class RouteDiagramZoom {
 
     void togglePanels() {
         panels = !panels;
+    }
+
+    /**
+     * The messages moving through the route diagram and the topology, with the metrics on: dots on the arrows.
+     */
+    FlowAnimation flow() {
+        return flow;
+    }
+
+    /** The counts the dots of a topology whose boxes are not the running routes (the architecture) move at, or null. */
+    FlowFeed flowFeed() {
+        return flowFeed;
+    }
+
+    void setFlowFeed(FlowFeed flowFeed) {
+        this.flowFeed = flowFeed;
     }
 
     boolean isFit() {

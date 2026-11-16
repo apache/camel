@@ -189,7 +189,7 @@ public class PropertiesTranslateTools {
             "camel.metrics.",
             "camel.opentelemetry.",
             "camel.opentelemetry2.",
-            "camel.tracing.",
+            "camel.trace.",
             "camel.threadpool.",
             "camel.resilience4j.",
             "camel.faulttolerance.",

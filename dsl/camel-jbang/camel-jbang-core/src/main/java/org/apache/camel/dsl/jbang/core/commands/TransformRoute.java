@@ -27,6 +27,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.lang.model.SourceVersion;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
@@ -38,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 
@@ -61,7 +65,7 @@ public class TransformRoute extends CamelCommand {
     }
 
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-               paramLabel = "<files>")
+               paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Option(name = "output",
@@ -113,6 +117,13 @@ public class TransformRoute extends CamelCommand {
 
         if (!"xml".equals(format) && !"yaml".equals(format) && !"java".equals(format)) {
             throw CliException.usage("--format must be xml, yaml or java, was: " + format);
+        }
+        for (String file : files) {
+            // the file it cannot find by its name: it exited 1 without saying which file, except for --format=java
+            // (CAMEL-26931)
+            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:") && !Files.exists(Path.of(file))) {
+                throw CliException.fileNotFound("File does not exist: " + file);
+            }
         }
         if ("java".equals(format)) {
             return transformToJava();
@@ -174,6 +185,24 @@ public class TransformRoute extends CamelCommand {
     }
 
     /**
+     * The Java route with the class named after the file it is written to: a class must have the name of its file, and
+     * --output=Out.java got the class named after the route file (CAMEL-26931). A file name that is no class name, such
+     * as My.Route.java, keeps the class name.
+     */
+    static String withClassName(String java, String fileName, Path out) {
+        String wanted = out.getFileName().toString();
+        if (!wanted.endsWith(".java") || fileName == null || !fileName.endsWith(".java")) {
+            return java;
+        }
+        wanted = wanted.substring(0, wanted.length() - ".java".length());
+        String current = fileName.substring(0, fileName.length() - ".java".length());
+        if (wanted.equals(current) || !SourceVersion.isIdentifier(wanted) || SourceVersion.isKeyword(wanted)) {
+            return java;
+        }
+        return java.replaceFirst("\\bclass " + Pattern.quote(current) + "\\b", "class " + wanted);
+    }
+
+    /**
      * To Java, each file is converted without running it (CAMEL-25254): read into the model by the parser of its DSL
      * and written as a route builder class, printed, or written into the output directory (or file, for one file).
      */
@@ -195,7 +224,7 @@ public class TransformRoute extends CamelCommand {
                 Files.createDirectories(out);
                 Files.writeString(out.resolve(r.fileName()), java);
             } else {
-                Files.writeString(out, java);
+                Files.writeString(out, withClassName(java, r.fileName(), out));
             }
         }
         if (out == null) {

@@ -44,6 +44,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -68,6 +71,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.artifact.versioning.ComparableVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.QUARKUS_GROUP_ID;
@@ -87,6 +92,11 @@ public final class QuarkusHelper {
      * platform for the same Camel version (a respin), so the mapping is not kept forever.
      */
     private static final Duration PLATFORM_MAPPING_TTL = Duration.ofDays(7);
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuarkusHelper.class);
+
+    // how long the registry may take to answer, its document included
+    private static final Duration REGISTRY_TIMEOUT = Duration.ofSeconds(20);
 
     private QuarkusHelper() {
     }
@@ -344,12 +354,17 @@ public final class QuarkusHelper {
                 }
             }
 
-            HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-            HttpResponse<String> res = hc.send(
-                    HttpRequest.newBuilder(uri)
-                            .timeout(Duration.ofSeconds(20))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> res;
+            try {
+                res = get(uri);
+            } catch (IOException e) {
+                // offline, or the registry does not answer: the document of an earlier day is better than none
+                JsonArray stale = staleCache(uri, registriesDir, fresh, e.getMessage());
+                if (stale != null) {
+                    return stale;
+                }
+                throw e;
+            }
 
             if (res.statusCode() == 200) {
                 final String jsonBody = res.body();
@@ -361,6 +376,10 @@ public final class QuarkusHelper {
 
                 return deserialize(jsonBody);
             } else {
+                JsonArray stale = staleCache(uri, registriesDir, fresh, "HTTP " + res.statusCode());
+                if (stale != null) {
+                    return stale;
+                }
                 throw new RuntimeException(
                         "Could not get " + uri + ": " + res.statusCode() + " to determine the Quarkus Platform version."
                                            + " You may want to pass --download=false to use the cached resource if available"
@@ -376,6 +395,47 @@ public final class QuarkusHelper {
         } catch (DeserializationException e) {
             throw new RuntimeException("Invalid JSON input from " + quarkusPlatformUrl, e);
         }
+    }
+
+    /**
+     * Gets the document of the registry. HttpRequest.timeout() only bounds the headers, so the document is bounded with
+     * sendAsync and get(timeout): a registry that sent the headers and then stalled hung the command.
+     */
+    private static HttpResponse<String> get(URI uri) throws IOException, InterruptedException {
+        HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+        var future = hc.sendAsync(HttpRequest.newBuilder(uri).timeout(REGISTRY_TIMEOUT).build(),
+                HttpResponse.BodyHandlers.ofString());
+        try {
+            return future.get(REGISTRY_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new IOException("timed out after " + REGISTRY_TIMEOUT.toSeconds() + " seconds", e);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof IOException ioe) {
+                throw ioe;
+            }
+            throw new IOException(e.getCause());
+        }
+    }
+
+    /**
+     * The document of the registry cached on an earlier day, when the daily refresh failed (CAMEL-27004: the command
+     * failed although it had the document). Not with --fresh, which asks for the registry and nothing else.
+     *
+     * @return the platform streams of the cached document, or null when there is none
+     */
+    private static JsonArray staleCache(URI uri, Path registriesDir, boolean fresh, String reason)
+            throws IOException, DeserializationException {
+        if (fresh) {
+            return null;
+        }
+        Path cacheFile = cacheFile(uri, registriesDir);
+        if (!Files.isRegularFile(cacheFile)) {
+            return null;
+        }
+        LOG.warn("Could not refresh the Quarkus platforms from {} ({}): using the copy cached on {}", uri, reason,
+                LocalDate.ofInstant(Files.getLastModifiedTime(cacheFile).toInstant(), ZoneId.systemDefault()));
+        return deserialize(Files.readString(cacheFile));
     }
 
     private static boolean updatedToday(Path cacheFile) {

@@ -58,6 +58,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -183,6 +185,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -304,6 +308,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
         case "includefolders":

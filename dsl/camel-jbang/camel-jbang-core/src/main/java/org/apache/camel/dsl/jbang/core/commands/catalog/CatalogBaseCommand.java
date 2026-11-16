@@ -35,6 +35,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
+import org.apache.camel.dsl.jbang.core.common.CamelVersionCheck;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -43,6 +45,7 @@ import org.apache.camel.dsl.jbang.core.model.CatalogBaseDTO;
 import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -116,6 +119,21 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     static CamelCatalog loadCatalog(
             RuntimeType runtime, String camelVersion, QuarkusPlatformMixin quarkusPlatform, MavenResolverMixin mavenResolver)
             throws Exception {
+        try {
+            return doLoadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
+        } catch (DownloadException e) {
+            // a version that was never released says so, and is not found (CAMEL-26931)
+            CliException notFound = CamelVersionCheck.notFound(e, runtime, camelVersion);
+            if (notFound != null) {
+                throw notFound;
+            }
+            throw e;
+        }
+    }
+
+    private static CamelCatalog doLoadCatalog(
+            RuntimeType runtime, String camelVersion, QuarkusPlatformMixin quarkusPlatform, MavenResolverMixin mavenResolver)
+            throws Exception {
         if (RuntimeType.springBoot == runtime) {
             return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
@@ -144,7 +162,8 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             filterName = filterName.toLowerCase(Locale.ROOT);
             rows = rows.stream()
                     .filter(
-                            r -> r.name.equalsIgnoreCase(filterName)
+                            // a part of the name, as of the description: --filter=aws2 listed nothing (CAMEL-26931)
+                            r -> r.name.toLowerCase(Locale.ROOT).contains(filterName)
                                     || (r.description != null
                                             && r.description.toLowerCase(Locale.ROOT).contains(filterName))
                                     || (r.label != null && r.label.toLowerCase(Locale.ROOT).contains(filterName)))

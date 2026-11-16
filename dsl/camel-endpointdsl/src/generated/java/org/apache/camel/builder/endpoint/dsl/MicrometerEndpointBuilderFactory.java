@@ -371,7 +371,8 @@ public interface MicrometerEndpointBuilderFactory {
          * header are used as given; use the tags URI parameters for Simple
          * expressions.
          * 
-         * The option is a: {@code java.lang.Iterable<Tag>} type.
+         * The option is a: {@code
+         * java.lang.Iterable<io.micrometer.core.instrument.Tag>} type.
          * 
          * Group: producer
          * 

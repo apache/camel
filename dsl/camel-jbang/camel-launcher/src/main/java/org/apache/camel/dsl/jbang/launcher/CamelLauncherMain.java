@@ -16,18 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.launcher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPlugin;
+import org.apache.camel.dsl.jbang.core.commands.mcp.McpPlugin;
 import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
 import org.apache.camel.dsl.jbang.core.commands.tui.TuiPlugin;
 import org.apache.camel.dsl.jbang.core.commands.validate.ValidatePlugin;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdatePlugin;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.UpdateChecker;
 
@@ -43,6 +49,8 @@ public class CamelLauncherMain extends CamelJBangMain {
     private static final List<EmbeddedPlugin> PLUGINS = List.of(
             new EmbeddedPlugin(GeneratePlugin::new, Set.of("generate")),
             new EmbeddedPlugin(KubernetesPlugin::new, Set.of("kubernetes", "k8s")),
+            // its jar was in the launcher, but camel mcp installed the plugin on first use, in the plugin configuration
+            new EmbeddedPlugin(McpPlugin::new, Set.of("mcp")),
             new EmbeddedPlugin(SelfUpdatePlugin::new, Set.of("self-update")),
             new EmbeddedPlugin(TuiPlugin::new, Set.of("tui")),
             new EmbeddedPlugin(ValidatePlugin::new, Set.of("validate")),
@@ -62,6 +70,25 @@ public class CamelLauncherMain extends CamelJBangMain {
     @Override
     protected boolean isPluginCommand(String command) {
         return PLUGINS.stream().anyMatch(p -> p.commands().contains(command)) || super.isPluginCommand(command);
+    }
+
+    @Override
+    public Collection<Plugin> getEmbeddedPlugins(String target) {
+        // such as the test plugin for camel export: the launcher does not register its plugins in the plugin
+        // configuration, so the export did not have the Citrus tests (CAMEL-26933)
+        List<Plugin> answer = new ArrayList<>();
+        for (EmbeddedPlugin embedded : PLUGINS) {
+            boolean contributes = embedded.commands().stream()
+                    .map(PluginType::findByName)
+                    .flatMap(Optional::stream)
+                    .anyMatch(type -> Arrays.asList(type.getAppliesTo()).contains(target));
+            if (contributes) {
+                Plugin plugin = embedded.factory().get();
+                plugin.setClassLoader(getClass().getClassLoader());
+                answer.add(plugin);
+            }
+        }
+        return answer;
     }
 
     @Override

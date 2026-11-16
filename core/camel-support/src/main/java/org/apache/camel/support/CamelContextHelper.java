@@ -312,7 +312,7 @@ public final class CamelContextHelper {
 
     /**
      * Gets the maximum cache pool size.
-     * <p/>
+     * <p>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}. If no property
      * has been set, then it will fallback to return a size of 1000.
      *
@@ -326,7 +326,7 @@ public final class CamelContextHelper {
 
     /**
      * Gets the maximum endpoint cache size.
-     * <p/>
+     * <p>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_ENDPOINT_CACHE_SIZE}. If no
      * property has been set, then it will fallback to return a size of 1000.
      *
@@ -340,7 +340,7 @@ public final class CamelContextHelper {
 
     /**
      * Gets the maximum simple cache size.
-     * <p/>
+     * <p>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}. If no property
      * has been set, then it will fallback to return a size of 1000. Use value of 0 or negative to disable the cache.
      *
@@ -354,7 +354,7 @@ public final class CamelContextHelper {
 
     /**
      * Gets the maximum transformer cache size.
-     * <p/>
+     * <p>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_TRANSFORMER_CACHE_SIZE}. If no
      * property has been set, then it will fallback to return a size of 1000.
      *
@@ -392,7 +392,7 @@ public final class CamelContextHelper {
 
     /**
      * Gets the maximum validator cache size.
-     * <p/>
+     * <p>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_VALIDATOR_CACHE_SIZE}. If no
      * property has been set, then it will fallback to return a size of 1000.
      *
@@ -409,7 +409,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the parsed text, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the parsed text, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument
      */
     public static String parseText(CamelContext camelContext, String text) {
@@ -422,7 +422,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the integer vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the integer value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Integer parseInteger(CamelContext camelContext, String text) {
@@ -434,7 +434,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the int value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the int value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Integer parseInt(CamelContext camelContext, String text) {
@@ -442,11 +442,11 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Parses the given text and converts it to an Long and handling property placeholders as well
+     * Parses the given text and converts it to a Long and handling property placeholders as well
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the long value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the long value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Long parseLong(CamelContext camelContext, String text) {
@@ -458,7 +458,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the Duration value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the Duration value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Duration parseDuration(CamelContext camelContext, String text) {
@@ -478,7 +478,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the float value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the float value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Float parseFloat(CamelContext camelContext, String text) {
@@ -490,7 +490,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext          the camel context
      * @param  text                  the text
-     * @return                       the double vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                       the double value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Double parseDouble(CamelContext camelContext, String text) {
@@ -498,11 +498,11 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Parses the given text and converts it to an Boolean and handling property placeholders as well
+     * Parses the given text and converts it to a Boolean and handling property placeholders as well
      *
      * @param  camelContext             the camel context
      * @param  text                     the text
-     * @return                          the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                          the boolean value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
     public static Boolean parseBoolean(CamelContext camelContext, String text) {
@@ -515,7 +515,7 @@ public final class CamelContextHelper {
      * @param  camelContext             the camel context
      * @param  clazz                    the class to convert the value to
      * @param  text                     the text
-     * @return                          the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return                          the converted value, or <code>null</code> if the text was <code>null</code>
      * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
     public static <T> T parse(CamelContext camelContext, Class<T> clazz, String text) {
@@ -541,7 +541,7 @@ public final class CamelContextHelper {
      *
      * @param  camelContext the camel context
      * @param  routeId      the id of the route
-     * @return              the startup order, or <tt>0</tt> if not possible to determine
+     * @return              the startup order, or <code>0</code> if not possible to determine
      */
     public static int getRouteStartupOrder(CamelContext camelContext, String routeId) {
         for (RouteStartupOrder order : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
@@ -554,10 +554,11 @@ public final class CamelContextHelper {
 
     /**
      * Whether the given route is started automatically when its CamelContext starts, taking into account the
-     * CamelContext and route <tt>autoStartup</tt> options and the CamelContext <tt>autoStartupExcludePattern</tt>.
+     * CamelContext and route <code>autoStartup</code> options and the CamelContext
+     * <code>autoStartupExcludePattern</code>.
      *
      * @param  route the route
-     * @return       <tt>true</tt> if the route is started automatically
+     * @return       <code>true</code> if the route is started automatically
      */
     public static boolean isAutoStartup(Route route) {
         CamelContext camelContext = route.getCamelContext();
@@ -599,7 +600,7 @@ public final class CamelContextHelper {
      * Gets the route id the given node belongs to.
      *
      * @param  node the node
-     * @return      the route id, or <tt>null</tt> if not possible to find
+     * @return      the route id, or <code>null</code> if not possible to find
      */
     public static String getRouteId(NamedNode node) {
         NamedNode parent = node;
@@ -613,7 +614,7 @@ public final class CamelContextHelper {
      * Gets the route the given node belongs to.
      *
      * @param  node the node
-     * @return      the route, or <tt>null</tt> if not possible to find
+     * @return      the route, or <code>null</code> if not possible to find
      */
     public static NamedRoute getRoute(NamedNode node) {
         NamedNode parent = node;

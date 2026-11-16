@@ -96,6 +96,8 @@ public class RunPipeline {
 
     private static final String OPENAPI_GENERATED_FILE = "generated-openapi.yaml";
 
+    private static final String SANITIZER_PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
+
     /**
      * The folders of a project layout, whose name says nothing about the app (CAMEL-25830).
      */
@@ -425,7 +427,7 @@ public class RunPipeline {
                 stub = sj.toString();
             }
             request.stub = stub;
-            writeSetting(main, profileProperties, STUB, stub);
+            writeOption(main, profileProperties, "stub", STUB, stub);
             main.setStubPattern(stub);
         }
 
@@ -435,48 +437,48 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
         if (request.sourceDir != null) {
-            writeSetting(main, profileProperties, SOURCE_DIR, request.sourceDir);
+            writeOption(main, profileProperties, "source-dir", SOURCE_DIR, request.sourceDir);
         }
         if (request.dataDir != null) {
-            writeSetting(main, profileProperties, DATA_DIR, request.dataDir);
+            writeOption(main, profileProperties, "data-dir", DATA_DIR, request.dataDir);
         }
         if (request.trace) {
-            writeSetting(main, profileProperties, "camel.main.tracing", "true");
+            writeOption(main, profileProperties, "trace", "camel.main.tracing", "true");
         }
         if (request.backlogTrace) {
-            writeSetting(main, profileProperties, "camel.trace.enabled", "true");
+            writeOption(main, profileProperties, "backlog-trace", "camel.trace.enabled", "true");
         }
         if (request.modeline) {
-            writeSetting(main, profileProperties, "camel.main.modeline", "true");
+            writeOption(main, profileProperties, "modeline", "camel.main.modeline", "true");
             // configure eager
             main.configure().withModeline(true);
         }
         if (request.ignoreLoadingError) {
-            writeSetting(main, profileProperties, IGNORE_LOADING_ERROR, "true");
+            writeOption(main, profileProperties, "ignore-loading-error", IGNORE_LOADING_ERROR, "true");
         }
         if (request.lazyBean) {
-            writeSetting(main, profileProperties, LAZY_BEAN, "true");
+            writeOption(main, profileProperties, "lazy-bean", LAZY_BEAN, "true");
         }
         if (request.prompt) {
-            writeSetting(main, profileProperties, PROMPT, "true");
+            writeOption(main, profileProperties, "prompt", PROMPT, "true");
         }
         writeSetting(main, profileProperties, COMPILE_WORK_DIR, request.workDir.resolve("compile").toString());
 
         if (request.gav != null) {
-            writeSetting(main, profileProperties, GAV, request.gav);
+            writeOption(main, profileProperties, "gav", GAV, request.gav);
         }
-        writeSetting(main, profileProperties, OPEN_API, request.openapi);
+        writeOption(main, profileProperties, "open-api", OPEN_API, request.openapi);
         if (request.mavenResolver != null) {
             request.mavenResolver.putTo((k, v) -> {
                 writeSetting(main, profileProperties, k, v);
             });
         }
-        writeSetting(main, profileProperties, HEALTH, request.health ? "true" : "false");
-        writeSetting(main, profileProperties, METRICS, request.metrics ? "true" : "false");
-        writeSetting(main, profileProperties, CONSOLE, request.console ? "true" : "false");
-        writeSetting(main, profileProperties, MCP, request.mcp ? "true" : "false");
-        writeSetting(main, profileProperties, OPENAPI_UI, request.openapiUi ? "true" : "false");
-        writeSetting(main, profileProperties, VERBOSE, request.verbose ? "true" : "false");
+        writeOption(main, profileProperties, "health", HEALTH, request.health ? "true" : "false");
+        writeOption(main, profileProperties, "metrics", METRICS, request.metrics ? "true" : "false");
+        writeOption(main, profileProperties, "console", CONSOLE, request.console ? "true" : "false");
+        writeOption(main, profileProperties, "mcp", MCP, request.mcp ? "true" : "false");
+        writeOption(main, profileProperties, "openapi-ui", OPENAPI_UI, request.openapiUi ? "true" : "false");
+        writeOption(main, profileProperties, "verbose", VERBOSE, request.verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
         writeSetting(main, profileProperties, SPRING_BOOT_VERSION, request.springBootVersion);
@@ -566,7 +568,7 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.management.port",
                     () -> String.valueOf(request.managementPort));
         }
-        writeSetting(main, profileProperties, JFR, request.jfrEnabled() ? "jfr" : null);
+        writeOption(main, profileProperties, "jfr", JFR, request.jfrEnabled() ? "jfr" : null);
         writeSetting(main, profileProperties, JFR_PROFILE,
                 request.jfrProfile != null ? request.jfrProfile : null);
         if (request.jfrEnabled()) {
@@ -574,7 +576,7 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.main.startupRecorderRuntimeEnabled", "true");
         }
 
-        writeSetting(main, profileProperties, KAMELETS_VERSION, request.kameletsVersion);
+        writeOption(main, profileProperties, "kamelets-version", KAMELETS_VERSION, request.kameletsVersion);
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
@@ -758,6 +760,16 @@ public class RunPipeline {
             String sdir = "file:" + request.sourceDir + "/**?optional=true";
             main.addInitialProperty("camel.main.routesIncludePattern", sdir);
             writeSettings("camel.main.routesIncludePattern", sdir);
+            String excluded = sourceDirExcludePattern(request.sourceDir, request.excludes);
+            if (excluded != null) {
+                // --exclude applies to the files of the directory too (CAMEL-26930)
+                String existing = main.getInitialProperties().getProperty("camel.main.routesExcludePattern");
+                if (existing != null && !existing.isBlank()) {
+                    excluded = existing + "," + excluded;
+                }
+                main.addInitialProperty("camel.main.routesExcludePattern", excluded);
+                writeSettings("camel.main.routesExcludePattern", excluded);
+            }
         } else if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
@@ -907,6 +919,11 @@ public class RunPipeline {
                 main.addOverrideProperty("camel.chaos.reportFile", request.chaosReport);
             }
         }
+        if (request.sanitizer) {
+            // camel-sanitizer switches itself on with profile dev (the default of camel run), never with profile prod
+            request.dependencies.add("camel:sanitizer");
+            applySanitizerRuntimeOptions(main, profileProperties);
+        }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
             request.dependencies.add("camel:openapi-java");
@@ -961,8 +978,24 @@ public class RunPipeline {
         settings.write(main, existing, key, value);
     }
 
+    /**
+     * Writes the setting of a camel run option: the option given on the command line wins over the profile properties,
+     * which are the default when it is not given (CAMEL-26930: before, the file won, so with camel.main.tracing=false
+     * in it --trace printed nothing).
+     */
+    void writeOption(KameletMain main, Properties existing, String option, String key, String value) {
+        if (request.given(option) && value != null) {
+            // KameletMain reads the camel.jbang settings from the initial properties, and camel-main loads the
+            // application properties on top of them: so both, as the file would win over the initial property alone
+            main.addInitialProperty(key, value);
+            settings.write(main, existing, key, () -> value);
+        } else {
+            settings.write(main, existing, key, value);
+        }
+    }
+
     private boolean isMcpEnabled(Properties profileProperties) {
-        String val = profileProperties != null
+        String val = profileProperties != null && !request.given("mcp")
                 ? profileProperties.getProperty(MCP, request.mcp ? "true" : "false")
                 : (request.mcp ? "true" : "false");
         return "true".equals(val);
@@ -1012,6 +1045,36 @@ public class RunPipeline {
         if (request.managementPort == -1) {
             request.managementPort = request.port;
         }
+    }
+
+    /**
+     * With the debugger on (camel debug runs with camel.debug.enabled=true), an exchange held at a breakpoint keeps the
+     * calls of the steps around it pending, which the still pending warning of camel-sanitizer would report after its
+     * pendingTimeout (60 seconds by default). So the warning is off while debugging, unless
+     * camel.sanitizer.pendingTimeout is set: on the command line or in the application properties here, and as an
+     * initial property, which any other setting of it overrides.
+     */
+    void applySanitizerRuntimeOptions(BaseMainSupport main, Properties profileProperties) {
+        if (isTrue(argumentOrProfileProperty(profileProperties, "camel.debug.enabled"))
+                && argumentOrProfileProperty(profileProperties, SANITIZER_PENDING_TIMEOUT) == null) {
+            main.addInitialProperty(SANITIZER_PENDING_TIMEOUT, "0");
+        }
+    }
+
+    private String argumentOrProfileProperty(Properties profileProperties, String key) {
+        if (request.applicationProperties != null) {
+            for (String p : request.applicationProperties) {
+                String k = StringHelper.before(p, "=");
+                if (k != null && key.equals(k.trim())) {
+                    return StringHelper.after(p, "=");
+                }
+            }
+        }
+        return profileProperties != null ? profileProperties.getProperty(key) : null;
+    }
+
+    private static boolean isTrue(String value) {
+        return value != null && "true".equalsIgnoreCase(value.trim());
     }
 
     void applyOpenApiUiRuntimeOptions(BaseMainSupport main) {
@@ -1111,24 +1174,15 @@ public class RunPipeline {
             if (request.sourceDir != null) {
                 main.addInitialProperty(SOURCE_DIR, request.sourceDir);
                 main.addInitialProperty("camel.main.routesReloadDirectory", request.sourceDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", sourceDirReloadPattern(request.dataDir));
+                main.addInitialProperty("camel.main.routesReloadPattern",
+                        sourceDirReloadPattern(request.dataDir) + reloadExcludes(request.excludes));
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
             } else {
                 dataDirWithoutSourceDir.run();
-                String pattern = sjReload.toString();
-                String reloadDir = ".";
-                // use current dir, however if we run a file that are in another folder, then we should track that folder instead
-                for (String r : sjReload.toString().split(",")) {
-                    String path = FileUtil.onlyPath(r);
-                    if (path != null && !path.equals(".camel-jbang")) {
-                        reloadDir = path;
-                        break;
-                    }
-                }
-                main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", pattern);
-                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
-                        isReloadRecursive(pattern) ? "true" : "false");
+                ReloadFolder reload = reloadFolder(List.of(sjReload.toString().split(",")));
+                main.addInitialProperty("camel.main.routesReloadDirectory", reload.directory());
+                main.addInitialProperty("camel.main.routesReloadPattern", reload.pattern());
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", Boolean.toString(reload.recursive()));
             }
             if (request.maxMessages <= 0 && request.maxSeconds <= 0 && request.maxIdleSeconds <= 0) {
                 // do not shutdown the JVM but stop routes when max duration is triggered, so a reload can start them
@@ -1138,14 +1192,106 @@ public class RunPipeline {
         }
     }
 
-    private static boolean isReloadRecursive(String reload) {
-        for (String part : reload.split(",")) {
-            String dir = FileUtil.onlyPath(part);
-            if (dir != null) {
-                return true;
+    /**
+     * The folder dev mode watches for the files given on the command line, and the pattern of those files.
+     *
+     * @param directory the folder, relative to the current directory unless a file was given by its absolute path
+     * @param pattern   the files, relative to the folder
+     * @param recursive whether a file is in a sub folder of the folder
+     */
+    public record ReloadFolder(String directory, String pattern, boolean recursive) {
+    }
+
+    /**
+     * The folder to watch for the files given on the command line: the deepest folder that has all of them, with the
+     * files relative to it. The folder of the first file in another folder was watched, so a change of a file in the
+     * current directory, such as application.properties, was not seen, and ./application.properties did not match the
+     * pattern of the files (CAMEL-26930). The files in .camel-jbang, which the watch leaves out, do not widen it.
+     */
+    public static ReloadFolder reloadFolder(Collection<String> files) {
+        Path cwd = Paths.get("").toAbsolutePath();
+        Path internal = cwd.resolve(".camel-jbang");
+        List<Path> paths = new ArrayList<>();
+        boolean absolute = false;
+        Path dir = null;
+        for (String file : files) {
+            if (file == null || file.isBlank()) {
+                continue;
+            }
+            Path path = Paths.get(file.trim());
+            absolute |= path.isAbsolute();
+            path = cwd.resolve(path).normalize();
+            paths.add(path);
+            Path parent = path.getParent() != null ? path.getParent() : cwd;
+            if (!parent.startsWith(internal)) {
+                dir = dir == null ? parent : commonFolder(dir, parent);
             }
         }
-        return false;
+        if (dir == null) {
+            dir = cwd;
+        }
+        StringJoiner pattern = new StringJoiner(",");
+        boolean recursive = false;
+        for (Path path : paths) {
+            String relative = dir.relativize(path).toString().replace('\\', '/');
+            recursive |= relative.contains("/");
+            pattern.add(relative);
+        }
+        String directory = absolute ? dir.toString() : cwd.relativize(dir).toString();
+        return new ReloadFolder(directory.isEmpty() ? "." : directory, pattern.toString(), recursive);
+    }
+
+    private static Path commonFolder(Path a, Path b) {
+        Path answer = a;
+        while (answer != null && !b.startsWith(answer)) {
+            answer = answer.getParent();
+        }
+        return answer != null ? answer : a.getRoot();
+    }
+
+    /**
+     * The routes exclude pattern (camel.main.routesExcludePattern) of the --exclude patterns for the files of a source
+     * directory, or null when there are none. The files of the directory have the location file:dir/name; a pattern
+     * without a folder, such as *.xml, matches a file name in any folder, as it does for the files given by name.
+     */
+    public static String sourceDirExcludePattern(String sourceDir, List<String> excludes) {
+        if (excludes == null || excludes.isEmpty()) {
+            return null;
+        }
+        String dir = sourceDir.replace('\\', '/');
+        while (dir.length() > 1 && dir.endsWith("/")) {
+            dir = dir.substring(0, dir.length() - 1);
+        }
+        StringJoiner sj = new StringJoiner(",");
+        for (String pattern : excludes) {
+            pattern = pattern.trim().replace('\\', '/');
+            while (pattern.startsWith("./")) {
+                pattern = pattern.substring(2);
+            }
+            if (!pattern.isEmpty()) {
+                sj.add("file:" + dir + "/" + (pattern.contains("/") ? pattern : "**/" + pattern));
+            }
+        }
+        return sj.length() > 0 ? sj.toString() : null;
+    }
+
+    /**
+     * The --exclude patterns as excludes of the reload pattern, so a change of an excluded file does not load it.
+     */
+    public static String reloadExcludes(List<String> excludes) {
+        StringBuilder sb = new StringBuilder();
+        if (excludes != null) {
+            for (String pattern : excludes) {
+                pattern = pattern.trim().replace('\\', '/');
+                while (pattern.startsWith("./")) {
+                    pattern = pattern.substring(2);
+                }
+                if (!pattern.isEmpty()) {
+                    sb.append(",!").append(pattern);
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -1153,11 +1299,19 @@ public class RunPipeline {
      * the Citrus tests of the project (run with camel test run) and their data, none of them routes (CAMEL-26494), and
      * the data folders (--data-dir), whose files the routes read and write: a change there is not a change of the
      * sources, and reloading the routes for it restarts them, so they write again and reload again (CAMEL-25670).
+     * Neither are the files that a run or the tools write in the project: logs (camel dev &gt; run.log reloaded all the
+     * routes every 2 seconds, CAMEL-26930), the build output, git, and the folders of the Camel CLI and the file
+     * consumer (.camel-jbang, .camel).
      */
     public static String sourceDirReloadPattern(String dataDir) {
         StringJoiner sj = new StringJoiner(",");
         sj.add("*");
         sj.add("!test/**");
+        sj.add("!*.log");
+        sj.add("!target/**");
+        sj.add("!.git/**");
+        sj.add("!.camel/**");
+        sj.add("!.camel-jbang/**");
         if (dataDir != null) {
             for (String dir : dataDir.split(",")) {
                 dir = dir.trim().replace('\\', '/');

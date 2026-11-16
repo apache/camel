@@ -32,8 +32,8 @@ public final class AsyncProcessorHelper {
     /**
      * Calls the async version of the processor's process method and waits for it to complete before returning. This can
      * be used by {@link AsyncProcessor} objects to implement their sync version of the process method.
-     * <p/>
-     * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
+     * <p>
+     * <b>Important:</b> This method is discouraged to be used, as it's better to invoke the asynchronous
      * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever
      * possible.
      *

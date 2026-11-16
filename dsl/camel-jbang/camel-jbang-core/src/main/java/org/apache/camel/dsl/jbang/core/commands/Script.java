@@ -33,7 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 public class Script extends CamelCommand {
 
     Path filePath; // Defined only for file path completion; the field never used
-    @Argument(required = true, description = "Name of file", paramLabel = "<file>")
+    @Argument(required = true, description = "Name of file", paramLabel = "file")
     String file;
 
     @Option(name = "max-messages", description = "Max number of messages to process before stopping", defaultValue = "0")

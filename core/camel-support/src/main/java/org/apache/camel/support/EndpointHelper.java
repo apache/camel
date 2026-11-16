@@ -239,10 +239,10 @@ public final class EndpointHelper {
 
     /**
      * Matches the endpoint with the given pattern.
-     * <p/>
+     * <p>
      * The endpoint will first resolve property placeholders using
      * {@link #resolveEndpointUriPropertyPlaceholders(CamelContext, String)}
-     * <p/>
+     * <p>
      * The match rules are applied in this order:
      * <ul>
      * <li>exact match, returns true</li>
@@ -252,10 +252,10 @@ public final class EndpointHelper {
      * <li>otherwise returns false</li>
      * </ul>
      *
-     * @param  context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
+     * @param  context the Camel context, if <code>null</code> then property placeholder resolution is skipped.
      * @param  uri     the endpoint uri
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     * @return         <code>true</code> if matched, <code>false</code> otherwise.
      */
     public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
         if (context != null) {
@@ -325,7 +325,7 @@ public final class EndpointHelper {
      * Is the given parameter a reference parameter (starting with a # char)
      *
      * @param  parameter the parameter
-     * @return           <tt>true</tt> if it's a reference parameter
+     * @return           <code>true</code> if it's a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;
@@ -528,7 +528,7 @@ public final class EndpointHelper {
      * Gets the route id for the given endpoint in which there is a consumer listening.
      *
      * @param  endpoint the endpoint
-     * @return          the route id, or <tt>null</tt> if none found
+     * @return          the route id, or <code>null</code> if none found
      */
     public static String getRouteIdFromEndpoint(Endpoint endpoint) {
         if (endpoint == null || endpoint.getCamelContext() == null) {
@@ -557,7 +557,7 @@ public final class EndpointHelper {
      * Lookup the id the given endpoint has been enlisted with in the {@link org.apache.camel.spi.Registry}.
      *
      * @param  endpoint the endpoint
-     * @return          the endpoint id, or <tt>null</tt> if not found
+     * @return          the endpoint id, or <code>null</code> if not found
      */
     public static String lookupEndpointRegistryId(Endpoint endpoint) {
         if (endpoint == null || endpoint.getCamelContext() == null) {
@@ -582,10 +582,10 @@ public final class EndpointHelper {
     }
 
     /**
-     * Attempts to resolve if the url has an <tt>exchangePattern</tt> option configured
+     * Attempts to resolve if the url has an <code>exchangePattern</code> option configured
      *
      * @param  url the url
-     * @return     the exchange pattern, or <tt>null</tt> if the url has no <tt>exchangePattern</tt> configured.
+     * @return     the exchange pattern, or <code>null</code> if the url has no <code>exchangePattern</code> configured.
      */
     public static ExchangePattern resolveExchangePatternFromUrl(String url) {
         // optimize to use simple string contains check

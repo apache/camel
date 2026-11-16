@@ -43,6 +43,9 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.transfer.ArtifactNotFoundException;
+import org.eclipse.aether.transfer.RepositoryOfflineException;
 
 public final class CatalogLoader {
 
@@ -51,6 +54,21 @@ public final class CatalogLoader {
     private static final String QUARKUS_CATALOG_PROVIDER = "org.apache.camel.catalog.quarkus.QuarkusRuntimeProvider";
 
     private CatalogLoader() {
+    }
+
+    /**
+     * Whether the Maven repositories answered that the artifact does not exist, such as a Camel version that was never
+     * released. It is false when a repository could not be reached, or is offline and has not got the artifact.
+     */
+    public static boolean isArtifactNotFound(Throwable e) {
+        for (Throwable c = e; c != null; c = c.getCause()) {
+            if (c instanceof ArtifactResolutionException are) {
+                List<Exception> errors = are.getResults().stream().flatMap(r -> r.getExceptions().stream()).toList();
+                return !errors.isEmpty() && errors.stream().allMatch(
+                        x -> x instanceof ArtifactNotFoundException && !(x.getCause() instanceof RepositoryOfflineException));
+            }
+        }
+        return false;
     }
 
     public static CamelCatalog loadCatalog(String repos, String version, boolean download) throws Exception {

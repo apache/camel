@@ -39,6 +39,7 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private int backoffIdleThreshold;
     private int backoffErrorThreshold;
     private long repeatCount;
+    private volatile long healthCheckMaxPollDuration;
     private Map<String, Object> schedulerProperties;
 
     // state during running
@@ -92,6 +94,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile long lastPollTimestamp;
     private volatile long lastPollMessagesTimestamp;
     private volatile int lastPollMessagesCount;
+    // times the most recent poll (a new watch for each poll), so the health check can see a poll that does not return
+    private volatile StopWatch pollStopWatch;
 
     protected ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -213,6 +217,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                     }
 
                     // mark we are polling which should also include the begin/poll/commit
+                    // (the watch first, so whoever sees the counter sees the watch of this poll or a later one)
+                    pollStopWatch = new StopWatch();
                     pollingCounter.incrementAndGet();
                     try {
                         boolean begin = pollStrategy.begin(this, getEndpoint());
@@ -375,6 +381,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         return pollingCounter.get() > 0;
     }
 
+    /**
+     * How long the consumer has been polling, in millis: the time since the poll in progress started, or 0 if the
+     * consumer is not polling. A poll is the begin, poll and commit of the poll strategy (as {@link #isPolling()}), and
+     * each run of a greedy consumer is a poll of its own. With more than one poll in progress (the concurrentConsumers
+     * option of the scheduler), it is the time since the most recent poll started.
+     *
+     * @see   #getHealthCheckMaxPollDuration()
+     * @since 4.24
+     */
+    public long getPollingDuration() {
+        if (!isPolling()) {
+            return 0;
+        }
+        StopWatch watch = pollStopWatch;
+        return watch != null ? Math.max(0, watch.taken()) : 0;
+    }
+
     public ScheduledPollConsumerScheduler getScheduler() {
         return scheduler;
     }
@@ -497,6 +520,28 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     public void setRepeatCount(long repeatCount) {
         this.repeatCount = repeatCount;
+    }
+
+    /**
+     * How long a poll may run before the health check of the consumer reports DOWN, in millis, or 0 (the default) to
+     * not check it.
+     *
+     * @see   #getPollingDuration()
+     * @since 4.24
+     */
+    public long getHealthCheckMaxPollDuration() {
+        return healthCheckMaxPollDuration;
+    }
+
+    /**
+     * How long a poll may run before the health check of the consumer reports DOWN, in millis. The health check is
+     * otherwise based on the polls that are done, so it stays UP while a poll hangs. The poll is not interrupted. 0 or
+     * less (the default) turns this off.
+     *
+     * @since 4.24
+     */
+    public void setHealthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+        this.healthCheckMaxPollDuration = healthCheckMaxPollDuration;
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {
@@ -648,7 +693,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     /**
      * The polling method which is invoked periodically to poll this consumer
      *
-     * @return           number of messages polled, will be <tt>0</tt> if no message was polled at all.
+     * @return           number of messages polled, will be <code>0</code> if no message was polled at all.
      * @throws Exception can be thrown if an exception occurred during polling
      */
     protected abstract int poll() throws Exception;
@@ -658,7 +703,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      * {@link org.apache.camel.DynamicPollingConsumer} such as camel-file.
      *
      * @param  dynamic   the current exchange when being used from Poll and PollEnrich EIPs in dynamic mode,
-     * @return           number of messages polled, will be <tt>0</tt> if no message was polled at all.
+     * @return           number of messages polled, will be <code>0</code> if no message was polled at all.
      * @throws Exception can be thrown if an exception occurred during polling
      */
     protected int poll(Exchange dynamic) throws Exception {
@@ -783,7 +828,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     /**
      * Starts the scheduler.
-     * <p/>
+     * <p>
      * If the scheduler is already started, then this is a noop method call.
      */
     public void startScheduler() {

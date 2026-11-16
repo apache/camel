@@ -24,7 +24,7 @@ public class KeycloakEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(51);
+        Set<String> props = new HashSet<>(52);
         props.add("accessToken");
         props.add("allowOperationHeader");
         props.add("authClient");
@@ -47,6 +47,7 @@ public class KeycloakEndpointUriFactory extends org.apache.camel.support.compone
         props.add("exchangePattern");
         props.add("first");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("introspectionCacheEnabled");
         props.add("introspectionCacheTtl");

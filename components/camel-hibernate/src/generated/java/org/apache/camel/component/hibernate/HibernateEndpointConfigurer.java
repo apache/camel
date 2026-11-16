@@ -41,6 +41,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filters": target.setFilters(property(camelContext, java.util.Map.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -105,6 +107,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filters": return java.util.Map.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -170,6 +174,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": return target.getExchangePattern();
         case "filters": return target.getFilters();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":

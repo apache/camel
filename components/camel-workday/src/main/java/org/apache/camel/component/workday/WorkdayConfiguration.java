@@ -59,15 +59,15 @@ public class WorkdayConfiguration {
     @Metadata(required = true)
     private String tokenRefresh;
 
-    @UriParam(label = "host", description = "Workday Host name.")
+    @UriParam(label = "common", description = "Workday Host name.")
     @Metadata(required = true)
     private String host;
 
-    @UriParam(label = "tenant", description = "Workday Tenant name.")
+    @UriParam(label = "common", description = "Workday Tenant name.")
     @Metadata(required = true)
     private String tenant;
 
-    @UriParam(label = "format", description = "Workday Report as a service output format.", enums = "json",
+    @UriParam(label = "common", description = "Workday Report as a service output format.", enums = "json",
               defaultValue = "json")
     private String reportFormat = "json";
 

@@ -171,6 +171,21 @@ public interface TahuEdgeEndpointBuilderFactory {
             return this;
         }
         /**
+         * ID of each device connected to this edge node, as a comma-separated
+         * list. Applies to the edge node endpoint only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param deviceIds the value to set
+         * @return the dsl builder
+         */
+        default TahuEdgeEndpointBuilder deviceIds(String deviceIds) {
+            doSetProperty("deviceIds", deviceIds);
+            return this;
+        }
+        /**
          * Tahu SparkplugBPayloadMap to configure metric data types for this
          * edge node or device. Note that this payload is used exclusively as a
          * Sparkplug B spec-compliant configuration for all possible edge node
@@ -213,26 +228,12 @@ public interface TahuEdgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * ID of each device connected to this edge node, as a comma-separated
-         * list.
+         * Host ID of the primary host application for this edge node. Applies
+         * to the edge node endpoint only.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer (edge node only)
-         * 
-         * @param deviceIds the value to set
-         * @return the dsl builder
-         */
-        default TahuEdgeEndpointBuilder deviceIds(String deviceIds) {
-            doSetProperty("deviceIds", deviceIds);
-            return this;
-        }
-        /**
-         * Host ID of the primary host application for this edge node.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (edge node only)
+         * Group: producer
          * 
          * @param primaryHostId the value to set
          * @return the dsl builder
@@ -311,6 +312,60 @@ public interface TahuEdgeEndpointBuilderFactory {
             return (TahuEdgeEndpointBuilder) this;
         }
 
+        /**
+         * To use a specific org.eclipse.tahu.message.BdSeqManager
+         * implementation to manage edge node birth-death sequence numbers.
+         * Applies to the edge node endpoint only.
+         * 
+         * The option is a: <code>org.eclipse.tahu.message.BdSeqManager</code>
+         * type.
+         * 
+         * Default: org.apache.camel.component.tahu.CamelBdSeqManager
+         * Group: producer (advanced)
+         * 
+         * @param bdSeqManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTahuEdgeEndpointBuilder bdSeqManager(org.eclipse.tahu.message.BdSeqManager bdSeqManager) {
+            doSetProperty("bdSeqManager", bdSeqManager);
+            return this;
+        }
+        /**
+         * To use a specific org.eclipse.tahu.message.BdSeqManager
+         * implementation to manage edge node birth-death sequence numbers.
+         * Applies to the edge node endpoint only.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.tahu.message.BdSeqManager</code> type.
+         * 
+         * Default: org.apache.camel.component.tahu.CamelBdSeqManager
+         * Group: producer (advanced)
+         * 
+         * @param bdSeqManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTahuEdgeEndpointBuilder bdSeqManager(String bdSeqManager) {
+            doSetProperty("bdSeqManager", bdSeqManager);
+            return this;
+        }
+        /**
+         * Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files.
+         * This path will contain files named as -bdSeqNum and must be writable
+         * by the executing process' user. Applies to the edge node endpoint
+         * only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ${sys:java.io.tmpdir}/CamelTahuTemp
+         * Group: producer (advanced)
+         * 
+         * @param bdSeqNumPath the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTahuEdgeEndpointBuilder bdSeqNumPath(String bdSeqNumPath) {
+            doSetProperty("bdSeqNumPath", bdSeqNumPath);
+            return this;
+        }
         /**
          * To use a custom HeaderFilterStrategy to filter headers used as
          * Sparkplug metrics. Default value notice: Defaults to sending all
@@ -394,63 +449,13 @@ public interface TahuEdgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific org.eclipse.tahu.message.BdSeqManager
-         * implementation to manage edge node birth-death sequence numbers.
-         * 
-         * The option is a: <code>org.eclipse.tahu.message.BdSeqManager</code>
-         * type.
-         * 
-         * Default: org.apache.camel.component.tahu.CamelBdSeqManager
-         * Group: advanced
-         * 
-         * @param bdSeqManager the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTahuEdgeEndpointBuilder bdSeqManager(org.eclipse.tahu.message.BdSeqManager bdSeqManager) {
-            doSetProperty("bdSeqManager", bdSeqManager);
-            return this;
-        }
-        /**
-         * To use a specific org.eclipse.tahu.message.BdSeqManager
-         * implementation to manage edge node birth-death sequence numbers.
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.tahu.message.BdSeqManager</code> type.
-         * 
-         * Default: org.apache.camel.component.tahu.CamelBdSeqManager
-         * Group: advanced
-         * 
-         * @param bdSeqManager the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTahuEdgeEndpointBuilder bdSeqManager(String bdSeqManager) {
-            doSetProperty("bdSeqManager", bdSeqManager);
-            return this;
-        }
-        /**
-         * Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files.
-         * This path will contain files named as -bdSeqNum and must be writable
-         * by the executing process' user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: ${sys:java.io.tmpdir}/CamelTahuTemp
-         * Group: advanced
-         * 
-         * @param bdSeqNumPath the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTahuEdgeEndpointBuilder bdSeqNumPath(String bdSeqNumPath) {
-            doSetProperty("bdSeqNumPath", bdSeqNumPath);
-            return this;
-        }
-        /**
-         * Flag enabling support for metric aliases.
+         * Flag enabling support for metric aliases. Applies to the edge node
+         * endpoint only.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: producer (advanced)
          * 
          * @param useAliases the value to set
          * @return the dsl builder
@@ -460,12 +465,13 @@ public interface TahuEdgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Flag enabling support for metric aliases.
+         * Flag enabling support for metric aliases. Applies to the edge node
+         * endpoint only.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: producer (advanced)
          * 
          * @param useAliases the value to set
          * @return the dsl builder
@@ -507,7 +513,7 @@ public interface TahuEdgeEndpointBuilderFactory {
          * ID of the edge node
          * 
          * Path parameter: deviceId
-         * ID of this edge node device
+         * ID of this edge node device. Applies to the device endpoint only.
          * 
          * @param path groupId/edgeNode
          * @return the dsl builder
@@ -532,7 +538,7 @@ public interface TahuEdgeEndpointBuilderFactory {
          * ID of the edge node
          * 
          * Path parameter: deviceId
-         * ID of this edge node device
+         * ID of this edge node device. Applies to the device endpoint only.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
