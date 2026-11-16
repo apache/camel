@@ -883,6 +883,12 @@ As all the above information is standard JMS, you can check the
 http://java.sun.com/javaee/5/docs/api/javax/jms/Message.html[JMS
 documentation] for further details.
 
+When `pollEnrich` or a `ConsumerTemplate` receives a message from a JMS endpoint, Camel reads the body and the
+headers of the message before it closes the JMS consumer and session, as a JMS client may not read the message after
+that (the ActiveMQ Artemis client streams the body of a large message through the consumer). The whole body is read at
+once (with `artemisStreamingEnabled`, into a stream cache). If the body cannot be read, the receive fails, and with
+`transacted=true` the message is rolled back.
+
 === About using Camel to send and receive messages and JMSReplyTo
 
 The JMS component is complex, and you have to pay close attention to how

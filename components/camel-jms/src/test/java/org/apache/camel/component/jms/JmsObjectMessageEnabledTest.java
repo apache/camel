@@ -24,7 +24,6 @@ import jakarta.jms.ObjectMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -35,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -100,11 +98,9 @@ public class JmsObjectMessageEnabledTest extends AbstractJMSTest {
             return msg;
         });
 
-        // Reading the body via Camel should fail because objectMessageEnabled=false
-        Exchange exchange = consumer.receive("activemq:JmsObjectMessageEnabledTest.consumer", 5000);
-        assertNotNull(exchange, "Should have received the exchange wrapper");
+        // Receiving via Camel should fail because objectMessageEnabled=false (the receive reads the body)
         IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> exchange.getIn().getBody());
+                () -> consumer.receive("activemq:JmsObjectMessageEnabledTest.consumer", 5000));
         assertTrue(ex.getMessage().contains("objectMessageEnabled=true"),
                 "Expected guidance to enable objectMessageEnabled=true, got: " + ex.getMessage());
     }

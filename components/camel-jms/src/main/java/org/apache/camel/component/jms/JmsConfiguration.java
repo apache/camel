@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.function.Function;
+
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Destination;
 import jakarta.jms.ExceptionListener;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
 import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
 
@@ -33,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
+import org.springframework.jms.connection.JmsResourceHolder;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -44,6 +48,7 @@ import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 import org.springframework.util.ErrorHandler;
 
@@ -676,6 +681,61 @@ public class JmsConfiguration implements Cloneable {
             if (session.getTransacted() && isSessionLocallyTransacted(session)) {
                 // Transacted session created by this template -> commit.
                 JmsUtils.commitIfNecessary(session);
+            }
+        }
+
+        /**
+         * Receives a message from the default destination, and applies the function to it before the message is
+         * acknowledged (or the session committed) and before the consumer and the session are closed.
+         * <p/>
+         * {@link #receiveSelected(String)} returns the message after the consumer and the session are closed, when a
+         * JMS client may no longer read it: the Apache Artemis client streams the body of a large message through the
+         * consumer. If the function fails, the message is not acknowledged and the session is not committed.
+         *
+         * @param  messageSelector the message selector, or <tt>null</tt> for none
+         * @param  function        the function to apply to the received message
+         * @return                 the result of the function, or <tt>null</tt> if no message was received within the
+         *                         receive timeout
+         */
+        public <T> T receiveSelectedAndApply(final String messageSelector, final Function<Message, T> function)
+                throws JmsException {
+            return execute(session -> {
+                Destination destination = getDefaultDestination();
+                if (destination == null) {
+                    String destinationName = getDefaultDestinationName();
+                    if (destinationName == null) {
+                        throw new IllegalStateException(
+                                "No 'defaultDestination' or 'defaultDestinationName' specified. Check configuration of JmsTemplate.");
+                    }
+                    destination = resolveDestinationName(session, destinationName);
+                }
+                return doReceiveAndApply(session, createConsumer(session, destination, messageSelector), function);
+            }, true);
+        }
+
+        private <T> T doReceiveAndApply(Session session, MessageConsumer consumer, Function<Message, T> function)
+                throws JMSException {
+            try {
+                // use the transaction timeout (if available), as JmsTemplate does
+                long timeout = getReceiveTimeout();
+                ConnectionFactory connectionFactory = getConnectionFactory();
+                JmsResourceHolder resourceHolder = null;
+                if (connectionFactory != null) {
+                    resourceHolder = (JmsResourceHolder) TransactionSynchronizationManager.getResource(connectionFactory);
+                }
+                if (resourceHolder != null && resourceHolder.hasTimeout()) {
+                    timeout = Math.min(timeout, resourceHolder.getTimeToLiveInMillis());
+                }
+                Message message = receiveFromConsumer(consumer, timeout);
+                T answer = message != null ? function.apply(message) : null;
+                if (session.getTransacted()) {
+                    commitIfNecessary(session);
+                } else if (message != null && isClientAcknowledge(session)) {
+                    message.acknowledge();
+                }
+                return answer;
+            } finally {
+                JmsUtils.closeMessageConsumer(consumer);
             }
         }
 
