@@ -49,6 +49,7 @@ import org.mockito.ArgumentCaptor;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -919,11 +920,8 @@ public class ServiceBusConsumerTest {
     }
 
     private static void awaitState(Thread thread, Thread.State state) {
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-        while (thread.getState() != state) {
-            assertThat(System.nanoTime()).as("thread %s in state %s", thread.getName(), state).isLessThan(deadline);
-            Thread.onSpinWait();
-        }
+        await("thread " + thread.getName() + " in state " + state).atMost(10, TimeUnit.SECONDS)
+                .until(() -> thread.getState() == state);
     }
 
     @Test

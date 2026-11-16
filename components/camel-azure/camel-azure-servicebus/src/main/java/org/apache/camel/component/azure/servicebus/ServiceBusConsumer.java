@@ -176,9 +176,11 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     /**
      * Holds a message delivered during a graceful stop, without routing or settling it: the processor client delivers
-     * the next message only when processMessage returns, so at most maxConcurrentCalls messages are held (the SDK
-     * renews their lock while they are held). They are released when the stop has closed the client: Service Bus
-     * delivers a held message again once its lock expires.
+     * the next message only when processMessage returns, so at most maxConcurrentCalls messages are held (per session
+     * with sessions). The SDK renews their lock while they are held, up to maxAutoLockRenewDuration: with 0 the lock of
+     * a held message can expire during the graceful wait, and Service Bus then delivers it again to a free call, where
+     * it is held again (one more delivery count each time). They are released when the stop has closed the client:
+     * Service Bus delivers a held message again once its lock expires.
      */
     private static void holdUntilStopped(CountDownLatch stop) {
         try {
