@@ -200,14 +200,19 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             while (isRunAllowed()) {
 
                 byte[] data = null;
-                try {
-                    data = is.readAllBytes();
-                } catch (IOException e) {
-                    // ignore
+                if (is != null) {
+                    try {
+                        data = is.readAllBytes();
+                    } catch (IOException e) {
+                        // ignore
+                    }
                 }
                 boolean eos = data == null || data.length == 0;
 
-                if (isRunAllowed() && endpoint.isRetry()) {
+                if (!eos && isRunAllowed()) {
+                    // a scanned stream is never complete
+                    index = processRaw(data, index, false);
+                } else if (eos && isRunAllowed() && endpoint.isRetry()) {
                     boolean reOpen = true;
                     if (endpoint.isFileWatcher()) {
                         reOpen = watchFileChanged;
@@ -237,12 +242,12 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else {
             // regular read stream once until end of stream
             boolean eos = false;
-            byte[] data = null;
             while (!eos && isRunAllowed()) {
                 if (endpoint.getPromptMessage() != null) {
                     doPromptMessage();
                 }
 
+                byte[] data = null;
                 try {
                     data = is.readAllBytes();
                 } catch (IOException e) {
@@ -250,7 +255,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 }
                 eos = data == null || data.length == 0;
                 if (!eos) {
-                    processRaw(data, index);
+                    index = processRaw(data, index);
                 }
             }
         }
@@ -372,9 +377,13 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
      * Strategy method for processing the data
      */
     protected long processRaw(byte[] body, long index) throws Exception {
+        return processRaw(body, index, true);
+    }
+
+    private long processRaw(byte[] body, long index, boolean last) throws Exception {
         lock.lock();
         try {
-            Exchange exchange = createExchange(body, index++, true);
+            Exchange exchange = createExchange(body, index++, last);
             getProcessor().process(exchange);
             return index;
         } finally {

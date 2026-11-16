@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
                                    byOption = @BodyType.When(option = "readLine", value = "false", carriers = Carrier.BYTES,
                                                              javaType = "byte[]"),
                                    description = "Each line of the stream as text. With groupLines, a List of the lines; with"
-                                                 + " readLine=false, all the bytes of the stream"),
+                                                 + " readLine=false, all the bytes of the stream (with scanStream,"
+                                                 + " the bytes read in one scan)"),
            producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "Text in the encoding, or bytes, a stream or a file as bytes, followed by a new"
                                                 + " line; no body writes nothing. A Map or a POJO is written as its toString()"
@@ -311,7 +312,7 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     /**
      * Whether to read the input stream in line mode (terminate by line breaks). Setting this to false, will instead
-     * read the entire stream until EOL.
+     * read the entire stream until EOL. With scanStream, each exchange holds the bytes read in one scan.
      */
     public void setReadLine(boolean readLine) {
         this.readLine = readLine;
