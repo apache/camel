@@ -108,7 +108,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     private static final String DEFAULT_ENGINE = "secret";
     private CamelContext camelContext;
     private volatile VaultTemplate client;
-    // the client the function created, which it closes on stop (a client given to the function is not closed)
+    // the client the function created (when it starts, or from the settings it is given), which it closes on stop: a
+    // VaultTemplate given to the function is not closed
     private HashicorpVaultClient vaultClient;
     private final Set<String> secrets = ConcurrentHashMap.newKeySet();
     private final Map<String, Integer> secretVersions = new ConcurrentHashMap<>();
@@ -123,6 +124,26 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     public HashicorpVaultPropertiesFunction(VaultTemplate client) {
         super();
         this.client = client;
+    }
+
+    /**
+     * A function that reads the secrets without a CamelContext, such as to resolve properties before the context
+     * exists. It reads them as the function of the CamelContext does with these settings, also in the namespace on
+     * HashiCorp Cloud, with a client for a short use of its own (see
+     * {@link HashicorpVaultClient#create(HashicorpVaultClientSettings)}). Stopping the function closes the client, also
+     * when the function was not started.
+     *
+     * @param  settings                 where Vault is and how to log in to it
+     * @throws IllegalArgumentException when the settings are incomplete or not valid
+     * @since                           4.24
+     */
+    public HashicorpVaultPropertiesFunction(HashicorpVaultClientSettings settings) {
+        this(HashicorpVaultClient.create(settings), settings);
+    }
+
+    private HashicorpVaultPropertiesFunction(HashicorpVaultClient vaultClient, HashicorpVaultClientSettings settings) {
+        this(vaultClient.getVaultTemplate(), settings.isCloud(), settings.getNamespace());
+        this.vaultClient = vaultClient;
     }
 
     HashicorpVaultPropertiesFunction(VaultTemplate client, boolean cloud, String namespace) {

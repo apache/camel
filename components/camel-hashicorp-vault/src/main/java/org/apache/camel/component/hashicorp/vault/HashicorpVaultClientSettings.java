@@ -81,8 +81,9 @@ public final class HashicorpVaultClientSettings {
     private String azureClientId;
 
     /**
-     * The settings of the properties function and the secret refresh task: from the CAMEL_HASHICORP_VAULT_* environment
-     * variables when one of them is set, else from the vault configuration.
+     * The settings of the properties function and the secret refresh task, and of the early resolution of properties of
+     * Camel on Spring Boot: from the CAMEL_HASHICORP_VAULT_* environment variables when one of them is set, else from
+     * the vault configuration.
      *
      * @param  configuration the vault configuration (camel.vault.hashicorp), may be null
      * @return               the settings
@@ -125,14 +126,12 @@ public final class HashicorpVaultClientSettings {
 
     /**
      * The settings of the vault configuration (camel.vault.hashicorp) alone, without the CAMEL_HASHICORP_VAULT_*
-     * environment variables of the properties function: such as for Camel on Spring Boot, which binds the vault
-     * configuration itself.
+     * environment variables.
      *
      * @param  configuration the vault configuration
      * @return               the settings
-     * @since                4.24
      */
-    public static HashicorpVaultClientSettings fromConfiguration(HashicorpVaultConfiguration configuration) {
+    static HashicorpVaultClientSettings fromConfiguration(HashicorpVaultConfiguration configuration) {
         HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
         settings.setHost(configuration.getHost());
         settings.setPort(configuration.getPort());
