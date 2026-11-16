@@ -144,8 +144,9 @@ The same options are available on the management server as `camel.management.jwt
 Vert.x only uses the keys of the JWT keystore whose alias is the name of a JWT algorithm: `HS256`, `HS384`, `HS512`,
 `RS256`, `RS384`, `RS512`, `ES256K`, `ES256`, `ES384` or `ES512`. A key stored under another alias, such as the
 `keycloak` alias of a Keycloak realm export, is not used, and every signed token is then rejected with HTTP 401
-(`JWT is in unsecured mode but token is signed`). The server logs a warning at startup when the keystore has no such
-alias. Rename the alias of the key to its algorithm, for example:
+(`JWT is in unsecured mode but token is signed`). The server therefore fails to start when the keystore has no such
+alias, or when the key under it cannot be read with the keystore password (`jwtKeystorePassword`).
+Rename the alias of the key to its algorithm, for example:
 
 [source,bash]
 ----

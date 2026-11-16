@@ -16,45 +16,99 @@
  */
 package org.apache.camel.component.platform.http.main.authentication;
 
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyStore;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JWTKeystoreAliasesTest {
 
+    private static final String PASSWORD = "secret";
+
+    @TempDir
+    Path dir;
+
     @Test
-    void noWarningForAnAliasNamedAfterAnAlgorithm() throws Exception {
+    void validKeystoreStarts() throws Exception {
         // a PKCS12 keystore stores the alias in lower case, as hs256
-        assertThat(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("HS256"), "camel.server",
-                "keystore.p12")).isNull();
+        Path file = writeKeystore("PKCS12", PASSWORD, "HS256");
+
+        assertThatCode(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey("PKCS12", file.toString(), PASSWORD,
+                "camel.server")).doesNotThrowAnyException();
     }
 
     @Test
-    void noWarningWhenOneOfTheAliasesIsNamedAfterAnAlgorithm() throws Exception {
-        assertThat(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak", "HS512"),
-                "camel.server", "keystore.p12")).isNull();
+    void oneAliasNamedAfterAnAlgorithmIsEnough() throws Exception {
+        Path file = writeKeystore("PKCS12", PASSWORD, "keycloak", "HS512");
+
+        assertThatCode(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey("PKCS12", file.toString(), PASSWORD,
+                "camel.server")).doesNotThrowAnyException();
     }
 
     @Test
-    void warningForAnAliasNotNamedAfterAnAlgorithm() throws Exception {
-        String warning = JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak"),
-                "camel.management", "keystore.p12");
+    void noAliasNamedAfterAnAlgorithmFails() throws Exception {
+        Path file = writeKeystore("PKCS12", PASSWORD, "keycloak");
 
-        assertThat(warning).isNotNull()
-                .contains("keystore.p12", "camel.management.jwtKeystorePath", "keycloak", "RS256");
+        assertThatThrownBy(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey("PKCS12", file.toString(),
+                PASSWORD, "camel.management"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(file.toString())
+                .hasMessageContaining("camel.management.jwtKeystorePath")
+                .hasMessageContaining("keycloak")
+                .hasMessageContaining("RS256");
     }
 
-    private static KeyStore keyStoreWith(String... aliases) throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+    @Test
+    void keyWithAnotherPasswordThanTheKeystoreFails() throws Exception {
+        // JCEKS keeps a password per key, so the key can have another password than the keystore
+        Path file = writeKeystore("JCEKS", "another", "HS256");
+
+        assertThatThrownBy(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey("JCEKS", file.toString(),
+                PASSWORD, "camel.server"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("has no key that Vert.x can use");
+    }
+
+    @Test
+    void typeNotSetIsStillChecked() throws Exception {
+        // the default keystore type of Java is PKCS12
+        Path file = writeKeystore("PKCS12", PASSWORD, "keycloak");
+
+        assertThatThrownBy(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey(null, file.toString(), PASSWORD,
+                "camel.server"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("keycloak");
+    }
+
+    @Test
+    void keystoreNotFoundFails() {
+        String missing = dir.resolve("missing.p12").toString();
+
+        assertThatThrownBy(() -> JWTAuthenticationConfigurer.assertJwtKeystoreHasKey("PKCS12", missing, PASSWORD,
+                "camel.server"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("is not found");
+    }
+
+    private Path writeKeystore(String type, String keyPassword, String... aliases) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance(type);
         keyStore.load(null, null);
         for (String alias : aliases) {
             keyStore.setEntry(alias, new KeyStore.SecretKeyEntry(new SecretKeySpec(new byte[32], "HmacSHA256")),
-                    new KeyStore.PasswordProtection("secret".toCharArray()));
+                    new KeyStore.PasswordProtection(keyPassword.toCharArray()));
         }
-        return keyStore;
+        Path file = dir.resolve("keystore." + type.toLowerCase());
+        try (OutputStream out = Files.newOutputStream(file)) {
+            keyStore.store(out, PASSWORD.toCharArray());
+        }
+        return file;
     }
 }

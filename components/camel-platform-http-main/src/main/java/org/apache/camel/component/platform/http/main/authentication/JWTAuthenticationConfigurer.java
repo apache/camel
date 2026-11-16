@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collections;
@@ -38,12 +39,8 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JWTAuthenticationConfigurer.class);
 
     // the aliases Vert.x looks up in a JWT keystore, one per algorithm
     // (io.vertx.ext.auth.impl.jose.JWK#load in vertx-auth-common 5.2.3: check it when upgrading Vert.x)
@@ -61,7 +58,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         assertIssuerOrAudienceConfigured(properties.getJwtAudience(), properties.getJwtIssuer(),
                 properties.isJwtAllowMissingIssuerAndAudience(), "camel.server");
 
-        warnIfNoJwtAlias(properties.getJwtKeystoreType(), properties.getJwtKeystorePath(),
+        assertJwtKeystoreHasKey(properties.getJwtKeystoreType(), properties.getJwtKeystorePath(),
                 properties.getJwtKeystorePassword(), "camel.server");
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
@@ -104,7 +101,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         assertIssuerOrAudienceConfigured(properties.getJwtAudience(), properties.getJwtIssuer(),
                 properties.isJwtAllowMissingIssuerAndAudience(), "camel.management");
 
-        warnIfNoJwtAlias(properties.getJwtKeystoreType(), properties.getJwtKeystorePath(),
+        assertJwtKeystoreHasKey(properties.getJwtKeystoreType(), properties.getJwtKeystorePath(),
                 properties.getJwtKeystorePassword(), "camel.management");
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
@@ -137,46 +134,69 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
     }
 
     /**
-     * Vert.x only uses the keys whose alias is the name of a JWT algorithm, such as RS256. A keystore without such an
-     * alias loads fine, but then every signed token fails, so warn at startup.
+     * Vert.x only uses the keys whose alias is the name of a JWT algorithm, such as RS256, and reads them with the
+     * keystore password. A keystore without such a key loads fine, but then every signed token is rejected, so fail at
+     * startup.
      */
-    private static void warnIfNoJwtAlias(String type, String path, String password, String configPrefix) {
+    static void assertJwtKeystoreHasKey(String type, String path, String password, String configPrefix) {
         if (path == null) {
             return;
         }
+        KeyStore keyStore = loadKeystore(type, path, password, configPrefix);
+        String error = checkJwtKeystoreKeys(keyStore, password, configPrefix, path);
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+    }
+
+    private static KeyStore loadKeystore(String type, String path, String password, String configPrefix) {
         try (InputStream is = openKeystore(path)) {
             if (is == null) {
-                // Vert.x reports a keystore it cannot read
-                return;
+                throw new IllegalArgumentException(
+                        "The JWT keystore " + path + " (" + configPrefix + ".jwtKeystorePath) is not found as a file"
+                                                   + " or on the classpath.");
             }
-            KeyStore keyStore = KeyStore.getInstance(type);
+            // Vert.x uses the default keystore type when none is set
+            KeyStore keyStore = KeyStore.getInstance(type != null ? type : KeyStore.getDefaultType());
             keyStore.load(is, password != null ? password.toCharArray() : null);
-            String warning = checkJwtKeystoreAliases(keyStore, configPrefix, path);
-            if (warning != null) {
-                LOG.warn(warning);
-            }
-        } catch (Exception e) {
-            LOG.debug("Cannot read the JWT keystore {} to check its aliases", path, e);
+            return keyStore;
+        } catch (IOException | GeneralSecurityException e) {
+            throw new IllegalArgumentException(
+                    "Cannot load the JWT keystore " + path + " (" + configPrefix + ".jwtKeystorePath, " + configPrefix
+                                               + ".jwtKeystoreType and " + configPrefix + ".jwtKeystorePassword): "
+                                               + e.getMessage(),
+                    e);
         }
     }
 
     /**
-     * Returns the warning for a keystore that has no key under an alias Vert.x uses, or null when it has one.
+     * Returns the error for a keystore that has no key Vert.x can use, or null when it has one.
      */
-    static String checkJwtKeystoreAliases(KeyStore keyStore, String configPrefix, String path)
-            throws KeyStoreException {
-        List<String> aliases = Collections.list(keyStore.aliases());
-        for (String alias : aliases) {
-            // the aliases of a PKCS12 or JKS keystore are not case-sensitive
-            if (JWT_KEYSTORE_ALIASES.stream().anyMatch(alias::equalsIgnoreCase)) {
-                return null;
+    static String checkJwtKeystoreKeys(KeyStore keyStore, String password, String configPrefix, String path) {
+        KeyStore.PasswordProtection protection
+                = new KeyStore.PasswordProtection(password != null ? password.toCharArray() : null);
+        for (String algorithm : JWT_KEYSTORE_ALIASES) {
+            try {
+                // as Vert.x does; the alias lookup of a JKS or PKCS12 keystore ignores case
+                if (keyStore.getEntry(algorithm, protection) != null) {
+                    return null;
+                }
+            } catch (Exception e) {
+                // Vert.x skips an entry it cannot read, such as a key with another password
             }
         }
-        return "The JWT keystore " + path + " (" + configPrefix
-               + ".jwtKeystorePath) has no key under an alias named after a JWT"
-               + " algorithm (" + String.join(", ", JWT_KEYSTORE_ALIASES) + "), so signed tokens cannot be verified."
-               + " Aliases found: " + aliases + ". Rename the alias of the key to its algorithm, for example with"
-               + " keytool -changealias -alias <alias> -destalias RS256.";
+        String aliases;
+        try {
+            aliases = Collections.list(keyStore.aliases()).toString();
+        } catch (KeyStoreException e) {
+            aliases = "unknown";
+        }
+        return "The JWT keystore " + path + " (" + configPrefix + ".jwtKeystorePath) has no key that Vert.x can use:"
+               + " it only reads the keys whose alias is the name of a JWT algorithm ("
+               + String.join(", ", JWT_KEYSTORE_ALIASES) + "), with the keystore password (" + configPrefix
+               + ".jwtKeystorePassword). Aliases found: " + aliases + ". Rename the alias of the key to the algorithm"
+               + " of the key, for example RS256 for an RSA key, with keytool -changealias -alias <alias>"
+               + " -destalias RS256.";
     }
 
     private static InputStream openKeystore(String path) throws IOException {
@@ -184,7 +204,10 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         if (Files.isRegularFile(file)) {
             return Files.newInputStream(file);
         }
-        return JWTAuthenticationConfigurer.class.getClassLoader().getResourceAsStream(path);
+        // as Vert.x does: the thread context class loader first, then the own one
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        InputStream is = tccl != null ? tccl.getResourceAsStream(path) : null;
+        return is != null ? is : JWTAuthenticationConfigurer.class.getClassLoader().getResourceAsStream(path);
     }
 
     /**
