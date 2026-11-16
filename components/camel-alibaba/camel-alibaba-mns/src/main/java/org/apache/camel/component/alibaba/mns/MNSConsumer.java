@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.aliyun.mns.client.CloudQueue;
+import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.model.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -49,9 +50,9 @@ public class MNSConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         MNSEndpoint endpoint = getEndpoint();
-        endpoint.initClient();
+        MNSClient client = endpoint.initClient();
 
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(endpoint.getQueueName());
+        CloudQueue queue = client.getQueueRef(endpoint.getQueueName());
         List<Message> messages = receiveMessages(queue, endpoint.getMaxMessagesPerPoll(), endpoint.getWaitSeconds());
 
         forceConsumerAsReady();
