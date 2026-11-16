@@ -51,6 +51,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 class SemanticAuditTest {
+    @Test
+    void theMemoryStoreLosesItsRecordsWhenTheApplicationStops() {
+        assertThat(new MemorySemanticAuditStore(10).isInMemory()).isTrue();
+    }
+
     @ParameterizedTest
     @CsvSource({
             "false,inherit,false", "false,true,true", "false,false,false", "true,inherit,true", "true,true,true",
