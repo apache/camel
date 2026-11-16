@@ -38,23 +38,25 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-// writes ./application.properties in the module directory, which the exports of the tests in the other forks read
-@UsesWorkingDirectory
 class ExportMainApplicationPropertiesTest {
 
     private File workingDir;
-    private File profile = new File(".", "application.properties");
+    private File baseDir;
+    private File profile;
 
     @BeforeEach
     public void setup() throws IOException {
         workingDir = Files.createTempDirectory("camel-export").toFile();
+        // a base directory of its own: the application.properties of the module directory is shared with the other forks
+        baseDir = Files.createTempDirectory("camel-export-base").toFile();
+        profile = new File(baseDir, "application.properties");
     }
 
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
         FileUtil.removeDir(workingDir);
-        FileUtil.deleteFile(profile);
+        FileUtil.removeDir(baseDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -96,6 +98,7 @@ class ExportMainApplicationPropertiesTest {
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());

@@ -47,6 +47,8 @@ plugin org.apache.maven.plugins:maven-failsafe-plugin
 
 # application.properties
 camel.main.name=hello
+quarkus.http.port=0
+quarkus.management.port=0
 camel.main.dev-console-enabled=true
 camel.main.profile=dev
 
