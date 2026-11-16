@@ -143,6 +143,22 @@ a failure, as the JPA specification leaves them after a rollback. A route that h
 `onException` and `handled(true)`, or `doCatch`) and goes on using them can no longer load their lazy associations,
 and the next JPA step of the exchange uses a new `EntityManager`.
 
+=== camel-jpa - skipLockedEntity skips a locked entity with SKIP LOCKED on Hibernate
+
+With `skipLockedEntity=true`, Hibernate and a pessimistic `lockModeType` (the default `PESSIMISTIC_WRITE`), the consumer
+now locks each entity with a select of the entity with `SKIP LOCKED`, instead of `EntityManager.lock` with the
+`jakarta.persistence.lock.timeout` hint `0` (`NOWAIT`). The select returns no row for an entity that another transaction
+holds, and the consumer skips the entity.
+
+On PostgreSQL, the consumer now skips the locked entity and commits the poll. Before, the failed `NOWAIT` lock aborted the
+transaction, the poll was rolled back, and the entities that it had routed before the locked one were routed again by
+the next poll, for as long as the other transaction held the lock.
+
+On every database, an entity that another consumer has consumed (deleted) since the poll listed it is now skipped.
+Before, its lock failed with an `OptimisticLockException`, and the poll was rolled back.
+
+Other JPA providers, and the optimistic lock modes, are not affected.
+
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
 `writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with

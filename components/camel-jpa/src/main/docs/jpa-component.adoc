@@ -131,11 +131,11 @@ session `idle in transaction`, with its locks, until TCP keepalive gives up on t
 defaults of Linux. A socket timeout of the JDBC driver ends the poll, but not its wait on the database: each poll leaves
 one more session waiting for the lock.
 
-The consumer waits for at most `lockTimeout`, or not at all with `skipLockedEntity=true`. The JPA provider applies
-`lockTimeout` if it can with the database: Hibernate 7.4, for one, sets `lock_timeout` for the lock on PostgreSQL, so the
-database itself cancels the wait.
+The consumer waits for at most `lockTimeout`, or not at all with `skipLockedEntity=true` (see below). The JPA
+provider applies `lockTimeout` if it can with the database: Hibernate 7.4, for one, sets `lock_timeout` for the lock on
+PostgreSQL, so the database itself cancels the wait.
 
-What happens to a lock that the consumer does not get depends on the database:
+What happens to a lock that the consumer does not get in time depends on the database:
 
 * When the transaction can go on, the JPA provider reports a `LockTimeoutException`: the consumer skips the entity and
 routes the next one.
@@ -150,6 +150,26 @@ Either way, a later poll consumes the locked entity once its lock is released. T
 does not end, set a timeout on the database, such as `idle_in_transaction_session_timeout` on PostgreSQL, which ends such
 a session. Set it above the time a poll takes to route its entities: while the route runs, the session of the poll is
 idle in transaction too.
+
+==== Skipping the locked entities
+
+With `skipLockedEntity=true`, the consumer skips an entity that another transaction holds, instead of waiting for its
+lock, and routes the next one. This lets several consumers share the same table: each one skips the entities that the
+others are consuming.
+
+With Hibernate, and a pessimistic `lockModeType` (`PESSIMISTIC_WRITE`, `PESSIMISTIC_READ` or
+`PESSIMISTIC_FORCE_INCREMENT`), the consumer locks the entity with a select of the entity with `SKIP LOCKED` (with
+`PESSIMISTIC_WRITE` on PostgreSQL, `SELECT ... FOR NO KEY UPDATE OF ... SKIP LOCKED`), where the database supports it:
+PostgreSQL, MySQL, Oracle and H2, among others. The select returns no row for a locked entity, which is no error, so the poll goes on and
+commits the entities it consumed, also on PostgreSQL. An entity that another consumer has consumed since the poll listed
+it is skipped too.
+
+Otherwise, with another JPA provider or an optimistic `lockModeType`, the consumer gives the lock the
+`jakarta.persistence.lock.timeout` hint `0` (`NOWAIT`), and a lock that it does not get is handled as one that times out
+(see above): on PostgreSQL the poll is rolled back. OpenJPA 4.1 does not apply `NOWAIT`: it applies the lock timeout as
+the query timeout of JDBC, where `0` sets no timeout, so on PostgreSQL its lock waits for the other transaction, as
+without `skipLockedEntity`. With OpenJPA, an entity that another consumer has consumed since the poll listed it fails
+the lock with an `OptimisticLockException`, which rolls back the poll.
 
 === Configuring EntityManagerFactory
 
