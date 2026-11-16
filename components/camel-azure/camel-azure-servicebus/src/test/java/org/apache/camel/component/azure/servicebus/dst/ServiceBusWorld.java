@@ -67,17 +67,18 @@ import static org.mockito.Mockito.when;
  * the renewals and the fault rates.
  * <p>
  * Properties: no lock is lost, and no message is delivered again, while the consumer holds the message, unless an
- * injected renewal of its lock failed (the consumer stops renewing a message after a renewal error;
- * {@code -Ddst.servicebus.strictRenew=true} does not excuse it), the route was stopped while it was processed (once a
- * stop timed out the consumer stops renewing, and the exchange goes on), or maxAutoLockRenewDuration passed; the
- * message of a completed exchange is completed, unless its settlement failed, found its lock lost under one of those
- * excuses, or came after the processor client was closed while the exchange was in flight: by the close() of a stop
- * that timed out (by design), or by the stop() of the graceful shutdown (the V2 processor of the SDK closes its
- * receiver on stop, see FakeServiceBus; the message is then delivered again; {@code
- * -Ddst.servicebus.strictClose=true} does not excuse this case); a message is completed only after its exchange
- * completed, and abandoned or dead-lettered only after it failed (or was in flight when a stop timed out, see below);
- * once the faults cleared every message is completed or dead-lettered; the consumer settles each delivery at most once
- * and renews only what it holds, through an open client.
+ * injected renewal of its lock failed, the route was stopped while it was processed (once a stop timed out the consumer
+ * stops renewing, and the exchange goes on), or maxAutoLockRenewDuration passed. The consumer renews a lock again after
+ * a transient renewal error, but only at its next run: the lock renewer runs about every 11 seconds, so one transient
+ * renewal error can still lose a 30 second lock. {@code -Ddst.servicebus.strictRenew=true} does not excuse a failed
+ * renewal, and still fails on some seeds. The message of a completed exchange is completed, unless its settlement
+ * failed, found its lock lost under one of those excuses, or came after the close() of a stop that timed out while the
+ * exchange was in flight (by design); a graceful stop keeps the processor client open for the exchanges in flight (the
+ * V2 processor of the SDK closes its receiver on stop(), see FakeServiceBus; CAMEL-26970), so a settlement inside the
+ * graceful wait must find it open; a message is completed only after its exchange completed, and abandoned or
+ * dead-lettered only after it failed (or was in flight when a stop timed out, see below); once the faults cleared every
+ * message is completed or dead-lettered; the consumer settles each delivery at most once and renews only what it holds,
+ * through an open client.
  * <p>
  * The operator stops the route as DefaultShutdownStrategy does (its ShutdownTask), with the wait of the strategy as
  * tasks of the operator (see {@link #gracefulStop}): a processMessage call that waits until the consumer stops would
@@ -103,7 +104,8 @@ import static org.mockito.Mockito.when;
           invariants = {
                   "no lock is lost and no message is delivered again while the consumer holds it, unless a renewal"
                          + " failed, the route was stopped or maxAutoLockRenewDuration passed",
-                  "the message of a completed exchange is completed, unless its settlement failed or was excused",
+                  "the message of a completed exchange is completed, unless its settlement failed, its lock was"
+                                                                                                + " lost as excused above, or a forced stop closed the client first",
                   "a message is completed only after its exchange completed",
                   "a message is abandoned or dead-lettered only after its exchange failed",
                   "every message is completed or dead-lettered once the faults cleared",
@@ -114,8 +116,6 @@ final class ServiceBusWorld {
     static final String ROUTE = "servicebus";
     /** Excuses a lost lock only when the renewal found it lost (not after an injected transient renewal failure). */
     static final boolean STRICT_RENEW = Boolean.getBoolean("dst.servicebus.strictRenew");
-    /** Does not excuse a settlement after the stop() of the graceful shutdown and before the close() of the stop. */
-    static final boolean STRICT_CLOSE = Boolean.getBoolean("dst.servicebus.strictClose");
 
     private final Dst dst;
     private final DstLedger ledger;
@@ -258,8 +258,8 @@ final class ServiceBusWorld {
                                   + " unless a renewal failed, the route was stopped or maxAutoLockRenewDuration passed",
                             () -> redeliveredWhileHeld.isEmpty() && lostWhileHeld.isEmpty()
                                     ? null : redeliveredWhileHeld + " " + lostWhileHeld + " (" + config() + ")"),
-                    Invariants.of("the message of a completed exchange is completed, unless its settlement failed or"
-                                  + " was excused as above",
+                    Invariants.of("the message of a completed exchange is completed, unless its settlement failed, its"
+                                  + " lock was lost as excused above, or a forced stop closed the client first",
                             () -> notCompleted.isEmpty() ? null : notCompleted + " (" + config() + ")"),
                     Invariants.of("a message is completed only after its exchange completed",
                             () -> wrongSettlements.stream().noneMatch(s -> s.contains("COMPLETED"))
@@ -342,9 +342,9 @@ final class ServiceBusWorld {
     }
 
     /**
-     * Why the consumer may lose the lock of a delivery it holds: an injected renewal failure (the consumer stops
-     * renewing that message after a renewal error), a route stop while it was processed (the consumer stops renewing
-     * once the stop timed out), or a hold longer than maxAutoLockRenewDuration.
+     * Why the consumer may lose the lock of a delivery it holds: an injected renewal failure (the consumer renews again
+     * only at its next run, which can come after the lock expired), a route stop while it was processed (the consumer
+     * stops renewing once the stop timed out), or a hold longer than maxAutoLockRenewDuration.
      */
     private boolean excused(String delivery) {
         Long at = routedAt.get(delivery);
@@ -378,11 +378,9 @@ final class ServiceBusWorld {
             String outcome = outcomes.get(delivery);
             boolean ok = "COMPLETED".equals(outcome) || "fault".equals(outcome)
                     || "lockLost (excused)".equals(outcome)
-                    // a settlement after the close is one of an exchange that was in flight when the client stopped:
-                    // after the consumer's own close() (the stop timed out) by design; between the stop() of the graceful
-                    // shutdown and that close() only without strictClose
-                    || "closed".equals(outcome)
-                    || "closedByStop".equals(outcome) && !STRICT_CLOSE;
+                    // a settlement after the consumer's own close() is one of an exchange that was in flight when the
+                    // stop timed out (by design); a graceful stop keeps the client open, so "closedByStop" is not excused
+                    || "closed".equals(outcome);
             if (!ok) {
                 notCompleted.add(delivery + " completed but its settlement was " + outcome);
             }
@@ -506,7 +504,7 @@ final class ServiceBusWorld {
      * the one stack its own timeout is noticed only when that wait returns), which delays the route stop and the
      * restart. Nothing is delivered meanwhile, as the stopped consumer has closed its processor client, and the
      * settlements of those exchanges find the client closed as they would after the real forced stop. Settlements after
-     * a forced stop are "closed" (by design), so strictClose counts only the ones inside the graceful wait.
+     * a forced stop are "closed" (by design); a settlement inside the graceful wait must find the client open.
      * <p>
      * Why not stopRoute at once: the consumer may hold a message delivered during the graceful stop in processMessage
      * until it stops. On the one stack that call would run above the wait of the strategy, and the stop below it could
