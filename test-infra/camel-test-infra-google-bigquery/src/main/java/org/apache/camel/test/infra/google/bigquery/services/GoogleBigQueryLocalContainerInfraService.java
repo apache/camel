@@ -61,8 +61,7 @@ public class GoogleBigQueryLocalContainerInfraService
 
     protected FlociGcpContainer initContainer(String imageName) {
         return new FlociGcpContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass()))
-                .withDockerSocket()
-                .withBigQueryEngine();
+                .withDockerSocket();
     }
 
     @Override
@@ -73,6 +72,9 @@ public class GoogleBigQueryLocalContainerInfraService
 
     @Override
     public void initialize() {
+        // here, and not in the constructor: it pulls the image, so it needs Docker, which the tests check for only
+        // after building the service
+        container.withBigQueryEngine();
         container.start();
 
         LOG.info("Floci GCP running at address {}", container.serviceAddress());
@@ -91,11 +93,12 @@ public class GoogleBigQueryLocalContainerInfraService
     }
 
     /**
-     * The id of the project: {@code test-project}, as Floci GCP accepts any
+     * The id of the project, {@code test-project} unless the {@code google.bigquery.project.id} system property gives
+     * another one: Floci GCP accepts any
      */
     @Override
     public String projectId() {
-        return DEFAULT_PROJECT_ID;
+        return System.getProperty(GoogleBigQueryProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
     }
 
     @Override

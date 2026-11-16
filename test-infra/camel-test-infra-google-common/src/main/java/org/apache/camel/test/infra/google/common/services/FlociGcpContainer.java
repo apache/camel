@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.exception.ConflictException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
@@ -104,6 +105,11 @@ public class FlociGcpContainer extends GenericContainer<FlociGcpContainer> {
      * Needs {@link #withDockerSocket()}.
      */
     public FlociGcpContainer withBigQueryEngine() {
+        if (resourceNamespace == null) {
+            throw new IllegalStateException(
+                    "withDockerSocket() must come before withBigQueryEngine(): Floci GCP starts the engine through the"
+                                            + " Docker socket");
+        }
         String image = LocalPropertyResolver.getProperty(FlociGcpContainer.class,
                 GoogleProperties.BIGQUERY_ENGINE_CONTAINER);
         return withEnv(BIGQUERY_ENGINE_IMAGE_ENV, new RemoteDockerImage(DockerImageName.parse(image)).get());
@@ -141,8 +147,9 @@ public class FlociGcpContainer extends GenericContainer<FlociGcpContainer> {
             LOG.debug("Removing the container {} that Floci GCP started", Arrays.toString(container.getNames()));
             try {
                 client.removeContainerCmd(container.getId()).withForce(true).withRemoveVolumes(true).exec();
-            } catch (NotFoundException e) {
-                LOG.debug("The container {} was already removed", container.getId());
+            } catch (NotFoundException | ConflictException e) {
+                // another stop, such as the one of a shutdown hook, removed it or is removing it
+                LOG.debug("The container {} was already removed, or is being removed", container.getId());
             }
         }
     }
