@@ -30,6 +30,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttClientException;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
@@ -295,7 +296,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
     private Exception closeOwnedClient(MqttClient ownedClient, Exception primaryException) {
         try {
-            ownedClient.close(true);
+            closeClient(ownedClient);
         } catch (Exception closeException) {
             if (primaryException == null) {
                 return closeException;
@@ -303,6 +304,43 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             primaryException.addSuppressed(closeException);
         }
         return primaryException;
+    }
+
+    /**
+     * Closes the own client of the consumer. Paho does not close a client while it connects, also with force: the close
+     * throws 32110 (connect already in progress), and the client goes on connecting, with the automatic reconnect of
+     * Paho after a lost connection, or with the reconnect of the consumer that its stop interrupted. Such a client
+     * would connect later next to the client of the next start, and with the same client id the two take the session
+     * from each other. A forced disconnect sets the client to disconnected in any state and shuts down what the connect
+     * has opened so far, so the client can then be closed, and a connect still in progress does not complete on a
+     * closed client. A connect that completed just after the stop saw the client disconnected makes the close throw
+     * 32100 (client is connected): that client is disconnected first, as a connected client is.
+     */
+    private static void closeClient(MqttClient ownedClient) throws MqttException {
+        try {
+            ownedClient.close(true);
+        } catch (MqttException e) {
+            if (e.getReasonCode() == MqttClientException.REASON_CODE_CONNECT_IN_PROGRESS) {
+                LOG.debug("Client: {} is connecting: aborting the connect before closing the client",
+                        ownedClient.getClientId());
+                // no quiesce and no DISCONNECT packet: the client has no connection yet
+                ownedClient.disconnectForcibly(0, 0, false);
+            } else if (e.getReasonCode() == MqttClientException.REASON_CODE_CLIENT_CONNECTED) {
+                LOG.debug("Client: {} connected while the consumer stopped: disconnecting before closing the client",
+                        ownedClient.getClientId());
+                try {
+                    ownedClient.disconnect();
+                } catch (MqttException disconnectException) {
+                    // disconnected or disconnecting in the meantime: leave it disconnected in any state
+                    LOG.debug("Client: {} could not be disconnected: {}", ownedClient.getClientId(),
+                            disconnectException.getMessage());
+                    ownedClient.disconnectForcibly(0, 0, false);
+                }
+            } else {
+                throw e;
+            }
+            ownedClient.close(true);
+        }
     }
 
     /**
