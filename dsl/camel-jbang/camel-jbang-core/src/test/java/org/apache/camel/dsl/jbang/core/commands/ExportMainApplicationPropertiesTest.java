@@ -38,14 +38,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ExportMainApplicationPropertiesTest {
+class ExportMainApplicationPropertiesTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
     private File baseDir;
     private File profile;
 
     @BeforeEach
-    public void setup() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
         // a base directory of its own: the application.properties of the module directory is shared with the other forks
         baseDir = Files.createTempDirectory("camel-export-base").toFile();
