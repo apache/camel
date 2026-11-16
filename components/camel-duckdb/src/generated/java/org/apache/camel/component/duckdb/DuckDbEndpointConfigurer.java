@@ -23,8 +23,14 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowglobcopysource":
+        case "allowGlobCopySource": target.setAllowGlobCopySource(property(camelContext, boolean.class, value)); return true;
+        case "allowurlcopysource":
+        case "allowUrlCopySource": target.setAllowUrlCopySource(property(camelContext, boolean.class, value)); return true;
         case "batchsize":
         case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
+        case "copybasedirectory":
+        case "copyBaseDirectory": target.setCopyBaseDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "jdbcurl":
         case "jdbcUrl": target.setJdbcUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -44,8 +50,14 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowglobcopysource":
+        case "allowGlobCopySource": return boolean.class;
+        case "allowurlcopysource":
+        case "allowUrlCopySource": return boolean.class;
         case "batchsize":
         case "batchSize": return int.class;
+        case "copybasedirectory":
+        case "copyBaseDirectory": return java.lang.String.class;
         case "format": return java.lang.String.class;
         case "jdbcurl":
         case "jdbcUrl": return java.lang.String.class;
@@ -66,8 +78,14 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowglobcopysource":
+        case "allowGlobCopySource": return target.isAllowGlobCopySource();
+        case "allowurlcopysource":
+        case "allowUrlCopySource": return target.isAllowUrlCopySource();
         case "batchsize":
         case "batchSize": return target.getBatchSize();
+        case "copybasedirectory":
+        case "copyBaseDirectory": return target.getCopyBaseDirectory();
         case "format": return target.getFormat();
         case "jdbcurl":
         case "jdbcUrl": return target.getJdbcUrl();

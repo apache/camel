@@ -65,6 +65,7 @@ public final class SecurityUtils {
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowurlcopysource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("downloadenabled", new SecurityOption(INSECURE_DEV, "true"));
