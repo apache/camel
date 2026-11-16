@@ -33,7 +33,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -98,12 +97,13 @@ public class JdbcOrphanLockAwareIdempotentRepositoryRestartTest {
         // the keep-alive still refreshes a lease after the restarts
         assertTrue(repository.add("FILE_1"));
         Timestamp expired = new Timestamp(System.currentTimeMillis() - LOCK_MAX_AGE_MILLIS - 60_000L);
-        new JdbcTemplate(dataSource).update("UPDATE " + TABLE_NAME + " SET createdAt = ? WHERE messageId = ?", expired,
-                "FILE_1");
-        assertFalse(repository.contains("FILE_1"));
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET createdAt = ? WHERE messageId = ?", expired, "FILE_1");
 
         repository.keepAlive();
-        assertTrue(repository.contains("FILE_1"));
+        Timestamp refreshed = jdbcTemplate.queryForObject("SELECT createdAt FROM " + TABLE_NAME + " WHERE messageId = ?",
+                Timestamp.class, "FILE_1");
+        assertTrue(refreshed.after(expired), "The keep-alive did not refresh the lease");
     }
 
     @Test
