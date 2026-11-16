@@ -482,28 +482,29 @@ public class OpenFgaConfiguration implements Cloneable {
         this.maxParallelRequests = maxParallelRequests;
     }
 
-    public OpenFgaBatchCheckMode getBatchCheckMode() {
-        return batchCheckMode;
-    }
-
     /**
      * Whether batchCheck fans out individual checks (client, the compatible default) or uses the native server
      * BatchCheck API (server, requires OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize and
      * correlates responses back to the original objects. Failures never fall back to an unfiltered result or another
      * mode.
      */
+    public OpenFgaBatchCheckMode getBatchCheckMode() {
+        return batchCheckMode;
+    }
+
     public void setBatchCheckMode(OpenFgaBatchCheckMode batchCheckMode) {
         this.batchCheckMode = batchCheckMode;
     }
 
+    /**
+     * Maximum number of checks per native server BatchCheck request, from 1 to 50. Applies only when
+     * batchCheckMode=server; the SDK splits larger input lists into requests of at most this size. 50 is the default
+     * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+     */
     public int getMaxBatchSize() {
         return maxBatchSize;
     }
 
-    /**
-     * Maximum number of checks per native server BatchCheck request, from 1 to 50. Applies only when
-     * batchCheckMode=server; the SDK splits larger input lists into requests of at most this size.
-     */
     public void setMaxBatchSize(int maxBatchSize) {
         this.maxBatchSize = maxBatchSize;
     }

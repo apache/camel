@@ -254,8 +254,9 @@ By default, `batchCheckMode=client` sends one Check request per object, with at 
 (default 10) in flight. This is compatible with older OpenFGA servers.
 
 For OpenFGA 1.8.0 or later, set `batchCheckMode=server` to use the native BatchCheck API. The SDK groups checks into
-HTTP requests containing at most `maxBatchSize` checks (default 50, configurable from 1 to 50), and sends at most
-`maxParallelRequests` of those requests concurrently. Results are correlated back to their input positions, preserving
+HTTP requests containing at most `maxBatchSize` checks (default 50, configurable from 1 to 50; 50 is the default
+per-request limit of an OpenFGA server, `max-checks-per-batch-check`, and the component does not go above it even
+when a server is configured to accept more), and sends at most `maxParallelRequests` of those requests concurrently. Results are correlated back to their input positions, preserving
 order and duplicate identifiers even when the server returns answers out of order. For example:
 
 [source,java]

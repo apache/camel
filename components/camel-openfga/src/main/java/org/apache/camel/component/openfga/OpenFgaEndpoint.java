@@ -142,17 +142,12 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
      * decision and is a thoroughly misleading thing to debug.
      */
     private void validateOperationOptions() {
-        if (operation == OpenFgaOperation.batchCheck) {
-            if (configuration.getBatchCheckMode() == null) {
-                throw new IllegalArgumentException("batchCheckMode must be client or server");
+        if (operation == OpenFgaOperation.batchCheck && configuration.getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
+            if (configuration.getMaxBatchSize() < 1 || configuration.getMaxBatchSize() > 50) {
+                throw new IllegalArgumentException("maxBatchSize must be between 1 and 50 for server batch checks");
             }
-            if (configuration.getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
-                if (configuration.getMaxBatchSize() < 1 || configuration.getMaxBatchSize() > 50) {
-                    throw new IllegalArgumentException("maxBatchSize must be between 1 and 50 for server batch checks");
-                }
-                if (configuration.getMaxParallelRequests() < 1) {
-                    throw new IllegalArgumentException("maxParallelRequests must be at least 1 for server batch checks");
-                }
+            if (configuration.getMaxParallelRequests() < 1) {
+                throw new IllegalArgumentException("maxParallelRequests must be at least 1 for server batch checks");
             }
         }
         switch (operation) {
