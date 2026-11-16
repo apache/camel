@@ -2831,7 +2831,9 @@ Sets the time unit used for keep alive time. Default value: SECONDS
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue.
+Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread,
+up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a
+scheduled thread pool, 0 or -1 means the queue is not limited.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8989,7 +8991,8 @@ Maximum allowed string length when deserializing (in chars or bytes, depending o
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Package name where your JAXB classes are located.
+Package name where your JAXB classes are located. The package must have an ObjectFactory class or a jaxb.index file that
+lists the classes. To use a class name instead, set contextPathIsClassName to true.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9029,7 +9032,7 @@ error will trigger JAXB to stop. There are the following three levels: 0=warning
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: true
+To enable pretty printing output nicely formatted. Is by default true. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9056,8 +9059,9 @@ Whether to ignore JAXBElement elements - only needed to be set to false in very 
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether marshalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to
-false to relax that, such as when the data is already in XML format. Default value: false
+Whether marshalling must be java objects with JAXB annotations. By default, any other message body is written as it is,
+such as when the data is already in XML format. Set this option to true to fail with an InvalidPayloadException instead.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9084,8 +9088,9 @@ To overrule and use a specific encoding.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To turn on marshalling XML fragment trees. This is useful when generated code does not have XmlRootElement annotation
-and you need to unmarshall only part of the tree. Default value: false
+To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller. To marshal
+or unmarshal only part of the tree, or classes without the XmlRootElement annotation, use partClass and partNamespace
+instead. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9131,7 +9136,8 @@ To use a custom xml stream writer.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To define the location of the schema.
+To set the xsi:schemaLocation attribute in the marshalled XML. This does not validate the XML; use the schema option to
+validate.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14097,7 +14103,9 @@ Sets the time unit to use for keep alive time. By default SECONDS is used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.
+Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread,
+up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a
+scheduled thread pool, 0 or -1 means the queue is not limited.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14177,7 +14185,8 @@ Sets the time unit for the keep alive time. By default SECONDS is used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.
+Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread,
+up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue.
 ]]>
             </xs:documentation>
           </xs:annotation>

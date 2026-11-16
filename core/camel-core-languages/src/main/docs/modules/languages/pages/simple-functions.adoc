@@ -306,8 +306,10 @@ And for String payloads such as `${size('Hello World')}` then `1` is always retu
 
 TIP: Use the `length` function to return the payload length in bytes.
 
-The `skip` function is used for skipping the first number of elements. For example suppose you have a CSV file that contains a header line,
-and you want to skip this line, then you can use `${skip(1)}` that then returns an `Iterator` that starts at the 2nd line.
+The `skip` function is used for skipping the first number of elements. For example if the message body is a `List` with
+the values `a,b,c` then `${skip(1)}` returns an `Iterator` over `b,c`. It works on a `List`, an array or an `Iterator`.
+A `String` body is split on commas, not on lines: to skip the header line of a CSV text, use the
+xref:tokenize-language.adoc[Tokenize] language with `skipFirst`, or the xref:dataformats:csv-dataformat.adoc[CSV] data format.
 
 The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
 For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
