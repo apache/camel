@@ -1195,6 +1195,10 @@ YAML::
 ----
 ====
 
+NOTE: The `idempotentKey` and `idempotentRepository` options are used only with `idempotent=true` (`noop=true` turns
+it on), or by the idempotent read locks (`readLock=idempotent`, `idempotent-changed` and `idempotent-rename`). Set
+without them, they do not skip any file, and the consumer logs a WARN when it is created.
+
 Camel will log at `DEBUG` level if it skips a file because it has been
 consumed before:
 
