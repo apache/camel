@@ -25,11 +25,17 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * value in an exchange property, never in message headers. Implementations must derive certificates from the actual
  * server connection or container TLS state, not from inbound identity/certificate headers. Route authors and container
  * authentication configuration remain trusted.
+ * <p>
+ * The property is present only on an exchange that arrived over TLS: it carries the authenticated chain, or throws for
+ * a TLS connection without an authenticated client. A plain connection leaves it absent.
+ *
+ * @since 4.24
  */
 @FunctionalInterface
 public interface TlsPeerCertificateProvider {
 
-    String EXCHANGE_PROPERTY = TlsPeerCertificateProvider.class.getName();
+    /** The name of the exchange property that carries the provider. */
+    String EXCHANGE_PROPERTY = "CamelTlsPeerCertificates";
 
     /**
      * Returns the authenticated X509 chain, leaf first.

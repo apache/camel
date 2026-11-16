@@ -25,7 +25,11 @@ import javax.net.ssl.SSLSession;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.TlsPeerCertificateProvider;
 
-/** Helpers for consumer adapters publishing authenticated TLS state as a transport-neutral exchange property. */
+/**
+ * Helpers for consumer adapters publishing authenticated TLS state as a transport-neutral exchange property.
+ *
+ * @since 4.24
+ */
 public final class TlsPeerCertificateSupport {
 
     private static final X509Certificate[] NO_CERTIFICATES = new X509Certificate[0];
@@ -36,17 +40,28 @@ public final class TlsPeerCertificateSupport {
     private TlsPeerCertificateSupport() {
     }
 
-    /** Snapshots the actual server TLS session. An absent/unverified peer overwrites any prior exchange state. */
+    /**
+     * Snapshots the actual server TLS session. A TLS session without an authenticated client records an unverified
+     * peer, which overwrites any prior exchange state; no session, that is a plain connection, leaves the property
+     * absent and removes a stale one.
+     */
     public static void populateFromSession(Exchange exchange, SSLSession session) {
+        if (session == null) {
+            clear(exchange);
+            return;
+        }
         Certificate[] chain = null;
-        if (session != null) {
-            try {
-                chain = session.getPeerCertificates();
-            } catch (SSLPeerUnverifiedException e) {
-                // Server-only TLS and connections without client authentication have no authenticated peer identity.
-            }
+        try {
+            chain = session.getPeerCertificates();
+        } catch (SSLPeerUnverifiedException e) {
+            // Server-only TLS and connections without client authentication have no authenticated peer identity.
         }
         populateFromVerifiedCertificates(exchange, chain);
+    }
+
+    /** Removes the property, for an exchange that arrived over a plain connection; a pooled exchange may carry one. */
+    public static void clear(Exchange exchange) {
+        exchange.removeProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY);
     }
 
     /**

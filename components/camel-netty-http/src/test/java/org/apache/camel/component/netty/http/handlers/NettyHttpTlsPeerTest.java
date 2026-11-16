@@ -32,6 +32,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,8 +61,8 @@ class NettyHttpTlsPeerTest {
             when(pipeline.get(SslHandler.class)).thenReturn(null);
             exchange.getMessage().setHeader("CamelNettySSLSession", session);
             HttpServerChannelHandler.populateTlsPeer(exchange, channel);
-            var noPeer = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
-            assertThrows(SSLPeerUnverifiedException.class, noPeer::getPeerCertificates);
+            assertNull(exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY),
+                    "a plain connection leaves the property absent");
         }
     }
 

@@ -59,6 +59,12 @@ class TlsPeerCertificateSupportTest {
                     properties.put((String) args[0], args[1]);
                     return null;
                 }
+                if (method.getName().equals("removeProperty") && args.length == 1) {
+                    return properties.remove((String) args[0]);
+                }
+                if (method.getName().equals("getProperty") && args.length == 1) {
+                    return properties.get((String) args[0]);
+                }
                 throw new UnsupportedOperationException(method.getName());
             });
 
@@ -106,6 +112,13 @@ class TlsPeerCertificateSupportTest {
     void unverifiedSessionCreatesAuthoritativeAbsence() throws Exception {
         TlsPeerCertificateSupport.populateFromSession(exchange, session(null));
         assertThatThrownBy(() -> captured().getPeerCertificates()).isInstanceOf(SSLPeerUnverifiedException.class);
+    }
+
+    @Test
+    void plainConnectionLeavesThePropertyAbsentAndRemovesAStaleOne() throws Exception {
+        TlsPeerCertificateSupport.populateFromSession(exchange, session(new Certificate[] { certificate() }));
+        TlsPeerCertificateSupport.populateFromSession(exchange, null);
+        assertThat(exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY)).isNull();
     }
 
     @Test

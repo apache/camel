@@ -29,6 +29,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,8 +52,8 @@ class VertxTlsPeerTest {
             when(request.sslSession()).thenReturn(null);
             when(request.getHeader("X-Forwarded-Client-Cert")).thenReturn("spiffe://example.org/frontend");
             VertxPlatformHttpSupport.populateTlsPeer(exchange, request);
-            var noPeer = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
-            assertThrows(SSLPeerUnverifiedException.class, noPeer::getPeerCertificates);
+            assertNull(exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY),
+                    "a plain connection leaves the property absent");
         }
     }
 

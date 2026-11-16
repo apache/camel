@@ -31,6 +31,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -58,8 +59,8 @@ class UndertowTlsPeerTest {
             when(info.getPeerCertificates()).thenReturn(new Certificate[] { certificate });
             exchange.getMessage().setHeader("X-Forwarded-Client-Cert", "spiffe://example.org/frontend");
             UndertowConsumer.populateTlsPeer(exchange, request);
-            var noPeer = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
-            assertThrows(SSLPeerUnverifiedException.class, noPeer::getPeerCertificates);
+            assertNull(exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY),
+                    "a plain connection leaves the property absent");
         }
     }
 

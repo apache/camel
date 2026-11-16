@@ -110,10 +110,24 @@ class SpiffeSecurityPolicyTest extends CamelTestSupport {
     void unverifiedTransportStateCannotFallBackToLegacySession() throws Exception {
         var legacy = sessionPresenting(certWithUriSans(FRONTEND));
         Exchange result = template.request("direct:start", exchange -> {
-            TlsPeerCertificateSupport.populateFromSession(exchange, null);
+            // a TLS connection without a client certificate: the consumer recorded an unverified peer
+            TlsPeerCertificateSupport.populateFromVerifiedCertificates(exchange, null);
             exchange.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, legacy);
         });
         assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+    }
+
+    @Test
+    void plainConnectionLeavesNoTransportStateAndTheLegacySessionStillCounts() throws Exception {
+        var legacy = sessionPresenting(certWithUriSans(FRONTEND));
+        Exchange result = template.request("direct:start", exchange -> {
+            // a consumer that has not adopted the property, or a plain connection, leaves it absent
+            TlsPeerCertificateSupport.populateFromSession(exchange, null);
+            exchange.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, legacy);
+        });
+        assertThat(result.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY)).isNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isEqualTo(FRONTEND);
     }
 
     @Test

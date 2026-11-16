@@ -38,6 +38,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.LoggingLevel;
@@ -509,7 +510,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     }
 
     static void populateTlsPeer(Exchange exchange, ChannelHandlerContext context) {
-        var ssl = context.pipeline().get(io.netty.handler.ssl.SslHandler.class);
+        var ssl = context.pipeline().get(SslHandler.class);
         TlsPeerCertificateSupport.populateFromSession(exchange, ssl != null ? ssl.engine().getSession() : null);
     }
 

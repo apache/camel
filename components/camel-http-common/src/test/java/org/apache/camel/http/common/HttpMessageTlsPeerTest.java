@@ -29,6 +29,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,9 +54,9 @@ class HttpMessageTlsPeerTest {
             initialize(exchange, request);
             var provider = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
             assertArrayEquals(new X509Certificate[] { certificate }, provider.getPeerCertificates());
+            // reused for a plain request: the TLS state of the earlier request must not survive
             initialize(exchange, mock(HttpServletRequest.class));
-            var noPeer = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
-            assertThrows(SSLPeerUnverifiedException.class, noPeer::getPeerCertificates);
+            assertNull(exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY));
         }
     }
 
@@ -75,7 +76,13 @@ class HttpMessageTlsPeerTest {
                 initialize(exchange, request);
                 var provider
                         = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, TlsPeerCertificateProvider.class);
-                assertThrows(SSLPeerUnverifiedException.class, provider::getPeerCertificates);
+                if (secure) {
+                    // TLS without a client certificate: present and unverified, so a forwarded header cannot stand in
+                    assertThrows(SSLPeerUnverifiedException.class, provider::getPeerCertificates);
+                } else {
+                    // a plain connection: absent, and the certificate attribute is not trusted either
+                    assertNull(provider);
+                }
             }
         }
     }
