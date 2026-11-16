@@ -142,7 +142,7 @@
         <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.1</compress-lzf-version>
         <consul-client-version>1.12.2</consul-client-version>
-        <couchbase-client-version>3.13.0</couchbase-client-version>
+        <couchbase-client-version>3.13.1</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
         <cxf-version>4.2.4</cxf-version>
         <cxf-codegen-plugin-version>4.2.4</cxf-codegen-plugin-version>
@@ -235,7 +235,7 @@
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.12.1</hapi-fhir-version>
-        <hapi-fhir-core-version>7.0.3</hapi-fhir-core-version>
+        <hapi-fhir-core-version>7.0.5</hapi-fhir-core-version>
         <hawtio-version>5.3.0</hawtio-version>
         <!-- https://issues.apache.org/jira/browse/CAMEL-22041
             hazelcast needs to stay at 5.4.0 for 4.19.0 due to changes where the CP subsystem is only available in
@@ -356,7 +356,7 @@
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.3.2</kafka-version>
-        <keycloak-client-version>26.0.12</keycloak-client-version>
+        <keycloak-client-version>26.0.13</keycloak-client-version>
         <keycloak-version>26.8.1</keycloak-version>
         <kubernetes-client-version>8.0.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
@@ -416,7 +416,7 @@
         <mybatis-version>3.6.0</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
-        <netty-version>4.2.18.Final</netty-version>
+        <netty-version>4.2.20.Final</netty-version>
         <networknt-json-schema-validator-version>3.0.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.10</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>

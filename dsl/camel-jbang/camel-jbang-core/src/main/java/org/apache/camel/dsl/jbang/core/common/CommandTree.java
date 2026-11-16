@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.aesh.command.AeshCommandRuntimeBuilder;
 import org.aesh.command.Command;
@@ -56,7 +58,9 @@ public final class CommandTree {
     // the tree of every command object, for the defaults of its options (camel.<command path>.<option>)
     private static final Map<Object, CommandTree> TREES = Collections.synchronizedMap(new WeakHashMap<>());
 
-    private final Command<CommandInvocation> command;
+    // created when first needed, when the tree was made with a factory (see lazy)
+    private Command<CommandInvocation> command;
+    private final Supplier<?> factory;
     private final Map<String, CommandTree> subcommands = new LinkedHashMap<>();
     // the name the command is added under, which can differ from the name of its CommandDefinition (aesh #706)
     private String name;
@@ -75,7 +79,25 @@ public final class CommandTree {
     @SuppressWarnings("unchecked")
     public CommandTree(Object command) {
         this.command = (Command<CommandInvocation>) command;
+        this.factory = null;
         TREES.put(command, this);
+    }
+
+    private CommandTree(Supplier<?> factory) {
+        this.factory = factory;
+    }
+
+    /**
+     * A tree whose command the factory creates when it is first needed: when the command line runs it, or aesh lists it
+     * (such as in the help of its parent). For the sub-commands of a command with many (camel get, camel cmd): a
+     * command line runs one of them, and creating the others (loading their classes) costs more than running most of
+     * them. Add it under a name, as {@link #getName()} would otherwise create the command for the name of its
+     * {@link CommandDefinition}.
+     *
+     * @param factory creates the command
+     */
+    public static CommandTree lazy(Supplier<?> factory) {
+        return new CommandTree(factory);
     }
 
     /**
@@ -129,7 +151,12 @@ public final class CommandTree {
         return Collections.unmodifiableMap(subcommands);
     }
 
+    @SuppressWarnings("unchecked")
     public Command<CommandInvocation> getCommand() {
+        if (command == null) {
+            command = (Command<CommandInvocation>) factory.get();
+            TREES.put(command, this);
+        }
         return command;
     }
 
@@ -138,7 +165,7 @@ public final class CommandTree {
     }
 
     public String getName() {
-        return name != null ? name : nameOf(command);
+        return name != null ? name : nameOf(getCommand());
     }
 
     /**
@@ -174,7 +201,7 @@ public final class CommandTree {
     public CommandResult execute(String... args) throws Exception {
         this.args = args;
         AeshCommandRuntimeBuilder<CommandInvocation> builder = AeshCommandRuntimeBuilder.<CommandInvocation> builder()
-                .commandRegistry(registry());
+                .commandRegistry(registry(args));
         if (output != null) {
             builder.shell(new OutputShell(output));
         }
@@ -193,7 +220,7 @@ public final class CommandTree {
     public void parse(String... args) throws Exception {
         this.args = args;
         CommandRuntime<CommandInvocation> runtime = AeshCommandRuntimeBuilder.<CommandInvocation> builder()
-                .commandRegistry(registry())
+                .commandRegistry(registry(args))
                 .build();
         try {
             for (Execution<CommandInvocation> execution : runtime.buildExecutor(getName(), args).getExecutions()) {
@@ -212,7 +239,7 @@ public final class CommandTree {
      */
     public Completion complete(String line, int cursor) throws Exception {
         CommandRuntime<CommandInvocation> runtime = AeshCommandRuntimeBuilder.<CommandInvocation> builder()
-                .commandRegistry(registry())
+                .commandRegistry(registry(null))
                 .build();
         try {
             AeshCompleteOperation operation = new AeshCompleteOperation(line, cursor);
@@ -233,7 +260,13 @@ public final class CommandTree {
     public record Completion(List<String> candidates, int offset, boolean appendSeparator) {
     }
 
-    private CommandRegistry<CommandInvocation> registry() throws Exception {
+    /**
+     * The registry of this command, with only the sub-commands that the command line runs (see
+     * {@link #container(AeshCommandContainerBuilder, String[])}).
+     *
+     * @param args the arguments after the name of this command, or {@code null} for all sub-commands
+     */
+    private CommandRegistry<CommandInvocation> registry(String[] args) throws Exception {
         AeshCommandContainerBuilder<CommandInvocation> builder = newBuilder();
         DefaultValueProvider provider = getDefaultValueProvider();
         if (provider != null) {
@@ -243,7 +276,7 @@ public final class CommandTree {
         if (provider != null) {
             registry.defaultValueProvider(provider);
         }
-        return registry.command(rootContainer(builder)).create();
+        return registry.command(rootContainer(builder, args)).create();
     }
 
     /**
@@ -255,7 +288,7 @@ public final class CommandTree {
         if (provider != null) {
             builder.setDefaultValueProvider(provider);
         }
-        return rootContainer(builder).getParser();
+        return rootContainer(builder, null).getParser();
     }
 
     /**
@@ -294,7 +327,7 @@ public final class CommandTree {
      * metadata of the commands.
      */
     public ProcessedCommand<?, ?> processedCommand() throws Exception {
-        return newBuilder().create(command, getName(), aliasesOf(command))
+        return newBuilder().create(getCommand(), getName(), aliasesOf(getCommand()))
                 .getParser().getProcessedCommand();
     }
 
@@ -312,30 +345,47 @@ public final class CommandTree {
      * The container of this command and its sub-commands, with the colors of the help: as aesh decides in its runner,
      * no colors when stdout is not a terminal (such as a pipe or a file), or with NO_COLOR or CI set.
      */
-    private CommandContainer<CommandInvocation> rootContainer(AeshCommandContainerBuilder<CommandInvocation> builder)
+    private CommandContainer<CommandInvocation> rootContainer(
+            AeshCommandContainerBuilder<CommandInvocation> builder, String[] args)
             throws Exception {
-        CommandContainer<CommandInvocation> container = container(builder);
+        CommandContainer<CommandInvocation> container = container(builder, args);
         boolean colors = EnvironmentHelper.isColorEnabled()
                 && (System.getenv("FORCE_COLOR") != null || TtyDetect.isStdoutTty());
         container.getParser().updateAnsiMode(colors);
         return container;
     }
 
-    private CommandContainer<CommandInvocation> container(AeshCommandContainerBuilder<CommandInvocation> builder)
+    /**
+     * The container of this command, with the containers of its sub-commands. When the arguments start with the name of
+     * a sub-command (camel get route), only that one: aesh reads the annotations of each command it gets, which for the
+     * 40 sub-commands of camel get or camel cmd costs more than running most of them. Otherwise (no arguments, an
+     * option such as --help, or a name that is not a sub-command, for which aesh suggests the sub-commands) all.
+     *
+     * @param args the arguments after the name of this command, or {@code null} for all sub-commands
+     */
+    private CommandContainer<CommandInvocation> container(
+            AeshCommandContainerBuilder<CommandInvocation> builder, String[] args)
             throws Exception {
         CommandContainer<CommandInvocation> container
-                = builder.create(command, getName(), aliases != null ? aliases : aliasesOf(command));
+                = builder.create(getCommand(), getName(), aliases != null ? aliases : aliasesOf(getCommand()));
         if (helpGroup != null) {
             container.getParser().getProcessedCommand().setHelpGroup(helpGroup);
         }
-        if (command instanceof ParsedCommandAware aware) {
+        if (getCommand() instanceof ParsedCommandAware aware) {
             aware.setProcessedCommand(container.getParser().getProcessedCommand(), this);
+        }
+        CommandTree only = args != null && args.length > 0 && args[0] != null && !args[0].startsWith("-")
+                ? subcommands.get(args[0]) : null;
+        if (only != null) {
+            ((AeshCommandContainer<CommandInvocation>) container)
+                    .addChild(only.container(builder, Arrays.copyOfRange(args, 1, args.length)));
+            return container;
         }
         // once each, also when added under aliases
         List<CommandTree> children = new ArrayList<>(new LinkedHashSet<>(subcommands.values()));
         children.sort(Comparator.comparingInt(c -> c.helpOrder));
         for (CommandTree sub : children) {
-            ((AeshCommandContainer<CommandInvocation>) container).addChild(sub.container(builder));
+            ((AeshCommandContainer<CommandInvocation>) container).addChild(sub.container(builder, null));
         }
         return container;
     }

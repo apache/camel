@@ -19,8 +19,10 @@ package org.apache.camel.support.processor.state;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -28,9 +30,15 @@ import org.apache.camel.support.service.ServiceSupport;
  * This {@link MemoryStateRepository} class is a memory-based implementation of a {@link StateRepository}.
  */
 @ManagedResource(description = "Memory based state repository")
-public class MemoryStateRepository extends ServiceSupport implements StateRepository<String, String> {
+public class MemoryStateRepository extends ServiceSupport implements StateRepository<String, String>, InMemoryStrategy {
 
     private final ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
+
+    @Override
+    @ManagedAttribute(description = "Whether the state is kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return true;
+    }
 
     @Override
     @ManagedOperation(description = "Adds the value of the given key to the store")

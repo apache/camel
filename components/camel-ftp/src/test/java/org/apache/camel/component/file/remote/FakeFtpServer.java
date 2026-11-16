@@ -70,6 +70,7 @@ final class FakeFtpServer implements Closeable {
     private final Map<String, byte[]> files = new ConcurrentHashMap<>();
     private final Set<String> directories = ConcurrentHashMap.newKeySet();
     private final List<Connection> connections = new CopyOnWriteArrayList<>();
+    private final List<String> commands = new CopyOnWriteArrayList<>();
     private final AtomicInteger connectionIds = new AtomicInteger();
     private volatile Predicate<String> trigger;
     private volatile Stall stall = Stall.BEFORE_REPLY;
@@ -117,6 +118,11 @@ final class FakeFtpServer implements Closeable {
         List<String> answer = new ArrayList<>();
         connections.forEach(c -> answer.addAll(c.unanswered));
         return answer;
+    }
+
+    /** Every command line the server received, on any connection, in the order received. */
+    List<String> commands() {
+        return commands;
     }
 
     /** How many control connections the client has opened so far. */
@@ -181,6 +187,7 @@ final class FakeFtpServer implements Closeable {
                 reply("220 fake FTP server ready (connection " + id + ")");
                 String line;
                 while ((line = in.readLine()) != null) {
+                    commands.add(line);
                     Predicate<String> t = trigger;
                     if (!silent && t != null && t.test(line)) {
                         // one shot: only the first matching connection stalls

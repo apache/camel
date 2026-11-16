@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
+import org.apache.camel.dsl.jbang.run.common.CliTimes;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -156,8 +154,7 @@ public class ListSqlTrace extends ProcessWatchCommand {
 
     private String formatTime(Row r) {
         if (r.timestamp > 0) {
-            return LocalDateTime.ofInstant(Instant.ofEpochMilli(r.timestamp), ZoneId.systemDefault())
-                    .format(TIME_FMT);
+            return CliTimes.localDateTime(r.timestamp).format(TIME_FMT);
         }
         return "";
     }

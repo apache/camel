@@ -40,12 +40,12 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
 
     /**
-     * This is the class that connects our Camel test with the Kudu testing framework to spin up a Kudu local endpoint.
+     * Shared Kudu cluster started once per test class via Testcontainers.
      */
     @RegisterExtension
-    public IntegrationKuduConfiguration ikc = new IntegrationKuduConfiguration();
+    static IntegrationKuduConfiguration ikc = new IntegrationKuduConfiguration();
 
-    private Integer id = 1;
+    private int id = 1;
 
     protected void createTestTable(String tableName) {
         LOG.trace("Creating table {}.", tableName);
@@ -77,7 +77,7 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() {
-        Assumptions.assumeTrue(ikc.hasKuduHarness(), "Skipping the test because the Kudu harness is not runnable");
+        Assumptions.assumeTrue(ikc.isAvailable(), "Skipping test: Kudu containers are not available (Docker not running?)");
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
 
     @Override
     public void doPostTearDown() {
-        if (ikc.hasKuduHarness()) {
+        if (ikc.isAvailable()) {
             deleteTestTable("TestTable");
         }
     }
@@ -121,7 +121,6 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
 
             client.newSession().apply(insert);
         } catch (KuduException e) {
-
             LOG.error(e.getMessage(), e);
         }
         LOG.trace("Row inserted on table {}.", tableName);

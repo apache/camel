@@ -27,10 +27,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 
 /** Bounded recent history, lost when the context is destroyed. No persistent-storage guarantee. */
-public final class MemorySemanticAuditStore extends ServiceSupport implements SemanticAuditSink, SemanticAuditReader {
+public final class MemorySemanticAuditStore extends ServiceSupport
+        implements SemanticAuditSink, SemanticAuditReader, InMemoryStrategy {
     private final int capacity;
     private final String epoch = UUID.randomUUID().toString();
     private final Deque<Entry> records = new ArrayDeque<>();
@@ -42,6 +44,11 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
             throw new IllegalArgumentException("Invalid audit capacity");
         }
         this.capacity = capacity;
+    }
+
+    @Override
+    public boolean isInMemory() {
+        return true;
     }
 
     @Override

@@ -79,8 +79,9 @@ public interface MessageHistory {
 
     /**
      * The class of the message body when this node was reached (the type the body arrived with, before the node
-     * processed it): the canonical class name, the string {@code "null"} when the body was null, or null when not
-     * captured. Cheap to capture: the class, no conversion, no copy.
+     * processed it): the canonical class name, or the class name when the class has none (an anonymous, local or hidden
+     * class), the string {@code "null"} when the body was null, or null when not captured. Cheap to capture: the class,
+     * no conversion, no copy.
      *
      * @since 4.23
      */

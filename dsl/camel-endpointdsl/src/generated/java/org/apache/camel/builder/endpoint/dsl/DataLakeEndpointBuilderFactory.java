@@ -3308,11 +3308,12 @@ public interface DataLakeEndpointBuilderFactory {
             return "CamelAzureStorageDataLakeFileName";
         }
         /**
-         * The metadata to associate with the file.
+         * (producer) The metadata to associate with the file. (consumer) The
+         * metadata of the file.
          * 
          * The option is a: {@code Map<String, String>} type.
          * 
-         * Group: from both
+         * Group: common
          * 
          * @return the name of the header {@code AzureStorageDataLakeMetadata}.
          */

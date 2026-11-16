@@ -69,6 +69,20 @@ only the default port of `http` (80); to deliver to another port, list it explic
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
+The query string of a request is also read more leniently: a parameter without a value (`?foo` or `?foo=`) gets an empty
+value, and a value that contains `=` is kept whole. Before, such a parameter made the request fail, and a value was cut at
+the first `=` it contained.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -98,6 +112,34 @@ configurations are not affected.
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-duckdb - copy loads one local file unless allowUrlCopySource or allowGlobCopySource is set
+
+The `copy` operation of the `duckdb` producer gave the path from the message body to DuckDB as it was, so DuckDB read a
+value with a URL scheme (such as `https://` or `s3://`) as a remote file, and expanded a value with glob pattern
+characters (`*`, `?`, `[` or `{`) to all the matching files. Now `copy` loads a single local file by default, and a
+source with a URL scheme or glob pattern characters fails with an `IllegalArgumentException`. This also applies to a
+`File` body, such as a file from the `file` consumer, whose name has one of these characters. A route that loads such
+sources must set the new `allowUrlCopySource=true` or `allowGlobCopySource=true` option (both disabled by default).
+
+The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
+links.
+
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly.
+
+Documents carrying an internal DTD subset still parse. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-file - idempotent consumer with an idempotent read lock
 
 With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
@@ -113,6 +155,18 @@ or changing to a directory could resolve the name to another file or directory w
 wildcard to select a file, use the real name of the file in the producer, and the `include` or `antInclude` option of a
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
+
+=== camel-ftp - ftp and ftps refuse a file or directory name with a carriage return or a line feed
+
+The `ftp` and `ftps` components now refuse a remote file or directory name with a carriage return or a line feed, with
+a `GenericFileOperationFailedException`, before they send any command to the server for it. This applies to the name
+the producer writes (the `CamelFileName` header, `tempFileName`, `doneFileName` and `moveExisting`), to the directories
+it creates or changes to, and to the names the consumer retrieves, deletes, renames or lists.
+
+The FTP control connection sends one command per line, so such a name cannot be sent as one command. Before, the server
+got the name cut at the line break: the operation failed or acted on another file, and the replies of the later
+commands on that connection could get out of step. Remove or replace these characters in the name before the producer.
+The `sftp` component is not affected. See the xref:components::ftp-component.adoc[FTP component].
 
 === camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
