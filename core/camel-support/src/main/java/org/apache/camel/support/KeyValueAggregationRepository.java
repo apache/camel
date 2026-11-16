@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class KeyValueAggregationRepository extends ServiceSupport
-        implements RecoverableAggregationRepository, CamelContextAware {
+        implements RecoverableAggregationRepository, CamelContextAware, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyValueAggregationRepository.class);
 
@@ -244,6 +245,16 @@ public class KeyValueAggregationRepository extends ServiceSupport
 
     public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+    /**
+     * Whether the aggregates are kept only in memory: when the underlying {@link KeyValueRepository} keeps its data
+     * only in memory, or when none is set, as the service then creates a {@link MemoryKeyValueRepository} when it
+     * starts.
+     */
+    @Override
+    public boolean isInMemory() {
+        return repository == null || (repository instanceof InMemoryStrategy s && s.isInMemory());
     }
 
     /**
