@@ -69,6 +69,20 @@ only the default port of `http` (80); to deliver to another port, list it explic
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
+The query string of a request is also read more leniently: a parameter without a value (`?foo` or `?foo=`) gets an empty
+value, and a value that contains `=` is kept whole. Before, such a parameter made the request fail, and a value was cut at
+the first `=` it contained.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
