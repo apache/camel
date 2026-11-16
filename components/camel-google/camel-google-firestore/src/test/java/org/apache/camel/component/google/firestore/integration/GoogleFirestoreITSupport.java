@@ -31,6 +31,8 @@ import org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreServ
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base support class for Google Firestore integration tests.
@@ -63,6 +65,8 @@ public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
     @RegisterExtension
     public static GoogleFirestoreService service = GoogleFirestoreServiceFactory.createSingletonService();
 
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleFirestoreITSupport.class);
+
     /**
      * Test collection name with unique suffix to avoid conflicts between test runs.
      */
@@ -85,8 +89,12 @@ public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
         configuration.setProjectId(service.projectId());
 
         if (isRemote()) {
-            configuration.setServiceAccountKey(
-                    "file:" + System.getProperty(GoogleFirestoreProperties.SERVICE_ACCOUNT_KEY));
+            String serviceAccountKey = System.getProperty(GoogleFirestoreProperties.SERVICE_ACCOUNT_KEY);
+            if (serviceAccountKey == null) {
+                throw new IllegalStateException(
+                        "The google.firestore.serviceAccountKey system property is required with -Dgoogle.instance.type=remote");
+            }
+            configuration.setServiceAccountKey("file:" + serviceAccountKey);
             String databaseId = System.getProperty(GoogleFirestoreProperties.DATABASE_ID);
             if (databaseId != null) {
                 configuration.setDatabaseId(databaseId);
@@ -104,7 +112,7 @@ public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
                 try {
                     client.close();
                 } catch (Exception e) {
-                    throw new IllegalStateException(e);
+                    LOG.warn("Failed to close the Firestore client of Floci GCP", e);
                 }
             }));
         }
