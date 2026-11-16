@@ -24,9 +24,7 @@ import org.apache.camel.test.dst.DstTest;
  * Deterministic simulation test of the camel-mongodb change streams consumer against a fake MongoDB, with dropped
  * collections, a server that cannot be reached, failed getMores, failed and slow processing, and route restarts: a
  * stored resume token never passes an event that was not routed, and once the faults cleared every event is routed. A
- * failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds;
- * {@code -Ddst.mongodb.strictFirstCursor=true} also counts the events that a cursor opened again before any exchange
- * completed skips (CAMEL-26992, see {@link MongoDbChangeStreamsWorld}).
+ * failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
  */
 @DstInstrument("org.apache.camel.component.mongodb")
 class MongoDbChangeStreamsDstTest {

@@ -121,7 +121,7 @@ a|* the change streams consumer with a store of its resume token (changeStreamTo
 * a server that cannot be reached for a while: the cursor cannot be opened, a getMore fails
 * route restarts (the consumer thread interrupted, then the route stopped and started), resuming after the stored token
 * the fullDocument option and cursorRegenerationDelay
-|CAMEL-25679, CAMEL-25946
+|CAMEL-25679, CAMEL-25946, CAMEL-26992
 
 |camel-nats
 |`NatsWorld` (`NatsConsumerDstTest`)
@@ -606,8 +606,8 @@ diff /tmp/seed-8.first $SQS/target/dst/SqsVisibilityDstTest.*/seed-8.trace && ec
 ----
 
 For camel-mongodb (`MongoDbChangeStreamsDstTest`) the past fixes are the main code of 5f10c225652e (CAMEL-25946) and of
-3af2c90d63ad (CAMEL-25679), reverted by hand. Its world has the property `dst.mongodb.strictFirstCursor` (`true` counts
-the events that a cursor opened again before any exchange completed skips, CAMEL-26992, as missing).
+3af2c90d63ad (CAMEL-25679), reverted by hand. Its world also found CAMEL-26992 (fixed by 1eb59175e600): a cursor that
+the consumer opened again before any exchange completed started at the current time and skipped the events in between.
 
 The past fixes of the other worlds are 83aaa80754f9 (CAMEL-25683, Event Hubs), 68329f0919bc (CAMEL-25684, Slack), the
 main code of b62e90ddb2d9 (CAMEL-25869, Pulsar), the main code of 20c94435789e (CAMEL-25872, Kafka share, whose world

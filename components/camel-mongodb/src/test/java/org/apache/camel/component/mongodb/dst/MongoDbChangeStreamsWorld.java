@@ -66,10 +66,10 @@ import org.apache.camel.test.dst.Invariants;
  * Events may be routed more than once (a restart or a new cursor resumes after the stored token), and an event whose
  * exchange failed is not routed again when a later one completed (the consumer stores the token of the later one).
  * <p>
- * One case is left out of the default set: a cursor that the consumer thread opens again before any exchange completed
- * (the first change stream failed and the driver could not resume it) starts at the current time, as the consumer has
- * no token yet, so the events written since the first change stream are skipped. This is CAMEL-26992. By default the
- * world does not count those events; {@code -Ddst.mongodb.strictFirstCursor=true} counts them.
+ * A cursor that the consumer thread opens again before any exchange completed (the first change stream failed and the
+ * driver could not resume it) has no token to resume after: it starts at the operation time that a ping read just
+ * before the first change stream was opened (startAtOperationTime), so the events written since then are routed too
+ * (CAMEL-26992).
  * <p>
  * Not explored: the graceful stop of the consumer (keepRunning set to false and the cursor closed under a waiting
  * getMore or an exchange in flight), which the one stack cannot run; tailable cursors, streamFilter, the ResumeStrategy
@@ -95,9 +95,8 @@ import org.apache.camel.test.dst.Invariants;
                   "a resume token is stored only after its exchange completed",
                   "a stored resume token never passes an event that was not routed",
                   "every exchange carries a resume token",
-                  "every event is routed once the faults cleared (except a cursor opened again before any exchange"
-                                                           + " completed, CAMEL-26992)" },
-          issues = { "CAMEL-25679", "CAMEL-25946" })
+                  "every event is routed once the faults cleared" },
+          issues = { "CAMEL-25679", "CAMEL-25946", "CAMEL-26992" })
 final class MongoDbChangeStreamsWorld {
 
     static final String ROUTE = "changes";
@@ -122,7 +121,6 @@ final class MongoDbChangeStreamsWorld {
     private long endRequestedAt;
     private boolean finalRequested;
     private boolean starting;
-    private final boolean strictFirstCursor = Boolean.getBoolean("dst.mongodb.strictFirstCursor");
     private boolean interrupted;
     private String finalCheck;
 
@@ -202,8 +200,7 @@ final class MongoDbChangeStreamsWorld {
                     Invariants.of("a stored resume token never passes an event that was not routed",
                             () -> violations.stream().noneMatch(v -> v.startsWith("stored a token past"))
                                     ? null : violations + " (" + config() + ")"),
-                    Invariants.of("every event is routed once the faults cleared (except a cursor opened again before any"
-                                  + " exchange completed, CAMEL-26992)",
+                    Invariants.of("every event is routed once the faults cleared",
                             () -> finalCheck == null ? null : finalCheck + " (" + config() + ")"));
         } finally {
             dst.dropPending();
@@ -258,13 +255,15 @@ final class MongoDbChangeStreamsWorld {
         }
     }
 
-    /** A change stream opened without a token starts at the current time: the events before it are not expected. */
+    /**
+     * The first change stream of a route start without a stored token starts at the current time: the events before it
+     * are not expected.
+     */
     private void opened(String how) {
-        // the first cursor of a route start with an empty store of the token starts at the current time by design. A
-        // cursor that the consumer thread opens again before any exchange completed also starts at the current time (the
-        // consumer has no token yet), so the events written since the first cursor are skipped: that case is CAMEL-26992,
-        // and -Ddst.mongodb.strictFirstCursor=true counts it
-        if (completed.isEmpty() && ("now (route start)".equals(how) || !strictFirstCursor && how.startsWith("now"))) {
+        // only the route start opens a change stream at the current time by design. A cursor that the consumer thread
+        // opens again before any exchange completed starts where the first one started (CAMEL-26992), so the events
+        // written in between are expected
+        if (completed.isEmpty() && "now (route start)".equals(how)) {
             for (FakeMongo.Event e : mongo.oplog()) {
                 if (e.seq() <= mongo.lastCursorStart() && !routed.contains(e.seq())) {
                     excused.add(e.seq());
