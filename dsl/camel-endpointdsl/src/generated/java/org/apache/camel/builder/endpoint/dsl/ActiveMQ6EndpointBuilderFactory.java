@@ -441,7 +441,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -461,7 +463,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -481,7 +485,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToMaxConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -500,7 +506,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToMaxConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

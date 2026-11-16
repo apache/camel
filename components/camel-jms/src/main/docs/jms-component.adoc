@@ -1185,6 +1185,54 @@ You can configure this option in one of the following ways:
 * On the endpoint URI or,
 * By invoking `setConcurrentConsumers()` directly on the `JmsEndpoint`.
 
+==== Concurrent Consuming from a topic
+
+On a topic, each concurrent consumer is a subscriber of its own and receives every message. With
+`concurrentConsumers=3` on a topic, each message is processed three times. This is also the case when
+`concurrentConsumers` or `maxConcurrentConsumers` is set on the component (for its queues) and a route of that component
+consumes from a topic. Camel logs a WARN when such a consumer starts.
+
+To have several consumers share the messages of a topic, so each message is processed once, use a shared subscription
+(requires a JMS 2.0 broker) with `subscriptionShared=true` and a `subscriptionName`. Add `subscriptionDurable=true` to
+keep the messages sent while no consumer is connected:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:topic:SomeTopic?concurrentConsumers=5&subscriptionShared=true&subscriptionName=myApp")
+  .bean(MyClass.class);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:topic:SomeTopic?concurrentConsumers=5&amp;subscriptionShared=true&amp;subscriptionName=myApp"/>
+  <to uri="bean:MyClass"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:topic:SomeTopic
+      parameters:
+        concurrentConsumers: 5
+        subscriptionShared: true
+        subscriptionName: myApp
+      steps:
+        - to:
+            uri: bean:MyClass
+----
+====
+
 ==== Concurrent Consuming with async consumer
 
 Notice that each concurrent consumer will only pick up the next available

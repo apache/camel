@@ -545,6 +545,14 @@ closed, so the body of an ActiveMQ Artemis large message failed with `AMQ219023`
 (such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and the message is
 rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged.
 
+=== camel-jms - a topic consumer with several concurrent consumers and no shared subscription logs a WARN
+
+A consumer on a topic with `concurrentConsumers` or `maxConcurrentConsumers` greater than 1 and without
+`subscriptionShared=true` now logs a WARN when it starts. Each of its consumers has its own subscription, so every
+message is processed once per consumer; this is unchanged. This also applies when the option is set on the component
+and the route consumes from a topic, and to camel-activemq, camel-activemq6 and camel-amqp. To process each message
+once, set `subscriptionShared=true` with a `subscriptionName`, or use a single consumer on the topic.
+
 === camel-sjms, camel-sjms2 - pollEnrich and ConsumerTemplate read the message before they close the session
 
 `pollEnrich` and a `ConsumerTemplate` on an `sjms` or `sjms2` endpoint now read the body and the headers of the message
