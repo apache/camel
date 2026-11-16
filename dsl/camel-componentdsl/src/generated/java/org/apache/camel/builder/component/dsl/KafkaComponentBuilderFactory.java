@@ -639,7 +639,10 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The number of consumers that connect to kafka server. Each consumer
          * is run on a separate thread that retrieves and process the incoming
-         * data.
+         * data. Each consumer is a member of the consumer group, so the
+         * consumers beyond the number of partitions of the topic (counting the
+         * consumers of all the application instances) get no records. With
+         * groupInstanceId, each consumer gets its own group instance id.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -742,7 +745,10 @@ public interface KafkaComponentBuilderFactory {
          * used in combination with a larger session timeout to avoid group
          * rebalances caused by transient unavailability (e.g., process
          * restarts). If not set, the consumer will join the group as a dynamic
-         * member, which is the traditional behavior.
+         * member, which is the traditional behavior. When consumersCount is
+         * greater than 1, each consumer is a static member of its own, with
+         * this ID followed by a dash and the index of the consumer (myId-0,
+         * myId-1, ...).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

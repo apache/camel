@@ -441,6 +441,14 @@ consumer thread (for example, after an aggregator).
 A commit called after the partition was revoked from the consumer is not made.
 It would move back the offset that the new owner of the partition committed.
 
+=== camel-kafka - each consumer of consumersCount gets its own group instance id
+
+With `groupInstanceId` (or `additionalProperties.group.instance.id`) and `consumersCount` greater than 1, the consumer
+with index n now joins the group with the id `<groupInstanceId>-n`, for example `pod-1-0`, `pod-1-1` and `pod-1-2`.
+Before, all the consumers used the same id and fenced each other in a loop (`FencedInstanceIdException`). With
+`consumersCount=1` the id is used as given. After the upgrade, the static member with the old id stays in the group
+until its session timeout (`sessionTimeoutMs`) expires.
+
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
 With `transferException=true`, a consumer that sends the exception of a failed exchange back as the reply now always
