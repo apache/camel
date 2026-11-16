@@ -58,48 +58,86 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " too"))
 public class KMSEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
-             enums = "encrypt,decrypt,generateDataKey")
+    @UriPath(description = "The operation that the producer performs. The CamelAlibabaKmsOperation header replaces this option"
+                           + " for a request that the producer sends. If that header is not set, an exchange property of the"
+                           + " same name replaces this option.",
+             displayName = "Operation", label = "producer", enums = "encrypt,decrypt,generateDataKey")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Alibaba Cloud region", displayName = "Region")
+    @UriParam(description = "The region ID of KMS, for example cn-hangzhou. Only used when the endpoint option is not set, to"
+                            + " build the endpoint of KMS. Not used when the kmsClient option is set or autowired.",
+              displayName = "Region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "KMS endpoint URL. Carries higher precedence than region based client initialization",
+    @UriParam(description = "The endpoint of KMS, which is a host name without http:// or https://. The producer sends requests"
+                            + " to it over HTTPS. If not set, the region option determines the endpoint, and one of the two is"
+                            + " required. Not used when the kmsClient option is set or autowired.",
               displayName = "Endpoint")
     private String endpoint;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Access Key", security = "secret",
-              label = "security")
+    @UriParam(description = "The AccessKey ID of the AccessKey pair for the requests that the producer sends to KMS. If not"
+                            + " set, the accessKey of the serviceKeys option is used, and one of the two is required. Not used"
+                            + " when the kmsClient option is set or autowired.",
+              displayName = "Access Key", security = "secret", label = "security")
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key", security = "secret",
-              label = "security")
+    @UriParam(description = "The AccessKey secret of the AccessKey pair for the requests that the producer sends to KMS. If not"
+                            + " set, the secretKey of the serviceKeys option is used, and one of the two is required. Not used"
+                            + " when the kmsClient option is set or autowired.",
+              displayName = "Secret Key", security = "secret", label = "security")
     private String secretKey;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Keys",
-              security = "secret", label = "security")
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Its"
+                            + " accessKey is the AccessKey ID and its secretKey is the AccessKey secret. Each of the two is"
+                            + " used when the option of the same name is not set. Not used when the kmsClient option is set or"
+                            + " autowired.",
+              displayName = "Service Keys", security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "KMS key id", displayName = "Key Id")
+    @UriParam(description = "The ID, alias or ARN of the KMS key for encrypt and generateDataKey. The CamelAlibabaKmsKeyId"
+                            + " header replaces this option for a request that the producer sends. If that header is not set,"
+                            + " an exchange property of the same name replaces this option. One of the three is required for"
+                            + " encrypt and generateDataKey.",
+              displayName = "Key Id")
     private String keyId;
 
-    @UriParam(description = "Plaintext to encrypt", displayName = "Plaintext", security = "secret", label = "security")
+    @UriParam(description = "The plaintext for encrypt. The producer encodes it in UTF-8 and sends it to KMS in Base64. The"
+                            + " CamelAlibabaKmsPlaintext header replaces this option for a request that the producer sends. If"
+                            + " that header is not set, an exchange property of the same name replaces this option. If none of"
+                            + " the three is set, the producer takes the plaintext from the message body.",
+              displayName = "Plaintext", security = "secret", label = "security")
     private String plaintext;
 
-    @UriParam(description = "Ciphertext blob to decrypt", displayName = "Ciphertext Blob", security = "secret",
-              label = "security")
+    @UriParam(description = "The ciphertext blob for decrypt, for example from the response to encrypt or generateDataKey. The"
+                            + " CamelAlibabaKmsCiphertextBlob header replaces this option for a request that the producer"
+                            + " sends. If that header is not set, an exchange property of the same name replaces this option."
+                            + " If none of the three is set, the producer takes the ciphertext blob from the message body as"
+                            + " text.",
+              displayName = "Ciphertext Blob", security = "secret", label = "security")
     private String ciphertextBlob;
 
-    @UriParam(description = "Key spec for generateDataKey", displayName = "Key Spec")
+    @UriParam(description = "The key spec of the data key for generateDataKey. The value must be AES_256 or AES_128. KMS does"
+                            + " not use it when the number of bytes is set as well. The CamelAlibabaKmsKeySpec header replaces"
+                            + " this option for a request that the producer sends. If that header is not set, an exchange"
+                            + " property of the same name replaces this option. If none of the three is set, the producer adds"
+                            + " no key spec to the request.",
+              displayName = "Key Spec")
     private String keySpec;
 
-    @UriParam(description = "Number of bytes for generateDataKey", displayName = "Number Of Bytes")
+    @UriParam(description = "The number of bytes of the data key for generateDataKey. The value must be from 1 to 1024. The"
+                            + " CamelAlibabaKmsNumberOfBytes header replaces this option for a request that the producer sends."
+                            + " If that header is not set, an exchange property of the same name replaces this option. If none"
+                            + " of the three is set, the producer adds no number of bytes to the request.",
+              displayName = "Number Of Bytes")
     private Integer numberOfBytes;
 
-    @UriParam(description = "Autowire an existing KMS client instance", displayName = "KMS Client", label = "advanced")
+    @UriParam(description = "To use a custom com.aliyun.kms20160120.Client. The producer sends its requests with this client,"
+                            + " and the region, endpoint, accessKey, secretKey and serviceKeys options are not used. If no"
+                            + " client is set or autowired, the Camel endpoint creates a client from these options. It creates"
+                            + " this client when the producer processes its first message.",
+              displayName = "KMS Client", label = "advanced")
     @Metadata(autowired = true)
     private Client kmsClient;
 
