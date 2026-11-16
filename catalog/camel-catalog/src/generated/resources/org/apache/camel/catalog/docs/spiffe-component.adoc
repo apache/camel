@@ -415,10 +415,11 @@ The consumer must expose the peer authenticated by its own TLS connection. Suppo
 | No automatic peer authentication support. The proxy's connection identity does not prove the original client's identity.
 |===
 
-These adapters publish a `org.apache.camel.spi.TlsPeerCertificateProvider` under its `EXCHANGE_PROPERTY`
-exchange-property key. This typed contract is for trusted consumers integrating actual authenticated server TLS
-state. It is never populated from HTTP identity or certificate headers. An absent client certificate is recorded
-as an unverified peer, which fails closed. Custom consumers must uphold the same provenance contract.
+These adapters publish a `org.apache.camel.spi.TlsPeerCertificateProvider` in the `CamelTlsPeerCertificates`
+exchange property. This typed contract is for trusted consumers integrating actual authenticated server TLS state. It
+is never populated from HTTP identity or certificate headers. A TLS connection without a client certificate is
+recorded as an unverified peer, which fails closed; a plain connection leaves the property absent, and the policy then
+falls back to the session header. Custom consumers must uphold the same provenance contract.
 ====
 
 The peer SPIFFE ID is taken from the *verified* TLS peer certificate the consumer put on the exchange through the
