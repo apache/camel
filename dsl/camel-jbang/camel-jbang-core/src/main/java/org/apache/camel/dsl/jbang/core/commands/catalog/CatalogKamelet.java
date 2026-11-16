@@ -108,8 +108,8 @@ public class CatalogKamelet extends CamelCommand {
         }
         if (filterName != null) {
             String text = filterName.toLowerCase(Locale.ROOT);
-            // a Kamelet may have no description
-            rows.removeIf(r -> !text.equalsIgnoreCase(r.name)
+            // a part of the name, as camel catalog component does; a Kamelet may have no description
+            rows.removeIf(r -> !r.name.toLowerCase(Locale.ROOT).contains(text)
                     && (r.description == null || !r.description.toLowerCase(Locale.ROOT).contains(text)));
         }
 
