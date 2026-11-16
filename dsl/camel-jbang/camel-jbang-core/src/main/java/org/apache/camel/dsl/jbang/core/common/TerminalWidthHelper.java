@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Locale;
+import java.util.function.BooleanSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,8 +51,11 @@ public final class TerminalWidthHelper {
      * Windows. Returns {@value #DEFAULT_WIDTH} if detection fails or if the output is not connected to a terminal.
      */
     public static int getTerminalWidth() {
+        return getTerminalWidth(System.getenv("COLUMNS"), EnvironmentHelper::hasTerminal);
+    }
+
+    static int getTerminalWidth(String cols, BooleanSupplier terminal) {
         // Try COLUMNS env var first (set by most shells)
-        String cols = System.getenv("COLUMNS");
         if (cols != null) {
             try {
                 int w = Integer.parseInt(cols.trim());
@@ -61,6 +65,13 @@ public final class TerminalWidthHelper {
             } catch (NumberFormatException e) {
                 // ignore
             }
+        }
+        if (!terminal.getAsBoolean()) {
+            // No terminal (output piped or redirected, or input not a terminal, as when an AI agent runs the CLI): the
+            // command would fail or size a terminal that the output does not go to. Starting it costs tens of
+            // milliseconds, as from JDK 24 starting a process asks for a System.Logger, which makes the JDK look for a
+            // LoggerFinder in every JAR of the class path.
+            return DEFAULT_WIDTH;
         }
         // Fall back to an OS native command that reads the terminal size without escape sequences
         int w = isWindows()
