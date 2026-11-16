@@ -85,6 +85,16 @@ keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `
 the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
 no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
+=== camel-core-model - EIP options given an expression in the Java DSL keep its language
+
+In the Java DSL, `completionSize`, `completionTimeout` and `completionPredicate` of the Aggregate EIP, and `handled`,
+`continued` and `retryWhile` of `onException`, keep an expression made with `simple(...)`, `header(...)` or another
+expression builder as its language and text, as the EIPs that take an expression directly do. Each route created from
+a route template now has its own copy of the expression, so a template parameter in it, such as
+`+completionSize(simple("{{size}}"))+`, takes the value of that route: before, every route used the value of the first
+route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
+`CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:
