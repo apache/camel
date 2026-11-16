@@ -6460,6 +6460,23 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
 
+=== camel-google-storage, camel-minio, camel-alibaba-mns - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead` or `moveAfterRead`, the `google-storage` and `minio` consumers now delete or move the object
+they consumed, in the bucket of the endpoint. Before, they took the name and the bucket of the object from the
+`CamelGoogleCloudStorageObjectName` and `CamelGoogleCloudStorageBucketName` headers, or from the `CamelMinioObjectName`
+and `CamelMinioBucketName` headers, as the route left them. A route that set the object name header, for example to
+write a copy of the object under another name, deleted or moved that copy, and the consumed object was consumed again
+by the next poll. A route that removed these headers deleted nothing.
+
+The `alibaba-mns` consumer now deletes the message with the receipt handle it received it with. Before, it took the
+`CamelAlibabaMnsReceiptHandle` header as the route left it, so a route that removed the headers or replaced the message
+did not delete it, and the message was received again once it was visible again.
+
+The consumers now call `processCommit(Exchange, String)` with the name of the object or the receipt handle. A subclass
+of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
+the new method instead. `processCommit(Exchange)` is deprecated.
+
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed

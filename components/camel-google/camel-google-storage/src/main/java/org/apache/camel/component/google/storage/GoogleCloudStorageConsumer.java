@@ -285,12 +285,14 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the object to delete or move once the exchange is done. It is taken now, as the route may change or
+            // remove the object name header before it ends (the producer takes the name of the object to write from it)
             final String key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     try {
-                        processCommit(exchange);
+                        processCommit(exchange, key);
                     } finally {
                         inProgress.remove(key);
                     }
@@ -321,16 +323,27 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy to delete the message after being processed.
+     * Strategy to delete or move the object after being processed, the object named by the
+     * {@link GoogleCloudStorageConstants#OBJECT_NAME} header.
+     *
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
+     */
+    @Deprecated(since = "4.24.0")
+    protected void processCommit(Exchange exchange) {
+        processCommit(exchange, exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
+    }
+
+    /**
+     * Strategy to delete or move the object after being processed.
      *
      * @param exchange the exchange
+     * @param key      the name of the object the exchange was created from, in the bucket of the endpoint
      */
-    protected void processCommit(Exchange exchange) {
+    protected void processCommit(Exchange exchange, String key) {
+        final String bucketName = getConfiguration().getBucketName();
         try {
             if (getConfiguration().isMoveAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
-
                 LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key,
                         getConfiguration().getDestinationBucket());
 
@@ -343,9 +356,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                         getConfiguration().getDestinationBucket(), copyWriter.getResult());
             }
             if (getConfiguration().isDeleteAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
-
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
 
                 boolean b = getStorageClient().delete(bucketName, key);
