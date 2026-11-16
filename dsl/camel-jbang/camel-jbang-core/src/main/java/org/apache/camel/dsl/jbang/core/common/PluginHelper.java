@@ -80,10 +80,11 @@ public final class PluginHelper {
 
     /**
      * Built-in top-level commands that consume plugins — either by accepting plugin-contributed sub-options (run,
-     * export) or by dispatching to plugin-provided commands (shell, cmd). Plugin discovery must still run for these
-     * even if the target name is registered as a built-in subcommand.
+     * export) or by dispatching to plugin-provided commands (shell). Plugin discovery must still run for these even if
+     * the target name is registered as a built-in subcommand. Not cmd: no plugin adds to it, and creating all commands
+     * and plugins for it made camel cmd take twice as long as the other commands.
      */
-    private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export", "cmd");
+    private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export");
 
     // the plugins warned about by compatibilityCheck, to warn once
     private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
@@ -146,8 +147,8 @@ public final class PluginHelper {
     /**
      * Decides whether plugin discovery (classpath scan + JSON config + Maven resolution) is needed for the current
      * invocation. Returns false when the target command is a built-in that does not consume plugins, skipping all
-     * plugin-related IO. Returns true for plugin-consuming built-ins (run/export/cmd/shell), for unknown commands
-     * (likely plugin-provided), and when no target is given (e.g. --help listing).
+     * plugin-related IO. Returns true for plugin-consuming built-ins (run/export/shell), for unknown commands (likely
+     * plugin-provided), and when no target is given (e.g. --help listing).
      *
      * @param  commandLine the command line with all built-in subcommands already registered
      * @param  args        the raw CLI args; only args[0] is inspected
@@ -182,7 +183,7 @@ public final class PluginHelper {
      * {@link #shouldDiscoverPlugins(CommandTree, String...)}).
      *
      * @param  command the name of the command
-     * @return         {@code true} for shell, run, export and cmd
+     * @return         {@code true} for shell, run and export
      */
     public static boolean isPluginConsumingCommand(String command) {
         return PLUGIN_CONSUMING_BUILTINS.contains(command);
