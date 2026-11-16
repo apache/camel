@@ -613,6 +613,15 @@ CAMEL-25737), `dst.replayCheckSeed` (the seed of the in-JVM replay test of the E
 `dst.share.pollOnError` (the pollOnError strategies the Kafka share world picks from)
 and `dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures).
 
+For camel-zookeeper-master (`-pl components/camel-zookeeper-master`, `ZooKeeperMasterDstTest`) the past fixes are
+`MasterConsumer` of e670025a49a4^ (CAMEL-25315), `MasterRoutePolicy` of 706beec6d5ab^ (CAMEL-26540), 136ffd929263
+(CAMEL-26802) and 28f3170dcc6a (CAMEL-26887) reverted, and the `unregisterAsListener()` of 5ecab86a58ba (CAMEL-26870)
+taken out by hand. Its world has three properties, each adding back a case that the default set leaves out:
+`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected),
+`dst.zookeeper.stopDuringCreate` (a route stopped while the group waits for the answer of a create, or a create made
+after the close interrupted the thread of the group) and `dst.zookeeper.startStartedRoute` (a started
+route of the policy started again).
+
 == Limits
 
 * Interleaving is per task: the harness does not preempt a task in the middle of a method.

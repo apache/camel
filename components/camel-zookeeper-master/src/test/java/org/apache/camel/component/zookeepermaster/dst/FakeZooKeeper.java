@@ -78,7 +78,9 @@ import tools.jackson.databind.json.JsonMapper;
  * <p>
  * Not modelled: ACLs, containers and TTL znodes, background (asynchronous) operations, transactions, the state events
  * of type None that ZooKeeper gives every watcher (the watchers of the group ignore them), read-only mode, the order of
- * the children in a getChildren answer (sorted here).
+ * the children in a getChildren answer (sorted here), and SessionExpiredException of an operation, which Curator
+ * retries (the client here has its new session as soon as the connection is back, so no operation sees the expired
+ * one).
  * <p>
  * The client notices a connection loss after a seeded delay below two thirds of the session timeout (as the ZooKeeper
  * client does with its read timeout), or at once when one of its calls fails on it (a reset connection).
@@ -523,14 +525,22 @@ final class FakeZooKeeper {
 
     // the threads of the closed groups (executor labels), which a real close interrupts
     private final Set<String> interrupted = new HashSet<>();
+    /**
+     * Whether a write that an interrupted thread makes while the client is connected is applied, as ZooKeeper does (see
+     * {@link #interrupt}). A group whose thread is interrupted by its close can then make its znode after it left the
+     * group, the case of {@code -Ddst.zookeeper.stopDuringCreate}; without it such a write fails before it is sent.
+     */
+    boolean writesAfterInterrupt;
 
     /**
      * The thread with this executor label is interrupted, as ExecutorService.shutdownNow does when a group closes. A
      * ZooKeeper call that it waits in, or makes from now on, throws: the real one throws InterruptedException (Curator
      * sets the interrupt flag again, so the next call throws too). The fake throws an IllegalStateException instead, as
      * an InterruptedException would make the code under test set the interrupt flag of the one thread of the harness. A
-     * write that was sent before the interrupt is applied by the ensemble (ClientCnxn queues the packet before it
-     * waits); only its answer is lost.
+     * write is applied by the ensemble when it was sent before the interrupt, or, with {@link #writesAfterInterrupt},
+     * when it is made after the interrupt while the client is connected (ClientCnxn.submitRequest queues the packet
+     * before it waits); only its answer is lost. Curator queues a guaranteed delete again on an InterruptedException;
+     * the fake's IllegalStateException does not show that.
      */
     void interrupt(String executorLabel) {
         interrupted.add(executorLabel);
@@ -578,6 +588,18 @@ final class FakeZooKeeper {
     }
 
     private <T> T call(String what, boolean write, Callable<T> apply) throws Exception {
+        if (writesAfterInterrupt && write && interrupted.contains(dst.currentExecutor()) && !closed && clientConnected
+                && network) {
+            // [Z] a write made after the interrupt still reaches the ensemble: ClientCnxn queues the packet before it
+            // waits, and only the wait is interrupted
+            try {
+                apply.call();
+            } catch (KeeperException e) {
+                // the answer of the ensemble is lost with the interrupt
+                dst.trace("zk: " + what + " of an interrupted thread failed: " + e.code());
+            }
+            checkInterrupted(what, true);
+        }
         checkInterrupted(what, false);
         if (closed) {
             violations.add(what + " on a closed client");

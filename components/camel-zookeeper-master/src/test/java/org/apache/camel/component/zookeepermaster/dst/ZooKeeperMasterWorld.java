@@ -85,10 +85,12 @@ import org.apache.curator.framework.CuratorFramework;
  * JMX), the camel-master cluster services, and a stop while the thread of the group waits in a call of ZooKeeper (see
  * {@code mustWaitToStop}). The route policy starts its consumer at once (see {@code maxStart}).
  * <p>
- * Left out of the default set while they are looked at separately (a system property adds each): a route stopped while
- * the client is disconnected ({@code -Ddst.zookeeper.stopWhileSuspended=true}) or while the group waits for the answer
- * of a create ({@code -Ddst.zookeeper.stopDuringCreate=true}), and a route of the policy started from outside when it
- * is started already ({@code -Ddst.zookeeper.startStartedRoute=true}).
+ * Left out of the default set, each a bug of its own with a JIRA to come (a system property adds each): a route stopped
+ * while the client is disconnected leaves the znode of its group behind
+ * ({@code -Ddst.zookeeper.stopWhileSuspended=true}); a route stopped while the group waits for the answer of a create,
+ * or makes one after the close interrupted its thread, leaves the znode of that create behind
+ * ({@code -Ddst.zookeeper.stopDuringCreate=true}); and a route of the policy started from outside when it is started
+ * already starts its consumer again without the onStart of the policy ({@code -Ddst.zookeeper.startStartedRoute=true}).
  */
 @DstWorld(component = "zookeeper-master",
           fake = "FakeZooKeeper: a ZooKeeper ensemble (sessions, ephemeral sequential znodes, one-time watches) with the"
@@ -124,8 +126,11 @@ final class ZooKeeperMasterWorld {
     private final long maxStart;
     private final double startFailRate;
     private final long grace;
+    // a started route of the policy started again starts its consumer without the onStart of the policy
     private final boolean startStartedRoute = Boolean.getBoolean("dst.zookeeper.startStartedRoute");
+    // a group closed while the client is disconnected does not delete its znode
     private final boolean stopWhileSuspended = Boolean.getBoolean("dst.zookeeper.stopWhileSuspended");
+    // a create interrupted by the close of the group is applied, and its znode stays
     private final boolean stopDuringCreate = Boolean.getBoolean("dst.zookeeper.stopDuringCreate");
     private final List<String> violations = new ArrayList<>();
     private final List<WorkConsumer> running = new ArrayList<>();
@@ -151,6 +156,9 @@ final class ZooKeeperMasterWorld {
         this.policyMode = dst.chance(0.5);
         zk.sessionTimeout = dst.pick(List.of(4000L, 10_000L));
         zk.retries = dst.pick(List.of(0, 1));
+        // a write of a thread the close interrupted is applied by ZooKeeper, which leaves a znode behind as in a stop
+        // during a create
+        zk.writesAfterInterrupt = stopDuringCreate;
         zk.slowRate = dst.pick(List.of(0.0, 0.05));
         // a connection lost before the answer of a write: the client retries it; a create retried that way makes a second
         // znode, which the group removes as it finds it with its own uuid (prunePartialState)
