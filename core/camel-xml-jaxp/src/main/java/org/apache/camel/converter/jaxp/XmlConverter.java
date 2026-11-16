@@ -1205,6 +1205,18 @@ public class XmlConverter {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
                     "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
         }
+        try {
+            sfactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    "http://xml.org/sax/features/external-parameter-entities", false, e.getMessage());
+        }
+        try {
+            sfactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/nonvalidating/load-external-dtd", false, e.getMessage());
+        }
         sfactory.setNamespaceAware(true);
         return sfactory;
     }
