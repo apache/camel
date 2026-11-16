@@ -507,6 +507,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         this.policyReloadInterval = policyReloadInterval;
     }
 
+    /** Explicitly reloads the configured WASM policy, retaining the active revision if validation fails. */
     public boolean reloadPolicy() throws Exception {
         OpaReloadableWasmEvaluator wasm;
         synchronized (this) {
@@ -518,6 +519,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         return wasm.reload();
     }
 
+    /** The reload status of the WASM policy, or {@code null} when this policy does not evaluate in WASM mode. */
     public OpaPolicyReloadStatus getPolicyReloadStatus() {
         return evaluator instanceof OpaReloadableWasmEvaluator wasm ? wasm.getReloadStatus() : null;
     }

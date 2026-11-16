@@ -234,6 +234,42 @@ class OpaReloadableWasmEvaluatorTest {
     }
 
     @Test
+    void managedWatcherDoesNotBuildTheSameFailedContentAgain() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var loads = new AtomicInteger();
+        var creations = new AtomicInteger();
+        var old = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 10, () -> {
+                         loads.incrementAndGet();
+                         return content.get();
+                     },
+                     b -> {
+                         if (b.wasm()[0] == 2) {
+                             creations.incrementAndGet();
+                             throw new IOException("module rejected");
+                         }
+                         return old;
+                     },
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            evaluator.startWatching();
+            content.set(bundle(2));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> evaluator.getReloadStatus().getLastFailedReload() != null);
+            int loadsAtFailure = loads.get();
+            // the polls go on reading the resource, but the content that failed is not built again
+            await().atMost(5, TimeUnit.SECONDS).until(() -> loads.get() >= loadsAtFailure + 3);
+            assertThat(creations).hasValue(1);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+            // an explicit reload tries again
+            assertThatThrownBy(evaluator::reload).isInstanceOf(IOException.class);
+            assertThat(creations).hasValue(2);
+            evaluator.stopWatching();
+        }
+    }
+
+    @Test
     void revisionIncludesDataAndDistinguishesMissingDataFromEmptyObject() throws Exception {
         var content = new AtomicReference<>(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, null));
         var first = mock(OpaWasmEvaluator.class);

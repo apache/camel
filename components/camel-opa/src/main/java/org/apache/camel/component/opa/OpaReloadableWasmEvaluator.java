@@ -141,8 +141,10 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
             boolean published = false;
             String revision = null;
             try {
-                OpaWasmEvaluator.Bundle bundle = immutableBundle(loader.load());
-                revision = revision(bundle);
+                OpaWasmEvaluator.Bundle loaded = loader.load();
+                // computed before the validation, so content that loads but does not validate is remembered too
+                revision = revision(loaded);
+                OpaWasmEvaluator.Bundle bundle = immutableBundle(loaded);
                 synchronized (state) {
                     ensureOpen(generation);
                     if (active.revision.equals(revision)) {

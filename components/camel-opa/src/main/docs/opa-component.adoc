@@ -709,8 +709,9 @@ exchanges to finish. Stopping cancels the watcher and prevents an in-flight relo
 successful check (the initial load, a published reload, or a poll that found the content unchanged), and the
 time and exception class name of the last failed reload, which stay visible after later successful checks.
 Failure diagnostics exclude exception messages and resource contents. A failed reload retains the last
-validated snapshot, and a poll does not build the same failed content again until it changes, so one broken
-file logs one warning; an explicit `reloadPolicy()` always tries. Operators should monitor failures because
+validated snapshot. Content that loads but fails validation or compilation is not built again by a poll until
+it changes, so one broken file logs one warning, while a resource that cannot be read at all is retried on every
+poll; an explicit `reloadPolicy()` always tries. Operators should monitor failures because
 retained policy can become stale. Reload and this option apply only to WASM evaluation; REST policy
 deployment remains managed by the OPA server.
 
