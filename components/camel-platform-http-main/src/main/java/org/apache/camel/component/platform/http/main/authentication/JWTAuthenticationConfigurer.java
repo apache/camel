@@ -141,6 +141,9 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
      * alias loads fine, but then every signed token fails, so warn at startup.
      */
     private static void warnIfNoJwtAlias(String type, String path, String password, String configPrefix) {
+        if (path == null) {
+            return;
+        }
         try (InputStream is = openKeystore(path)) {
             if (is == null) {
                 // Vert.x reports a keystore it cannot read
