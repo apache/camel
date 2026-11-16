@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A {@link RouteBuilder} which has extended capabilities when using the
  * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
- * <p/>
+ * <p>
  * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes). If
  * you do it multiple times, then it may not work as expected, especially when any kind of error handling is involved.
  */
@@ -163,7 +163,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     /**
      * Weaves by matching id of the nodes in the route (incl onException etc).
-     * <p/>
+     * <p>
      * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param  pattern the pattern
@@ -179,7 +179,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     /**
      * Weaves by matching the to string representation of the nodes in the route (incl onException etc).
-     * <p/>
+     * <p>
      * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param  pattern the pattern
@@ -195,7 +195,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     /**
      * Weaves by matching sending to endpoints with the given uri of the nodes in the route (incl onException etc).
-     * <p/>
+     * <p>
      * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param  pattern the pattern

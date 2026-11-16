@@ -62,9 +62,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(defaultValue = "true", description = "Setting to set endpoint as one-way (false) or request-response (true)")
     private boolean sync = true;
     @UriParam(label = "codec",
-              description = "Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not"
-                            + " specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed"
-                            + " to be serialized by default.")
+              description = "Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec,"
+                            + " where each message ends with the delimiter. If not specified or the value is false, the default"
+                            + " codec is a String codec without framing, so each read from the socket becomes one message.")
     private boolean textline;
     @UriParam(label = "codec", defaultValue = "LINE", enums = "LINE,NULL",
               description = "The delimiter to use for the textline codec. Possible values are LINE and NULL.")
@@ -114,8 +114,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
               description = "If enabled and an Exchange failed processing on the consumer side the response written back to the remote peer"
                             + " won't contain the exception's class, message or stack trace.")
     private boolean muteException = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.")
+    @UriParam(label = "advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use when there is nothing to send: on the consumer (if sync is enabled) when there is no reply to send back, and on the producer when the message has no body.")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If the server (NettyConsumer) catches an exception then its logged using this logging level.")
@@ -418,9 +418,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     }
 
     /**
-     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not
-     * specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed
-     * to be serialized by default.
+     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec, where
+     * each message ends with the delimiter. If not specified or the value is false, the default codec is a String codec
+     * without framing, so each read from the socket becomes one message.
      */
     public void setTextline(boolean textline) {
         this.textline = textline;

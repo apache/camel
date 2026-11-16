@@ -142,46 +142,48 @@ public class CamelNanoLspEditor extends Nano {
         CompletionItem item = lines.get(selected);
         Either<TextEdit, InsertReplaceEdit> textEdit = item.getTextEdit();
         if (textEdit != null) {
-            TextEdit left = textEdit.getLeft();
-            Range range = left.getRange();
+            // a text edit, or an insert/replace edit, which replaces its range (CAMEL-26933: the latter threw a
+            // NullPointerException, as it is the right side of the Either)
+            Range range = textEdit.isLeft() ? textEdit.getLeft().getRange() : textEdit.getRight().getReplace();
+            String newText = textEdit.isLeft() ? textEdit.getLeft().getNewText() : textEdit.getRight().getNewText();
             Position start = range.getStart();
-            int startLine = start.getLine();
             Position end = range.getEnd();
-            int endLine = end.getLine();
-            if (startLine == endLine) {
-                StringBuilder newLine = new StringBuilder();
-                String line = this.buffer.getLines().get(startLine);
-                newLine.append(line, 0, start.getCharacter());
-                newLine.append(left.getNewText());
-                newLine.append(line.substring(end.getCharacter()));
-                this.buffer.getLines().set(startLine, newLine.toString());
-                this.buffer.moveRight(left.getNewText().length());
-            } else {
-                // first line
-                StringBuilder newFirstLine = new StringBuilder();
-                String oldFirstLine = this.buffer.getLines().get(startLine);
-                String newText = left.getNewText();
-                newFirstLine.append(oldFirstLine, 0, start.getCharacter());
-                newFirstLine.append(newText, 0, oldFirstLine.length() - start.getCharacter());
-                this.buffer.getLines().set(startLine, newFirstLine.toString());
-                // second line
-                StringBuilder newSecondLine = new StringBuilder();
-                String oldSecondLine = this.buffer.getLines().get(endLine);
-                newSecondLine.append(newText, oldFirstLine.length() - start.getCharacter(), end.getCharacter());
-                newSecondLine.append(oldSecondLine.substring(end.getCharacter()));
-                this.buffer.getLines().set(endLine, newSecondLine.toString());
-                this.buffer.moveRight(left.getNewText().length());
-            }
+            applyEdit(this.buffer.getLines(), start.getLine(), start.getCharacter(), end.getLine(), end.getCharacter(),
+                    newText);
+            this.buffer.moveRight(newText.length());
         } else if (!Strings.isEmpty(item.getInsertText()) || !Strings.isEmpty(item.getLabel())) {
             String insert = Strings.isEmpty(item.getInsertText()) ? item.getLabel() : item.getInsertText();
-            StringBuilder newLine = new StringBuilder();
-            String line = this.buffer.getLines().get(buffer.getLine());
-            newLine.append(line, 0, buffer.getOffsetInLine() + buffer.getColumn());
-            newLine.append(insert);
-            this.buffer.getLines().set(buffer.getLine(), newLine.toString());
+            int line = buffer.getLine();
+            this.buffer.getLines().set(line,
+                    insertAt(this.buffer.getLines().get(line), buffer.getOffsetInLine() + buffer.getColumn(), insert));
             this.buffer.moveRight(insert.length());
         }
         this.buffer.setDirty(true);
+    }
+
+    /**
+     * Replaces the text from the start to the end position with the new text, which may span several lines: the lines
+     * of the range are replaced by the lines of the result. The text of the edit was indexed with the positions of the
+     * old lines, which lost text or threw (CAMEL-26933).
+     */
+    static void applyEdit(List<String> lines, int startLine, int startChar, int endLine, int endChar, String newText) {
+        String first = lines.get(startLine);
+        String last = lines.get(endLine);
+        String result = first.substring(0, Math.min(startChar, first.length())) + newText
+                        + last.substring(Math.min(endChar, last.length()));
+        List<String> replaced = List.of(result.split("\n", -1));
+        for (int i = endLine; i >= startLine; i--) {
+            lines.remove(i);
+        }
+        lines.addAll(startLine, replaced);
+    }
+
+    /**
+     * The line with the text inserted at the position, keeping the rest of the line, which was dropped (CAMEL-26933).
+     */
+    static String insertAt(String line, int pos, String insert) {
+        int at = Math.min(pos, line.length());
+        return line.substring(0, at) + insert + line.substring(at);
     }
 
     private static class LocalCamelDocumentService extends CamelTextDocumentService {

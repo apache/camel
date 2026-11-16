@@ -439,9 +439,12 @@ public interface LangChain4jChatEndpointBuilderFactory {
             return "CamelLangChain4jChatPromptTemplate";
         }
         /**
-         * Augmented Data for RAG.
+         * Augmented Data for RAG: the contents to inject into the chat message.
+         * Set by LangChain4jRagAggregatorStrategy, which turns the retrieved
+         * Strings into Content.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.rag.content.Content>} type.
          * 
          * Group: producer
          * 

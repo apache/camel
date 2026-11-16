@@ -247,7 +247,7 @@ thread that called the recipient list, then make sure to enable the synchronous 
 
 ==== Using custom thread pool
 
-A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `ExecutorServiceStrategy` (see Camel's Threading Model),
+A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `executorService` option (see Camel's Threading Model),
 the same way you would do it for the `aggregationStrategy`. By default, Camel uses a thread pool with 10 threads (subject to change in future versions).
 
 The Recipient List EIP will by default continue to process the entire exchange even in case one of the

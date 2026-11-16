@@ -168,12 +168,37 @@ public class JpaProducer extends DefaultProducer {
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
 
-        if (findEntity) {
-            processFind(exchange, entityManager);
-        } else if (getQueryFactory() != null) {
-            processQuery(exchange, entityManager);
-        } else {
-            processEntity(exchange, entityManager);
+        try {
+            if (findEntity) {
+                processFind(exchange, entityManager);
+            } else if (getQueryFactory() != null) {
+                processQuery(exchange, entityManager);
+            } else {
+                processEntity(exchange, entityManager);
+            }
+        } catch (RuntimeException e) {
+            closeEntityManagerOnFailure(exchange, entityManager);
+            throw e;
+        }
+    }
+
+    /**
+     * After a failure, the EntityManager may hold a broken JDBC connection (Hibernate keeps it when the rollback
+     * fails), and its persistence context is undefined after the rollback (Jakarta Persistence, Transaction Rollback).
+     * Closes it, as JpaConsumer does, so that a redelivery of the exchange gets a new one from
+     * {@link JpaHelper#getTargetEntityManager}. Only the EntityManager that camel-jpa created for the exchange is
+     * closed: not one passed in the {@link JpaConstants#ENTITY_MANAGER} header, nor Spring's shared EntityManager. One
+     * that joined an outer transaction (transacted route) is closed when that transaction completes.
+     */
+    private static void closeEntityManagerOnFailure(Exchange exchange, EntityManager entityManager) {
+        Map<?, ?> entityManagers = exchange.getProperty(JpaConstants.ENTITY_MANAGER, Map.class);
+        if (entityManagers != null && entityManagers.containsValue(entityManager)) {
+            LOG.debug("Closing EntityManager {} after a failure, so that a redelivery uses a new one", entityManager);
+            try {
+                entityManager.close();
+            } catch (RuntimeException e) {
+                LOG.debug("Error closing EntityManager {} after a failure. This exception is ignored.", entityManager, e);
+            }
         }
     }
 

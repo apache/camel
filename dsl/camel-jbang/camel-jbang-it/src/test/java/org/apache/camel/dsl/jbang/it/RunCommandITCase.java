@@ -169,14 +169,6 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
-    public void runCamelKCRDTest() throws IOException {
-        copyResourceInDataFolder(TestResources.JOKE);
-        executeBackground(String.format("run %s/%s",
-                mountPoint(), TestResources.JOKE.getName()));
-        checkLogContainsAllOf("timer://chuck", "log-sink");
-    }
-
-    @Test
     @DisabledOnOs(WINDOWS)
     @Tag("container-only")
     @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")

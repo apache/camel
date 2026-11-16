@@ -44,6 +44,8 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "ingestionjobid":
         case "ingestionJobId": target.getConfiguration().setIngestionJobId(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
@@ -131,6 +133,8 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "ingestionjobid":
         case "ingestionJobId": return java.lang.String.class;
         case "initialdelay":
@@ -214,6 +218,8 @@ public class BedrockAgentEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "ingestionjobid":
         case "ingestionJobId": return target.getConfiguration().getIngestionJobId();
         case "initialdelay":

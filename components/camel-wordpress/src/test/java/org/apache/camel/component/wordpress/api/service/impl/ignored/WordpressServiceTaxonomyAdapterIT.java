@@ -19,6 +19,8 @@ package org.apache.camel.component.wordpress.api.service.impl.ignored;
 import java.util.Map;
 
 import org.apache.camel.component.wordpress.WordpressTestConstants;
+import org.apache.camel.component.wordpress.api.WordpressAPIConfiguration;
+import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Taxonomy;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceTaxonomy;
@@ -39,8 +41,9 @@ public class WordpressServiceTaxonomyAdapterIT {
 
     @BeforeAll
     public static void before() {
-        final WordpressServiceProvider serviceProvider = WordpressServiceProvider.getInstance();
-        serviceProvider.init(WordpressTestConstants.WORDPRESS_DEMO_URL);
+        final WordpressServiceProvider serviceProvider = WordpressServiceProvider
+                .create(new WordpressAPIConfiguration(
+                        WordpressTestConstants.WORDPRESS_DEMO_URL, WordpressConstants.API_VERSION));
         serviceTaxonomy = serviceProvider.getService(WordpressServiceTaxonomy.class);
     }
 

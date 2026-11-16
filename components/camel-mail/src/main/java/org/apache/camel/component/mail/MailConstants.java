@@ -55,6 +55,10 @@ public final class MailConstants {
     public static final String MAIL_DEFAULT_FROM = "camel@localhost";
     @Metadata(description = "The message ID.", javaType = "String")
     public static final String MAIL_MESSAGE_ID = "CamelMailMessageId";
+    @Metadata(label = "consumer",
+              description = "The name of the attachment, on each message produced by SplitAttachmentsExpression.",
+              javaType = "String")
+    public static final String MAIL_SPLIT_ATTACHMENT_ID = "CamelSplitAttachmentId";
     public static final int MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000;
     public static final int MAIL_DEFAULT_MAX_MULTIPART_DEPTH = 20;
     public static final String MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER = "never";

@@ -24,6 +24,7 @@ import io.fabric8.kubernetes.api.model.batch.v1.CronJobBuilder;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.CronJob;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.util.ObjectHelper;
 
 public class CronJobTrait extends BaseTrait {
@@ -34,9 +35,13 @@ public class CronJobTrait extends BaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        return traitConfig.getCronjob() != null
-                && Optional.ofNullable(traitConfig.getCronjob().getEnabled()).orElse(false)
-                && ObjectHelper.isNotEmpty(traitConfig.getCronjob().getSchedule());
+        boolean enabled = traitConfig.getCronjob() != null
+                && Optional.ofNullable(traitConfig.getCronjob().getEnabled()).orElse(false);
+        if (enabled && ObjectHelper.isEmpty(traitConfig.getCronjob().getSchedule())) {
+            // without a schedule there was no workload at all, and the export exited with 0 (CAMEL-26934)
+            throw CliException.usage("cronjob.enabled=true needs cronjob.schedule, such as cronjob.schedule=0 * * * *");
+        }
+        return enabled;
     }
 
     @Override
@@ -105,7 +110,8 @@ public class CronJobTrait extends BaseTrait {
                     .withActiveDeadlineSeconds(cronjobTrait.getActiveDeadlineSeconds()).endSpec().endJobTemplate().endSpec();
         }
         // sets the BackoffLimit
-        if (cronjobTrait.getBackoffLimit() != null && cronjobTrait.getBackoffLimit() > 0) {
+        // 0 is a limit too: no retry of a failed job (it was left out, and Kubernetes then retries 6 times)
+        if (cronjobTrait.getBackoffLimit() != null && cronjobTrait.getBackoffLimit() >= 0) {
             cronjobBuilder.editOrNewSpec().editOrNewJobTemplate().editOrNewSpec()
                     .withBackoffLimit(cronjobTrait.getBackoffLimit()).endSpec().endJobTemplate().endSpec();
         }

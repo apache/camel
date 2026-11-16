@@ -292,8 +292,8 @@ public class PGPDataFormat extends DataFormatDefinition {
          * decryption). During the signature verification process the specified User ID restricts the public keys from
          * the public keyring which can be used for the verification. If no User ID is specified for the signature
          * verification then any public key in the public keyring can be used for the verification. Can also be only a
-         * part of a user ID. For example, if the user ID is "Test User <test@camel.com>" then you can use the part
-         * "Test User" or "<test@camel.com>" to address the User ID.
+         * part of a user ID. For example, if the user ID is "Test User &lt;test@camel.com&gt;" then you can use the
+         * part "Test User" or "&lt;test@camel.com&gt;" to address the User ID.
          */
         public Builder signatureKeyUserid(String signatureKeyUserid) {
             this.signatureKeyUserid = signatureKeyUserid;
@@ -363,7 +363,7 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Adds an integrity check/sign into the encryption file.
-         * <p/>
+         * <p>
          * The default value is true.
          */
         public Builder integrity(String integrity) {
@@ -373,7 +373,7 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Adds an integrity check/sign into the encryption file.
-         * <p/>
+         * <p>
          * The default value is true.
          */
         public Builder integrity(boolean integrity) {
@@ -392,8 +392,8 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For
-         * example, if the user ID is "Test User <test@camel.com>" then you can use the part "Test User" or
-         * "<test@camel.com>" to address the user ID.
+         * example, if the user ID is "Test User &lt;test@camel.com&gt;" then you can use the part "Test User" or
+         * "&lt;test@camel.com&gt;" to address the user ID.
          */
         public Builder keyUserid(String keyUserid) {
             this.keyUserid = keyUserid;

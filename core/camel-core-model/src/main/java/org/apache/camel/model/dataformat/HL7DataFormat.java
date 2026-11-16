@@ -107,7 +107,7 @@ public class HL7DataFormat extends DataFormatDefinition {
 
         /**
          * Whether to validate the HL7 message
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder validate(String validate) {
@@ -117,7 +117,7 @@ public class HL7DataFormat extends DataFormatDefinition {
 
         /**
          * Whether to validate the HL7 message
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder validate(boolean validate) {

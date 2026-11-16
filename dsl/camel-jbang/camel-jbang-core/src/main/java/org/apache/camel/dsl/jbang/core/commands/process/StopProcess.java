@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
@@ -41,14 +42,18 @@ import org.apache.camel.util.TimeUtils;
                    footer = {
                            "Examples:",
                            "  camel stop hello",
-                           "  camel stop *",
+                           "  camel stop --all",
                            "  camel stop 12345",
                            "  camel stop hello --timeout=2m",
                            "  camel stop hello --kill" })
 public class StopProcess extends ProcessBaseCommand {
 
-    @Argument(description = "Name or pid of running Camel integration(s)")
-    String name = "*";
+    @Argument(description = "Name or pid of running Camel integration(s). Without a name, the one integration that runs"
+                            + " (use --all when several run)")
+    String name;
+
+    @Option(name = "all", hasValue = false, description = "Stop all running Camel integrations")
+    boolean all;
 
     @Option(name = "kill", hasValue = false, description = "To force killing the process (SIGKILL)")
     boolean kill;
@@ -67,7 +72,13 @@ public class StopProcess extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findIntegrationPids(name);
+        if (all && name != null && !name.isBlank()) {
+            throw CliException.usage("Give the name or pid of the integration to stop, or --all, not both");
+        }
+        if (!all && (name == null || name.isBlank())) {
+            requireOneRunning();
+        }
+        List<Long> pids = findIntegrationPids(all ? "*" : name);
 
         for (Long pid : pids) {
             Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
@@ -109,6 +120,23 @@ public class StopProcess extends ProcessBaseCommand {
                                        + "; use --kill");
         }
         return 0;
+    }
+
+    /**
+     * Without a name and without --all, camel stop stops the one integration that runs. When several run it stops none:
+     * a bare camel stop, such as of an AI agent, stopped the integrations of the user and of other agents too
+     * (CAMEL-26929).
+     *
+     * @throws CliException with exit code 2 when more than one integration runs
+     */
+    private void requireOneRunning() {
+        List<ProcessFinder.CamelProcess> running = ProcessFinder.find("*");
+        if (running.size() > 1) {
+            String names = running.stream().map(p -> p.name() + " (PID: " + p.pid() + ")")
+                    .collect(Collectors.joining(", "));
+            throw CliException.usage(running.size() + " Camel integrations are running: " + names
+                                     + ". Give the name or pid of the one to stop, or --all to stop them all");
+        }
     }
 
     /**

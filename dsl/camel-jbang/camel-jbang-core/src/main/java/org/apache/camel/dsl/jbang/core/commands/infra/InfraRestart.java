@@ -27,7 +27,9 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
+import org.apache.camel.dsl.jbang.core.commands.BackgroundWait;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 
 @CommandDefinition(name = "restart", description = "Restarts a running external service", generateHelp = true,
@@ -37,7 +39,7 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
                            "  camel infra restart kafka --background" })
 public class InfraRestart extends InfraBaseCommand {
 
-    @Arguments(required = true, description = "Service name (and optional implementation)")
+    @Arguments(paramLabel = "service", required = true, description = "Service name (and optional implementation)")
     private List<String> serviceName;
 
     @Option(name = "port", description = "Override the default port for the service")
@@ -48,6 +50,13 @@ public class InfraRestart extends InfraBaseCommand {
 
     @Option(name = "background", hasValue = false, description = "Run in the background", defaultValue = "false")
     boolean background;
+
+    @Option(name = "background-wait",
+            description = "How long to wait for the service in the background to start, before returning, in millis"
+                          + " or as a duration such as 2m (true waits 60 seconds, false does not wait)",
+            defaultValue = "60s", optionalValue = true, fallbackValue = "true", converter = BackgroundWait.Converter.class,
+            parser = BackgroundWait.Parser.class)
+    long backgroundWait = BackgroundWait.DEFAULT;
 
     @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
                 description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
@@ -74,6 +83,8 @@ public class InfraRestart extends InfraBaseCommand {
             }
             if (kill) {
                 ProcessHandle.of(entry.getKey()).ifPresent(ProcessHandle::destroyForcibly);
+                // a killed service cannot remove the output it had in the background
+                BackgroundLog.remove(entry.getKey());
             }
         }
 
@@ -97,6 +108,7 @@ public class InfraRestart extends InfraBaseCommand {
         infraRun.port = port;
         infraRun.setLogToStdout(logToStdout);
         infraRun.background = background;
+        infraRun.backgroundWait = backgroundWait;
         // a restart starts a new service, so it takes its properties the way it takes its port
         infraRun.serviceProperties = serviceProperties;
         return infraRun.doCall();

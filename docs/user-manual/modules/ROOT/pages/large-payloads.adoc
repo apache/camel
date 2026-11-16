@@ -91,7 +91,7 @@ copy is a temporary file, otherwise it is in memory. Use `multiPartUpload=true` 
 | xref:components::azure-storage-blob-component.adoc[Azure Storage Blob],
 xref:components::azure-storage-datalake-component.adoc[Azure Storage Data Lake]
 | The blob is received as a stream. With `fileDir`, the blob is downloaded to a file.
-| Same as AWS S3. For blobs, the length can also be given with the `CamelAzureStorageBlobUploadSize` header.
+| Same as AWS S3. For blobs, the length can also be given with the `CamelAzureStorageBlobBlobUploadSize` header.
 
 | xref:components::google-storage-component.adoc[Google Storage]
 | With `includeBody=true` the object is copied into a stream cache (a temporary file when spooling is enabled). With

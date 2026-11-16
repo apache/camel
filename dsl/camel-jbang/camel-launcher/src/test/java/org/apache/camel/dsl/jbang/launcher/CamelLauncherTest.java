@@ -100,12 +100,15 @@ public class CamelLauncherTest {
         // creating all the commands of the CLI and the plugins costs more than half a second
         assertEquals(Set.of("generate"), commandsOf("generate"));
         assertEquals(Set.of("kubernetes", "k8s"), commandsOf("k8s", "--help"));
+        // embedded like the others, so camel mcp does not install it in the plugin configuration on first use
+        assertEquals(Set.of("mcp"), commandsOf("mcp", "--help"));
         assertEquals(Set.of("version"), commandsOf("version"));
     }
 
     @Test
     public void theHelpCreatesTheCommandsOfAllEmbeddedPlugins() {
-        assertTrue(commandsOf("--help").containsAll(Set.of("version", "generate", "kubernetes", "self-update", "tui")));
+        assertTrue(commandsOf("--help")
+                .containsAll(Set.of("version", "generate", "kubernetes", "mcp", "self-update", "tui", "validate", "test")));
     }
 
     private static Set<String> commandsOf(String... args) {

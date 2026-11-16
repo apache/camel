@@ -233,7 +233,7 @@ public class OcsfDataFormat extends DataFormatDefinition {
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder prettyPrint(String prettyPrint) {
@@ -243,7 +243,7 @@ public class OcsfDataFormat extends DataFormatDefinition {
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder prettyPrint(boolean prettyPrint) {
@@ -291,7 +291,7 @@ public class OcsfDataFormat extends DataFormatDefinition {
 
         /**
          * If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(String allowUnmarshallType) {
@@ -301,7 +301,7 @@ public class OcsfDataFormat extends DataFormatDefinition {
 
         /**
          * If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(boolean allowUnmarshallType) {

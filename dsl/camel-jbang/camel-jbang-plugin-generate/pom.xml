@@ -86,6 +86,12 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
                 </exclusion>
+                <!-- only of use when openapi-generator itself is compiled (its pom has it in the compile scope),
+                     and 2 MB in the Camel CLI distribution -->
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

@@ -23,4 +23,11 @@ public interface HuggingFaceConstants {
     @Metadata(description = "The output from the model", javaType = "String")
     String OUTPUT = "CamelHuggingFaceOutput";
 
+    @Metadata(label = "producer",
+              description = "For the chat task, clears the stored conversation history of the current memory id before"
+                            + " the request is built. The memory id is read from the header named by the"
+                            + " memoryIdHeader option.",
+              javaType = "Boolean")
+    String CLEAR_HISTORY = "CamelChatClearHistory";
+
 }

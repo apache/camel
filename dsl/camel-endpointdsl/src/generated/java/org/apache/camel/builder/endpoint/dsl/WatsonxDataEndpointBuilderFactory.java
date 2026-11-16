@@ -311,7 +311,9 @@ public interface WatsonxDataEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: {@code WatsonxDataOperations} type.
+         * The option is a: {@code
+         * org.apache.camel.component.ibm.watsonx.data.WatsonxDataOperations}
+         * type.
          * 
          * Group: producer
          * 

@@ -75,8 +75,7 @@ public final class RunFiles {
             "- routeTemplate:", "- route-template:",
             "- templatedRoute:", "templated-route:",
             "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:",
-            "Pipe" // special for camel-k pipe
+            "- rest:", "- beans:"
     };
 
     private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS

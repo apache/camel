@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * The Flexible Aggregation Strategy is a highly customizable, fluently configurable aggregation strategy. It allows you
  * to quickly whip up an {@link AggregationStrategy} that is capable of performing the most typical aggregation duties,
  * with zero Java code.
- * <p/>
+ * <p>
  * It can perform the following logic:
  * <ul>
  * <li>Filtering results based on a defined {@link Predicate} written in any language, such as XPath, OGNL, Groovy,
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * It also includes the ability to specify both aggregation batch completion actions and timeout actions, in an
  * abbreviated manner.
- * <p/>
+ * <p>
  * This Aggregation Strategy is suitable for usage in aggregate, split, multicast, enrich and recipient list EIPs.
  */
 public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
@@ -81,7 +81,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Set an expression to extract the element to be aggregated from the incoming {@link Exchange}. All results are
      * cast to the {@link FlexibleAggregationStrategy#castAs} type (or the type specified in the constructor).
-     * <p/>
+     * <p>
      * By default, it picks the full IN message body of the incoming exchange.
      *
      * @param  expression The picking expression.
@@ -105,8 +105,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Accumulate the result of the <i>pick expression</i> in a collection of the designated type. No <tt>null</tt>s
-     * will stored unless the {@link FlexibleAggregationStrategy#storeNulls()} option is enabled.
+     * Accumulate the result of the <i>pick expression</i> in a collection of the designated type. No <code>null</code>s
+     * will be stored unless the {@link FlexibleAggregationStrategy#storeNulls()} option is enabled.
      *
      * @param  collectionType The type of the Collection to aggregate into.
      * @return                This instance.

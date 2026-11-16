@@ -102,6 +102,52 @@ YAML::
 ----
 ====
 
+=== Noticing a dead or silent broker
+
+How soon a route notices a broker that stopped answering without closing the connection (the host is gone, or a
+firewall or NAT drops the packets) depends on the connection factory. The durations below describe how Spring AMQP and
+the RabbitMQ Java client behave by default, approximately; they are not guarantees of Camel.
+
+*Publisher confirms.* Without publisher confirms, the producer hands the message to the client and reports success:
+on a silent or reset connection the send succeeds and the message can be lost without an error. Configure the
+connection factory with simple publisher confirms. With the default `confirm=auto` the producer then waits up to
+`confirmTimeout` (5 seconds) for RabbitMQ to confirm each message sent InOnly, and the send fails when it is not
+confirmed, so the error handler can redeliver it. `confirm=enabled` waits the same way, and needs the connection factory
+to have publisher confirms.
+
+*Heartbeat.* The RabbitMQ Java client notices a silent connection through the heartbeat, 60 seconds by default (the
+lower of the values that the client and the broker request). It reads with a timeout of a quarter of the heartbeat and
+closes the connection after more than 8 such timeouts in a row: about 2.25 × the heartbeat, so about 135 seconds by
+default. Until then a consumer receives nothing and logs no error. A lower heartbeat notices it sooner, for example
+about 34 seconds with 15 seconds.
+
+*Channel operations.* An operation that waits for an answer of the broker on a channel, such as opening a channel or
+cancelling a consumer when the route stops, waits until the connection is closed or for up to the `channelRpcTimeout`
+of the client, 10 minutes by default.
+
+[source,xml]
+----
+<bean id="rabbitConnectionFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
+  <property name="uri" value="amqp://localhost:5672"/>
+  <property name="publisherConfirmType" value="SIMPLE"/>
+  <property name="requestedHeartBeat" value="15"/>
+</bean>
+----
+
+In Java, `connectionFactory.getRabbitConnectionFactory().setChannelRpcTimeout(30000)` sets the channel timeout. With
+Spring Boot:
+
+[source,properties]
+----
+spring.rabbitmq.publisher-confirm-type=simple
+spring.rabbitmq.requested-heartbeat=15s
+spring.rabbitmq.channel-rpc-timeout=30s
+----
+
+After the connection breaks, the broker requeues the messages that the consumer received but did not acknowledge,
+while the consumer may still process the ones it had already received: expect duplicates after a reconnect, up to
+`prefetchCount` (250 by default) per consumer. Make the processing idempotent, or lower `prefetchCount`.
+
 === Default Exchange Name
 
 To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
@@ -142,11 +188,26 @@ YAML::
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
-In development mode, it may be desirable to let Camel automatic do this.
-You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
+Since Camel 4.5, a consumer declares them when it starts, as `autoDeclare` is `true` by default: the exchange, of the
+`exchangeType` (`direct` by default), the queues, and the binding between the exchange, the queues and the routing key.
+A producer declares them only with `autoDeclareProducer=true`.
 
-Then Spring RabbitMQ will automatically declare the necessary elements and set up the binding between the exchange,
-queue and routing keys.
+If the broker already has one of these elements with other settings, such as an exchange of another type or a queue
+with other arguments, the broker refuses the declaration with `PRECONDITION_FAILED` and the consumer fails to start.
+Configure the endpoint with the settings of the existing elements, or turn the declaration off with `autoDeclare=false`
+(on the endpoint or the component), or for some elements with `skipDeclareExchange`, `skipDeclareQueue` or
+`skipBindQueue`.
+
+The consumer declares them again each time the connection factory opens a new connection, for example after the
+connection to RabbitMQ was lost: a queue that RabbitMQ deleted meanwhile, such as an auto-delete or exclusive queue, is
+declared again when the consumer reconnects.
+
+When RabbitMQ is not available when the consumer starts, the consumer logs a warning and starts anyway: the listener
+container keeps trying to connect, and the exchange, queue and binding are declared when it connects.
+To fail the start instead, set `testConnectionOnStartup=true`.
+
+NOTE: With a `CachingConnectionFactory` whose cache mode is `CONNECTION`, the consumer declares only when it starts, as
+Spring's `RabbitAdmin`, and fails to start when RabbitMQ is not available.
 
 The elements can be configured using the multivalued `args` option.
 

@@ -104,7 +104,7 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
         /**
          * Whether or not the trailing characters until new line must be ignored.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder skipTrailingCharsUntilNewline(String skipTrailingCharsUntilNewline) {
@@ -114,7 +114,7 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
         /**
          * Whether or not the trailing characters until new line must be ignored.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder skipTrailingCharsUntilNewline(boolean skipTrailingCharsUntilNewline) {
@@ -124,7 +124,7 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
         /**
          * Whether or not the record ends on new line.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder recordEndsOnNewline(String recordEndsOnNewline) {
@@ -134,7 +134,7 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
         /**
          * Whether or not the record ends on new line.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder recordEndsOnNewline(boolean recordEndsOnNewline) {
@@ -144,7 +144,7 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
         /**
          * The padding character.
-         * <p/>
+         * <p>
          * The default value is a space
          */
         public Builder padding(String padding) {

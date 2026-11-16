@@ -119,15 +119,27 @@ Object result = FluentProducerTemplate.on(context)
 You have sent an Exchange to Camel, but it fails during processing caused
 by a thrown Exception. How do I retrieve this Exception?
 
-If you are using CamelTemplate (or CamelProducer), then it is common to
-use the sendBody/requestBody methods that returns the exchange body
-response *only*. So if there was a thrown exception during processing
-Camel is not rethrowing this Exception. To remedy this you can use the
-plain send/request methods that accepts an Exchange object and returns
-an Exchange object.
+The `sendBody` and `requestBody` methods (and their variants with headers) return the body *only*.
+When processing fails, they throw a `CamelExecutionException`:
 
-From the returned Exchange you can test if it has failed and get the caused
-exception. This is illustrated in the code sample:
+* `getCause()` returns the exception that caused the exchange to fail. An EIP such as
+xref:components:eips:multicast-eip.adoc[Multicast] can wrap it in another exception, so use
+`ObjectHelper.getException(MyException.class, e)` to find it in the cause chain.
+* `getExchange()` returns the failed exchange.
+
+._Java-only: catching the exception thrown by requestBody_
+[source,java]
+----
+try {
+    template.requestBody("direct:input", "Hello Paris");
+} catch (CamelExecutionException e) {
+    IllegalArgumentException cause = ObjectHelper.getException(IllegalArgumentException.class, e);
+}
+----
+
+The `send` and `request` methods that take an `Exchange` or a `Processor` do not throw.
+They return the exchange: test if it has failed and get the caused exception from it.
+This is illustrated in the code sample:
 
 ._Java-only: retrieving a thrown exception from the returned Exchange_
 [source,java]

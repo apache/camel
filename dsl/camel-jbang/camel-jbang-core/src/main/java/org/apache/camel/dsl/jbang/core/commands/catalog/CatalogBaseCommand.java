@@ -162,7 +162,8 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             filterName = filterName.toLowerCase(Locale.ROOT);
             rows = rows.stream()
                     .filter(
-                            r -> r.name.equalsIgnoreCase(filterName)
+                            // a part of the name, as of the description: --filter=aws2 listed nothing (CAMEL-26931)
+                            r -> r.name.toLowerCase(Locale.ROOT).contains(filterName)
                                     || (r.description != null
                                             && r.description.toLowerCase(Locale.ROOT).contains(filterName))
                                     || (r.label != null && r.label.toLowerCase(Locale.ROOT).contains(filterName)))

@@ -525,7 +525,7 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         /**
          * Sets the delimiter to use.
-         * <p/>
+         * <p>
          * The default value is , (comma)
          */
         public Builder delimiter(String delimiter) {
@@ -766,7 +766,7 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Refers to a custom <tt>CsvRecordConverter</tt> to lookup from the registry to use.
+         * Refers to a custom <code>CsvRecordConverter</code> to lookup from the registry to use.
          */
         public Builder recordConverterRef(String recordConverterRef) {
             this.recordConverterRef = recordConverterRef;

@@ -24,12 +24,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Set the expected data type of the output message. If the actual message type is different at runtime, camel look for
- * a required {@link Transformer} and apply if exists. If validate attribute is true then camel applies
- * {@link Validator} as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type
- * 'name' is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}. It's also
- * possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML
- * message matches. It's handy to add only one transformer/validator for all the XML-Java transformation.
+ * Set the expected data type of the output message. If the actual message type is different at runtime, camel looks for
+ * a required {@link org.apache.camel.spi.Transformer} and apply if exists. If validate attribute is true then camel
+ * applies {@link org.apache.camel.spi.Validator} as well. Type name consists of two parts, 'scheme' and 'name'
+ * connected with ':'. For Java type 'name' is a fully qualified class name. For example {@code java:java.lang.String},
+ * {@code json:ABCOrder}. It's also possible to specify only scheme part, so that it works like a wildcard. If only
+ * 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the
+ * XML-Java transformation.
  */
 @Metadata(label = "configuration",
           description = "Declares the expected output data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.")

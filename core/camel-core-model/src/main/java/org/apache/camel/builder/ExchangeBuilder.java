@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultExchange;
 
 /**
  * Builder to create {@link Exchange} and add headers and set body on the Exchange {@link Message}.
- * <p/>
+ * <p>
  * Use the {@link #build()} method when done setting up the exchange.
  */
 public final class ExchangeBuilder {

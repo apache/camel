@@ -18,9 +18,11 @@ package org.apache.camel.component.alibaba.mns.constants;
 
 public final class MNSProperties {
 
-    public static final String OPERATION = "CamelAlibabaMnsOperation";
+    /** Also read as a message header; see {@link MNSHeaders#OPERATION}. */
+    public static final String OPERATION = MNSHeaders.OPERATION;
     public static final String QUEUE_NAME = "CamelAlibabaMnsQueueName";
-    public static final String TOPIC_NAME = "CamelAlibabaMnsTopicName";
+    /** Also read as a message header; see {@link MNSHeaders#TOPIC_NAME}. */
+    public static final String TOPIC_NAME = MNSHeaders.TOPIC_NAME;
     public static final String REQUEST_ID = "CamelAlibabaMnsRequestId";
 
     private MNSProperties() {

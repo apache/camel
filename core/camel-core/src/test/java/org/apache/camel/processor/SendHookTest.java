@@ -200,9 +200,8 @@ class SendHookTest extends ContextTestSupport {
         getMockEndpoint("mock:ptAsync").expectedBodiesReceived("Hello");
         template.asyncSendBody("mock:ptAsync", "Hello").get(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
-        // the hook runs once, though this path fires the sending and the sent event twice (as it did before the hook)
-        assertEquals(List.of("sending:mock://ptAsync", "sending:mock://ptAsync", "before:mock://ptAsync",
-                "after:mock://ptAsync", "sent:mock://ptAsync", "sent:mock://ptAsync"), calls("mock://ptAsync"));
+        // the hook runs once, and the sending and the sent event are fired once
+        assertHookAroundSend("mock://ptAsync");
     }
 
     @Test

@@ -322,6 +322,15 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return true;
     }
 
+    /**
+     * Creates the injector that provides the instance the non-static converter methods of the given type are invoked
+     * on. By default, the injector creates the instance lazily, the first time one of these methods is invoked.
+     * Override to supply an instance that already exists (see {@link TypeConvertersLoader}).
+     */
+    protected CachingInjector<?> createInjector(TypeConverterRegistry registry, Class<?> type) {
+        return new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
+    }
+
     private CachingInjector<?> handleHasConverterAnnotation(
             TypeConverterRegistry registry, Class<?> type,
             CachingInjector<?> injector, Method method, boolean allowNull) {
@@ -343,7 +352,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 new StaticMethodTypeConverter(method, allowNull));
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
+                            injector = createInjector(registry, type);
                         }
                         registerTypeConverter(registry, method, toType, fromType,
                                 new InstanceMethodTypeConverter(injector, method, registry, allowNull));
@@ -378,7 +387,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
+                            injector = createInjector(registry, type);
                         }
                         registerFallbackTypeConverter(registry,
                                 new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);

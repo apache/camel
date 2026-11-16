@@ -46,6 +46,6 @@ public interface Textract2Constants {
               description = "The feature types of the analyzeDocument and startDocumentAnalysis operations (TABLES, FORMS, QUERIES, "
                             + "SIGNATURES, LAYOUT): a list of FeatureType or String values, or a String with comma separated values. "
                             + "The String values are case-insensitive. Without this header TABLES and FORMS are used.",
-              javaType = "List<FeatureType>")
+              javaType = "List<software.amazon.awssdk.services.textract.model.FeatureType>")
     String FEATURE_TYPES = "CamelAwsTextractFeatureTypes";
 }
