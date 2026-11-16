@@ -22,10 +22,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,6 +43,7 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceManagedTypes;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
@@ -144,6 +147,46 @@ class JpaConsumerLockTimeoutIT extends CamelTestSupport {
         }
 
         // the next poll consumes every entity
+        mock.expectedMessageCount(3);
+        assertEquals(3, consumer.poll());
+        mock.assertIsSatisfied();
+        assertEquals(0, countItems());
+    }
+
+    @Test
+    void entitiesAheadOfALockedEntityAreRoutedAgainByEachPoll() throws Exception {
+        insertItems(1L, 2L, 3L);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        JpaConsumer consumer = (JpaConsumer) context.getRoute("consumer").getConsumer();
+
+        try (Connection other = openConnection()) {
+            // a transaction that locks the second entity and does not end
+            other.setAutoCommit(false);
+            try (Statement st = other.createStatement()) {
+                st.execute("select id from lock_timeout_item where id = 2 for update");
+            }
+
+            // each poll routes the first entity, then the lock of the second one times out: on PostgreSQL this aborts
+            // the transaction, so the poll fails to commit the consumed first entity and is rolled back, and the next
+            // poll routes the first entity again
+            for (int poll = 1; poll <= 3; poll++) {
+                assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+                    assertThrows(PersistenceException.class, consumer::poll);
+                }, "the poll waited for the lock");
+                assertEquals(poll, mock.getReceivedCounter());
+                assertEquals(3, countItems());
+            }
+            List<Long> routed = mock.getReceivedExchanges().stream()
+                    .map(exchange -> exchange.getMessage().getBody(LockTimeoutItem.class).getId())
+                    .toList();
+            assertEquals(List.of(1L, 1L, 1L), routed);
+
+            // the transaction ends
+            other.rollback();
+        }
+
+        // the next poll consumes every entity
+        mock.reset();
         mock.expectedMessageCount(3);
         assertEquals(3, consumer.poll());
         mock.assertIsSatisfied();

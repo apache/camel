@@ -536,8 +536,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      * is given to the JPA provider as the jakarta.persistence.lock.timeout hint, which the provider applies if the
      * database supports it: for example Hibernate on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
      * timeout: the lock waits as long as the database lets it, which on PostgreSQL is until the other transaction ends.
-     * A lock that times out is handled like one that skipLockedEntity could not get. Not used with skipLockedEntity,
-     * which does not wait at all. The value is in millis.
+     * A lock that times out is handled like one that skipLockedEntity could not get. On PostgreSQL it rolls back the
+     * poll: the entities that the poll routed before the locked one are routed again by each poll, for as long as the
+     * other transaction holds the lock, so the route must be idempotent. Not used with skipLockedEntity, which does not
+     * wait at all. The value is in millis, and must not be negative.
      */
     public void setLockTimeout(long lockTimeout) {
         this.lockTimeout = lockTimeout;

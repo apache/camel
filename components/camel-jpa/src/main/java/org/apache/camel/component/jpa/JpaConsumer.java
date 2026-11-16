@@ -72,7 +72,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     static {
         NOWAIT = new HashMap<>();
-        NOWAIT.put(LOCK_TIMEOUT, 0L);
+        // an int of millis, like the hint given with lockTimeout
+        NOWAIT.put(LOCK_TIMEOUT, 0);
     }
 
     private static final class DataHolder {
@@ -367,7 +368,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Sets how long, in millis, to wait for the lock of an entity that another transaction holds. It is given to the
      * JPA provider as the <tt>jakarta.persistence.lock.timeout</tt> hint. The default <tt>0</tt> sets no timeout. Not
-     * used with skipLockedEntity.
+     * used with skipLockedEntity. Must not be negative.
      */
     public void setLockTimeout(long lockTimeout) {
         this.lockTimeout = lockTimeout;
@@ -583,6 +584,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        if (lockTimeout < 0) {
+            // there is no hint for a negative value, so the lock would wait for ever
+            throw new IllegalArgumentException("lockTimeout must be >= 0, was: " + lockTimeout);
+        }
 
         // need to setup entity manager first
         if (getEndpoint().isSharedEntityManager()) {

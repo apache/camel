@@ -141,7 +141,10 @@ What happens to a lock that the consumer does not get depends on the database:
 routes the next one.
 * On PostgreSQL, the failed lock aborts the transaction, and the JPA provider reports a `PessimisticLockException`: the
 consumer routes no more entities in this poll, and the poll is rolled back. The entities that the poll routed before
-the locked one are not consumed, so the next poll routes them again.
+the locked one are not consumed, so the next poll routes them again. This repeats on every poll for as long as the other
+transaction holds the lock: instead of waiting for the lock, the consumer routes the entities ahead of the locked one
+again and again. The route must handle these entities being routed again (be idempotent), or the transaction holding
+the lock must be ended (see `idle_in_transaction_session_timeout` below).
 
 Either way, a later poll consumes the locked entity once its lock is released. To release the locks of a transaction that
 does not end, set a timeout on the database, such as `idle_in_transaction_session_timeout` on PostgreSQL, which ends such

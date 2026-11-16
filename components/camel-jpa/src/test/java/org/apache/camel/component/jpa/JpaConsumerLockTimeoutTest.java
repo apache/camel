@@ -25,8 +25,12 @@ import jakarta.persistence.metamodel.Metamodel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.processor.jpa.AbstractJpaTest;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -68,7 +72,33 @@ class JpaConsumerLockTimeoutTest extends AbstractJpaTest {
         EntityManager em = entityManagerWithMetamodel();
 
         assertTrue(consumer("skipLocked").lockEntity(entity, em));
-        verify(em).lock(entity, LockModeType.PESSIMISTIC_WRITE, Map.of("jakarta.persistence.lock.timeout", 0L));
+        // an Integer, as the hint of lockTimeout
+        verify(em).lock(entity, LockModeType.PESSIMISTIC_WRITE, Map.of("jakarta.persistence.lock.timeout", 0));
+    }
+
+    @Test
+    void negativeLockTimeoutInTheUriIsRejected() {
+        // a negative duration converts without error ("-1", "-1s" or "-PT1S"), and would wait for ever
+        Exception e = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("jpa://" + SendEmail.class.getName() + "?startScheduler=false&lockTimeout=-1s").to("mock:result");
+            }
+        }));
+        IllegalArgumentException cause = ObjectHelper.getException(IllegalArgumentException.class, e);
+        assertNotNull(cause, "the route must not start with a negative lockTimeout");
+        assertEquals("lockTimeout must be >= 0, was: -1000", cause.getMessage());
+    }
+
+    @Test
+    void negativeLockTimeoutOfTheConsumerIsRejected() throws Exception {
+        JpaEndpoint endpoint = context.getEndpoint("jpa://" + SendEmail.class.getName(), JpaEndpoint.class);
+        JpaConsumer consumer = (JpaConsumer) endpoint.createConsumer(exchange -> {
+        });
+        consumer.setLockTimeout(-1);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, consumer::init);
+        assertEquals("lockTimeout must be >= 0, was: -1", e.getMessage());
     }
 
     private EntityManager entityManagerWithMetamodel() {
