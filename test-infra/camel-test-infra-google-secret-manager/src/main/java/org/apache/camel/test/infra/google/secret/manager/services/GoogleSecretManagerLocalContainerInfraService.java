@@ -87,11 +87,12 @@ public class GoogleSecretManagerLocalContainerInfraService
     }
 
     /**
-     * The id of the project: {@code test-project}, as Floci GCP accepts any
+     * The id of the project, {@code test-project} unless the {@code google.secret.manager.project.id} system property
+     * gives another one: Floci GCP accepts any
      */
     @Override
     public String projectId() {
-        return DEFAULT_PROJECT_ID;
+        return System.getProperty(GoogleSecretManagerProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
     }
 
     @Override

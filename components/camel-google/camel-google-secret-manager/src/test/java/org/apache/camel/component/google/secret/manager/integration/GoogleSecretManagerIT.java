@@ -68,6 +68,13 @@ class GoogleSecretManagerIT extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         if (service instanceof GoogleSecretManagerLocalContainerInfraService) {
+            // the test ran against a real project when this variable was set, before it ran on Floci GCP: so that a run
+            // on Floci GCP is not taken for one against that project, it asks for -Dgoogle.instance.type=remote
+            if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null) {
+                throw new IllegalStateException(
+                        "GOOGLE_APPLICATION_CREDENTIALS is set: add -Dgoogle.instance.type=remote to run the test against"
+                                                + " the Secret Manager of that project");
+            }
             // the endpoints take the client of the registry, and do not close it: it goes with the context
             SecretManagerServiceClient client = createLocalClient();
             context.getRegistry().bind("secretManagerClient", client);
