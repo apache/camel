@@ -60,7 +60,15 @@ for this component:
 ----
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:dummy?connectionUriString=RAW(mongodb://host:port)&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ----
+
+The endpoint uses the first client it finds in this order:
+
+. the client set with the `mongoConnection` endpoint option
+. a client the endpoint creates from the `connectionUriString` or `hosts` option
+. the `mongoConnection` client of the component, which is autowired when the registry holds exactly one `MongoClient`
+. the `MongoClient` bean named by the endpoint path (`connectionBean`)
 
 // component options: START
 include::partial$component-configure-options.adoc[]

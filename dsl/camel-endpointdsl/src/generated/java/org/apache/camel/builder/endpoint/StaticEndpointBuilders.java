@@ -12520,7 +12520,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database if no hosts parameter is present.
+     * to a database if neither the hosts nor the connectionUriString parameter
+     * is present.
      * 
      * @param path connectionBean
      * @return the dsl builder
@@ -12540,7 +12541,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database if no hosts parameter is present.
+     * to a database if neither the hosts nor the connectionUriString parameter
+     * is present.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

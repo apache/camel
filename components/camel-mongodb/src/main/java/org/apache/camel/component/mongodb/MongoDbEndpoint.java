@@ -130,7 +130,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if"
+                           + " neither the hosts nor the connectionUriString parameter is present.")
     @Metadata(required = true)
     private String connectionBean;
 
@@ -255,7 +256,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private StateRepository<String, String> changeStreamTokenRepository;
     @UriParam(label = "consumer")
     private String changeStreamToken;
-    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
+    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint. When set, the endpoint creates"
+                            + " its client from it, instead of using the client of the component or the connectionBean.",
               label = "common")
     private String connectionUriString;
 
@@ -501,7 +503,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     private MongoClient resolveMongoConnection() {
         MongoClient mongoClient;
-        if (this.hosts != null) {
+        if (this.hosts != null || this.connectionUriString != null) {
             String credentials = username == null ? "" : username;
             if (!credentials.isEmpty()) {
                 credentials += this.password == null ? "@" : ":" + password + "@";
