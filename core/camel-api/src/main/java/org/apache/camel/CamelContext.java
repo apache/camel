@@ -1666,8 +1666,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a
      * slight performance impact under very heavy load.
      * <p>
-     * You can enable/disable the statistics at runtime using the {@link #setTypeConverterStatisticsEnabled(Boolean)}
-     * method, or from JMX on the {@code org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
+     * The option is read once, when the type converter registry is created, so it must be set before; changing it
+     * afterwards has no effect. The statistics can be read and reset from JMX on the
+     * {@code org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
      *
      * @param typeConverterStatisticsEnabled <code>true</code> to enable, <code>false</code> to disable
      */
