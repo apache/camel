@@ -214,7 +214,8 @@ This allows processing the data in a streaming fashion which, for example,
 can be used by the Splitter EIP to process each row one at a time, and load data from the database as needed.
 The rows can be read once: when reading a row fails (for example, the connection is lost), the iterator keeps failing
 instead of ending, so a split that is redelivered over it fails too, rather than succeeding with the rows read before
-the failure.
+the failure. The same applies when a row cannot be mapped to the `outputClass` (for example, a value that does not
+convert to the type of its property).
 
 [tabs]
 ====
