@@ -98,6 +98,18 @@ configurations are not affected.
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-duckdb - copy loads one local file unless allowUrlCopySource or allowGlobCopySource is set
+
+The `copy` operation of the `duckdb` producer gave the path from the message body to DuckDB as it was, so DuckDB read a
+value with a URL scheme (such as `https://` or `s3://`) as a remote file, and expanded a value with glob pattern
+characters (`*`, `?`, `[` or `{`) to all the matching files. Now `copy` loads a single local file by default, and a
+source with a URL scheme or glob pattern characters fails with an `IllegalArgumentException`. This also applies to a
+`File` body, such as a file from the `file` consumer, whose name has one of these characters. A route that loads such
+sources must set the new `allowUrlCopySource=true` or `allowGlobCopySource=true` option (both disabled by default).
+
+The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
+links.
+
 === camel-file - idempotent consumer with an idempotent read lock
 
 With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
