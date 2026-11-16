@@ -250,7 +250,8 @@ component's Jackson JSON mapping. Nested maps, lists and POJOs are normalized to
 JSON string is not parsed implicitly. Null, scalar, array and streaming results fail closed before the policy
 engine is called, even when `failOpen=true`.
 
-For example, if the body is already the desired domain object, bind a body expression and reference it:
+For example, take the verified identity from an exchange property the route set after authentication, and only
+the domain payload from the body:
 
 [tabs]
 ====
@@ -258,8 +259,13 @@ Java::
 +
 [source,java]
 ----
-context.getRegistry().bind("domainInput",
-        org.apache.camel.support.builder.ExpressionBuilder.bodyExpression());
+context.getRegistry().bind("domainInput", new ExpressionAdapter() {
+    @Override
+    public Object evaluate(Exchange exchange) {
+        return Map.of("subject", exchange.getProperty("verifiedSubject"),
+                      "order", exchange.getMessage().getBody());
+    }
+});
 
 from("direct:orders")
     .to("opa:authz/orders/allow?inputExpression=#domainInput");
@@ -269,8 +275,8 @@ XML::
 +
 [source,xml]
 ----
-<bean id="domainInput" class="org.apache.camel.support.builder.ExpressionBuilder"
-      factory-method="bodyExpression"/>
+<!-- a small Expression class of the application, with the evaluate(Exchange) method of the Java tab -->
+<bean id="domainInput" class="com.example.orders.DomainInputExpression"/>
 
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
@@ -285,9 +291,9 @@ YAML::
 [source,yaml]
 ----
 - beans:
+    # a small Expression class of the application, with the evaluate(Exchange) method of the Java tab
     - name: domainInput
-      type: org.apache.camel.support.builder.ExpressionBuilder
-      factoryMethod: bodyExpression
+      type: com.example.orders.DomainInputExpression
 - route:
     from:
       uri: direct:orders
@@ -299,10 +305,19 @@ YAML::
 ----
 ====
 
+WARNING: The body comes from the sender. Do not make it the whole input, and never let it supply the identity or
+role fields the policy reads: a sender who posts `{"subject": "admin"}` would write straight into them. Take the
+identity from an exchange property the route verified, as <<authorizing-an-identity>> describes, and put the
+sender's data under a key of its own.
+
 The `includeHeaders`, `includeProperties` and `includeBody` options configure only the default envelope; they do
 not add or filter fields in a custom input. The expression decides what to include, so select verified identity
-and application data deliberately and avoid copying credentials. Decision headers are still cleared before
-mapping. Custom expression beans must support concurrent evaluation.
+and application data deliberately. The default envelope withholds the headers that carry a credential verbatim
+(`Authorization`, `Proxy-Authorization`, `Cookie` and `Set-Cookie`); a custom expression gets none of that
+protection, so copy headers selectively and leave those out. Decision headers are still cleared before mapping.
+Custom expression beans must support concurrent evaluation. For a single exchange the expression runs on the live
+exchange, so a header or property it sets stays on the exchange; in batch mode it runs on a copy, as described
+below.
 
 In batch mode, the expression is evaluated once per element against an exchange copy whose body is that element.
 Headers and properties remain available to the expression, while the route's original List body is preserved.

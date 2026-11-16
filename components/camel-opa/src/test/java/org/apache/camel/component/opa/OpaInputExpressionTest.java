@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.OPAClient;
 import com.styra.opa.OPAResult;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
@@ -186,7 +188,7 @@ class OpaInputExpressionTest extends CamelTestSupport {
     @Test
     void normalizesAnObjectJsonNode() throws Exception {
         when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenReturn(Boolean.TRUE);
-        var input = new com.fasterxml.jackson.databind.ObjectMapper().createObjectNode().put("subject", "alice");
+        var input = new ObjectMapper().createObjectNode().put("subject", "alice");
 
         Exchange out = template.request(endpoint(ExpressionBuilder.bodyExpression(), false, false),
                 e -> e.getMessage().setBody(input));
@@ -201,7 +203,7 @@ class OpaInputExpressionTest extends CamelTestSupport {
         AtomicBoolean initialized = new AtomicBoolean();
         Expression expression = new ExpressionAdapter() {
             @Override
-            public void init(org.apache.camel.CamelContext camelContext) {
+            public void init(CamelContext camelContext) {
                 initialized.set(true);
             }
 

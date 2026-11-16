@@ -341,7 +341,6 @@ public abstract class OpaPolicyEvaluator {
     protected Map<String, Object> buildInput(Exchange exchange, Object body, boolean withBody) {
         if (inputExpression != null) {
             Exchange element = exchange.copy();
-            element.getIn().setBody(body);
             element.getMessage().setBody(body);
             return mappedInput(element);
         }
