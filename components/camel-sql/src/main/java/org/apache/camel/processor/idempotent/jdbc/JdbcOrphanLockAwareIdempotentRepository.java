@@ -51,6 +51,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  * CAMEL_MESSAGEPROCESSED table or if in case the instance holding the lock has crashed. This is determined if the
  * timestamp on the createdAt column is more than the lockMaxAge.
  *
+ * A key that this instance holds (it was added and is not confirmed or removed yet) is never an orphan for this
+ * instance, whatever the age of its createdAt: when the keep-alive cannot refresh it for longer than the lockMaxAge
+ * (the database cannot be reached), the message may still be processed by this instance, which then still treats the
+ * key as a duplicate. Another instance cannot tell this instance from one that crashed, so it does take the key over
+ * then: the lockMaxAge must be longer than the longest database outage that must not lead to a message processed twice.
+ *
  * A key that is confirmed (the message was processed) is no longer a lock: its createdAt is set to null, which the
  * orphan check never treats as old, and it is no longer kept alive. So it stays a duplicate after the instance that
  * added it stops, as in {@link JdbcMessageIdRepository}. A confirmed key has no age then, so a purge by createdAt does
@@ -94,6 +100,11 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     // set when the repository starts: whether the confirm query stores null in createdAt
     private volatile boolean confirmChecked;
 
+    // when the keep-alive last refreshed the leases of this instance (or the repository started), and whether it logged
+    // that they may have expired since then
+    private volatile long leasesRefreshedAt = System.currentTimeMillis();
+    private volatile boolean leasesMayHaveExpired;
+
     public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
         this.context = camelContext;
@@ -118,6 +129,12 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
     @Override
     protected int queryForInt(String key) {
+        // a key this instance holds is not an orphan, whatever the age of its lease: when the keep-alive could not refresh
+        // it for longer than lockMaxAge (the database could not be reached), this instance may still process the message,
+        // and taking the key over would process it a second time
+        if (processorNameMessageIdSet.contains(new ProcessorNameAndMessageId(processorName, key))) {
+            return 1;
+        }
         /**
          * If the update timestamp time is more than lockMaxAge then assume that the lock is orphan and the process
          * which had acquired the lock has died
@@ -376,6 +393,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         String query = getConfirmQuery();
         confirmChecked = ObjectHelper.isNotEmpty(query) && checkConfirmQuery(query);
 
+        leasesRefreshedAt = System.currentTimeMillis();
+        leasesMayHaveExpired = false;
         executorServiceManager = context.getExecutorServiceManager();
         executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getSimpleName());
 
@@ -410,6 +429,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     }
 
     void keepAlive() {
+        // the leases get a later timestamp, taken once the connection was obtained
+        long started = System.currentTimeMillis();
         try {
             transactionTemplate.execute(status -> {
                 // take the timestamp and the keys inside the transaction, after the connection was obtained (with the
@@ -424,6 +445,31 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             });
         } catch (Exception e) {
             log.error("failed updating createdAt in keepAlive due to ", e);
+            warnOnceWhenLeasesMayHaveExpired();
+            return;
+        }
+        if (leasesMayHaveExpired) {
+            leasesMayHaveExpired = false;
+            log.info("The keep-alive of processor {} refreshes the leases of this instance again, {} ms after it last did:"
+                     + " another instance may have taken over some of its keys meanwhile",
+                    processorName, started - leasesRefreshedAt);
+        }
+        leasesRefreshedAt = started;
+    }
+
+    // once per outage: the keep-alive has not refreshed the leases for longer than lockMaxAge, so other instances may take
+    // over the keys of this instance, as if it had crashed (this instance does not, see queryForInt)
+    private void warnOnceWhenLeasesMayHaveExpired() {
+        // now, as a round can fail only after a while (such as the connection timeout of the pool)
+        long notRefreshedFor = System.currentTimeMillis() - leasesRefreshedAt;
+        int held = processorNameMessageIdSet.size();
+        if (!leasesMayHaveExpired && held > 0 && notRefreshedFor >= lockMaxAgeMillis) {
+            leasesMayHaveExpired = true;
+            log.warn("The keep-alive of processor {} has not refreshed the leases of this instance for {} ms, longer than"
+                     + " lockMaxAgeMillis ({} ms): another instance may take over the {} keys this instance holds, as if it"
+                     + " had crashed, and process their messages a second time. This instance still treats them as"
+                     + " duplicates. Set lockMaxAgeMillis longer than the longest database outage to survive.",
+                    processorName, notRefreshedFor, lockMaxAgeMillis, held);
         }
     }
 
