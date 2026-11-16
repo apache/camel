@@ -48,9 +48,13 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonRecordSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DevConsole(name = "processor-detail", description = "Show configured options for all processors in a route")
 public class ProcessorDetailDevConsole extends AbstractDevConsole {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorDetailDevConsole.class);
 
     @Metadata(label = "query",
               description = "The route id to get processor details for (use * for all routes)",
@@ -251,8 +255,10 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                             onlyTrue(mp.isAggregationRepositoryInMemory())));
                 }
             }
-        } catch (Exception e) {
-            // the processor is not managed, so its state is not shown
+        } catch (RuntimeException e) {
+            // the JMX proxy wraps what goes wrong, such as a processor that is not managed, in a runtime exception;
+            // the console still answers, without the state of this processor
+            LOG.debug("Cannot read the state of processor {}: {}", id, e.getMessage(), e);
         }
         return null;
     }

@@ -25,6 +25,8 @@ package org.apache.camel.spi;
  * Only true counts: false means that the data is kept elsewhere, or that the store cannot tell, such as a cache whose
  * provider does not say where it keeps its entries. A store that can be configured either way, such as a cache with or
  * without a disk tier, or a store that delegates to another store, answers for the configuration in use.
+ *
+ * @since 4.24
  */
 public interface InMemoryStrategy {
 
