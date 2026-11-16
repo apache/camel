@@ -21,12 +21,19 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UpdateCheckerTest {
+
+    @Test
+    void runningVersionIsTheCatalogVersion() {
+        // from the manifest of the launcher JAR, or from the catalog when there is no manifest (as in this test)
+        assertThat(UpdateChecker.runningVersion()).isEqualTo(new DefaultCamelCatalog().getCatalogVersion());
+    }
 
     @Test
     void formatsNoticeWhenNewerVersionCached() {

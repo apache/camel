@@ -613,11 +613,31 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     /**
-     * Finish this main with given exit code. By default, uses system exit to terminate. Subclasses may want to
-     * overwrite this exit behavior e.g. during unit tests.
+     * Finish this main with given exit code. By default, uses system exit to terminate, except for exit code 0 when no
+     * other thread keeps the JVM running: then this returns, and the JVM ends when the main method returns. Subclasses
+     * may want to overwrite this exit behavior e.g. during unit tests.
      */
     public void quit(int exitCode) {
+        if (exitCode == CliExitCode.OK
+                && !hasOtherNonDaemonThread(Thread.currentThread(), Thread.getAllStackTraces().keySet())) {
+            // The JVM then ends with exit code 0 and runs the shutdown hooks, as System.exit(0) does. Since JDK 21,
+            // System.exit logs the exit through a System.Logger, and the first System.Logger makes the JDK look for a
+            // LoggerFinder in every JAR of the class path: about 50 ms with the 340 JARs of the distribution.
+            return;
+        }
         System.exit(exitCode);
+    }
+
+    /**
+     * Whether another thread than the given one keeps the JVM running (a live thread that is not a daemon).
+     */
+    static boolean hasOtherNonDaemonThread(Thread current, Collection<Thread> threads) {
+        for (Thread thread : threads) {
+            if (thread != current && thread.isAlive() && !thread.isDaemon()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
