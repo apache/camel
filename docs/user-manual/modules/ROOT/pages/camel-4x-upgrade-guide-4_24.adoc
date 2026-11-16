@@ -462,6 +462,14 @@ the error handler (such as the dead letter channel or `onException`) without red
 body. Before, when the error handler had redeliveries, the first step of the route was redelivered with that body and,
 when it succeeded, the message went on through the route and never reached the error handler.
 
+=== camel-jms - pollEnrich and ConsumerTemplate read the message before they close the session
+
+`pollEnrich` and a `ConsumerTemplate` on a `jms` endpoint now read the body and the headers of the message before they
+close the JMS consumer and session. Before, the body was read when the exchange first used it, after the session was
+closed, so the body of an ActiveMQ Artemis large message failed with `AMQ219023`. A message whose body cannot be read
+(such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and the message is
+rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged.
+
 === camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
 
 This is a change in Keycloak, not in Camel: from Keycloak 26.8.2 the Admin REST API accepts only access tokens that

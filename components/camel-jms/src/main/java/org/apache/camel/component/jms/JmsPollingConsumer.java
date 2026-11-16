@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.support.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
@@ -55,13 +56,18 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
 
     @Override
     public Exchange receive(long timeout) {
+        String selector = ObjectHelper.isNotEmpty(jmsEndpoint.getSelector()) ? jmsEndpoint.getSelector() : null;
         Message message;
         // synchronize to make set-timeout + receive atomic, as the polling consumer
         // may be shared across concurrent pollEnrich / ConsumerTemplate callers
         synchronized (template) {
             setReceiveTimeout(timeout);
-            if (ObjectHelper.isNotEmpty(jmsEndpoint.getSelector())) {
-                message = template.receiveSelected(jmsEndpoint.getSelector());
+            if (template instanceof CamelJmsTemplate camelJmsTemplate) {
+                // read the message before the JMS consumer and session are closed
+                return camelJmsTemplate.receiveSelectedAndApply(selector, this::createExchange);
+            }
+            if (selector != null) {
+                message = template.receiveSelected(selector);
             } else {
                 message = template.receive();
             }
@@ -70,6 +76,18 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
             return getEndpoint().createExchange(message, null);
         }
         return null;
+    }
+
+    /**
+     * Creates the exchange for the received message, and reads the body and the headers of the message. It is called
+     * before the JMS consumer and session are closed, as a JMS client may not read the message after that: the Apache
+     * Artemis client streams the body of a large message through the consumer.
+     */
+    protected Exchange createExchange(Message message) {
+        Exchange exchange = getEndpoint().createExchange(message, null);
+        exchange.getIn().getBody();
+        exchange.getIn().getHeaders();
+        return exchange;
     }
 
     @Override
