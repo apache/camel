@@ -56,6 +56,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": target.getConfiguration().setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "heartbeatinterval":
         case "heartbeatInterval": target.getConfiguration().setHeartbeatInterval(property(camelContext, long.class, value)); return true;
         case "heartbeatreplymaxwait":
@@ -147,6 +149,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "heartbeatinterval":
         case "heartbeatInterval": return long.class;
         case "heartbeatreplymaxwait":
@@ -234,6 +238,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return target.getConfiguration().isFailOnUnknownHost();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "heartbeatinterval":
         case "heartbeatInterval": return target.getConfiguration().getHeartbeatInterval();
         case "heartbeatreplymaxwait":

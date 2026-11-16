@@ -90,6 +90,35 @@ class GoogleSecretManagerCreateSecretTest extends CamelTestSupport {
     }
 
     @Test
+    void createSecretWithAnEmptyValueFailsBeforeTheSecretIsCreated() {
+        Exchange exchange = template.request(CREATE_SECRET, e -> {
+            e.getIn().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test");
+            e.getIn().setBody("");
+        });
+
+        // no secret is left behind without a version
+        verify(client, never()).createSecret(any(ProjectName.class), any(), any(Secret.class));
+        verify(client, never()).addSecretVersion((String) any(), any(SecretPayload.class));
+        InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(String.class, cause.getType());
+        assertTrue(cause.getMessage().contains("must not be empty"), cause.getMessage());
+    }
+
+    @Test
+    void createSecretWithAnEmptyStreamFailsBeforeTheSecretIsCreated() {
+        Exchange exchange = template.request(CREATE_SECRET, e -> {
+            e.getIn().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test");
+            e.getIn().setBody(new ByteArrayInputStream(new byte[0]));
+        });
+
+        // no secret is left behind without a version
+        verify(client, never()).createSecret(any(ProjectName.class), any(), any(Secret.class));
+        verify(client, never()).addSecretVersion((String) any(), any(SecretPayload.class));
+        InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(String.class, cause.getType());
+    }
+
+    @Test
     void createSecretCreatesTheSecretAndAddsTheValueAsAVersion() {
         Exchange exchange = template.request(CREATE_SECRET, e -> {
             e.getIn().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test");

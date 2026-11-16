@@ -24,7 +24,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(42);
         props.add("apiName");
         props.add("arrayName");
         props.add("async");
@@ -40,6 +40,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("fields");
         props.add("filter");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("inBody");
         props.add("initialDelay");
         props.add("interval");

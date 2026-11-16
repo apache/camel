@@ -76,6 +76,7 @@ public final class SecurityUtils {
         map.put("allowsharedstatefulkey", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowurlcopysource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("downloadenabled", new SecurityOption(INSECURE_DEV, "true"));
@@ -171,6 +172,8 @@ public final class SecurityUtils {
                 "component:sqlstored"));
         owners.put("allowurlbody", Set.of(
                 "component:ldif"));
+        owners.put("allowurlcopysource", Set.of(
+                "component:duckdb"));
         owners.put("allowurlsource", Set.of(
                 "component:docling"));
         owners.put("failonunknownhost", Set.of(

@@ -106,8 +106,8 @@ public class Base64DataFormat extends DataFormatDefinition {
         private String urlSafe;
 
         /**
-         * To specific a maximum line length for the encoded data.
-         * <p/>
+         * To specify a maximum line length for the encoded data.
+         * <p>
          * By default 76 is used.
          */
         public Builder lineLength(String lineLength) {
@@ -116,8 +116,8 @@ public class Base64DataFormat extends DataFormatDefinition {
         }
 
         /**
-         * To specific a maximum line length for the encoded data.
-         * <p/>
+         * To specify a maximum line length for the encoded data.
+         * <p>
          * By default 76 is used.
          */
         public Builder lineLength(int lineLength) {
@@ -127,7 +127,7 @@ public class Base64DataFormat extends DataFormatDefinition {
 
         /**
          * The line separators to use.
-         * <p/>
+         * <p>
          * Uses new line characters (CRLF) by default.
          */
         public Builder lineSeparator(String lineSeparator) {

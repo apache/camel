@@ -17,11 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.impl.console.TransformerConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -53,6 +56,31 @@ class ListTransformerTest extends ProcessCommandTestSupport {
 
             assertEquals(0, exit);
             assertEquals("", printer.getOutput().trim());
+        }
+    }
+
+    @Test
+    void testIntegrationWithoutTransformers() throws Exception {
+        // as the console writes it: no list when there are no transformers, which was a NullPointerException
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("transformers", JsonRecordSupport.toJsonObject(new TransformerConsole.Response(0, 0, 0, 1000, null)));
+        writeStatusFile(TEST_PID, root);
+
+        ListTransformer command = new ListTransformer(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertEquals("", printer.getOutput().trim());
+            assertEquals("", printer.getStderr().trim(), "no warning for the integration");
         }
     }
 
@@ -122,11 +150,11 @@ class ListTransformerTest extends ProcessCommandTestSupport {
         return container;
     }
 
+    // built from the record of the transformer console, so a renamed key breaks this test
     private static JsonObject transformer(String name, String from, String to) {
-        JsonObject t = new JsonObject();
-        t.put("name", name);
-        t.put("from", from);
-        t.put("to", to);
-        return t;
+        TransformerConsole.TransformerEntry entry = new TransformerConsole.TransformerEntry(name, from, to);
+        JsonObject response
+                = JsonRecordSupport.toJsonObject(new TransformerConsole.Response(1, 0, 1, 1000, List.of(entry)));
+        return (JsonObject) ((JsonArray) response.get("transformers")).get(0);
     }
 }

@@ -277,9 +277,9 @@ public class BindyDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * To configure a default locale to use, such as <tt>us</tt> for united states.
-         * <p/>
-         * To use the JVM platform default locale then use the name <tt>default</tt>
+         * To configure a default locale to use, such as <code>us</code> for united states.
+         * <p>
+         * To use the JVM platform default locale then use the name <code>default</code>
          */
         public Builder locale(String locale) {
             this.locale = locale;
@@ -303,7 +303,7 @@ public class BindyDataFormat extends DataFormatDefinition {
 
         /**
          * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
-         * <tt>java.util.List</tt>.
+         * <code>java.util.List</code>.
          */
         public Builder unwrapSingleInstance(String unwrapSingleInstance) {
             this.unwrapSingleInstance = unwrapSingleInstance;
@@ -312,7 +312,7 @@ public class BindyDataFormat extends DataFormatDefinition {
 
         /**
          * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
-         * <tt>java.util.List</tt>.
+         * <code>java.util.List</code>.
          */
         public Builder unwrapSingleInstance(boolean unwrapSingleInstance) {
             this.unwrapSingleInstance = Boolean.toString(unwrapSingleInstance);

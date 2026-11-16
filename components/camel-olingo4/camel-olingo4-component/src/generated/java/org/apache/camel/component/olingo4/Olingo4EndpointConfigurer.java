@@ -47,6 +47,7 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("BackoffMultiplier", int.class);
         map.put("Delay", long.class);
         map.put("Greedy", boolean.class);
+        map.put("HealthCheckMaxPollDuration", long.class);
         map.put("InitialDelay", long.class);
         map.put("RepeatCount", long.class);
         map.put("RunLoggingLevel", org.apache.camel.LoggingLevel.class);
@@ -84,6 +85,8 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "filteralreadyseen":
         case "filterAlreadySeen": target.getConfiguration().setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "httpasyncclientbuilder":
         case "httpAsyncClientBuilder": target.getConfiguration().setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
         case "httpclientbuilder":
@@ -156,6 +159,8 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "filteralreadyseen":
         case "filterAlreadySeen": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "httpasyncclientbuilder":
         case "httpAsyncClientBuilder": return org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class;
         case "httpclientbuilder":
@@ -224,6 +229,8 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "filteralreadyseen":
         case "filterAlreadySeen": return target.getConfiguration().isFilterAlreadySeen();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "httpasyncclientbuilder":
         case "httpAsyncClientBuilder": return target.getConfiguration().getHttpAsyncClientBuilder();
         case "httpclientbuilder":

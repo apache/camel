@@ -33,7 +33,6 @@ import org.aesh.command.parser.CommandLineParserException;
 import org.aesh.command.validator.OptionValidatorException;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
-import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -80,6 +79,7 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
+import org.apache.camel.dsl.jbang.run.common.CliLogging;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
@@ -110,7 +110,12 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     // the plugins whose commands were added, to add them to a new command line too
     private final List<Plugin> plugins = new CopyOnWriteArrayList<>();
 
+    /**
+     * The main method of the CLI that JBang runs (camel-jbang-main/dist/CamelJBang.java).
+     */
     public static void run(String... args) {
+        // before anything creates a logger
+        CliLogging.install();
         run(new CamelJBangMain(), args);
     }
 
@@ -270,9 +275,6 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     CommandTree createCommandLine(String only) {
         // the help of --help is printed with the printer of the CLI too
         CommandTree commandLine = new CommandTree(this).setOutput(text -> out.print(text));
-        if (shouldCreate(only, "bind")) {
-            commandLine.addSubcommand("bind", new CommandTree(new Bind(this)));
-        }
         if (shouldCreate(only, "catalog")) {
             commandLine.addSubcommand("catalog", new CommandTree(new CatalogCommand(this))
                     .addSubcommand("component", new CommandTree(new CatalogComponent(this)))

@@ -36,7 +36,9 @@ import org.apache.camel.spi.Metadata;
 public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, description = "Package name where your JAXB classes are located.")
+    @Metadata(required = true,
+              description = "Package name where your JAXB classes are located. The package must have an ObjectFactory class"
+                            + " or a jaxb.index file that lists the classes. To use a class name instead, set contextPathIsClassName to true.")
     private String contextPath;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
@@ -53,7 +55,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     private String schemaSeverityLevel;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "To enable pretty printing output nicely formatted. Is by default false.")
+              description = "To enable pretty printing output nicely formatted. Is by default true.")
     private String prettyPrint;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
@@ -65,8 +67,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     private String ignoreJAXBElement;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Whether marshalling must be java objects with JAXB annotations. And if not then it fails."
-                            + " This option can be set to false to relax that, such as when the data is already in XML format.")
+              description = "Whether marshalling must be java objects with JAXB annotations."
+                            + " By default, any other message body is written as it is, such as when the data is already in XML format."
+                            + " Set this option to true to fail with an InvalidPayloadException instead.")
     private String mustBeJAXBElement;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -77,8 +80,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "To turn on marshalling XML fragment trees. This is useful when generated code does not have @XmlRootElement annotation"
-                            + " and you need to unmarshall only part of the tree.")
+              description = "To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller."
+                            + " To marshal or unmarshal only part of the tree, or classes without the @XmlRootElement annotation,"
+                            + " use partClass and partNamespace instead.")
     private String fragment;
     // Partial encoding
     @XmlAttribute
@@ -96,7 +100,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced", description = "To use a custom xml stream writer.")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
-    @Metadata(description = "To define the location of the schema.")
+    @Metadata(description = "To set the xsi:schemaLocation attribute in the marshalled XML."
+                            + " This does not validate the XML; use the schema option to validate.")
     private String schemaLocation;
     @XmlAttribute
     @Metadata(label = "advanced", description = "To define the location of the namespaceless schema.")
@@ -366,7 +371,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String accessExternalSchemaProtocols;
 
         /**
-         * Package name where your JAXB classes are located.
+         * Package name where your JAXB classes are located. The package must have an ObjectFactory class or a
+         * jaxb.index file that lists the classes. To use a class name instead, set contextPathIsClassName to true.
          */
         public Builder contextPath(String contextPath) {
             this.contextPath = contextPath;
@@ -422,8 +428,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
-         * Is by default false.
+         * <p>
+         * Is by default true.
          */
         public Builder prettyPrint(String prettyPrint) {
             this.prettyPrint = prettyPrint;
@@ -432,8 +438,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
-         * Is by default false.
+         * <p>
+         * Is by default true.
          */
         public Builder prettyPrint(boolean prettyPrint) {
             this.prettyPrint = Boolean.toString(prettyPrint);
@@ -475,8 +481,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be
-         * set to false to relax that, such as when the data is already in XML format.
+         * Whether marshalling must be java objects with JAXB annotations. By default, any other message body is written
+         * as it is, such as when the data is already in XML format. Set this option to true to fail with an
+         * InvalidPayloadException instead.
          */
         public Builder mustBeJAXBElement(String mustBeJAXBElement) {
             this.mustBeJAXBElement = mustBeJAXBElement;
@@ -484,8 +491,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be
-         * set to false to relax that, such as when the data is already in XML format.
+         * Whether marshalling must be java objects with JAXB annotations. By default, any other message body is written
+         * as it is, such as when the data is already in XML format. Set this option to true to fail with an
+         * InvalidPayloadException instead.
          */
         public Builder mustBeJAXBElement(boolean mustBeJAXBElement) {
             this.mustBeJAXBElement = Boolean.toString(mustBeJAXBElement);
@@ -493,11 +501,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * To turn on marshalling XML fragment trees. By default JAXB looks for @XmlRootElement annotation on given
-         * class to operate on whole XML tree. This is useful but not always - sometimes generated code does not
-         * have @XmlRootElement annotation, sometimes you need unmarshall only part of tree. In that case you can use
-         * partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class
-         * to JAXB's unmarshaler.
+         * To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller.
+         * To marshal or unmarshal only part of the tree, or classes without the @XmlRootElement annotation, use
+         * partClass and partNamespace instead.
          */
         public Builder fragment(String fragment) {
             this.fragment = fragment;
@@ -505,11 +511,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * To turn on marshalling XML fragment trees. By default JAXB looks for @XmlRootElement annotation on given
-         * class to operate on whole XML tree. This is useful but not always - sometimes generated code does not
-         * have @XmlRootElement annotation, sometimes you need unmarshall only part of tree. In that case you can use
-         * partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class
-         * to JAXB's unmarshaler.
+         * To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller.
+         * To marshal or unmarshal only part of the tree, or classes without the @XmlRootElement annotation, use
+         * partClass and partNamespace instead.
          */
         public Builder fragment(boolean fragment) {
             this.fragment = Boolean.toString(fragment);
@@ -542,7 +546,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * Name of class used for fragment parsing.
-         * <p/>
+         * <p>
          * See more details at the fragment option.
          */
         public Builder partClass(String partClass) {
@@ -552,7 +556,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * XML namespace to use for fragment parsing.
-         * <p/>
+         * <p>
          * See more details at the fragment option.
          */
         public Builder partNamespace(String partNamespace) {
@@ -579,7 +583,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * To define the location of the schema
+         * To set the xsi:schemaLocation attribute in the marshalled XML. This does not validate the XML; use the schema
+         * option to validate.
          */
         public Builder schemaLocation(String schemaLocation) {
             this.schemaLocation = schemaLocation;

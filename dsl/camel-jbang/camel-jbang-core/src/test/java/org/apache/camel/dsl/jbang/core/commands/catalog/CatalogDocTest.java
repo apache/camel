@@ -216,6 +216,8 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         Assertions.assertTrue(output.contains("EIP output"), output);
         Assertions.assertTrue(output.contains("Steps"), output);
         Assertions.assertTrue(output.contains("Each part of what the expression gives"), output);
+        // CAMEL-26931: an EIP has no first version in the catalog, which printed an empty Since line
+        Assertions.assertFalse(output.lines().anyMatch(l -> l.strip().equals("Since:")), output);
     }
 
     @Test

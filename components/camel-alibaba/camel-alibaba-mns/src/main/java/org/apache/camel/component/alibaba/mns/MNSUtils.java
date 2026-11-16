@@ -83,7 +83,7 @@ public final class MNSUtils {
     public static String resolveOperation(MNSEndpoint endpoint, Exchange exchange) {
         String operation = exchange.getProperty(MNSProperties.OPERATION, String.class);
         if (ObjectHelper.isEmpty(operation)) {
-            operation = exchange.getIn().getHeader(MNSProperties.OPERATION, String.class);
+            operation = exchange.getIn().getHeader(MNSHeaders.OPERATION, String.class);
         }
         if (ObjectHelper.isEmpty(operation)) {
             operation = endpoint.resolveOperation();
@@ -102,7 +102,7 @@ public final class MNSUtils {
     public static String resolveTopicName(MNSEndpoint endpoint, Exchange exchange) {
         String topicName = exchange.getProperty(MNSProperties.TOPIC_NAME, String.class);
         if (ObjectHelper.isEmpty(topicName)) {
-            topicName = exchange.getIn().getHeader(MNSProperties.TOPIC_NAME, String.class);
+            topicName = exchange.getIn().getHeader(MNSHeaders.TOPIC_NAME, String.class);
         }
         if (ObjectHelper.isEmpty(topicName)) {
             topicName = endpoint.resolveTopicName();

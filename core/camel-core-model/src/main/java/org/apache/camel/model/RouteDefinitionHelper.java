@@ -50,7 +50,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 
 /**
  * Helper for {@link RouteDefinition}
- * <p/>
+ * <p>
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
@@ -259,7 +259,8 @@ public final class RouteDefinitionHelper {
      *
      * @param  target the target route
      * @param  routes the existing routes
-     * @return        <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     * @return        <code>null</code> if no duplicate id's detected, otherwise the first found duplicate id is
+     *                returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
         return validateUniqueIds(target, routes, null);
@@ -271,7 +272,8 @@ public final class RouteDefinitionHelper {
      * @param  target   the target route
      * @param  routes   the existing routes
      * @param  prefixId optional prefix to use in duplicate id detection
-     * @return          <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     * @return          <code>null</code> if no duplicate id's detected, otherwise the first found duplicate id is
+     *                  returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes, String prefixId) {
         List<String> routesIds = new ArrayList<>();
@@ -358,7 +360,7 @@ public final class RouteDefinitionHelper {
 
     /**
      * Prepares the route.
-     * <p/>
+     * <p>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
      * @param context the camel context
@@ -370,7 +372,7 @@ public final class RouteDefinitionHelper {
 
     /**
      * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
-     * <p/>
+     * <p>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
      * @param context                            the camel context
@@ -398,7 +400,7 @@ public final class RouteDefinitionHelper {
 
     /**
      * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
-     * <p/>
+     * <p>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
      * @param context                            the camel context
@@ -468,7 +470,8 @@ public final class RouteDefinitionHelper {
      *
      * @param  context the camel context
      * @param  route   the route, before it is prepared
-     * @return         the checksum, or <tt>null</tt> when it cannot be computed (camel-xml-io is not on the classpath)
+     * @return         the checksum, or <code>null</code> when it cannot be computed (camel-xml-io is not on the
+     *                 classpath)
      */
     public static String checksum(CamelContext context, NamedNode route) {
         if (context == null || route == null) {
@@ -799,8 +802,8 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Force assigning ids to the give node and all its children (recursively).
-     * <p/>
+     * Force assigning ids to the given node and all its children (recursively).
+     * <p>
      * This is needed when doing tracing or the likes, where each node should have its id assigned so the tracing can
      * pinpoint exactly.
      *

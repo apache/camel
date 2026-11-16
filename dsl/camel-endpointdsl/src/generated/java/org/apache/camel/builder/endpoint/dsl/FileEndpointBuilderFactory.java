@@ -598,7 +598,10 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -614,7 +617,10 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -1619,6 +1625,48 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
             return this;
         }
         /**

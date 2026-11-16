@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import static org.springframework.jdbc.support.JdbcUtils.closeConnection;
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
@@ -251,22 +251,27 @@ public class SqlProducer extends DefaultProducer {
         LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
-        // and we need to keep the connection alive while routing and close it when the Exchange is done being routed
+        // and we need to keep the connection alive while routing and close it when the Exchange is done being routed.
+        // Get and release the connection with DataSourceUtils, as the jdbcTemplate does, so a transacted route
+        // uses the connection of its transaction, and does not close it
+        JdbcTemplate template = fetchJdbcTemplate(exchange);
+        DataSource ds = template.getDataSource();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            con = fetchJdbcTemplate(exchange).getDataSource().getConnection();
+            con = DataSourceUtils.doGetConnection(ds);
             ps = statementCreator.createPreparedStatement(con);
             ResultSetIterator iterator = null;
 
+            applyStatementSettings(ps, template);
             populateStatement(ps, exchange, sql, preparedQuery);
 
             boolean isResultSet = ps.execute();
             if (isResultSet) {
                 rs = ps.getResultSet();
-                iterator = getEndpoint().queryForStreamList(con, ps, rs);
+                iterator = getEndpoint().queryForStreamList(con, ds, ps, rs);
 
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
@@ -276,16 +281,30 @@ public class SqlProducer extends DefaultProducer {
                 // and return the connection to the pool right away
                 exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                 closeStatement(ps);
-                closeConnection(con);
+                DataSourceUtils.releaseConnection(con, ds);
             }
             return iterator;
         } catch (Exception e) {
             // in case of exception then close all this before rethrow
-            closeConnection(con);
-            closeStatement(ps);
             closeResultSet(rs);
+            closeStatement(ps);
+            DataSourceUtils.releaseConnection(con, ds);
             throw e;
         }
+    }
+
+    /**
+     * Applies the statement settings of the template (template.* options), as the template does for the statements it
+     * creates.
+     */
+    private static void applyStatementSettings(PreparedStatement ps, JdbcTemplate template) throws SQLException {
+        if (template.getFetchSize() != -1) {
+            ps.setFetchSize(template.getFetchSize());
+        }
+        if (template.getMaxRows() != -1) {
+            ps.setMaxRows(template.getMaxRows());
+        }
+        DataSourceUtils.applyTimeout(ps, template.getDataSource(), template.getQueryTimeout());
     }
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
@@ -344,7 +363,16 @@ public class SqlProducer extends DefaultProducer {
     protected JdbcTemplate fetchJdbcTemplate(Exchange exchange) {
         DataSource ds = exchange.getMessage().getHeader(SqlConstants.SQL_DATA_SOURCE, DataSource.class);
         if (ds != null) {
-            return new JdbcTemplate(ds);
+            // same settings (template.* options) as the template of the endpoint
+            JdbcTemplate answer = new JdbcTemplate(ds);
+            answer.setFetchSize(jdbcTemplate.getFetchSize());
+            answer.setMaxRows(jdbcTemplate.getMaxRows());
+            answer.setQueryTimeout(jdbcTemplate.getQueryTimeout());
+            answer.setIgnoreWarnings(jdbcTemplate.isIgnoreWarnings());
+            answer.setSkipResultsProcessing(jdbcTemplate.isSkipResultsProcessing());
+            answer.setSkipUndeclaredResults(jdbcTemplate.isSkipUndeclaredResults());
+            answer.setResultsMapCaseInsensitive(jdbcTemplate.isResultsMapCaseInsensitive());
+            return answer;
         }
         return jdbcTemplate;
     }

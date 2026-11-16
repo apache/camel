@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Base64UrlNamingStrategy;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Message;
@@ -727,6 +728,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void declareElements(AbstractMessageListenerContainer container, AmqpAdmin admin) {
         if (admin != null && autoDeclare) {
+            // before the broker is called, so that a generated queue name is set on the container also when the broker
+            // is not available
+            String queuesToDeclare = queuesToDeclare(container);
+
             // bind dead letter exchange
             if (deadLetterExchange != null) {
                 ExchangeBuilder eb = new ExchangeBuilder(deadLetterExchange, deadLetterExchangeType);
@@ -773,16 +778,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 admin.declareExchange(rabbitExchange);
             }
 
-            // if the consumer has no specific queue names then auto-create an unique queue (auto deleted)
-            String queuesToDeclare = queues;
             String autoDeleteDefault = "false";
-            boolean generateUniqueQueue = false;
-            if (queuesToDeclare == null) {
-                // no explicit queue names so use a single blank so we can create a single new unique queue for the consumer
-                queuesToDeclare = " ";
-                generateUniqueQueue = true;
-            }
-
             for (String queue : queuesToDeclare.split(",")) {
                 queue = queue.trim();
                 Map<String, Object> map = getQueueArgs();
@@ -824,9 +820,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                                 rabbitQueue.getName(), durable, autoDelete, exclusive);
                     }
                     qn = admin.declareQueue(rabbitQueue);
-                    // if we auto created a new unique queue then the container needs to know the queue name
-                    if (generateUniqueQueue && container != null) {
-                        container.setQueueNames(qn);
+                    if (qn == null) {
+                        // the declaration failed and the admin ignores declaration exceptions (ignoreDeclarationExceptions):
+                        // use the name of the queue (given, or generated on the client) to bind and consume
+                        qn = rabbitQueue.getName();
                     }
                 }
                 if (!skipBindQueue) {
@@ -838,6 +835,27 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 }
             }
         }
+    }
+
+    /**
+     * The queues to declare. When no queues are configured, the consumer consumes a queue with a generated name: the
+     * name is generated the first time and set on the listener container, before the container starts, so that the
+     * container consumes that queue also when the broker is not available yet, and every later declaration (on a new
+     * connection) declares the same queue again.
+     */
+    private String queuesToDeclare(AbstractMessageListenerContainer container) {
+        if (queues != null) {
+            return queues;
+        }
+        if (container == null || skipDeclareQueue) {
+            // a single blank: the producer declares a queue with a generated name (QueueBuilder)
+            return " ";
+        }
+        if (container.getQueueNames().length == 0) {
+            // the same naming strategy as QueueBuilder for a queue without a name
+            container.setQueueNames(Base64UrlNamingStrategy.DEFAULT.generateName());
+        }
+        return String.join(",", container.getQueueNames());
     }
 
     private void prepareDeadLetterQueueArgs(Map<String, Object> args) {

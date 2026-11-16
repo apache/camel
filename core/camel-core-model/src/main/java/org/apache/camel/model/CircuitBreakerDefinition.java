@@ -119,7 +119,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     /**
      * Adds the output to the circuit breaker, or to the fallback while the fallback is being built with the fluent Java
      * DSL, as in {@code circuitBreaker().to("a").onFallback().to("b").end()}.
-     * <p/>
+     * <p>
      * A fallback set with {@link #setOnFallback(OnFallbackDefinition)} (XML, YAML and the other DSL loaders) carries
      * its own outputs, so the outputs added here belong to the circuit breaker no matter in which order the loader read
      * the fallback and the steps.
@@ -196,8 +196,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     // -------------------------------------------------------------------------
     /**
      * Configures the circuit breaker to use Resilience4j.
-     * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
+     * <p>
+     * Use <code>end</code> when configuration is complete, to return back to the Circuit Breaker EIP.
      */
     public Resilience4jConfigurationDefinition resilience4jConfiguration() {
         resilience4jConfiguration
@@ -215,8 +215,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     /**
      * Configures the circuit breaker to use MicroProfile Fault Tolerance.
-     * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
+     * <p>
+     * Use <code>end</code> when configuration is complete, to return back to the Circuit Breaker EIP.
      */
     public FaultToleranceConfigurationDefinition faultToleranceConfiguration() {
         faultToleranceConfiguration = faultToleranceConfiguration == null
@@ -282,7 +282,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     /**
      * The fallback route path to execute that will go over the network.
-     * <p/>
+     * <p>
      * If the fallback will go over the network it is another possible point of failure.
      *
      * @deprecated Not supported by any circuit breaker implementation. Use {@link #onFallback()} instead.

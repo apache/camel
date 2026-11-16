@@ -310,10 +310,10 @@ public abstract class BuilderSupport implements CamelContextAware {
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * <p>
+     * This method accepts dual parameters. Either a bean instance or a reference to a bean (String).
      *
-     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param  beanOrBeanRef either an instance of a bean or a reference to bean to lookup in the Registry
      * @return               the builder
      */
     public ValueBuilder method(Object beanOrBeanRef) {
@@ -322,10 +322,10 @@ public abstract class BuilderSupport implements CamelContextAware {
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * <p>
+     * This method accepts dual parameters. Either a bean instance or a reference to a bean (String).
      *
-     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param  beanOrBeanRef either an instance of a bean or a reference to bean to lookup in the Registry
      * @param  method        name of method to invoke
      * @return               the builder
      */

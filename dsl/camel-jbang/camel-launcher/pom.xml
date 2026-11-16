@@ -88,6 +88,13 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <!-- from spring-core: jcl-over-slf4j below has the same classes, and sends the logging to slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Pre-installed plugins -->
@@ -254,6 +261,13 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient-version}</version>
+            <exclusions>
+                <!-- jcl-over-slf4j below has the same classes, and sends the logging to slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

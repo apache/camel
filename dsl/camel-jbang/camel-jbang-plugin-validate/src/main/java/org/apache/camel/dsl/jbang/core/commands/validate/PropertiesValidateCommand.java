@@ -44,7 +44,7 @@ import org.apache.camel.util.FileUtil;
                    sortOptions = true)
 public class PropertiesValidateCommand extends CamelCommand {
 
-    @Arguments(required = true, description = "The properties files to validate.", paramLabel = "<files>")
+    @Arguments(required = true, description = "The properties files to validate.", paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Option(name = "json", hasValue = false,

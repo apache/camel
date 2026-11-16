@@ -61,6 +61,8 @@ public class IBMCOSEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "inprogressrepository":
         case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "includebody":
@@ -156,6 +158,8 @@ public class IBMCOSEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "inprogressrepository":
         case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "includebody":
@@ -247,6 +251,8 @@ public class IBMCOSEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": return target.getConfiguration().getFileName();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "inprogressrepository":
         case "inProgressRepository": return target.getInProgressRepository();
         case "includebody":

@@ -67,8 +67,9 @@ public class ListTransformer extends ProcessBaseCommand {
         forEachIntegration(name, (ph, root) -> {
             JsonObject context = (JsonObject) root.get("context");
             JsonObject jo = (JsonObject) root.get("transformers");
-            if (context != null && jo != null) {
-                JsonArray array = (JsonArray) jo.get("transformers");
+            // the console leaves the list out when there are no transformers (CAMEL-26929)
+            JsonArray array = jo != null ? (JsonArray) jo.get("transformers") : null;
+            if (context != null && array != null) {
                 for (int i = 0; i < array.size(); i++) {
                     JsonObject o = (JsonObject) array.get(i);
                     Row row = new Row();

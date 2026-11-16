@@ -183,7 +183,7 @@ public class ParamDefinition {
 
     /**
      * Name of the parameter.
-     * <p/>
+     * <p>
      * This option is mandatory.
      */
     public ParamDefinition name(String name) {
@@ -242,7 +242,7 @@ public class ParamDefinition {
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
+     * The data type of the parameter such as <code>string</code>, <code>integer</code>, <code>boolean</code>
      */
     public ParamDefinition dataType(String type) {
         setDataType(type);
@@ -250,9 +250,9 @@ public class ParamDefinition {
     }
 
     /**
-     * The data format of the parameter such as <tt>binary</tt>, <tt>date</tt>, <tt>date-time</tt>, <tt>password</tt>.
-     * The format is usually derived from the dataType alone. However you can set this option for more fine grained
-     * control of the format in use.
+     * The data format of the parameter such as <code>binary</code>, <code>date</code>, <code>date-time</code>,
+     * <code>password</code>. The format is usually derived from the dataType alone. However you can set this option for
+     * more fine grained control of the format in use.
      */
     public ParamDefinition dataFormat(String type) {
         setDataFormat(type);

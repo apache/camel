@@ -20,19 +20,35 @@ import org.apache.camel.spi.Metadata;
 
 public final class FCHeaders {
 
-    @Metadata(label = "producer", description = "FC service name override", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The name of the service that contains the function. This header replaces the serviceName option."
+                            + " If this header is not set, an exchange property of the same name replaces the serviceName"
+                            + " option.",
+              javaType = "String")
     public static final String SERVICE_NAME = FCProperties.SERVICE_NAME;
 
-    @Metadata(label = "producer", description = "FC function name override", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The name of the function. This header replaces the functionName option. If this header is not set,"
+                            + " an exchange property of the same name replaces the functionName option.",
+              javaType = "String")
     public static final String FUNCTION_NAME = FCProperties.FUNCTION_NAME;
 
-    @Metadata(label = "producer", description = "Function qualifier override", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The version or alias of the service. This header replaces the qualifier option. If this header is"
+                            + " not set, an exchange property of the same name replaces the qualifier option.",
+              javaType = "String")
     public static final String QUALIFIER = FCProperties.QUALIFIER;
 
-    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The request ID that Function Compute returns in the response to invokeFunction. The producer sets"
+                            + " it for invokeFunction, unless the exchange fails.",
+              javaType = "String")
     public static final String REQUEST_ID = FCProperties.REQUEST_ID;
 
-    @Metadata(label = "producer", description = "HTTP status code from FC invoke response", javaType = "Integer")
+    @Metadata(label = "producer",
+              description = "The HTTP status code of the response to the operation. The producer sets it, unless the exchange"
+                            + " fails.",
+              javaType = "Integer")
     public static final String STATUS_CODE = "CamelAlibabaFcStatusCode";
 
     private FCHeaders() {

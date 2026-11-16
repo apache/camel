@@ -843,7 +843,9 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The conversation messages for Converse API.
          * 
-         * The option is a: {@code List<Message>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.bedrockruntime.model.Message>}
+         * type.
          * 
          * Group: producer
          * 
@@ -855,7 +857,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The system prompts for Converse API.
          * 
-         * The option is a: {@code List<SystemContentBlock>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock>} type.
          * 
          * Group: producer
          * 
@@ -867,7 +870,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The inference configuration for Converse API.
          * 
-         * The option is a: {@code InferenceConfiguration} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration} type.
          * 
          * Group: producer
          * 
@@ -880,7 +884,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The tool configuration for Converse API.
          * 
-         * The option is a: {@code ToolConfiguration} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration} type.
          * 
          * Group: producer
          * 
@@ -918,7 +923,9 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The usage metrics from Converse API response.
          * 
-         * The option is a: {@code TokenUsage} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.TokenUsage}
+         * type.
          * 
          * Group: producer
          * 
@@ -930,7 +937,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The output message from Converse API response (converse only).
          * 
-         * The option is a: {@code Message} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.Message} type.
          * 
          * Group: producer
          * 
@@ -944,7 +952,8 @@ public interface BedrockEndpointBuilderFactory {
          * The guardrail configuration to apply to the request. converseStream
          * also takes a GuardrailStreamConfiguration.
          * 
-         * The option is a: {@code GuardrailConfiguration} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration} type.
          * 
          * Group: producer
          * 
@@ -968,7 +977,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The content blocks for ApplyGuardrail operation.
          * 
-         * The option is a: {@code List<GuardrailContentBlock>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock>} type.
          * 
          * Group: producer
          * 
@@ -992,7 +1002,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The output content of the ApplyGuardrail response.
          * 
-         * The option is a: {@code List<GuardrailOutputContent>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailOutputContent>} type.
          * 
          * Group: producer
          * 
@@ -1004,7 +1015,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The trace information from guardrail evaluation.
          * 
-         * The option is a: {@code GuardrailTraceAssessment} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.GuardrailTraceAssessment} type.
          * 
          * Group: producer
          * 
@@ -1016,7 +1028,8 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The guardrail assessments from ApplyGuardrail response.
          * 
-         * The option is a: {@code List<GuardrailAssessment>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailAssessment>} type.
          * 
          * Group: producer
          * 
@@ -1029,7 +1042,9 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The guardrail usage metrics from ApplyGuardrail response.
          * 
-         * The option is a: {@code GuardrailUsage} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.bedrockruntime.model.GuardrailUsage}
+         * type.
          * 
          * Group: producer
          * 

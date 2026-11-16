@@ -233,17 +233,6 @@ class InitTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    void initPipe() throws Exception {
-        Init initCommand = new Init(new CamelJBangMain());
-        CommandLineTestHelper.parse(initCommand, "my.yaml", "--pipe", "--dir=" + workingDir);
-
-        int exit = initCommand.doCall();
-
-        assertEquals(0, exit);
-        assertTrue(Files.readString(workingDir.resolve("my.yaml")).contains("kind: Pipe"));
-    }
-
-    @Test
     void initFailsWhenTheFileExists() throws Exception {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();

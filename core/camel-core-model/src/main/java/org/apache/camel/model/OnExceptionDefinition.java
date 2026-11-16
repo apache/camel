@@ -284,8 +284,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets whether the exchange should handle and continue routing from the point of failure.
-     * <p/>
-     * If this option is enabled then its considered handled as well.
+     * <p>
+     * If this option is enabled then it's considered handled as well.
      *
      * @param  continued continued or not
      * @return           the builder
@@ -325,7 +325,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets an additional predicate that should be true before the onException is triggered.
-     * <p/>
+     * <p>
      * To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type
      * or not.
      *
@@ -339,8 +339,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets the retry while predicate.
-     * <p/>
-     * Will continue retrying until predicate returns <tt>false</tt>.
+     * <p>
+     * Will continue retrying until predicate returns <code>false</code>.
      *
      * @param  retryWhile predicate that determines when to stop retrying
      * @return            the builder
@@ -515,7 +515,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
      * reduce verbose.
-     * <p/>
+     * <p>
      * A new exception is an exception that was thrown while handling a previous exception.
      */
     public OnExceptionDefinition logNewException(boolean logNewException) {
@@ -526,7 +526,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
      * reduce verbose.
-     * <p/>
+     * <p>
      * A new exception is an exception that was thrown while handling a previous exception.
      */
     public OnExceptionDefinition logNewException(String logNewException) {
@@ -599,8 +599,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log exhausted message body with message history. Requires <tt>logExhaustedMessageHistory</tt> to
-     * be enabled.
+     * Sets whether to log exhausted message body with message history. Requires <code>logExhaustedMessageHistory</code>
+     * to be enabled.
      */
     public OnExceptionDefinition logExhaustedMessageBody(boolean logExhaustedMessageBody) {
         getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
@@ -608,8 +608,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log exhausted message body with message history. Requires <tt>logExhaustedMessageHistory</tt> to
-     * be enabled.
+     * Sets whether to log exhausted message body with message history. Requires <code>logExhaustedMessageHistory</code>
+     * to be enabled.
      */
     public OnExceptionDefinition logExhaustedMessageBody(String logExhaustedMessageBody) {
         getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
@@ -715,21 +715,21 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an
      * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
-     * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
-     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * <p>
+     * <b>Notice:</b> this only applies when all redelivery attempts have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br>
      * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
      * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
      * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
      * the original exchange store in the dead letter queue it might be easier to manually re submit the
      * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
      * able to send the {@link org.apache.camel.Exchange} to the same input.
-     * <p/>
+     * <p>
      * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
      * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
-     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * with custom headers and include the original message body. The former won't let you do this, as it's using the
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
-     * <p/>
+     * <p>
      * The original input message is defensively copied, and the copied message body is converted to
      * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
      * original route), to ensure the body can be read when the original message is being used later. If the body is
@@ -737,16 +737,16 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
      * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
      * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * <p>
+     * <b>Important:</b> The original input means the input message that is bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. A unit of work typically spans one route, or multiple routes if they are
+     * connected using internal endpoints such as direct or seda. When messages are passed via external endpoints such
+     * as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary for
+     * the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <code>shareUnitOfWork</code> which allows to combine with the parent unit of work in regard to error handling and
      * therefore use the parent original message.
-     * <p/>
+     * <p>
      * By default this feature is off.
      *
      * @return the builder
@@ -760,21 +760,21 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Will use the original input {@link org.apache.camel.Message} body (original body only) when an
      * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
-     * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
-     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * <p>
+     * <b>Notice:</b> this only applies when all redelivery attempts have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br>
      * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
      * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
      * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
      * the original exchange store in the dead letter queue it might be easier to manually re submit the
      * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
      * able to send the {@link org.apache.camel.Exchange} to the same input.
-     * <p/>
+     * <p>
      * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
      * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
-     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * with custom headers and include the original message body. The former won't let you do this, as it's using the
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
-     * <p/>
+     * <p>
      * The original input message is defensively copied, and the copied message body is converted to
      * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
      * original route), to ensure the body can be read when the original message is being used later. If the body is
@@ -782,16 +782,16 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
      * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
      * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * <p>
+     * <b>Important:</b> The original input means the input message that is bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. A unit of work typically spans one route, or multiple routes if they are
+     * connected using internal endpoints such as direct or seda. When messages are passed via external endpoints such
+     * as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary for
+     * the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <code>shareUnitOfWork</code> which allows to combine with the parent unit of work in regard to error handling and
      * therefore use the parent original message.
-     * <p/>
+     * <p>
      * By default this feature is off.
      *
      * @return the builder
@@ -804,8 +804,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets a processor that should be processed <b>before</b> a redelivery attempt.
-     * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     * <p>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> it's being redelivered.
      */
     public OnExceptionDefinition onRedelivery(Processor processor) {
         setOnRedelivery(processor);
@@ -814,8 +814,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     /**
      * Sets a reference to a processor that should be processed <b>before</b> a redelivery attempt.
-     * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     * <p>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> it's being redelivered.
      *
      * @param ref reference to the processor
      */
@@ -827,7 +827,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets a processor that should be processed <b>just after</b> an exception occurred. Can be used to perform custom
      * logging about the occurred exception at the exact time it happened.
-     * <p/>
+     * <p>
      * Important: Any exception thrown from this processor will be ignored.
      */
     public OnExceptionDefinition onExceptionOccurred(Processor processor) {
@@ -838,7 +838,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets a reference to a processor that should be processed <b>just after</b> an exception occurred. Can be used to
      * perform custom logging about the occurred exception at the exact time it happened.
-     * <p/>
+     * <p>
      * Important: Any exception thrown from this processor will be ignored.
      *
      * @param ref reference to the processor

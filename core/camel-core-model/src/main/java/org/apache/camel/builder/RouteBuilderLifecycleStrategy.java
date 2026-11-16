@@ -36,7 +36,7 @@ public interface RouteBuilderLifecycleStrategy extends Ordered {
 
     /**
      * Gets the order.
-     * <p/>
+     * <p>
      * Default to {@link Ordered#LOWEST}.
      *
      * @return the order

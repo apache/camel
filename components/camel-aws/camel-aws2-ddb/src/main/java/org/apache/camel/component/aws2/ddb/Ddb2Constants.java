@@ -23,7 +23,8 @@ import org.apache.camel.spi.Metadata;
  */
 public interface Ddb2Constants {
     @Metadata(label = "DeleteItem GetItem PutItem UpdateItem",
-              description = "The list of attributes returned by the operation.", javaType = "Map<String, AttributeValue>")
+              description = "The list of attributes returned by the operation.",
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String ATTRIBUTES = "CamelAwsDdbAttributes";
     @Metadata(description = """
             If attribute names are not specified then all attributes will be
@@ -31,10 +32,10 @@ public interface Ddb2Constants {
               javaType = "Collection<String>")
     String ATTRIBUTE_NAMES = "CamelAwsDdbAttributeNames";
     @Metadata(description = "A map of the table name and corresponding items to get by primary key.",
-              javaType = "Map<String, KeysAndAttributes>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes>")
     String BATCH_ITEMS = "CamelAwsDdbBatchItems";
     @Metadata(label = "BatchGetItems", description = "Table names and the respective item attributes from the tables.",
-              javaType = "Map<String, List<Map<String, AttributeValue>>>")
+              javaType = "Map<String, List<Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>>>")
     String BATCH_RESPONSE = "CamelAwsDdbBatchResponse";
     @Metadata(description = """
             If set to true, then a consistent read is issued, otherwise eventually
@@ -57,17 +58,17 @@ public interface Ddb2Constants {
     //     "their attributes.", javaType = "Boolean")
     // String EXACT_COUNT = "CamelAwsDdbExactCount";
     // Removed from DynamoDB v1 to v2
-    // @Metadata(description = "Value of the hash component of the composite primary key.", javaType = "AttributeValue")
+    // @Metadata(description = "Value of the hash component of the composite primary key.", javaType = "software.amazon.awssdk.services.dynamodb.model.AttributeValue")
     // String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
     // Added INDEX_NAME for querying secondary indexes
     @Metadata(description = "If set will be used as Secondary Index for Query operation.", javaType = "String")
     String INDEX_NAME = "CamelAwsDdbIndexName";
     @Metadata(description = "A map of the attributes for the item, and must include the primary key\n" +
                             "values that define the item.",
-              javaType = "Map<String, AttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String ITEM = "CamelAwsDdbItem";
     @Metadata(label = "Query Scan", description = "The list of items returned by the operation.",
-              javaType = "List<Map<String,AttributeValue>>")
+              javaType = "List<Map<String,software.amazon.awssdk.services.dynamodb.model.AttributeValue>>")
     String ITEMS = "CamelAwsDdbItems";
     @Metadata(label = "DeleteTable DescribeTable UpdateTable", description = "Item count for this table.", javaType = "Long")
     String ITEM_COUNT = "CamelAwsDdbTableItemCount";
@@ -80,22 +81,22 @@ public interface Ddb2Constants {
               javaType = "String")
     String NEXT_TOKEN = "CamelAwsDdbNextToken";
     @Metadata(description = "The primary key that uniquely identifies each item in a table.",
-              javaType = "Map<String, AttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String KEY = "CamelAwsDdbKey";
     // Added from DynamoDB v1 to v2
     @Metadata(description = "This header specify the selection criteria for the\n" +
                             "query, and merge together the two old headers *CamelAwsDdbHashKeyValue*\n" +
                             "and *CamelAwsDdbScanRangeKeyCondition*",
-              javaType = "Map<String, Condition>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.Condition>")
     String KEY_CONDITIONS = "CamelAwsDdbKeyConditions";
     @Metadata(label = "DeleteTable DescribeTable UpdateTable",
               description = "The KeySchema that identifies the primary key for this table.\n" +
                             "*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and not KeySchema*",
-              javaType = "List<KeySchemaElement>")
+              javaType = "List<software.amazon.awssdk.services.dynamodb.model.KeySchemaElement>")
     String KEY_SCHEMA = "CamelAwsDdbKeySchema";
     @Metadata(label = "Query Scan", description = "Primary key of the item where the query operation stopped, inclusive of\n" +
                                                   "the previous result set.",
-              javaType = "Map<String, AttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
     @Metadata(label = "Query Scan",
               description = "Whether the response has more results (is truncated). If true, use LAST_EVALUATED_KEY as START_KEY for the next page.",
@@ -128,13 +129,13 @@ public interface Ddb2Constants {
     String SCAN_INDEX_FORWARD = "CamelAwsDdbScanIndexForward";
     // Removed from DynamoDB v1 to v2
     // @Metadata(description = "A container for the attribute values and comparison operators to use for\n" +
-    //    "the query.", javaType = "Condition")
+    //    "the query.", javaType = "software.amazon.awssdk.services.dynamodb.model.Condition")
     // String SCAN_RANGE_KEY_CONDITION = "CamelAwsDdbScanRangeKeyCondition";
     @Metadata(description = "Evaluates the scan results and returns only the desired values.",
-              javaType = "Map<String, Condition>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.Condition>")
     String SCAN_FILTER = "CamelAwsDdbScanFilter";
     @Metadata(description = "Primary key of the item from which to continue an earlier query.",
-              javaType = "Map<String, AttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String START_KEY = "CamelAwsDdbStartKey";
     @Metadata(description = "Table Name for this operation, instead of the table of the endpoint.", javaType = "String")
     String TABLE_NAME = "CamelAwsDdbTableName";
@@ -145,14 +146,14 @@ public interface Ddb2Constants {
               javaType = "software.amazon.awssdk.services.dynamodb.model.TableStatus")
     String TABLE_STATUS = "CamelAwsDdbTableStatus";
     @Metadata(description = "Designates an attribute for a conditional modification.",
-              javaType = "Map<String, ExpectedAttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue>")
     String UPDATE_CONDITION = "CamelAwsDdbUpdateCondition";
     @Metadata(description = "Map of attribute name to the new value and action for the update.",
-              javaType = "Map<String, AttributeValueUpdate>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate>")
     String UPDATE_VALUES = "CamelAwsDdbUpdateValues";
     @Metadata(label = "BatchGetItems", description = "Contains a map of tables and their respective keys that were not\n" +
                                                      "processed with the current response.",
-              javaType = "Map<String,KeysAndAttributes>")
+              javaType = "Map<String,software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes>")
     String UNPROCESSED_KEYS = "CamelAwsDdbUnprocessedKeys";
     @Metadata(label = "UpdateTable DescribeTable",
               description = "WriteCapacityUnits property of this table. UpdateTable reads it as the write capacity to set, and\n"
@@ -220,7 +221,7 @@ public interface Ddb2Constants {
               javaType = "Map<String, String>")
     String FILTER_EXPRESSION_ATTRIBUTE_NAMES = "CamelAwsDdbFilterExpressionAttributeNames";
     @Metadata(label = "Query Scan", description = "The Filter Expression Attribute Values.",
-              javaType = "Map<String, AttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String FILTER_EXPRESSION_ATTRIBUTE_VALUES = "CamelAwsDdbFilterExpressionAttributeValues";
     @Metadata(label = "Query Scan", description = "The Project Expression.",
               javaType = "String")

@@ -281,6 +281,94 @@ public interface DuckDbEndpointBuilderFactory {
             doSetProperty("allowDatabasePathFromHeader", allowDatabasePathFromHeader);
             return this;
         }
+        /**
+         * Whether the copy operation accepts a source with glob pattern
+         * characters (*, ?, [ or {), which DuckDB expands to all the matching
+         * files. Disabled by default, so copy loads a single file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowGlobCopySource the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowGlobCopySource(boolean allowGlobCopySource) {
+            doSetProperty("allowGlobCopySource", allowGlobCopySource);
+            return this;
+        }
+        /**
+         * Whether the copy operation accepts a source with glob pattern
+         * characters (*, ?, [ or {), which DuckDB expands to all the matching
+         * files. Disabled by default, so copy loads a single file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowGlobCopySource the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowGlobCopySource(String allowGlobCopySource) {
+            doSetProperty("allowGlobCopySource", allowGlobCopySource);
+            return this;
+        }
+        /**
+         * Whether the copy operation accepts a source that starts with a URL
+         * scheme (such as https:// or s3://), which DuckDB reads as a remote
+         * file. Disabled by default, so copy loads a local file only; enable it
+         * only when the source of the message body is trusted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlCopySource the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowUrlCopySource(boolean allowUrlCopySource) {
+            doSetProperty("allowUrlCopySource", allowUrlCopySource);
+            return this;
+        }
+        /**
+         * Whether the copy operation accepts a source that starts with a URL
+         * scheme (such as https:// or s3://), which DuckDB reads as a remote
+         * file. Disabled by default, so copy loads a local file only; enable it
+         * only when the source of the message body is trusted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlCopySource the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowUrlCopySource(String allowUrlCopySource) {
+            doSetProperty("allowUrlCopySource", allowUrlCopySource);
+            return this;
+        }
+        /**
+         * A directory that the local source of the copy operation must be
+         * inside, after resolving symbolic links. A relative source is resolved
+         * against this directory. For a glob pattern, the directory before the
+         * first glob character must be inside it. Not set by default, so copy
+         * loads a file from any directory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param copyBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder copyBaseDirectory(String copyBaseDirectory) {
+            doSetProperty("copyBaseDirectory", copyBaseDirectory);
+            return this;
+        }
     }
 
     /**

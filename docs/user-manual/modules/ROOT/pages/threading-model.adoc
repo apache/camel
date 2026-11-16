@@ -26,7 +26,7 @@ The default profile is pre-configured out of the box with the following settings
 | *poolSize* | `10` | Sets the default core pool size (threads to keep minimum in pool)
 | *keepAliveTime* | `60` | Sets the default keep alive time (in seconds) for inactive threads
 | *maxPoolSize* | `20` | Sets the default maximum pool size
-| *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use -1 for an unbounded queue.
+| *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use `0` or `-1` for no work queue, or `Integer.MAX_VALUE` for an unbounded queue. For a scheduled thread pool, `0` or `-1` means the queue is not limited.
 | *allowCoreThreadTimeOut* | `true` | Sets default whether to allow core threads to timeout
 | *rejectedPolicy* | `CallerRuns` | Sets the default handler for tasks which cannot be executed by the thread pool. Has three options:
 `Abort`, `CallerRuns`, `Block`. See <<rejected-policy>> for details.
@@ -35,6 +35,14 @@ The default profile is pre-configured out of the box with the following settings
 What that means is that for example when you use
 xref:components:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above.
+
+A thread pool starts up to `poolSize` threads, and then puts new tasks in the work queue.
+It creates more threads, up to `maxPoolSize`, only when the work queue is full.
+With the default profile, a pool therefore runs 10 tasks at a time until 1000 tasks are waiting.
+When `maxQueueSize` is `0` or `-1`, there is no work queue: each task goes directly to a thread, up to `maxPoolSize`
+threads, and then the `rejectedPolicy` applies.
+With `Integer.MAX_VALUE` the queue is never full, so the pool never grows past `poolSize`.
+For a scheduled thread pool, `0` or `-1` means the queue is not limited.
 
 You can define as many thread pool profiles as you like. But there must
 be only *one* default profile. A custom thread pool profile will inherit
@@ -298,18 +306,14 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 == Component developers
 
 If you develop your own Camel component and are in need of a thread pool,
-then it is advised to use the `ExecutorServiceStrategy`/`ExecutorServiceManager`
+then it is advised to use the `ExecutorServiceManager` (from `CamelContext.getExecutorServiceManager()`)
 to create the thread pool you need.
 
-=== ExecutorServiceStrategy and ExecutorServiceManager
+=== Custom thread pool provider
 
-Camel provides a pluggable strategy to hook in your own thread pool
-provider.See the `org.apache.camel.spi.ExecutorServiceStrategy` interface which
-you should implement and hook into the WorkManager.
-
-To hook in custom thread pool providers a
-`ThreadPoolFactory` interface can be implemented. The implementation can
-be set in the `ExecutorServiceManager`.
+To hook in your own thread pool provider, implement the `org.apache.camel.spi.ThreadPoolFactory` interface.
+Camel Main, Spring Boot and Spring XML use a `ThreadPoolFactory` bean from the xref:registry.adoc[Registry]
+when there is exactly one. You can also set it with `setThreadPoolFactory` on the `ExecutorServiceManager`.
 
 [[rejected-policy]]
 == Rejected Policy
@@ -352,7 +356,7 @@ is set to zero and `maxQueueSize` is set to a value less or equal to `0`.
 
 When `maxQueueSize` is set to a positive value, Camel wraps the virtual thread executor with a semaphore-based
 concurrency limit. This ensures that `maxQueueSize` is honored for backpressure, even though virtual threads do not
-use a traditional work queue.
+use a traditional work queue. When `maxQueueSize` is `0` or `-1`, there is no concurrency limit.
 
 Unlike `ThreadPoolExecutor` where pool threads and queued tasks are distinct concepts, the virtual thread executor
 enforces a flat concurrency cap: the maximum number of concurrently executing tasks equals `maxQueueSize`.

@@ -736,7 +736,9 @@ public interface Textract2EndpointBuilderFactory {
          * values. The String values are case-insensitive. Without this header
          * TABLES and FORMS are used.
          * 
-         * The option is a: {@code List<FeatureType>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.textract.model.FeatureType>}
+         * type.
          * 
          * Group: producer
          * 

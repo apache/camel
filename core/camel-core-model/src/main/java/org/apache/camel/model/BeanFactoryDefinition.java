@@ -357,10 +357,10 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
      * the properties values to configure the bean.
-     * <p/>
-     * Not needed for a type that has no public no-arg constructor but a public static <tt>builder()</tt> or
-     * <tt>newBuilder()</tt> method (such as Lombok, Immutables, LangChain4j or AWS SDK classes): Camel then infers the
-     * builder, sets the properties on it, and creates the bean with its build method.
+     * <p>
+     * Not needed for a type that has no public no-arg constructor but a public static <code>builder()</code> or
+     * <code>newBuilder()</code> method (such as Lombok, Immutables, LangChain4j or AWS SDK classes): Camel then infers
+     * the builder, sets the properties on it, and creates the bean with its build method.
      */
     public BeanFactoryDefinition<P> builderClass(String builderClass) {
         setBuilderClass(builderClass);
@@ -379,8 +379,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls a groovy script for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>, then
+     * it's loaded from the external resource.
      *
      * @param script the script
      */
@@ -393,8 +394,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls a Jactl script for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.jactl</tt>,
-     * <tt>resource:file:/var/myscript.jactl</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.jactl</code>, <code>resource:file:/var/myscript.jactl</code>, then it's
+     * loaded from the external resource.
      *
      * @param script the script
      */
@@ -407,8 +409,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls joor script (Java source that is runtime compiled to Java bytecode) for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>, then
+     * it's loaded from the external resource.
      *
      * @param script the script
      */
@@ -421,8 +424,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls java (Java source that is runtime compiled to Java bytecode) for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>, then
+     * it's loaded from the external resource.
      *
      * @param script the script
      */
@@ -433,8 +437,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls a custom language for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>, then
+     * it's loaded from the external resource.
      *
      * @param language the language
      * @param script   the script
@@ -448,8 +453,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     /**
      * Calls a MvEL script for creating the local bean
      *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * If the script uses the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>, then
+     * it's loaded from the external resource.
      *
      * @param script the script
      */

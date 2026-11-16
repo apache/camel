@@ -80,7 +80,12 @@ Or you can explicitly specify the reference to a custom SchemaResolver.
 
 You can configure `JacksonAvroDataFormat` to use a custom `AvroMapper` in case you need more control of the mapping configuration.
 
-If you set up a single `AvroMapper` in the registry, then Camel will automatic lookup and use this `AvroMapper`.
+Refer to your `AvroMapper` with the `objectMapper` option, such as `objectMapper=#myMapper`.
+
+By default, Camel does not look up an `AvroMapper` in the registry. To look one up, set `autoDiscoverObjectMapper=true`
+(and leave `useDefaultObjectMapper` at its default, `true`). Camel then uses the `AvroMapper` only when there is exactly
+one in the registry, and otherwise creates its own. The options of the data format that configure the mapper, such as
+`include`, `enableFeatures`, `disableFeatures` and `timezone`, are not applied to an `AvroMapper` from the registry.
 
 == Dependencies
 

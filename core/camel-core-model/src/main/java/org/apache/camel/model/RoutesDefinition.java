@@ -252,7 +252,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     /**
      * Creates a new route using the given route.
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      *
      * @param  route the route
@@ -360,7 +360,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     /**
      * Creates and adds an interceptor that is triggered when an exchange is received as input to any routes (eg from
-     * all the <tt>from</tt>)
+     * all the <code>from</code>)
      *
      * @return the interceptor builder to configure
      */
@@ -372,7 +372,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     /**
      * Creates and adds an interceptor that is triggered when an exchange is received as input to the route defined with
-     * the given endpoint (eg from the <tt>from</tt>)
+     * the given endpoint (eg from the <code>from</code>)
      *
      * @param  uri uri of the endpoint
      * @return     the interceptor builder to configure
