@@ -68,6 +68,21 @@ public class KameletTools {
     }
 
     /**
+     * The Kamelets of {@code version} for a list: from the index in the camel-kamelets JAR when it has one, otherwise
+     * from the cached catalog.
+     */
+    private List<KameletModel> loadKameletSummaries(String version) throws Exception {
+        List<KameletModel> answer = KameletCatalogHelper.loadIndex(version);
+        if (answer == null) {
+            answer = new ArrayList<>();
+            for (Object o : loadKamelets(version).values()) {
+                answer.add(KameletCatalogHelper.createModel(o, false));
+            }
+        }
+        return answer;
+    }
+
+    /**
      * Tool to list available Kamelets.
      */
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
@@ -89,12 +104,9 @@ public class KameletTools {
             String version = kameletsVersion != null && !kameletsVersion.isBlank()
                     ? kameletsVersion : VersionHelper.extractKameletsVersion();
 
-            Map<String, Object> kamelets = loadKamelets(version);
-
             // Build the full filtered list first, then sort, then limit — never limit before sorting
             List<KameletInfo> all = new ArrayList<>();
-            for (Object o : kamelets.values()) {
-                KameletModel km = KameletCatalogHelper.createModel(o, false);
+            for (KameletModel km : loadKameletSummaries(version)) {
 
                 // filter by type
                 if (type != null && !type.isBlank()
