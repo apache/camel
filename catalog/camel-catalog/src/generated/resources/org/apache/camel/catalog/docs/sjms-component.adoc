@@ -313,6 +313,14 @@ With `jmsMessageType=Stream` the body is converted to an `InputStream`, and its 
 A received `StreamMessage` is mapped to an `InputStream` over its bytes, as in the JMS component.
 With `mapJmsMessage=false` the body is always the received `jakarta.jms.Message`.
 
+When `pollEnrich` or a `ConsumerTemplate` receives a message from an SJMS endpoint, Camel reads the body and the
+headers of the message before it commits the session (or acknowledges the message) and closes the JMS consumer, session
+and connection, as a JMS client may not read the message after that (the ActiveMQ Artemis client streams the body of a
+large message through the consumer). If the body cannot be read, the receive fails, and the message is rolled back with
+`transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, so that it is delivered again. The body is not read at
+receive time with `mapJmsMessage=false` (the body is the `jakarta.jms.Message` itself), and for a `StreamMessage` (the
+body is an `InputStream` that reads the message when it is used).
+
 === Clustering
 
 When using _InOut_ with SJMS in a clustered environment, you must either

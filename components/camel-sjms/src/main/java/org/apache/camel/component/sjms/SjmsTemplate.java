@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.util.function.Function;
+
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Destination;
@@ -38,6 +40,7 @@ import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
 import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
 import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
 import static org.apache.camel.component.sjms.SjmsHelper.isTransactionOrClientAcknowledgeMode;
+import static org.apache.camel.component.sjms.SjmsHelper.rollbackIfNeeded;
 
 public class SjmsTemplate {
 
@@ -239,6 +242,29 @@ public class SjmsTemplate {
     }
 
     public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout) throws Exception {
+        return receive(destinationName, messageSelector, isTopic, timeout, Function.identity());
+    }
+
+    /**
+     * Receives a message, and applies the function to it before the message is acknowledged (or the session committed),
+     * and before the consumer, the session and the connection are closed.
+     * <p/>
+     * {@link #receive(String, String, boolean, long)} returns the message after they are closed, when a JMS client may
+     * no longer read it: the ActiveMQ Artemis client streams the body of a large message through the consumer. If the
+     * function fails, the message is not acknowledged: a transacted session is rolled back, and a client acknowledge
+     * session is recovered, so the message is delivered again.
+     *
+     * @param  destinationName the name of the destination
+     * @param  messageSelector the message selector, or <tt>null</tt> for none
+     * @param  isTopic         whether the destination is a topic
+     * @param  timeout         the receive timeout in millis, 0 to wait without timeout, or a negative value to not wait
+     * @param  function        the function to apply to the received message
+     * @return                 the result of the function, or <tt>null</tt> if no message was received
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T receive(
+            String destinationName, String messageSelector, boolean isTopic, long timeout, Function<Message, T> function)
+            throws Exception {
         Object obj = execute(sc -> {
             Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
             MessageConsumer consumer;
@@ -249,8 +275,8 @@ public class SjmsTemplate {
                 consumer = sc.createConsumer(dest);
             }
 
-            Message message = null;
             try {
+                Message message;
                 if (timeout < 0) {
                     message = consumer.receiveNoWait();
                 } else if (timeout == 0) {
@@ -258,14 +284,35 @@ public class SjmsTemplate {
                 } else {
                     message = consumer.receive(timeout);
                 }
-            } finally {
+                T answer;
+                try {
+                    answer = message != null ? function.apply(message) : null;
+                } catch (RuntimeException | Error e) {
+                    rollbackOnException(sc, e);
+                    throw e;
+                }
                 // success then commit if we need to
                 commitIfNeeded(sc, message);
+                return answer;
+            } finally {
                 closeConsumer(consumer);
             }
-            return message;
         }, true);
-        return (Message) obj;
+        return (T) obj;
+    }
+
+    /**
+     * Rolls back a transacted session, or recovers a client acknowledge session, when the received message could not be
+     * read. A session of a pooled connection factory is not closed after the receive, so the message would otherwise
+     * stay unacknowledged on it, and the next acknowledge on that session would acknowledge it too. A failure of the
+     * rollback is added to the cause as a suppressed exception.
+     */
+    private static void rollbackOnException(Session session, Throwable cause) {
+        try {
+            rollbackIfNeeded(session);
+        } catch (JMSException | RuntimeException e) {
+            cause.addSuppressed(e);
+        }
     }
 
     public Connection createConnection() throws Exception {
