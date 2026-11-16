@@ -313,7 +313,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-eventbridge:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The
+     * CamelAlibabaEventBridgeOperation header replaces this option for a
+     * request that the producer sends. If that header is not set, an exchange
+     * property of the same name replaces this option.
      * There are 1 enums and the value can be one of: putEvents
      * 
      * @param path operation
@@ -333,7 +336,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-eventbridge:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The
+     * CamelAlibabaEventBridgeOperation header replaces this option for a
+     * request that the producer sends. If that header is not set, an exchange
+     * property of the same name replaces this option.
      * There are 1 enums and the value can be one of: putEvents
      * 
      * @param componentName to use a custom component name for the endpoint
