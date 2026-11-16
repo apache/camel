@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -562,6 +563,34 @@ public class MainSecurityPolicyTest {
         main.bind("mytls", new MyTlsComponent());
         main.addInitialProperty("camel.security.insecureSslPolicy", "fail");
         main.addInitialProperty("camel.component.mytls.tls", "false");
+
+        assertDoesNotThrow(() -> {
+            main.start();
+            main.stop();
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "camel.management.mcpEnabled", "camel.management.openapiUiEnabled",
+            "camel.server.jwtAllowMissingIssuerAndAudience", "camel.management.jwtAllowMissingIssuerAndAudience" })
+    public void testInsecureDevMainOptionFailsWithProdProfile(String key) {
+        // the camel-main options flagged insecure:dev in the metadata are reported by the security policy
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty(key, "true");
+
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class, main::start);
+        assertTrue(ex.getMessage().contains("[insecure:dev]"), ex.getMessage());
+        assertTrue(ex.getMessage().contains(key), ex.getMessage());
+    }
+
+    @Test
+    public void testInsecureDevMainOptionDisabledWithProdProfile() {
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.management.mcpEnabled", "false");
+        main.addInitialProperty("camel.server.jwtAllowMissingIssuerAndAudience", "false");
 
         assertDoesNotThrow(() -> {
             main.start();
