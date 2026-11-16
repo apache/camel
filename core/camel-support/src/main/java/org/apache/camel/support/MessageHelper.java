@@ -777,7 +777,7 @@ public final class MessageHelper {
 
         // the body as it is now, for the route's own row (the history rows carry the body as each node was reached)
         Object body = exchange.getMessage().getBody();
-        String bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        String bodyType = body != null ? BodyFacts.className(body) : "null";
         String bodySize = "";
         if (body != null && exchange.getContext().getMessageSizeStrategy() != null
                 && exchange.getContext().getMessageSizeStrategy().isEnabled()) {

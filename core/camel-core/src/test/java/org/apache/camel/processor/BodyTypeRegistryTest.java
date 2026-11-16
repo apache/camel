@@ -95,6 +95,15 @@ public class BodyTypeRegistryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testANullTypeIsIgnored() {
+        // a MessageHistory that did not capture the type
+        registry.addBodyType("custom", "step", null, null);
+        registry.addBodyType("custom", "step", "java.lang.String", Kind.PAYLOAD);
+
+        assertEquals(List.of("java.lang.String"), registry.getBodyTypes("custom", "step"));
+    }
+
+    @Test
     public void testNotReachedIsEmpty() {
         assertTrue(registry.getBodyTypes("orders", "maybeMap").isEmpty());
         assertTrue(registry.getBodyTypes("unknown", "maybeMap").isEmpty());
