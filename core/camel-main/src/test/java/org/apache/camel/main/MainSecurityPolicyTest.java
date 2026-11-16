@@ -569,6 +569,59 @@ public class MainSecurityPolicyTest {
         });
     }
 
+    @Test
+    public void testComponentOptionWithTheNameOfASecretVaultOption() {
+        // serviceAccountKey and tenantId are secret as camel.vault options, but not as component options
+        Main main = new Main();
+        main.bind("google-pubsub", new MyCloudComponent());
+        main.bind("azure-storage-datalake", new MyCloudComponent());
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.component.google-pubsub.serviceAccountKey", "classpath:sa.json");
+        main.addInitialProperty("camel.component.azure-storage-datalake.tenantId", "mytenant");
+
+        assertDoesNotThrow(() -> {
+            main.start();
+            main.stop();
+        });
+    }
+
+    @Test
+    public void testPlainTextSecretVaultOption() {
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.vault.azure.tenantId", "mytenant");
+
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class, main::start);
+        assertTrue(ex.getMessage().contains("camel.vault.azure.tenantId"), ex.getMessage());
+    }
+
+    public static class MyCloudComponent extends DefaultComponent {
+
+        private String serviceAccountKey;
+        private String tenantId;
+
+        public String getServiceAccountKey() {
+            return serviceAccountKey;
+        }
+
+        public void setServiceAccountKey(String serviceAccountKey) {
+            this.serviceAccountKey = serviceAccountKey;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     public static class MyTlsComponent extends DefaultComponent {
 
         private boolean tls = true;
