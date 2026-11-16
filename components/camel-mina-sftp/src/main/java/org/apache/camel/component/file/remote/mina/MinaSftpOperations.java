@@ -111,8 +111,8 @@ public class MinaSftpOperations
      */
     private static final int MAX_BUFFER_SIZE = 126 * 1024 + 512; // ~126KB
 
-    // while the stop of the producer waits for an operation of another thread, how often it checks whether the shutdown
-    // is forced, and then how long it waits for that operation to release the lock
+    // while the stop of the producer or the consumer waits for an operation of another thread, how often it checks
+    // whether the shutdown is forced, and then how long it waits for that operation to release the lock
     private static final long DISCONNECT_ON_STOP_WAIT_MILLIS = 1000;
 
     private MinaSftpEndpoint endpoint;
@@ -872,7 +872,9 @@ public class MinaSftpOperations
     }
 
     /**
-     * Disconnects when the producer stops. Another thread can still run an operation that holds the lock.
+     * Disconnects when the producer or the consumer stops. Another thread can still run an operation that holds the
+     * lock: an upload of the producer, or the poll of the consumer, which the stop of its scheduler interrupts, but
+     * which then changes back to the directory it started from (stepwise), on a server that may not answer.
      * <p>
      * As long as the shutdown of Camel is not forced, this method waits for that operation, as {@link #disconnect()}
      * does: it can be a healthy but slow upload, when a producer cache evicts the producer, when an application stops a
@@ -884,6 +886,9 @@ public class MinaSftpOperations
      * its idle timeout, 10 minutes by default). This method then closes the session without the lock, so that the
      * operation fails and releases the lock. A connect in progress is waited for: the connect timeout and the reconnect
      * attempts bound it, and its next attempt would open a new session.
+     * <p>
+     * With the lock, it disconnects also when not connected: a connect that failed, such as one whose password the
+     * server rejected, has already started the SSH client, whose threads {@link #disconnect()} releases.
      */
     @Override
     public void disconnectOnStop() throws GenericFileOperationFailedException {
@@ -905,9 +910,7 @@ public class MinaSftpOperations
         try {
             if (locked) {
                 try {
-                    if (isConnected()) {
-                        disconnect();
-                    }
+                    disconnect();
                 } finally {
                     lock.unlock();
                 }
@@ -932,7 +935,7 @@ public class MinaSftpOperations
         }
         String server = endpoint.getConfiguration().remoteServerInformation();
         LOG.warn("The shutdown is forced: disconnecting from {} while another thread still runs an operation, such as an"
-                 + " upload that hangs. The operation fails.",
+                 + " upload or a download that hangs. The operation fails.",
                 server);
         // closes the session at once, without waiting for the server: its SFTP channel closes, and the requests that
         // wait for an answer of the server fail
