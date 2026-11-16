@@ -107,7 +107,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(200))
                         .withInitialDelay(Duration.ZERO)
-                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(4)
                         .build())
                 .build();

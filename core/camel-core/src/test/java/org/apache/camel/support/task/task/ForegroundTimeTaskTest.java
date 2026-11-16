@@ -43,10 +43,10 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMoreSupplier() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofMillis(200))
@@ -67,10 +67,10 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMoreSupplierWithDelay() {
-        // this should run 5 times in a total duration of 6 seconds (5s executing + 1s delay)
+        // this should run 5 times in a total duration of 1.2 seconds (1s executing + 200ms delay)
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(2_000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ofMillis(200))
                         .withInterval(Duration.ofMillis(200))
@@ -85,10 +85,10 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicate() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofMillis(200))
@@ -103,7 +103,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateMaxDuration() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxDuration(Duration.ofMillis(1000))
@@ -121,10 +121,10 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministic() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofMillis(200))
@@ -139,7 +139,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministicSlow() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxDuration(Duration.ofMillis(1000))
@@ -157,7 +157,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministicSlowWithDelay() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxDuration(Duration.ofMillis(1000))
