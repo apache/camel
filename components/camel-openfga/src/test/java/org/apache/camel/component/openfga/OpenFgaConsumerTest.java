@@ -20,20 +20,31 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import dev.openfga.sdk.api.client.ApiResponse;
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientReadChangesRequest;
 import dev.openfga.sdk.api.client.model.ClientReadChangesResponse;
 import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
+import dev.openfga.sdk.api.model.ReadChangesResponse;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.TupleOperation;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultInflightRepository;
+import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
+import org.apache.camel.spi.StateRepository;
+import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -42,6 +53,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +79,7 @@ class OpenFgaConsumerTest {
             assertThat(fixture.consumer.poll()).isZero();
         }
         ArgumentCaptor<ClientReadChangesOptions> options = ArgumentCaptor.forClass(ClientReadChangesOptions.class);
-        verify(client, org.mockito.Mockito.times(2)).readChanges(any(), options.capture());
+        verify(client, times(2)).readChanges(any(), options.capture());
         assertThat(options.getAllValues().get(0).getContinuationToken()).isNull();
         assertThat(options.getAllValues().get(1).getContinuationToken()).isEqualTo("cursor-1");
         assertThat(delivered).hasValue(1);
@@ -100,14 +112,14 @@ class OpenFgaConsumerTest {
         when(client.readChanges(any(), any())).thenReturn(CompletableFuture.completedFuture(page("after", true)));
         AtomicInteger failedCompletion = new AtomicInteger();
         try (Fixture fixture = new Fixture(client, repository, exchange -> {
-            exchange.getUnitOfWork().addSynchronization(new org.apache.camel.spi.Synchronization() {
+            exchange.getUnitOfWork().addSynchronization(new Synchronization() {
                 @Override
-                public void onComplete(org.apache.camel.Exchange completed) {
+                public void onComplete(Exchange completed) {
                     throw new AssertionError("A thrown processor failure must not complete successfully");
                 }
 
                 @Override
-                public void onFailure(org.apache.camel.Exchange failed) {
+                public void onFailure(Exchange failed) {
                     failedCompletion.incrementAndGet();
                 }
             });
@@ -145,7 +157,7 @@ class OpenFgaConsumerTest {
             assertThat(fixture.consumer.poll()).isEqualTo(2);
         }
         ArgumentCaptor<ClientReadChangesOptions> options = ArgumentCaptor.forClass(ClientReadChangesOptions.class);
-        verify(client, org.mockito.Mockito.times(2)).readChanges(any(), options.capture());
+        verify(client, times(2)).readChanges(any(), options.capture());
         assertThat(options.getAllValues()).allSatisfy(option -> assertThat(option.getContinuationToken()).isEqualTo("before"));
         assertThat(delivered).hasValue(2);
         assertThat(repository.token).isEqualTo("after");
@@ -220,7 +232,7 @@ class OpenFgaConsumerTest {
         try (Fixture fixture = new Fixture(client, repository, exchange -> {
         })) {
             fixture.endpoint.getConfiguration().setChangePollTimeout(50);
-            assertThatThrownBy(fixture.consumer::poll).hasRootCauseInstanceOf(java.util.concurrent.TimeoutException.class);
+            assertThatThrownBy(fixture.consumer::poll).hasRootCauseInstanceOf(TimeoutException.class);
             assertThat(pending.isCancelled()).isTrue();
             assertThat(repository.saved).isEmpty();
         }
@@ -289,7 +301,7 @@ class OpenFgaConsumerTest {
         }
         ArgumentCaptor<ClientReadChangesRequest> requests = ArgumentCaptor.forClass(ClientReadChangesRequest.class);
         ArgumentCaptor<ClientReadChangesOptions> options = ArgumentCaptor.forClass(ClientReadChangesOptions.class);
-        verify(client, org.mockito.Mockito.times(2)).readChanges(requests.capture(), options.capture());
+        verify(client, times(2)).readChanges(requests.capture(), options.capture());
         assertThat(requests.getAllValues().get(0).getStartTime()).isEqualTo(OffsetDateTime.parse("2026-10-01T00:00:00Z"));
         assertThat(requests.getAllValues().get(1).getStartTime()).isNull();
         assertThat(requests.getAllValues()).allSatisfy(request -> assertThat(request.getType()).isEqualTo("document"));
@@ -315,7 +327,7 @@ class OpenFgaConsumerTest {
     }
 
     private static ClientReadChangesResponse page(String cursor, boolean populated) {
-        var response = new dev.openfga.sdk.api.model.ReadChangesResponse().continuationToken(cursor);
+        var response = new ReadChangesResponse().continuationToken(cursor);
         response.changes(populated
                 ? List.of(
                         new TupleChange().tupleKey(new TupleKey().user("user:anne").relation("reader")._object("document:a"))
@@ -324,27 +336,27 @@ class OpenFgaConsumerTest {
                                 .operation(TupleOperation.DELETE))
                 : List.of());
         return new ClientReadChangesResponse(
-                new dev.openfga.sdk.api.client.ApiResponse<>(200, java.util.Map.of(), "", response));
+                new ApiResponse<>(200, Map.of(), "", response));
     }
 
-    private static class Repository implements OpenFgaCheckpointRepository {
+    private static class Repository extends ServiceSupport implements StateRepository<String, String> {
         private String token;
         private boolean failLoad;
         private boolean failStore;
         private final List<String> saved = new ArrayList<>();
 
         @Override
-        public String load(String key) throws Exception {
+        public String getState(String key) {
             if (failLoad) {
-                throw new IOException("checkpoint unavailable");
+                throw new IllegalStateException("checkpoint unavailable");
             }
             return token;
         }
 
         @Override
-        public void store(String key, String token) throws Exception {
+        public void setState(String key, String token) {
             if (failStore) {
-                throw new IOException("checkpoint unavailable");
+                throw new IllegalStateException("checkpoint unavailable");
             }
             saved.add(token);
             this.token = token;
@@ -357,11 +369,11 @@ class OpenFgaConsumerTest {
         private final OpenFgaConsumer consumer;
 
         Fixture(OpenFgaClient client, Repository repository, Processor processor) throws Exception {
-            context.setInflightRepository(new org.apache.camel.impl.engine.DefaultInflightRepository());
+            context.setInflightRepository(new DefaultInflightRepository());
             context.start();
-            var unitOfWorkFactory = new org.apache.camel.impl.engine.DefaultUnitOfWorkFactory();
+            var unitOfWorkFactory = new DefaultUnitOfWorkFactory();
             unitOfWorkFactory.afterPropertiesConfigured(context);
-            context.getCamelContextExtension().addContextPlugin(org.apache.camel.spi.UnitOfWorkFactory.class,
+            context.getCamelContextExtension().addContextPlugin(UnitOfWorkFactory.class,
                     unitOfWorkFactory);
             OpenFgaConfiguration configuration = new OpenFgaConfiguration();
             configuration.setOpenFgaClient(client);

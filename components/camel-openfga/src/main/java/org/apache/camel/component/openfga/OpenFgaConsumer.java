@@ -26,6 +26,7 @@ import dev.openfga.sdk.api.client.model.ClientReadChangesResponse;
 import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,9 +46,9 @@ public class OpenFgaConsumer extends ScheduledPollConsumer {
             return 0;
         }
         OpenFgaConfiguration configuration = endpoint.getConfiguration();
-        OpenFgaCheckpointRepository repository = configuration.getCheckpointRepository();
+        StateRepository<String, String> repository = configuration.getCheckpointRepository();
         // Reload on every poll: a failed checkpoint must replay the page, never use an uncommitted in-memory cursor.
-        String previous = repository.load(configuration.getCheckpointKey());
+        String previous = repository.getState(configuration.getCheckpointKey());
         ClientReadChangesRequest request = new ClientReadChangesRequest();
         if (ObjectHelper.isNotEmpty(configuration.getType())) {
             request.type(configuration.getType());
@@ -88,18 +89,23 @@ public class OpenFgaConsumer extends ScheduledPollConsumer {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
-                    throw e;
+                    if (!endpoint.isBridgeErrorHandler()) {
+                        throw e;
+                    }
                 } finally {
                     doneUoW(exchange);
                 }
                 if (exchange.isFailed() || exchange.isRollbackOnly()) {
+                    if (endpoint.isBridgeErrorHandler()) {
+                        return page.size();
+                    }
                     Exception failure = exchange.getException();
                     throw failure != null ? failure : new IllegalStateException("OpenFGA change page processing rolled back");
                 }
             }
             // An empty tail can return the same cursor. Never erase a bookmark when the server omits its token.
             if (isRunAllowed() && ObjectHelper.isNotEmpty(next) && !next.equals(previous)) {
-                repository.store(configuration.getCheckpointKey(), next);
+                repository.setState(configuration.getCheckpointKey(), next);
             }
             return page.size();
         } finally {

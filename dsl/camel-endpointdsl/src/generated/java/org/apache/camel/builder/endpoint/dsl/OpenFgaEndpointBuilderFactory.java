@@ -399,7 +399,8 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Unique durable cursor key for this store, filter and projection. Only
-         * one consumer may own the key.
+         * one consumer may own the key, including when configured at component
+         * level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -410,6 +411,44 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointConsumerBuilder checkpointKey(String checkpointKey) {
             doSetProperty("checkpointKey", checkpointKey);
+            return this;
+        }
+        /**
+         * Durable cursor storage, required for a readChanges consumer. The
+         * repository must persist each update before returning, retain the
+         * previous value on failure, and use finite I/O deadlines. The
+         * application owns its lifecycle.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param checkpointRepository the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder checkpointRepository(org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> checkpointRepository) {
+            doSetProperty("checkpointRepository", checkpointRepository);
+            return this;
+        }
+        /**
+         * Durable cursor storage, required for a readChanges consumer. The
+         * repository must persist each update before returning, retain the
+         * previous value on failure, and use finite I/O deadlines. The
+         * application owns its lifecycle.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param checkpointRepository the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder checkpointRepository(String checkpointRepository) {
+            doSetProperty("checkpointRepository", checkpointRepository);
             return this;
         }
         /**
@@ -1176,38 +1215,6 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default AdvancedOpenFgaEndpointConsumerBuilder changePollTimeout(String changePollTimeout) {
             doSetProperty("changePollTimeout", changePollTimeout);
-            return this;
-        }
-        /**
-         * Durable cursor storage, required for a readChanges consumer. The
-         * application owns its lifecycle.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.openfga.OpenFgaCheckpointRepository</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param checkpointRepository the value to set
-         * @return the dsl builder
-         */
-        default AdvancedOpenFgaEndpointConsumerBuilder checkpointRepository(org.apache.camel.component.openfga.OpenFgaCheckpointRepository checkpointRepository) {
-            doSetProperty("checkpointRepository", checkpointRepository);
-            return this;
-        }
-        /**
-         * Durable cursor storage, required for a readChanges consumer. The
-         * application owns its lifecycle.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.openfga.OpenFgaCheckpointRepository</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param checkpointRepository the value to set
-         * @return the dsl builder
-         */
-        default AdvancedOpenFgaEndpointConsumerBuilder checkpointRepository(String checkpointRepository) {
-            doSetProperty("checkpointRepository", checkpointRepository);
             return this;
         }
         /**

@@ -485,7 +485,8 @@ public interface OpenfgaComponentBuilderFactory {
     
         /**
          * Unique durable cursor key for this store, filter and projection. Only
-         * one consumer may own the key.
+         * one consumer may own the key, including when configured at component
+         * level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -496,6 +497,25 @@ public interface OpenfgaComponentBuilderFactory {
          */
         default OpenfgaComponentBuilder checkpointKey(java.lang.String checkpointKey) {
             doSetProperty("checkpointKey", checkpointKey);
+            return this;
+        }
+    
+        /**
+         * Durable cursor storage, required for a readChanges consumer. The
+         * repository must persist each update before returning, retain the
+         * previous value on failure, and use finite I/O deadlines. The
+         * application owns its lifecycle.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param checkpointRepository the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder checkpointRepository(org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> checkpointRepository) {
+            doSetProperty("checkpointRepository", checkpointRepository);
             return this;
         }
     
@@ -514,23 +534,6 @@ public interface OpenfgaComponentBuilderFactory {
          */
         default OpenfgaComponentBuilder changePollTimeout(long changePollTimeout) {
             doSetProperty("changePollTimeout", changePollTimeout);
-            return this;
-        }
-    
-        /**
-         * Durable cursor storage, required for a readChanges consumer. The
-         * application owns its lifecycle.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaCheckpointRepository&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param checkpointRepository the value to set
-         * @return the dsl builder
-         */
-        default OpenfgaComponentBuilder checkpointRepository(org.apache.camel.component.openfga.OpenFgaCheckpointRepository checkpointRepository) {
-            doSetProperty("checkpointRepository", checkpointRepository);
             return this;
         }
     
@@ -942,8 +945,8 @@ public interface OpenfgaComponentBuilderFactory {
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((OpenFgaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkpointKey": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointKey((java.lang.String) value); return true;
+            case "checkpointRepository": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "changePollTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setChangePollTimeout((long) value); return true;
-            case "checkpointRepository": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointRepository((org.apache.camel.component.openfga.OpenFgaCheckpointRepository) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;

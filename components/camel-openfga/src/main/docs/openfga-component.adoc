@@ -759,10 +759,41 @@ order, to the route. Configure `pageSize` to bound the requested page size; empt
 tail pages do not produce exchanges. Standard scheduled polling options, such as
 `delay`, `initialDelay` and polling backoff, control the schedule.
 
-Register an application-provided `OpenFgaCheckpointRepository` as `changeCheckpoints`:
+Register an application-provided `org.apache.camel.spi.StateRepository<String, String>`
+as `changeCheckpoints`. Start it before the route and stop it after the route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: openfga:readChanges
+      parameters:
+        storeId: "{{fga.store}}"
+        type: document
+        checkpointRepository: "#changeCheckpoints"
+        checkpointKey: documents-projection-v1
+        pageSize: 100
+        delay: 1000
+        changePollTimeout: 30000
+      steps:
+        - split:
+            expression:
+              simple: "${body}"
+            shareUnitOfWork: true
+            stopOnException: true
+            steps:
+              - to: direct:applyChange
+----
+====
 from("openfga:readChanges?storeId={{fga.store}}&type=document"
     + "&checkpointRepository=#changeCheckpoints&checkpointKey=documents-projection-v1"
     + "&pageSize=100&delay=1000&changePollTimeout=30000")
@@ -772,15 +803,19 @@ from("openfga:readChanges?storeId={{fga.store}}&type=document"
 ----
 
 Both `checkpointRepository` and `checkpointKey` are required. Implement the
-repository with durable storage: `load(key)` returns the last committed cursor
-or null, and `store(key, cursor)` must atomically persist it before returning.
+repository with durable storage: `getState(key)` returns the last committed cursor
+or null, and `setState(key, cursor)` must atomically persist it before returning.
 A failed store must preserve the previous value. Repository methods must impose
 finite I/O deadlines. Camel does not substitute an in-memory repository and does
-not own the repository's lifecycle.
+not own the repository's lifecycle. Reuse a state repository only when it meets
+these durability and failure requirements; an in-memory repository cannot resume
+after a process restart.
 
 Choose a stable key unique to the server, store, type filter and projection.
 Exactly one active consumer may own a key; the SPI does not provide distributed
-leader election. Use a different key when deliberately rebuilding a projection
+leader election. For clustered deployments, consider xref:master-component.adoc[master]
+to run one active route. A component-level checkpoint key must still be unique
+for every consumer. Use a different key when deliberately rebuilding a projection
 or changing its filter. `continuationToken` is not accepted on a consumer;
 the durable repository is its only cursor source. `startTime` applies only
 before a cursor exists and must remain consistent across restarts.

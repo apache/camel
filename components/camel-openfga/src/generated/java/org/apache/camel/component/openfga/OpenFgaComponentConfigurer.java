@@ -2,7 +2,6 @@
 package org.apache.camel.component.openfga;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +29,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenFgaComponent target = (OpenFgaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": getOrCreateConfiguration(target).setApiAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "apitoken":
@@ -45,6 +44,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "batchcheckmode":
         case "batchCheckMode": getOrCreateConfiguration(target).setBatchCheckMode(property(camelContext, org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "changepolltimeout":
+        case "changePollTimeout": getOrCreateConfiguration(target).setChangePollTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "checkpointkey":
+        case "checkpointKey": getOrCreateConfiguration(target).setCheckpointKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "checkpointrepository":
+        case "checkpointRepository": getOrCreateConfiguration(target).setCheckpointRepository(property(camelContext, org.apache.camel.spi.StateRepository.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -110,7 +117,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return java.lang.String.class;
         case "apitoken":
@@ -125,6 +132,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return boolean.class;
         case "batchcheckmode":
         case "batchCheckMode": return org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "changepolltimeout":
+        case "changePollTimeout": return long.class;
+        case "checkpointkey":
+        case "checkpointKey": return java.lang.String.class;
+        case "checkpointrepository":
+        case "checkpointRepository": return org.apache.camel.spi.StateRepository.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -186,7 +201,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenFgaComponent target = (OpenFgaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return getOrCreateConfiguration(target).getApiAudience();
         case "apitoken":
@@ -201,6 +216,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "batchcheckmode":
         case "batchCheckMode": return getOrCreateConfiguration(target).getBatchCheckMode();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "changepolltimeout":
+        case "changePollTimeout": return getOrCreateConfiguration(target).getChangePollTimeout();
+        case "checkpointkey":
+        case "checkpointKey": return getOrCreateConfiguration(target).getCheckpointKey();
+        case "checkpointrepository":
+        case "checkpointRepository": return getOrCreateConfiguration(target).getCheckpointRepository();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
@@ -261,7 +284,9 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "checkpointrepository":
+        case "checkpointRepository": return java.lang.String.class;
         case "conditioncontext":
         case "conditionContext": return java.lang.Object.class;
         default: return null;

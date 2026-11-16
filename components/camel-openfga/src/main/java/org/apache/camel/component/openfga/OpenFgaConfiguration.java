@@ -21,6 +21,7 @@ import java.util.Map;
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -131,8 +132,8 @@ public class OpenFgaConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private OpenFgaClient openFgaClient;
 
-    @UriParam(label = "consumer,advanced")
-    private OpenFgaCheckpointRepository checkpointRepository;
+    @UriParam(label = "consumer")
+    private StateRepository<String, String> checkpointRepository;
 
     @UriParam(label = "consumer")
     private String checkpointKey;
@@ -140,12 +141,16 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "consumer,advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long changePollTimeout = 30000;
 
-    public OpenFgaCheckpointRepository getCheckpointRepository() {
+    public StateRepository<String, String> getCheckpointRepository() {
         return checkpointRepository;
     }
 
-    /** Durable cursor storage, required for a readChanges consumer. The application owns its lifecycle. */
-    public void setCheckpointRepository(OpenFgaCheckpointRepository checkpointRepository) {
+    /**
+     * Durable cursor storage, required for a readChanges consumer. The repository must persist each update before
+     * returning, retain the previous value on failure, and use finite I/O deadlines. The application owns its
+     * lifecycle.
+     */
+    public void setCheckpointRepository(StateRepository<String, String> checkpointRepository) {
         this.checkpointRepository = checkpointRepository;
     }
 
@@ -153,7 +158,10 @@ public class OpenFgaConfiguration implements Cloneable {
         return checkpointKey;
     }
 
-    /** Unique durable cursor key for this store, filter and projection. Only one consumer may own the key. */
+    /**
+     * Unique durable cursor key for this store, filter and projection. Only one consumer may own the key, including
+     * when configured at component level.
+     */
     public void setCheckpointKey(String checkpointKey) {
         this.checkpointKey = checkpointKey;
     }
