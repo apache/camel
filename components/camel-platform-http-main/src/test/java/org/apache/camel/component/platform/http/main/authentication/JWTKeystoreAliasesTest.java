@@ -31,24 +31,25 @@ class JWTKeystoreAliasesTest {
     @Test
     void noWarningForAnAliasNamedAfterAnAlgorithm() throws Exception {
         // a PKCS12 keystore stores the alias in lower case, as hs256
-        assertNull(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("HS256"), "camel.server"));
+        assertNull(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("HS256"), "camel.server", "keystore.p12"));
     }
 
     @Test
     void noWarningWhenOneOfTheAliasesIsNamedAfterAnAlgorithm() throws Exception {
         assertNull(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak", "HS512"),
-                "camel.server"));
+                "camel.server", "keystore.p12"));
     }
 
     @Test
     void warningForAnAliasNotNamedAfterAnAlgorithm() throws Exception {
         String warning = JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak"),
-                "camel.management");
+                "camel.management", "keystore.p12");
 
         assertNotNull(warning);
         assertTrue(warning.contains("camel.management.jwtKeystorePath"), warning);
         assertTrue(warning.contains("keycloak"), warning);
         assertTrue(warning.contains("RS256"), warning);
+        assertTrue(warning.contains("keystore.p12"), warning);
     }
 
     private static KeyStore keyStoreWith(String... aliases) throws Exception {

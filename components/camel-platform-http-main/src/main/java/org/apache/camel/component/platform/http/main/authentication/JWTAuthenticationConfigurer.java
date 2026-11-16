@@ -45,7 +45,8 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
 
     private static final Logger LOG = LoggerFactory.getLogger(JWTAuthenticationConfigurer.class);
 
-    // the aliases Vert.x looks up in a JWT keystore, one per algorithm (io.vertx.ext.auth.impl.jose.JWK#load)
+    // the aliases Vert.x looks up in a JWT keystore, one per algorithm
+    // (io.vertx.ext.auth.impl.jose.JWK#load in vertx-auth-common 5.2.3: check it when upgrading Vert.x)
     static final List<String> JWT_KEYSTORE_ALIASES = List.of(
             "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "ES256K", "ES256", "ES384", "ES512");
 
@@ -147,7 +148,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
             }
             KeyStore keyStore = KeyStore.getInstance(type);
             keyStore.load(is, password != null ? password.toCharArray() : null);
-            String warning = checkJwtKeystoreAliases(keyStore, configPrefix);
+            String warning = checkJwtKeystoreAliases(keyStore, configPrefix, path);
             if (warning != null) {
                 LOG.warn(warning);
             }
@@ -159,7 +160,8 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
     /**
      * Returns the warning for a keystore that has no key under an alias Vert.x uses, or null when it has one.
      */
-    static String checkJwtKeystoreAliases(KeyStore keyStore, String configPrefix) throws KeyStoreException {
+    static String checkJwtKeystoreAliases(KeyStore keyStore, String configPrefix, String path)
+            throws KeyStoreException {
         List<String> aliases = Collections.list(keyStore.aliases());
         for (String alias : aliases) {
             // the aliases of a PKCS12 or JKS keystore are not case-sensitive
@@ -167,7 +169,8 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
                 return null;
             }
         }
-        return "The JWT keystore " + configPrefix + ".jwtKeystorePath has no key under an alias named after a JWT"
+        return "The JWT keystore " + path + " (" + configPrefix
+               + ".jwtKeystorePath) has no key under an alias named after a JWT"
                + " algorithm (" + String.join(", ", JWT_KEYSTORE_ALIASES) + "), so signed tokens cannot be verified."
                + " Aliases found: " + aliases + ". Rename the alias of the key to its algorithm, for example with"
                + " keytool -changealias -alias <alias> -destalias RS256.";
