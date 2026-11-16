@@ -277,60 +277,60 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         CommandTree commandLine = new CommandTree(this).setOutput(text -> out.print(text));
         if (shouldCreate(only, "catalog")) {
             commandLine.addSubcommand("catalog", new CommandTree(new CatalogCommand(this))
-                    .addSubcommand("component", new CommandTree(new CatalogComponent(this)))
-                    .addSubcommand("dataformat", new CommandTree(new CatalogDataFormat(this)))
-                    .addSubcommand("dev-console", new CommandTree(new CatalogDevConsole(this)))
-                    .addSubcommand("kamelet", new CommandTree(new CatalogKamelet(this)))
-                    .addSubcommand("transformer", new CommandTree(new CatalogTransformer(this)))
-                    .addSubcommand("language", new CommandTree(new CatalogLanguage(this)))
-                    .addSubcommand("other", new CommandTree(new CatalogOther(this))));
+                    .addSubcommand("component", CommandTree.lazy(() -> new CatalogComponent(this)))
+                    .addSubcommand("dataformat", CommandTree.lazy(() -> new CatalogDataFormat(this)))
+                    .addSubcommand("dev-console", CommandTree.lazy(() -> new CatalogDevConsole(this)))
+                    .addSubcommand("kamelet", CommandTree.lazy(() -> new CatalogKamelet(this)))
+                    .addSubcommand("transformer", CommandTree.lazy(() -> new CatalogTransformer(this)))
+                    .addSubcommand("language", CommandTree.lazy(() -> new CatalogLanguage(this)))
+                    .addSubcommand("other", CommandTree.lazy(() -> new CatalogOther(this))));
         }
         if (shouldCreate(only, "cmd")) {
             commandLine.addSubcommand("cmd", new CommandTree(new CamelAction(this))
-                    .addSubcommand("browse", new CommandTree(new CamelBrowseAction(this)))
-                    .addSubcommand("chaos-add", new CommandTree(new CamelChaosAddAction(this)))
-                    .addSubcommand("chaos-change", new CommandTree(new CamelChaosChangeAction(this)))
-                    .addSubcommand("chaos-clear", new CommandTree(new CamelChaosClearAction(this)))
-                    .addSubcommand("chaos-experiment", new CommandTree(new CamelChaosExperimentAction(this)))
-                    .addSubcommand("chaos-explore", new CommandTree(new ChaosExplore(this)))
-                    .addSubcommand("chaos-explore-finish", new CommandTree(new CamelChaosExploreFinishAction(this)))
-                    .addSubcommand("chaos-explore-start", new CommandTree(new CamelChaosExploreStartAction(this)))
-                    .addSubcommand("chaos-load", new CommandTree(new CamelChaosLoadAction(this)))
-                    .addSubcommand("chaos-remove", new CommandTree(new CamelChaosRemoveAction(this)))
-                    .addSubcommand("chaos-suggest", new CommandTree(new CamelChaosSuggestAction(this)))
-                    .addSubcommand("disable-processor", new CommandTree(new CamelProcessorDisableAction(this)))
-                    .addSubcommand("enable-processor", new CommandTree(new CamelProcessorEnableAction(this)))
-                    .addSubcommand("gc", new CommandTree(new CamelGCAction(this)))
-                    .addSubcommand("heap-dump", new CommandTree(new CamelHeapDump(this)))
-                    .addSubcommand("heap-histogram", new CommandTree(new CamelHeapHistogram(this)))
-                    .addSubcommand("memory-leak", new CommandTree(new CamelMemoryLeak(this)))
-                    .addSubcommand("load", new CommandTree(new CamelLoadAction(this)))
-                    .addSubcommand("logger", new CommandTree(new LoggerAction(this)))
-                    .addSubcommand("receive", new CommandTree(new CamelReceiveAction(this)))
-                    .addSubcommand("reload", new CommandTree(new CamelReloadAction(this)))
-                    .addSubcommand("reset-stats", new CommandTree(new CamelResetStatsAction(this)))
-                    .addSubcommand("resume-route", new CommandTree(new CamelRouteResumeAction(this)))
-                    .addSubcommand("route-diagram", new CommandTree(new CamelRouteDiagramAction(this)))
-                    .addSubcommand("route-dump", new CommandTree(new CamelRouteDumpAction(this)))
-                    .addSubcommand("route-structure", new CommandTree(new CamelRouteStructureAction(this)))
-                    .addSubcommand("route-topology", new CommandTree(new CamelRouteTopologyAction(this)))
-                    .addSubcommand("send", new CommandTree(new CamelSendAction(this)))
-                    .addSubcommand("sql", new CommandTree(new CamelSqlQueryAction(this)))
-                    .addSubcommand("span", new CommandTree(new CamelSpanAction(this)))
-                    .addSubcommand("start-group", new CommandTree(new CamelRouteGroupStartAction(this)))
-                    .addSubcommand("start-route", new CommandTree(new CamelRouteStartAction(this)))
-                    .addSubcommand("stop-group", new CommandTree(new CamelRouteGroupStopAction(this)))
-                    .addSubcommand("stop-route", new CommandTree(new CamelRouteStopAction(this)))
-                    .addSubcommand("stub", new CommandTree(new CamelStubAction(this)))
-                    .addSubcommand("suspend-route", new CommandTree(new CamelRouteSuspendAction(this)))
-                    .addSubcommand("thread-dump", new CommandTree(new CamelThreadDump(this))));
+                    .addSubcommand("browse", CommandTree.lazy(() -> new CamelBrowseAction(this)))
+                    .addSubcommand("chaos-add", CommandTree.lazy(() -> new CamelChaosAddAction(this)))
+                    .addSubcommand("chaos-change", CommandTree.lazy(() -> new CamelChaosChangeAction(this)))
+                    .addSubcommand("chaos-clear", CommandTree.lazy(() -> new CamelChaosClearAction(this)))
+                    .addSubcommand("chaos-experiment", CommandTree.lazy(() -> new CamelChaosExperimentAction(this)))
+                    .addSubcommand("chaos-explore", CommandTree.lazy(() -> new ChaosExplore(this)))
+                    .addSubcommand("chaos-explore-finish", CommandTree.lazy(() -> new CamelChaosExploreFinishAction(this)))
+                    .addSubcommand("chaos-explore-start", CommandTree.lazy(() -> new CamelChaosExploreStartAction(this)))
+                    .addSubcommand("chaos-load", CommandTree.lazy(() -> new CamelChaosLoadAction(this)))
+                    .addSubcommand("chaos-remove", CommandTree.lazy(() -> new CamelChaosRemoveAction(this)))
+                    .addSubcommand("chaos-suggest", CommandTree.lazy(() -> new CamelChaosSuggestAction(this)))
+                    .addSubcommand("disable-processor", CommandTree.lazy(() -> new CamelProcessorDisableAction(this)))
+                    .addSubcommand("enable-processor", CommandTree.lazy(() -> new CamelProcessorEnableAction(this)))
+                    .addSubcommand("gc", CommandTree.lazy(() -> new CamelGCAction(this)))
+                    .addSubcommand("heap-dump", CommandTree.lazy(() -> new CamelHeapDump(this)))
+                    .addSubcommand("heap-histogram", CommandTree.lazy(() -> new CamelHeapHistogram(this)))
+                    .addSubcommand("memory-leak", CommandTree.lazy(() -> new CamelMemoryLeak(this)))
+                    .addSubcommand("load", CommandTree.lazy(() -> new CamelLoadAction(this)))
+                    .addSubcommand("logger", CommandTree.lazy(() -> new LoggerAction(this)))
+                    .addSubcommand("receive", CommandTree.lazy(() -> new CamelReceiveAction(this)))
+                    .addSubcommand("reload", CommandTree.lazy(() -> new CamelReloadAction(this)))
+                    .addSubcommand("reset-stats", CommandTree.lazy(() -> new CamelResetStatsAction(this)))
+                    .addSubcommand("resume-route", CommandTree.lazy(() -> new CamelRouteResumeAction(this)))
+                    .addSubcommand("route-diagram", CommandTree.lazy(() -> new CamelRouteDiagramAction(this)))
+                    .addSubcommand("route-dump", CommandTree.lazy(() -> new CamelRouteDumpAction(this)))
+                    .addSubcommand("route-structure", CommandTree.lazy(() -> new CamelRouteStructureAction(this)))
+                    .addSubcommand("route-topology", CommandTree.lazy(() -> new CamelRouteTopologyAction(this)))
+                    .addSubcommand("send", CommandTree.lazy(() -> new CamelSendAction(this)))
+                    .addSubcommand("sql", CommandTree.lazy(() -> new CamelSqlQueryAction(this)))
+                    .addSubcommand("span", CommandTree.lazy(() -> new CamelSpanAction(this)))
+                    .addSubcommand("start-group", CommandTree.lazy(() -> new CamelRouteGroupStartAction(this)))
+                    .addSubcommand("start-route", CommandTree.lazy(() -> new CamelRouteStartAction(this)))
+                    .addSubcommand("stop-group", CommandTree.lazy(() -> new CamelRouteGroupStopAction(this)))
+                    .addSubcommand("stop-route", CommandTree.lazy(() -> new CamelRouteStopAction(this)))
+                    .addSubcommand("stub", CommandTree.lazy(() -> new CamelStubAction(this)))
+                    .addSubcommand("suspend-route", CommandTree.lazy(() -> new CamelRouteSuspendAction(this)))
+                    .addSubcommand("thread-dump", CommandTree.lazy(() -> new CamelThreadDump(this))));
         }
         if (shouldCreate(only, "config")) {
             commandLine.addSubcommand("config", new CommandTree(new ConfigCommand(this))
-                    .addSubcommand("get", new CommandTree(new ConfigGet(this)))
-                    .addSubcommand("list", new CommandTree(new ConfigList(this)))
-                    .addSubcommand("set", new CommandTree(new ConfigSet(this)))
-                    .addSubcommand("unset", new CommandTree(new ConfigUnset(this))));
+                    .addSubcommand("get", CommandTree.lazy(() -> new ConfigGet(this)))
+                    .addSubcommand("list", CommandTree.lazy(() -> new ConfigList(this)))
+                    .addSubcommand("set", CommandTree.lazy(() -> new ConfigSet(this)))
+                    .addSubcommand("unset", CommandTree.lazy(() -> new ConfigUnset(this))));
         }
         if (shouldCreate(only, "completion")) {
             commandLine.addSubcommand("completion", new CommandTree(new Complete(this)));
@@ -346,10 +346,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "dependency")) {
             commandLine.addSubcommand("dependency", new CommandTree(new DependencyCommand(this))
-                    .addSubcommand("copy", new CommandTree(new DependencyCopy(this)))
-                    .addSubcommand("list", new CommandTree(new DependencyList(this)))
-                    .addSubcommand("runtime", new CommandTree(new DependencyRuntime(this)))
-                    .addSubcommand("update", new CommandTree(new DependencyUpdate(this))));
+                    .addSubcommand("copy", CommandTree.lazy(() -> new DependencyCopy(this)))
+                    .addSubcommand("list", CommandTree.lazy(() -> new DependencyList(this)))
+                    .addSubcommand("runtime", CommandTree.lazy(() -> new DependencyRuntime(this)))
+                    .addSubcommand("update", CommandTree.lazy(() -> new DependencyUpdate(this))));
         }
         if (shouldCreate(only, "dirty")) {
             commandLine.addSubcommand("dirty", new CommandTree(new Dirty(this)));
@@ -359,7 +359,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "eval")) {
             commandLine.addSubcommand("eval", new CommandTree(new EvalCommand(this))
-                    .addSubcommand("expression", new CommandTree(new EvalExpressionCommand(this))));
+                    .addSubcommand("expression", CommandTree.lazy(() -> new EvalExpressionCommand(this))));
         }
         if (shouldCreate(only, "export")) {
             commandLine.addSubcommand("export", new CommandTree(new Export(this)));
@@ -381,55 +381,55 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "get")) {
             commandLine.addSubcommand("get", new CommandTree(new CamelStatus(this))
-                    .addSubcommand("bean", new CommandTree(new CamelBeanDump(this)))
-                    .addSubcommand("blocked", new CommandTree(new ListBlocked(this)))
-                    .addSubcommand("chaos", new CommandTree(new ListChaos(this)))
-                    .addSubcommand("circuit-breaker", new CommandTree(new ListCircuitBreaker(this)))
-                    .addSubcommand("consumer", new CommandTree(new ListConsumer(this)))
-                    .addSubcommand("context", new CommandTree(new CamelContextStatus(this)))
-                    .addSubcommand("count", new CommandTree(new CamelCount(this)))
-                    .addSubcommand("datasource", new CommandTree(new ListDataSource(this)))
-                    .addSubcommand("endpoint", new CommandTree(new ListEndpoint(this)))
-                    .addSubcommand("error", new CommandTree(new ListError(this)))
-                    .addSubcommand("event", new CommandTree(new ListEvent(this)))
-                    .addSubcommand("groovy", new CommandTree(new ListGroovy(this)))
-                    .addSubcommand("group", new CommandTree(new CamelRouteGroupStatus(this)))
-                    .addSubcommand("health", new CommandTree(new ListHealth(this)))
-                    .addSubcommand("history", new CommandTree(new CamelHistoryAction(this)))
-                    .addSubcommand("inflight", new CommandTree(new ListInflight(this)))
-                    .addSubcommand("internal-task", new CommandTree(new ListInternalTask(this)))
-                    .addSubcommand("kafka", new CommandTree(new ListKafka(this)))
-                    .addSubcommand("metric", new CommandTree(new ListMetric(this)))
-                    .addSubcommand("platform-http", new CommandTree(new ListPlatformHttp(this)))
-                    .addSubcommand("processor", new CommandTree(new CamelProcessorStatus(this)))
-                    .addSubcommand("producer", new CommandTree(new ListProducer(this)))
-                    .addSubcommand("properties", new CommandTree(new ListProperties(this)))
-                    .addSubcommand("rest", new CommandTree(new ListRest(this)))
-                    .addSubcommand("route", new CommandTree(new CamelRouteStatus(this)))
-                    .addSubcommand("route-controller", new CommandTree(new RouteControllerAction(this)))
-                    .addSubcommand("sanitizer", new CommandTree(new ListSanitizer(this)))
-                    .addSubcommand("service", new CommandTree(new ListService(this)))
-                    .addSubcommand("source", new CommandTree(new CamelSourceAction(this)))
-                    .addSubcommand("sql-trace", new CommandTree(new ListSqlTrace(this)))
-                    .addSubcommand("startup-recorder", new CommandTree(new CamelStartupRecorderAction(this)))
-                    .addSubcommand("timeline", new CommandTree(new ListTimeline(this)))
-                    .addSubcommand("about", new CommandTree(new ListAbout(this)))
-                    .addSubcommand("transformer", new CommandTree(new ListTransformer(this)))
-                    .addSubcommand("variable", new CommandTree(new ListVariable(this)))
-                    .addSubcommand("vault", new CommandTree(new ListVault(this))));
+                    .addSubcommand("bean", CommandTree.lazy(() -> new CamelBeanDump(this)))
+                    .addSubcommand("blocked", CommandTree.lazy(() -> new ListBlocked(this)))
+                    .addSubcommand("chaos", CommandTree.lazy(() -> new ListChaos(this)))
+                    .addSubcommand("circuit-breaker", CommandTree.lazy(() -> new ListCircuitBreaker(this)))
+                    .addSubcommand("consumer", CommandTree.lazy(() -> new ListConsumer(this)))
+                    .addSubcommand("context", CommandTree.lazy(() -> new CamelContextStatus(this)))
+                    .addSubcommand("count", CommandTree.lazy(() -> new CamelCount(this)))
+                    .addSubcommand("datasource", CommandTree.lazy(() -> new ListDataSource(this)))
+                    .addSubcommand("endpoint", CommandTree.lazy(() -> new ListEndpoint(this)))
+                    .addSubcommand("error", CommandTree.lazy(() -> new ListError(this)))
+                    .addSubcommand("event", CommandTree.lazy(() -> new ListEvent(this)))
+                    .addSubcommand("groovy", CommandTree.lazy(() -> new ListGroovy(this)))
+                    .addSubcommand("group", CommandTree.lazy(() -> new CamelRouteGroupStatus(this)))
+                    .addSubcommand("health", CommandTree.lazy(() -> new ListHealth(this)))
+                    .addSubcommand("history", CommandTree.lazy(() -> new CamelHistoryAction(this)))
+                    .addSubcommand("inflight", CommandTree.lazy(() -> new ListInflight(this)))
+                    .addSubcommand("internal-task", CommandTree.lazy(() -> new ListInternalTask(this)))
+                    .addSubcommand("kafka", CommandTree.lazy(() -> new ListKafka(this)))
+                    .addSubcommand("metric", CommandTree.lazy(() -> new ListMetric(this)))
+                    .addSubcommand("platform-http", CommandTree.lazy(() -> new ListPlatformHttp(this)))
+                    .addSubcommand("processor", CommandTree.lazy(() -> new CamelProcessorStatus(this)))
+                    .addSubcommand("producer", CommandTree.lazy(() -> new ListProducer(this)))
+                    .addSubcommand("properties", CommandTree.lazy(() -> new ListProperties(this)))
+                    .addSubcommand("rest", CommandTree.lazy(() -> new ListRest(this)))
+                    .addSubcommand("route", CommandTree.lazy(() -> new CamelRouteStatus(this)))
+                    .addSubcommand("route-controller", CommandTree.lazy(() -> new RouteControllerAction(this)))
+                    .addSubcommand("sanitizer", CommandTree.lazy(() -> new ListSanitizer(this)))
+                    .addSubcommand("service", CommandTree.lazy(() -> new ListService(this)))
+                    .addSubcommand("source", CommandTree.lazy(() -> new CamelSourceAction(this)))
+                    .addSubcommand("sql-trace", CommandTree.lazy(() -> new ListSqlTrace(this)))
+                    .addSubcommand("startup-recorder", CommandTree.lazy(() -> new CamelStartupRecorderAction(this)))
+                    .addSubcommand("timeline", CommandTree.lazy(() -> new ListTimeline(this)))
+                    .addSubcommand("about", CommandTree.lazy(() -> new ListAbout(this)))
+                    .addSubcommand("transformer", CommandTree.lazy(() -> new ListTransformer(this)))
+                    .addSubcommand("variable", CommandTree.lazy(() -> new ListVariable(this)))
+                    .addSubcommand("vault", CommandTree.lazy(() -> new ListVault(this))));
         }
         if (shouldCreate(only, "hawtio")) {
             commandLine.addSubcommand("hawtio", new CommandTree(new Hawtio(this)));
         }
         if (shouldCreate(only, "infra")) {
             commandLine.addSubcommand("infra", new CommandTree(new InfraCommand(this))
-                    .addSubcommand("get", new CommandTree(new InfraGet(this)))
-                    .addSubcommand("list", new CommandTree(new InfraList(this)))
-                    .addSubcommand("log", new CommandTree(new InfraLog(this)))
-                    .addSubcommand("ps", new CommandTree(new InfraPs(this)))
-                    .addSubcommand("restart", new CommandTree(new InfraRestart(this)))
-                    .addSubcommand("run", new CommandTree(new InfraRun(this)))
-                    .addSubcommand("stop", new CommandTree(new InfraStop(this))));
+                    .addSubcommand("get", CommandTree.lazy(() -> new InfraGet(this)))
+                    .addSubcommand("list", CommandTree.lazy(() -> new InfraList(this)))
+                    .addSubcommand("log", CommandTree.lazy(() -> new InfraLog(this)))
+                    .addSubcommand("ps", CommandTree.lazy(() -> new InfraPs(this)))
+                    .addSubcommand("restart", CommandTree.lazy(() -> new InfraRestart(this)))
+                    .addSubcommand("run", CommandTree.lazy(() -> new InfraRun(this)))
+                    .addSubcommand("stop", CommandTree.lazy(() -> new InfraStop(this))));
         }
         if (shouldCreate(only, "init")) {
             commandLine.addSubcommand("init", new CommandTree(new Init(this)));
@@ -445,10 +445,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "plugin")) {
             commandLine.addSubcommand("plugin", new CommandTree(new PluginCommand(this))
-                    .addSubcommand("add", new CommandTree(new PluginAdd(this)))
-                    .addSubcommand("delete", new CommandTree(new PluginDelete(this)))
-                    .addSubcommand("get", new CommandTree(new PluginGet(this)))
-                    .addSubcommand("list", new CommandTree(new PluginList(this))));
+                    .addSubcommand("add", CommandTree.lazy(() -> new PluginAdd(this)))
+                    .addSubcommand("delete", CommandTree.lazy(() -> new PluginDelete(this)))
+                    .addSubcommand("get", CommandTree.lazy(() -> new PluginGet(this)))
+                    .addSubcommand("list", CommandTree.lazy(() -> new PluginList(this))));
         }
         if (shouldCreate(only, "ps")) {
             commandLine.addSubcommand("ps", new CommandTree(new ListProcess(this)));
@@ -467,10 +467,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "semantic")) {
             commandLine.addSubcommand("semantic", new CommandTree(new CamelSemantic(this))
-                    .addSubcommand("get", new CommandTree(new SemanticGet(this)))
-                    .addSubcommand("eval", new CommandTree(new SemanticEvaluate(this)))
-                    .addSubcommand("audit", new CommandTree(new SemanticAudit(this)))
-                    .addSubcommand("monitoring", new CommandTree(new SemanticMonitoring(this))));
+                    .addSubcommand("get", CommandTree.lazy(() -> new SemanticGet(this)))
+                    .addSubcommand("eval", CommandTree.lazy(() -> new SemanticEvaluate(this)))
+                    .addSubcommand("audit", CommandTree.lazy(() -> new SemanticAudit(this)))
+                    .addSubcommand("monitoring", CommandTree.lazy(() -> new SemanticMonitoring(this))));
         }
         if (shouldCreate(only, "shell")) {
             commandLine.addSubcommand("shell", new CommandTree(new Shell(this)));
@@ -480,31 +480,31 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "top")) {
             commandLine.addSubcommand("top", new CommandTree(new CamelTop(this))
-                    .addSubcommand("context", new CommandTree(new CamelContextTop(this)))
-                    .addSubcommand("group", new CommandTree(new CamelRouteGroupTop(this)))
-                    .addSubcommand("processor", new CommandTree(new CamelProcessorTop(this)))
-                    .addSubcommand("route", new CommandTree(new CamelRouteTop(this)))
-                    .addSubcommand("source", new CommandTree(new CamelSourceTop(this))));
+                    .addSubcommand("context", CommandTree.lazy(() -> new CamelContextTop(this)))
+                    .addSubcommand("group", CommandTree.lazy(() -> new CamelRouteGroupTop(this)))
+                    .addSubcommand("processor", CommandTree.lazy(() -> new CamelProcessorTop(this)))
+                    .addSubcommand("route", CommandTree.lazy(() -> new CamelRouteTop(this)))
+                    .addSubcommand("source", CommandTree.lazy(() -> new CamelSourceTop(this))));
         }
         if (shouldCreate(only, "trace")) {
             commandLine.addSubcommand("trace", new CommandTree(new CamelTraceAction(this)));
         }
         if (shouldCreate(only, "transform")) {
             commandLine.addSubcommand("transform", new CommandTree(new TransformCommand(this))
-                    .addSubcommand("dataweave", new CommandTree(new TransformDataWeave(this)))
-                    .addSubcommand("message", new CommandTree(new TransformMessageAction(this)))
-                    .addSubcommand("route", new CommandTree(new TransformRoute(this))));
+                    .addSubcommand("dataweave", CommandTree.lazy(() -> new TransformDataWeave(this)))
+                    .addSubcommand("message", CommandTree.lazy(() -> new TransformMessageAction(this)))
+                    .addSubcommand("route", CommandTree.lazy(() -> new TransformRoute(this))));
         }
         if (shouldCreate(only, "update")) {
             commandLine.addSubcommand("update", new CommandTree(new UpdateCommand(this))
-                    .addSubcommand("list", new CommandTree(new UpdateList(this)))
-                    .addSubcommand("run", new CommandTree(new UpdateRun(this))));
+                    .addSubcommand("list", CommandTree.lazy(() -> new UpdateList(this)))
+                    .addSubcommand("run", CommandTree.lazy(() -> new UpdateRun(this))));
         }
         if (shouldCreate(only, "version")) {
             commandLine.addSubcommand("version", new CommandTree(new VersionCommand(this))
-                    .addSubcommand("get", new CommandTree(new VersionGet(this)))
-                    .addSubcommand("list", new CommandTree(new VersionList(this)))
-                    .addSubcommand("set", new CommandTree(new VersionSet(this))));
+                    .addSubcommand("get", CommandTree.lazy(() -> new VersionGet(this)))
+                    .addSubcommand("list", CommandTree.lazy(() -> new VersionList(this)))
+                    .addSubcommand("set", CommandTree.lazy(() -> new VersionSet(this))));
         }
         if (shouldCreate(only, "wrapper")) {
             commandLine.addSubcommand("wrapper", new CommandTree(new WrapperCommand(this)));
