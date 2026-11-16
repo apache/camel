@@ -918,6 +918,8 @@ Runtime dependency coordinates still use the selected Spring Boot or Camel Quark
 
 Versioned Main catalogs also report the selected version: `DefaultCamelCatalog.getCatalogVersion()` now honors
 the installed version manager instead of always reporting the built-in version.
+When using `MavenVersionManager` from `camel-catalog-maven`, `getCatalogVersion()` returns `null` until
+`loadVersion(...)` succeeds.
 
 A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
 `org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
