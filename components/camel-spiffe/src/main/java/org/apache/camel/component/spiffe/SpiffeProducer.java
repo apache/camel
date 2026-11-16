@@ -79,10 +79,11 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
-        String[] audiences = resolveAudiences(exchange);
         Message message = getMessageForResponse(exchange);
+        // cleared before anything that can fail, the audience resolution included, as on the X.509 path
         message.removeHeader(SpiffeConstants.SPIFFE_ID);
         message.removeHeader(SpiffeConstants.EXPIRY);
+        String[] audiences = resolveAudiences(exchange);
         JwtSvid svid;
         if (localSpiffeId == null) {
             svid = audiences.length > 1

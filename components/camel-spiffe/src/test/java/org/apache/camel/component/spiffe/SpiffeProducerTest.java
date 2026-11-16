@@ -163,6 +163,29 @@ class SpiffeProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void fetchJwtSvidClearsTheIdentityHeadersWhenItFails() throws Exception {
+        when(client.fetchJwtSvid("my-audience")).thenThrow(new IllegalStateException("workload api down"));
+
+        Exchange failed = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid&audience=my-audience", e -> {
+                    e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity");
+                    e.getMessage().setHeader(SpiffeConstants.EXPIRY, new Date());
+                });
+        assertThat(failed.getException()).isInstanceOf(IllegalStateException.class);
+        assertThat(failed.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+        assertThat(failed.getMessage().getHeader(SpiffeConstants.EXPIRY)).isNull();
+
+        // the same when the audience is missing, which fails before the Workload API is asked
+        Exchange noAudience = template.request("spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid", e -> {
+            e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity");
+            e.getMessage().setHeader(SpiffeConstants.EXPIRY, new Date());
+        });
+        assertThat(noAudience.getException()).isNotNull();
+        assertThat(noAudience.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+        assertThat(noAudience.getMessage().getHeader(SpiffeConstants.EXPIRY)).isNull();
+    }
+
+    @Test
     void fetchJwtSvidAudienceFromHeader() throws Exception {
         SpiffeId id = spiffeId("spiffe://example.org/workload");
         JwtSvid svid = mock(JwtSvid.class);
