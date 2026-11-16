@@ -612,7 +612,8 @@ public interface SecurityHubEndpointBuilderFactory {
          * set, the findings are taken from the body: a Collection or an array
          * of AwsSecurityFinding, or one AwsSecurityFinding.
          * 
-         * The option is a: {@code List<AwsSecurityFinding>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFinding>} type.
          * 
          * Group: producer
          * 
@@ -624,7 +625,8 @@ public interface SecurityHubEndpointBuilderFactory {
         /**
          * The finding identifiers for batch update.
          * 
-         * The option is a: {@code List<AwsSecurityFindingIdentifier>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingIdentifier>} type.
          * 
          * Group: producer
          * 
@@ -639,7 +641,8 @@ public interface SecurityHubEndpointBuilderFactory {
          * AwsSecurityFindingFilters object; a value of another type, such as
          * JSON text, fails the exchange.
          * 
-         * The option is a: {@code AwsSecurityFindingFilters} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingFilters} type.
          * 
          * Group: producer
          * 
@@ -652,7 +655,8 @@ public interface SecurityHubEndpointBuilderFactory {
          * The note to add to findings during update. It must be a NoteUpdate
          * object; a value of another type fails the exchange.
          * 
-         * The option is a: {@code NoteUpdate} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.securityhub.model.NoteUpdate} type.
          * 
          * Group: producer
          * 
@@ -665,7 +669,9 @@ public interface SecurityHubEndpointBuilderFactory {
          * The severity to set on findings during update. It must be a
          * SeverityUpdate object; a value of another type fails the exchange.
          * 
-         * The option is a: {@code SeverityUpdate} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.securityhub.model.SeverityUpdate}
+         * type.
          * 
          * Group: producer
          * 
@@ -678,7 +684,9 @@ public interface SecurityHubEndpointBuilderFactory {
          * The workflow status to set on findings. It must be a WorkflowUpdate
          * object; a value of another type fails the exchange.
          * 
-         * The option is a: {@code WorkflowUpdate} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.securityhub.model.WorkflowUpdate}
+         * type.
          * 
          * Group: producer
          * 
@@ -740,7 +748,8 @@ public interface SecurityHubEndpointBuilderFactory {
         /**
          * Related findings to associate.
          * 
-         * The option is a: {@code List<RelatedFinding>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.securityhub.model.RelatedFinding>} type.
          * 
          * Group: producer
          * 
@@ -817,8 +826,8 @@ public interface SecurityHubEndpointBuilderFactory {
         /**
          * The list of findings that were not updated.
          * 
-         * The option is a: {@code List<BatchUpdateFindingsUnprocessedFinding>}
-         * type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.securityhub.model.BatchUpdateFindingsUnprocessedFinding>} type.
          * 
          * Group: batchUpdateFindings
          * 
@@ -831,7 +840,8 @@ public interface SecurityHubEndpointBuilderFactory {
         /**
          * The list of findings that were updated successfully.
          * 
-         * The option is a: {@code List<AwsSecurityFindingIdentifier>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingIdentifier>} type.
          * 
          * Group: batchUpdateFindings
          * 
