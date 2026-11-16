@@ -196,12 +196,12 @@ public interface SpiffeComponentBuilderFactory {
         /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: true
          * Group: health
-         *
+         * 
          * @param healthCheckConsumerEnabled the value to set
          * @return the dsl builder
          */
@@ -209,20 +209,20 @@ public interface SpiffeComponentBuilderFactory {
             doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
             return this;
         }
-
-
+    
+        
         /**
          * Minimum remaining X.509-SVID validity, in milliseconds, for the
          * producer readiness check to report UP. A certificate at or below this
          * threshold reports DOWN before expiry. Zero requires only an unexpired
          * identity. Does not apply to JWT-bundle readiness because bundles have
          * no expiry timestamp.
-         *
+         * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         *
+         * 
          * Default: 60000
          * Group: health
-         *
+         * 
          * @param healthCheckExpiryThreshold the value to set
          * @return the dsl builder
          */
@@ -230,19 +230,19 @@ public interface SpiffeComponentBuilderFactory {
             doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
             return this;
         }
-
-
+    
+        
         /**
          * Used for enabling or disabling all producer based health checks from
          * this component. Notice: Camel has by default disabled all producer
          * based health-checks. You can turn on producer checks globally by
          * setting camel.health.producersEnabled=true.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: true
          * Group: health
-         *
+         * 
          * @param healthCheckProducerEnabled the value to set
          * @return the dsl builder
          */
@@ -250,8 +250,8 @@ public interface SpiffeComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
-
-
+    
+        
         /**
          * Whether the CamelSpiffeOperation header may override the configured
          * operation. Disabled by default: the operation decides whether this
