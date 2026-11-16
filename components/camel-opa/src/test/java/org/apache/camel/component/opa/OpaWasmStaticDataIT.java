@@ -19,10 +19,12 @@ package org.apache.camel.component.opa;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,7 +71,7 @@ class OpaWasmStaticDataIT {
         try (var evaluator = evaluator("benchmark/allow", 1)) {
             for (int i = 0; i < 1000; i++) {
                 boolean allow = i % 2 == 0;
-                var input = new java.util.HashMap<>(input(i % 1000, allow));
+                var input = new HashMap<>(input(i % 1000, allow));
                 input.put("padding", "x".repeat(i % 2 == 0 ? 4096 : 1));
                 assertThat(evaluator.evaluateDecision(input)).as("iteration %d", i).isEqualTo(allow);
             }
@@ -83,7 +85,7 @@ class OpaWasmStaticDataIT {
         var ready = new CountDownLatch(threads);
         var start = new CountDownLatch(1);
         try (var evaluator = evaluator("benchmark/allow", 4)) {
-            var tasks = new ArrayList<java.util.concurrent.Future<Void>>();
+            var tasks = new ArrayList<Future<Void>>();
             for (int worker = 0; worker < threads; worker++) {
                 int user = worker;
                 tasks.add(executor.submit((Callable<Void>) () -> {
@@ -122,13 +124,13 @@ class OpaWasmStaticDataIT {
     @Test
     void requestScopedDataOverrideDoesNotChangeTheFollowingRequestsStaticData() throws Exception {
         try (var evaluator = evaluator("benchmark/isolation", 1)) {
-            var overridden = new java.util.HashMap<>(input(0, true));
+            var overridden = new HashMap<>(input(0, true));
             overridden.put("resource", "overridden-document");
             overridden.put("override", Map.of("user0", Map.of("resource", "overridden-document", "enabled", true)));
             for (int i = 0; i < 100; i++) {
                 assertThat(evaluator.evaluateDecision(overridden)).isEqualTo(true);
                 assertThat(evaluator.evaluateDecision(input(0, true))).isEqualTo(true);
-                var noOverride = new java.util.HashMap<>(input(0, true));
+                var noOverride = new HashMap<>(input(0, true));
                 noOverride.put("resource", "overridden-document");
                 assertThat(evaluator.evaluateDecision(noOverride)).isEqualTo(false);
             }
@@ -143,9 +145,13 @@ class OpaWasmStaticDataIT {
             return OpaPolicy.builder().withPolicy(wasm).build().entrypoint("benchmark/strict").data(data);
         }, 1, 1000)) {
             var broken = pool.borrow();
-            assertThatThrownBy(() -> broken.policy().evaluate("{\"trap\":true}"))
-                    .isInstanceOf(RuntimeException.class);
-            broken.discard();
+            try {
+                assertThatThrownBy(() -> broken.policy().evaluate("{\"trap\":true}"))
+                        .isInstanceOf(RuntimeException.class);
+            } finally {
+                // otherwise a failed assertion turns into a borrow timeout that hides it
+                broken.discard();
+            }
             try (var replacement = pool.borrow()) {
                 assertThat(replacement.policy()).isNotSameAs(broken.policy());
                 assertThat(replacement.policy()

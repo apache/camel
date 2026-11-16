@@ -25,10 +25,14 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.wasm.OpaPolicy;
+import com.sun.management.ThreadMXBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.opa.services.OpaWasmBundleBuilder;
 
@@ -61,7 +65,7 @@ public final class OpaWasmStaticDataBenchmark {
         String data = data(entries);
         System.out.printf("java=%s vm=%s arch=%s dataEntries=%d dataBytes=%d threads=%d warmupMs=%d measurementMs=%d%n",
                 System.getProperty("java.version"), System.getProperty("java.vm.name"), System.getProperty("os.arch"),
-                entries, data.getBytes(java.nio.charset.StandardCharsets.UTF_8).length, threads, warmup, measurement);
+                entries, data.getBytes(StandardCharsets.UTF_8).length, threads, warmup, measurement);
         System.out.println(
                 "mode,operations,operationsPerSecond,allocatedBytesPerOperation,createdInstances,meanFirstEvaluationMs,checksum");
         run(wasm, data, threads, warmup, measurement, false);
@@ -98,9 +102,9 @@ public final class OpaWasmStaticDataBenchmark {
 
     private static void run(byte[] wasm, String data, int threads, long warmup, long measurement, boolean prepareOnce)
             throws Exception {
-        var created = new java.util.concurrent.atomic.AtomicInteger();
-        var firstEvaluationNanos = new java.util.concurrent.atomic.AtomicLong();
-        var allocations = ManagementFactory.getThreadMXBean() instanceof com.sun.management.ThreadMXBean bean
+        var created = new AtomicInteger();
+        var firstEvaluationNanos = new AtomicLong();
+        var allocations = ManagementFactory.getThreadMXBean() instanceof ThreadMXBean bean
                 && bean.isThreadAllocatedMemorySupported() ? bean : null;
         if (allocations != null && !allocations.isThreadAllocatedMemoryEnabled()) {
             allocations.setThreadAllocatedMemoryEnabled(true);
@@ -116,7 +120,7 @@ public final class OpaWasmStaticDataBenchmark {
             var executor = Executors.newFixedThreadPool(threads);
             var ready = new CountDownLatch(threads);
             var start = new CountDownLatch(1);
-            var tasks = new ArrayList<java.util.concurrent.Future<Sample>>();
+            var tasks = new ArrayList<Future<Sample>>();
             try {
                 for (int worker = 0; worker < threads; worker++) {
                     tasks.add(executor.submit((Callable<Sample>) () -> {
@@ -171,7 +175,7 @@ public final class OpaWasmStaticDataBenchmark {
         }
     }
 
-    private static long allocated(com.sun.management.ThreadMXBean bean) {
+    private static long allocated(ThreadMXBean bean) {
         return bean != null ? bean.getCurrentThreadAllocatedBytes() : 0;
     }
 

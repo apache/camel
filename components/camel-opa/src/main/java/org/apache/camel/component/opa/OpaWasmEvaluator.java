@@ -170,18 +170,21 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
+        // serialized before borrowing, so an input that cannot be serialized costs no pooled instance
+        String json = MAPPER.writeValueAsString(input);
         OpaWasmPolicyPool.Lease lease = pool.borrow();
+        String result;
         try {
-            Object decision = unwrap(lease.policy().evaluate(MAPPER.writeValueAsString(input)));
-            lease.close();
-            return decision;
+            result = lease.policy().evaluate(json);
         } catch (Exception e) {
-            // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it
-            // rather than hand it to the next exchange. Safe to call unconditionally: a lease ends exactly once,
-            // so this is a no-op when close() above already returned it
+            // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it rather
+            // than hand it to the next exchange. A replacement pays for module creation and the full data parse,
+            // which is why an undefined decision, found by unwrap below and not a trap, keeps the instance
             lease.discard();
             throw e;
         }
+        lease.close();
+        return unwrap(result);
     }
 
     /**
