@@ -257,11 +257,15 @@ client served from another origin must now be listed in the new `camel.server.mc
 default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
 not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected.
 
-Spring Boot applications using `camel-mcp-server-starter` with Spring AI's Streamable HTTP transport also validate the
-`Origin` header on every request (`POST`, the SSE `GET`, and `DELETE`). Requests without an `Origin` header are
-accepted. Requests with an `Origin` header are accepted only when the origin matches the allowed list; other origins
-receive HTTP 403. By default, only loopback origins are allowed. Configure `camel.mcp-server.allowed-origins` to allow
-browser clients from other origins, for example:
+Spring Boot applications using `camel-mcp-server-starter` validate the `Origin` header when
+`spring.ai.mcp.server.protocol=STREAMABLE`, `camel.mcp-server.enabled` is not `false`, and Camel's Streamable HTTP
+transport is selected. `camel.mcp-server.enabled` defaults to `true`. By default, Camel's transport is selected when
+`camel.mcp-server.tags` is set. Set `camel.mcp-server.transport-enabled=true` to select Camel's transport without
+tags, or set it to `false` to keep Spring AI's transport even when tags are set. When Spring AI's transport is kept,
+Camel's `Origin` validation is not installed. The check covers every request (`POST`, the SSE `GET`, and `DELETE`).
+Requests without an `Origin` header are accepted. Requests with an `Origin` header are accepted only when the origin
+matches the allowed list; other origins receive HTTP 403. By default, only loopback origins are allowed. Configure
+`camel.mcp-server.allowed-origins` to allow browser clients from other origins, for example:
 
 [source,properties]
 ----
