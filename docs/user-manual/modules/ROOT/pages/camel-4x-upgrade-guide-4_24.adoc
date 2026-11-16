@@ -757,15 +757,24 @@ padded with another char, are not changed.
 
 === camel-cxf - the former operationName and operationNamespace headers are not sent
 
+=== camel-cxf, camel-cxfrs - the former operationName and operationNamespace headers are not sent
+
 The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
-`operationNamespace` headers (see the 4.21 upgrade guide). The producer does not read the former names, and now logs a
-WARN once when one of them is set without its replacement. The default `CxfHeaderFilterStrategy` no longer sends them
+`operationNamespace` headers (see the 4.21 upgrade guide). The `cxf` producer does not read the former names, and now logs
+a WARN once when one of them is set without its replacement. The default `CxfHeaderFilterStrategy` no longer sends them
 as HTTP headers, as before the rename: a route that maps a header named `operationName` to `CamelCxfOperationName`
 keeps working, and the service no longer receives an `operationName` HTTP header.
 
-The producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
+The `cxf` producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
 option selects the operation of a service with more than one operation. It then invokes the first operation that CXF
 returns, which is not the first one of the WSDL.
+
+The `cxfrs` producer does not read the former `operationName` header either. With the proxy-based client API
+(`httpClientAPI=false`) it still fails when `CamelCxfOperationName` is not set: the `NoSuchMethodException` now names
+that header, and says when `operationName` is set, in place of `Cannot find method with name: null`. The default
+`CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as before the rename: the producer no longer
+sends it as an HTTP header, with either client API, and the `SimpleConsumer` binding no longer returns it as a
+response header.
 
 === Java
 

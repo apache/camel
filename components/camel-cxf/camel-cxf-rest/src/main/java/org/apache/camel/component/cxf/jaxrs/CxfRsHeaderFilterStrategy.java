@@ -27,6 +27,8 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     protected void initialize() {
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
+        // and the former name of this header, which the producer no longer reads
+        getOutFilter().add("operationname");
 
         getOutFilter().add("Content-Type".toLowerCase());
     }
