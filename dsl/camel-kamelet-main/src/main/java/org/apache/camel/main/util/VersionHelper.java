@@ -16,15 +16,22 @@
  */
 package org.apache.camel.main.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class VersionHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VersionHelper.class);
 
     private static String camelVersion;
 
@@ -122,6 +129,21 @@ public final class VersionHelper {
             if (matcher.find() && matcher.groupCount() > 0) {
                 return matcher.group(1);
             }
+        }
+
+        // Launcher dependencies (nested JARs or a manifest Class-Path) are absent from java.class.path.
+        try (InputStream is = VersionHelper.class.getResourceAsStream(
+                "/META-INF/maven/org.apache.camel.kamelets/camel-kamelets/pom.properties")) {
+            if (is != null) {
+                Properties properties = new Properties();
+                properties.load(is);
+                String version = properties.getProperty("version");
+                if (ObjectHelper.isNotEmpty(version)) {
+                    return version;
+                }
+            }
+        } catch (IOException e) {
+            LOG.debug("Could not read bundled Kamelets catalog metadata, using default version", e);
         }
 
         return KameletCatalogHelper.KAMELETS_VERSION;
