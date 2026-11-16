@@ -34,7 +34,7 @@ package com.foo;
 @CamelSpringBootTest
 @EnableAutoConfiguration
 @SpringBootTest(
-    properties = { "camel.springboot.name=customName" }
+    properties = { "camel.main.name=customName" }
 )
 class CamelSpringBootSimpleTest {
 
