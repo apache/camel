@@ -589,6 +589,18 @@ When the `smb` consumer connects but cannot create its starting directory (`auto
 not connect. The `Cannot connect/login to: ... Will skip this poll.` WARN now gives the reason before
 `Will skip this poll.`, such as `due to: Connection refused`, on one line.
 
+=== camel-azure-files - a starting directory that cannot be created, or a refused connection, no longer fails the route start
+
+When the share refuses to create the starting directory of the `azure-files` consumer as the route starts
+(`autoCreate=true`), such as `403 AuthorizationPermissionMismatch`, or refuses the connection, such as
+`403 AuthenticationFailed`, the route now starts and the consumer tries again on each poll, as the
+xref:camel-4x-upgrade-guide-4_13.adoc#_camel_file_camel_ftp_camel_smb_camel_azure_files[Camel 4.13 upgrade guide]
+describes. Before, the route failed to start. `FilesOperations.connect` and `FilesOperations.buildDirectory` now throw a
+`GenericFileOperationFailedException` with the `ShareStorageException` of the Azure SDK as its cause, as the ftp and sftp
+operations do with the error of their client. The producer and the moves that connect or create a directory get this
+exception type too, and still fail as before when the share refuses; an `onException(ShareStorageException.class)`
+still matches it, as the cause.
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
