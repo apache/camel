@@ -672,6 +672,13 @@ message is processed once per consumer; this is unchanged. This also applies whe
 and the route consumes from a topic, and to camel-activemq, camel-activemq6 and camel-amqp. To process each message
 once, set `subscriptionShared=true` with a `subscriptionName`, or use a single consumer on the topic.
 
+=== camel-jms - the exceptionHandler of a consumer gets the JMS exceptions of its listener container
+
+A consumer with the `exceptionHandler` option now gives that handler the JMS exceptions of its listener container,
+such as a connection to the broker that cannot be established or is lost (the consumer tries again every
+`recoveryInterval`). Before, the option was not used. When `exceptionListener` is set too, it still gets each
+exception, before the handler. This also applies to camel-activemq, camel-activemq6 and camel-amqp.
+
 === camel-sjms, camel-sjms2 - pollEnrich and ConsumerTemplate read the message before they close the session
 
 `pollEnrich` and a `ConsumerTemplate` on an `sjms` or `sjms2` endpoint now read the body and the headers of the message
