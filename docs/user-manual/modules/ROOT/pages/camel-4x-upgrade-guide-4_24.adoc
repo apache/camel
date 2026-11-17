@@ -6141,6 +6141,14 @@ empty payload.
 A body that does not convert to bytes, such as a `Map` or a POJO, is no longer sent as its `toString()`: it now fails
 with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
 
+=== camel-alibaba-fc - region is no longer marked as required
+
+The `region` option of `alibaba-fc` is no longer marked as required. To create the client, the Camel endpoint needs
+the `region` or the `endpoint` option. It needs neither when the `fcClient` option is set or autowired. So the
+endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
+of the component at runtime does not change. A URI with neither option still fails at the first message with
+`Region or endpoint is required`, unless the `fcClient` option is set or autowired.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
