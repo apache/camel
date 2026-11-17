@@ -304,12 +304,9 @@ The accept(file) file argument has properties:
 
 === Filtering using ANT path matcher
 
-The ANT path matcher is a filter shipped out-of-the-box in the
-*camel-spring* jar. So you need to depend on *camel-spring* if you are
-using Maven. +
- The reason is that we leverage Spring's
-http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
-to do the actual matching.
+The ANT path matcher is a filter shipped out-of-the-box with the file component: the `antInclude` and `antExclude`
+options need no other dependency. Use them for wildcards such as `+*.txt+`: the `fileName` option is a file name, not
+a pattern, and the `include` and `exclude` options are regular expressions.
 
 The file paths are matched with the following rules:
 
