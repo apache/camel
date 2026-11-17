@@ -17,6 +17,8 @@
 package org.apache.camel.coap;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,11 +29,15 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.network.Endpoint;
 
 /**
  * The CoAP observer.
  */
 public class CoAPObserver extends DefaultConsumer implements CoapHandler {
+    // how long a stop waits for the answer to the cancel of the observation, before it releases the endpoint of the client
+    private static final long CANCEL_TIMEOUT_MILLIS = 5000;
+
     private final CoAPEndpoint endpoint;
     // guards client and observation: onError() runs on a Californium thread and observes again, which must not race
     // doStop(), or the new observation is not cancelled (the server keeps notifying it) or the client is gone
@@ -79,19 +85,33 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     protected void doStop() throws Exception {
         // cancel the observation, or the server keeps sending notifications to this consumer after it was stopped, and
         // a route that is started again then gets every notification twice (once from the stopped consumer)
+        Observation current;
+        CoapClient stopped;
         lock.lock();
         try {
-            Observation current = observation;
+            current = observation;
             observation = null;
             if (current != null) {
                 current.cancel();
             }
-            if (client != null) {
-                client.shutdown();
-                client = null;
+            stopped = client;
+            client = null;
+            if (stopped != null) {
+                stopped.shutdown();
             }
         } finally {
             lock.unlock();
+        }
+        if (stopped != null) {
+            // the client has its own endpoint (createCoapClient), which CoapClient.shutdown() does not release (bound
+            // socket and its threads): destroy it once the cancel went out, which is sent through it
+            if (current != null) {
+                current.awaitCancelled(CANCEL_TIMEOUT_MILLIS);
+            }
+            Endpoint clientEndpoint = stopped.getEndpoint();
+            if (clientEndpoint != null) {
+                clientEndpoint.destroy();
+            }
         }
         super.doStop();
     }
@@ -128,12 +148,27 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     private final class Observation implements CoapHandler {
         private volatile boolean cancelled;
         private volatile CoapObserveRelation relation;
+        // counted down when the answer to the cancel came, or the cancel failed
+        private final CountDownLatch cancelDone = new CountDownLatch(1);
 
         void cancel() {
             cancelled = true;
             CoapObserveRelation current = relation;
-            if (current != null) {
+            if (current != null && !current.isCanceled()) {
                 current.proactiveCancel();
+            } else {
+                // nothing is sent (no relation, or it was cancelled already, such as for a resource that is not
+                // observable), so no answer comes
+                cancelDone.countDown();
+            }
+        }
+
+        void awaitCancelled(long timeoutMillis) {
+            try {
+                cancelDone.await(timeoutMillis, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                // the endpoint is destroyed anyway
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -141,6 +176,9 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
         public void onLoad(CoapResponse response) {
             if (!cancelled) {
                 CoAPObserver.this.onLoad(response);
+            } else if (!response.getOptions().hasObserve()) {
+                // the answer to the cancel (a notification that was already on its way has the observe option)
+                cancelDone.countDown();
             }
         }
 
@@ -148,6 +186,8 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
         public void onError() {
             if (!cancelled) {
                 CoAPObserver.this.onError();
+            } else {
+                cancelDone.countDown();
             }
         }
     }
