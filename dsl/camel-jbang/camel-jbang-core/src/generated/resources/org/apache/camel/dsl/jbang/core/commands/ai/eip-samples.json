@@ -963,6 +963,10 @@
     {
       "source": "removeHeaders-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: seda:b\n      steps:\n        - removeHeaders: \"Camel*\"\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "removeHeaders-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: seda:b\n      steps:\n        - removeHeaders:\n            pattern: \"*\"\n            excludePattern: \"header1|header3|Camel.*\"\n        - to:\n            uri: mock:result\n"
     }
   ],
   "removeProperties": [
@@ -973,6 +977,10 @@
     {
       "source": "removeProperties-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: seda:b\n      steps:\n        - removeProperties:\n            pattern: \"Foo*\"\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "removeProperties-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: seda:b\n      steps:\n        - removeProperties:\n            pattern: \"Foo*\"\n            excludePattern: \"FooKeep|FooToo\"\n        - to:\n            uri: mock:result\n"
     }
   ],
   "removeProperty": [
