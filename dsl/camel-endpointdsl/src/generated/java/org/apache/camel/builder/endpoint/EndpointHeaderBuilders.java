@@ -2427,6 +2427,19 @@ public class EndpointHeaderBuilders {
         return JsltEndpointBuilderFactory.JsltHeaderNameBuilder.INSTANCE;
     }
     /**
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder jsonata() {
+        return JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
