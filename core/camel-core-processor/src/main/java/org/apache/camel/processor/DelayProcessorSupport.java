@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +48,9 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
     private boolean asyncDelayed = true;
     private boolean callerRunsWhenRejected = true;
     private final AtomicInteger delayedCount = new AtomicInteger();
+    // the delayed tasks that are scheduled and not yet started: a task and doShutdown each claim a task by removing
+    // it, so an exchange is routed on, or failed when the thread pool is shut down, but never both
+    private final Set<ProcessCall> scheduledCalls = ConcurrentHashMap.newKeySet();
 
     private final class ProcessCall implements Runnable {
         private final Exchange exchange;
@@ -58,6 +63,10 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
 
         @Override
         public void run() {
+            if (!scheduledCalls.remove(this)) {
+                // the exchange was already failed by doShutdown
+                return;
+            }
             // we are running now so decrement the counter
             delayedCount.decrementAndGet();
 
@@ -120,6 +129,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
             // and increment the counter (we decrement the counter when we run the ProcessCall)
             delayedCount.incrementAndGet();
             ProcessCall call = new ProcessCall(exchange, callback);
+            scheduledCalls.add(call);
             try {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
@@ -130,6 +140,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
                 return false;
             } catch (RejectedExecutionException e) {
                 // we were not allowed to run the ProcessCall, so need to decrement the counter here
+                scheduledCalls.remove(call);
                 delayedCount.decrementAndGet();
                 if (isCallerRunsWhenRejected()) {
                     if (!isRunAllowed()) {
@@ -273,10 +284,32 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
         super.doStart();
     }
 
+    /**
+     * Fails the exchanges whose delayed task has not started yet. They would never be routed on once the thread pool is
+     * shut down (such as when the route is removed after the shutdown timeout ran out), and their callers would wait
+     * for ever. Only called once doShutdown shut down the thread pool of this EIP: a thread pool of the user still runs
+     * the tasks.
+     */
+    private void failScheduledCalls() {
+        for (ProcessCall call : scheduledCalls) {
+            if (scheduledCalls.remove(call)) {
+                delayedCount.decrementAndGet();
+                Exchange exchange = call.exchange;
+                LOG.debug("Delayed task is not run as the processor is shut down, for exchangeId: {}",
+                        exchange.getExchangeId());
+                exchange.setException(new RouteStoppingException("The delayed exchange is not run: the Delay is shut down"));
+                call.callback.done(false);
+            }
+        }
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownExecutorService && executorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            // the tasks still queued in the thread pool that was shut down never run (a thread pool of the user
+            // is not shut down here, and still runs them)
+            failScheduledCalls();
         }
         super.doShutdown();
     }

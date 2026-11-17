@@ -183,14 +183,16 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
      */
     protected boolean processAsynchronously(
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
+        AsyncCall call = newAsyncCall(exchange, callback);
         try {
             if (LOG.isTraceEnabled()) {
                 exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIME, TimeSource.nanoTime());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
-            asyncExecutor.submit(() -> process(exchange, callback));
+            asyncExecutor.submit(call);
             return false;
         } catch (final RejectedExecutionException e) {
+            call.rejected();
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
@@ -214,6 +216,9 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
     protected void doShutdown() throws Exception {
         if (shutdownAsyncExecutor && asyncExecutor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(asyncExecutor);
+            // the tasks still queued in the thread pool that was shut down never run (a thread pool of the user
+            // is not shut down here, and still runs them)
+            failAsyncCalls();
         }
         states.clear();
         super.doShutdown();
