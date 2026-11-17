@@ -93,12 +93,16 @@ public class SendReifierExpressionInUriTest extends ContextTestSupport {
                 .contains("expression-in-uri-mock", "mock:out-${header.id}", "${header.id}", "toD");
 
         template.sendBodyAndHeader("direct:mock", "hello", "id", "1");
+        template.sendBodyAndHeader("direct:mock", "hello", "id", "2");
 
+        // the WARN comes once, when the route is created, not for each message
+        assertThat(warnings).hasSize(1);
         // the behaviour is unchanged: one endpoint, named by the text of the expression, gets every message
         assertThat(context.hasEndpoint("mock://out-1")).isNull();
+        assertThat(context.hasEndpoint("mock://out-2")).isNull();
         Endpoint literal = context.hasEndpoint("mock://out-$%7Bheader.id%7D");
         assertThat(literal).isInstanceOf(MockEndpoint.class);
-        assertThat(((MockEndpoint) literal).getReceivedCounter()).isEqualTo(1);
+        assertThat(((MockEndpoint) literal).getReceivedCounter()).isEqualTo(2);
     }
 
     @Test

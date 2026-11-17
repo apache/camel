@@ -120,8 +120,8 @@ public class SendReifier extends ProcessorReifier<ToDefinition> {
 
     /**
      * The first Simple expression in the path of the uri (what comes before its options), or null when there is none.
-     * The path of the language component is a script, and a :#${...} or :#in:${...} is a parameter the sql components
-     * bind for each message, not a part of the address.
+     * Null for the language component too, whose path is a script. A :#${...} or :#in:${...} is skipped: it is a
+     * parameter the sql components bind for each message, not a part of the address.
      */
     private static String expressionInPath(String uri) {
         int question = uri.indexOf('?');

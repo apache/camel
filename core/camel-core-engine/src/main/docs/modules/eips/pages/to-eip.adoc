@@ -147,10 +147,12 @@ the xref:components:eips:toD-eip.adoc[toD] or xref:components:eips:recipientList
 
 The route still starts: the `to` sends every message to one endpoint, named by the text of the expression.
 Camel logs a WARN for such a `to` when it creates the route, and the WARN says to use `toD`.
-Only the endpoint path is checked, not the options after the `?`. A component that evaluates the expressions
-in its path for each message is left alone, such as xref:ROOT:language-component.adoc[Language] and
-xref:ROOT:sql-stored-component.adoc[SQL Stored Procedure], as are the `:#${...}` parameters of the
-xref:ROOT:sql-component.adoc[SQL] component.
+Only the endpoint path is checked, not the options after the `?`. Left alone are the
+xref:ROOT:language-component.adoc[Language] component, whose path is a script, the `:#${...}` parameters of the
+xref:ROOT:sql-component.adoc[SQL] component, and the components that evaluate their path for each message: they mark
+their path option with `@Metadata(supportSimpleExpression = true)`, as
+xref:ROOT:sql-stored-component.adoc[SQL Stored Procedure], xref:ROOT:aws2-s3-component.adoc[AWS S3] and
+xref:ROOT:micrometer-component.adoc[Micrometer] do.
 
 [TIP]
 ====
