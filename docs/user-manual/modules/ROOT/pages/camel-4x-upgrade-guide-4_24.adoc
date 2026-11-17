@@ -6807,6 +6807,23 @@ The consumers now call `processCommit(Exchange, String)` with the name of the ob
 of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
 the new method instead. `processCommit(Exchange)` is deprecated.
 
+=== camel-mongodb - connectionUriString without hosts creates the client of the endpoint
+
+An endpoint that sets `connectionUriString` without `hosts` now creates its client from the connection string. Before,
+the connection string was not used: the endpoint used the `MongoClient` of the component (autowired when the registry
+holds exactly one) or else the `MongoClient` bean named by the endpoint path, and failed to start when there was none.
+To keep using a client bean, remove `connectionUriString` from the endpoint.
+
+Each endpoint with `connectionUriString` or `hosts` creates its own client and connection pool, also when other
+endpoints (for example with another collection or operation) use the same connection string. To share one client
+between endpoints, bind a `MongoClient` and have the endpoints use it (the endpoint path or the `mongoConnection`
+option) instead of `connectionUriString` or `hosts`.
+
+The endpoint now closes the client it created when it stops, for example when its route is removed or reloaded, or when
+the `CamelContext` stops, and creates a new one when it is started again. Before, a client created from `hosts` stayed
+open. A client the endpoint did not create (the `mongoConnection` option, the client of the component, or the bean
+named by the endpoint path) is not closed.
+
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
