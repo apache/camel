@@ -386,6 +386,10 @@ API].
  You need to specify the operation name in the message header and
 prepare the parameter in the message body, the camel-cxfrs producer will
  generate the right REST request for you.
+Without the `CamelCxfOperationName` header, the producer fails with a `NoSuchMethodException` that names it.
+
+The `CamelCxfOperationName` header replaced the `operationName` header. The producer does not read the former name,
+and the default header filter strategy does not send it to the service as an HTTP header.
 
 Here is an example:
 
