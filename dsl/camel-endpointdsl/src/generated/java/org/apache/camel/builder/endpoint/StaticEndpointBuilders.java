@@ -584,7 +584,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -593,7 +594,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sls:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSlsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
      * 
@@ -605,7 +609,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -614,7 +619,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sls:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSlsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
      * 

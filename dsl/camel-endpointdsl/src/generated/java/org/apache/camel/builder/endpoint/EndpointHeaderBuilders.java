@@ -188,7 +188,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
