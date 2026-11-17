@@ -203,6 +203,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
         warnIfIdempotentOptionsUnused();
+        warnIfConsumerOptionsConflict();
 
         if (!getConfiguration().isUseList() && getFileName() == null) {
             throw new IllegalArgumentException(

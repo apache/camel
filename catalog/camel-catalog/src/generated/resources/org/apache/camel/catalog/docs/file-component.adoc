@@ -34,6 +34,19 @@ option, e.g., by setting `fileName=thefilename`.
  Also, the starting directory must not contain dynamic expressions with
 `${ }` placeholders. Again use the `fileName` option to specify the
 dynamic part of the filename.
+The directory is fixed when the endpoint is created: to write to a dynamic directory use `toD`, and to read from one
+use `pollEnrich` with a simple expression (`pollEnrich().simple("...")` in Java), as `pollEnrich("...")` uses the
+uri as is.
+
+The `fileName` option of a consumer is a file name, not a pattern: `+fileName=*.csv+` only consumes a file named
+`+*.csv+`. To consume the files that match a pattern use `antInclude` (wildcards such as `+*.csv+`), `include` (a regular
+expression such as `+.*\.csv+`) or `includeExt` (file extensions such as `csv`). The consumer logs a WARN when a fixed
+`fileName` has the wildcards `+*+` or `+?+`.
+
+The directory is a directory of the file system: `file:classpath:data` is a directory named `classpath:data` in the
+working directory, not a directory of the classpath. To read a classpath resource use the
+xref:language-component.adoc[Language] component, such as `language:constant:resource:classpath:data/order.json`.
+The file component logs a WARN when the directory starts with `classpath:` or `resource:`.
 
 [WARNING]
 ====
@@ -105,6 +118,10 @@ YAML::
             uri: bean:handleOrder
 ----
 ====
+
+NOTE: `noop=true` leaves the files in place, so it does not go with `delete=true` or `move`. With `delete=true`
+the files are deleted (delete wins), and with `move` they are not moved (noop wins); the consumer logs a WARN for both.
+`delete=true` with `move` fails when the consumer is created.
 
 [NOTE]
 ====
@@ -1311,6 +1328,11 @@ YAML::
 === Filtering Strategies
 
 Camel supports pluggable filtering strategies. They are described below.
+
+The `include` and `exclude` options are regular expressions matched against the file name (case-insensitive), such
+as `+include=.*\.xml+`. A wildcard such as `+*.xml+` is not a valid regular expression, and the endpoint fails with a
+message that says so. Use `antInclude` and `antExclude` for wildcards, or `includeExt` and `excludeExt` for file
+extensions.
 
 ==== Filter using the `GenericFilter`
 
