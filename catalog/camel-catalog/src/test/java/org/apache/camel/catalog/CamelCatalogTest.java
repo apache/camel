@@ -1605,6 +1605,16 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaFc() {
+        String uri = "alibaba-fc:invokeFunction?endpoint=12345.cn-hangzhou.fc.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        ComponentModel model = catalog.componentModel("alibaba-fc");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaFcOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateApiEndpoint() {
         // there is a type converter that converts from and to to phone number
         String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
