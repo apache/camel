@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * rejected the login, as each rejected login counts towards the lockout policy of the server. Other connection failures
  * are retried as before. The WARN of the consumer says why it cannot connect.
  */
+@Isolated
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
