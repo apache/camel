@@ -94,8 +94,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private String location;
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " This takes precedence over the sslContextParameters of the component,"
+                                                + " so endpoints of the same component can use different instances.")
     protected SSLContextParameters sslContextParameters;
 
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
@@ -150,7 +150,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                             + " If the component has disabled cookie management then this option is disabled too.")
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer,security",
-              description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
+              description = "If this option is true, camel-http sends the Basic credentials or the Bearer token with the first"
+                            + " request, without waiting for the server to ask for them with a 401 response.")
     private boolean authenticationPreemptive;
     @UriParam(label = "producer,advanced", description = "Whether the HTTP GET should include the message body or not."
                                                          + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
@@ -547,7 +548,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * If this option is true, camel-http sends preemptive basic authentication to the server.
+     * If this option is true, camel-http sends the Basic credentials or the Bearer token with the first request,
+     * without waiting for the server to ask for them with a 401 response.
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
@@ -638,9 +640,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * To configure security using SSLContextParameters. Important: Only one instance of
-     * org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more
-     * different instances, you need to define a new HttpComponent per instance you need.
+     * To configure security using SSLContextParameters. This takes precedence over the sslContextParameters of the
+     * component, so endpoints of the same component can use different instances.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

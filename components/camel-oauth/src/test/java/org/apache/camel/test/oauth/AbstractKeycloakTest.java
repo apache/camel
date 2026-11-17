@@ -24,7 +24,6 @@ import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assumptions;
 
 import static org.apache.camel.test.oauth.KeycloakAdmin.AdminParams;
@@ -34,10 +33,6 @@ import static org.apache.camel.test.oauth.KeycloakAdmin.UserParams;
 
 abstract class AbstractKeycloakTest {
 
-    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
-    static final int port = SERVER_PORT.getPort();
-    static final String APP_BASE_URL = "http://127.0.0.1:" + port + "/";
-
     static final String KEYCLOAK_REALM = "camel";
     static final String KEYCLOAK_BASE_URL = "https://oauth.localtest.me/kc";
     static final String KEYCLOAK_REALM_URL = KEYCLOAK_BASE_URL + "/realms/" + KEYCLOAK_REALM;
@@ -46,6 +41,17 @@ abstract class AbstractKeycloakTest {
 
     private KeycloakAdmin admin;
     private boolean removeRealm;
+
+    /**
+     * Returns the HTTP port used by this test class. Each concrete subclass must declare its own
+     * {@code static final AvailablePortFinder.Port} field and return its port number here, so that test classes running
+     * in the same JVM fork do not compete for the same port.
+     */
+    protected abstract int getPort();
+
+    protected String getAppBaseUrl() {
+        return "http://127.0.0.1:" + getPort() + "/";
+    }
 
     protected KeycloakAdmin getKeycloakAdmin() {
         if (admin == null) {
@@ -69,9 +75,9 @@ abstract class AbstractKeycloakTest {
                             .setLastName("Brown"))
                     .withClient(new ClientParams(TEST_CLIENT_ID)
                             .setClientSecret(TEST_CLIENT_SECRET)
-                            .setLogoutRedirectUri(APP_BASE_URL)
+                            .setLogoutRedirectUri(getAppBaseUrl())
                             .setServiceAccountsEnabled(true)
-                            .setRedirectUri(APP_BASE_URL + "auth"));
+                            .setRedirectUri(getAppBaseUrl() + "auth"));
             removeRealm = true;
         }
     }
@@ -82,7 +88,7 @@ abstract class AbstractKeycloakTest {
         }
     }
 
-    protected static Undertow createUndertowServer() throws ServletException {
+    protected static Undertow createUndertowServer(int port) throws ServletException {
         RestAssured.port = port;
 
         var deploymentInfo = Servlets.deployment()

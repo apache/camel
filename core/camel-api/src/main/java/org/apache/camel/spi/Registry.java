@@ -68,7 +68,7 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -86,7 +86,7 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -103,10 +103,10 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
-     * <p/>
+     * <p>
      * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then
      * use {@link #bindAsPrototype(String, Class, Supplier)} instead.
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * @param  id                    the id of the bean
@@ -118,10 +118,10 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
-     * <p/>
+     * <p>
      * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then
      * use {@link #bindAsPrototype(String, Class, Supplier)} instead.
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -140,9 +140,9 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
-     * <p/>
+     * <p>
      * Notice that the supplier will be called each time the bean is being looked up (not cached).
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * @param  id                    the id of the bean

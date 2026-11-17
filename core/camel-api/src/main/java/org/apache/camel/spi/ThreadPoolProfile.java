@@ -29,16 +29,16 @@ import org.jspecify.annotations.Nullable;
 /**
  * A named, reusable configuration template for {@link java.util.concurrent.ThreadPoolExecutor} settings managed by the
  * {@link ExecutorServiceManager}.
- * <p/>
+ * <p>
  * Rather than hard-coding pool parameters at each call site, Camel components and EIPs declare a profile id (or use the
  * default profile). The {@link ExecutorServiceManager} looks up the profile and passes it to the
  * {@link ThreadPoolFactory} to create the actual pool. The default profile provides baseline values (typically
  * {@code poolSize=10, maxPoolSize=20, keepAlive=60s, maxQueueSize=1000}) that are applied whenever a parameter is not
  * explicitly set on a custom profile.
- * <p/>
+ * <p>
  * A profile is also the vehicle for configuring the rejected-execution policy via {@link #setRejectedPolicy}, which
  * determines what happens when the work queue is full and all threads are busy.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
  *
  * @see ExecutorServiceManager
@@ -94,7 +94,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Whether this profile is the default profile (there can only be one).
      *
-     * @return <tt>true</tt> if its the default profile, <tt>false</tt> otherwise
+     * @return <code>true</code> if it's the default profile, <code>false</code> otherwise
      */
     public Boolean isDefaultProfile() {
         return defaultProfile != null && defaultProfile;
@@ -183,8 +183,10 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     /**
      * Gets the maximum number of tasks in the work queue.
-     * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * <p>
+     * Use <code>0</code> or <code>-1</code> for no work queue: each task goes directly to a thread, up to the max pool
+     * size, and then the rejected policy applies. Use <code>Integer.MAX_VALUE</code> for an unbounded queue. For a
+     * scheduled thread pool, <code>0</code> or <code>-1</code> means the queue is not limited.
      *
      * @return the max queue size
      */
@@ -194,8 +196,10 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     /**
      * Sets the maximum number of tasks in the work queue.
-     * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * <p>
+     * Use <code>0</code> or <code>-1</code> for no work queue: each task goes directly to a thread, up to the max pool
+     * size, and then the rejected policy applies. Use <code>Integer.MAX_VALUE</code> for an unbounded queue. For a
+     * scheduled thread pool, <code>0</code> or <code>-1</code> means the queue is not limited.
      *
      * @param maxQueueSize the max queue size
      */
@@ -215,7 +219,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Sets whether to allow core threads to timeout
      *
-     * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @param allowCoreThreadTimeOut <code>true</code> to allow timeout
      */
     public void setAllowCoreThreadTimeOut(@Nullable Boolean allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
@@ -233,7 +237,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Gets the handler for tasks which cannot be executed by the thread pool.
      *
-     * @return the handler, or <tt>null</tt> if none defined
+     * @return the handler, or <code>null</code> if none defined
      */
     public @Nullable RejectedExecutionHandler getRejectedExecutionHandler() {
         if (rejectedPolicy != null) {

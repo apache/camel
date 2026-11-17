@@ -105,6 +105,16 @@ public class JpaWithNamedQueryTest {
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertReceivedResult(receivedExchange));
 
+        // Stop the consumer before the final assertion to prevent a deadlock between the test
+        // thread (reading entity fields) and the consumer polling thread (calling
+        // entityManager.clear()), which both contend on OpenJPA internal BrokerImpl and
+        // StateManagerImpl locks. See CAMEL-23360.
+        ServiceHelper.stopService(consumer);
+        // Wait for any in-flight poll to complete: stopService() sends a cancel signal but does
+        // not block until the poll thread exits. Without this, a poll already running when we
+        // stop can still reach entityManager.clear() concurrently with the assertion block below.
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !((JpaConsumer) consumer).isPolling());
+
         // lets now test that the database is updated.
         // the consumer updates the row from within its own transaction, so we poll until that
         // transaction has committed - we cannot read it while that transaction is still active

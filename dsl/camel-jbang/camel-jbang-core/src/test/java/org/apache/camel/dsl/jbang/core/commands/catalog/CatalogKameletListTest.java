@@ -87,6 +87,14 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void filterByAPartOfTheName() throws Exception {
+        // the description of timer-source does not have the text, as camel catalog component a part of the name is enough
+        assertThat(command("--filter=Timer").doCall()).isZero();
+
+        assertThat(printer.getOutput()).contains("timer-source").doesNotContain("kafka-source", "log-action");
+    }
+
+    @Test
     void noResultsForTheFilter() throws Exception {
         assertThat(command("--filter=mqtt").doCall()).isZero();
 

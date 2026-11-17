@@ -191,11 +191,14 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the receipt handle to delete the message with once the exchange is done. It is taken now, as the route
+            // may remove the headers or replace the message before it ends
+            final String receiptHandle = exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    processCommit(exchange, receiptHandle);
                 }
 
                 @Override
@@ -254,14 +257,26 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
+     * Strategy to delete the message after being processed, with the receipt handle of the
+     * {@link Sqs2Constants#RECEIPT_HANDLE} header.
+     *
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
+     */
+    @Deprecated(since = "4.24.0")
+    protected void processCommit(Exchange exchange) {
+        processCommit(exchange, exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+    }
+
+    /**
      * Strategy to delete the message after being processed.
      *
-     * @param exchange the exchange
+     * @param exchange      the exchange
+     * @param receiptHandle the receipt handle the message of the exchange was received with
      */
-    protected void processCommit(Exchange exchange) {
+    protected void processCommit(Exchange exchange, String receiptHandle) {
         try {
             if (shouldDelete(exchange)) {
-                String receiptHandle = exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest.Builder deleteRequest
                         = DeleteMessageRequest.builder().queueUrl(getQueueUrl()).receiptHandle(receiptHandle);
 

@@ -50,7 +50,7 @@ public final class ServiceHelper {
 
     /**
      * Builds the given {@code value} if it's a {@link Service} or a collection of it.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void buildService(@Nullable Object value) {
@@ -79,7 +79,7 @@ public final class ServiceHelper {
 
     /**
      * Initializes the given {@code value} if it's a {@link Service} or a collection of it.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void initService(@Nullable Object value) {
@@ -108,7 +108,7 @@ public final class ServiceHelper {
 
     /**
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void startService(@Nullable Object value) {
@@ -121,7 +121,7 @@ public final class ServiceHelper {
 
     /**
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void startService(@Nullable Service service) {
@@ -132,7 +132,7 @@ public final class ServiceHelper {
 
     /**
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void startService(@Nullable Iterable<?> value) {
@@ -160,7 +160,7 @@ public final class ServiceHelper {
     /**
      * Stops each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise this
      * method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while stopping the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
      *
@@ -176,7 +176,7 @@ public final class ServiceHelper {
 
     /**
      * Stops the given {@code value}, rethrowing the first exception caught.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      *
      * @see Service#stop()
@@ -192,7 +192,7 @@ public final class ServiceHelper {
 
     /**
      * Stops the given {@code value}, rethrowing the first exception caught.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      *
      * @see Service#stop()
@@ -206,7 +206,7 @@ public final class ServiceHelper {
 
     /**
      * Stops the given {@code value}, rethrowing the first exception caught.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      *
      * @see Service#stop()
@@ -223,7 +223,7 @@ public final class ServiceHelper {
     /**
      * Stops each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise this
      * method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while stopping the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
      *
@@ -254,7 +254,7 @@ public final class ServiceHelper {
     /**
      * Stops and shutdowns each element of the given {@code services} if {@code services} itself is not {@code null},
      * otherwise this method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while stopping/shutting down the elements one after the other this method
      * would rethrow the <b>first</b> such exception being thrown.
      *
@@ -270,7 +270,7 @@ public final class ServiceHelper {
 
     /**
      * Stops and shutdowns the given {@code service}, rethrowing the first exception caught.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      *
      * @see #stopService(Object)
@@ -288,7 +288,7 @@ public final class ServiceHelper {
 
     /**
      * Stops and shutdowns the given {@code service}, rethrowing the first exception caught.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code value} is {@code null}.
      *
      * @see #stopService(Object)
@@ -306,7 +306,7 @@ public final class ServiceHelper {
     /**
      * Stops and shutdowns each element of the given {@code services} if {@code services} itself is not {@code null},
      * otherwise this method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while stopping/shutting down the elements one after the other this method
      * would rethrow the <b>first</b> such exception being thrown.
      *
@@ -340,7 +340,7 @@ public final class ServiceHelper {
     /**
      * Resumes each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise this
      * method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while resuming the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
      *
@@ -372,21 +372,20 @@ public final class ServiceHelper {
 
     /**
      * Resumes the given {@code service}.
-     * <p/>
+     * <p>
      * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService}
      * then its {@link org.apache.camel.SuspendableService#resume()} is called but <b>only</b> if {@code service} is
      * already {@link #isSuspended(Object) suspended}.
-     * <p/>
+     * <p>
      * If {@code service} is <b>not</b> a {@link org.apache.camel.Suspendable} and
      * {@link org.apache.camel.SuspendableService} then its {@link org.apache.camel.Service#start()} is called.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code service} is {@code null}.
      *
-     * @param  service   the service
-     * @return           <tt>true</tt> if either <tt>resume</tt> method or {@link #startService(Object)} was called,
-     *                   <tt>false</tt> otherwise.
-     * @throws Exception is thrown if error occurred
-     * @see              #startService(Object)
+     * @param  service the service
+     * @return         <code>true</code> if either <code>resume</code> method or {@link #startService(Object)} was
+     *                 called, <code>false</code> otherwise.
+     * @see            #startService(Object)
      */
     public static boolean resumeService(@Nullable Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService ss) {
@@ -406,7 +405,7 @@ public final class ServiceHelper {
     /**
      * Suspends each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise
      * this method would return immediately.
-     * <p/>
+     * <p>
      * If there's any exception being thrown while suspending the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
      *
@@ -438,21 +437,20 @@ public final class ServiceHelper {
 
     /**
      * Suspends the given {@code service}.
-     * <p/>
+     * <p>
      * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService}
      * then its {@link org.apache.camel.SuspendableService#suspend()} is called but <b>only</b> if {@code service} is
      * <b>not</b> already {@link #isSuspended(Object) suspended}.
-     * <p/>
+     * <p>
      * If {@code service} is <b>not</b> a {@link org.apache.camel.Suspendable} and
      * {@link org.apache.camel.SuspendableService} then its {@link org.apache.camel.Service#stop()} is called.
-     * <p/>
+     * <p>
      * Calling this method has no effect if {@code service} is {@code null}.
      *
-     * @param  service   the service
-     * @return           <tt>true</tt> if either the <tt>suspend</tt> method or {@link #stopService(Object)} was called,
-     *                   <tt>false</tt> otherwise.
-     * @throws Exception is thrown if error occurred
-     * @see              #stopService(Object)
+     * @param  service the service
+     * @return         <code>true</code> if either the <code>suspend</code> method or {@link #stopService(Object)} was
+     *                 called, <code>false</code> otherwise.
+     * @see            #stopService(Object)
      */
     public static boolean suspendService(@Nullable Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService ss) {
@@ -472,7 +470,7 @@ public final class ServiceHelper {
     /**
      * Is the given service stopping or already stopped?
      *
-     * @return <tt>true</tt> if stopping or already stopped, <tt>false</tt> otherwise
+     * @return <code>true</code> if stopping or already stopped, <code>false</code> otherwise
      * @see    StatefulService#isStopping()
      * @see    StatefulService#isStopped()
      */
@@ -487,7 +485,7 @@ public final class ServiceHelper {
     /**
      * Is the given service stopping or already stopped?
      *
-     * @return <tt>true</tt> if stopping or already stopped, <tt>false</tt> otherwise
+     * @return <code>true</code> if stopping or already stopped, <code>false</code> otherwise
      * @see    StatefulService#isStopping()
      * @see    StatefulService#isStopped()
      */
@@ -502,7 +500,7 @@ public final class ServiceHelper {
     /**
      * Is the given service starting or already started?
      *
-     * @return <tt>true</tt> if starting or already started, <tt>false</tt> otherwise
+     * @return <code>true</code> if starting or already started, <code>false</code> otherwise
      * @see    StatefulService#isStarting()
      * @see    StatefulService#isStarted()
      */
@@ -517,7 +515,7 @@ public final class ServiceHelper {
     /**
      * Is the given service starting or already started?
      *
-     * @return <tt>true</tt> if starting or already started, <tt>false</tt> otherwise
+     * @return <code>true</code> if starting or already started, <code>false</code> otherwise
      * @see    StatefulService#isStarting()
      * @see    StatefulService#isStarted()
      */
@@ -532,7 +530,7 @@ public final class ServiceHelper {
     /**
      * Is the given service suspending or already suspended?
      *
-     * @return <tt>true</tt> if suspending or already suspended, <tt>false</tt> otherwise
+     * @return <code>true</code> if suspending or already suspended, <code>false</code> otherwise
      * @see    StatefulService#isSuspending()
      * @see    StatefulService#isSuspended()
      */
@@ -547,7 +545,7 @@ public final class ServiceHelper {
     /**
      * Is the given service suspending or already suspended?
      *
-     * @return <tt>true</tt> if suspending or already suspended, <tt>false</tt> otherwise
+     * @return <code>true</code> if suspending or already suspended, <code>false</code> otherwise
      * @see    StatefulService#isSuspending()
      * @see    StatefulService#isSuspended()
      */
@@ -561,7 +559,7 @@ public final class ServiceHelper {
 
     /**
      * Gathers all child services by navigating the service to recursively gather all child services.
-     * <p/>
+     * <p>
      * The returned set does <b>not</b> include the children being error handler.
      *
      * @param  service the service

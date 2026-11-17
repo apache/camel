@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,6 +49,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -177,6 +182,21 @@ class WebsiteInstallTest {
         }
     }
 
+    // the headers and half of the body, and then nothing more, while the connection stays open
+    static void serveHalfThenStall(ServerSocket rawServer, byte[] fullBody, CountDownLatch release) {
+        try (Socket client = rawServer.accept()) {
+            String headers = "HTTP/1.1 200 OK\r\nContent-Length: " + fullBody.length + "\r\nConnection: close\r\n\r\n";
+            OutputStream out = client.getOutputStream();
+            out.write(headers.getBytes(StandardCharsets.US_ASCII));
+            out.write(fullBody, 0, fullBody.length / 2);
+            out.flush();
+            release.await(60, TimeUnit.SECONDS);
+        } catch (IOException ignored) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     static Stream<Arguments> invalidManifests() {
         String hash = "a".repeat(64);
         return Stream.of(
@@ -205,6 +225,7 @@ class WebsiteInstallTest {
 
     @Nested
     @DisabledOnOs(OS.WINDOWS)
+    @Execution(ExecutionMode.CONCURRENT)
     class PosixShell {
 
         private static final Path SCRIPT = Paths.get("src/install/install.sh").toAbsolutePath();
@@ -1100,6 +1121,39 @@ class WebsiteInstallTest {
 
                 assertNotEquals(0, r.exit());
                 assertFalse(Files.exists(home.resolve(".local/bin/camel")));
+            }
+        }
+
+        @Test
+        void givesUpOnAStalledDownload(@TempDir Path temp) throws Exception {
+            CountDownLatch release = new CountDownLatch(1);
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"));
+                 ServerSocket rawServer = new ServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                Path tar = fixture.safeTar("1.0.0");
+                Path zip = fixture.safeZip("1.0.0");
+                fixture.publishManifest("/camel-cli/releases/latest.properties", "1.0.0", tar, zip);
+
+                byte[] tarBytes = Files.readAllBytes(tar);
+                Thread server = new Thread(() -> serveHalfThenStall(rawServer, tarBytes, release));
+                server.setDaemon(true);
+                server.start();
+
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("CAMEL_INSTALL_MAVEN_BASE_URL", "http://127.0.0.1:" + rawServer.getLocalPort());
+                // the download gives up after 2 seconds without data, instead of 60
+                env.put("CAMEL_INSTALL_STALL_TIMEOUT", "2");
+
+                long start = System.nanoTime();
+                WebsiteInstallerFixture.Result r = fixture.run(List.of("/bin/sh", SCRIPT.toString()), env);
+
+                // CAMEL-27004: curl waited for the rest of the body for as long as the server kept the connection open
+                assertNotEquals(0, r.exit());
+                assertTrue(Duration.ofNanos(System.nanoTime() - start).compareTo(Duration.ofSeconds(30)) < 0,
+                        "the installer gave up on the stalled download");
+                assertFalse(Files.exists(home.resolve(".local/bin/camel")));
+            } finally {
+                release.countDown();
             }
         }
 

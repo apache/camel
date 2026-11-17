@@ -71,7 +71,7 @@ public class RestConfigurationDefinition {
               label = "consumer,advanced", javaType = "java.lang.Boolean")
     private String useXForwardHeaders;
     @XmlAttribute
-    @Metadata(description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.",
+    @Metadata(description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document.",
               label = "producer,advanced")
     private String producerApiDoc;
     @XmlAttribute
@@ -481,10 +481,10 @@ public class RestConfigurationDefinition {
 
     /**
      * Sets the location of the api document the REST producer will use to validate the REST uri and query parameters
-     * are valid accordingly to the api document.
-     * <p/>
-     * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
-     * <tt>http:</tt> to refer to resources to load from file or http url.
+     * are valid according to the api document.
+     * <p>
+     * The location of the api document is loaded from classpath by default, but you can use <code>file:</code> or
+     * <code>http:</code> to refer to resources to load from file or http url.
      */
     public RestConfigurationDefinition producerApiDoc(String apiDoc) {
         setProducerApiDoc(apiDoc);
@@ -492,12 +492,12 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * The path, such as <tt>/api-doc</tt>, where the REST DSL serves the API documentation of the REST services, as an
-     * OpenAPI document.
-     * <p/>
-     * The API documentation is only served when this option is set. This requires <tt>camel-openapi-java</tt> on the
-     * classpath. The document is JSON by default, or YAML when the request path ends with <tt>.yaml</tt>. The path is
-     * relative to contextPath, when that option is set.
+     * The path, such as <code>/api-doc</code>, where the REST DSL serves the API documentation of the REST services, as
+     * an OpenAPI document.
+     * <p>
+     * The API documentation is only served when this option is set. This requires <code>camel-openapi-java</code> on
+     * the classpath. The document is JSON by default, or YAML when the request path ends with <code>.yaml</code>. The
+     * path is relative to contextPath, when that option is set.
      */
     public RestConfigurationDefinition apiContextPath(String contextPath) {
         setApiContextPath(contextPath);
@@ -506,7 +506,7 @@ public class RestConfigurationDefinition {
 
     /**
      * Sets the route id to use for the route that services the REST API.
-     * <p/>
+     * <p>
      * The route will by default use an auto assigned route id.
      */
     public RestConfigurationDefinition apiContextRouteId(String apiContextRouteId) {
@@ -536,8 +536,8 @@ public class RestConfigurationDefinition {
 
     /**
      * Sets a leading context-path the REST services will be using.
-     * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
+     * <p>
+     * This can be used when using components such as <code>camel-servlet</code> where the deployed web application is
      * deployed using a context-path.
      */
     public RestConfigurationDefinition contextPath(String contextPath) {
@@ -645,7 +645,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the
      * response.
      */
     public RestConfigurationDefinition enableCORS(boolean enableCORS) {
@@ -654,7 +654,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the
      * response.
      */
     public RestConfigurationDefinition enableCORS(String enableCORS) {
@@ -688,7 +688,7 @@ public class RestConfigurationDefinition {
      * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
      * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>true</tt>.
+     * This option is default <code>true</code>.
      */
     public RestConfigurationDefinition inlineRoutes(String inlineRoutes) {
         setInlineRoutes(inlineRoutes);
@@ -703,7 +703,7 @@ public class RestConfigurationDefinition {
      * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
      * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>true</tt>.
+     * This option is default <code>true</code>.
      */
     public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
         setInlineRoutes(inlineRoutes ? "true" : "false");
@@ -712,7 +712,7 @@ public class RestConfigurationDefinition {
 
     /**
      * To use a specific json data format
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *
@@ -726,7 +726,7 @@ public class RestConfigurationDefinition {
 
     /**
      * To use a specific XML data format
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *
@@ -740,8 +740,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on component level
-     * <p/>
-     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
+     * <p>
+     * The value can use <code>#</code> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition componentProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -753,8 +753,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on endpoint level
-     * <p/>
-     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
+     * <p>
+     * The value can use <code>#</code> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition endpointProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -766,8 +766,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on consumer level
-     * <p/>
-     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
+     * <p>
+     * The value can use <code>#</code> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition consumerProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -779,8 +779,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on data format level
-     * <p/>
-     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
+     * <p>
+     * The value can use <code>#</code> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition dataFormatProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -791,7 +791,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * For configuring an api property, such as <tt>api.title</tt>, or <tt>api.version</tt>.
+     * For configuring an api property, such as <code>api.title</code>, or <code>api.version</code>.
      */
     public RestConfigurationDefinition apiProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();

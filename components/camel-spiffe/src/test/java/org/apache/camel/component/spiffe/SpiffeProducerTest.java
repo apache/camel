@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SpiffeProducerTest extends CamelTestSupport {
@@ -135,6 +137,52 @@ class SpiffeProducerTest extends CamelTestSupport {
         assertThat(out.getMessage().getBody(String.class)).isEqualTo("the-jwt-token");
         assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
         assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(expiry);
+    }
+
+    @Test
+    void fetchJwtSvidMintsTheTokenForTheConfiguredLocalIdentity() throws Exception {
+        SpiffeId billing = SpiffeId.parse("spiffe://example.org/billing");
+        SpiffeId id = spiffeId("spiffe://example.org/billing");
+        Date expiry = new Date();
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getToken()).thenReturn("the-billing-token");
+        when(svid.getSpiffeId()).thenReturn(id);
+        when(svid.getExpiry()).thenReturn(expiry);
+        when(client.fetchJwtSvid(billing, "my-audience")).thenReturn(svid);
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid&audience=my-audience"
+                                        + "&localSpiffeId=spiffe://example.org/billing",
+                e -> e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity"));
+
+        assertThat(out.getMessage().getBody(String.class)).isEqualTo("the-billing-token");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/billing");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(expiry);
+        // the default identity is never asked for
+        verify(client, never()).fetchJwtSvid("my-audience");
+    }
+
+    @Test
+    void fetchJwtSvidClearsTheIdentityHeadersWhenItFails() throws Exception {
+        when(client.fetchJwtSvid("my-audience")).thenThrow(new IllegalStateException("workload api down"));
+
+        Exchange failed = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid&audience=my-audience", e -> {
+                    e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity");
+                    e.getMessage().setHeader(SpiffeConstants.EXPIRY, new Date());
+                });
+        assertThat(failed.getException()).isInstanceOf(IllegalStateException.class);
+        assertThat(failed.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+        assertThat(failed.getMessage().getHeader(SpiffeConstants.EXPIRY)).isNull();
+
+        // the same when the audience is missing, which fails before the Workload API is asked
+        Exchange noAudience = template.request("spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid", e -> {
+            e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity");
+            e.getMessage().setHeader(SpiffeConstants.EXPIRY, new Date());
+        });
+        assertThat(noAudience.getException()).isNotNull();
+        assertThat(noAudience.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+        assertThat(noAudience.getMessage().getHeader(SpiffeConstants.EXPIRY)).isNull();
     }
 
     @Test

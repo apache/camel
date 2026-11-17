@@ -49,7 +49,7 @@ public final class EventHubsConstants {
     public static final String OFFSET = HEADER_PREFIX + "Offset";
     @Metadata(label = "consumer",
               description = "It sets the instant, in UTC, of when the event was enqueued in the Event Hub partition. This is only present on a received `EventData`.",
-              javaType = "Instant")
+              javaType = "java.time.Instant")
     public static final String ENQUEUED_TIME = HEADER_PREFIX + "EnqueuedTime";
     @Metadata(label = "consumer",
               description = "It sets the sequence number assigned to the event when it was enqueued in the associated Event Hub partition. "

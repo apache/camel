@@ -789,7 +789,12 @@ spec].
 For the `exchange.in.header` the following rules apply for the header
 **keys**:
 
-* Keys starting with `JMS` or `JMSX` are reserved.
+* Keys starting with `JMSX` are sent as properties, except those that the JMS provider sets, such as
+`JMSXDeliveryCount` or `JMSXUserID`.
+* Keys starting with `JMS_` and a vendor name, such as `JMS_IBM_Character_Set`, are sent as vendor-specific properties.
+See <<_vendor_specific_properties,Vendor-specific properties>>.
+* Other keys starting with `JMS` and a letter, such as `JMSType` or `JMSCorrelationID`, are reserved for the standard
+JMS headers: Camel sets the ones it supports on the message and drops the others.
 * `exchange.in.headers` keys must be literals and all be valid Java
 identifiers (do not use dots in the key name).
 * Camel replaces dots & hyphens and the reverse when consuming JMS
@@ -816,6 +821,21 @@ at *DEBUG* level if it drops a given header value. For example:
 2008-07-09 06:43:04,046 [main           ] DEBUG JmsBinding
   - Ignoring non primitive header: order of class: org.apache.camel.component.jms.issues.DummyOrder with value: DummyOrder{orderId=333, itemId=4444, quantity=2}
 ----
+
+==== Vendor-specific properties
+
+The JMS specification keeps the `JMS_<vendor>_` prefix for the properties of a JMS provider, such as
+`JMS_IBM_Character_Set` of IBM MQ. Set them as message headers: Camel sends such a header as a property of the JMS
+message, while it does not send exchange properties.
+
+Since Camel 4.22, when the JMS provider refuses a vendor-specific property, for example because it is read-only,
+Camel logs a WARN and sends the message without it.
+
+A JMS property holds only primitives and strings, so Camel drops a header whose value is a `byte[]`, such as the IBM MQ
+message descriptor field `JMS_IBM_MQMD_MsgId`, unless the `allowAdditionalHeaders` option names it, for example
+`allowAdditionalHeaders=JMS_IBM_MQMD_*`. IBM MQ also writes the `JMS_IBM_MQMD_*` fields only to a destination with its
+`WMQ_MQMD_WRITE_ENABLED` property set to `true`, see
+<<_setting_jms_provider_options_on_the_destination,Setting JMS provider options on the destination>>.
 
 === Message format when receiving
 
@@ -862,6 +882,15 @@ and 9 as the highest).
 As all the above information is standard JMS, you can check the
 http://java.sun.com/javaee/5/docs/api/javax/jms/Message.html[JMS
 documentation] for further details.
+
+When `pollEnrich` or a `ConsumerTemplate` receives a message from a JMS endpoint, Camel reads the body and the
+headers of the message before it closes the JMS consumer and session, as a JMS client may not read the message after
+that (the ActiveMQ Artemis client streams the body of a large message through the consumer). The whole body is read at
+once (with `artemisStreamingEnabled`, into a stream cache). If the body cannot be read, the receive fails, and the
+message is rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, so that it is delivered again.
+The body is not read at receive time with `mapJmsMessage=false` (the body is the `jakarta.jms.Message` itself), for a
+`StreamMessage` (the body is an `InputStream` that reads the message when it is used), and with a custom
+`jmsOperations` that is not a `CamelJmsTemplate` (the message is read after the session is closed, as before).
 
 === About using Camel to send and receive messages and JMSReplyTo
 
@@ -1155,6 +1184,54 @@ You can configure this option in one of the following ways:
 * On the `JmsComponent`,
 * On the endpoint URI or,
 * By invoking `setConcurrentConsumers()` directly on the `JmsEndpoint`.
+
+==== Concurrent Consuming from a topic
+
+On a topic, each concurrent consumer is a subscriber of its own and receives every message. With
+`concurrentConsumers=3` on a topic, each message is processed three times. This is also the case when
+`concurrentConsumers` or `maxConcurrentConsumers` is set on the component (for its queues) and a route of that component
+consumes from a topic. Camel logs a WARN when such a consumer starts.
+
+To have several consumers share the messages of a topic, so each message is processed once, use a shared subscription
+(requires a JMS 2.0 broker) with `subscriptionShared=true` and a `subscriptionName`. Add `subscriptionDurable=true` to
+keep the messages sent while no consumer is connected:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:topic:SomeTopic?concurrentConsumers=5&subscriptionShared=true&subscriptionName=myApp")
+  .bean(MyClass.class);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:topic:SomeTopic?concurrentConsumers=5&amp;subscriptionShared=true&amp;subscriptionName=myApp"/>
+  <to uri="bean:MyClass"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:topic:SomeTopic
+      parameters:
+        concurrentConsumers: 5
+        subscriptionShared: true
+        subscriptionName: myApp
+      steps:
+        - to:
+            uri: bean:MyClass
+----
+====
 
 ==== Concurrent Consuming with async consumer
 

@@ -54,6 +54,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "jointransaction":
@@ -62,6 +64,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lockmodetype":
         case "lockModeType": target.setLockModeType(property(camelContext, jakarta.persistence.LockModeType.class, value)); return true;
+        case "locktimeout":
+        case "lockTimeout": target.setLockTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "maximumresults":
@@ -150,6 +154,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "jointransaction":
@@ -158,6 +164,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return boolean.class;
         case "lockmodetype":
         case "lockModeType": return jakarta.persistence.LockModeType.class;
+        case "locktimeout":
+        case "lockTimeout": return long.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return int.class;
         case "maximumresults":
@@ -247,6 +255,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": return target.isFlushOnSend();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "jointransaction":
@@ -255,6 +265,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "lockmodetype":
         case "lockModeType": return target.getLockModeType();
+        case "locktimeout":
+        case "lockTimeout": return target.getLockTimeout();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "maximumresults":

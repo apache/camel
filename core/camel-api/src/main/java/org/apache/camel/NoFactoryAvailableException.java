@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Thrown by the Camel {@code FactoryFinder} mechanism when no implementation class can be located for a given service
  * URI.
- * <p/>
+ * <p>
  * The {@code FactoryFinder} scans the classpath for service descriptor files under
  * {@code META-INF/services/org/apache/camel/} to discover pluggable implementations of Camel SPIs (components, data
  * formats, languages, dumpers, etc.). When the required JAR is absent from the classpath, or when the service

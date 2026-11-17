@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method parameter as the payload of the inbound {@link Message} when Camel performs
  * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
- * <p/>
+ * <p>
  * When a bean method is invoked via the Bean EIP or {@link Consume}, Camel maps the exchange to the method parameters.
  * A parameter annotated with {@code @Body} receives {@link Message#getBody()}, optionally converted to the declared
  * parameter type via the {@link TypeConverter} infrastructure.

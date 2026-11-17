@@ -31,10 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
 public class DynamicTableIdIT extends BigQueryITSupport {
     private static final String TABLE_ID_1 = "dynamic_table_1";
     private static final String TABLE_ID_2 = "dynamic_table_2";

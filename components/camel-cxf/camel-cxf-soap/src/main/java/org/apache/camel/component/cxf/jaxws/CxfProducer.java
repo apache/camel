@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.handler.MessageContext.Scope;
@@ -47,8 +48,10 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +63,14 @@ public class CxfProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
 
+    // the names of the operation headers before CxfConstants.OPERATION_NAME and OPERATION_NAMESPACE replaced them
+    private static final String FORMER_OPERATION_NAME = "operationName";
+    private static final String FORMER_OPERATION_NAMESPACE = "operationNamespace";
+
     private Client client;
     private CxfEndpoint endpoint;
+    private volatile boolean formerOperationHeadersWarned;
+    private volatile boolean operationNotSelectedWarned;
 
     /**
      * Constructor to create a CxfProducer. It will create a CXF client object.
@@ -275,6 +284,7 @@ public class CxfProducer extends DefaultAsyncProducer {
 
     private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {
         final BindingOperationInfo boi = lookupBindingOperationInfo(endpoint, exchange);
+        checkWrapperObject(parameters, boi);
         final int expectMessagePartsSize = tryGetExpectMessagePartsSize(parameters, boi);
 
         if (parameters.length > expectMessagePartsSize) {
@@ -287,10 +297,49 @@ public class CxfProducer extends DefaultAsyncProducer {
                 throw new IllegalArgumentException(
                         "Get the wrong parameter size to invoke the out service, Expect size "
                                                    + (expectMessagePartsSize + holdersSize + soapHeadersSize)
-                                                   + ", Parameter size " + parameters.length
+                                                   + ", Parameter size " + parameters.length + ". The operation "
+                                                   + boi.getName() + " expects the parameters " + parameterTypes(boi)
                                                    + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
+    }
+
+    /**
+     * Fails when the one parameter is the request wrapper object of an operation that the producer invokes in its
+     * unwrapped form (wrapped=false), and is not accepted as the parameter of the unwrapped operation.
+     */
+    private static void checkWrapperObject(Object[] parameters, BindingOperationInfo boi) {
+        if (parameters.length != 1 || parameters[0] == null || !boi.isUnwrapped()) {
+            return;
+        }
+        BindingMessageInfo wrappedInput = boi.getWrappedOperation().getInput();
+        if (wrappedInput == null || wrappedInput.getMessageParts().isEmpty()) {
+            return;
+        }
+        Class<?> wrapperClass = wrappedInput.getMessageParts().get(0).getTypeClass();
+        if (wrapperClass == null || !wrapperClass.isInstance(parameters[0])) {
+            return;
+        }
+        List<MessagePartInfo> parts = boi.getInput().getMessageParts();
+        if (parts.size() == 1) {
+            Class<?> partClass = parts.get(0).getTypeClass();
+            if (partClass == null || partClass.isInstance(parameters[0])) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(
+                "The message body is a " + wrapperClass.getName() + ", the request wrapper object of the operation "
+                                           + boi.getName() + ", but the producer invokes the operation with its parameters "
+                                           + parameterTypes(boi) + " because the wrapped option is false. Set the wrapped"
+                                           + " option to true to send the wrapper object, or set the message body to the"
+                                           + " parameters of the operation.");
+    }
+
+    private static String parameterTypes(BindingOperationInfo boi) {
+        return boi.getInput().getMessageParts().stream()
+                .map(part -> part.getTypeClass() != null
+                        ? part.getTypeClass().getTypeName() : part.getName().getLocalPart())
+                .collect(Collectors.joining(", ", "(", ")"));
     }
 
     private BindingOperationInfo lookupBindingOperationInfo(CxfEndpoint endpoint, Exchange exchange) {
@@ -339,6 +388,8 @@ public class CxfProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Get the wrong parameter size to invoke the out service, Expect size "
                                                + expectMessagePartsSize + ", Parameter size " + parameters.length
+                                               + ". The operation " + boi.getName() + " expects the parameters "
+                                               + parameterTypes(boi)
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         return expectMessagePartsSize;
@@ -402,12 +453,20 @@ public class CxfProducer extends DefaultAsyncProducer {
      * <ul>
      * <li>Using the in message header "CamelCxfOperationName".</li>
      * <li>Using the defaultOperationName option value from the CxfEndpoint.</li>
-     * <li>Using the first operation which is find from the CxfEndpoint Operations list.</li>
-     * <ul>
+     * <li>Using the first operation that CXF returns for the service, in an order that is not defined. A WARN is logged
+     * once when the service has more than one operation.</li>
+     * </ul>
+     * <p>
+     * The headers named operationName and operationNamespace, which CamelCxfOperationName and
+     * CamelCxfOperationNamespace replaced, are not read. A WARN is logged once when they are set without their
+     * replacement.
+     * </p>
      */
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) this.getEndpoint();
+        BindingInfo binding = client.getEndpoint().getEndpointInfo().getBinding();
         BindingOperationInfo answer = null;
+        warnOnFormerOperationHeaders(ex);
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
             LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName",
@@ -418,11 +477,19 @@ public class CxfProducer extends DefaultAsyncProducer {
             LOG.debug(
                     "CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
                     CxfConstants.OPERATION_NAME);
-            Collection<BindingOperationInfo> bois = client.getEndpoint().getEndpointInfo().getBinding().getOperations();
+            Collection<BindingOperationInfo> bois = binding.getOperations();
 
             Iterator<BindingOperationInfo> iter = bois.iterator();
             if (iter.hasNext()) {
                 answer = iter.next();
+            }
+            if (bois.size() > 1 && !operationNotSelectedWarned) {
+                operationNotSelectedWarned = true;
+                LOG.warn("Neither the {} header nor the defaultOperationName option selects the operation, and the service"
+                         + " has {} operations: the producer of endpoint {} invokes {}, the first one that CXF returns, in"
+                         + " an order that is not the order of the WSDL or of the service class. Set the {} header or the"
+                         + " defaultOperationName option. This is logged once.",
+                        CxfConstants.OPERATION_NAME, bois.size(), endpoint, answer.getName(), CxfConstants.OPERATION_NAME);
             }
 
         } else {
@@ -439,14 +506,44 @@ public class CxfProducer extends DefaultAsyncProducer {
 
             LOG.trace("Operation qname = {}", qname);
 
-            answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
+            answer = binding.getOperation(qname);
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "Can't find the BindingOperationInfo with operation name " + qname
-                                                   + ". Please check the message headers of operationName and operationNamespace.");
+                                                   + ". Please check the " + CxfConstants.OPERATION_NAME + " and "
+                                                   + CxfConstants.OPERATION_NAMESPACE
+                                                   + " headers, or the defaultOperationName and defaultOperationNamespace"
+                                                   + " options. The operations of the service are "
+                                                   + operationNames(binding));
             }
         }
         return answer;
+    }
+
+    private void warnOnFormerOperationHeaders(Exchange ex) {
+        if (formerOperationHeadersWarned) {
+            return;
+        }
+        String former = null;
+        if (ex.getIn().getHeader(CxfConstants.OPERATION_NAME) == null
+                && ex.getIn().getHeader(FORMER_OPERATION_NAME) != null) {
+            former = FORMER_OPERATION_NAME;
+        } else if (ex.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE) == null
+                && ex.getIn().getHeader(FORMER_OPERATION_NAMESPACE) != null) {
+            former = FORMER_OPERATION_NAMESPACE;
+        }
+        if (former != null) {
+            formerOperationHeadersWarned = true;
+            LOG.warn("The producer of endpoint {} does not read the {} header: the operation is selected by the {} and {}"
+                     + " headers (CxfConstants.OPERATION_NAME and CxfConstants.OPERATION_NAMESPACE), which replaced the {}"
+                     + " and {} headers. This is logged once.",
+                    endpoint, former, CxfConstants.OPERATION_NAME, CxfConstants.OPERATION_NAMESPACE, FORMER_OPERATION_NAME,
+                    FORMER_OPERATION_NAMESPACE);
+        }
+    }
+
+    private static List<String> operationNames(BindingInfo binding) {
+        return binding.getOperations().stream().map(boi -> boi.getName().toString()).sorted().toList();
     }
 
     public Client getClient() {

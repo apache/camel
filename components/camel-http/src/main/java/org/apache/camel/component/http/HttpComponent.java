@@ -97,8 +97,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "To use a custom org.apache.hc.core5.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
     @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " An endpoint can use another instance with its own sslContextParameters option.")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
@@ -183,6 +182,22 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced",
               description = "The time for connection to live, the time unit is millisecond, the default value is always keepAlive.")
     protected long connectionTimeToLive = -1;
+    @Metadata(label = "advanced",
+              description = "The maximum time (in millis) a pooled connection can stay idle and still be reused."
+                            + " A connection idle for longer is closed when it would be reused, and the request opens a new one,"
+                            + " whatever Keep-Alive timeout the server announced. Set it below the idle timeout of a NAT, firewall"
+                            + " or load balancer that drops idle connections silently: the next request on such a connection"
+                            + " would otherwise wait for the read timeout and fail."
+                            + " Zero (the default) or a negative value means no limit.")
+    protected long connectionIdleTimeout;
+    @Metadata(label = "advanced", defaultValue = "2000",
+              description = "The time (in millis) a pooled connection must have been idle before it is checked, prior to its"
+                            + " reuse, for having been closed by the server. A request sent on a connection that the server closed"
+                            + " fails with NoHttpResponseException, and HttpClient retries it only for idempotent methods."
+                            + " Zero checks the connection before each reuse, at the cost of a read of up to 1 millisecond per"
+                            + " request; a negative value disables the check. The check cannot see a connection that a NAT or"
+                            + " firewall dropped silently: use connectionIdleTimeout for that.")
+    protected long validateAfterInactivity = 2000;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     protected boolean useGlobalSslContextParameters;
     @Metadata(label = "producer,advanced", defaultValue = "8192",
@@ -339,21 +354,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     private HttpClientConfigurer configureBasicAuthentication(
             Map<String, Object> parameters, HttpClientConfigurer configurer,
             HttpCredentialsHelper credentialsProvider, URI targetUri) {
+        // not removed from the parameters, so the endpoint gets the options too
+        String authMethod = getParameter(parameters, "authMethod", String.class);
         String authUsername = getParameter(parameters, "authUsername", String.class);
         String authPassword = getParameter(parameters, "authPassword", String.class);
+        String authBearerToken = getParameter(parameters, "authBearerToken", String.class);
+        String authHost = getParameter(parameters, "authHost", String.class);
 
-        if (authUsername != null && authPassword != null) {
+        if ("bearer".equalsIgnoreCase(authMethod) && authBearerToken != null) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new DefaultAuthenticationHttpClientConfigurer(
+                            null, null, null, authScopeScheme(authHost, targetUri),
+                            authScopeHost(authHost, targetUri), authScopePort(authHost, targetUri), authBearerToken,
+                            false, credentialsProvider));
+        } else if (authUsername != null && authPassword != null) {
             String authDomain = getParameter(parameters, "authDomain", String.class);
-            String authHost = getParameter(parameters, "authHost", String.class);
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new DefaultAuthenticationHttpClientConfigurer(
                             authUsername, authPassword, authDomain, authScopeScheme(authHost, targetUri),
                             authScopeHost(authHost, targetUri), authScopePort(authHost, targetUri), null,
-                            credentialsProvider));
+                            "ntlm".equalsIgnoreCase(authMethod), credentialsProvider));
         } else if (this.httpConfiguration != null) {
-            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
-                    || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+            String method = this.httpConfiguration.getAuthMethod();
+            if ("basic".equalsIgnoreCase(method) || "bearer".equalsIgnoreCase(method) || "ntlm".equalsIgnoreCase(method)) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
                         new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
@@ -362,7 +386,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                                 authScopeHost(this.httpConfiguration.getAuthHost(), targetUri),
                                 authScopePort(this.httpConfiguration.getAuthHost(), targetUri),
                                 this.httpConfiguration.getAuthBearerToken(),
-                                credentialsProvider));
+                                "ntlm".equalsIgnoreCase(method), credentialsProvider));
             }
         }
 
@@ -702,9 +726,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             TlsSocketStrategy tlsStrategy,
             int maxTotalConnections, int connectionsPerRoute, SocketConfig defaultSocketConfig) {
         // set up the connection using the builder pattern
-        ConnectionConfig connConfig = ConnectionConfig.custom()
+        ConnectionConfig.Builder connConfigBuilder = ConnectionConfig.custom()
                 .setTimeToLive(TimeValue.ofMilliseconds(getConnectionTimeToLive()))
-                .build();
+                .setValidateAfterInactivity(TimeValue.ofMilliseconds(getValidateAfterInactivity()));
+        if (getConnectionIdleTimeout() > 0) {
+            // checked when a connection is leased: no background thread, and it applies whatever keep-alive
+            // the server announced
+            connConfigBuilder.setIdleTimeout(Timeout.ofMilliseconds(getConnectionIdleTimeout()));
+        }
+        ConnectionConfig connConfig = connConfigBuilder.build();
         PoolingHttpClientConnectionManagerBuilder builder = PoolingHttpClientConnectionManagerBuilder.create()
                 .setTlsSocketStrategy(tlsStrategy)
                 .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
@@ -839,9 +869,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To configure security using SSLContextParameters. Important: Only one instance of
-     * org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use two or more
-     * different instances, you need to define a new HttpComponent per instance.
+     * To configure security using SSLContextParameters. An endpoint can use another instance with its own
+     * sslContextParameters option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -923,6 +952,36 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setConnectionTimeToLive(long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
+    }
+
+    public long getConnectionIdleTimeout() {
+        return connectionIdleTimeout;
+    }
+
+    /**
+     * The maximum time (in millis) a pooled connection can stay idle and still be reused. A connection idle for longer
+     * is closed when it would be reused, and the request opens a new one, whatever Keep-Alive timeout the server
+     * announced. Set it below the idle timeout of a NAT, firewall or load balancer that drops idle connections
+     * silently: the next request on such a connection would otherwise wait for the read timeout and fail. Zero (the
+     * default) or a negative value means no limit.
+     */
+    public void setConnectionIdleTimeout(long connectionIdleTimeout) {
+        this.connectionIdleTimeout = connectionIdleTimeout;
+    }
+
+    public long getValidateAfterInactivity() {
+        return validateAfterInactivity;
+    }
+
+    /**
+     * The time (in millis) a pooled connection must have been idle before it is checked, prior to its reuse, for having
+     * been closed by the server. A request sent on a connection that the server closed fails with
+     * NoHttpResponseException, and HttpClient retries it only for idempotent methods. Zero checks the connection before
+     * each reuse, at the cost of a read of up to 1 millisecond per request; a negative value disables the check. The
+     * check cannot see a connection that a NAT or firewall dropped silently: use connectionIdleTimeout for that.
+     */
+    public void setValidateAfterInactivity(long validateAfterInactivity) {
+        this.validateAfterInactivity = validateAfterInactivity;
     }
 
     public CookieStore getCookieStore() {

@@ -1597,8 +1597,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                     // recoverable repository would not find it, and it would be kept as unconfirmed for good)
                     confirmed = true;
                 } else if (isRecoverableRepository()) {
-                    confirmed = ((RecoverableAggregationRepository) aggregationRepository)
-                            .confirmWithResult(exchange.getContext(), exchangeId);
+                    confirmed = confirmWithResult(exchange.getContext());
                 } else {
                     aggregationRepository.confirm(exchange.getContext(), exchangeId);
                     confirmed = true;
@@ -1612,6 +1611,22 @@ public class AggregateProcessor extends BaseProcessorSupport
                 // must remember to remove in progress when we are complete
                 inProgressCompleteExchanges.remove(exchangeId);
                 inProgressCount.decrement();
+            }
+        }
+
+        private boolean confirmWithResult(CamelContext context) {
+            try {
+                return ((RecoverableAggregationRepository) aggregationRepository).confirmWithResult(context, exchangeId);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled here
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // the exchange was processed: keep it as not confirmed, as when the repository returns false, so the
+                // recover task tries to confirm it again instead of recovering it and sending it again
+                LOG.warn("Error confirming the aggregated exchange with id: {}, which was processed. It is kept as not"
+                         + " confirmed: the recover task will try to confirm it again, and will not send it again.",
+                        exchangeId, e);
+                return false;
             }
         }
 
@@ -1902,8 +1917,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                                                         exchange,
                                                         exchange.getException());
                                     } else {
-                                        // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
-                                        recoverable.confirm(camelContext, exchangeId);
+                                        // it was ok, so it is done (remove its redelivery state as well), and confirm it,
+                                        // so we wont recover it again
+                                        redeliveryState.remove(exchange.getExchangeId());
+                                        confirmMovedToDeadLetter(exchangeId);
                                     }
                                 } else {
                                     // update current redelivery state
@@ -1957,11 +1974,45 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         private void retryConfirm(String exchangeId) {
             // Confirm that the exchange was processed
-            if (recoverable.confirmWithResult(camelContext, exchangeId)) {
+            boolean confirmed;
+            try {
+                confirmed = recoverable.confirmWithResult(camelContext, exchangeId);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // as when it returns false: try again on the next run, and go on with the other exchanges of the scan
+                LOG.warn("Still unable to confirm removal of exchange {}. Caused by: {}", exchangeId, e.toString());
+                LOG.debug("Error confirming removal of exchange {}", exchangeId, e);
+                return;
+            }
+            if (confirmed) {
                 unconfirmedCompleteExchanges.remove(exchangeId);
                 LOG.debug("Removal of exchange {} confirmed.", exchangeId);
             } else {
                 LOG.warn("Still unable to confirm removal of exchange {}.", exchangeId);
+            }
+        }
+
+        private void confirmMovedToDeadLetter(String exchangeId) {
+            boolean confirmed;
+            try {
+                confirmed = recoverable.confirmWithResult(camelContext, exchangeId);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // as when it returns false, and go on with the other exchanges of the scan
+                LOG.warn("Error confirming the recovered exchange with id: {}, which was moved to the dead letter channel."
+                         + " It is kept as not confirmed: the recover task will try to confirm it again, and will not move it"
+                         + " again.",
+                        exchangeId, e);
+                confirmed = false;
+            }
+            if (!confirmed) {
+                // keep it as not confirmed, as a processed exchange whose confirm failed (AggregateOnCompletion), so the
+                // recover task tries to confirm it again instead of recovering it and moving it again
+                unconfirmedCompleteExchanges.add(exchangeId);
             }
         }
     }

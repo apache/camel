@@ -18,6 +18,7 @@ package org.apache.camel.sanitizer;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -164,6 +165,94 @@ final class BrokenUserCode {
                 }
             }, "user-late-callback").start();
             throw new IllegalStateException("Forced by ThrowsThenCallsBack");
+        }
+    }
+
+    /**
+     * Rule R3: hands the exchange to a worker thread that calls the callback with false, so the worker continues the
+     * exchange, while process waits for it and then returns true, as if it had done the work on the calling thread. A
+     * caller that uses the return value continues the exchange a second time.
+     */
+    static final class ReturnsTrueAfterAsyncDone extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            Thread worker = new Thread(() -> callback.done(false), "user-worker");
+            worker.start();
+            try {
+                worker.join(TimeUnit.SECONDS.toMillis(10));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Rule R3: calls the callback with true from a worker thread and returns false.
+     */
+    static final class ReturnsFalseCallbackTrue extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            new Thread(() -> callback.done(true), "user-worker").start();
+            return false;
+        }
+    }
+
+    /**
+     * Rule R3: calls the callback with true on the calling thread, and then returns false.
+     */
+    static final class ReturnsFalseAfterSyncDone extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            callback.done(true);
+            return false;
+        }
+    }
+
+    /**
+     * Rule R3: returns true, and only then lets a worker thread call the callback with false. Whether the sanitizer
+     * sees the callback before or after the return depends on the threads, which decides the kind of the report.
+     */
+    static final class ReturnsTrueThenCallsBack extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            CountDownLatch returning = new CountDownLatch(1);
+            new Thread(() -> {
+                try {
+                    if (returning.await(10, TimeUnit.SECONDS)) {
+                        callback.done(false);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }, "user-worker").start();
+            returning.countDown();
+            return true;
+        }
+    }
+
+    /**
+     * Correct: hands the exchange to a thread of its pool, which calls the callback with false, and returns false.
+     */
+    static final class CorrectAsync extends AsyncProcessorSupport {
+
+        private final ExecutorService pool;
+
+        CorrectAsync(ExecutorService pool) {
+            this.pool = pool;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            pool.execute(() -> {
+                exchange.getMessage().setHeader("worker", Thread.currentThread().getName());
+                callback.done(false);
+            });
+            return false;
         }
     }
 

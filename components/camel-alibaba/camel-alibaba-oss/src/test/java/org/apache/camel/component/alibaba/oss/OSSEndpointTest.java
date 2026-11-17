@@ -16,10 +16,24 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import com.aliyun.sdk.service.oss2.OSSClient;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -67,5 +81,65 @@ class OSSEndpointTest {
 
         verify(client).close();
         assertThat(endpoint.getOssClient()).isNull();
+    }
+
+    @Test
+    void concurrentInitClientCreatesOneClient() throws Exception {
+        int callers = 8;
+        Set<Thread> creators = ConcurrentHashMap.newKeySet();
+        List<OSSClient> created = new CopyOnWriteArrayList<>();
+        CountDownLatch release = new CountDownLatch(1);
+        OSSEndpoint endpoint = new OSSEndpoint() {
+            @Override
+            OSSClient createClient() {
+                creators.add(Thread.currentThread());
+                try {
+                    release.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(e);
+                }
+                OSSClient client = mock(OSSClient.class);
+                created.add(client);
+                return client;
+            }
+        };
+
+        Set<Thread> threads = ConcurrentHashMap.newKeySet();
+        ExecutorService executor = Executors.newFixedThreadPool(callers);
+        try {
+            List<Future<OSSClient>> results = new ArrayList<>();
+            for (int i = 0; i < callers; i++) {
+                results.add(executor.submit(() -> {
+                    threads.add(Thread.currentThread());
+                    return endpoint.initClient();
+                }));
+            }
+            // a creation is held until each caller has started one too, or waits for the lock of a caller that has,
+            // so the result does not depend on how the threads are scheduled
+            await().atMost(10, TimeUnit.SECONDS).until(() -> threads.size() == callers
+                    && threads.stream().allMatch(thread -> creators.contains(thread) || waitsForLockOf(thread, creators)));
+            release.countDown();
+
+            List<OSSClient> clients = new ArrayList<>();
+            for (Future<OSSClient> result : results) {
+                clients.add(result.get(10, TimeUnit.SECONDS));
+            }
+            assertThat(created).hasSize(1);
+            assertThat(clients).hasSize(callers).allSatisfy(client -> assertThat(client).isSameAs(created.get(0)));
+            assertThat(endpoint.getOssClient()).isSameAs(created.get(0));
+
+            endpoint.doStop();
+            verify(created.get(0)).close();
+            assertThat(endpoint.getOssClient()).isNull();
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    private static boolean waitsForLockOf(Thread thread, Set<Thread> owners) {
+        ThreadInfo info = ManagementFactory.getThreadMXBean().getThreadInfo(thread.threadId());
+        return info != null && owners.stream().anyMatch(owner -> owner.threadId() == info.getLockOwnerId());
     }
 }

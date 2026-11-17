@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
@@ -55,16 +57,50 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
             return true;
         }
 
+        SendCallback send = new SendCallback(callback);
         try {
             LOG.debug(">>>> {} {}", getEndpoint(), exchange);
             // emit the sending and sent events around the send (and run the send hook if any)
-            return SendHelper.send(exchange, getEndpoint(), producer, callback);
+            return SendHelper.send(exchange, getEndpoint(), producer, send);
         } catch (Exception throwable) {
+            if (!send.compareAndSet(false, true)) {
+                // the producer called the callback and then threw: the exchange is already continued (maybe on another
+                // thread), so it is not completed a second time and the exception is not set on it
+                LOG.warn("The producer of {} threw an exception after it completed the exchange. This exception is ignored.",
+                        getEndpoint(), throwable);
+                return send.doneSync;
+            }
             exchange.setException(throwable);
             callback.done(true);
         }
 
         return true;
+    }
+
+    /**
+     * The callback of one send: calls the callback of the caller, and records that it did, so that an exception the
+     * producer throws after it called the callback does not complete the exchange a second time. A further call of the
+     * callback by the producer is passed on as before.
+     */
+    private final class SendCallback extends AtomicBoolean implements AsyncCallback {
+        private final AsyncCallback callback;
+        private volatile boolean doneSync;
+
+        private SendCallback(AsyncCallback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (compareAndSet(false, true)) {
+                this.doneSync = doneSync;
+            } else {
+                LOG.warn("The producer of {} completed the exchange after the send was completed (more than once, or after"
+                         + " it threw).",
+                        getEndpoint());
+            }
+            callback.done(doneSync);
+        }
     }
 
     @Override

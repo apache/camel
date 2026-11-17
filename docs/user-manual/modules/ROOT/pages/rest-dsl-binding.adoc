@@ -82,6 +82,12 @@ The `value` in `dataFormatProperty` must be defined as a string value, so we use
 ----
 ====
 
+The binding creates data formats of its own. They start from the options of the data format of the same name that is
+configured on the CamelContext, such as with `camel.dataformat.jackson.include=NON_NULL` in Camel Main, except the
+`objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`, `unmarshalType`, `useList`, `collectionType` and
+`partClass` options: the body type comes from the `type` and `outType` of the verb. The `dataFormatProperty` options are
+applied after them, so they take precedence.
+
 To use binding you must include the necessary data formats on the
 classpath, such as `camel-jaxb` / `camel-jacksonxml` (or `camel-jackson3xml`) and/or `camel-jackson` (or `camel-jackson3`). And then enable
 the binding mode. You can configure the binding mode globally on the
@@ -380,7 +386,7 @@ The Rest DSL supports the following options:
 | *inlineRoutes*| true| boolean| Inline routes in rest-dsl which are linked using direct endpoints. If disabling then each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By default, this allows Camel to optimize and inline this as a single route. However, this requires using direct endpoints, which must be unique per service.
 | *jsonDataFormat*|| String| Sets a custom JSON data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
 | *port*|| int| Sets the port to use by the REST consumer
-| *producerApiDoc*|| String| Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document...
+| *producerApiDoc*|| String| Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid according to the api document...
 | *producerComponent*|| String| Sets the name of the Camel component to use as the REST producer
 | *scheme*|| String| Sets the scheme to use by the REST consumer
 | *skipBindingOnErrorCode*| true| boolean| Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.
@@ -576,8 +582,59 @@ With `camel-jackson3` (Jackson 3):
 * `tools.jackson.core.StreamReadFeature`
 * `tools.jackson.core.StreamWriteFeature`
 
-Jackson 3 has other defaults than Jackson 2. For example, `FAIL_ON_UNKNOWN_PROPERTIES` is off by default in Jackson 3, so
-unknown properties are only rejected when you enable it with `json.in.enableFeatures`.
+Jackson 3 has other defaults than Jackson 2. For example, `FAIL_ON_UNKNOWN_PROPERTIES` is off by default in Jackson 3,
+but the binding turns it on for request bodies, so unknown properties are rejected as with Jackson 2. To accept them,
+disable it with `json.in.disableFeatures` as shown above, or use your own `ObjectMapper`.
+
+== Using your own Jackson ObjectMapper
+
+The binding does not use the `objectMapper` of a Jackson data format that you configure elsewhere, such as in a route
+or with `camel.dataformat.jackson.objectMapper`. To use an `ObjectMapper` of your own, refer to it with
+`json.in.objectMapper` (request) and `json.out.objectMapper` (response):
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+   .dataFormatProperty("json.in.objectMapper", "#myMapper")
+   .dataFormatProperty("json.out.objectMapper", "#myMapper");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration component="jetty" host="localhost" port="9090" bindingMode="json">
+  <dataFormatProperty key="json.in.objectMapper" value="#myMapper"/>
+  <dataFormatProperty key="json.out.objectMapper" value="#myMapper"/>
+</restConfiguration>
+----
+
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: "jetty"
+    host: "localhost"
+    port: "9090"
+    bindingMode: "json"
+    dataFormatProperty:
+      - key: "json.in.objectMapper"
+        value: "#myMapper"
+      - key: "json.out.objectMapper"
+        value: "#myMapper"
+----
+====
+
+The binding does not turn on `FAIL_ON_UNKNOWN_PROPERTIES` for your mapper: unknown properties are handled as the mapper
+is configured. To use the single `ObjectMapper` in the registry instead, set `json.in.autoDiscoverObjectMapper` and
+`json.out.autoDiscoverObjectMapper` to `true`, see
+xref:components:dataformats:jackson3-dataformat.adoc#_using_custom_objectmapper[Using custom ObjectMapper].
 
 
 == Default CORS headers

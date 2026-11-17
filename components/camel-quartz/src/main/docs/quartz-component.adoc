@@ -56,10 +56,15 @@ Each endpoint represents a different timer (in Quartz terms, a `Trigger` and ``J
 
 === Configuring quartz.properties file
 
-By default, Quartz will look for a `quartz.properties` file in the
-`org/quartz` directory of the classpath. If you are using WAR
-deployments, this means just drop the quartz.properties in
-`WEB-INF/classes/org/quartz`.
+By default, the Camel Quartz component loads the `quartz.properties` file
+from the `org/quartz` directory of the classpath, which is the default file in the Quartz JAR.
+Unlike Quartz itself, it does not read a `quartz.properties` file at the root of the classpath,
+or the file set by the `org.quartz.properties` system property. It logs a WARN when this system property is set,
+or else when it finds a `quartz.properties` file at the root of the classpath.
+To use such a file, set the `propertiesFile` option, for example to `classpath:quartz.properties`
+or `file:/etc/myapp/quartz.properties`.
+To keep the default file without the WARN, for example when the application keeps a `quartz.properties` file
+at the root of the classpath for a Quartz scheduler of its own, set `propertiesFile` to `classpath:org/quartz/quartz.properties`.
 
 However, the Camel xref:quartz-component.adoc[Quartz] component also allows you
 to configure properties:
@@ -81,6 +86,27 @@ To do this, you can configure this in Spring XML as follows
     <property name="propertiesFile" value="com/mycompany/myquartz.properties"/>
 </bean>
 ----
+
+=== Using your own scheduler (spring-boot-starter-quartz)
+
+The component uses the Quartz `Scheduler` set with its `scheduler` option, or else the single `Scheduler` of the
+registry, such as the scheduler of `spring-boot-starter-quartz`. It does not create a scheduler of its own then,
+so the options `properties`, `propertiesRef` and `propertiesFile` are not used, and it logs a WARN when one of them is set.
+The options `schedulerFactory`, `enableJmx`, `prefixInstanceName` and `interruptJobsOnShutdown` are not used either.
+Configure that scheduler instead, for example with the `spring.quartz.properties.*` properties of Spring Boot.
+
+The component starts this scheduler once the routes have started, unless `autoStartScheduler` is `false`
+or the scheduler is already running. The routes add their jobs when they start, so a scheduler that is already running
+can fire a trigger before its route has started, and this fire is lost. The component logs a WARN when the scheduler is
+already running when it starts. Spring Boot starts the scheduler of `spring-boot-starter-quartz` before Camel,
+so let Camel start it:
+
+[source,properties]
+----
+spring.quartz.auto-startup=false
+----
+
+The Quartz jobs of the application that are not Camel routes then also start when Camel starts the scheduler.
 
 === Enabling Quartz scheduler in JMX
 

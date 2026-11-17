@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Result of a Splitter EIP operation that provides structured information about the outcome, including failure details
  * when error thresholds ({@code errorThreshold} or {@code maxFailedRecords}) are configured.
- * <p/>
+ * <p>
  * This result is available as an exchange property ({@link Exchange#SPLIT_RESULT}) after the split operation completes.
  *
  * @since 4.22

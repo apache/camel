@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 
 @CommandDefinition(name = "mcp", description = "MCP server for AI coding assistants", generateHelp = true)
@@ -42,6 +44,9 @@ public class McpCommand extends CamelCommand {
     @Option(name = "version", description = "Camel MCP server version to use (default: current Camel version)")
     String version;
 
+    // the JBang command, which runs the MCP server
+    String jbang = "jbang";
+
     public McpCommand(CamelJBangMain main) {
         super(main);
     }
@@ -54,7 +59,7 @@ public class McpCommand extends CamelCommand {
         }
 
         List<String> cmd = new ArrayList<>();
-        cmd.add("jbang");
+        cmd.add(jbang);
         cmd.add("-Dquarkus.log.level=" + logLevel);
         if (http) {
             cmd.add("-Dquarkus.http.host-enabled=true");
@@ -64,7 +69,16 @@ public class McpCommand extends CamelCommand {
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.inheritIO();
-        Process process = pb.start();
+        Process process;
+        try {
+            process = pb.start();
+        } catch (IOException e) {
+            // without JBang this was an internal error (exit 70) with a stack trace (CAMEL-26932)
+            throw CliException.failure("camel mcp runs the MCP server with JBang, which is not installed (" + e.getMessage()
+                                       + "). Install JBang (https://www.jbang.dev), or run the server without it: java -jar"
+                                       + " camel-jbang-mcp-" + mcpVersion + "-runner.jar (see the Camel MCP server"
+                                       + " documentation)");
+        }
         return process.waitFor();
     }
 }

@@ -243,8 +243,14 @@ public class AuthoringTools {
                 }
             }
         }
-        return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
-                "edits", editsJson(edits), "camelVersion", camelVersion), null, clientRoot(roots));
+        Map<String, String> arguments = args("directory", directory, "file", file, "find", find,
+                "edits", editsJson(edits), "camelVersion", camelVersion);
+        if (replace != null) {
+            // as it is: args() leaves out a blank value, and a replace of only whitespace (a newline, the indentation
+            // of a YAML line) then deleted the text it was to replace (CAMEL-26932)
+            arguments.put("replace", replace);
+        }
+        return call("camel_edit_file", arguments, null, clientRoot(roots));
     }
 
     /**
@@ -583,9 +589,9 @@ public class AuthoringTools {
                             e.getMessage());
                 }
             }
-            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
+            return McpToolNames.of(RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args)));
         } catch (ToolExecutionException e) {
-            throw new ToolCallException(e.getMessage(), e);
+            throw new ToolCallException(McpToolNames.of(e.getMessage()), e);
         }
     }
 

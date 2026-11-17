@@ -38,7 +38,7 @@ public final class RowSort<R> {
      *
      * @param pid    the pid of the row, as text
      * @param name   the name of the integration
-     * @param uptime how long the integration runs, in millis
+     * @param uptime when the integration started, in epoch millis, so {@code age} sorts the oldest first
      */
     public static <R> RowSort<R> integration(Function<R, String> pid, Function<R, String> name, ToLongFunction<R> uptime) {
         return new RowSort<R>().number("pid", pid).text("name", name).by("age", Comparator.comparingLong(uptime));

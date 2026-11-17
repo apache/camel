@@ -37,23 +37,23 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the children as well.
+     * Looks for the given type in the list of outputs and recursing all the children as well.
      *
      * @param  outputs list of outputs, can be null or empty.
      * @param  type    the type to look for
-     * @return         the found definitions, or <tt>null</tt> if not found
+     * @return         the found definitions, or <code>null</code> if not found
      */
     public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         return filterTypeInOutputs(outputs, type, -1);
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the children as well.
+     * Looks for the given type in the list of outputs and recursing all the children as well.
      *
      * @param  outputs list of outputs, can be null or empty.
      * @param  type    the type to look for
      * @param  maxDeep maximum levels deep to traverse
-     * @return         the found definitions, or <tt>null</tt> if not found
+     * @return         the found definitions, or <code>null</code> if not found
      */
     public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<>();
@@ -62,12 +62,12 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the children as well. Will stop at first found
+     * Looks for the given type in the list of outputs and recursing all the children as well. Will stop at first found
      * and return it.
      *
      * @param  outputs list of outputs, can be null or empty.
      * @param  type    the type to look for
-     * @return         the first found type, or <tt>null</tt> if not found
+     * @return         the first found type, or <code>null</code> if not found
      */
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<>();
@@ -83,7 +83,7 @@ public final class ProcessorDefinitionHelper {
      *
      * @param  parentType the type the parent must be
      * @param  node       the node
-     * @return            <tt>true</tt> if first child, <tt>false</tt> otherwise
+     * @return            <code>true</code> if first child, <code>false</code> otherwise
      */
     public static boolean isFirstChildOfType(Class<?> parentType, ProcessorDefinition<?> node) {
         if (node == null || node.getParent() == null) {
@@ -107,7 +107,7 @@ public final class ProcessorDefinitionHelper {
      * @param  parentType the parent type
      * @param  node       the current node
      * @param  recursive  whether or not to check grand parent(s) as well
-     * @return            <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
+     * @return            <code>true</code> if parent(s) is of given type, <code>false</code> otherwise
      */
     public static boolean isParentOfType(
             Class<? extends ProcessorDefinition> parentType, ProcessorDefinition<?> node, boolean recursive) {
@@ -120,7 +120,7 @@ public final class ProcessorDefinitionHelper {
      * @param  parentType the parent type
      * @param  node       the current node
      * @param  recursive  whether or not to check grand parent(s) as well
-     * @return            <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
+     * @return            <code>true</code> if parent(s) is of given type, <code>false</code> otherwise
      */
     public static <T extends ProcessorDefinition> T findFirstParentOfType(
             Class<T> parentType, ProcessorDefinition<?> node, boolean recursive) {
@@ -143,7 +143,7 @@ public final class ProcessorDefinitionHelper {
      * Gets the route definition the given node belongs to.
      *
      * @param  node the node
-     * @return      the route, or <tt>null</tt> if not possible to find
+     * @return      the route, or <code>null</code> if not possible to find
      */
     public static RouteDefinition getRoute(NamedNode node) {
         if (node == null) {
@@ -168,7 +168,7 @@ public final class ProcessorDefinitionHelper {
      * Gets the route id the given node belongs to.
      *
      * @param  node the node
-     * @return      the route id, or <tt>null</tt> if not possible to find
+     * @return      the route id, or <code>null</code> if not possible to find
      */
     public static String getRouteId(NamedNode node) {
         RouteDefinition route = getRoute(node);
@@ -179,7 +179,7 @@ public final class ProcessorDefinitionHelper {
      * Traverses the node, including its children (recursive), and gathers all the node ids.
      *
      * @param  node            the target node
-     * @param  set             list to store ids, if <tt>null</tt> a new list will be created
+     * @param  set             list to store ids, if <code>null</code> a new list will be created
      * @param  onlyCustomId    whether to only store custom assigned ids (ie.
      *                         {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
      * @param  includeAbstract whether to include abstract nodes (ie.
@@ -474,7 +474,7 @@ public final class ProcessorDefinitionHelper {
      * Gets the resource the given node belongs to.
      *
      * @param  node the node
-     * @return      the resource, or <tt>null</tt> if not possible to find
+     * @return      the resource, or <code>null</code> if not possible to find
      */
     public static Resource getResource(NamedNode node) {
         if (node == null) {

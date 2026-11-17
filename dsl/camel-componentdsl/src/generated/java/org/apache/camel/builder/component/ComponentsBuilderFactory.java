@@ -4626,8 +4626,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SEDA (camel-seda)
-     * Asynchronously call another endpoint from any Camel Context in the same
-     * JVM.
+     * Asynchronously call another endpoint from the same Camel Context.
      * 
      * Category: core,messaging
      * Since: 1.1

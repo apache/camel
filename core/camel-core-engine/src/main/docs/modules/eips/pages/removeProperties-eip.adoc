@@ -116,6 +116,52 @@ YAML::
 ----
 ====
 
+== Keeping some properties
+
+The `excludePattern` option keeps the exchange properties it matches, with the same rules as `pattern`.
+It is a single pattern: to keep several properties, use a regular expression with `|` (a comma does not separate patterns).
+In Java, you can also give several exclude patterns as arguments.
+
+The following removes the exchange properties that start with `Foo`, except `FooKeep` and `FooToo`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .removeProperties("Foo*", "FooKeep", "FooToo")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeProperties pattern="Foo*" excludePattern="FooKeep|FooToo"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeProperties:
+            pattern: "Foo*"
+            excludePattern: "FooKeep|FooToo"
+        - to:
+            uri: mock:result
+----
+====
+
 == See Also
 
 Camel provides the following EIPs for removing headers or exchange properties:

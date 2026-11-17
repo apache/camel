@@ -30,7 +30,7 @@ public interface ErrorHandlerRedeliveryCustomizer {
     /**
      * Determines if redelivery is enabled by checking if any of the redelivery policy settings may allow redeliveries.
      *
-     * @return           <tt>true</tt> if redelivery is possible, <tt>false</tt> otherwise
+     * @return           <code>true</code> if redelivery is possible, <code>false</code> otherwise
      * @throws Exception can be thrown
      */
     boolean determineIfRedeliveryIsEnabled() throws Exception;

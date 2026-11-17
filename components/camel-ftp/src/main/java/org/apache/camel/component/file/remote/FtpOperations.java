@@ -23,8 +23,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
@@ -55,6 +57,11 @@ import org.slf4j.LoggerFactory;
  * FTP remote file operations
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
+
+    /**
+     * How long a disconnect waits at most for the reply to QUIT (soTimeout when it is shorter).
+     */
+    private static final int QUIT_REPLY_TIMEOUT = 2000;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
@@ -118,6 +125,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         String username = configuration.getUsername();
         String account = ((FtpConfiguration) configuration).getAccount();
 
+        // connecting replaces the socket of the client without closing it: close a connection that is still open, such
+        // as one whose server no longer answers, so it is not left open
+        if (client.isConnected()) {
+            log.trace("Client disconnect before connecting again");
+            try {
+                client.disconnect();
+            } catch (IOException e) {
+                log.trace("Ignore exception during disconnect: {}", e.getMessage());
+            }
+        }
+
         if (clientConfig != null) {
             log.trace("Configuring FTPClient with config: {}", clientConfig);
             client.configure(clientConfig);
@@ -157,9 +175,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     if (payload.exception instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
                         throw genericFileOperationFailedException;
                     } else {
+                        // no reply string when the client has no reply, such as after it closed the previous connection
                         throw new GenericFileOperationFailedException(
-                                client.getReplyCode(), client.getReplyString(), payload.exception.getMessage(),
-                                payload.exception);
+                                client.getReplyCode(), Objects.toString(client.getReplyString(), ""),
+                                payload.exception.getMessage(), payload.exception);
                     }
                 } else {
                     throw new GenericFileOperationFailedException(
@@ -303,9 +322,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    /**
+     * Closes the connection without sending QUIT: a forced disconnect recovers from a failure, after which the server
+     * may no longer answer, so it must not wait up to soTimeout for the reply.
+     */
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
-        doDisconnect();
+        clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
+        try {
+            log.trace("Client disconnect");
+            client.disconnect();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+        clientActivityListener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 
     protected void doDisconnect() throws GenericFileOperationFailedException {
@@ -313,6 +343,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
         try {
             log.trace("Client logout");
+            // the connection is closed anyway, so a server that no longer answers (it hangs, or the connection was lost
+            // without being closed) must not hold the disconnect, such as the stop of the consumer or producer, for
+            // soTimeout while waiting for the reply to QUIT
+            if (client.isConnected()) {
+                int soTimeout = client.getSoTimeout();
+                if (soTimeout <= 0 || soTimeout > QUIT_REPLY_TIMEOUT) {
+                    client.setSoTimeout(QUIT_REPLY_TIMEOUT);
+                }
+            }
             client.logout();
             client.disconnect();
         } catch (IOException e) {
@@ -335,6 +374,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("Deleting file: {}", name);
+        checkName(name);
 
         boolean result;
         String target = name;
@@ -375,6 +415,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
+        checkName(from);
+        checkName(to);
         try {
             reconnectIfNecessary(null);
             return client.rename(from, to);
@@ -387,6 +429,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
+        checkName(directory);
 
         log.trace("buildDirectory({})", directory);
         try {
@@ -418,6 +461,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+        checkName(name);
         // store the name of the file to download on the listener
         clientActivityListener.setDownload(true);
         clientActivityListener.setRemoteFileName(name);
@@ -458,6 +502,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(
                             client.getReplyCode(), client.getReplyString());
                 }
+            } catch (SocketTimeoutException e) {
+                // the server did not answer in time at the end of the streamed transfer: a reply that comes late would be
+                // read as the reply to the next command, so the connection cannot be used any more. It is closed
+                // without waiting on it, and the consumer leaves the rest of the batch to the next poll, which connects
+                // again
+                GenericFileOperationFailedException failure = new GenericFileOperationFailedException(e.getMessage(), e);
+                try {
+                    forceDisconnect();
+                } catch (GenericFileOperationFailedException fe) {
+                    failure.addSuppressed(fe);
+                }
+                throw failure;
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
@@ -691,6 +747,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
+        // before the listener and the client, so nothing is sent for a name that is refused
+        checkName(name);
 
         // store the name of the file to upload on the listener
         clientActivityListener.setDownload(false);
@@ -833,6 +891,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        checkName(name);
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
         try {
             return client.storeFile(name, bis);
@@ -846,6 +905,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
+        checkName(name);
         if (endpoint.isFastExistsCheck()) {
             return fastExistsFile(name);
         }
@@ -878,6 +938,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     protected boolean fastExistsFile(String name) throws GenericFileOperationFailedException {
         log.trace("fastExistsFile({})", name);
+        checkName(name);
         try {
             String[] names = client.listNames(name);
             if (names == null) {
@@ -907,6 +968,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
+        checkName(path);
 
         // must compact path so FTP server can traverse correctly
         // use the ftp utils implementation of the compact path
@@ -978,8 +1040,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         log.trace("Listing remote files");
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
-
-            return client.listFiles();
+            return checkListing(client.listFiles(), "the current directory");
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -995,13 +1056,36 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             path = ".";
         }
+        checkName(path);
 
         try {
-            return client.listFiles(path);
+            return checkListing(client.listFiles(path), "directory: " + path);
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
+    }
+
+    /**
+     * The FTP client returns an empty listing, without an exception, when the server refuses the data connection (PORT,
+     * EPRT, PASV, EPSV) or the LIST command, so an empty listing fails unless the server completed it. The replies 450
+     * and 550 still give an empty listing, as servers use them for a directory that is missing or empty.
+     */
+    private FTPFile[] checkListing(FTPFile[] files, String what) {
+        if (files != null && files.length > 0) {
+            return files;
+        }
+        int code = client.getReplyCode();
+        if (FTPReply.isPositiveCompletion(code) || code == FTPReply.FILE_ACTION_NOT_TAKEN
+                || code == FTPReply.FILE_UNAVAILABLE) {
+            return files;
+        }
+        String message = "Cannot list " + what;
+        if (!endpoint.getConfiguration().isPassiveMode()) {
+            message += ". Set passiveMode=true if the server or a firewall refuses data connections in active mode";
+        }
+        clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), message);
+        throw new GenericFileOperationFailedException(code, client.getReplyString(), message);
     }
 
     @Override
@@ -1021,6 +1105,26 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return client.sendSiteCommand(command);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * The FTP control connection sends one command per line, so a file or directory name with a carriage return or a
+     * line feed cannot be sent as the argument of a single command. Such a name is refused before any command is sent.
+     * The message gives the character and its index, not the name.
+     */
+    private static void checkName(String name) {
+        if (name == null) {
+            return;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch == '\r' || ch == '\n') {
+                throw new GenericFileOperationFailedException(
+                        String.format("Cannot use the file or directory name: it has the character U+%04X at index %d, and a"
+                                      + " carriage return or a line feed cannot be sent in an FTP command",
+                                (int) ch, i));
+            }
         }
     }
 

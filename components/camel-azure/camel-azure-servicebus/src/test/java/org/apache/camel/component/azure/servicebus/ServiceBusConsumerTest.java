@@ -20,8 +20,12 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import com.azure.core.amqp.exception.AmqpErrorCondition;
+import com.azure.core.amqp.exception.AmqpException;
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.*;
@@ -40,12 +44,14 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -726,11 +732,77 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
+    void lockRenewerRetriesATransientErrorBeforeTheLockExpires() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        // as the SDK reports a busy server: a transient error, which can be retried
+        ServiceBusException busy = new ServiceBusException(
+                new AmqpException(true, AmqpErrorCondition.SERVER_BUSY_ERROR, "server busy", null),
+                ServiceBusErrorSource.RENEW_LOCK);
+        when(renewalClient.renewMessageLock(any(ServiceBusReceivedMessage.class)))
+                .thenReturn(Mono.error(busy))
+                .thenReturn(Mono.just(OffsetDateTime.now().plusMinutes(1)));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            ArgumentCaptor<Long> periodCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), periodCaptor.capture());
+            // two runs are at most the period plus a second apart (the period task scheduler ticks once per second).
+            // A lock that expires 2 seconds after two such gaps must be renewed now: left to the next run, its first
+            // renewal could come with one gap and 2 seconds left, and a transient failure of it would be retried with
+            // about 2 seconds left, too little for the call to Service Bus
+            long maxGapMillis = periodCaptor.getValue() + 1000;
+            when(message.getLockedUntil())
+                    .thenReturn(OffsetDateTime.now().plus(Duration.ofMillis(2 * maxGapMillis + 2000)));
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(1)).renewMessageLock(message);
+
+            // the next run renews the lock it still holds
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(2)).renewMessageLock(message);
+
+            // the lock was renewed for another minute: the run after does not renew it
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(2)).renewMessageLock(message);
+        }
+    }
+
+    @Test
+    void lockRenewerStopsAfterTheLockIsLost() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(15));
+        // as the SDK reports a lock that expired or a message that was settled: not transient
+        ServiceBusException lockLost = new ServiceBusException(
+                new AmqpException(false, AmqpErrorCondition.MESSAGE_LOCK_LOST, "lock lost", null),
+                ServiceBusErrorSource.RENEW_LOCK);
+        when(renewalClient.renewMessageLock(any(ServiceBusReceivedMessage.class))).thenReturn(Mono.error(lockLost));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+            taskCaptor.getValue().run();
+
+            verify(renewalClient, times(1)).renewMessageLock(message);
+        }
+    }
+
+    @Test
     void lockRenewerDoesNotRenewALockThatOutlastsTheNextRuns() throws Exception {
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         when(messageContext.getMessage()).thenReturn(message);
-        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusMinutes(1));
+        // the renewer renews a lock that expires within 20 seconds: this one has two seconds more
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(22));
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
 
@@ -794,15 +866,130 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
-    void deferShutdownStopsClientAndReturnsTrue() throws Exception {
+    void deferShutdownStopsUserProvidedClient() throws Exception {
+        // its messages go to the callbacks the user built it with, not through the consumer
+        when(configuration.getProcessorClient()).thenReturn(client);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            assertThat(consumer.deferShutdown(ShutdownRunningTask.CompleteCurrentTaskOnly)).isTrue();
+            verify(client).stop();
+        }
+    }
+
+    @Test
+    void deferShutdownStopsClientInReceiveAndDeleteMode() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
 
             boolean deferred = consumer.deferShutdown(ShutdownRunningTask.CompleteAllTasks);
 
+            // a received message is deleted already: nothing to settle, so the client stops receiving at once
             assertThat(deferred).isTrue();
             verify(client).stop();
         }
+    }
+
+    @Test
+    @Timeout(30)
+    void gracefulStopKeepsTheClientOpenUntilTheExchangesInFlightAreSettled() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        settlementFailsOnceTheClientIsClosed();
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+        when(messageContext.getMessage()).thenReturn(message);
+        processMessageCaptor.getValue().accept(messageContext);
+        Exchange exchange = exchangeCaptor.getValue();
+
+        // the graceful shutdown defers the stop of the consumer while its exchange is in flight
+        assertThat(consumer.deferShutdown(ShutdownRunningTask.CompleteCurrentTaskOnly)).isTrue();
+        assertThat(consumer.getPendingExchangesSize()).isEqualTo(1);
+
+        // the exchange completes during the graceful shutdown: its message is completed, not delivered again
+        Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+        synchronization.onComplete(exchange);
+        verify(messageContext).complete();
+        assertThat(consumer.getPendingExchangesSize()).isZero();
+
+        // then the shutdown stops the consumer
+        consumer.doStop();
+        verify(client).close();
+    }
+
+    @Test
+    @Timeout(30)
+    void messageDeliveredDuringGracefulStopIsHeldUntilTheConsumerStops() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+        assertThat(consumer.deferShutdown(ShutdownRunningTask.CompleteCurrentTaskOnly)).isTrue();
+
+        // the open processor client delivers another message: it is neither routed nor settled, and the call does
+        // not return, so the client delivers no more messages
+        ServiceBusReceivedMessageContext delivered = mock();
+        Thread pump = new Thread(() -> processMessageCaptor.getValue().accept(delivered));
+        pump.setDaemon(true);
+        pump.start();
+        awaitState(pump, Thread.State.WAITING);
+        assertThat(consumer.getPendingExchangesSize()).isZero();
+
+        // the stop closes the client and releases the call (Service Bus delivers the message again when its lock
+        // expires)
+        consumer.doStop();
+        pump.join(TimeUnit.SECONDS.toMillis(10));
+        assertThat(pump.isAlive()).isFalse();
+        verify(client).close();
+        verify(processor, never()).process(any(Exchange.class), any(AsyncCallback.class));
+        verifyNoInteractions(delivered);
+    }
+
+    @Test
+    @Timeout(30)
+    void consumerStartedAgainAfterGracefulStopRoutesMessages() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+        assertThat(consumer.deferShutdown(ShutdownRunningTask.CompleteCurrentTaskOnly)).isTrue();
+        consumer.doStop();
+
+        consumer.doStart();
+        when(messageContext.getMessage()).thenReturn(message);
+        processMessageCaptor.getValue().accept(messageContext);
+
+        verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
+        assertThat(consumer.getPendingExchangesSize()).isEqualTo(1);
+        consumer.doStop();
+    }
+
+    /**
+     * As the processor client of azure-messaging-servicebus 7.17 (the default V2 stack): stop() closes the processor
+     * like close(), which disposes its receiver (ServiceBusProcessor.stop calls close, and the cleanup of its message
+     * pump closes the ServiceBusReceiverAsyncClient), and a settlement through a disposed receiver fails with this
+     * IllegalStateException (ServiceBusReceiverAsyncClient.updateDisposition).
+     */
+    private void settlementFailsOnceTheClientIsClosed() {
+        AtomicBoolean closed = new AtomicBoolean();
+        doAnswer(invocation -> {
+            closed.set(true);
+            return null;
+        }).when(client).stop();
+        doAnswer(invocation -> {
+            closed.set(true);
+            return null;
+        }).when(client).close();
+        doAnswer(invocation -> {
+            if (closed.get()) {
+                throw new IllegalStateException("Cannot perform operation 'completed' on a disposed receiver.");
+            }
+            return null;
+        }).when(messageContext).complete();
+    }
+
+    private static void awaitState(Thread thread, Thread.State state) {
+        await("thread " + thread.getName() + " in state " + state).atMost(10, TimeUnit.SECONDS)
+                .until(() -> thread.getState() == state);
     }
 
     @Test

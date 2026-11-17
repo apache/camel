@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -102,7 +103,10 @@ public class KafkaConsumer extends DefaultConsumer
         return (KafkaEndpoint) super.getEndpoint();
     }
 
-    Properties getProps() {
+    /**
+     * The properties of the Kafka consumer with the given index (0 to consumersCount - 1).
+     */
+    Properties getProps(int consumerIndex) {
         KafkaConfiguration configuration = endpoint.getConfiguration();
 
         Properties props = configuration.createConsumerProperties();
@@ -111,13 +115,34 @@ public class KafkaConsumer extends DefaultConsumer
         ObjectHelper.ifNotEmpty(endpoint.getKafkaClientFactory().getBrokers(configuration),
                 v -> props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, v));
 
-        String groupId = configuration.getGroupId() != null ? configuration.getGroupId() : defaultGroupId;
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        String groupId = configuredGroupId();
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId != null ? groupId : defaultGroupId);
 
         ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
                 v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
 
+        // a group instance id is one static member of the group: the consumers of the endpoint would fence each other
+        // with the same id, so each one gets the id followed by its index
+        Object groupInstanceId = props.get(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
+        if (configuration.getConsumersCount() > 1 && ObjectHelper.isNotEmpty(groupInstanceId)) {
+            props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, groupInstanceId + "-" + consumerIndex);
+        }
+
         return props;
+    }
+
+    /**
+     * The consumer group set by the groupId option or, without it, by the group.id additional property. Null when
+     * neither sets one: the consumer then uses a generated group id.
+     */
+    private String configuredGroupId() {
+        KafkaConfiguration configuration = endpoint.getConfiguration();
+        if (configuration.getGroupId() != null) {
+            return configuration.getGroupId();
+        }
+        Map<String, Object> additionalProperties = configuration.getAdditionalProperties();
+        Object groupId = additionalProperties != null ? additionalProperties.get(ConsumerConfig.GROUP_ID_CONFIG) : null;
+        return ObjectHelper.isNotEmpty(groupId) ? groupId.toString() : null;
     }
 
     @Override
@@ -126,6 +151,13 @@ public class KafkaConsumer extends DefaultConsumer
 
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
+        if (configuredGroupId() == null) {
+            LOG.warn("Kafka consumer on topic: {} has no groupId and uses the generated consumer group {}, a new one at each"
+                     + " start. It does not resume from the offsets committed before a restart, and each instance of the"
+                     + " application receives every record instead of sharing them with the others. Set the groupId"
+                     + " option to use a stable consumer group.",
+                    endpoint.getConfiguration().getTopic(), defaultGroupId);
+        }
         super.doStart();
         if (endpoint.getConfiguration().isExactlyOnce()) {
             KafkaRecordStreamingProcessorFacade.validateNoKafkaWireTaps(endpoint.getCamelContext(), getRouteId());
@@ -180,7 +212,7 @@ public class KafkaConsumer extends DefaultConsumer
         try {
             for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
                 KafkaFetchRecords task = new KafkaFetchRecords(
-                        this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
+                        this, bridge, topic, pattern, Integer.toString(i), getProps(i), consumerListener);
 
                 // if camel has not been fully started yet then delay starting this consumer to avoid
                 // process incoming message before camel is fully started

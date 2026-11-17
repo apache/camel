@@ -58,8 +58,12 @@ public class DockerConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
     @UriParam(label = "advanced")
+    @Metadata(deprecationNote = "Not used: nothing reads this option when the Docker client is built")
+    @Deprecated
     private boolean loggingFilter;
     @UriParam(label = "advanced")
+    @Metadata(deprecationNote = "Not used: nothing reads this option when the Docker client is built")
+    @Deprecated
     private boolean followRedirectFilter;
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
@@ -195,24 +199,42 @@ public class DockerConfiguration implements Cloneable {
         this.maxPerRouteConnections = maxPerRouteConnections;
     }
 
+    /**
+     * Whether to use logging filter
+     *
+     * @deprecated Not used: nothing reads this option when the Docker client is built
+     */
+    @Deprecated
     public boolean isLoggingFilter() {
         return loggingFilter;
     }
 
     /**
      * Whether to use logging filter
+     *
+     * @deprecated Not used: nothing reads this option when the Docker client is built
      */
+    @Deprecated
     public void setLoggingFilter(boolean loggingFilterEnabled) {
         this.loggingFilter = loggingFilterEnabled;
     }
 
+    /**
+     * Whether to follow redirect filter
+     *
+     * @deprecated Not used: nothing reads this option when the Docker client is built
+     */
+    @Deprecated
     public boolean isFollowRedirectFilter() {
         return followRedirectFilter;
     }
 
     /**
      * Whether to follow redirect filter
+     *
+     * @deprecated Not used: nothing reads this option when the Docker client is built
      */
+    @Deprecated
     public void setFollowRedirectFilter(boolean followRedirectFilterEnabled) {
         this.followRedirectFilter = followRedirectFilterEnabled;
     }

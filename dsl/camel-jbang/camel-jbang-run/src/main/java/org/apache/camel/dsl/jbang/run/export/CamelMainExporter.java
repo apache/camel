@@ -379,8 +379,6 @@ class CamelMainExporter extends Exporter {
         // log4j configuration
         InputStream is = CamelMainExporter.class.getResourceAsStream("/log4j2-main.properties");
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
-        is = CamelMainExporter.class.getResourceAsStream("/export/log4j2.component.properties");
-        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
     }
 
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {

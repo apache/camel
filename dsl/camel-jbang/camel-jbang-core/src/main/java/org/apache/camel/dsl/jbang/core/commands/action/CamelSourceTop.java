@@ -130,6 +130,9 @@ public class CamelSourceTop extends ActionWatchCommand {
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
                 JsonObject row = new JsonObject();
+                // which integration, as the other listings say (CAMEL-26929)
+                row.put("pid", process.pid());
+                row.put("name", process.name());
                 row.put("id", r.id);
                 row.put("routeId", r.routeId);
                 row.put("location", r.location);

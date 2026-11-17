@@ -48,22 +48,6 @@
   yes=true
 > ask --yes=false
   (defaults)
-> bind v --sink v --source v
-  errorHandler=null
-  file="v"
-  output="file"
-  properties=null
-  sink="v"
-  source="v"
-  steps=null
-> bind v --sink v --source v --error-handler v
-  errorHandler="v"
-> bind v --sink v --source v --output file
-  (defaults)
-> bind v --sink v --source v --property v --property w
-  properties=["v", "w"]
-> bind v --sink v --source v --step v --step w
-  steps=["v", "w"]
 > catalog
 > catalog component
   camelVersion=null
@@ -2870,7 +2854,7 @@
   catalogContext=false
   files=["v"]
   format="text"
-  model="llama3.2"
+  model=null
   showPrompt=false
   stream=true
   systemPrompt=null
@@ -4297,7 +4281,7 @@
   catalogContext=false
   files=["v"]
   format="text"
-  model="llama3.2"
+  model=null
   showPrompt=false
   stream=true
   systemPrompt=null
@@ -4480,7 +4464,6 @@
   fromKamelet=null
   kameletsVersion=null
   list=false
-  pipe=false
   repositories=null
 > init --clean-directory
   cleanDirectory=true
@@ -4499,10 +4482,6 @@
 > init --list
   list=true
 > init --list=false
-  (defaults)
-> init --pipe
-  pipe=true
-> init --pipe=false
   (defaults)
 > init --repos v
   repositories="v"
@@ -4574,7 +4553,7 @@
   applyDescriptions=false
   directory=null
   format="markdown"
-  model="llama3.2"
+  model=null
   save=false
   showPrompt=false
   temperature=0.3
@@ -5408,7 +5387,7 @@
 > shell
 > stop
   kill=false
-  name="*"
+  name=null
   noWait=false
   timeout=60000
 > stop --kill
@@ -6120,7 +6099,7 @@
   # OptionParserException: The option --unknown-option is unknown.
 > no-such-command
   error
-  # OptionParserException: Unexpected positional value 'no-such-command' at index 0. Declared positional indexes: none.
+  # OptionParserException: Unknown argument 'no-such-command': camel takes no arguments
 
 @config logging-level=debug
 > run

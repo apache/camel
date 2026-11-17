@@ -396,7 +396,9 @@ public interface Activemq6ComponentBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -417,7 +419,9 @@ public interface Activemq6ComponentBuilderFactory {
          * maxMessagesPerTask option to control dynamic scaling up/down of
          * threads. When doing request/reply over JMS then the option
          * replyToMaxConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * consumers on the reply message listener. On a topic, each consumer
+         * has its own subscription and receives every message, unless
+         * subscriptionShared is enabled.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

@@ -70,10 +70,13 @@ public class PluginGet extends PluginBaseCommand {
             return 0;
         }
 
-        if (!rows.isEmpty()) {
-            printer().println("Installed plugins:");
-            printer().println();
+        if (rows.isEmpty()) {
+            // it printed nothing (CAMEL-26931)
+            printer().printDiagnostic("No plugins installed (camel plugin list lists the plugins that can be added)");
+            return 0;
         }
+        printer().println("Installed plugins:");
+        printer().println();
         printRows(rows);
 
         return 0;

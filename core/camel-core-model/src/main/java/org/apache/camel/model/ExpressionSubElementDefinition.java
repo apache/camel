@@ -50,11 +50,13 @@ public class ExpressionSubElementDefinition implements HasExpressionType {
     }
 
     public ExpressionSubElementDefinition(Expression expression) {
-        this.expressionType = new ExpressionDefinition(expression);
+        // unwrap a builder such as simple("...") to its expression definition, so a copy (each route created from a
+        // route template) gets its own expression rather than sharing one that is created only once
+        this.expressionType = ExpressionNodeHelper.toExpressionDefinition(expression);
     }
 
     public ExpressionSubElementDefinition(Predicate predicate) {
-        this.expressionType = new ExpressionDefinition(predicate);
+        this.expressionType = ExpressionNodeHelper.toExpressionDefinition(predicate);
     }
 
     public ExpressionSubElementDefinition copyDefinition() {

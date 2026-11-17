@@ -3485,7 +3485,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of headers to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3."
           },
           "id" : {
             "type" : "string",
@@ -3525,7 +3525,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of properties to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3."
           },
           "id" : {
             "type" : "string",
@@ -5138,7 +5138,7 @@
           "maxQueueSize" : {
             "type" : "number",
             "title" : "Max Queue Size",
-            "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue."
+            "description" : "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a scheduled thread pool, 0 or -1 means the queue is not limited."
           },
           "note" : {
             "type" : "string",
@@ -5216,7 +5216,7 @@
           "maxQueueSize" : {
             "type" : "number",
             "title" : "Max Queue Size",
-            "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue."
+            "description" : "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue."
           },
           "note" : {
             "type" : "string",
@@ -6375,7 +6375,7 @@
           "autoDiscoverObjectMapper" : {
             "type" : "boolean",
             "title" : "Auto Discover Object Mapper",
-            "description" : "If set to true then Jackson will lookup for an objectMapper into the registry.",
+            "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to that AvroMapper.",
             "default" : false
           },
           "autoDiscoverSchemaResolver" : {
@@ -6470,7 +6470,7 @@
           "useDefaultObjectMapper" : {
             "type" : "boolean",
             "title" : "Use Default Object Mapper",
-            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
             "default" : true
           },
           "useList" : {
@@ -7782,7 +7782,7 @@
           "contextPath" : {
             "type" : "string",
             "title" : "Context Path",
-            "description" : "Package name where your JAXB classes are located."
+            "description" : "Package name where your JAXB classes are located. The package must have an ObjectFactory class or a jaxb.index file that lists the classes. To use a class name instead, set contextPathIsClassName to true."
           },
           "contextPathIsClassName" : {
             "type" : "boolean",
@@ -7804,7 +7804,7 @@
           "fragment" : {
             "type" : "boolean",
             "title" : "Fragment",
-            "description" : "To turn on marshalling XML fragment trees. This is useful when generated code does not have XmlRootElement annotation and you need to unmarshall only part of the tree.",
+            "description" : "To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller. To marshal or unmarshal only part of the tree, or classes without the XmlRootElement annotation, use partClass and partNamespace instead.",
             "default" : false
           },
           "id" : {
@@ -7826,7 +7826,7 @@
           "mustBeJAXBElement" : {
             "type" : "boolean",
             "title" : "Must Be JAXBElement",
-            "description" : "Whether marshalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format.",
+            "description" : "Whether marshalling must be java objects with JAXB annotations. By default, any other message body is written as it is, such as when the data is already in XML format. Set this option to true to fail with an InvalidPayloadException instead.",
             "default" : false
           },
           "namespacePrefix" : {
@@ -7858,7 +7858,7 @@
           "prettyPrint" : {
             "type" : "boolean",
             "title" : "Pretty Print",
-            "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+            "description" : "To enable pretty printing output nicely formatted. Is by default true.",
             "default" : true
           },
           "schema" : {
@@ -7869,7 +7869,7 @@
           "schemaLocation" : {
             "type" : "string",
             "title" : "Schema Location",
-            "description" : "To define the location of the schema."
+            "description" : "To set the xsi:schemaLocation attribute in the marshalled XML. This does not validate the XML; use the schema option to validate."
           },
           "schemaSeverityLevel" : {
             "type" : "string",
@@ -7930,7 +7930,7 @@
           "autoDiscoverObjectMapper" : {
             "type" : "boolean",
             "title" : "Auto Discover Object Mapper",
-            "description" : "If set to true then Jackson will look for an objectMapper to use from the registry.",
+            "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, prettyPrint, enableFeatures and disableFeatures, are not applied to that ObjectMapper.",
             "default" : false
           },
           "autoDiscoverSchemaResolver" : {
@@ -8042,7 +8042,7 @@
           "useDefaultObjectMapper" : {
             "type" : "boolean",
             "title" : "Use Default Object Mapper",
-            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
             "default" : true
           },
           "useList" : {
@@ -8357,7 +8357,7 @@
           "autoDiscoverObjectMapper" : {
             "type" : "boolean",
             "title" : "Auto Discover Object Mapper",
-            "description" : "If set to true then Jackson will lookup for an objectMapper into the registry.",
+            "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to that ProtobufMapper.",
             "default" : false
           },
           "autoDiscoverSchemaResolver" : {
@@ -8454,7 +8454,7 @@
           "useDefaultObjectMapper" : {
             "type" : "boolean",
             "title" : "Use Default Object Mapper",
-            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
             "default" : true
           },
           "useList" : {
@@ -12634,7 +12634,7 @@
           "producerApiDoc" : {
             "type" : "string",
             "title" : "Producer Api Doc",
-            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document."
+            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document."
           },
           "producerComponent" : {
             "type" : "string",

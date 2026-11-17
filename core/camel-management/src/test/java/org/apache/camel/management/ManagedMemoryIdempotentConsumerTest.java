@@ -59,6 +59,8 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
+        // the keys are lost when the application stops
+        assertEquals(Boolean.TRUE, mbeanServer.getAttribute(on, "InMemory"));
 
         assertFalse(repo.contains("1"));
         assertFalse(repo.contains("2"));
@@ -115,6 +117,11 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
 
         Long count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
+
+        // the idempotent consumer names its repository and says that it keeps the keys only in memory
+        assertEquals(MemoryIdempotentRepository.class.getName(),
+                mbeanServer.getAttribute(on, "IdempotentRepositoryClassName"));
+        assertEquals(Boolean.TRUE, mbeanServer.getAttribute(on, "IdempotentRepositoryInMemory"));
 
         resultEndpoint.expectedBodiesReceived("one", "two");
 

@@ -35,39 +35,29 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
-import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
-import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.app.SSLContextParametersDefinition;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -82,12 +72,10 @@ import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.isSequenceNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
@@ -95,20 +83,9 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
-    // Note: the "pipe.yaml" extension (Camel K Pipe / kind: Pipe) is deprecated and will be removed in a future release;
-    // use a plain Camel route instead.
-    public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
+    public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml" };
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
-
-    // API versions for Pipe
-    // we are lenient so lets just assume we can work with any of the v1 even if they evolve
-    @Deprecated
-    private static final String PIPE_VERSION = "camel.apache.org/v1";
-    private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1beta2";
-    private static final String KNATIVE_MESSAGING_VERSION = "messaging.knative.dev/v1";
-    private static final String KNATIVE_EVENTING_VERSION = "eventing.knative.dev/v1";
-    private static final String KNATIVE_EVENT_TYPE = "org.apache.camel.event";
 
     private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
 
@@ -371,24 +348,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // backwards compatible fixes
         Object target = root;
 
-        // check if the yaml with embedded pipes
-        if (Objects.equals(root.getNodeType(), NodeType.MAPPING)) {
-            final MappingNode mn = YamlDeserializerSupport.asMappingNode(root);
-            // pipe
-            boolean pipe = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(PIPE_VERSION)) &&
-                    anyTupleMatches(mn.getValue(), "kind", "Pipe");
-            if (pipe) {
-                if (!preParse) {
-                    String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
-                    LOG.warn(
-                            "Loading Pipe (kind: Pipe) resources with the YAML DSL is deprecated and will be removed in a future release. "
-                             + "Use a plain Camel route instead: {}",
-                            loc);
-                }
-                target = preConfigurePipe(root, ctx, target, preParse);
-            }
-        }
-
         // only detect beans during pre-parsing
         if (preParse && Objects.equals(root.getNodeType(), NodeType.SEQUENCE)) {
             final List<Object> list = new ArrayList<>();
@@ -416,264 +375,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             }
         }
         return target;
-    }
-
-    /**
-     * Pipe file
-     *
-     * @deprecated Pipe support in the YAML DSL is deprecated and will be removed in a future release; use a plain Camel
-     *             route instead.
-     */
-    @Deprecated
-    private Object preConfigurePipe(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
-        // when in pre-parse phase then we only want to gather /metadata/annotations
-
-        List<Object> answer = new ArrayList<>();
-
-        MappingNode ann = asMappingNode(nodeAt(root, "/metadata/annotations"));
-        Map<String, Object> params = asMap(ann);
-
-        if (!preParse) {
-            // start with a route
-            final RouteDefinition route = new RouteDefinition();
-            String routeId = asText(nodeAt(root, "/metadata/name"));
-            if (routeId != null) {
-                route.routeId(routeId);
-            }
-
-            // Pipe is a bit more complex, so grab the source and sink
-            // and map those to Camel route definitions
-            MappingNode source = asMappingNode(nodeAt(root, "/spec/source"));
-            MappingNode sink = asMappingNode(nodeAt(root, "/spec/sink"));
-            if (source != null) {
-                int line = -1;
-                if (source.getStartMark().isPresent()) {
-                    line = source.getStartMark().get().getLine();
-                }
-
-                // source at the beginning (mandatory)
-                String uri = extractCamelEndpointUri(source);
-                route.from(uri);
-
-                // enrich model with line number
-                if (line != -1) {
-                    route.getInput().setLineNumber(line);
-                    if (ctx != null) {
-                        route.getInput().setLocation(ctx.getResource().getLocation());
-                    }
-                }
-
-                MappingNode dataTypes = asMappingNode(nodeAt(source, "/dataTypes"));
-                if (dataTypes != null) {
-                    MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
-                    if (in != null) {
-                        route.inputType(extractDataType(in));
-                    }
-
-                    MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
-                    if (out != null) {
-                        route.transformDataType(new DataType(extractDataType(out)));
-                    }
-                }
-
-                // steps in the middle (optional)
-                Node steps = nodeAt(root, "/spec/steps");
-                if (steps != null) {
-                    SequenceNode sn = asSequenceNode(steps);
-                    for (Node node : sn.getValue()) {
-                        MappingNode step = asMappingNode(node);
-                        uri = extractCamelEndpointUri(step);
-                        if (uri != null) {
-                            line = -1;
-                            if (node.getStartMark().isPresent()) {
-                                line = node.getStartMark().get().getLine();
-                            }
-
-                            ProcessorDefinition<?> out;
-                            // if kamelet then use kamelet eip instead of to
-                            boolean kamelet = uri.startsWith("kamelet:");
-                            if (kamelet) {
-                                uri = uri.substring(8);
-                                out = new KameletDefinition(uri);
-                            } else {
-                                out = new ToDefinition(uri);
-                            }
-                            route.addOutput(out);
-                            // enrich model with line number
-                            if (line != -1) {
-                                out.setLineNumber(line);
-                                if (ctx != null) {
-                                    out.setLocation(ctx.getResource().getLocation());
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (sink != null) {
-                    dataTypes = asMappingNode(nodeAt(sink, "/dataTypes"));
-                    if (dataTypes != null) {
-                        MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
-                        if (in != null) {
-                            route.transformDataType(new DataType(extractDataType(in)));
-                        }
-
-                        MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
-                        if (out != null) {
-                            route.outputType(extractDataType(out));
-                        }
-                    }
-
-                    // sink is at the end (mandatory)
-                    line = -1;
-                    if (sink.getStartMark().isPresent()) {
-                        line = sink.getStartMark().get().getLine();
-                    }
-                    uri = extractCamelEndpointUri(sink);
-                    ToDefinition to = new ToDefinition(uri);
-                    route.addOutput(to);
-
-                    // enrich model with line number
-                    if (line != -1) {
-                        to.setLineNumber(line);
-                        if (ctx != null) {
-                            to.setLocation(ctx.getResource().getLocation());
-                        }
-                    }
-                }
-
-                // is there any error handler?
-                MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
-                if (errorHandler != null && !errorHandler.getValue().isEmpty()) {
-                    // there are 5 different error handlers, which one is it
-                    NodeTuple nt = errorHandler.getValue().get(0);
-                    String ehName = asText(nt.getKeyNode());
-
-                    ErrorHandlerFactory ehf = null;
-                    if ("sink".equals(ehName)) {
-                        // a sink is a dead letter queue
-                        DeadLetterChannelDefinition dlcd = new DeadLetterChannelDefinition();
-                        MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
-                        if (endpoint == null) {
-                            throw new IllegalArgumentException(
-                                    "Pipe errorHandler sink must have an endpoint defined");
-                        }
-                        String dlq = extractCamelEndpointUri(endpoint);
-                        dlcd.setDeadLetterUri(dlq);
-                        ehf = dlcd;
-                    } else if ("log".equals(ehName)) {
-                        // log is the default error handler
-                        ehf = new DefaultErrorHandlerDefinition();
-                    } else if ("none".equals(ehName)) {
-                        route.errorHandler(new NoErrorHandlerDefinition());
-                    }
-
-                    // some error handlers support additional parameters
-                    if (ehf != null) {
-                        // properties that are general for all kind of error handlers
-                        MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
-                        params = asMap(prop);
-                        if (params != null) {
-                            PropertyBindingSupport.build()
-                                    .withIgnoreCase(true)
-                                    .withFluentBuilder(true)
-                                    .withRemoveParameters(true)
-                                    .withCamelContext(getCamelContext())
-                                    .withTarget(ehf)
-                                    .withProperties(params)
-                                    .bind();
-                        }
-                        route.errorHandler(ehf);
-                    }
-                }
-            }
-
-            answer.add(route);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Extracts the data type transformer name information form nodes dataTypes/in or dataTypes/out. When scheme is set
-     * construct the transformer name with a prefix like scheme:format. Otherwise, just use the given format as a data
-     * type transformer name.
-     */
-    private String extractDataType(MappingNode node) {
-        String scheme = extractTupleValue(node.getValue(), "scheme");
-        String format = extractTupleValue(node.getValue(), "format");
-        if (scheme != null) {
-            return scheme + ":" + format;
-        }
-        return format;
-    }
-
-    private String extractCamelEndpointUri(MappingNode node) {
-        MappingNode mn = null;
-        Node ref = nodeAt(node, "/ref");
-        if (ref != null) {
-            mn = asMappingNode(ref);
-        }
-
-        // extract uri is different if kamelet or not
-        boolean kamelet = mn != null && anyTupleMatches(mn.getValue(), "kind", "Kamelet");
-        boolean strimzi = !kamelet && mn != null
-                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
-                && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
-        boolean knativeBroker = !kamelet && mn != null
-                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_EVENTING_VERSION))
-                && anyTupleMatches(mn.getValue(), "kind", "Broker");
-        boolean knativeChannel = !kamelet && !strimzi && mn != null
-                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_MESSAGING_VERSION));
-        String uri;
-        if (knativeBroker) {
-            uri = KNATIVE_EVENT_TYPE;
-        } else if (kamelet || strimzi || knativeChannel) {
-            uri = extractTupleValue(mn.getValue(), "name");
-        } else {
-            uri = extractTupleValue(node.getValue(), "uri");
-            if (uri == null && mn != null) {
-                String kind = extractTupleValue(mn.getValue(), "kind");
-                String apiVersion = extractTupleValue(mn.getValue(), "apiVersion");
-                throw new IllegalArgumentException(
-                        "Unsupported Pipe ref kind: " + kind + " (apiVersion: " + apiVersion + ")");
-            }
-        }
-
-        // properties
-        MappingNode prop = asMappingNode(nodeAt(node, "/properties"));
-        Map<String, Object> params = asMap(prop);
-
-        if (knativeBroker && params != null && params.containsKey("type")) {
-            // Use explicit event type from properties - remove setting from params and set
-            // as uri
-            uri = params.remove("type").toString();
-        }
-
-        if (params != null && !params.isEmpty()) {
-            // kamelet uses useRawUri so parameters should not be encoded
-            String query = URISupport.createQueryString(params, !kamelet);
-            // CAMEL-23284: restore property placeholders that were URL-encoded
-            query = query.replace("%7B%7B", "{{").replace("%7D%7D", "}}");
-            uri = uri + "?" + query;
-        }
-
-        if (kamelet) {
-            return "kamelet:" + uri;
-        } else if (strimzi) {
-            return "kafka:" + uri;
-        } else if (knativeBroker) {
-            if (uri.contains("?")) {
-                uri += "&kind=Broker&name=" + extractTupleValue(mn.getValue(), "name");
-            } else {
-                uri += "?kind=Broker&name=" + extractTupleValue(mn.getValue(), "name");
-            }
-            return "knative:event/" + uri;
-        } else if (knativeChannel) {
-            return "knative:channel/" + uri;
-        } else {
-            return uri;
-        }
     }
 
     @Override

@@ -24,7 +24,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(51);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -42,10 +42,12 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("firstResult");
         props.add("flushOnSend");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("joinTransaction");
         props.add("lazyStartProducer");
         props.add("lockModeType");
+        props.add("lockTimeout");
         props.add("maxMessagesPerPoll");
         props.add("maximumResults");
         props.add("namedQuery");

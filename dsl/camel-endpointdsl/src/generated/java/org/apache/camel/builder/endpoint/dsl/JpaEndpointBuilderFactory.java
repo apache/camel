@@ -367,6 +367,58 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long the consumer waits for the lock of an entity (see
+         * consumeLockEntity) that another transaction holds. It is given to the
+         * JPA provider as the jakarta.persistence.lock.timeout hint, which the
+         * provider applies if the database supports it: for example Hibernate
+         * on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
+         * timeout: the lock waits as long as the database lets it, which on
+         * PostgreSQL is until the other transaction ends. On PostgreSQL a lock
+         * that times out rolls back the poll: the entities that the poll routed
+         * before the locked one are routed again by each poll, for as long as
+         * the other transaction holds the lock, so the route must be
+         * idempotent. Not used with skipLockedEntity. The value is in millis,
+         * and must not be negative.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param lockTimeout the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder lockTimeout(long lockTimeout) {
+            doSetProperty("lockTimeout", lockTimeout);
+            return this;
+        }
+        /**
+         * How long the consumer waits for the lock of an entity (see
+         * consumeLockEntity) that another transaction holds. It is given to the
+         * JPA provider as the jakarta.persistence.lock.timeout hint, which the
+         * provider applies if the database supports it: for example Hibernate
+         * on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
+         * timeout: the lock waits as long as the database lets it, which on
+         * PostgreSQL is until the other transaction ends. On PostgreSQL a lock
+         * that times out rolls back the poll: the entities that the poll routed
+         * before the locked one are routed again by each poll, for as long as
+         * the other transaction holds the lock, so the route must be
+         * idempotent. Not used with skipLockedEntity. The value is in millis,
+         * and must not be negative.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param lockTimeout the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder lockTimeout(String lockTimeout) {
+            doSetProperty("lockTimeout", lockTimeout);
+            return this;
+        }
+        /**
          * An integer value to define the maximum number of messages to gather
          * per poll. By default, no maximum is set. It can be used to avoid
          * polling many thousands of messages when starting up the server. Set a
@@ -465,8 +517,15 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure whether to use NOWAIT on lock and silently skip the
-         * entity.
+         * To configure whether to skip an entity that another transaction has
+         * locked, instead of waiting for its lock, so that several consumers
+         * can share a table. With Hibernate and a pessimistic lockModeType, the
+         * consumer locks the entity with SKIP LOCKED, where the database
+         * supports it: an entity that another transaction holds, or that is no
+         * longer in the database, is skipped, and the poll goes on, also on
+         * PostgreSQL. Otherwise the consumer gives the lock the timeout 0
+         * (NOWAIT, if the JPA provider applies it), and a lock that fails is
+         * handled as one that times out with lockTimeout.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -481,8 +540,15 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure whether to use NOWAIT on lock and silently skip the
-         * entity.
+         * To configure whether to skip an entity that another transaction has
+         * locked, instead of waiting for its lock, so that several consumers
+         * can share a table. With Hibernate and a pessimistic lockModeType, the
+         * consumer locks the entity with SKIP LOCKED, where the database
+         * supports it: an entity that another transaction holds, or that is no
+         * longer in the database, is skipped, and the poll goes on, also on
+         * PostgreSQL. Otherwise the consumer gives the lock the timeout 0
+         * (NOWAIT, if the JPA provider applies it), and a lock that fails is
+         * handled as one that times out with lockTimeout.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -692,6 +758,48 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
             return this;
         }
         /**

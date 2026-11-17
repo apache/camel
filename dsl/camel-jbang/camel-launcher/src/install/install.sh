@@ -23,6 +23,11 @@ manifest_base_url="${CAMEL_INSTALL_MANIFEST_BASE_URL:-https://camel.apache.org/c
 maven_base_url="${CAMEL_INSTALL_MAVEN_BASE_URL:-https://repo1.maven.org/maven2/org/apache/camel/camel-launcher}"
 snapshot_base_url="${CAMEL_INSTALL_SNAPSHOT_BASE_URL:-https://repository.apache.org/content/repositories/snapshots/org/apache/camel/camel-launcher}"
 ca_cert="${CAMEL_INSTALL_CA_CERT:-}"
+stall_timeout="${CAMEL_INSTALL_STALL_TIMEOUT:-60}"
+
+# A download gives up when it cannot connect within 30 seconds, or when it gets almost nothing (under 1 KB/s) for
+# $stall_timeout seconds; a slow but working download of the archive (over 100 MB) is not cut off by a total time.
+connect_timeout=30
 
 data_root="${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli/versions"
 camel_cli_root="${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli"
@@ -138,15 +143,20 @@ fetch() {
     outfile="$2"
     if command -v curl >/dev/null 2>&1; then
         if [ -n "$ca_cert" ]; then
-            curl -fsSL --cacert "$ca_cert" -o "$outfile" "$url"
+            curl -fsSL --connect-timeout "$connect_timeout" --speed-limit 1024 --speed-time "$stall_timeout" \
+                --cacert "$ca_cert" -o "$outfile" "$url"
         else
-            curl -fsSL -o "$outfile" "$url"
+            curl -fsSL --connect-timeout "$connect_timeout" --speed-limit 1024 --speed-time "$stall_timeout" \
+                -o "$outfile" "$url"
         fi
     elif command -v wget >/dev/null 2>&1; then
+        # wget tries 20 times by default, each waiting 900 seconds for data
         if [ -n "$ca_cert" ]; then
-            wget -nv --ca-certificate="$ca_cert" -O "$outfile" "$url"
+            wget -nv --connect-timeout="$connect_timeout" --read-timeout="$stall_timeout" --tries=2 \
+                --ca-certificate="$ca_cert" -O "$outfile" "$url"
         else
-            wget -nv -O "$outfile" "$url"
+            wget -nv --connect-timeout="$connect_timeout" --read-timeout="$stall_timeout" --tries=2 \
+                -O "$outfile" "$url"
         fi
     else
         fail "curl or wget is required to install the Camel CLI"

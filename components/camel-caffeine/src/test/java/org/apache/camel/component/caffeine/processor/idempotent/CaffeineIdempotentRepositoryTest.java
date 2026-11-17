@@ -20,6 +20,8 @@ import java.util.UUID;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository;
+import org.apache.camel.component.caffeine.processor.aggregate.CaffeineAggregationRepository;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,14 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
 
         key01 = generateRandomString();
         key02 = generateRandomString();
+    }
+
+    @Test
+    void testInMemory() {
+        // a Caffeine cache lives in the heap, so the keys are lost when the application stops
+        assertTrue(repo.isInMemory());
+        assertTrue(new CaffeineAggregationRepository().isInMemory());
+        assertTrue(new CaffeineKeyValueRepository().isInMemory());
     }
 
     @Test

@@ -26,13 +26,13 @@ import org.apache.camel.StaticService;
 /**
  * Pluggable strategy that performs the actual <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful
  * shutdown</a> sequence when a {@link CamelContext} is stopping.
- * <p/>
+ * <p>
  * Graceful shutdown is non-trivial: Camel must stop all route consumers (so no new messages enter) while keeping routes
  * alive long enough to drain in-flight exchanges, including messages sitting in in-memory queues (SEDA, etc.). The
  * default implementation shuts down routes in reverse startup order (see {@link RouteStartupOrder}), waits for
  * in-flight exchanges to complete up to the configured {@link #setTimeout timeout}, then forces shutdown if the timeout
  * expires.
- * <p/>
+ * <p>
  * This SPI is intended for framework and container integrators. End users who need to stop individual routes should use
  * {@link RouteController} via {@link CamelContext#getRouteController()} instead. Per-route and per-consumer shutdown
  * behaviour can be tuned via {@link org.apache.camel.ShutdownRoute} and {@link org.apache.camel.ShutdownRunningTask}
@@ -48,13 +48,13 @@ public interface ShutdownStrategy extends StaticService {
 
     /**
      * Shutdown the routes, forcing shutdown being more aggressive, if timeout occurred.
-     * <p/>
-     * This operation is used when {@link CamelContext} is shutting down, to ensure Camel will shutdown if messages
-     * seems to be <i>stuck</i>.
+     * <p>
+     * This operation is used when {@link CamelContext} is shutting down, to ensure Camel will shutdown if messages seem
+     * to be <i>stuck</i>.
      *
      * @param  context   the camel context
      * @param  routes    the routes, ordered by the order they were started
-     * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error shutting down the consumers, however it's preferred to avoid this
      */
     void shutdownForced(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
 
@@ -63,7 +63,7 @@ public interface ShutdownStrategy extends StaticService {
      *
      * @param  context   the camel context
      * @param  routes    the routes, ordered by the order they were started
-     * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error shutting down the consumers, however it's preferred to avoid this
      */
     void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
 
@@ -72,7 +72,7 @@ public interface ShutdownStrategy extends StaticService {
      *
      * @param  context   the camel context
      * @param  routes    the routes, ordered by the order they are started
-     * @throws Exception is thrown if error suspending the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error suspending the consumers, however it's preferred to avoid this
      */
     void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
 
@@ -83,7 +83,7 @@ public interface ShutdownStrategy extends StaticService {
      * @param  routes    the routes, ordered by the order they are started
      * @param  timeout   timeout
      * @param  timeUnit  the unit to use
-     * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error shutting down the consumers, however it's preferred to avoid this
      */
     void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
 
@@ -96,8 +96,8 @@ public interface ShutdownStrategy extends StaticService {
      * @param  timeout           timeout
      * @param  timeUnit          the unit to use
      * @param  abortAfterTimeout should abort shutdown after timeout
-     * @return                   <tt>true</tt> if the route is stopped before the timeout
-     * @throws Exception         is thrown if error shutting down the consumer, however its preferred to avoid this
+     * @return                   <code>true</code> if the route is stopped before the timeout
+     * @throws Exception         is thrown if error shutting down the consumer, however it's preferred to avoid this
      */
     boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
             throws Exception;
@@ -109,17 +109,17 @@ public interface ShutdownStrategy extends StaticService {
      * @param  routes    the routes, ordered by the order they were started
      * @param  timeout   timeout
      * @param  timeUnit  the unit to use
-     * @throws Exception is thrown if error suspending the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error suspending the consumers, however it's preferred to avoid this
      */
     void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
      * Set a timeout to wait for the shutdown to complete.
-     * <p/>
+     * <p>
      * You must set a positive value. If you want to wait (forever) then use a very high value such as
      * {@link Long#MAX_VALUE}
-     * <p/>
-     * The default timeout unit is <tt>SECONDS</tt>
+     * <p>
+     * The default timeout unit is <code>SECONDS</code>
      *
      * @throws IllegalArgumentException if the timeout value is 0 or negative
      * @param  timeout                  timeout
@@ -128,8 +128,8 @@ public interface ShutdownStrategy extends StaticService {
 
     /**
      * Gets the timeout.
-     * <p/>
-     * The default timeout unit is <tt>SECONDS</tt>
+     * <p>
+     * The default timeout unit is <code>SECONDS</code>
      *
      * @return the timeout
      */
@@ -153,13 +153,13 @@ public interface ShutdownStrategy extends StaticService {
      * Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown
      * is happening. And during forced shutdown we want to avoid logging errors/warnings et al. in the logs as a side
      * effect of the forced timeout.
-     * <p/>
-     * By default, this is <tt>false</tt>
-     * <p/>
+     * <p>
+     * By default, this is <code>false</code>
+     * <p>
      * Notice the suppression is a <i>best effort</i> as there may still be some logs coming from 3rd party libraries
      * and whatnot, which Camel cannot control.
      *
-     * @param suppressLoggingOnTimeout <tt>true</tt> to suppress logging, false to log as usual.
+     * @param suppressLoggingOnTimeout <code>true</code> to suppress logging, false to log as usual.
      */
     void setSuppressLoggingOnTimeout(boolean suppressLoggingOnTimeout);
 
@@ -167,22 +167,22 @@ public interface ShutdownStrategy extends StaticService {
      * Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown
      * is happening. And during forced shutdown we want to avoid logging errors/warnings et al. in the logs as a side
      * effect of the forced timeout.
-     * <p/>
-     * By default, this is <tt>false</tt>
-     * <p/>
+     * <p>
+     * By default, this is <code>false</code>
+     * <p>
      * Notice the suppression is a <i>best effort</i> as there may still be some logs coming from 3rd party libraries
      * and whatnot, which Camel cannot control.
      */
     boolean isSuppressLoggingOnTimeout();
 
     /**
-     * Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown
+     * Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers were shutdown
      * within that period.
-     * <p/>
-     * You should have good reasons to set this option to <tt>false</tt> as it means that the routes keep running and is
-     * halted abruptly when {@link CamelContext} has been shutdown.
+     * <p>
+     * You should have good reasons to set this option to <code>false</code> as it means that the routes keep running
+     * and is halted abruptly when {@link CamelContext} has been shutdown.
      *
-     * @param shutdownNowOnTimeout <tt>true</tt> to force shutdown, <tt>false</tt> to leave them running
+     * @param shutdownNowOnTimeout <code>true</code> to force shutdown, <code>false</code> to leave them running
      */
     void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout);
 
@@ -196,31 +196,31 @@ public interface ShutdownStrategy extends StaticService {
     /**
      * Sets whether routes should be shutdown in reverse or the same order as they were started.
      *
-     * @param shutdownRoutesInReverseOrder <tt>true</tt> to shutdown in reverse order
+     * @param shutdownRoutesInReverseOrder <code>true</code> to shutdown in reverse order
      */
     void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder);
 
     /**
      * Whether to shut down routes in reverse order than they were started.
-     * <p/>
-     * This option is by default set to <tt>true</tt>.
+     * <p>
+     * This option is by default set to <code>true</code>.
      *
-     * @return <tt>true</tt> if routes should be shutdown in reverse order.
+     * @return <code>true</code> if routes should be shutdown in reverse order.
      */
     boolean isShutdownRoutesInReverseOrder();
 
     /**
      * Sets whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running
-     * during a shutdown which didn't complete without the given timeout.
+     * during a shutdown which didn't complete within the given timeout.
      *
-     * @param logInflightExchangesOnTimeout <tt>true</tt> to log information about the inflight exchanges,
-     *                                      <tt>false</tt> to not log
+     * @param logInflightExchangesOnTimeout <code>true</code> to log information about the inflight exchanges,
+     *                                      <code>false</code> to not log
      */
     void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout);
 
     /**
      * Whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running during a
-     * shutdown which didn't complete without the given timeout.
+     * shutdown which didn't complete within the given timeout.
      */
     boolean isLogInflightExchangesOnTimeout();
 

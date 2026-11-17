@@ -171,7 +171,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
         assertThatThrownBy(command::doCall)
                 .isInstanceOfSatisfying(CliException.class,
                         e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
-                .hasMessageContaining("--quarkusMavenPluginVersion is required with --download=false");
+                .hasMessageContaining("--quarkus-maven-plugin-version is required with --download=false");
     }
 
     @Test

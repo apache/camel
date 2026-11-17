@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,10 @@ class ListAboutTest extends ProcessCommandTestSupport {
 
     @Test
     void asJson() throws Exception {
-        JsonObject about = (JsonObject) Jsoner.deserialize(run(command(null), true));
+        // a list, also for one integration, as the other listings (CAMEL-26929)
+        JsonArray all = (JsonArray) Jsoner.deserialize(run(command(null), true));
+        assertThat(all).hasSize(1);
+        JsonObject about = (JsonObject) all.get(0);
         assertThat(about.getString("name")).isEqualTo("myApp");
         assertThat(about.getString("purpose")).isEqualTo("Every order is checked against the stock.");
         assertThat((List<?>) about.get("routes")).hasSize(2);

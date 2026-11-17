@@ -205,7 +205,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
         /**
          * Whether the first line is ignored for delimited files (for the column headers).
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder ignoreFirstRecord(String ignoreFirstRecord) {
@@ -215,7 +215,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
         /**
          * Whether the first line is ignored for delimited files (for the column headers).
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder ignoreFirstRecord(boolean ignoreFirstRecord) {
@@ -225,7 +225,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
         /**
          * If the text is qualified with a character.
-         * <p/>
+         * <p>
          * Uses quote character by default.
          */
         public Builder textQualifier(String textQualifier) {

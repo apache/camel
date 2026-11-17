@@ -253,4 +253,47 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         answer.put("message", message);
         return answer;
     }
+
+    @Test
+    void theOutcomeAsJson() throws Exception {
+        // CAMEL-26929: send had no --json, so a script or an AI agent had to read the status line and the table
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--body=hello", "--reply", "--json"),
+                answer("success"));
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("success");
+        assertThat(out.getString("exchangeId")).isEqualTo("ex-1");
+        assertThat(out.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(printer.getStdout()).doesNotContain("Sent (");
+    }
+
+    @Test
+    void theSummaryOfARepeatAsJson() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject summary = new JsonObject(
+                Map.of("status", "success", "sent", 10L, "failed", 0L, "elapsed", 3000L,
+                        "endpoint", "direct://start", "errors", new JsonArray()));
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--repeat=10", "--json"), summary);
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getLong("sent")).isEqualTo(10L);
+        assertThat(out.getString("status")).isEqualTo("success");
+    }
+
+    @Test
+    void aFailedSendAsJsonIsAFailure() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--json"), answer("error"));
+
+        assertThat(exit).isEqualTo(CliExitCode.FAILURE);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("error");
+        assertThat(out.containsKey("exception")).isTrue();
+    }
 }

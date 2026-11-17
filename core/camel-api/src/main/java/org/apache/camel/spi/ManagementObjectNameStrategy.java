@@ -37,16 +37,16 @@ import org.jspecify.annotations.Nullable;
 /**
  * Strategy for computing the full {@link ObjectName} (domain plus all key-value properties) for every Camel artifact
  * registered in JMX.
- * <p/>
+ * <p>
  * A JMX {@link ObjectName} encodes both a domain (e.g., {@code org.apache.camel}) and a set of typed key-value pairs
  * (e.g., {@code context=myApp, type=routes, name=myRoute}). This strategy provides a dedicated factory method for each
  * Camel artifact type so that the correct type key and identifying attributes are always applied consistently.
- * <p/>
+ * <p>
  * The {@link ManagementStrategy} calls the appropriate {@code getObjectNameFor*} method before invoking
  * {@link ManagementAgent#register(Object, ObjectName)} or {@link ManagementAgent#unregister(ObjectName)}. The domain
  * portion of the {@link ObjectName} is configured on {@link ManagementAgent#getMBeanObjectDomainName()}, while the name
  * key within the context entry is governed by {@link ManagementNameStrategy}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see ManagementNameStrategy

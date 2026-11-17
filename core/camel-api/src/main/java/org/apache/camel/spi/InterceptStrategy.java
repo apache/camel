@@ -24,14 +24,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * Strategy that wraps the {@link Processor}s in a route with interceptors, for cross-cutting concerns such as gathering
  * performance statistics at the processor level.
- * <p/>
+ * <p>
  * Camel invokes {@link #wrapProcessorInInterceptors} for each processor while building a route, giving the strategy the
  * chance to return a wrapping processor (or the original). Registered strategies are applied to every interceptable
  * processor; a processor can opt out by implementing {@link InterceptableProcessor}.
- * <p/>
+ * <p>
  * It is <b>strongly</b> advised to return an {@link org.apache.camel.AsyncProcessor} as the wrapper, which ensures the
  * interceptor works well with the asynchronous routing engine. You can use
- * {@link org.apache.camel.support.processor.DelegateAsyncProcessor} to easily return an
+ * {@code org.apache.camel.support.processor.DelegateAsyncProcessor} to easily return an
  * {@link org.apache.camel.AsyncProcessor} and override
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
  * implement your interceptor logic, then invoke the super method to <b>continue</b> routing.
@@ -42,7 +42,7 @@ public interface InterceptStrategy {
 
     /**
      * Give implementor an opportunity to wrap the target processor in a route.
-     * <p/>
+     * <p>
      * <b>Important:</b> See the class javadoc for advice on letting interceptor be compatible with the asynchronous
      * routing engine.
      *

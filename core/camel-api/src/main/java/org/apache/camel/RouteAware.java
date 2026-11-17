@@ -20,11 +20,11 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Implemented by objects that wish to receive a reference to the {@link Route} they belong to.
- * <p/>
+ * <p>
  * The framework injects the route after it is built but before consumers are started. The primary implementor is
  * {@link Consumer}: the consumer attached to a route's input {@link Endpoint} is set as route-aware so that it can
  * access route-level metadata (id, policy, etc.) at runtime.
- * <p/>
+ * <p>
  * Custom {@link Processor}s and services may also implement this interface to obtain contextual route information
  * without carrying an explicit route reference in their constructor.
  *
@@ -43,7 +43,7 @@ public interface RouteAware {
     /**
      * Gets the {@link Route}
      *
-     * @return the route, or <tt>null</tt> if no route has been set.
+     * @return the route, or <code>null</code> if no route has been set.
      */
     @Nullable
     Route getRoute();

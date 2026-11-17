@@ -33,6 +33,7 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttReturnCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +106,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             }
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-            client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+            subscribe(client);
         } catch (Exception startException) {
             shutdownReconnectExecutor();
             MqttClient ownedClient = stopClient ? client : null;
@@ -243,7 +244,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             return;
         }
         try {
-            current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+            subscribe(current);
         } catch (MqttException e) {
             if (stopClient) {
                 LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
@@ -254,6 +255,25 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                         "MQTT resubscribe failed on reconnect with externally provided client,"
                           + " route will not be auto-restarted: {}",
                         e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * Subscribes the client to the topic of the endpoint. Paho returns from the subscribe once the SUBACK arrived, also
+     * when the broker refused the subscription: the reason code in the SUBACK is then 0x80 or higher (MQTT 5, 3.9.3),
+     * and the broker sends no message of the topic. That is a failed subscribe, as a subscribe that throws.
+     */
+    private void subscribe(MqttClient mqttClient) throws MqttException {
+        IMqttToken token = mqttClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        int[] reasonCodes = token != null ? token.getReasonCodes() : null;
+        if (reasonCodes != null) {
+            for (int reasonCode : reasonCodes) {
+                if (reasonCode >= MqttReturnCode.RETURN_CODE_UNSPECIFIED_ERROR) {
+                    LOG.debug("The broker refused the subscription of client: {} to topic: {} with reason code: {}",
+                            mqttClient.getClientId(), getEndpoint().getTopic(), reasonCode);
+                    throw new MqttException(reasonCode);
+                }
             }
         }
     }
@@ -299,9 +319,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
      * always fails does not reconnect in a tight loop. In every other case the broker never sends the message again, so
      * it is acknowledged, which frees its place in the receive window.
      */
-    private void rollback(Exchange exchange, MqttMessage mqttMessage) {
+    private void rollback(Exchange exchange, MqttMessage mqttMessage, MqttClient receivingClient) {
         MqttClient current = client;
-        if (current == null) {
+        if (current == null || current != receivingClient) {
+            logNotAcknowledgedAfterStop(exchange, mqttMessage);
             return;
         }
         if (mqttMessage.getQos() != 1 || !isSessionKeptAfterDisconnect()) {
@@ -366,7 +387,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     LOG.warn("The broker did not keep the session of client: {}: the failed MQTT message and the other"
                              + " unacknowledged ones are not delivered again; subscribing again to topic: {}",
                             clientId, getEndpoint().getTopic());
-                    current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                    subscribeAfterReconnect(current);
                 }
             }
         } catch (Exception e) {
@@ -375,6 +396,21 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             getExceptionHandler().handleException("Failed to reconnect after a failed exchange", e);
             // the client does not reconnect on its own after a disconnect it was asked for, so try again later
             scheduleReconnect(current, "Reconnect failed");
+        }
+    }
+
+    /**
+     * Subscribes again after the reconnect of {@link #reconnect(MqttClient)} found no session. The connect created a
+     * session that the broker keeps, so a later reconnect finds it and does not subscribe: a failed subscribe would
+     * leave the consumer connected without its subscription. The route is restarted instead, as for a failed
+     * resubscribe after an automatic reconnect.
+     */
+    private void subscribeAfterReconnect(MqttClient current) {
+        try {
+            subscribe(current);
+        } catch (MqttException e) {
+            LOG.warn("MQTT subscribe failed after a reconnect, restarting route for recovery: {}", e.getMessage(), e);
+            restartRouteAsync();
         }
     }
 
@@ -422,12 +458,21 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
         exchange.setIn(paho);
         if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+            // the message is acknowledged on the client it arrived on: once the consumer stopped, that client is closed
+            // (or replaced by the client of the next start), and its packet id means nothing to another client
+            MqttClient receivingClient = client;
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
+                    MqttClient current = client;
+                    if (current == null || current != receivingClient) {
+                        // not a message of the current client: its backoff is left as is
+                        logNotAcknowledgedAfterStop(exchange, mqttMessage);
+                        return;
+                    }
                     failedMessageReconnects.set(0);
                     try {
-                        PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+                        current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
                         getExceptionHandler().handleException(
                                 "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
@@ -437,11 +482,18 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    rollback(exchange, mqttMessage);
+                    rollback(exchange, mqttMessage, receivingClient);
                 }
             });
         }
         return exchange;
+    }
+
+    private void logNotAcknowledgedAfterStop(Exchange exchange, MqttMessage mqttMessage) {
+        LOG.debug("MQTT message with ID: {} of Exchange ID: {} is not acknowledged: the consumer stopped and closed the client"
+                  + " it arrived on (on a session that the broker keeps, the broker sends it again to a client with the"
+                  + " same client id)",
+                mqttMessage.getId(), exchange.getExchangeId());
     }
 
 }

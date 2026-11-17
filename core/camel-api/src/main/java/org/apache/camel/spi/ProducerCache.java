@@ -40,7 +40,7 @@ public interface ProducerCache extends Service {
     /**
      * Acquires a pooled producer which you <b>must</b> release back again after usage using the
      * {@link #releaseProducer(org.apache.camel.Endpoint, org.apache.camel.AsyncProducer)} method.
-     * <p/>
+     * <p>
      * If the producer is currently starting then the cache will wait at most 30 seconds for the producer to finish
      * starting and be ready for use.
      *
@@ -138,26 +138,27 @@ public interface ProducerCache extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied callback supporting the asynchronous routing engine.
-     * <p/>
+     * <p>
      * If an exception was thrown during processing, it would be set on the given Exchange, unless the producer had
      * already completed the exchange (called the callback) before it threw: then the callback is not called again.
      *
      * @param  endpoint         the endpoint to send the exchange to
-     * @param  exchange         the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
+     * @param  exchange         the exchange, can be <code>null</code> if so then create a new exchange from the
+     *                          producer
      * @param  callback         the asynchronous callback
      * @param  producerCallback the producer template callback to be executed
-     * @return                  (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue
-     *                          being executed asynchronously
+     * @return                  (doneSync) <code>true</code> to continue execute synchronously, <code>false</code> to
+     *                          continue being executed asynchronously
      */
     boolean doInAsyncProducer(
             Endpoint endpoint, Exchange exchange, AsyncCallback callback, AsyncProducerCallback producerCallback);
 
     /**
-     * Callback for sending a exchange message to a endpoint using an {@link AsyncProcessor} capable producer.
-     * <p/>
+     * Callback for sending an exchange message to an endpoint using an {@link AsyncProcessor} capable producer.
+     * <p>
      * Using this callback as a template pattern ensures that Camel handles the resource handling and will start and
      * stop the given producer, to avoid resource leaks.
-     * <p/>
+     * <p>
      * When a {@link SendHook} is installed, the producer given to the callback is a producer that calls the producer of
      * the endpoint with the hook around it.
      */
@@ -166,11 +167,11 @@ public interface ProducerCache extends Service {
         /**
          * Performs operation on the given producer to send the given exchange.
          *
-         * @param  asyncProducer the async producer, is never <tt>null</tt>
+         * @param  asyncProducer the async producer, is never <code>null</code>
          * @param  exchange      the exchange to process
          * @param  callback      the async callback
-         * @return               (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue
-         *                       being executed asynchronously
+         * @return               (doneSync) <code>true</code> to continue execute synchronously, <code>false</code> to
+         *                       continue being executed asynchronously
          */
         boolean doInAsyncProducer(AsyncProducer asyncProducer, Exchange exchange, AsyncCallback callback);
     }

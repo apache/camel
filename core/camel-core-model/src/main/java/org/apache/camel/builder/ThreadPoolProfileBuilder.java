@@ -23,7 +23,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Builder to build {@link org.apache.camel.spi.ThreadPoolProfile}.
- * <p/>
+ * <p>
  * Use the {@link #build()} method when done setting up the profile.
  */
 public class ThreadPoolProfileBuilder {

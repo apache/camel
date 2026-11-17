@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class which ensures that a service is only initialized once and provides some helper methods for
  * enquiring of its status.
- * <p/>
+ * <p>
  * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService} in case they
  * support suspend/resume.
- * <p/>
- * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()}},
+ * <p>
+ * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg {@link #doStart()},
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
  * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
  * the operation in a safe manner.
@@ -105,10 +105,10 @@ public abstract class BaseService {
     }
 
     /**
-     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
-     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
-     * invoke the operation in a safe manner.
+     * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg
+     * {@link #doStart()}, {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()},
+     * {@link #stop()} should <b>NOT</b> be overridden as they are used internally to keep track of the state of this
+     * service and properly invoke the operation in a safe manner.
      */
     public void start() {
         lock.lock();
@@ -150,10 +150,10 @@ public abstract class BaseService {
     }
 
     /**
-     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
-     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
-     * invoke the operation in a safe manner.
+     * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg
+     * {@link #doStart()}, {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()},
+     * {@link #stop()} should <b>NOT</b> be overridden as they are used internally to keep track of the state of this
+     * service and properly invoke the operation in a safe manner.
      */
     public void stop() {
         lock.lock();
@@ -186,10 +186,10 @@ public abstract class BaseService {
     }
 
     /**
-     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
-     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
-     * invoke the operation in a safe manner.
+     * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg
+     * {@link #doStart()}, {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()},
+     * {@link #stop()} should <b>NOT</b> be overridden as they are used internally to keep track of the state of this
+     * service and properly invoke the operation in a safe manner.
      */
     public void suspend() {
         lock.lock();
@@ -218,10 +218,10 @@ public abstract class BaseService {
     }
 
     /**
-     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
-     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
-     * invoke the operation in a safe manner.
+     * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg
+     * {@link #doStart()}, {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()},
+     * {@link #stop()} should <b>NOT</b> be overridden as they are used internally to keep track of the state of this
+     * service and properly invoke the operation in a safe manner.
      */
     public void resume() {
         lock.lock();
@@ -246,10 +246,10 @@ public abstract class BaseService {
     }
 
     /**
-     * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
-     * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
-     * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
-     * invoke the operation in a safe manner.
+     * <b>Important: </b> You should override the lifecycle methods that start with <code>do</code>, eg
+     * {@link #doStart()}, {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()},
+     * {@link #stop()} should <b>NOT</b> be overridden as they are used internally to keep track of the state of this
+     * service and properly invoke the operation in a safe manner.
      */
     public void shutdown() {
         lock.lock();
@@ -401,7 +401,7 @@ public abstract class BaseService {
 
     /**
      * Implementations override this method to support customized start/stop.
-     * <p/>
+     * <p>
      * <b>Important: </b> See {@link #doStop()} for more details.
      *
      * @see #doStop()
@@ -412,7 +412,7 @@ public abstract class BaseService {
 
     /**
      * Implementations override this method to support customized start/stop.
-     * <p/>
+     * <p>
      * <b>Important:</b> Camel will invoke this {@link #doStop()} method when the service is being stopped. This method
      * will <b>also</b> be invoked if the service is still in <i>uninitialized</i> state (eg has not been started). The
      * method is <b>always</b> called to allow the service to do custom logic when the service is being stopped, such as

@@ -35,6 +35,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -89,18 +90,39 @@ public class SftpOperations
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private static final int OK_STATUS = 0;
     private static final String OK_MESSAGE = "OK";
+    // while the stop of the producer waits for an operation of another thread, how often it checks whether the shutdown
+    // is forced, and then how long it waits for the disconnect
+    private static final long DISCONNECT_ON_STOP_WAIT_MILLIS = 1000;
     private Proxy proxy;
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
-    private Session session;
+    // volatile: disconnectOnStop reads it without the lock
+    private volatile Session session;
     private final Lock lock = new ReentrantLock();
+    // whether connect, with its reconnect attempts, holds the lock
+    private volatile boolean connecting;
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
         private Exception exception;
+        // the server rejected the login, which ends the reconnect attempts
+        private boolean authenticationFailed;
 
         public TaskPayload(RemoteFileConfiguration configuration) {
             this.configuration = configuration;
+        }
+    }
+
+    /**
+     * Ends the session when the server asks for the password again: JSch asks for it again each time the server rejects
+     * it, up to MaxAuthTries times per session, and each rejected password counts towards the lockout policy of the
+     * server.
+     */
+    private static final class PasswordNotAcceptedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        PasswordNotAcceptedException(String username) {
+            super("Auth fail for user '" + username + "': the server did not accept the password");
         }
     }
 
@@ -136,6 +158,7 @@ public class SftpOperations
                 // already connected
                 return true;
             }
+            connecting = true;
 
             ScheduledExecutorService ses = endpoint.getCamelContext().getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "SftpReconnect");
@@ -152,7 +175,7 @@ public class SftpOperations
 
                 TaskPayload payload = new TaskPayload(configuration);
 
-                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
+                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload) || payload.authenticationFailed) {
                     throw new GenericFileOperationFailedException(
                             "Cannot connect to " + configuration.remoteServerInformation(),
                             payload.exception);
@@ -165,10 +188,17 @@ public class SftpOperations
 
             return true;
         } finally {
+            connecting = false;
             lock.unlock();
         }
     }
 
+    /**
+     * One attempt of the reconnect task.
+     *
+     * @return whether the task is done: connected, or the server rejected the login, which is not retried as each
+     *         rejected login counts towards the lockout policy of the server
+     */
     private boolean tryConnect(TaskPayload payload) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
@@ -210,13 +240,21 @@ public class SftpOperations
                     LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
                 }
             }
-        } catch (JSchException e) {
+        } catch (JSchException | PasswordNotAcceptedException e) {
             payload.exception = e;
+            payload.authenticationFailed = isAuthenticationFailure(e);
 
-            return false;
+            return payload.authenticationFailed;
         }
 
         return true;
+    }
+
+    private static boolean isAuthenticationFailure(Exception e) {
+        // JSch fails with "Auth fail for methods ..." or "Auth cancel for methods ..." when no method authenticated
+        String message = e.getMessage();
+        return e instanceof PasswordNotAcceptedException
+                || message != null && (message.startsWith("Auth fail") || message.startsWith("Auth cancel"));
     }
 
     private void configureBulkRequests() {
@@ -418,16 +456,21 @@ public class SftpOperations
 
             private final CamelLogger messageLogger
                     = new CamelLogger(LOG, ((SftpConfiguration) configuration).getServerMessageLoggingLevel());
+            // the password is given once per session, with the password or the keyboard-interactive method
+            private boolean passwordGiven;
 
             public String getPassphrase() {
                 return null;
             }
 
             public String getPassword() {
-                return configuration.getPassword();
+                String password = configuration.getPassword();
+                passwordGiven |= password != null;
+                return password;
             }
 
             public boolean promptPassword(String s) {
+                checkPasswordNotGiven();
                 return true;
             }
 
@@ -455,11 +498,21 @@ public class SftpOperations
 
             public String[] promptKeyboardInteractive(
                     String destination, String name, String instruction, String[] prompt, boolean[] echo) {
-                // must return an empty array if password is null
-                if (configuration.getPassword() == null) {
+                // must return an empty array if password is null, or if the server asks nothing (only an instruction)
+                if (configuration.getPassword() == null || prompt.length == 0) {
                     return new String[0];
                 } else {
+                    checkPasswordNotGiven();
+                    passwordGiven = true;
                     return new String[] { configuration.getPassword() };
+                }
+            }
+
+            private void checkPasswordNotGiven() {
+                if (passwordGiven) {
+                    // asked again: the server did not accept the password, so end the session instead of sending it
+                    // once more (JSch passes the exception on from Session.connect, after it disconnected)
+                    throw new PasswordNotAcceptedException(configuration.getUsername());
                 }
             }
 
@@ -632,6 +685,88 @@ public class SftpOperations
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Disconnects when the producer or the consumer stops. Another thread can still run an operation that holds the
+     * lock: an upload of the producer, or the poll of the consumer, which the stop of its scheduler interrupts, but
+     * which then changes back to the directory it started from (stepwise), on a server that may not answer.
+     * <p>
+     * As long as the shutdown of Camel is not forced, this method waits for that operation, as {@link #disconnect()}
+     * does: it can be a healthy but slow upload, when a producer cache evicts the producer, when an application stops a
+     * {@code ProducerTemplate}, or during a graceful shutdown, which stops the producers of a route whose consumer it
+     * stops right away (one that cannot be suspended) while its exchanges are still in flight.
+     * <p>
+     * Once the shutdown is forced, as its timeout elapsed, the operation is one that the shutdown gave up waiting for,
+     * such as an upload that hangs as long as the server does not answer. This method then disconnects the session
+     * without the lock: JSch's {@link Session#disconnect()} can be called from another thread (its own session thread
+     * does), and closes the channel and its pipe, so that the operation fails and releases the lock. A connect in
+     * progress is waited for: the connect timeout and the reconnect attempts bound it, and its next attempt would open
+     * a new session.
+     */
+    @Override
+    public void disconnectOnStop() throws GenericFileOperationFailedException {
+        boolean locked = false;
+        boolean interrupted = false;
+        // a stop that began before the shutdown was forced (as above) is still waiting at that time, so check again
+        while (!locked) {
+            try {
+                locked = lock.tryLock(DISCONNECT_ON_STOP_WAIT_MILLIS, TimeUnit.MILLISECONDS);
+                if (!locked && !connecting && isForceShutdown()) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                // keep waiting, as lock() would: the shutdown task, which a shutdown cancels when it times out, is
+                // interrupted before the shutdown is forced; the interrupt is restored at the end
+                interrupted = true;
+            }
+        }
+        try {
+            if (locked) {
+                try {
+                    disconnect();
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                disconnectWithoutLock();
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean isForceShutdown() {
+        return endpoint.getCamelContext().getShutdownStrategy().isForceShutdown();
+    }
+
+    private void disconnectWithoutLock() {
+        Session current = session;
+        if (current == null || !current.isConnected()) {
+            return;
+        }
+        String server = endpoint.getConfiguration().remoteServerInformation();
+        LOG.warn("The shutdown is forced: disconnecting from {} while another thread still runs an operation, such as an"
+                 + " upload or a download that hangs. The operation fails.",
+                server);
+        // JSch sends the close of the channel under the lock of the session that a write to the socket holds: when the
+        // operation is blocked writing to a server that no longer reads (a half-open connection), the disconnect waits
+        // until that write fails, so it runs in its own thread and the stop waits for it a little
+        Thread disconnector = endpoint.getCamelContext().getExecutorServiceManager()
+                .newThread("SftpDisconnectOnStop", current::disconnect);
+        disconnector.start();
+        try {
+            disconnector.join(DISCONNECT_ON_STOP_WAIT_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        if (disconnector.isAlive()) {
+            LOG.warn("Disconnecting from {} waits for a write to the connection that does not progress."
+                     + " The disconnect completes in the background when the write fails.",
+                    server);
         }
     }
 

@@ -27,8 +27,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * The report of the exchange sanitizer: the violations with their stacks, the counts per rule, the commits followed
- * (rule R2), and the calls reported still pending (warnings of rule R1).
+ * The report of the exchange sanitizer: the checks that run, the violations with their stacks, the counts per rule, the
+ * commits followed (rule R2), and the calls reported still pending (warnings of rule R1).
  * <p/>
  * The console only reads. Its option {@link #REPORT} leaves out the full report of each violation and the still pending
  * warnings, for a caller that shows only the fields, such as the table of camel get sanitizer. The report holds ids,
@@ -43,8 +43,8 @@ import org.apache.camel.util.json.JsonObject;
 public class SanitizerDevConsole extends AbstractDevConsole {
 
     public record ViolationEntry(
-            @Metadata(description = "The rule the violation breaks: R1 (the callback of a step) or R2 (the commit of a consumer)") String rule,
-            @Metadata(description = "The kind of violation, such as COMPLETED_TWICE or COMMIT_NEVER_RUN") String kind,
+            @Metadata(description = "The rule the violation breaks: R1 (the callback of a step), R2 (the commit of a consumer) or R3 (the value process returns against the value of its callback)") String rule,
+            @Metadata(description = "The kind of violation, such as COMPLETED_TWICE, COMMIT_NEVER_RUN or RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD") String kind,
             @Metadata(description = "The kind of violation in plain words, such as: callback called twice") String title,
             @Metadata(description = "The id of the exchange") String exchangeId,
             @Metadata(description = "The id of the route of the step (for R2 without a step, the route of the consumer)") String routeId,
@@ -56,10 +56,11 @@ public class SanitizerDevConsole extends AbstractDevConsole {
     public record Response(
             @Metadata(description = "Whether the sanitizer is switched on: with profile dev, camel.sanitizer.enabled=true or @CamelSanitizer, never with profile prod") boolean enabled,
             @Metadata(description = "Why the sanitizer is off (only when it is off)") String reason,
+            @Metadata(description = "The checks that run, as in camel.sanitizer.checks: callback (R1), commit (R2) and threads (R3) (only when it is on)") List<String> checks,
             @Metadata(description = "The calls of the processors of steps checked (only when it is on)") Long calls,
             @Metadata(description = "The commits of consumers followed for rule R2 (only when R2 is checked)") Long commits,
             @Metadata(description = "The violations reported, also those past the first 1000 that are counted but not listed (only when it is on)") Long total,
-            @Metadata(description = "The violations reported per rule, R1 and R2 (only when it is on)") Map<String, Long> rules,
+            @Metadata(description = "The violations reported per rule, R1, R2 and R3 (only when it is on)") Map<String, Long> rules,
             @Metadata(description = "The violations reported per kind, every kind (only when it is on)") Map<String, Long> kinds,
             @Metadata(description = "The violations, the first 1000 in the order they were reported (only when it is on)") List<ViolationEntry> violations,
             @Metadata(description = "The calls of steps pending now, whose callback has not come yet (only when the still pending warning of R1 is on)") Long pendingCalls,
@@ -102,6 +103,7 @@ public class SanitizerDevConsole extends AbstractDevConsole {
         boolean report = optionBoolean(options, REPORT, true);
         // the list before the counts, so each violation listed is counted (one reported meanwhile is only counted)
         List<SanitizerViolation> violations = sanitizer.getViolations();
+        root.put("checks", new JsonArray(sanitizer.getChecks()));
         root.put("calls", sanitizer.getCallCount());
         Commits commits = sanitizer.getCommits();
         if (commits != null) {

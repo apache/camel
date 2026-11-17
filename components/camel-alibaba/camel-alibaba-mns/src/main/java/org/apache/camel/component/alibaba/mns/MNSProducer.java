@@ -18,6 +18,7 @@ package org.apache.camel.component.alibaba.mns;
 
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
+import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.model.Base64TopicMessage;
 import com.aliyun.mns.model.BaseMessage;
 import com.aliyun.mns.model.Message;
@@ -43,23 +44,23 @@ public class MNSProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         MNSEndpoint endpoint = getEndpoint();
-        endpoint.initClient();
+        MNSClient client = endpoint.initClient();
 
         ClientConfigurations configuration = MNSUtils.createClientConfigurations(endpoint, exchange);
         String operation = configuration.operation();
 
         switch (operation) {
-            case MNSOperations.SEND_MESSAGE -> sendMessage(endpoint, exchange, configuration);
-            case MNSOperations.DELETE_MESSAGE -> deleteMessage(endpoint, exchange, configuration);
-            case MNSOperations.PUBLISH_MESSAGE -> publishMessage(endpoint, exchange, configuration);
+            case MNSOperations.SEND_MESSAGE -> sendMessage(client, exchange, configuration);
+            case MNSOperations.DELETE_MESSAGE -> deleteMessage(client, exchange, configuration);
+            case MNSOperations.PUBLISH_MESSAGE -> publishMessage(client, exchange, configuration);
             case MNSOperations.RECEIVE_MESSAGE -> throw new UnsupportedOperationException(
                     "receiveMessage is not a producer operation: the consumer receives the messages of the queue");
             default -> throw new UnsupportedOperationException("Unsupported operation: " + operation);
         }
     }
 
-    private void sendMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.queueName());
+    private void sendMessage(MNSClient client, Exchange exchange, ClientConfigurations configuration) throws Exception {
+        CloudQueue queue = client.getQueueRef(configuration.queueName());
         Message message = new Message();
         MNSUtils.setMessageBody(exchange, message);
 
@@ -77,23 +78,23 @@ public class MNSProducer extends DefaultProducer {
         setMessageResponse(exchange, response);
     }
 
-    private void deleteMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void deleteMessage(MNSClient client, Exchange exchange, ClientConfigurations configuration) throws Exception {
         String receiptHandle = MNSUtils.resolveReceiptHandle(exchange);
         if (ObjectHelper.isEmpty(receiptHandle)) {
             throw new IllegalArgumentException("Receipt handle is required for deleteMessage operation");
         }
 
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.queueName());
+        CloudQueue queue = client.getQueueRef(configuration.queueName());
         queue.deleteMessage(receiptHandle);
     }
 
-    private void publishMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void publishMessage(MNSClient client, Exchange exchange, ClientConfigurations configuration) throws Exception {
         String topic = configuration.topicName();
         if (ObjectHelper.isEmpty(topic)) {
             throw new IllegalArgumentException("Topic name is required for publishMessage operation");
         }
 
-        CloudTopic cloudTopic = endpoint.getMnsClient().getTopicRef(topic);
+        CloudTopic cloudTopic = client.getTopicRef(topic);
         TopicMessage topicMessage = new Base64TopicMessage();
         MNSUtils.setMessageBody(exchange, topicMessage);
 

@@ -64,7 +64,8 @@ public class JWTAuthenticationMainHttpServerTest {
 
     @Test
     void testJWTAuth() {
-        String validToken = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions());
+        String validToken
+                = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions().setAlgorithm("RS256"));
         String invalidToken = validToken.substring(0, (validToken.length() - 2));
 
         CamelContext camelContext = main.getCamelContext();

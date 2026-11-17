@@ -16,23 +16,16 @@
  */
 package org.apache.camel.component.alibaba.fc.constants;
 
-import org.apache.camel.spi.Metadata;
-
 public final class FCProperties {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaFcOperation";
 
-    @Metadata(label = "producer", description = "FC service name override", javaType = "String")
     public static final String SERVICE_NAME = "CamelAlibabaFcServiceName";
 
-    @Metadata(label = "producer", description = "FC function name override", javaType = "String")
     public static final String FUNCTION_NAME = "CamelAlibabaFcFunctionName";
 
-    @Metadata(label = "producer", description = "Function qualifier override", javaType = "String")
     public static final String QUALIFIER = "CamelAlibabaFcQualifier";
 
-    @Metadata(label = "producer", description = "Request id returned by FC", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaFcRequestId";
 
     private FCProperties() {

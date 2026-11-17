@@ -125,4 +125,29 @@ class OpenFgaEndpointConfigurationTest extends CamelTestSupport {
         assertThatThrownBy(() -> endpoint.createConsumer(e -> {
         })).isInstanceOf(UnsupportedOperationException.class);
     }
+
+    @Test
+    void defaultsToCompatibleClientBatchChecks() throws Exception {
+        OpenFgaEndpoint endpoint = endpoint("openfga:batchCheck?openFgaClient=#fgaClient&storeId=" + STORE
+                                            + "&user=user:anne&relation=reader");
+
+        assertThat(endpoint.getConfiguration().getBatchCheckMode()).isEqualTo(OpenFgaBatchCheckMode.client);
+    }
+
+    @Test
+    void validatesServerBatchSizeBeforeSendingRequests() {
+        for (int size : new int[] { 0, 51 }) {
+            assertThatThrownBy(() -> endpoint("openfga:batchCheck?openFgaClient=#fgaClient&storeId=" + STORE
+                                              + "&user=user:anne&relation=reader&batchCheckMode=server&maxBatchSize=" + size))
+                    .rootCause().hasMessageContaining("maxBatchSize must be between 1 and 50");
+        }
+    }
+
+    @Test
+    void validatesServerBatchParallelismBeforeSendingRequests() {
+        assertThatThrownBy(() -> endpoint("openfga:batchCheck?openFgaClient=#fgaClient&storeId=" + STORE
+                                          + "&user=user:anne&relation=reader&batchCheckMode=server&maxParallelRequests=0"))
+                .rootCause().hasMessageContaining("maxParallelRequests must be at least 1");
+    }
+
 }

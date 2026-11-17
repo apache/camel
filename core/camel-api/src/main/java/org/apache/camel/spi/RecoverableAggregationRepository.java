@@ -42,7 +42,7 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      *
      * @param  camelContext the current CamelContext
      * @param  exchangeId   exchange id
-     * @return              the recovered exchange or <tt>null</tt> if not found
+     * @return              the recovered exchange or <code>null</code> if not found
      */
     @Nullable
     Exchange recover(CamelContext camelContext, String exchangeId);
@@ -90,15 +90,15 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
     void setUseRecovery(boolean useRecovery);
 
     /**
-     * Whether or not recovery is enabled or not
+     * Whether or not recovery is enabled
      *
-     * @return <tt>true</tt> to use recovery, <tt>false</tt> otherwise.
+     * @return <code>true</code> to use recovery, <code>false</code> otherwise.
      */
     boolean isUseRecovery();
 
     /**
-     * Sets an optional dead letter channel which exhausted recovered {@link Exchange} should be send to.
-     * <p/>
+     * Sets an optional dead letter channel which exhausted recovered {@link Exchange} should be sent to.
+     * <p>
      * By default this option is disabled
      *
      * @param deadLetterUri the uri of the dead letter channel
@@ -114,11 +114,11 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
     String getDeadLetterUri();
 
     /**
-     * Sets an optional limit of the number of redelivery attempt of recovered {@link Exchange} should be attempted,
-     * before its exhausted.
-     * <p/>
+     * Sets an optional limit of the number of redelivery attempts of recovered {@link Exchange} should be attempted,
+     * before it's exhausted.
+     * <p>
      * When this limit is hit, then the {@link Exchange} is moved to the dead letter channel.
-     * <p/>
+     * <p>
      * By default this option is disabled
      *
      * @param maximumRedeliveries the maximum redeliveries
@@ -135,12 +135,17 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
 
     /**
      * Confirms the completion of the {@link Exchange} with a result.
-     * <p/>
+     * <p>
      * This method is invoked instead of confirm() if the repository is recoverable. This allows possible recovery of
      * non-confirmed completed exchanges.
-     * <p/>
+     * <p>
      * It is not invoked for a group that was completed by its first exchange (for example with a completion size of 1),
-     * as such a group was never added to the repository, so there is nothing to confirm.
+     * as such a group was never added to the repository, so there is nothing to confirm. It is also invoked for a
+     * recovered exchange that was moved to the dead letter channel.
+     * <p>
+     * When it returns false or throws an exception, the exchange (which was processed, or moved to the dead letter
+     * channel) is kept as not confirmed: the recover task does not recover it, and invokes this method again for it, as
+     * long as {@link #scan(CamelContext)} returns its exchange id.
      *
      * @param  camelContext the current CamelContext
      * @param  exchangeId   exchange id to confirm

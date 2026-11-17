@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstInstrument;
 import org.apache.camel.test.dst.DstTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
                alsoRewrite = {
                        "org.apache.camel.util.StopWatch", "org.apache.camel.impl.engine.DefaultShutdownStrategy",
                        "org.apache.camel.support.task" })
+@Tag("not-parallel")
 class ChaosLifecycleDstTest {
 
     @DstTest(seeds = 200)

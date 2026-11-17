@@ -40,7 +40,6 @@ src/main/docker/Dockerfile
 src/main/java/com/acme/PomRoute.java
 src/main/java/org/example/golden/pomproject/CamelApplication.java
 src/main/resources/application.properties
-src/main/resources/log4j2.component.properties
 src/main/resources/log4j2.properties
 
 # pom.xml

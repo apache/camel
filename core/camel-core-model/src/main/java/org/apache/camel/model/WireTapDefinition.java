@@ -182,7 +182,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     /**
      * Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a
      * dynamic uri to use as the wire-tap destination, for each incoming message. This works similar to how the
-     * <tt>toD</tt> EIP pattern works. If static then the uri is used as-is as the wire-tap destination.
+     * <code>toD</code> EIP pattern works. If static then the uri is used as-is as the wire-tap destination.
      *
      * @param  dynamicUri whether to use dynamic or static uris
      * @return            the builder
@@ -194,7 +194,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     /**
      * Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a
      * dynamic uri to use as the wire-tap destination, for each incoming message. This works similar to how the
-     * <tt>toD</tt> EIP pattern works. If static then the uri is used as-is as the wire-tap destination.
+     * <code>toD</code> EIP pattern works. If static then the uri is used as-is as the wire-tap destination.
      *
      * @param  dynamicUri whether to use dynamic or static uris
      * @return            the builder
@@ -237,14 +237,15 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
-     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
-     * the default size (1000).
+     * However if there is a high degree of dynamic endpoints that have been used before, then it can benefit to use the
+     * cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the
+     * default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non-frequent used producers.
      *
-     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param  cacheSize the cache size, use <code>0</code> for default cache size, or <code>-1</code> to turn cache
+     *                   off.
      * @return           the builder
      */
     @Override
@@ -261,14 +262,15 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
-     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
-     * the default size (1000).
+     * However if there is a high degree of dynamic endpoints that have been used before, then it can benefit to use the
+     * cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the
+     * default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non-frequent used producers.
      *
-     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param  cacheSize the cache size, use <code>0</code> for default cache size, or <code>-1</code> to turn cache
+     *                   off.
      * @return           the builder
      */
     @Override

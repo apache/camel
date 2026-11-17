@@ -148,7 +148,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
     private S3Client s3Client;
 
     @UriPath(description = "Bucket name or ARN")
-    @Metadata(required = true)
+    @Metadata(required = true, supportSimpleExpression = true)
     private String bucketNameOrArn; // to support component docs
     @UriParam
     private AWS2S3Configuration configuration;

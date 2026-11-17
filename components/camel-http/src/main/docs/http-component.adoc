@@ -165,7 +165,7 @@ HTTP response headers as well to the _OUT_ message headers.
 
 === Using System Properties
 
-When setting useSystemProperties to true, the HTTP Client will look for
+When setting `useSystemProperties` to `true`, the HTTP Client will look for
 the following System Properties, and it will use it:
 
 * `ssl.TrustManagerFactory.algorithm`
@@ -181,9 +181,20 @@ the following System Properties, and it will use it:
 * `javax.net.ssl.keyStorePassword`
 * `http.proxyHost`
 * `http.proxyPort`
+* `https.proxyHost`
+* `https.proxyPort`
 * `http.nonProxyHosts`
 * `http.keepAlive`
-* `http.maxConnections`
+
+The `http.proxyHost` and `http.proxyPort` properties apply to `http` targets only. For `https` targets, set
+`https.proxyHost` and `https.proxyPort`.
+
+Without `useSystemProperties`, the HTTP Client does not read these properties, with one exception: it uses the default
+trust store of the JVM, so the `javax.net.ssl.trustStore` properties apply unless `sslContextParameters` is set.
+
+You can set `useSystemProperties` on the endpoint, or on the component for all its endpoints, such as with
+`camel.component.http.use-system-properties=true`. The `https` component is configured on its own, such as with
+`camel.component.https.use-system-properties=true`.
 
 === Response code
 
@@ -462,11 +473,72 @@ YAML::
 ----
 ====
 
-=== Using client timeout - SO_TIMEOUT
+=== Timeouts and dead or silent servers
 
-See the
-https://github.com/apache/camel/blob/main/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
-unit test.
+The component passes to Apache HttpClient only the timeouts that you set to another value than their default, so the
+defaults below are those of HttpClient 5. They describe how the client library behaves, approximately, not guarantees
+of Camel. All values are in milliseconds, and can be set on the component or on the endpoint (the endpoint wins).
+
+[cols="2,1,4"]
+|===
+| Option | Default | What it bounds
+
+| `connectTimeout` | 3 minutes | Opening a new connection, including the TLS handshake.
+
+| `soTimeout` | 3 minutes | Each read on a connection of the endpoint's connection pool: a server that stops sending
+fails the request after this time.
+
+| `responseTimeout` | not set | When set, it replaces `soTimeout` as the read timeout while the request runs.
+
+| `connectionRequestTimeout` | 3 minutes | Waiting for a free connection of the pool (`maxTotalConnections`,
+`connectionsPerRoute`).
+|===
+
+A server that stops answering without closing the connection (the host is gone, or a firewall or NAT drops the
+packets) blocks the request for the read timeout: with the defaults the exchange fails after about 3 minutes with a
+`SocketTimeoutException`. HttpClient does not retry a request that timed out, whatever its method; a redelivery of the
+Camel error handler sends it again. Set the timeouts to what your service needs:
+
+[source,text]
+----
+https://api.example.com/orders?connectTimeout=5000&soTimeout=30000&connectionRequestTimeout=5000
+----
+
+NOTE: `soTimeout`, `connectionTimeToLive`, `connectionIdleTimeout` and `validateAfterInactivity` are settings of the
+connection pool that the component creates for the endpoint: they do not apply when you set your own
+`clientConnectionManager` on the component.
+
+==== Pooled connections closed by the server or by a NAT
+
+The endpoint keeps connections open for reuse. Before reusing a connection that has been idle for more than
+`validateAfterInactivity` (component option, milliseconds, 2 seconds by default), HttpClient checks that the server has
+not closed it. A request sent sooner on a connection that the server closed fails with `NoHttpResponseException`.
+HttpClient retries it once only when the method is idempotent (`GET`, `HEAD`, `PUT`, `DELETE`, `OPTIONS`, `TRACE`), so
+a `POST` or a `PATCH` fails and needs a redelivery of the Camel error handler. With `validateAfterInactivity=0`,
+HttpClient checks the connection before each reuse, which costs a read of up to 1 millisecond per request; a negative
+value turns the check off.
+
+A NAT, firewall or load balancer that drops an idle connection silently does not close it, so neither the pool nor the
+check above can see it: the next request on it waits for the read timeout and fails, without a retry by HttpClient. To
+keep the pool from reusing such a connection:
+
+* `connectionIdleTimeout` (component option, milliseconds): the maximum time a connection can stay idle in the pool and
+still be reused; a connection idle for longer is closed when it would be reused, and the request opens a new one. It
+applies whatever `Keep-Alive` timeout the server announces. Not set by default. Set it below the idle timeout of the
+NAT, firewall or load balancer.
+* `httpClient.connectionKeepAlive` (milliseconds): how long an idle connection is kept for reuse when the response of
+the server has no `Keep-Alive` header with a timeout; 3 minutes by default. Set it below the idle timeout of the NAT or
+firewall: it does not help when the server announces a longer timeout.
+* `connectionTimeToLive` (component option, milliseconds): the maximum age of a connection, counted from its creation,
+whether it was busy or idle. Below the idle timeout of the NAT or firewall it works too, at the cost of reconnecting
+busy connections as well.
+
+For example, in `application.properties`, for a NAT that drops connections idle for 5 minutes:
+
+[source,properties]
+----
+camel.component.https.connection-idle-timeout=240000
+----
 
 === Configuring a Proxy
 
@@ -539,9 +611,10 @@ Spring XML
 </camelContext>
 ----
 
-Camel will first set the settings from Java System or CamelContext
-Properties and then the endpoint proxy options if provided.
-So you can override the system properties with the endpoint options.
+Camel uses these global options only when `useSystemProperties` is `false`, the default. The JVM system properties,
+such as `http.proxyHost`, are only used with `useSystemProperties=true`, see
+<<_using_system_properties,Using System Properties>>. The proxy options of the endpoint or the component, such as
+`proxyAuthHost` and `proxyAuthPort`, take precedence over both.
 
 There is also a `http.proxyScheme` property you
 can set to explicitly configure the scheme to use.
@@ -681,10 +754,73 @@ Most of the option are available here: https://hc.apache.org/httpcomponents-clie
 To disable cookies in the CookieStore, you can set the HTTP Client to ignore cookies by
 adding this URI option: `httpClient.cookieSpec=ignore`. This doesn't affect cookies manually set in the `Cookie` header
 
-=== Basic auth with the streaming message body
+=== Authentication
 
-To avoid the `NonRepeatableRequestException`, you need to do the
-Preemptive Basic Authentication by adding the option: `authenticationPreemptive=true`
+The HTTP producer authenticates with the options of the endpoint. To use the same settings for all the endpoints of a
+component, set them in an `HttpConfiguration` given to the `httpConfiguration` option of the component.
+
+[cols="1,3"]
+|===
+| Method | Options
+
+| Basic
+| `authUsername` and `authPassword`. `authMethod=Basic` is optional.
+
+| Bearer
+| `authMethod=Bearer` and `authBearerToken`.
+
+| NTLM (deprecated)
+| `authMethod=NTLM`, `authUsername`, `authPassword`, and `authDomain` if the account is in a domain.
+|===
+
+By default, the credentials are sent only when the server answers with `401 Unauthorized` and a `WWW-Authenticate`
+header that asks for them. With `authenticationPreemptive=true`, the Basic credentials or the Bearer token are sent
+with the first request. Use it when the server does not send a challenge, or when the message body is a stream that
+can be sent only once: otherwise the request fails with `NonRepeatableRequestException` when the server asks for the
+credentials.
+
+When `followRedirects=true`, a redirect to another host does not receive the credentials.
+
+The following example sends a bearer token, read from a property, with each request:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("https://api.example.com/orders?authMethod=Bearer&authBearerToken={{orders.token}}&authenticationPreemptive=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="https://api.example.com/orders?authMethod=Bearer&amp;authBearerToken={{orders.token}}&amp;authenticationPreemptive=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "https://api.example.com/orders"
+            parameters:
+              authMethod: Bearer
+              authBearerToken: "{{orders.token}}"
+              authenticationPreemptive: true
+----
+====
+
+To get the token from an authorization server, use the OAuth2 options described in the next section.
 
 === OAuth2 Support
 
@@ -917,23 +1053,10 @@ class. +
 `org.apache.camel.component.http.HttpClientConfigurer` to do some
 configuration on the http client if you need full control of it.
 
-However, if you _just_ want to specify the keystore and truststore, you
-can do this with Apache HTTP `HttpClientConfigurer`, for example:
-
-._Java-only: programmatic `KeyStore` and `SchemeRegistry` setup_
-[source,java]
-----
-KeyStore keystore = ...;
-KeyStore truststore = ...;
-
-SchemeRegistry registry = new SchemeRegistry();
-registry.register(new Scheme("https", 443, new SSLSocketFactory(keystore, "mypassword", truststore)));
-----
-
-And then you need to create a class that implements
-`HttpClientConfigurer`, and registers https protocol providing a
-keystore or truststore per the example above. Then, from your camel route
-builder class, you can hook it up like so:
+However, if you _just_ want to specify the keystore and truststore, use
+`sslContextParameters` as shown above. If you implement an
+`HttpClientConfigurer`, you can hook it up from your camel route builder
+class like so:
 
 ._Java-only: programmatic `HttpClientConfigurer` setup_
 [source,java]
@@ -954,9 +1077,6 @@ If you are doing this using the Spring DSL, you can specify your
 
 <to uri="https://myhostname.com:443/myURL?httpClientConfigurer=#myHttpClientConfigurer"/>
 ----
-
-As long as you implement the `HttpClientConfigurer` and configure your
-keystore and truststore as described above, it will work fine.
 
 [[HTTP-UsingHTTPStoauthenticategotchas]]
 Using HTTPS to authenticate gotchas
@@ -1018,26 +1138,50 @@ public class HttpContextFactory {
 [[HTTP-UsingdifferentSSLContextParameters]]
 Using different SSLContextParameters
 
-The xref:http-component.adoc[HTTP] component only supports one instance of
-`org.apache.camel.support.jsse.SSLContextParameters` per component. If you
-need to use two or more different instances, then you need to set up
-multiple xref:http-component.adoc[HTTP] components as shown below. Where we have
-two components, each using their own instance of `sslContextParameters`
-property.
+The `sslContextParameters` option of an endpoint takes precedence over the one of the component. So endpoints of the
+same component can use different `SSLContextParameters` instances, and you do not need a component per instance. A
+dynamic endpoint can refer to one as well:
 
-._XML-only: Spring bean declarations for multiple HTTP components with different SSL contexts_
-[source,xml]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
-<bean id="http-foo" class="org.apache.camel.component.http.HttpComponent">
-   <property name="sslContextParameters" ref="sslContextParams1"/>
-   <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
-</bean>
+from("direct:start")
+  .toD("https://${header.host}/orders?sslContextParameters=#mySSL");
+----
 
-<bean id="http-bar" class="org.apache.camel.component.http.HttpComponent">
-   <property name="sslContextParameters" ref="sslContextParams2"/>
-   <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
-</bean>
+YAML::
++
+[source,yaml]
 ----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "https://${header.host}/orders?sslContextParameters=#mySSL"
+----
+====
+
+To define `mySSL` in XML or YAML, see
+xref:manual::camel-configuration-utilities.adoc#_configuring_sslcontextparameters_in_xml_and_yaml_dsl[JSSE Utility].
+
+With Camel Main, the `camel.ssl.*` properties set up global `SSLContextParameters` instead. An `https` endpoint uses
+them when the `https` component has `useGlobalSslContextParameters=true`, and neither the endpoint nor the component
+sets `sslContextParameters`:
+
+[source,properties]
+----
+camel.ssl.enabled=true
+camel.ssl.trust-store=truststore.p12
+camel.ssl.trust-store-password=changeit
+camel.component.https.use-global-ssl-context-parameters=true
+----
+
+When the component or the endpoint has a `clientConnectionManager`, Camel uses that connection manager as it is, and
+`sslContextParameters` is not applied.
 
 == Removing http protocol headers in the Camel Message
 

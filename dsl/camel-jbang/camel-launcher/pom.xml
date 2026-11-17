@@ -67,13 +67,10 @@
     <dependencyManagement>
         <dependencies>
             <!--
-                This launcher bundles both camel-jbang-plugin-generate and camel-jbang-plugin-tui on a
-                single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
-                while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
-                classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
-                core next to the 0.28.0 extensions, which makes the TUI Markdown help throw NoClassDefFoundError.
-                Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
-                the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
+                The tui plugin (via tamboui-markdown) needs a commonmark core that is not older than its
+                commonmark-ext-* modules. The generate plugin, which installs on first use, brings commonmark 0.21.0,
+                but its class loader asks the launcher first, so it uses this core too; openapi-generator only uses
+                the stable Parser/HtmlRenderer APIs.
             -->
             <dependency>
                 <groupId>org.commonmark</groupId>
@@ -84,19 +81,48 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--
+            First, as the class path of the distribution (the Class-Path of the launcher JAR) follows the order of the
+            dependencies: the JARs that the short commands (camel ps, get, log, doc, catalog, ...) load classes from,
+            which camel-jbang-core brings in only further down. The JVM opens the JARs of the class path in order until
+            it finds a class, so a class from a JAR far down opens every JAR before it.
+        -->
+        <dependency>
+            <groupId>org.aesh</groupId>
+            <artifactId>aesh</artifactId>
+            <version>${aesh-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.freva</groupId>
+            <artifactId>ascii-table</artifactId>
+            <version>${ascii-table-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <!-- from spring-core: jcl-over-slf4j below has the same classes, and sends the logging to slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Pre-installed plugins -->
-        <!-- the edit plugin is not pre-installed -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-plugin-generate</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- the edit and generate plugins are not pre-installed: they install on first use
+             (generate and its OpenAPI generator are about 24 MB, a fifth of the download) -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-test</artifactId>
@@ -254,6 +280,13 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient-version}</version>
+            <exclusions>
+                <!-- jcl-over-slf4j below has the same classes, and sends the logging to slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

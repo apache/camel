@@ -18,6 +18,7 @@ package org.apache.camel.sanitizer;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -41,9 +42,10 @@ import org.slf4j.LoggerFactory;
  * from the properties component, and installs the sanitizer only with profile {@code dev}, with
  * {@code camel.sanitizer.enabled=true}, or for a context built on a thread that the JUnit extension marked
  * ({@link SanitizerTestSession}), and never with profile {@code prod} (checked first). Otherwise nothing is installed
- * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1, for rule R2 the
- * on completion listener, and for rule R2 and the still pending warning of R1 one event notifier of the exchanges that
- * are done; it looks for still pending calls while the context runs, and logs a WARN that the sanitizer is on.
+ * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1, the step listener
+ * of rule R3, for rule R2 the on completion listener, and for rule R2 and the still pending warning of R1 one event
+ * notifier of the exchanges that are done; it looks for still pending calls while the context runs, and logs a WARN
+ * that the sanitizer is on.
  *
  * @since 4.24
  */
@@ -56,16 +58,19 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
     static final String PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
 
     /**
-     * The checks of this version: {@code callback} is rule R1, {@code commit} is rule R2.
+     * The checks of this version: {@code callback} is rule R1, {@code commit} is rule R2, {@code threads} is rule R3
+     * (its first part: the value process returns and the value of its callback).
      */
     static final String CHECK_CALLBACK = "callback";
     static final String CHECK_COMMIT = "commit";
+    static final String CHECK_THREADS = "threads";
     /**
-     * The checks by default: R1 only, as R2 costs more per message (one lock of its records for the whole context);
-     * both in a test, that is a context built on a thread the JUnit extension marked, where the cost does not matter.
+     * The checks by default: R1 and R3, not R2, as R2 costs more per message (one lock of its records for the whole
+     * context); all three in a test, that is a context built on a thread the JUnit extension marked, where the cost
+     * does not matter.
      */
-    static final String DEFAULT_CHECKS = CHECK_CALLBACK;
-    static final String DEFAULT_CHECKS_IN_TESTS = CHECK_CALLBACK + "," + CHECK_COMMIT;
+    static final String DEFAULT_CHECKS = CHECK_CALLBACK + "," + CHECK_THREADS;
+    static final String DEFAULT_CHECKS_IN_TESTS = CHECK_CALLBACK + "," + CHECK_COMMIT + "," + CHECK_THREADS;
 
     private static final Logger LOG = LoggerFactory.getLogger(SanitizerContextServicePlugin.class);
 
@@ -119,6 +124,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             long pendingTimeout;
             boolean callback;
             boolean commit;
+            boolean threads;
             try {
                 String text = property(pc, ENABLED);
                 enabled = text != null ? parseBoolean(ENABLED, text) : null;
@@ -133,6 +139,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 String checks = orElse(property(pc, CHECKS), session != null ? DEFAULT_CHECKS_IN_TESTS : DEFAULT_CHECKS);
                 callback = parseChecks(checks, CHECK_CALLBACK);
                 commit = parseChecks(checks, CHECK_COMMIT);
+                threads = parseChecks(checks, CHECK_THREADS);
                 stackDepth = parseStackDepth(orElse(property(pc, STACK_DEPTH), "32"));
                 pendingTimeout = parsePendingTimeout(orElse(property(pc, PENDING_TIMEOUT), "60s"));
                 reportOnShutdown = parseBoolean(REPORT_ON_SHUTDOWN, orElse(property(pc, REPORT_ON_SHUTDOWN), "true"));
@@ -148,18 +155,24 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 turnedOff(session);
                 return;
             }
-            if (!callback && !commit) {
+            if (!callback && !commit && !threads) {
                 LOG.info("camel-sanitizer is switched on with no check in {}, so nothing is installed", CHECKS);
                 turnedOff(session);
                 return;
             }
-            Sanitizer s = new Sanitizer(context, stackDepth, session, callback, commit, pendingTimeout);
+            Sanitizer s = new Sanitizer(context, stackDepth, session, callback, commit, threads, pendingTimeout);
             if (session != null) {
                 session.installed();
             }
             context.getCamelContextExtension().addContextPlugin(Sanitizer.class, s);
-            // the step listener also tells rule R2 which step runs on a thread
-            context.getCamelContextExtension().addStepListener(new SanitizerStepListener(s));
+            if (callback || commit) {
+                // the step listener also tells rule R2 which step runs on a thread
+                context.getCamelContextExtension().addStepListener(new SanitizerStepListener(s));
+            }
+            if (threads) {
+                // it counts the calls of the steps only when the step listener above does not
+                context.getCamelContextExtension().addStepListener(new SanitizerDoneSyncListener(s, !callback && !commit));
+            }
             if (commit) {
                 SanitizerOnCompletionListener listener = new SanitizerOnCompletionListener(s);
                 context.getCamelContextExtension().addOnCompletionListener(listener);
@@ -172,9 +185,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             }
             sanitizer = s;
             String why = enabled != null ? ENABLED + "=true" : session != null ? "@CamelSanitizer" : "profile dev";
-            String rules = callback && commit
-                    ? "each call of the steps of the routes (rule R1) and the commits of the consumers (rule R2)"
-                    : callback ? "each call of the steps of the routes (rule R1)" : "the commits of the consumers (rule R2)";
+            String rules = rules(callback, commit, threads);
             String message = "The exchange sanitizer is switched on ({}): it checks {}, which costs time at each step."
                              + " Do not use in production.";
             if (session == null || WARNED_IN_TESTS.compareAndSet(false, true)) {
@@ -231,6 +242,23 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         }
 
         /**
+         * What the sanitizer checks, in words, for the WARN that it is on.
+         */
+        static String rules(boolean callback, boolean commit, boolean threads) {
+            StringJoiner sj = new StringJoiner(", ");
+            if (callback) {
+                sj.add("the callback of each call of the steps of the routes (rule R1)");
+            }
+            if (commit) {
+                sj.add("the commits of the consumers (rule R2)");
+            }
+            if (threads) {
+                sj.add("the value each call of a step returns against the value of its callback (rule R3)");
+            }
+            return sj.toString();
+        }
+
+        /**
          * A context of a test stays off on purpose (profile prod, camel.sanitizer.enabled=false, pooled exchanges, no
          * check): the expected violations of the test are then not required.
          */
@@ -271,7 +299,8 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         }
 
         /**
-         * Whether the checks include the given one: {@code callback} (rule R1) or {@code commit} (rule R2).
+         * Whether the checks include the given one: {@code callback} (rule R1), {@code commit} (rule R2) or
+         * {@code threads} (rule R3).
          */
         static boolean parseChecks(String text, String wanted) {
             boolean found = false;
@@ -280,10 +309,10 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 if (check.isEmpty() || "none".equals(check)) {
                     continue;
                 }
-                if (!CHECK_CALLBACK.equals(check) && !CHECK_COMMIT.equals(check)) {
+                if (!CHECK_CALLBACK.equals(check) && !CHECK_COMMIT.equals(check) && !CHECK_THREADS.equals(check)) {
                     throw new IllegalArgumentException(
                             CHECKS + "=" + text + " has the unknown check " + part.trim() + " (the checks of this version: "
-                                                       + CHECK_CALLBACK + ", " + CHECK_COMMIT + ")");
+                                                       + CHECK_CALLBACK + ", " + CHECK_COMMIT + ", " + CHECK_THREADS + ")");
                 }
                 found |= wanted.equals(check);
             }

@@ -61,7 +61,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 To use this component, you have multiple options to provide the required Azure authentication information:
 
-- By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `blobServiceClient`. Note: You don't need to create a specific client, e.g.: BlockBlobClient, the BlobServiceClient represents the upper level which
+- By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `serviceClient`. Note: You don't need to create a specific client, e.g.: BlockBlobClient, the BlobServiceClient represents the upper level which
 can be used to retrieve lower level clients.
 - Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
 - Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
@@ -185,7 +185,7 @@ For these operations, `accountName` is *required*.
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Operation |Description
-|`listBlobContainers`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`listBlobContainers`  |List the blob containers of the storage account, as a `List<BlobContainerItem>`. This is the default operation when `operation` is not set, so a producer without `operation` lists the containers and uploads nothing: set `operation=uploadBlockBlob` to upload the message body.
 |`getChangeFeed` | Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
 |`findBlobsByTags` | Returns a list of blobs across the storage account whose index tags match the SQL-like filter expression provided via the `CamelAzureStorageBlobTagFilter` header or the message body. Optionally honours `CamelAzureStorageBlobMaxResultsPerPage` and `CamelAzureStorageBlobTimeout`. The result body is a `List<TaggedBlobItem>`.
 |===

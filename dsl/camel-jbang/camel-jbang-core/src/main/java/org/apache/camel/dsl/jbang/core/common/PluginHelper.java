@@ -49,7 +49,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.Printer;
@@ -80,10 +79,11 @@ public final class PluginHelper {
 
     /**
      * Built-in top-level commands that consume plugins — either by accepting plugin-contributed sub-options (run,
-     * export) or by dispatching to plugin-provided commands (shell, cmd). Plugin discovery must still run for these
-     * even if the target name is registered as a built-in subcommand.
+     * export) or by dispatching to plugin-provided commands (shell). Plugin discovery must still run for these even if
+     * the target name is registered as a built-in subcommand. Not cmd: no plugin adds to it, and creating all commands
+     * and plugins for it made camel cmd take twice as long as the other commands.
      */
-    private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export", "cmd");
+    private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export");
 
     // the plugins warned about by compatibilityCheck, to warn once
     private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
@@ -146,8 +146,8 @@ public final class PluginHelper {
     /**
      * Decides whether plugin discovery (classpath scan + JSON config + Maven resolution) is needed for the current
      * invocation. Returns false when the target command is a built-in that does not consume plugins, skipping all
-     * plugin-related IO. Returns true for plugin-consuming built-ins (run/export/cmd/shell), for unknown commands
-     * (likely plugin-provided), and when no target is given (e.g. --help listing).
+     * plugin-related IO. Returns true for plugin-consuming built-ins (run/export/shell), for unknown commands (likely
+     * plugin-provided), and when no target is given (e.g. --help listing).
      *
      * @param  commandLine the command line with all built-in subcommands already registered
      * @param  args        the raw CLI args; only args[0] is inspected
@@ -182,7 +182,7 @@ public final class PluginHelper {
      * {@link #shouldDiscoverPlugins(CommandTree, String...)}).
      *
      * @param  command the name of the command
-     * @return         {@code true} for shell, run, export and cmd
+     * @return         {@code true} for shell, run and export
      */
     public static boolean isPluginConsumingCommand(String command) {
         return PLUGIN_CONSUMING_BUILTINS.contains(command);
@@ -385,8 +385,9 @@ public final class PluginHelper {
             return activePlugins;
         }
         if (config != null) {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            String version = catalog.getCatalogVersion();
+            // no local of the interface type: the verifier would load CamelCatalog when it loads this class, and its JAR
+            // is far down the class path of the distribution
+            String version = new DefaultCamelCatalog().getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
             if (plugins == null) {
                 return activePlugins;
@@ -435,6 +436,16 @@ public final class PluginHelper {
                     }
                     warnNotLoaded(main.getOut(), name, target, e.getMessage());
                     continue;
+                } catch (LinkageError e) {
+                    // a plugin built for another Camel version, whose classes refer to a class that has moved or is
+                    // gone: a NoClassDefFoundError when it is created (CAMEL-26964)
+                    String reason = notLinked(version, e);
+                    if (!contributor) {
+                        throw CliException.failure("Plugin " + name + " cannot be loaded (" + reason + "): "
+                                                   + addOrDelete(name));
+                    }
+                    warnNotLoaded(main.getOut(), name, target, reason, addOrDelete(name));
+                    continue;
                 }
                 if (res.plugin().isPresent()) {
                     activePlugins.put(command, res.plugin().get());
@@ -459,10 +470,77 @@ public final class PluginHelper {
     // than once
     private static final Map<Printer, Set<String>> WARNED_NOT_LOADED = Collections.synchronizedMap(new WeakHashMap<>());
 
+    /**
+     * Why a plugin that fails with a linkage error cannot be loaded, such as
+     * {@code it does not link with Camel 4.24.0 and may be built for another version: NoClassDefFoundError org/...}.
+     * The error may also come from elsewhere, such as a newer Java ({@link UnsupportedClassVersionError}) or a static
+     * initializer of the plugin that fails ({@link ExceptionInInitializerError}, without a message of its own: its
+     * cause says what failed).
+     */
+    public static String notLinked(String camelVersion, LinkageError e) {
+        String error = e.getClass().getSimpleName();
+        if (e.getMessage() != null) {
+            error += " " + e.getMessage();
+        } else if (e.getCause() != null) {
+            Throwable cause = e.getCause();
+            error += " caused by " + cause.getClass().getSimpleName()
+                     + (cause.getMessage() != null ? " " + cause.getMessage() : "");
+        }
+        return "it does not link with Camel " + camelVersion + " and may be built for another version: " + error;
+    }
+
+    /**
+     * Warns, once, that a plugin is left out of camel run or camel export as its run customizer or exporter does not
+     * link with this Camel version: the JVM links the classes of a plugin when they are first used, so a plugin that
+     * could be created may still fail when asked for them (CAMEL-26964).
+     *
+     * @param printer where to warn
+     * @param command the command of the plugin, as the keys of {@link #getActivePlugins(CamelJBangMain, String)}
+     * @param target  the command that goes on without the plugin, such as run or export
+     * @param e       the error
+     */
+    public static void warnNotLinked(Printer printer, String command, String target, LinkageError e) {
+        String name = nameOf(command);
+        warnNotLoaded(printer, name, target, notLinked(new DefaultCamelCatalog().getCatalogVersion(), e),
+                addOrDelete(name));
+    }
+
+    // the name of the plugin of the given command in the plugin configuration, which camel plugin add and camel plugin
+    // delete take
+    private static String nameOf(String command) {
+        try {
+            JsonObject config = getPluginConfig();
+            JsonObject plugins = config != null ? config.getMap("plugins") : null;
+            if (plugins != null) {
+                for (String pluginKey : plugins.keySet()) {
+                    JsonObject properties = plugins.getMap(pluginKey);
+                    String name = properties.getOrDefault("name", pluginKey).toString();
+                    if (command.equals(properties.getOrDefault("command", name).toString())) {
+                        return name;
+                    }
+                }
+            }
+        } catch (RuntimeException e) {
+            // corrupt plugin config: warned about by getActivePlugins
+        }
+        return command;
+    }
+
+    // what to do about a plugin built for another Camel version: camel plugin add selects the release built for this
+    // one, as compatibilityCheck says
+    private static String addOrDelete(String name) {
+        return "run camel plugin add " + name + " to select a release for this Camel version, or remove it with"
+               + " camel plugin delete " + name;
+    }
+
     private static void warnNotLoaded(Printer printer, String name, String target, String reason) {
+        warnNotLoaded(printer, name, target, reason, "remove it with camel plugin delete " + name);
+    }
+
+    private static void warnNotLoaded(Printer printer, String name, String target, String reason, String remedy) {
         if (WARNED_NOT_LOADED.computeIfAbsent(printer, p -> ConcurrentHashMap.newKeySet()).add(name)) {
             printer.printWarn("Plugin " + name + " cannot be loaded (" + reason + "), so camel " + target
-                              + " goes on without it: remove it with camel plugin delete " + name);
+                              + " goes on without it: " + remedy);
         }
     }
 
@@ -1128,8 +1206,7 @@ public final class PluginHelper {
                 // Check version compatibility if needed
                 CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (annotation != null) {
-                    CamelCatalog catalog = new DefaultCamelCatalog();
-                    String version = catalog.getCatalogVersion();
+                    String version = new DefaultCamelCatalog().getCatalogVersion();
                     String firstVersion = annotation.firstVersion();
                     if (!version.isBlank() && !firstVersion.isBlank()) {
                         PluginHelper.versionCheck(main, version, firstVersion, command);

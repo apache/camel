@@ -21,17 +21,17 @@ import java.util.Map;
 
 /**
  * The body types the nodes of the routes have been reached with, across all the exchanges.
- * <p/>
+ * <p>
  * The message history records the type of the body as each node is reached
  * ({@link org.apache.camel.MessageHistory#getBodyType()}), but for one exchange at a time. This registry keeps, per
  * node, every distinct type the node has been reached with, so tooling can show what the body was at each step of a
  * route: also in a branch the last exchange did not take, and with all the types when they varied, such as after a
  * processor that sets a text for some messages and a Map for others.
- * <p/>
+ * <p>
  * Each type also has its {@link Kind}. A node reached with bodies of more than one kind needs attention: a step that
  * writes or sends fails for the data, and a step that reads fields fails for the payload. Types of one kind, such as a
  * String and a byte[], are a part of the route that is dynamic, which the steps after it usually handle.
- * <p/>
+ * <p>
  * It is fed when the message history is enabled (as the dev profile does), so it costs nothing otherwise. The body
  * types of a route are forgotten when the route is removed, so a route that is loaded again never mixes two versions.
  * The registry is a context plugin:

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Thrown when an operation is attempted on a {@link Service} that has already been stopped and therefore cannot service
  * the call.
- * <p/>
+ * <p>
  * Typically raised when a producer or template is invoked after the owning {@link CamelContext} (or its parent route)
  * has been shut down.
  */

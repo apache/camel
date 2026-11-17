@@ -1702,7 +1702,7 @@ public class CamelMonitor extends CamelCommand {
         // refreshed by the next data-refresh redraw, which is bounded by {@code interval}.
         // Without this gate the tick loop forced a full redraw on every tick (~25/s at the
         // default 40ms tick rate) even while idle.
-        return dataRefreshed || needsAnimationRedraw(
+        return dataRefreshed || tabRegistry.isFlowFrameDue() || needsAnimationRedraw(
                 shellPanel.isOpen(),
                 aiPanel.isOpen(),
                 logPinAnim.isAnimating(),

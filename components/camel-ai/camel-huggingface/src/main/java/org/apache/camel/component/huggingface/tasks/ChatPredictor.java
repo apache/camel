@@ -70,7 +70,8 @@ import tools.jackson.databind.node.ArrayNode;
  * <ul>
  * <li>{@code CamelChatMemoryId} (optional, default "default"): String key for conversation history (e.g., user session
  * ID).</li>
- * <li>{@code CamelChatClearHistory} (optional): Boolean to clear the history for the current memory ID.</li>
+ * <li>{@code HuggingFaceConstants.CLEAR_HISTORY} (optional): Boolean to clear the history for the current memory
+ * ID.</li>
  * <li>{@code HuggingFaceConstants.OUTPUT}: The same generated response string (for convenience).</li>
  * </ul>
  *
@@ -174,7 +175,7 @@ public class ChatPredictor extends AbstractTaskPredictor {
         String memoryId = memoryId(exchange);
 
         // Clear if requested
-        Boolean clear = exchange.getIn().getHeader("CamelChatClearHistory", Boolean.class);
+        Boolean clear = exchange.getIn().getHeader(HuggingFaceConstants.CLEAR_HISTORY, Boolean.class);
         if (Boolean.TRUE.equals(clear)) {
             chatHistories.remove(memoryId);
             LOG.debug("Cleared chat history for ID: {}", memoryId);

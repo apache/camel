@@ -55,7 +55,7 @@ public interface EhcacheConstants {
             Object used for comparison for actions like REPLACE""",
               javaType = "Object")
     String OLD_VALUE = "CamelEhcacheOldValue";
-    @Metadata(description = "The type of event received", javaType = "EventType")
+    @Metadata(description = "The type of event received", javaType = "org.ehcache.event.EventType")
     String EVENT_TYPE = "CamelEhcacheEventType";
 
     String ACTION_CLEAR = "CLEAR";

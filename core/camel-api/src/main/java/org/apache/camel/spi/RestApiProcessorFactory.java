@@ -24,9 +24,9 @@ import org.apache.camel.Processor;
 /**
  * Allows SPI to plugin a {@link RestApiProcessorFactory} that creates the Camel {@link Processor} responsible for
  * servicing and generating the REST API documentation.
- * <p/>
- * For example the <tt>camel-openapi-java</tt> component provides such a factory that uses OpenAPI/Swagger to generate
- * the documentation.
+ * <p>
+ * For example the <code>camel-openapi-java</code> component provides such a factory that uses OpenAPI/Swagger to
+ * generate the documentation.
  */
 public interface RestApiProcessorFactory {
 

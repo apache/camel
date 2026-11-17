@@ -25,12 +25,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Records named {@link StartupStep} spans during {@link org.apache.camel.CamelContext} startup to capture timing and
  * diagnostic information for troubleshooting and performance analysis.
- * <p/>
+ * <p>
  * Each step is opened with {@link #beginStep} and closed with {@link #endStep}, forming a tree of nested spans that
  * mirrors the initialization call graph. The default implementation is a no-op; the {@code camel-jfr} module provides
  * an implementation that writes events to the Java Flight Recorder (JFR) event stream, enabling correlation with JVM
  * profiling data in tools such as JDK Mission Control.
- * <p/>
+ * <p>
  * The recorder is started automatically when the context starts and stopped (or kept running, depending on
  * {@link #setStartupRecorderDuration}) once startup completes. Use {@link #steps()} to iterate over captured steps
  * after startup for programmatic analysis.

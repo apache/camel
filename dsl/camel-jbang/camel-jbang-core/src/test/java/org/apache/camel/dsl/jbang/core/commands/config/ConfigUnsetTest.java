@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,9 +56,10 @@ class ConfigUnsetTest extends BaseConfigTestSupport {
 
         ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.doCall();
+        // a key that is not set is not found, as for camel config get (CAMEL-26931); it exited with 0
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, command.doCall());
 
-        Assertions.assertEquals("", printer.getOutput());
+        Assertions.assertEquals("ERROR: foo key not found", printer.getOutput().trim());
 
         CommandLineHelper.loadProperties(properties -> {
             Assertions.assertEquals(2, properties.size());

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PatternHelperTest {
@@ -140,6 +142,43 @@ class PatternHelperTest {
             for (String pattern : patterns) {
                 assertEquals(alwaysTryingTheRegex(name, pattern), PatternHelper.matchPattern(name, pattern),
                         () -> "name=" + name + " pattern=" + pattern);
+            }
+        }
+    }
+
+    @Test
+    void testCombinePatterns() {
+        assertNull(PatternHelper.combinePatterns());
+        assertNull(PatternHelper.combinePatterns((String[]) null));
+        assertNull(PatternHelper.combinePatterns(null, null));
+        assertEquals("Camel*", PatternHelper.combinePatterns("Camel*"));
+        assertEquals("Camel*", PatternHelper.combinePatterns(null, "Camel*"));
+        assertEquals("header1|header3", PatternHelper.combinePatterns("header1", "header3"));
+        assertEquals("header1|Camel.*|(?:Camel*)|(?:Beer(Heineken|Tuborg))|\\Q*File\\E.*|\\Qa(\\E",
+                PatternHelper.combinePatterns("header1", "Camel*", "Beer(Heineken|Tuborg)", "*File*", "a("));
+        // a wildcard with regular expression characters keeps its wildcard match too, unless it ends with .*
+        assertEquals("\\Qmy.app\\E.*|(?:my.app*)|\\QBeer(X)\\E.*|(?:Beer(X)*)|(?:kafka.*)|\\Q{{keep}}\\E",
+                PatternHelper.combinePatterns("my.app*", "Beer(X)*", "kafka.*", "{{keep}}"));
+    }
+
+    @Test
+    void testCombinePatternsMatchesAsAnyOfThePatterns() {
+        String[] patterns = {
+                "header1", "Camel*", "Beer(Heineken|Tuborg)", ".*Id", "my.app*", "Beer(X)*", "kafka.*", "*File*", "a(",
+                "x-y", "*" };
+        String[] names = {
+                "header1", "HEADER1", "header2", "Camel", "Came", "CamelFileName", "camelfoo", "BeerHeineken",
+                "beertuborg", "BeerCarlsberg", "breadcrumbId", "my.app", "my.app.id", "MY.APP.ID", "myXapp", "my.ap",
+                "Beer(X)foo", "BeerX", "BeerXX", "kafka.TOPIC", "kafkaTopic", "*FileName", "FileName", "a(", "A(", "a",
+                "x-y", "xy" };
+        for (int i = 0; i < patterns.length; i++) {
+            for (int j = i + 1; j <= patterns.length; j++) {
+                String[] some = Arrays.copyOfRange(patterns, i, j);
+                String combined = PatternHelper.combinePatterns(some);
+                for (String name : names) {
+                    assertEquals(PatternHelper.matchPatterns(name, some), PatternHelper.matchPattern(name, combined),
+                            () -> "name=" + name + " patterns=" + Arrays.toString(some) + " combined=" + combined);
+                }
             }
         }
     }

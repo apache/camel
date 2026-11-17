@@ -188,6 +188,10 @@ public final class AuthoringTools {
                 .repeatHint("Write the file now with camel_write_file: when the earlier answer had no sample, asking again"
                             + " gives none either. The write checks the file, and its answer says what to change (for a"
                             + " Citrus test: which actions it takes).")
+                // "no sample for" is a miss, whose note gives this instead of the hint above (r34: told 8 times to ask
+                // with other arguments, the model asked for the same missing sample each time)
+                .missHint("Write the file now with camel_write_file: asking again gives no sample either. The write checks"
+                          + " the file, and its answer says what to change (for a Citrus test: which actions it takes).")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
@@ -465,19 +469,6 @@ public final class AuthoringTools {
                     return DependencyLookup.lookup(ctx, required(args, "className"), args.get("runtime"),
                             bool(args, "mavenCentral", false));
                 }));
-        registry.accept(tool("camel_error_diagnose",
-                "Diagnoses a Camel error from a stack trace or error message: the known exceptions in it with common "
-                                                     + "causes and suggested fixes, the components and EIPs it mentions with "
-                                                     + "documentation links, and the route id.")
-                .param("error", "string", "The stack trace or error message", true)
-                .param("camelVersion", "string", VERSION_DESC, false)
-                .core(true)
-                .deterministic(true)
-                .executor((ctx, args) -> {
-                    applyVersion(ctx, args);
-                    return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
-                }));
-
         registry.accept(tool("camel_project_overview",
                 "Overview of a project's integrations from its route sources, no running integration needed: "
                                                        + "routes, entry points, links between routes, external systems, "

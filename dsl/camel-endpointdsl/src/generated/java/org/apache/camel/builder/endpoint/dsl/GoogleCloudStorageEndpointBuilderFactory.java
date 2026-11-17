@@ -581,6 +581,48 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
          * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
@@ -1749,12 +1791,11 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return "CamelGoogleCloudStorageOperation";
         }
         /**
-         * The bucket Name which this object will be stored or which will be
-         * used for the current operation.
+         * The name of the bucket the object was consumed from.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: consumer
          * 
          * @return the name of the header {@code GoogleCloudStorageBucketName}.
          */
@@ -1766,7 +1807,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageObjectName}.
          */
@@ -1922,7 +1963,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageComponentCount}.
@@ -1936,7 +1977,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageContentLanguage}.
@@ -1953,7 +1994,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCustomTime}.
          */
@@ -1965,7 +2006,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCrc32cHex}.
          */
@@ -1990,7 +2031,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageGeneration}.
          */
@@ -2002,7 +2043,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.storage.BlobId} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageBlobId}.
          */
@@ -2014,7 +2055,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageKmsKeyName}.
          */
@@ -2026,7 +2067,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageMediaLink}.
          */
@@ -2038,7 +2079,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageMetageneration}.
@@ -2051,7 +2092,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.storage.StorageClass} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageStorageClass}.
@@ -2064,7 +2105,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCreateTime}.
          */
@@ -2076,7 +2117,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Date} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageLastUpdate}.
          */

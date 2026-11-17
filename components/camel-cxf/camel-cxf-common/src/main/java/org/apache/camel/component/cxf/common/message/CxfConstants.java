@@ -86,7 +86,8 @@ public final class CxfConstants {
 
     @Metadata(description = "The HTTP method of the request, for example GET. The consumer sets it to the method of the"
                             + " request. With the WebClient API, the producer sends its request with this method, and without"
-                            + " an entity for GET.",
+                            + " an entity for GET. Without this header, the WebClient API sends a POST, even when the message has"
+                            + " no body.",
               javaType = "String", applicableFor = SCHEME_CXF_RS)
     public static final String HTTP_METHOD = Exchange.HTTP_METHOD;
     @Metadata(description = "The path of the request below the service address, for example /customers/123. The consumer sets"

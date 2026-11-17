@@ -1,0 +1,240 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.spiffe;
+
+import java.security.cert.X509Certificate;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import io.spiffe.bundle.jwtbundle.JwtBundle;
+import io.spiffe.bundle.jwtbundle.JwtBundleSet;
+import io.spiffe.spiffeid.SpiffeId;
+import io.spiffe.spiffeid.TrustDomain;
+import io.spiffe.svid.x509svid.X509Svid;
+import io.spiffe.workloadapi.Watcher;
+import io.spiffe.workloadapi.WorkloadApiClient;
+import io.spiffe.workloadapi.X509Context;
+import org.apache.camel.health.HealthCheck;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class SpiffeProducerHealthCheckTest {
+    private static final Instant NOW = Instant.parse("2026-01-01T00:00:00Z");
+
+    @Test
+    void reportsUnavailableBeforeMaterialThenTracksValidityWithoutFurtherApiCalls() throws Exception {
+        MutableClock clock = new MutableClock();
+        SpiffeProducerHealthCheck check = check(SpiffeOperation.fetchX509Svid, clock);
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        Watcher<X509Context> watcher = x509Watcher(client);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+
+        watcher.onUpdate(x509(NOW.plusSeconds(120)));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.remainingValidityMillis", 120000L)
+                .containsEntry("spiffe.lastUpdate", NOW.toString());
+        clock.now = NOW.plusSeconds(70);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.expiring", true)
+                .containsEntry("spiffe.materialValid", true);
+        clock.now = NOW.plusSeconds(121);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.materialValid", false);
+        verify(client, never()).fetchX509Context();
+    }
+
+    @Test
+    void failedWatchStaysDownAndRetainsMaterialMetadataWithoutPublishingFailureDetails() throws Exception {
+        MutableClock clock = new MutableClock();
+        SpiffeProducerHealthCheck check = check(SpiffeOperation.fetchX509Svid, clock);
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        Watcher<X509Context> watcher = x509Watcher(client);
+        watcher.onUpdate(x509(NOW.plusSeconds(120)));
+        // the SDK calls onError only for an error it does not retry, and then cancels the watch for good
+        watcher.onError(new IllegalStateException("credential-must-not-appear"));
+
+        HealthCheck.Result failed = check.call();
+        assertThat(failed.getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(failed.getDetails()).containsEntry("spiffe.watch", "failed")
+                .containsEntry("spiffe.materialValid", true)
+                .containsEntry("spiffe.lastUpdate", NOW.toString());
+        assertThat(failed.getError()).isEmpty();
+        assertThat(failed.getMessage().orElse("")).contains("until the route restarts")
+                .doesNotContain("credential-must-not-appear");
+        assertThat(failed.getDetails().toString()).doesNotContain("credential-must-not-appear");
+
+        // no update follows a failed watch; time passing only makes the retained material expire
+        clock.now = NOW.plusSeconds(121);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.watch", "failed")
+                .containsEntry("spiffe.materialValid", false);
+    }
+
+    @Test
+    void missingIdentityAndLateCallbacksAfterCloseNeverReportReady() throws Exception {
+        SpiffeProducerHealthCheck check = check(SpiffeOperation.fetchX509Svid, new MutableClock());
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        Watcher<X509Context> watcher = x509Watcher(client);
+        watcher.onUpdate(null);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        check.close();
+        watcher.onUpdate(x509(NOW.plusSeconds(120)));
+        watcher.onError(new IllegalStateException("late error"));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.watch", "stopped")
+                .doesNotContainKeys("spiffe.expiry", "spiffe.lastUpdate");
+    }
+
+    @Test
+    void jwtOperationsObserveBundlesWithoutClaimingIdentityExpiry() {
+        for (SpiffeOperation operation : List.of(SpiffeOperation.fetchJwtSvid, SpiffeOperation.validateJwtSvid)) {
+            SpiffeProducerHealthCheck check = check(operation, new MutableClock());
+            WorkloadApiClient client = mock(WorkloadApiClient.class);
+            check.observe(client);
+            ArgumentCaptor<Watcher<JwtBundleSet>> captor = ArgumentCaptor.captor();
+            verify(client).watchJwtBundles(captor.capture());
+            captor.getValue().onUpdate(JwtBundleSet.emptySet());
+            assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+            JwtBundleSet bundles = mock(JwtBundleSet.class);
+            JwtBundle bundle = mock(JwtBundle.class);
+            when(bundles.getBundles()).thenReturn(Map.of(TrustDomain.parse("example.org"), bundle));
+            captor.getValue().onUpdate(bundles);
+            assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
+            assertThat(check.call().getDetails()).containsEntry("spiffe.observation", "jwt-bundles")
+                    .doesNotContainKeys("spiffe.expiry", "spiffe.remainingValidityMillis", "spiffe.materialValid");
+        }
+    }
+
+    @Test
+    void futureDatedIdentityIsUnavailableUntilItsValidityStarts() throws Exception {
+        MutableClock clock = new MutableClock();
+        SpiffeProducerHealthCheck check = check(SpiffeOperation.fetchX509Svid, clock);
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        X509Context context = x509(NOW.plusSeconds(300));
+        when(context.getDefaultSvid().getLeaf().getNotBefore()).thenReturn(Date.from(NOW.plusSeconds(30)));
+        x509Watcher(client).onUpdate(context);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.materialAvailable", true)
+                .containsEntry("spiffe.materialValid", false);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        clock.now = NOW.plusSeconds(30);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
+    }
+
+    @Test
+    void rejectsANegativeExpiryThreshold() {
+        assertThatThrownBy(() -> new SpiffeProducerHealthCheck("test", SpiffeOperation.fetchX509Svid, -1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("healthCheckExpiryThreshold");
+    }
+
+    @Test
+    void watchesTheConfiguredLocalIdentityInsteadOfTheDefault() throws Exception {
+        SpiffeId billing = SpiffeId.parse("spiffe://example.org/billing");
+        SpiffeProducerHealthCheck check = new SpiffeProducerHealthCheck(
+                "test", SpiffeOperation.fetchX509Svid, 60000,
+                billing, new MutableClock());
+        check.setEnabled(true);
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        Watcher<X509Context> watcher = x509Watcher(client);
+
+        // the default identity expires soon, the configured one is fine: the check follows the configured one
+        X509Svid defaultSvid = svid(SpiffeId.parse("spiffe://example.org/workload"), NOW.plusSeconds(10));
+        X509Svid billingSvid = svid(billing, NOW.plusSeconds(600));
+        watcher.onUpdate(x509(defaultSvid, List.of(defaultSvid, billingSvid)));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.localSpiffeId", billing.toString())
+                .containsEntry("spiffe.remainingValidityMillis", 600000L);
+
+        // an update that no longer carries the configured identity is unusable material, not a fallback
+        watcher.onUpdate(x509(defaultSvid, List.of(defaultSvid)));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.materialAvailable", false);
+    }
+
+    private static X509Svid svid(SpiffeId id, Instant expiry) {
+        X509Svid svid = mock(X509Svid.class);
+        X509Certificate leaf = mock(X509Certificate.class);
+        when(leaf.getNotAfter()).thenReturn(Date.from(expiry));
+        when(svid.getLeaf()).thenReturn(leaf);
+        when(svid.getSpiffeId()).thenReturn(id);
+        return svid;
+    }
+
+    private static X509Context x509(X509Svid defaultSvid, List<X509Svid> all) {
+        X509Context context = mock(X509Context.class);
+        when(context.getDefaultSvid()).thenReturn(defaultSvid);
+        when(context.getX509Svids()).thenReturn(all);
+        return context;
+    }
+
+    private static SpiffeProducerHealthCheck check(SpiffeOperation operation, Clock clock) {
+        SpiffeProducerHealthCheck check = new SpiffeProducerHealthCheck("test", operation, 60000, clock);
+        check.setEnabled(true);
+        return check;
+    }
+
+    private static Watcher<X509Context> x509Watcher(WorkloadApiClient client) {
+        ArgumentCaptor<Watcher<X509Context>> captor = ArgumentCaptor.captor();
+        verify(client).watchX509Context(captor.capture());
+        return captor.getValue();
+    }
+
+    private static X509Context x509(Instant expiry) throws Exception {
+        X509Svid svid = mock(X509Svid.class);
+        X509Certificate leaf = mock(X509Certificate.class);
+        when(leaf.getNotAfter()).thenReturn(Date.from(expiry));
+        when(svid.getLeaf()).thenReturn(leaf);
+        X509Context context = mock(X509Context.class);
+        when(context.getDefaultSvid()).thenReturn(svid);
+        return context;
+    }
+
+    private static final class MutableClock extends Clock {
+        private Instant now = NOW;
+
+        @Override
+        public ZoneId getZone() {
+            return ZoneOffset.UTC;
+        }
+
+        @Override
+        public Clock withZone(ZoneId zone) {
+            return this;
+        }
+
+        @Override
+        public Instant instant() {
+            return now;
+        }
+    }
+}

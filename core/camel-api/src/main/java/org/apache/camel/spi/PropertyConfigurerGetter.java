@@ -20,13 +20,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Extension of the configurer SPI that, in addition to setting properties, can describe the options a target supports.
- * <p/>
+ * <p>
  * Where {@link PropertyConfigurer} only writes property values, a getter can report each option's type
  * ({@link #getOptionType}), read the current value ({@link #getOptionValue}), resolve the element type of collection
  * options ({@link #getCollectionValueType}), and list autowired options ({@link #getAutowiredNames}). Generated
  * configurers typically implement this so tooling and the property-binding engine can introspect components and
  * endpoints. {@link ExtendedPropertyConfigurerGetter} adds enumeration of all options.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
  * @see   PropertyConfigurer
@@ -40,7 +40,7 @@ public interface PropertyConfigurerGetter {
      *
      * @param  name       the property name
      * @param  ignoreCase whether to ignore case for matching the property name
-     * @return            the class type, or <tt>null</tt> if no option exists with the name
+     * @return            the class type, or <code>null</code> if no option exists with the name
      */
     @Nullable
     Class<?> getOptionType(String name, boolean ignoreCase);
@@ -62,7 +62,7 @@ public interface PropertyConfigurerGetter {
      *                    {@link org.apache.camel.Component}.
      * @param  name       the property name
      * @param  ignoreCase whether to ignore case for matching the property name
-     * @return            the class type, or <tt>null</tt> if the option is not a collection kind or not possible to
+     * @return            the class type, or <code>null</code> if the option is not a collection kind or not possible to
      *                    determine
      */
     default @Nullable Object getCollectionValueType(Object target, String name, boolean ignoreCase) {

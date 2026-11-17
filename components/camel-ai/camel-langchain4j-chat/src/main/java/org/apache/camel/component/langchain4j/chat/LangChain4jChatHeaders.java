@@ -22,7 +22,9 @@ public class LangChain4jChatHeaders {
     @Metadata(description = "The prompt Template.", javaType = "String")
     public static final String PROMPT_TEMPLATE = "CamelLangChain4jChatPromptTemplate";
 
-    @Metadata(description = "Augmented Data for RAG", javaType = "String")
+    @Metadata(description = "Augmented Data for RAG: the contents to inject into the chat message. Set by"
+                            + " LangChain4jRagAggregatorStrategy, which turns the retrieved Strings into Content.",
+              javaType = "java.util.List<dev.langchain4j.rag.content.Content>")
     public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
 
     @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")

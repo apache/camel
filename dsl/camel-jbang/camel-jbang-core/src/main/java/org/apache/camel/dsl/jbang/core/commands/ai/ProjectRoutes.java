@@ -397,53 +397,17 @@ public final class ProjectRoutes {
             return routes;
         }
 
-        /** An Integration's flows, a Kamelet's template or a Pipe's source, steps and sink. */
+        /** A Kamelet's template: Camel K resources (Pipe, Integration) are not loaded by Camel (CAMEL-27002). */
         private void resource(MappingNode map) {
             Object kind = value(map, "kind");
             MappingNode spec = child(map, "spec") instanceof MappingNode m ? m : null;
             if (spec == null) {
                 return;
             }
-            if ("Integration".equals(kind) && child(spec, "flows") instanceof SequenceNode flows) {
-                for (org.yaml.snakeyaml.nodes.Node item : flows.getValue()) {
-                    topLevel(item);
-                }
-            } else if ("Kamelet".equals(kind) && child(spec, "template") instanceof MappingNode template) {
+            if ("Kamelet".equals(kind) && child(spec, "template") instanceof MappingNode template) {
                 Object name = child(map, "metadata") instanceof MappingNode meta ? value(meta, "name") : null;
                 route("routeTemplate", template, name != null ? name.toString() : null, line(map), -1, 0);
-            } else if ("Pipe".equals(kind) || "KameletBinding".equals(kind)) {
-                pipe(map, spec);
             }
-        }
-
-        private void pipe(MappingNode map, MappingNode spec) {
-            Object name = child(map, "metadata") instanceof MappingNode meta ? value(meta, "name") : null;
-            Endpoint from = pipeEndpoint(child(spec, "source"));
-            List<Endpoint> produces = new ArrayList<>();
-            if (child(spec, "steps") instanceof SequenceNode steps) {
-                for (org.yaml.snakeyaml.nodes.Node step : steps.getValue()) {
-                    add(produces, pipeEndpoint(step));
-                }
-            }
-            add(produces, pipeEndpoint(child(spec, "sink")));
-            List<Endpoint> consumes = new ArrayList<>();
-            add(consumes, from);
-            routes.add(new Route(
-                    name != null ? name.toString() : null, "route", null, null, file, line(map), "yaml", false,
-                    from, consumes, produces, produces.size(), -1, 0, null, null, false, null));
-        }
-
-        private Endpoint pipeEndpoint(org.yaml.snakeyaml.nodes.Node node) {
-            if (!(node instanceof MappingNode m)) {
-                return null;
-            }
-            if (value(m, "uri") instanceof String uri) {
-                return endpoint(uri, null, false, catalog);
-            }
-            if (child(m, "ref") instanceof MappingNode ref && value(ref, "name") instanceof String name) {
-                return endpoint("kamelet:" + name, null, false, catalog);
-            }
-            return null;
         }
 
         private void topLevel(org.yaml.snakeyaml.nodes.Node item) {

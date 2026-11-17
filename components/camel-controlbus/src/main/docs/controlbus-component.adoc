@@ -132,6 +132,29 @@ This route checks every minute that the route `foo` runs, and starts it when it 
                     action: start
 ----
 
+The `current` route id refers to the route that routes the message, so a route can stop itself:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      steps:
+        - to:
+            uri: log:orders
+        - to:
+            uri: controlbus:route
+            parameters:
+              routeId: current
+              action: stop
+----
+
+A graceful stop waits for the inflight messages of the route, including the one that asks for the stop.
+So a `stop`, `suspend`, `restart` or `fail` always runs asynchronously, even without `async=true`, when it targets the current route, a route that called it (such as with `direct`), or the route the message came from.
+The message continues, and the route stops once it is done.
+A copy of the message made by an EIP such as Split or Multicast does not know the routes that called the route of that EIP.
+From such a copy, a stop of one of those routes needs `async=true`, unless it is the route the message came from.
+
 [[ControlBus-Gettingperformancestatistics]]
 === Getting performance statistics
 

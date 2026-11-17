@@ -36,6 +36,31 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== URI format and paths
+
+----
+sftp://[username@]hostname[:port]/directoryname[?options]
+----
+
+The `directoryname` is relative to the directory the user logs in to, usually its home directory. For example,
+`sftp://admin@host/inbox` uses the `inbox` directory in the home directory of `admin`.
+
+Absolute paths are not supported. The component removes the leading slashes, also from `sftp://host//data/inbox`, and
+logs a WARN: that endpoint uses `data/inbox` under the login directory, not `/data/inbox`. As both the consumer and the
+producer create a missing directory (`autoCreate=true`, the default), a wrong path does not fail: the files are read
+from, or written to, a new directory under the login directory.
+
+To use a directory outside the login directory, either:
+
+* create a symbolic link to it in the login directory, and use the link as `directoryname`, or
+* go up with leading `../` segments, such as `sftp://host/../shared/inbox`, and set `jailStartingDirectory=false`. With
+  the default `jailStartingDirectory=true`, the consumer skips every file of such a directory, and the producer refuses
+  to write to it.
+
+For the producer, `directoryname` is the directory to write to, and the file name comes from the `CamelFileName` header
+or the `fileName` option. A file name that leaves the directory with `../` is refused unless
+`jailStartingDirectory=false`.
+
 === Security Best Practices: Host Key Verification
 
 WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which disables host key verification and makes connections vulnerable to man-in-the-middle (MITM) attacks. For production environments, you should enable strict host key checking to ensure you are connecting to the expected server.
@@ -195,6 +220,26 @@ YAML::
 
 NOTE: When `strictHostKeyChecking=yes` is enabled, Camel's security policy enforcement framework will not flag this as a security violation. The default `strictHostKeyChecking=no` may trigger warnings or failures depending on your configured security policy.
 
+=== Providing the private key
+
+For public key authentication, set the private key with one of these options:
+
+[cols="1,3"]
+|===
+|Option |Value
+
+|`privateKeyFile` |A path on the file system, such as `/home/camel/.ssh/id_rsa`.
+|`privateKeyUri` |A resource, loaded from the classpath by default, or from the file system with the `file:` prefix.
+|`privateKey` |The key as a `byte[]`, usually a bean reference such as `privateKey=#myKey`.
+|`keyPair` |A `java.security.KeyPair` bean, such as `keyPair=#myKeyPair`.
+|===
+
+Set `privateKeyPassphrase` when the key is encrypted. It applies to `privateKeyFile`, `privateKeyUri` and `privateKey`.
+
+The key must keep its line breaks. A key whose line breaks were replaced, for example with spaces when it was copied
+into a one-line property or environment variable, fails with `invalid privatekey`. Load such a key from a file instead,
+or from a bean that holds the original bytes.
+
 === OpenSSH Certificate Authentication
 
 Camel supports OpenSSH certificate-based authentication for SFTP connections, where a user's public key is signed by a Certificate Authority (CA) rather than being individually authorized on the server. This is common in enterprise environments using tools like HashiCorp Vault or custom CA infrastructure.
@@ -318,9 +363,32 @@ option for the proposal: the `jsch.kex` system property sets it for the whole JV
 
 === Restoring Deprecated Key Types and Algorithms
 
-As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
+As of Camel 3.17.0, key types and algorithms that use SHA1 are disabled by default: JSch no longer proposes the `ssh-rsa`
+and `ssh-dss` host keys, `ssh-rsa` signatures for public key authentication, or SHA1 key exchanges such as
+`diffie-hellman-group14-sha1`. If your server needs them, set them on the endpoint with these options:
 
-._Java-only: restoring deprecated JSch key types and algorithms_
+[cols="1,2"]
+|===
+|Option |Algorithms (JSch configuration key)
+
+|`serverHostKeys` |Host keys (`server_host_key`)
+|`publicKeyAcceptedAlgorithms` |Signatures for public key authentication (`PubkeyAcceptedAlgorithms`)
+|`keyExchangeProtocols` |Key exchange (`kex`)
+|`ciphers` |Ciphers (`cipher.c2s` and `cipher.s2c`)
+|===
+
+Each option replaces the default list of JSch for that endpoint, so list every algorithm the endpoint may use, the
+preferred one first. For example, for a server that has an RSA host key and only accepts `ssh-rsa` signatures:
+
+[source,text]
+----
+sftp://host/inbox?username=admin&privateKeyFile=/path/to/id_rsa&serverHostKeys=rsa-sha2-512,rsa-sha2-256,ssh-rsa&publicKeyAcceptedAlgorithms=rsa-sha2-512,rsa-sha2-256,ssh-rsa
+----
+
+The options apply to that endpoint only. Setting the JSch configuration directly changes the defaults of the whole JVM,
+so of every SFTP endpoint without these options:
+
+._Java-only: restoring deprecated JSch key types and algorithms for the whole JVM_
 [source,java]
 ----
 JSch.setConfig("server_host_key",  JSch.getConfig("server_host_key") + ",ssh-rsa");
@@ -335,7 +403,48 @@ command to inspect your server's configuration:
 ssh -vvv <server_address>
 ----
 
-As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting the corresponding URI parameters.
+=== Connection errors
+
+When the connection fails, the exception is a `GenericFileOperationFailedException` with the message
+`Cannot connect to sftp://user@host:port`. The message of its cause, from JSch, tells what failed, and the consumer
+logs it in its WARN `Cannot connect/login to: sftp://user@host:port due to: ...`:
+
+[cols="2,3"]
+|===
+|Message of the cause |What to check
+
+|`reject HostKey: <host>`
+|With `strictHostKeyChecking=yes`, the known hosts have no key for the server. Set `knownHostsFile`, `knownHostsUri` or
+`knownHosts` with an entry for the host and port, for example from `ssh-keyscan -p <port> <host>`. For a port other
+than 22, the entry starts with `[host]:port`.
+
+|`Algorithm negotiation fail: algorithmName="..." jschProposal="..." serverProposal="..."`
+|JSch and the server have no algorithm in common. Add one that the server proposes with `serverHostKeys` for
+`server_host_key`, `keyExchangeProtocols` for `kex`, or `ciphers` for `cipher.c2s` and `cipher.s2c`. See
+<<_restoring_deprecated_key_types_and_algorithms,Restoring Deprecated Key Types and Algorithms>>.
+
+|`Auth fail for methods '...'`, `Auth fail for user '...': the server did not accept the password`
+|The server refused the credentials: check the username, password or key. With an RSA key and a server that only
+accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`.
+
+|`invalid privatekey`
+|JSch cannot read the key, for example because its line breaks were lost. See <<_providing_the_private_key,Providing the private key>>.
+
+|`Incorrect passphrase provided.`
+|`privateKeyPassphrase` does not decrypt the key. In a URI, set a passphrase with characters such as `+` or `&` as
+`RAW(...)`, see xref:manual::endpoint.adoc#_configuring_parameter_values_using_raw_values_such_as_passwords[raw values].
+|===
+
+A login that the server rejects is not retried, as each rejected login counts towards the lockout policy of a server,
+such as one that locks the account after a few failures. Camel gives the password once per connection, with the
+`password` or the `keyboard-interactive` method: when the server asks for it again, the connection ends with
+`Auth fail for user '...': the server did not accept the password`. So a server that asks for the password twice in
+one login, such as one that requires both the `password` and the `keyboard-interactive` methods
+(`AuthenticationMethods password,keyboard-interactive` in OpenSSH), rejects the login, with the same message, even when
+the password is right. A rejected login (`Auth fail ...` or `Auth cancel ...`) does not connect again for
+`maximumReconnectAttempts`, which applies to the other connection failures. The consumer tries again on its next
+poll, so a wrong password is sent once per poll (and once more when the consumer starts with `autoCreate=true`), and
+the producer tries again on its next message.
 
 === Symbolic links and the starting directory
 
@@ -361,6 +470,32 @@ and `idempotent-rename` read locks of the xref:file-component.adoc[File] compone
 consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentException: ReadLock invalid`.
 The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
 is set, as it does not apply then.
+
+=== Timeouts and dead connections
+
+The SFTP endpoint opens the connection with `connectTimeout` (10 seconds) and uses `soTimeout` (5 minutes) as the read
+timeout of the JSch session. When nothing arrives from the server for `soTimeout`, JSch sends a keep-alive message and
+waits once more; it drops the session after `serverAliveCountMax` (1 by default) keep-alive messages without an answer.
+A connection that went silent (the host is gone, or a firewall or NAT drops the packets) is therefore noticed after
+about twice `soTimeout`: about 10 minutes with the defaults, during which the consumer or producer using it waits.
+These durations are how JSch behaves, approximately, not guarantees of Camel.
+
+Lower `soTimeout` to notice it sooner; `soTimeout=15000` notices it after about 30 seconds. As a server that is alive
+answers the keep-alive message, a command that takes longer than `soTimeout` does not drop the session.
+
+[source,text]
+----
+sftp://scott@sftp.example.com/inbox?password=RAW(tiger)&connectTimeout=5000&soTimeout=15000&throwExceptionOnConnectFailed=true
+----
+
+When `serverAliveInterval` is set, it replaces `soTimeout` as the read timeout of the session: the session is then
+dropped after about `serverAliveInterval` × (`serverAliveCountMax` + 1) without data from the server.
+
+As with FTP, set `throwExceptionOnConnectFailed=true` so that a consumer that cannot connect fails its poll and its
+health check reports it DOWN, and upload under a temporary name (`tempPrefix` or `tempFileName`) so that a broken
+upload does not leave a truncated file under its final name. See
+xref:ftp-component.adoc#_noticing_a_dead_or_silent_server[Noticing a dead or silent server] and
+xref:ftp-component.adoc#_uploads_interrupted_by_a_broken_connection[Uploads interrupted by a broken connection].
 
 === Checking whether a file exists
 

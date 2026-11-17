@@ -64,6 +64,26 @@ Starting service kafka with implementation redpanda
 }
 ----
 
+=== Running in the background
+
+Use `--background` to run the service detached from the terminal. The command waits until the service has started
+(60 seconds at most), and prints its connection details:
+
+[source,bash]
+----
+$ camel infra run kafka --background
+Running kafka in background with PID: 80093 (waiting for it to start)
+{
+  "getBootstrapServers" : "localhost:9092"
+}
+Log: /Users/me/.camel/80093-run.log
+----
+
+A service that cannot start, such as with Docker down, prints why and exits with its exit code. A service that is still
+starting after the wait, such as when it pulls its container image the first time, is left running and the command
+exits with `124`. Set how long with `--background-wait`, such as `--background-wait=5m`, or do not wait with
+`--background-wait=false`. The output of the service is in `~/.camel/<pid>-run.log` until `camel infra stop` stops it.
+
 == Configuring a service
 
 A service reads its own settings from system properties, so `--property` passes them through. The

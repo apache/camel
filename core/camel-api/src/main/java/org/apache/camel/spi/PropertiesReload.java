@@ -21,11 +21,11 @@ import java.util.Properties;
 /**
  * Listener notified when a {@link java.util.Properties} source is re-loaded at runtime, for example after a properties
  * file changes.
- * <p/>
+ * <p>
  * When live reloading is enabled, the {@link PropertiesComponent} invokes {@link #onReload(String, Properties)} with
  * the resource name and the freshly loaded properties, allowing Camel to react to configuration changes without a
  * restart.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
  * Camel user manual.
  *
@@ -48,7 +48,7 @@ public interface PropertiesReload {
      * Callback when a resource with properties changed and is re-loaded, such as a properties file that was saved while
      * live reloading is enabled. Unlike {@link #onReload(String, Properties)}, the properties are only those that
      * changed, as the user edited them, so a listener can tell which changes it cannot apply without a restart.
-     * <p/>
+     * <p>
      * The default calls {@link #onReload(String, Properties)}.
      *
      * @param  name       name of the resource such as the file name (absolute)

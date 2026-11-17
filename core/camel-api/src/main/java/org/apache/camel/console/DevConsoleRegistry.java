@@ -60,7 +60,7 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      * Will first lookup in this {@link DevConsoleRegistry} and then {@link org.apache.camel.spi.Registry}, and lastly
      * do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
      *
-     * @return either {@link DevConsole}, or <tt>null</tt> if none found.
+     * @return either {@link DevConsole}, or <code>null</code> if none found.
      */
     @Nullable
     DevConsole resolveById(String id);

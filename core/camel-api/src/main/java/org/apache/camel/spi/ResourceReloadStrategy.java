@@ -18,11 +18,11 @@ package org.apache.camel.spi;
 
 /**
  * SPI strategy for reloading {@link Resource}s in an already running {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * The strategy watches resources (typically route files) and, on change, notifies its configured {@link ResourceReload}
  * listener so Camel can apply the updated definitions live. It is the resource-oriented counterpart to
  * {@link ContextReloadStrategy} and builds on the generic {@link ReloadStrategy}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/route-reload.html">Route Reload</a> in the Camel user manual.
  *
  * @see   ContextReloadStrategy

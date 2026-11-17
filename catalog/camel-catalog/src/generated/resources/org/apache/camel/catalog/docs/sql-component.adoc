@@ -212,6 +212,10 @@ YAML::
 The producer supports `outputType=StreamList` that uses an iterator to stream the output of the query.
 This allows processing the data in a streaming fashion which, for example,
 can be used by the Splitter EIP to process each row one at a time, and load data from the database as needed.
+The rows can be read once: when reading a row fails (for example, the connection is lost), the iterator keeps failing
+instead of ending, so a split that is redelivered over it fails too, rather than succeeding with the rows read before
+the failure. The same applies when a row cannot be mapped to the `outputClass` (for example, a value that does not
+convert to the type of its property).
 
 [tabs]
 ====
@@ -271,6 +275,22 @@ YAML::
 ----
 ====
 
+Outside a transaction, the iterator keeps the connection and the result set open until the exchange is complete.
+In a transacted route, the query runs on the connection of the transaction, and the commit at the end of the
+transaction releases that connection: read the rows within the transacted route (for example with the Splitter EIP),
+not after it (for example in a route that calls the transacted route).
+The query gets the `fetchSize` and `template.*` options (such as `template.maxRows` and `template.queryTimeout`)
+like the other output types.
+No `CamelSqlRowCount` header is set, as the number of rows is not known up front.
+
+Whether the rows are loaded as needed depends on the JDBC driver. For example, the PostgreSQL driver only fetches
+`fetchSize` rows at a time when the connection has auto-commit off (as in a transacted route); otherwise it loads all
+the rows when the query is executed.
+
+The consumer supports `outputType=StreamList` too, but its iterator can only be used while the poll runs: process it
+in the route of the consumer (for example with the Splitter EIP), and do not hand it over to another thread (such as a
+`seda` endpoint).
+
 === Generated keys
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
@@ -294,6 +314,78 @@ You can set a reference to a `DataSource` in the URI directly:
 ----
 sql:select * from table where id=# order by name?dataSource=#myDS
 ----
+
+==== Noticing a dead or silent database
+
+The SQL component has no network timeout of its own: how long a poll or a send waits for a database that stopped
+answering depends on the JDBC driver and the connection pool of the `DataSource`. The durations below describe how
+those libraries behave by default; they are approximate, not guarantees of Camel.
+
+*Set the driver's socket timeout.* The common JDBC drivers have no read timeout by default. A statement on a
+connection that went silent (the database host is gone, or a firewall or NAT dropped the connection without a reset)
+waits in a socket read, with no error and nothing logged, until the operating system gives up on the connection:
+on Linux about 15 minutes when the request was not acknowledged, and never when it was and TCP keep-alive is off.
+Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because by default it counts only the
+polls that are done. Set `healthCheckMaxPollDuration` (for example `healthCheckMaxPollDuration=10m`) to have it report
+DOWN while a poll has been running for longer than that: see
+xref:manual::health-check.adoc#_detecting_a_poll_that_hangs[Detecting a poll that hangs].
+
+A socket timeout ends such a read with an error: the poll fails and is retried at the next poll, or the producer
+fails and the error handler can redeliver. Set it longer than your slowest statement:
+
+[cols="2,2,1,1"]
+|===
+| Driver | Property | Unit | Default
+
+| PostgreSQL (pgjdbc) | `socketTimeout` | seconds | 0 (no timeout)
+| MySQL Connector/J | `socketTimeout` | milliseconds | 0 (no timeout)
+| MariaDB Connector/J | `socketTimeout` | milliseconds | 0 (no timeout)
+| Microsoft SQL Server (mssql-jdbc) | `socketTimeout` | milliseconds | 0 (no timeout)
+| Oracle (thin driver) | `oracle.jdbc.ReadTimeout` | milliseconds | not set (no timeout)
+|===
+
+Set it in the JDBC URL, for example `jdbc:postgresql://db:5432/orders?socketTimeout=30`, or as a driver property of
+the pool:
+
+* Spring Boot with HikariCP: `spring.datasource.hikari.data-source-properties.socketTimeout=30`
+* Quarkus 3.36 or later: `quarkus.datasource.jdbc.read-timeout=30S` sets the property of the database kind; with an
+older Quarkus, `quarkus.datasource.jdbc.additional-jdbc-properties.socketTimeout=30` (PostgreSQL).
+
+*Let the pool drop broken connections.* After a socket timeout or a reset the connection is broken, and the pool must
+not hand it out again:
+
+* HikariCP does it by default: it checks a connection with `Connection.isValid()` (bounded by `validationTimeout`,
+5 seconds) when the connection is borrowed after more than 500 ms idle, and evicts a connection whose error has an
+SQLState of class `08` (connection exception).
+* Quarkus configures Agroal with a `Connection.isValid()` validator, a background validation every 2 minutes, the
+exception sorter of the database kind, and an acquisition timeout of 5 seconds.
+* Agroal used directly has no validator and no exception sorter by default: a broken connection goes back to the pool
+and fails each statement it is given again. Its default `acquisitionTimeout` of 0 waits forever when the pool is
+exhausted. Configure them:
++
+._Java-only: an Agroal pool that drops broken PostgreSQL connections_
+[source,java]
+----
+AgroalDataSource ds = AgroalDataSource.from(new AgroalDataSourceConfigurationSupplier()
+        .connectionPoolConfiguration(pool -> pool
+                .maxSize(10)
+                .acquisitionTimeout(Duration.ofSeconds(5))
+                .connectionValidator(ConnectionValidator.defaultValidatorWithTimeout(5))
+                .validationTimeout(Duration.ofMinutes(1)) // interval of the background validation
+                .exceptionSorter(new PostgreSQLExceptionSorter())
+                .connectionFactoryConfiguration(cf -> cf
+                        .jdbcUrl("jdbc:postgresql://db:5432/orders")
+                        .jdbcProperty("socketTimeout", "30")
+                        .principal(new NamePrincipal("app"))
+                        .credential(new SimplePassword("secret")))));
+----
+* Spring `SingleConnectionDataSource` keeps one connection and fails every call once that connection is closed: it
+never recovers, so keep it for tests.
+
+*Starting while the database is down.* `new HikariDataSource(hikariConfig)` opens a connection in the constructor and
+throws when the database cannot be reached, so the application does not start. Set `initializationFailTimeout` to
+`-1` on the `HikariConfig`, or create the pool with the no-argument constructor and its setters (as Spring Boot
+does): the pool then connects on first use, and the consumer polls again until the database is back.
 
 === Using named parameters
 
@@ -756,18 +848,22 @@ One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessag
 
 * lock already exists and its `createdAt` is null: the key was confirmed, so it is a duplicate, as in `JdbcMessageIdRepository`.
 
+* the instance requesting the lock holds it already (it added the key and has not confirmed or removed it yet): the key is a duplicate, whatever its `createdAt`.
+
 A key that is confirmed (the message was processed, for example by the Idempotent Consumer, by the file consumer with `idempotent=true` and the default `idempotentEager=true`, or by the file consumer with `readLock=idempotent` (also `idempotent-changed` and `idempotent-rename`) and the default `readLockRemoveOnCommit=false`) is no longer a lock: its `createdAt` is set to null and it is no longer kept alive, so another instance does not take it over when the instance that added it stops. With these read locks, the name of every processed file then stays in the table for good; when the key only needs to lock the file while it is read, set `readLockRemoveOnCommit=true`, together with `readLockIdempotentReleaseDelay` as described in the File component, so that the key is removed once the file is processed.
 
 A confirmed key has no age, so a purge by `createdAt` does not delete it. To purge confirmed keys by age, add a column of your own to the table, for example `insertedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP` (the repository does not write it), or set `confirmQuery` to a statement that also stores the time of the confirm in such a column, and purge by that column.
 
 The `createdAt` column must store null. The repository checks this once when it starts, in a transaction that it rolls back: it inserts a row, confirms it with `confirmQuery`, and checks that its `createdAt` is null. When the check fails (a `NOT NULL` column, a MySQL or MariaDB `TIMESTAMP` column with `explicit_defaults_for_timestamp=OFF`, or an error of the database), it logs a WARN and does not confirm keys until the repository is started again: they stay locks, as before, and a confirm sends no statement, so it cannot fail inside the transaction of a transacted route. A confirm that fails later (for example the connection is lost) logs a WARN, and the key stays a lock; when the repository joins the transaction of a transacted route (same `DataSource`), it marks that transaction as rollback only, as a failed add or remove does.
 
+A lock is kept alive only while its instance reaches the database. When the keep-alive fails (the database is down or cannot be reached, a failover, a connection pool with no free connection), it logs an ERROR on every round; when the instance holds keys and the keep-alive has not refreshed their locks for longer than `lockMaxAgeMillis`, it logs a WARN, as they may now be taken over, and an INFO when it refreshes them again. The instance itself keeps treating the keys it holds as duplicates, so it does not process their messages a second time, and its keep-alive refreshes their `createdAt` once the database is back. Another instance, however, cannot tell such an instance from one that crashed: when it reaches the database while the first one cannot (a network partition), or right after the outage, before the next keep-alive of the first instance, it takes these locks over, and their messages are processed twice, once on each instance. So choose a `lockMaxAgeMillis` longer than the longest database outage the application must survive without processing a message twice; the lock of an instance that really crashed is then taken over only after that time.
+
 This repository has these additional configuration parameters
 
 [cols="1,1"]
 |===
 |Parameter | Description
-|`lockMaxAgeMillis` | This refers to the duration after which the lock is considered orphaned, i.e., if the `currentTimestamp - createdAt >= lockMaxAgeMillis` then lock is orphaned.
+|`lockMaxAgeMillis` | This refers to the duration after which the lock is considered orphaned, i.e., if the `currentTimestamp - createdAt >= lockMaxAgeMillis` then lock is orphaned. Choose it longer than the longest database outage to survive, see above.
 |`lockKeepAliveIntervalMillis` | The frequency at which keep-alive updates are done to createdAt Timestamp column.
 |`confirmQuery` | The query that confirms a key by setting its `createdAt` to null; it may set other columns of the table too. It follows `tableName`; set it when the table is set through custom queries instead. Set it to null or empty to keep confirmed keys as locks. It is checked when the repository starts; a query set later is used after the next start.
 |===

@@ -19,7 +19,7 @@ package org.apache.camel;
 
 /**
  * Lifecycle events of a {@link CamelContext} that can be timestamped via an {@link org.apache.camel.clock.EventClock}.
- * <p/>
+ * <p>
  * Used by Camel to record when the context was first booted and when it actually started, so tools and metrics can
  * report startup timings.
  *

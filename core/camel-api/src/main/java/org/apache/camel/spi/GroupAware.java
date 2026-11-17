@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Marker for an object whose group can be injected.
- * <p/>
+ * <p>
  * Extends {@link HasGroup} to add the ability to set the group an object belongs to (used for clustering, JMX, and
  * similar group-based operations).
  *

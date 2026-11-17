@@ -111,8 +111,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     /**
      * Whether or not the caller should run the task when it was rejected by the thread pool.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
@@ -124,8 +124,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     /**
      * Whether or not the caller should run the task when it was rejected by the thread pool.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder

@@ -564,6 +564,8 @@ public interface FileEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -582,6 +584,8 @@ public interface FileEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -598,7 +602,10 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -614,7 +621,10 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -633,7 +643,10 @@ public interface FileEndpointBuilderFactory {
          * To use a custom idempotent key. By default the absolute path of the
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
+         * idempotentKey=${file:name}-${file:size}. It is used only with
+         * idempotent=true (noop=true turns it on), or by an idempotent read
+         * lock (readLock=idempotent, idempotent-changed or idempotent-rename)
+         * of the file component.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -649,7 +662,10 @@ public interface FileEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -666,7 +682,10 @@ public interface FileEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -1619,6 +1638,48 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
             return this;
         }
         /**
