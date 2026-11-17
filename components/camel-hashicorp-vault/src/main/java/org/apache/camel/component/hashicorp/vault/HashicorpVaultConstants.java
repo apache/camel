@@ -23,8 +23,7 @@ public final class HashicorpVaultConstants {
 
     // headers set by the producer only
     @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
-              javaType = "org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation or String",
-              enums = "createSecret,getSecret,deleteSecret,listSecrets")
+              javaType = "org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
     // headers set by the producer only
