@@ -531,8 +531,9 @@ When the server refuses to create the starting directory of the `smb` consumer a
 such as `STATUS_ACCESS_DENIED` on a read-only share, the route now starts and the consumer tries again on each poll, as
 the xref:camel-4x-upgrade-guide-4_13.adoc#_camel_file_camel_ftp_camel_smb_camel_azure_files[Camel 4.13 upgrade guide]
 describes. Before, the route failed to start. `SmbOperations.buildDirectory` now throws a
-`GenericFileOperationFailedException` with the smbj exception as its cause, as the ftp and sftp operations do. This
-also applies when the producer or a move creates a directory.
+`GenericFileOperationFailedException` with the smbj exception as its cause, as the ftp and sftp operations do. The
+producer and the moves that create a directory get this exception type too, and still fail as before when the server
+refuses to create it. An `onException` or `doCatch` for the smbj exception still matches it, as the cause.
 
 When the `smb` consumer connects but cannot create its starting directory (`autoCreate=true`), it now logs
 `Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.`, once. Before, it logged
