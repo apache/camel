@@ -661,10 +661,10 @@ CAMEL-25737), `dst.replayCheckSeed` (the seed of the in-JVM replay test of the E
 and `dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures).
 
 For camel-paho-mqtt5 (`components/camel-paho-mqtt5`, `PahoMqtt5ConsumerDstTest`) the past fixes are the main code of
-6044f38166f9 (CAMEL-25944) and the change of b7594f06e0b7 (CAMEL-25793), taken out by hand. Its world has two
-properties, each adding back a case that the default set leaves out: `dst.paho.strictCallbackThread` (`true` checks a
-client whose connect hangs while the callback thread is still in messageArrived, CAMEL-27043) and
-`dst.paho.stopWhileConnecting` (`true` lets the operator stop the route while the client connects, CAMEL-27041).
+6044f38166f9 (CAMEL-25944) and the change of b7594f06e0b7 (CAMEL-25793), taken out by hand, and the main code of
+CAMEL-27041 (a route stopped while the client connects). Its world has one property, which adds back a case that the
+default set leaves out: `dst.paho.strictCallbackThread` (`true` checks a client whose connect hangs while the callback
+thread is still in messageArrived, CAMEL-27043).
 
 For camel-zookeeper-master (`-pl components/camel-zookeeper-master`, `ZooKeeperMasterDstTest`) the past fixes are
 `MasterConsumer` of e670025a49a4^ (CAMEL-25315), `MasterRoutePolicy` of 706beec6d5ab^ (CAMEL-26540), 136ffd929263
