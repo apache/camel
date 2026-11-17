@@ -802,6 +802,17 @@
   "serviceVersion" : "RELEASE.2025-09-07T16-13-09Z-cpuv1",
   "uiSupported" : true
 }, {
+  "service" : "org.apache.camel.test.infra.google.secret.manager.services.GoogleSecretManagerInfraService",
+  "description" : "Local Google Secret Manager service with Floci GCP",
+  "implementation" : "org.apache.camel.test.infra.google.secret.manager.services.GoogleSecretManagerLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "secret-manager" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-secret-manager",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.12.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded SFTP Server",
   "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedInfraService",
