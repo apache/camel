@@ -8731,6 +8731,17 @@ API or JMX) has no mark and stays paused; this now also holds when the same rout
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
 
+=== camel-quartz - a scheduler from the registry gets the CamelContext when the component starts
+
+With a Quartz `Scheduler` set on the quartz component or autowired from the registry, such as the scheduler of
+`spring-boot-starter-quartz`, the component now stores the CamelContext in the scheduler context when it starts, before
+the routes add their jobs. Before, it did so only once the CamelContext was fully started, so a trigger that fired in
+between on a scheduler that was already running failed with `No CamelContext could be found with name`. Such a job now
+runs its route if the route has started. The component now logs a WARN when this scheduler is already running when it
+starts, as a trigger that fires before its route has started is still lost (with Spring Boot, set
+`spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
+`propertiesFile` are set, as they are not used with such a scheduler.
+
 === camel-langchain4j-ingest - a media document whose type cannot be told is filtered
 
 With `modality=media` and no `contentType` set, a document whose media type cannot be told from the extension of its
