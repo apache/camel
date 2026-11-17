@@ -18970,7 +18970,7 @@
       }, {
         "name" : "producerApiDoc",
         "type" : "string",
-        "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.",
+        "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document.",
         "title" : "Producer Api Doc",
         "displayName" : "Producer Api Doc",
         "kind" : "attribute",

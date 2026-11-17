@@ -15263,7 +15263,7 @@ reverse-proxy and networking going from HTTP to HTTPS etc. Default value: false
         <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid
-accordingly to the api document.
+according to the api document.
 ]]>
         </xs:documentation>
       </xs:annotation>
