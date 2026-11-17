@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
@@ -60,6 +60,8 @@ public class SmppConsumer extends DefaultConsumer {
     private final ScheduledExecutorService reconnectService;
 
     private SMPPSession session;
+    // the reconnect task that the thread which reported the lost session waits for, so that a stop can release it
+    private volatile BackgroundTask reconnectTask;
 
     /**
      * The constructor which gets a smpp endpoint, a smpp configuration and a processor
@@ -133,6 +135,12 @@ public class SmppConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         shutdownReconnectService(reconnectService);
+        // the shut down reconnect service no longer runs the reconnect task, so nothing else would release the thread
+        // that waits for it
+        BackgroundTask task = reconnectTask;
+        if (task != null) {
+            task.cancel(false);
+        }
 
         LOG.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
 
@@ -187,14 +195,20 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void reconnect() {
         if (reconnectLock.tryLock()) {
-            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+            BackgroundTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
                     configuration.getInitialReconnectDelay(),
                     configuration.getReconnectDelay(),
                     configuration.getMaxReconnect());
 
+            reconnectTask = task;
             try {
-                task.run(getEndpoint().getCamelContext(), this::doReconnect);
+                // a stop that began before the task was published does not cancel it, and the task would never run
+                // on the shut down reconnect service
+                if (!isServiceStopping(this)) {
+                    task.run(getEndpoint().getCamelContext(), this::doReconnect);
+                }
             } finally {
+                reconnectTask = null;
                 reconnectLock.unlock();
             }
         } else {
