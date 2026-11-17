@@ -354,18 +354,28 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
 
     /**
      * Sets the file of the repository (incl directory).
+     *
+     * @param fileStore the file store
      */
     public void setFileStore(File fileStore) {
         this.fileStore = fileStore;
     }
 
+    /**
+     * Gets the file name of the repository (incl directory). It is the path of the file store, as this repository has
+     * no bean metadata that needs a field of its own (unlike {@code FileIdempotentRepository}).
+     *
+     * @return the file name, or {@code null} if no file store is set
+     */
     public String getFileName() {
         return fileStore != null ? fileStore.getPath() : null;
     }
 
     /**
      * Sets the file name of the repository (incl directory), such as when the repository is declared as a bean in YAML
-     * or properties.
+     * or properties. This sets the file store to this file.
+     *
+     * @param fileName the file name, or {@code null} to clear the file store
      */
     public void setFileName(String fileName) {
         this.fileStore = fileName != null ? new File(fileName) : null;

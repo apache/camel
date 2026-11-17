@@ -88,6 +88,22 @@ public class FileStateRepositoryTest extends TestSupport {
     }
 
     @Test
+    public void shouldBindFileStoreAsFile() throws Exception {
+        // Given a FileStateRepository declared as a bean, with the file store as a java.io.File
+        FileStateRepository repository = new FileStateRepository();
+        try (CamelContext context = new DefaultCamelContext()) {
+            boolean hit = PropertyBindingSupport.build()
+                    .withCamelContext(context)
+                    .withTarget(repository)
+                    .withProperty("fileStore", "#class:java.io.File('" + repositoryStore.getPath() + "')")
+                    .bind();
+            assertTrue(hit);
+        }
+        assertEquals(repositoryStore, repository.getFileStore());
+        assertEquals(repositoryStore.getPath(), repository.getFileName());
+    }
+
+    @Test
     public void shouldFailToStartWithoutFile() {
         FileStateRepository repository = new FileStateRepository();
 

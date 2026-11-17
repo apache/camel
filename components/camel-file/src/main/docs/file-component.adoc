@@ -1223,8 +1223,8 @@ of 32mb. When the file grows larger, Camel drops the oldest entries from
 the file store (1000 by default) to make room for new ones.
 
 We declare the repository as a bean with the name of its file (`fileName`), and define our file consumer to use
-the repository with the `idempotentRepository` option, using `#bean:` to look it up in the Registry. The files that
-were read are not read again after a restart, and a new file is:
+the repository with the `idempotentRepository` option, using `#bean:` to look it up in the Registry. After a restart,
+the files that were read before are skipped, and only the new files are read:
 
 [tabs]
 ====
@@ -1264,7 +1264,7 @@ YAML::
 ----
 ====
 
-The `fileName` option takes the file name as plain text. Use `fileStore` instead when you have a `java.io.File`.
+The `fileName` property of the repository takes the file name as plain text. Use `fileStore` instead when you have a `java.io.File`.
 
 ==== Using a JPA based idempotent repository
 

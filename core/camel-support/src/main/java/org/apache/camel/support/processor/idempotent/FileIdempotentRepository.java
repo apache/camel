@@ -277,20 +277,29 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     /**
-     * Sets the file of the repository (incl directory).
+     * Sets the file of the repository (incl directory). This also sets the file name to the path of the file.
+     *
+     * @param fileStore the file store, or {@code null} to clear the file store and the file name
      */
     public void setFileStore(File fileStore) {
         this.fileStore = fileStore;
         this.fileName = fileStore != null ? fileStore.getPath() : null;
     }
 
+    /**
+     * Gets the file name of the repository (incl directory).
+     *
+     * @return the file name, or {@code null} if no file store or file name is set
+     */
     public String getFileName() {
         return fileName;
     }
 
     /**
      * Sets the file name of the repository (incl directory), such as when the repository is declared as a bean in YAML
-     * or properties.
+     * or properties. This also sets the file store to this file.
+     *
+     * @param fileName the file name, or {@code null} to clear the file name and the file store
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
