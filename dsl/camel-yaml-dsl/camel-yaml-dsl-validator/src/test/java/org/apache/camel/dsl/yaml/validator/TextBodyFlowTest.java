@@ -1180,8 +1180,9 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfBinaryDataFormats() {
-        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; zipFile gives the
-        // content of the entry as a stream, cbor an object of a class, and fory what the data holds, which say nothing
+        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; with ApacheAvro
+        // an object of instanceClassName, zipFile the content of the entry as a stream, cbor an object of a class, and
+        // fory what the data holds, which say nothing
         String yaml = """
                 - route:
                     id: avro
@@ -1190,6 +1191,16 @@ public class TextBodyFlowTest {
                       steps:
                         - unmarshal:
                             avro: {}
+                        - to: file:out
+                - route:
+                    id: avroApache
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            avro:
+                              library: ApacheAvro
+                              instanceClassName: com.acme.Order
                         - to: file:out
                 - route:
                     id: zip
@@ -1219,6 +1230,23 @@ public class TextBodyFlowTest {
                 """;
         assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
                 .contains("route avro: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
+    public void testTheAvroDataFormatOfTheLibraryOption() {
+        // the library option names the constant of AvroLibrary: Jackson is avroJackson, ApacheAvro the avro data format
+        CatalogBodyTypes bodyTypes = new CatalogBodyTypes(new DefaultCamelCatalog(), null);
+        ObjectNode jackson = JsonNodeFactory.instance.objectNode();
+        assertThat(bodyTypes.unmarshalOut("avro", jackson).carriers()).containsExactlyInAnyOrder("map", "list");
+        jackson.put("library", "Jackson");
+        assertThat(bodyTypes.unmarshalOut("avro", jackson).carriers()).containsExactlyInAnyOrder("map", "list");
+
+        ObjectNode apache = JsonNodeFactory.instance.objectNode();
+        apache.put("library", "ApacheAvro");
+        apache.put("instanceClassName", "com.acme.Order");
+        CatalogBodyTypes.Answer out = bodyTypes.unmarshalOut("avro", apache);
+        assertThat(out.carriers()).contains("pojo").doesNotContain("map", "list");
+        assertThat(out.javaType()).isEqualTo("com.acme.Order");
     }
 
     @Test

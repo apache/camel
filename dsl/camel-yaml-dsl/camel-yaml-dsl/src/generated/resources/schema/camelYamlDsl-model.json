@@ -10392,7 +10392,7 @@
         "enum" : [ "ApacheAvro", "Jackson" ],
         "description" : "Which Avro library to use.",
         "title" : "Library",
-        "default" : "avroJackson",
+        "default" : "Jackson",
         "displayName" : "Library",
         "kind" : "attribute",
         "index" : 2,
