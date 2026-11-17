@@ -48,6 +48,16 @@ public class PropertiesComponentIgnoreMissingPropertyTest extends ContextTestSup
         Assertions.assertEquals("foo:dummy?a=1&b={{foo}}&c=10", out);
     }
 
+    @Test
+    public void testOptionalPlaceholderDoesNotUrlEncodeOtherParams() {
+        // CAMEL-27111: when an optional placeholder is unset, the remaining parameters
+        // must not be URL-encoded. Values containing URL-special characters (colons, slashes,
+        // question marks, equals signs) must survive the optional-placeholder removal unchanged.
+        String out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new&foo={{?nosuchproperty}}");
+        Assertions.assertEquals("kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new", out);
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
