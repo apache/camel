@@ -56,6 +56,16 @@ public class PropertiesComponentIgnoreMissingPropertyTest extends ContextTestSup
         String out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
                 "kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new&foo={{?nosuchproperty}}");
         Assertions.assertEquals("kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new", out);
+
+        // the optional placeholder before the other parameters
+        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "kamelet:http-sink?foo={{?nosuchproperty}}&url=http://127.0.0.1:18089/open/with?q=status_s:new");
+        Assertions.assertEquals("kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new", out);
+
+        // an already encoded value, and a RAW value, are kept as they are
+        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "mock:result?a=hello%20world&foo={{?nosuchproperty}}&b=RAW(se+cr&t)");
+        Assertions.assertEquals("mock:result?a=hello%20world&b=RAW(se+cr&t)", out);
     }
 
     @Override
