@@ -35,6 +35,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
+import org.apache.camel.converter.CamelBaseBulkConverterLoader;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
@@ -59,10 +60,14 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseTypeConverterRegistry.class);
 
+    // the loader of the core type converters, which every Camel application needs
+    private static final String CORE_TYPE_CONVERTER_LOADER = CamelBaseBulkConverterLoader.class.getName();
+
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected CamelContext camelContext;
     protected PackageScanClassResolver resolver;
     protected Injector injector;
+    private boolean coreTypeConverterLoaderWarned;
 
     protected BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
                                         boolean statisticsEnabled) {
@@ -143,6 +148,17 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
      */
     public void loadCoreAndFastTypeConverters() throws Exception {
         Collection<String> names = findTypeConverterLoaderClasses();
+
+        if (!coreTypeConverterLoaderWarned && !names.contains(CORE_TYPE_CONVERTER_LOADER)) {
+            coreTypeConverterLoaderWarned = true;
+            LOG.warn("Type converter loader {} is not listed in any {} file on the classpath (found: {}),"
+                     + " so the core type converters of camel-base (such as String to Integer or Duration) are not loaded."
+                     + " A fat jar keeps only one of these files unless they are merged:"
+                     + " build it with the prepare-fatjar goal of the camel-maven-plugin,"
+                     + " or merge the {} files of the Camel JARs.",
+                    CORE_TYPE_CONVERTER_LOADER, META_INF_SERVICES_TYPE_CONVERTER_LOADER,
+                    getLoaderUrls(META_INF_SERVICES_TYPE_CONVERTER_LOADER), META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+        }
 
         for (String name : names) {
             LOG.debug("Resolving TypeConverterLoader: {}", name);
