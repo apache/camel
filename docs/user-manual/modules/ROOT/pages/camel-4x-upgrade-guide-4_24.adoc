@@ -755,6 +755,26 @@ characters (for example `000`) is now read as 0. Before, trimming removed every 
 `defaultValue` of the field when it has one, and an error for a `required` field. Text fields, and numeric fields
 padded with another char, are not changed.
 
+=== camel-cxf, camel-cxfrs - the former operationName and operationNamespace headers are not sent
+
+The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
+`operationNamespace` headers (see the xref:camel-4x-upgrade-guide-4_21.adoc#_camel_cxf[4.21 upgrade guide]). The
+`cxf` producer does not read the former names. It now logs a WARN once when one of them is set without its replacement.
+The default `CxfHeaderFilterStrategy` filters `operationName` and `operationNamespace` again, as it did before the
+rename, so the service no longer receives them as HTTP headers. A route that maps a header named `operationName` to
+`CamelCxfOperationName` keeps working.
+
+The `cxf` producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
+option selects the operation of a service with more than one operation. It then invokes the first operation that CXF
+returns, which is not the first one of the WSDL.
+
+The `cxfrs` producer does not read the former `operationName` header either. With the proxy-based client API
+(`httpClientAPI=false`) it still fails when `CamelCxfOperationName` is not set. The `NoSuchMethodException` now names
+that header, and says when `operationName` is set, in place of `Cannot find method with name: null`. The default
+`CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
+no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
+response header.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
