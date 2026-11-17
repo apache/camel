@@ -9590,3 +9590,21 @@ ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html?resolv
 endpoint.setJakartaServletWebApplication(
         JakartaServletWebApplication.buildApplication(servletContext));
 ----
+
+=== camel-alibaba-kms - a Map or a POJO in the plaintext header fails, and only generateDataKey reads numberOfBytes
+
+A `Map` or a POJO in the `CamelAlibabaKmsPlaintext` header, or in the exchange property of the same name, now fails
+with an `IllegalArgumentException` instead of being encrypted as its `toString()`. CAMEL-26258 made the same value in
+the message body fail with an `InvalidPayloadException`; the header kept encrypting the text of the object. Marshal
+such a value first, for example with `marshal().json()`, or set the header to the text. Text, bytes, a stream and a
+file are read as before.
+
+The `CamelAlibabaKmsNumberOfBytes` header and the exchange property of the same name are now read only by
+`generateDataKey`, which is the only operation that sends the value. Before, every exchange resolved them, so a value
+that is not a number failed `encrypt` and `decrypt` too, with a `TypeConversionException` from the conversion of the
+header. Such a value now fails `generateDataKey` alone, with an `IllegalArgumentException` that names the header, and
+an empty value counts as unset.
+
+The `region` option is no longer marked as required in the catalog, since `region` or `endpoint` is required and the
+`kmsClient` option replaces both. The producer still fails with "Region or endpoint is required" when it has to create
+a client and neither is set.
