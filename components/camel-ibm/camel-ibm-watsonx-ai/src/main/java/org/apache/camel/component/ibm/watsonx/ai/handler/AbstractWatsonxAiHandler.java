@@ -199,8 +199,10 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
      * other than its {@code toString()}, so the model would be asked about a map written in Java notation, or the
      * request would name such a map as its file (CAMEL-26521).
      *
-     * @param what the input in the words of the operation, such as "the prompt", for the error message of a body that
-     *             is not text
+     * @param  in   the inbound message whose body to read
+     * @param  what the input in the words of the operation, such as "the prompt", for the error message of a body that
+     *              is not text
+     * @return      the body as text, or {@code null} when the body is null
      */
     protected static String readAsText(Message in, String what) {
         Object body = in.getBody();

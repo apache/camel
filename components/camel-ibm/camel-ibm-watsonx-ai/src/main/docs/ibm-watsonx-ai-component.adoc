@@ -210,8 +210,8 @@ If you don't specify an operation explicitly, you must set it via the `operation
 
 === Message body read as text
 
-Many operations read the message body as text: the prompt of `textGeneration`, `tokenize`, `detect` and
-`deploymentGenerate`, the user message of the chat operations, the texts of `embedding` and `rerank`, and the file
+Many operations read the message body as text: the prompt of `textGeneration`, `textGenerationStreaming`, `tokenize`,
+`detect` and `deploymentGenerate`, the user message of the chat operations, the texts of `embedding` and `rerank`, and the file
 path, job id or file name of the extraction and classification operations that do not upload.
 
 Such a body can be a `String`, a `byte[]`, a stream, a file, anything else Camel converts to its text, such as a
