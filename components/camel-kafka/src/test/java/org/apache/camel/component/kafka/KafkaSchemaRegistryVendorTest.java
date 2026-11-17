@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -33,7 +37,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -136,16 +142,63 @@ class KafkaSchemaRegistryVendorTest {
     }
 
     @Test
-    void producerConvertsTheBodyForTheSerializerOfTheVendor() {
-        KafkaConfiguration config = new KafkaConfiguration();
-        assertEquals(STRING_SERIALIZER, config.resolveValueSerializer());
+    void producerConvertsTheBodyForTheSerializerOfTheVendor() throws Exception {
+        Payload payload = new Payload("hello");
 
-        config.setSchemaRegistryVendor("confluent");
         // the body is not converted to a String for the vendor serializer
-        assertEquals("io.confluent.kafka.serializers.KafkaAvroSerializer", config.resolveValueSerializer());
+        assertSame(payload, recordValue("kafka:t?schemaRegistryVendor=confluent&schemaRegistryURL=" + URL, payload));
+        assertSame(payload, batchRecordValue("kafka:t?schemaRegistryVendor=confluent", payload));
+        assertEquals("Payload[name=hello]", recordValue("kafka:t", payload));
+    }
 
-        config.setValueSerializer("com.example.MySerializer");
-        assertEquals("com.example.MySerializer", config.resolveValueSerializer());
+    @Test
+    void producerConvertsTheBodyForTheSerializerOfAdditionalProperties() throws Exception {
+        Payload payload = new Payload("hello");
+
+        // the serializer the Kafka producer gets, not the valueSerializer option, decides the conversion
+        String avro = "kafka:t?schemaRegistryURL=" + URL
+                      + "&additionalProperties.value.serializer=io.confluent.kafka.serializers.KafkaAvroSerializer";
+        assertSame(payload, recordValue(avro, payload));
+        assertSame(payload, batchRecordValue(avro, payload));
+
+        String bytes
+                = "kafka:t?additionalProperties.value.serializer=org.apache.kafka.common.serialization.ByteArraySerializer";
+        assertArrayEquals("hello".getBytes(StandardCharsets.UTF_8), (byte[]) recordValue(bytes, "hello"));
+        assertArrayEquals("hello".getBytes(StandardCharsets.UTF_8), (byte[]) batchRecordValue(bytes, "hello"));
+    }
+
+    private Object recordValue(String uri, Object body) throws Exception {
+        KafkaProducer producer = startedProducer(uri);
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(body);
+            return producer.createRecord(exchange, exchange.getMessage()).value();
+        } finally {
+            producer.stop();
+        }
+    }
+
+    private Object batchRecordValue(String uri, Object body) throws Exception {
+        KafkaProducer producer = startedProducer(uri);
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(List.of(body));
+            return producer.createRecordIterable(exchange, exchange.getMessage()).next().getValue().value();
+        } finally {
+            producer.stop();
+        }
+    }
+
+    private KafkaProducer startedProducer(String uri) {
+        String brokers = (uri.contains("?") ? "&" : "?") + "brokers=localhost:39092";
+        KafkaEndpoint endpoint = context.getEndpoint(uri + brokers, KafkaEndpoint.class);
+        KafkaProducer producer = new KafkaProducer(endpoint);
+        producer.setKafkaProducer(Mockito.mock(org.apache.kafka.clients.producer.Producer.class));
+        producer.start();
+        return producer;
+    }
+
+    record Payload(String name) {
     }
 
     @Test
@@ -249,6 +302,41 @@ class KafkaSchemaRegistryVendorTest {
         assertEquals("my-namespace.servicebus.windows.net", producer.get("schema.registry.url"));
         assertEquals("my-group", producer.get("schema.group"));
         assertSame(credential, producer.get("schema.registry.credential"));
+    }
+
+    @Test
+    void azureFlagsFromAdditionalPropertiesAreBooleans() {
+        KafkaEndpoint endpoint = context.getEndpoint(
+                "kafka:mytopic?schemaRegistryVendor=azure&schemaRegistryURL=my-namespace.servicebus.windows.net"
+                                                     + "&additionalProperties.auto.register.schemas=false"
+                                                     + "&additionalProperties.use.azure.credential=false"
+                                                     + "&additionalProperties.specific.avro.reader=true",
+                KafkaEndpoint.class);
+
+        // the Azure serde casts these flags to Boolean, so a String would fail when the client is created
+        Properties producer = endpoint.getConfiguration().createProducerProperties();
+        assertEquals(Boolean.FALSE, producer.get("auto.register.schemas"));
+        assertEquals(Boolean.FALSE, producer.get("use.azure.credential"));
+
+        Properties consumer = endpoint.getConfiguration().createConsumerProperties();
+        assertEquals(Boolean.FALSE, consumer.get("use.azure.credential"));
+        assertEquals(Boolean.TRUE, consumer.get("specific.avro.reader"));
+    }
+
+    @Test
+    void emptyVendorOnTheEndpointOptsOutOfTheVendorOfTheComponent() {
+        KafkaComponent kafka = context.getComponent("kafka", KafkaComponent.class);
+        kafka.getConfiguration().setSchemaRegistryVendor("confluent");
+
+        KafkaEndpoint dlq = context.getEndpoint(
+                "kafka:dlq?valueSerializer=" + STRING_SERIALIZER + "&schemaRegistryVendor=", KafkaEndpoint.class);
+        assertEquals(STRING_SERIALIZER,
+                dlq.getConfiguration().createProducerProperties().get(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+
+        // a valueSerializer equal to the default cannot be told apart from the default
+        KafkaEndpoint other = context.getEndpoint("kafka:other?valueSerializer=" + STRING_SERIALIZER, KafkaEndpoint.class);
+        assertEquals("io.confluent.kafka.serializers.KafkaAvroSerializer",
+                other.getConfiguration().createProducerProperties().get(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
     }
 
     @Test

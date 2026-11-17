@@ -472,20 +472,6 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         }
     }
 
-    /**
-     * The class name of the value serializer that a producer uses: the serializer of the schemaRegistryVendor when the
-     * configured value serializer is the default, or else the configured value serializer.
-     *
-     * @param valueSerializer the configured value serializer
-     */
-    protected String resolveValueSerializer(String valueSerializer) {
-        if (ObjectHelper.isEmpty(schemaRegistryVendor)
-                || !KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(valueSerializer)) {
-            return valueSerializer;
-        }
-        return KafkaSchemaRegistry.serializer(resolveSchemaRegistryVendor(), getSchemaFormat());
-    }
-
     private String resolveSchemaRegistryVendor() {
         return KafkaSchemaRegistry.vendor(getSchemaRegistryVendor(), getSchemaFormat());
     }
@@ -519,6 +505,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
                     props.put(property, value);
                 }
             });
+            // the Azure serde needs its flags as Boolean, also when given as a String in additionalProperties
+            KafkaSchemaRegistry.applyBooleanFlags(props, resolveSchemaRegistryVendor());
         }
     }
 

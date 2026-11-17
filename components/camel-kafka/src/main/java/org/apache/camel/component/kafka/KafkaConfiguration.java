@@ -222,15 +222,6 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         return (KafkaConfiguration) super.copy();
     }
 
-    /**
-     * The class name of the value serializer that the producer uses, which is the serializer of the
-     * schemaRegistryVendor when the valueSerializer is the default. The producer converts the message body to the type
-     * of this serializer.
-     */
-    public String resolveValueSerializer() {
-        return resolveValueSerializer(getValueSerializer());
-    }
-
     public Properties createProducerProperties() {
         // Apply saslAuthType configuration if set (before creating properties)
         applyAuthTypeConfiguration();

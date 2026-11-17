@@ -203,7 +203,8 @@ final class KafkaSchemaRegistry {
         if (!explicitDeserializer) {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer(vendor, format));
         }
-        boolean avro = AVRO.equals(format(format));
+        String f = format(format);
+        boolean avro = AVRO.equals(f);
         switch (vendor) {
             case APICURIO -> {
                 if (avro && specificAvroReader) {
@@ -211,7 +212,7 @@ final class KafkaSchemaRegistry {
                 }
             }
             case AWS_GLUE -> {
-                props.put(GLUE_DATA_FORMAT, format(format).toUpperCase(Locale.ROOT));
+                props.put(GLUE_DATA_FORMAT, f.toUpperCase(Locale.ROOT));
                 if (avro) {
                     // read as a String by the Glue serde
                     props.put(GLUE_AVRO_RECORD_TYPE, specificAvroReader ? "SPECIFIC_RECORD" : "GENERIC_RECORD");
@@ -227,6 +228,22 @@ final class KafkaSchemaRegistry {
                 if (avro && specificAvroReader) {
                     props.put(CONFLUENT_SPECIFIC_AVRO_READER, Boolean.TRUE);
                 }
+            }
+        }
+    }
+
+    /**
+     * Converts the flags of the Azure serde that are given as a String, such as from additionalProperties in a URI or
+     * YAML, to java.lang.Boolean: the Azure serde casts them to Boolean, and a String fails when the client is created.
+     * Does nothing for the other vendors, whose serdes parse a String.
+     */
+    static void applyBooleanFlags(Properties props, String vendor) {
+        if (!AZURE.equals(vendor)) {
+            return;
+        }
+        for (String key : new String[] { AZURE_AUTO_REGISTER, AZURE_USE_AZURE_CREDENTIAL, CONFLUENT_SPECIFIC_AVRO_READER }) {
+            if (props.get(key) instanceof String value) {
+                props.put(key, Boolean.valueOf(value.trim()));
             }
         }
     }

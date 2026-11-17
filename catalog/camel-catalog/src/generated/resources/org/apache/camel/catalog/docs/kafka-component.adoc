@@ -992,6 +992,9 @@ The `schemaFormat` is `avro` by default. A format that the vendor does not suppo
 The `specificAvroReader` option is set under the property of the vendor.
 
 What you set yourself takes precedence: a `valueSerializer` or `valueDeserializer` other than the default, and any `additionalProperties`, such as a property of the vendor that Camel also sets.
+A `valueSerializer` or `valueDeserializer` set to the default (`StringSerializer` or `StringDeserializer`) cannot be told apart from the default, so the vendor replaces it.
+When the vendor is set on the component, and one endpoint must send or receive plain strings, such as a dead letter topic, set an empty `schemaRegistryVendor` on that endpoint, for example `kafka:dlq?schemaRegistryVendor=`.
+The producer converts the message body for the value serializer that the Kafka producer gets, also when it is set with the `value.serializer` additional property.
 The key serializer and deserializer are not changed: the keys stay strings unless you set `keySerializer` and `keyDeserializer`.
 Leave `schemaRegistryVendor` unset to configure the serializer, deserializer and registry properties yourself, as before.
 
@@ -1144,6 +1147,7 @@ The `schemaRegistryURL` is the fully qualified namespace of the Event Hubs names
 A producer needs the schema group, which you set with the `schema.group` additional property.
 Camel sets `use.azure.credential=true`, so that the serde authenticates with the `DefaultAzureCredential` of the Azure Identity library (environment variables, managed identity, Azure CLI and so on).
 To use another credential, bind a `com.azure.core.credential.TokenCredential` bean and set it as the `schema.registry.credential` additional property, which takes precedence.
+The Azure serde reads `auto.register.schemas`, `use.azure.credential` and `specific.avro.reader` as `Boolean`: when you set them as additional properties, such as `additionalProperties.auto.register.schemas=false` to turn off the registration of schemas, Camel converts the `true` or `false` string to a `Boolean`.
 
 The dependencies of `azure-schemaregistry-kafka-avro` ask for different versions of `com.azure:azure-core`, and Maven picks the older one, which lacks `TokenRequestContext.isCaeEnabled()` that Azure Identity calls: the first send then fails with a `NoSuchMethodError`.
 Add a recent `com.azure:azure-core` next to the serde, or import the `com.azure:azure-sdk-bom`.
