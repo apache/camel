@@ -58,7 +58,6 @@ public class SMSEndpoint extends DefaultEndpoint {
                             + " option is not set, to determine the endpoint of Short Message Service. Not used when the"
                             + " smsClient option is set or autowired.",
               displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of Short Message Service, which is a host name without http:// or https://. The"

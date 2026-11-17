@@ -1704,6 +1704,20 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaSms() {
+        String uri = "alibaba-sms:sendSms?endpoint=dysmsapi.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-sms:sendSms?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        ComponentModel model = catalog.componentModel("alibaba-sms");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaSmsOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
