@@ -774,26 +774,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * Only relevant if parallel snapshotting is configured. During parallel
-         * snapshotting, multiple (4) connections open to the database client,
-         * and they each need their own unique connection ID. This offset is
-         * used to generate those IDs from the base configured cluster ID.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 10000
-         * Group: mysql
-         * 
-         * @param databaseServerIdOffset the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMysqlComponentBuilder databaseServerIdOffset(long databaseServerIdOffset) {
-            doSetProperty("databaseServerIdOffset", databaseServerIdOffset);
-            return this;
-        }
-    
         /**
          * The location of the key store file. This is optional and can be used
          * for two-way authentication between the client and the database.
@@ -2779,6 +2759,26 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is unavailable and not provided by the
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string represents hexadecimal encoded octets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: __debezium_unavailable_value
+         * Group: mysql
+         * 
+         * @param unavailableValuePlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder unavailableValuePlaceholder(java.lang.String unavailableValuePlaceholder) {
+            doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
+            return this;
+        }
+    
+        
+        /**
          * Whether to use socket.setSoLinger(true, 0) when BinaryLogClient
          * keepalive thread triggers a disconnect for a stale connection.
          * 
@@ -2855,7 +2855,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "databaseProtocol": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseProtocol((java.lang.String) value); return true;
             case "databaseQueryTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseQueryTimeoutMs((int) value); return true;
             case "databaseServerId": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseServerId((long) value); return true;
-            case "databaseServerIdOffset": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseServerIdOffset((long) value); return true;
             case "databaseSslKeystore": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslKeystore((java.lang.String) value); return true;
             case "databaseSslKeystorePassword": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslKeystorePassword((java.lang.String) value); return true;
             case "databaseSslMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslMode((java.lang.String) value); return true;
@@ -2959,6 +2958,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
             case "topicPrefix": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTopicPrefix((java.lang.String) value); return true;
             case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTransactionMetadataFactory((java.lang.String) value); return true;
+            case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumMySqlComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
             case "useNongracefulDisconnect": getOrCreateConfiguration((DebeziumMySqlComponent) component).setUseNongracefulDisconnect((boolean) value); return true;
             default: return false;
             }

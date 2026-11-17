@@ -3177,6 +3177,14 @@ a `Number` (or a `Byte`) instead. A `TINYINT UNSIGNED` column is still a `Short`
 The new Debezium options of 3.7 are available on all `debezium-*` components. The `ddlParserType` option of
 `debezium-mysql` is kept, although Debezium 3.7 no longer lists it in the configuration of its MySQL connector.
 
+Debezium 3.7.1.Final removed two options, so Camel removed them too, and an endpoint that still sets one fails to start
+with an unknown option:
+
+* `databaseServerIdOffset` (`database.server.id.offset`) of `debezium-mysql`
+* `snapshotDatabaseErrorsMaxRetries` (`snapshot.database.errors.max.retries`) of `debezium-oracle`
+
+The `debezium-mysql` component has the new `unavailableValuePlaceholder` option.
+
 === camel-docker - the streaming operations give their result, and their failures fail the exchange
 
 The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
