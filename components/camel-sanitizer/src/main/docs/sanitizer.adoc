@@ -257,8 +257,10 @@ to the reactive executor returns the value of the processor it calls, and the re
 with `false` on the calling thread, at once or after the work that thread is running. The channel of a step without an
 error handler does this, so a step that calls such a channel directly sees it: for example a `choice` whose branch has
 one step, in a route with `noErrorHandler()`.
-So a callback with `false` on the thread that called `process` is never reported, whatever `process` returns and whether it comes before or after the return. The check relies on the
-default reactive executor of camel-core, which runs a callback on the thread that scheduled it.
+
+So a callback with `false` on the thread that called `process` is never reported, whatever `process` returns and
+whether it comes before or after the return. The check relies on the default reactive executor of camel-core, which
+runs a callback on the thread that scheduled it.
 
 Only the first call of the callback is compared (a second call is R1), and a call whose `process` threw is not
 compared (R1 reports it). The check is at the processor of each step, below its error handler, as R1 is; the channel of
