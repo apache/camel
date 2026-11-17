@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.azure;
 
 import java.time.Duration;
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -141,6 +142,20 @@ class FilesConsumerAutoCreateTest extends CamelTestSupport {
         consumer.run();
         verifyCreateAttempts(1);
         verifyListings(1);
+    }
+
+    @Test
+    void refusedConnectionsDoNotGrowTheDirectoryStack() throws Exception {
+        connectRefused.set(true);
+
+        ScheduledPollConsumer consumer = startRoute();
+        FilesOperations operations = ((FilesConsumer) consumer).getOperations();
+        for (int i = 0; i < 5; i++) {
+            consumer.run();
+        }
+
+        // each refused poll connected again: the current directory is still the share root, held once
+        assertEquals(1, ((ArrayDeque<?>) operations.backup()).size());
     }
 
     @Test

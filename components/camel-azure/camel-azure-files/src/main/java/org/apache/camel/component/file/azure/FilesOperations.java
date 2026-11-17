@@ -113,6 +113,8 @@ public class FilesOperations extends NormalizedOperations {
         log.trace("connect()");
         root = getClient().getShareClient(configuration.getShare()).getRootDirectoryClient();
         // TODO what about (starting) directory as the root?
+        // a new connection starts at the share root, also when the previous connect was refused
+        dirStack = new ArrayDeque<>();
         dirStack.push(root);
         try {
             return existsRemote(root);
