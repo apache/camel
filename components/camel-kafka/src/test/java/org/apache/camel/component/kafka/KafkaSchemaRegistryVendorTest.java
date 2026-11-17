@@ -24,13 +24,17 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -40,8 +44,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -414,6 +421,138 @@ class KafkaSchemaRegistryVendorTest {
         } finally {
             producer.stop();
         }
+    }
+
+    static Stream<Arguments> artifacts() {
+        return Stream.of(
+                Arguments.of("confluent", "avro", "io.confluent:kafka-avro-serializer"),
+                Arguments.of("confluent", "json", "io.confluent:kafka-json-schema-serializer"),
+                Arguments.of("confluent", "protobuf", "io.confluent:kafka-protobuf-serializer"),
+                Arguments.of("apicurio", "avro", "io.apicurio:apicurio-registry-avro-serde-kafka"),
+                Arguments.of("apicurio", "json", "io.apicurio:apicurio-registry-jsonschema-serde-kafka"),
+                Arguments.of("apicurio", "protobuf", "io.apicurio:apicurio-registry-protobuf-serde-kafka"),
+                Arguments.of("aws-glue", "json", "software.amazon.glue:schema-registry-serde"),
+                Arguments.of("azure", "avro", "com.microsoft.azure:azure-schemaregistry-kafka-avro"));
+    }
+
+    // the serde jars of Apicurio, AWS Glue and Azure are test dependencies (KafkaSchemaRegistryVendorClassesTest),
+    // so only the Confluent ones, which are not in Maven Central, are missing from the test classpath
+    static Stream<Arguments> missingArtifacts() {
+        return artifacts().filter(a -> "confluent".equals(a.get()[0]));
+    }
+
+    @ParameterizedTest(name = "{0} {1}")
+    @MethodSource("artifacts")
+    void missingSerdeMessageNamesTheArtifact(String vendor, String format, String artifact) {
+        assertEquals(artifact, KafkaSchemaRegistry.artifact(vendor, format));
+        String className = KafkaSchemaRegistry.serializer(vendor, format);
+        String msg = KafkaSchemaRegistry.missingSerdeMessage(vendor, format, "serializer", className);
+        assertTrue(msg.startsWith("Cannot load the value serializer " + className + " of schemaRegistryVendor " + vendor
+                                  + " and schemaFormat " + format + ". Add the Maven artifact " + artifact
+                                  + " to the classpath"),
+                msg);
+        assertEquals("confluent".equals(vendor), msg.contains("camel run --repos=confluent"), msg);
+    }
+
+    @ParameterizedTest(name = "{0} {1}")
+    @MethodSource("missingArtifacts")
+    void producerFailsToStartWithoutTheSerializerAndNamesTheArtifact(String vendor, String format, String artifact)
+            throws Exception {
+        // the Confluent serde jars are not on the test classpath
+        KafkaEndpoint endpoint = context.getEndpoint(
+                "kafka:mytopic?brokers=localhost:39092&schemaRegistryVendor=" + vendor + "&schemaFormat=" + format,
+                KafkaEndpoint.class);
+        Producer producer = endpoint.createProducer();
+        try {
+            IllegalStateException e = assertThrows(IllegalStateException.class, producer::start);
+            assertTrue(e.getMessage().startsWith("Cannot load the value serializer "
+                                                 + KafkaSchemaRegistry.serializer(vendor, format)
+                                                 + " of schemaRegistryVendor " + vendor + " and schemaFormat " + format
+                                                 + ". Add the Maven artifact " + artifact + " to the classpath"),
+                    e.getMessage());
+            assertEquals("confluent".equals(vendor), e.getMessage().contains("camel run --repos=confluent"),
+                    e.getMessage());
+        } finally {
+            producer.stop();
+        }
+    }
+
+    @ParameterizedTest(name = "{0} {1}")
+    @MethodSource("missingArtifacts")
+    void consumerFailsToStartWithoutTheDeserializerAndNamesTheArtifact(String vendor, String format, String artifact)
+            throws Exception {
+        KafkaEndpoint endpoint = context.getEndpoint(
+                "kafka:mytopic?brokers=localhost:39092&groupId=g&schemaRegistryVendor=" + vendor + "&schemaFormat="
+                                                     + format,
+                KafkaEndpoint.class);
+        Consumer consumer = endpoint.createConsumer(exchange -> {
+        });
+        try {
+            IllegalStateException e = assertThrows(IllegalStateException.class, consumer::start);
+            assertTrue(e.getMessage().startsWith("Cannot load the value deserializer "
+                                                 + KafkaSchemaRegistry.deserializer(vendor, format)),
+                    e.getMessage());
+            assertTrue(e.getMessage().contains("Add the Maven artifact " + artifact + " to the classpath"),
+                    e.getMessage());
+        } finally {
+            consumer.stop();
+        }
+    }
+
+    @Test
+    void serializerOfTheVendorIsLoadedThroughTheClassResolver() throws Exception {
+        // Camel JBang downloads the jar of a known class that the class resolver is asked for and is not on the
+        // classpath: the class the resolver returns is the one Kafka gets
+        try (CamelContext camel = new DefaultCamelContext()) {
+            camel.setClassResolver(new DefaultClassResolver(camel) {
+                @Override
+                public Class<?> resolveClass(String name) {
+                    return "io.apicurio.registry.serde.avro.AvroKafkaSerializer".equals(name)
+                            ? StringSerializer.class : super.resolveClass(name);
+                }
+            });
+            camel.start();
+            KafkaEndpoint endpoint = camel.getEndpoint(
+                    "kafka:mytopic?brokers=localhost:39092&schemaRegistryVendor=apicurio", KafkaEndpoint.class);
+            KafkaProducer producer = new KafkaProducer(endpoint);
+
+            Properties props = producer.getProps();
+            assertSame(StringSerializer.class, props.get(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+            assertNull(endpoint.getConfiguration().missingSchemaRegistrySerde(props,
+                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+            endpoint.checkSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);
+        }
+    }
+
+    @Test
+    void customClientFactoryOnlyWarnsAboutAMissingSerializer() {
+        // a custom client factory may create the client without loading the class by its name
+        KafkaEndpoint endpoint = context.getEndpoint(
+                "kafka:mytopic?brokers=localhost:39092&schemaRegistryVendor=confluent", KafkaEndpoint.class);
+        endpoint.setKafkaClientFactory(new DefaultKafkaClientFactory() {
+        });
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+
+        assertNotNull(endpoint.getConfiguration().missingSchemaRegistrySerde(props,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+        assertDoesNotThrow(() -> endpoint.checkSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+    }
+
+    @Test
+    void onlyTheMissingSerdeOfTheVendorIsReported() {
+        // no vendor
+        KafkaConfiguration config = new KafkaConfiguration();
+        Properties props = new Properties();
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "com.example.MySerializer");
+        assertNull(config.missingSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+
+        // an explicit serializer that is not the one of the vendor is left to Kafka
+        config.setSchemaRegistryVendor("confluent");
+        assertNull(config.missingSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
+
+        // the serializer of the vendor that is still a class name could not be loaded
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroSerializer");
+        assertNotNull(config.missingSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
     }
 
     /**
