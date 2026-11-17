@@ -111,6 +111,14 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "camel.known-dependencies.verify")
     protected boolean verifyThirdPartyJars;
 
+    /**
+     * The repositories (id=url, separated by commas) that verifyThirdPartyJars uses in addition to the ones of the
+     * project, for the libraries that are not in Maven Central.
+     */
+    @Parameter(defaultValue = "confluent=https://packages.confluent.io/maven/",
+               property = "camel.known-dependencies.verify.repos")
+    protected String verifyRepositories;
+
     private final RepositorySystem repoSystem;
 
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
@@ -161,11 +169,12 @@ public class PrepareKameletMainMojo extends AbstractMojo {
 
     /**
      * Generates camel-thirdparty-known-dependencies.properties from the curated list of third-party libraries
-     * (CAMEL-24809). Each input line maps a package to groupId:artifactId:version, where the version is a ${property}
-     * of the project (inherited from camel-parent) or @bom(groupId:artifactId:${property}) for a library whose version
-     * a BOM manages. The version is resolved here, so the runtime needs no lookup, and a property that does not exist
-     * or a literal version fails the build. With verifyThirdPartyJars every jar is resolved and the mapped package must
-     * be found in it.
+     * (CAMEL-24809). Each input line maps a package or a class to groupId:artifactId:version (or several, separated by
+     * commas, that are downloaded together), where the version is a ${property} of the project (inherited from
+     * camel-parent) or @bom(groupId:artifactId:${property}) for a library whose version a BOM manages. The version is
+     * resolved here, so the runtime needs no lookup, and a property that does not exist or a literal version fails the
+     * build. With verifyThirdPartyJars every jar is resolved and the mapped package or class must be found in the first
+     * one.
      */
     protected void updateKnownThirdPartyDependencies() throws Exception {
         File input = thirdPartyLibraries.isAbsolute()
@@ -182,43 +191,15 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         List<String> problems = new ArrayList<>();
         Map<String, String> resolved = new TreeMap<>();
         for (String pkg : in.stringPropertyNames()) {
-            String gav = in.getProperty(pkg).trim();
-            int i = gav.indexOf(':');
-            int j = gav.indexOf(':', i + 1);
-            if (i < 0 || j < 0) {
-                problems.add(pkg + " = " + gav + ": expected groupId:artifactId:version");
-                continue;
+            // one or more dependencies, separated by commas
+            List<String> gavs = new ArrayList<>();
+            for (String gav : in.getProperty(pkg).split(",")) {
+                String r = resolveThirdPartyGav(pkg, gav.trim(), boms, problems);
+                if (r != null) {
+                    gavs.add(r);
+                }
             }
-            String groupId = gav.substring(0, i);
-            String artifactId = gav.substring(i + 1, j);
-            String version = gav.substring(j + 1);
-            Matcher pm = PROPERTY_VERSION.matcher(version);
-            Matcher bm = BOM_VERSION.matcher(version);
-            if (pm.matches()) {
-                String value = project.getProperties().getProperty(pm.group(1));
-                if (value == null) {
-                    problems.add(pkg + ": no property " + pm.group(1) + " in parent/pom.xml");
-                    continue;
-                }
-                version = value;
-            } else if (bm.matches()) {
-                String bomVersion = project.getProperties().getProperty(bm.group(3));
-                if (bomVersion == null) {
-                    problems.add(pkg + ": no property " + bm.group(3) + " in parent/pom.xml");
-                    continue;
-                }
-                String bomKey = bm.group(1) + ":" + bm.group(2) + ":" + bomVersion;
-                version = managedVersion(boms, bomKey, groupId, artifactId);
-                if (version == null) {
-                    problems.add(pkg + ": " + groupId + ":" + artifactId + " is not managed by " + bomKey);
-                    continue;
-                }
-            } else {
-                problems.add(pkg + " = " + gav + ": a literal version; add a <" + artifactId.toLowerCase(Locale.ROOT)
-                             + "-version> property to parent/pom.xml and use ${...}");
-                continue;
-            }
-            resolved.put(pkg, groupId + ":" + artifactId + ":" + version);
+            resolved.put(pkg, String.join(",", gavs));
         }
         if (!problems.isEmpty()) {
             throw new MojoFailureException("Problems in " + input + ":\n  " + String.join("\n  ", problems));
@@ -229,8 +210,8 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         List<String> lines = new ArrayList<>();
         lines.add("# Generated by camel-package-maven-plugin:prepare-kamelet-main from src/main/"
                   + input.getName() + " (CAMEL-24809). Do not edit.");
-        lines.add("# Third-party libraries camel run downloads on demand, mapped by package; the resolver matches the class"
-                  + " and then each enclosing package.");
+        lines.add("# Third-party libraries camel run downloads on demand, mapped by package or class; the resolver matches"
+                  + " the class and then each enclosing package.");
         for (Map.Entry<String, String> e : resolved.entrySet()) {
             lines.add(e.getKey() + " = " + e.getValue());
         }
@@ -245,6 +226,51 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         Files.createDirectories(out.getParent());
         updateResource(buildContext, out, licenseHeader + "\n" + String.join("\n", lines) + "\n");
         getLog().info("Generated " + out.getFileName() + " with " + resolved.size() + " libraries");
+    }
+
+    /**
+     * Resolves the version of one groupId:artifactId:version of the third-party libraries.
+     *
+     * @return the dependency with its version, or null when there is a problem (added to the problems)
+     */
+    private String resolveThirdPartyGav(String pkg, String gav, Map<String, String> boms, List<String> problems)
+            throws Exception {
+        int i = gav.indexOf(':');
+        int j = gav.indexOf(':', i + 1);
+        if (i < 0 || j < 0) {
+            problems.add(pkg + " = " + gav + ": expected groupId:artifactId:version");
+            return null;
+        }
+        String groupId = gav.substring(0, i);
+        String artifactId = gav.substring(i + 1, j);
+        String version = gav.substring(j + 1);
+        Matcher pm = PROPERTY_VERSION.matcher(version);
+        Matcher bm = BOM_VERSION.matcher(version);
+        if (pm.matches()) {
+            String value = project.getProperties().getProperty(pm.group(1));
+            if (value == null) {
+                problems.add(pkg + ": no property " + pm.group(1) + " in parent/pom.xml");
+                return null;
+            }
+            version = value;
+        } else if (bm.matches()) {
+            String bomVersion = project.getProperties().getProperty(bm.group(3));
+            if (bomVersion == null) {
+                problems.add(pkg + ": no property " + bm.group(3) + " in parent/pom.xml");
+                return null;
+            }
+            String bomKey = bm.group(1) + ":" + bm.group(2) + ":" + bomVersion;
+            version = managedVersion(boms, bomKey, groupId, artifactId);
+            if (version == null) {
+                problems.add(pkg + ": " + groupId + ":" + artifactId + " is not managed by " + bomKey);
+                return null;
+            }
+        } else {
+            problems.add(pkg + " = " + gav + ": a literal version; add a <" + artifactId.toLowerCase(Locale.ROOT)
+                         + "-version> property to parent/pom.xml and use ${...}");
+            return null;
+        }
+        return groupId + ":" + artifactId + ":" + version;
     }
 
     private String managedVersion(Map<String, String> cache, String bomKey, String groupId, String artifactId)
@@ -292,14 +318,26 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     }
 
     private void verifyPackagesInJars(Map<String, String> resolved) throws Exception {
+        List<RemoteRepository> repos = new ArrayList<>(repositories);
+        if (verifyRepositories != null) {
+            for (String repo : verifyRepositories.split(",")) {
+                int eq = repo.indexOf('=');
+                if (eq > 0) {
+                    repos.add(new RemoteRepository.Builder(
+                            repo.substring(0, eq).trim(), "default",
+                            repo.substring(eq + 1).trim()).build());
+                }
+            }
+        }
         List<String> problems = new ArrayList<>();
         Map<String, File> jars = new LinkedHashMap<>();
         for (Map.Entry<String, String> e : resolved.entrySet()) {
-            String gav = e.getValue();
+            // the package or class is in the first dependency, the others come with it
+            String gav = e.getValue().split(",")[0];
             File jar = jars.get(gav);
             if (jar == null) {
                 String[] parts = gav.split(":");
-                ArtifactRequest req = new ArtifactRequest().setRepositories(repositories)
+                ArtifactRequest req = new ArtifactRequest().setRepositories(repos)
                         .setArtifact(new DefaultArtifact(parts[0], parts[1], "jar", parts[2]));
                 try {
                     jar = repoSystem.resolveArtifact(repoSession, req).getArtifact().getFile();
@@ -309,13 +347,16 @@ public class PrepareKameletMainMojo extends AbstractMojo {
                 }
                 jars.put(gav, jar);
             }
+            // a package, or a class
             String dir = e.getKey().replace('.', '/') + "/";
+            String clazz = e.getKey().replace('.', '/') + ".class";
             boolean found;
             try (ZipFile zip = new ZipFile(jar)) {
-                found = zip.stream().anyMatch(z -> z.getName().startsWith(dir) && z.getName().endsWith(".class"));
+                found = zip.stream().anyMatch(z -> z.getName().equals(clazz)
+                        || z.getName().startsWith(dir) && z.getName().endsWith(".class"));
             }
             if (!found) {
-                problems.add(e.getKey() + ": no classes under " + dir + " in " + gav);
+                problems.add(e.getKey() + ": no class " + clazz + " nor classes under " + dir + " in " + gav);
             }
         }
         if (!problems.isEmpty()) {
@@ -323,7 +364,7 @@ public class PrepareKameletMainMojo extends AbstractMojo {
                     "Third-party known dependencies do not match their jars:\n  "
                                            + String.join("\n  ", problems));
         }
-        getLog().info("Verified " + resolved.size() + " third-party packages against " + jars.size() + " jars");
+        getLog().info("Verified " + resolved.size() + " third-party packages and classes against " + jars.size() + " jars");
     }
 
     protected void updateKnownDependencies() throws Exception {

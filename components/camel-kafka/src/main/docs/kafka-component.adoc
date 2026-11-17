@@ -1000,7 +1000,7 @@ Leave `schemaRegistryVendor` unset to configure the serializer, deserializer and
 
 The body of the message to send must be a value that the serializer of the vendor accepts, such as an Avro `GenericRecord` or a class generated from the Avro schema.
 
-IMPORTANT: Camel does not include the serde libraries of the vendors: add the serde jar of the vendor and format to your application.
+IMPORTANT: Camel does not include the serde libraries of the vendors: add the serde jar of the vendor and format to your application (Camel JBang downloads it, see below).
 The Confluent serde jars are not in Maven Central: add the Confluent Maven repository `https://packages.confluent.io/maven/`, or have the jars in a repository of your own.
 
 [width="100%",cols="1m,4",options="header"]
@@ -1026,16 +1026,20 @@ For example with Maven, for Confluent and Avro:
 <dependency>
   <groupId>io.confluent</groupId>
   <artifactId>kafka-avro-serializer</artifactId>
-  <version>8.0.0</version>
+  <version>8.3.3</version>
 </dependency>
 ----
 
-And with Camel JBang:
+Camel JBang downloads the serde jar of the vendor and format when the producer or consumer starts, so you do not add it with `--dep`.
+The Confluent serde jars are not in Maven Central, so add the Confluent Maven repository with `--repos=confluent` (Camel JBang knows the `confluent` repository by name):
 
 [source,bash]
 ----
-camel run MyRoute.java --repos=https://packages.confluent.io/maven/ --dep=io.confluent:kafka-avro-serializer:8.0.0
+camel run MyRoute.java --repos=confluent
 ----
+
+When the serializer or deserializer of the vendor cannot be loaded (the jar is not on the classpath, or Camel JBang cannot download it, such as a Confluent jar without `--repos=confluent`),
+the producer or consumer fails to start with a message that names the Maven artifact to add.
 
 *Confluent Schema Registry*
 
@@ -1151,6 +1155,7 @@ The Azure serde reads `auto.register.schemas`, `use.azure.credential` and `speci
 
 The dependencies of `azure-schemaregistry-kafka-avro` ask for different versions of `com.azure:azure-core`, and Maven picks the older one, which lacks `TokenRequestContext.isCaeEnabled()` that Azure Identity calls: the first send then fails with a `NoSuchMethodError`.
 Add a recent `com.azure:azure-core` next to the serde, or import the `com.azure:azure-sdk-bom`.
+Camel JBang downloads the `com.azure:azure-core` of the Azure SDK BOM together with the serde.
 The options to connect to Event Hubs with the Kafka protocol are left out of the example.
 
 [tabs]
