@@ -33,8 +33,9 @@ public abstract class AbstractOAuthClientCredentialsTest extends AbstractKeycloa
     @Test
     public void testOAuthClientCredentials() throws Exception {
 
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
 
         try (CamelContext context = createCamelContext()) {
             addOAuthClientCredentialsRoutes(context);

@@ -54,8 +54,9 @@ class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
     static void setUp() throws Exception {
         // Check Keycloak availability before starting Undertow, so the test class skips
         // cleanly (TestAbortedException) rather than failing with BindException.
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
         server = createUndertowServer(PORT);
         server.start();
     }

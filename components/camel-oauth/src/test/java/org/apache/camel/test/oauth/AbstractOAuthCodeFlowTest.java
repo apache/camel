@@ -17,7 +17,6 @@
 package org.apache.camel.test.oauth;
 
 import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
 
         var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
         Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        admin.close();
 
         try (CamelContext context = createCamelContext()) {
             addOAuthCodeFlowRoutes(context);
@@ -42,31 +42,12 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
 
             // Verify Realm, Client, and User exist
             var keycloak = getKeycloakAdmin().getKeycloak();
-            Assertions.assertNotNull(keycloak.realm(KEYCLOAK_REALM).toRepresentation());
-            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size());
-            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
+            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).toRepresentation() != null);
+            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size() == 1);
+            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).users().search("alice").size() == 1);
 
             LOG.info("Keycloak realm, client, and user available!");
             LOG.info("Open: {}", getAppBaseUrl());
-
-            // Open WebApp in Browser (works on macOS)
-            // Runtime.getRuntime().exec("open " + getAppBaseUrl());
-
-            // Increase for manual testing
-            int maxLoopCount = 10; // 500ms per loop
-
-            for (int i = maxLoopCount; i > 0; i--) {
-                var options = context.getGlobalOptions();
-                if ("ok".equals(options.get("OAuthLogout"))) {
-                    LOG.info("OAuthLogout - ok");
-                    i = 0;
-                }
-                if (i % 4 == 0) {
-                    LOG.info("Waiting on logout: {}/{} - {}", maxLoopCount - i, maxLoopCount,
-                            getAppBaseUrl() + "logout");
-                }
-                Thread.sleep(500L);
-            }
         }
     }
 

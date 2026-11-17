@@ -51,8 +51,9 @@ public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredenti
     @Test
     public void testOAuthSetup() throws Exception {
 
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
 
         try (CamelContext context = createCamelContext()) {
             context.start();

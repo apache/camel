@@ -27,7 +27,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLServerSocket;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -46,17 +45,13 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     private static final int CONNECT_TIMEOUT_MS = 10_000;
     private static final int READ_TIMEOUT_MS = 10_000;
 
-    // Required by abstract contract in AbstractKeycloakTest; not used by this test (localHttpsPort is used instead).
-    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
-    static final int PORT = SERVER_PORT.getPort();
-
     private static SSLServerSocket serverSocket;
     private static Thread serverThread;
     private static int localHttpsPort;
 
     @Override
     protected int getPort() {
-        return PORT;
+        return localHttpsPort;
     }
 
     @BeforeAll
@@ -111,8 +106,9 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
 
     @Test
     void testCheckKeycloakCertificateTrust() {
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
         Assertions.assertDoesNotThrow(() -> connectToUrl(KEYCLOAK_BASE_URL), "Certificate should be trusted");
     }
 
