@@ -1036,6 +1036,8 @@ camel run MyRoute.java --repos=https://packages.confluent.io/maven/ --dep=io.con
 
 *Confluent Schema Registry*
 
+NOTE: Supports Avro, JSON Schema and Protobuf. The serde jars are only in the Confluent Maven repository, not in Maven Central. The Avro serde and the registry client are licensed under the Apache License 2.0; the JSON Schema and Protobuf serdes are also listed under the Confluent Community License, so check their license for your use. Registries that implement the Confluent registry API, such as Karapace and Redpanda, work with `confluent` too.
+
 [tabs]
 ====
 Java::
@@ -1063,6 +1065,8 @@ YAML::
 ====
 
 *Apicurio Registry*
+
+NOTE: Supports Avro, JSON Schema and Protobuf, with the serdes of Apicurio Registry 3.x. The 2.x serdes have other artifact names and property names, and are not set up by `apicurio`.
 
 The URL is the URL of the registry API of Apicurio Registry 3.x, which ends with `/apis/registry/v3`.
 
@@ -1095,6 +1099,8 @@ YAML::
 ====
 
 *AWS Glue Schema Registry*
+
+NOTE: Supports Avro, JSON Schema and Protobuf, through one serializer and deserializer whose `dataFormat` Camel sets from `schemaFormat`. There is no local emulator of AWS Glue: test against AWS.
 
 AWS Glue is addressed by the AWS region and the name of the registry, not by a URL.
 The region is taken from the AWS default region provider chain (such as the `AWS_REGION` environment variable), or set with the `region` additional property.
@@ -1131,6 +1137,8 @@ YAML::
 ====
 
 *Azure Schema Registry*
+
+NOTE: Supports Avro only. Azure has no released JSON Schema serde (only a beta) and no Protobuf serde, so `azure` with `json` or `protobuf` fails when the producer or consumer starts.
 
 The `schemaRegistryURL` is the fully qualified namespace of the Event Hubs namespace, such as `my-namespace.servicebus.windows.net`.
 A producer needs the schema group, which you set with the `schema.group` additional property.
