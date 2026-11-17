@@ -21,6 +21,12 @@ import org.apache.camel.spi.Metadata;
 public final class SMSHeaders {
 
     @Metadata(label = "producer",
+              description = "The operation that the producer performs. This header replaces the operation option. If this"
+                            + " header is not set, an exchange property of the same name replaces the operation option.",
+              javaType = "String")
+    public static final String OPERATION = SMSProperties.OPERATION;
+
+    @Metadata(label = "producer",
               description = "The phone numbers of the recipients, which are separated by commas. Short Message Service accepts"
                             + " at most 1000 phone numbers. This header replaces the phoneNumbers option. If this header is not"
                             + " set, an exchange property of the same name replaces the phoneNumbers option.",

@@ -102,12 +102,11 @@ public interface SMSEndpointBuilderFactory {
         /**
          * The region ID of Short Message Service, for example cn-hangzhou. Only
          * used when the endpoint option is not set, to determine the endpoint
-         * of Short Message Service. Not used when the smsClient option is set
-         * or autowired.
+         * of Short Message Service. One of the two options is required. Not
+         * used when the smsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param region the value to set
@@ -419,6 +418,20 @@ public interface SMSEndpointBuilderFactory {
          */
         public static final SMSHeaderNameBuilder INSTANCE = new SMSHeaderNameBuilder();
 
+        /**
+         * The operation that the producer performs. This header replaces the
+         * operation option. If this header is not set, an exchange property of
+         * the same name replaces the operation option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaSmsOperation}.
+         */
+        public String alibabaSmsOperation() {
+            return "CamelAlibabaSmsOperation";
+        }
         /**
          * The phone numbers of the recipients, which are separated by commas.
          * Short Message Service accepts at most 1000 phone numbers. This header

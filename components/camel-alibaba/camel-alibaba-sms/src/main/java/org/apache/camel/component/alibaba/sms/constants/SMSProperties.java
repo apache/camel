@@ -16,29 +16,20 @@
  */
 package org.apache.camel.component.alibaba.sms.constants;
 
-import org.apache.camel.spi.Metadata;
-
 public final class SMSProperties {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaSmsOperation";
 
-    @Metadata(label = "producer", description = "Phone numbers to send SMS to", javaType = "String")
     public static final String PHONE_NUMBERS = "CamelAlibabaSmsPhoneNumbers";
 
-    @Metadata(label = "producer", description = "SMS sign name", javaType = "String")
     public static final String SIGN_NAME = "CamelAlibabaSmsSignName";
 
-    @Metadata(label = "producer", description = "SMS template code", javaType = "String")
     public static final String TEMPLATE_CODE = "CamelAlibabaSmsTemplateCode";
 
-    @Metadata(label = "producer", description = "SMS template parameters as JSON", javaType = "String")
     public static final String TEMPLATE_PARAM = "CamelAlibabaSmsTemplateParam";
 
-    @Metadata(label = "producer", description = "Out id for the SMS", javaType = "String")
     public static final String OUT_ID = "CamelAlibabaSmsOutId";
 
-    @Metadata(label = "producer", description = "Request id returned by SMS API", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaSmsRequestId";
 
     private SMSProperties() {
