@@ -30,6 +30,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredentialsTest {
 
+    @RegisterExtension
     static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
     static final int PORT = SERVER_PORT.getPort();
 

@@ -28,6 +28,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -40,6 +41,7 @@ import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
  */
 class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
 
+    @RegisterExtension
     static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
     static final int PORT = SERVER_PORT.getPort();
 
