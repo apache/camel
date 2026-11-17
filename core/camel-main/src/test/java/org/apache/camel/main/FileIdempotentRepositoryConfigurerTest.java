@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BeanIntrospection;
@@ -56,6 +58,57 @@ public class FileIdempotentRepositoryConfigurerTest {
 
         // will auto detect generated configurer so no reflection in use
         assertEquals(0, bi.getInvokedCounter());
+
+        context.stop();
+    }
+
+    @Test
+    public void testFileName() {
+        CamelContext context = new DefaultCamelContext();
+
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
+        bi.setExtendedStatistics(true);
+
+        context.start();
+
+        FileIdempotentRepository target = new FileIdempotentRepository();
+
+        // the file name is a plain String, as when the repository is a bean in YAML or properties
+        boolean hit = PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withReflection(false)
+                .withProperty("fileName", "target/data/read-files.dat")
+                .withRemoveParameters(true).bind();
+
+        assertTrue(hit);
+
+        assertEquals("target/data/read-files.dat", target.getFileName());
+        assertEquals(new File("target/data/read-files.dat"), target.getFileStore());
+
+        // will auto detect generated configurer so no reflection in use
+        assertEquals(0, bi.getInvokedCounter());
+
+        context.stop();
+    }
+
+    @Test
+    public void testFileStore() {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        FileIdempotentRepository target = new FileIdempotentRepository();
+
+        boolean hit = PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("fileStore", "#class:java.io.File('target/data/read-files.dat')")
+                .withRemoveParameters(true).bind();
+
+        assertTrue(hit);
+
+        assertEquals(new File("target/data/read-files.dat"), target.getFileStore());
+        assertEquals(new File("target/data/read-files.dat").getPath(), target.getFileName());
 
         context.stop();
     }
