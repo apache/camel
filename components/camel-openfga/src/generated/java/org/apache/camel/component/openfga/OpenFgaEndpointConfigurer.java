@@ -2,6 +2,7 @@
 package org.apache.camel.component.openfga;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenFgaEndpoint target = (OpenFgaEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiaudience":
         case "apiAudience": target.getConfiguration().setApiAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "apitoken":
@@ -70,6 +71,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failopen":
         case "failOpen": target.getConfiguration().setFailOpen(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -134,7 +137,7 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiaudience":
         case "apiAudience": return java.lang.String.class;
         case "apitoken":
@@ -182,6 +185,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failopen":
         case "failOpen": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -242,7 +247,7 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenFgaEndpoint target = (OpenFgaEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiaudience":
         case "apiAudience": return target.getConfiguration().getApiAudience();
         case "apitoken":
@@ -290,6 +295,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failopen":
         case "failOpen": return target.getConfiguration().isFailOpen();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
@@ -349,7 +356,7 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checkpointrepository":
         case "checkpointRepository": return java.lang.String.class;
         case "conditioncontext":

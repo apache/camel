@@ -105,7 +105,7 @@ public interface OpenfgaComponentBuilderFactory {
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaBatchCheckMode&lt;/code&gt; type.
          * 
          * Default: client
-         * Group: producer
+         * Group: common
          * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
@@ -264,7 +264,7 @@ public interface OpenfgaComponentBuilderFactory {
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onDuplicate the value to set
          * @return the dsl builder
@@ -284,7 +284,7 @@ public interface OpenfgaComponentBuilderFactory {
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onMissing the value to set
          * @return the dsl builder

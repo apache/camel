@@ -83,6 +83,48 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: common
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: common
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder batchCheckMode(String batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
          * Context passed to the CEL expressions of any conditioned relation the
          * check touches, as a map resolved from the registry -
          * conditionContext=#myContext. A map rather than an expression on
@@ -224,6 +266,80 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointConsumerBuilder object(String object) {
             doSetProperty("object", object);
+            return this;
+        }
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder onDuplicate(String onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder onMissing(String onMissing) {
+            doSetProperty("onMissing", onMissing);
             return this;
         }
         /**
@@ -641,6 +757,48 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
             return this;
         }
         /**
@@ -1357,9 +1515,45 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointConsumerBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointConsumerBuilder maxBatchSize(String maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1374,9 +1568,9 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1549,6 +1743,48 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: common
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: common
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder batchCheckMode(String batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
          * Context passed to the CEL expressions of any conditioned relation the
          * check touches, as a map resolved from the registry -
          * conditionContext=#myContext. A map rather than an expression on
@@ -1690,6 +1926,80 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointProducerBuilder object(String object) {
             doSetProperty("object", object);
+            return this;
+        }
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder onDuplicate(String onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointProducerBuilder onMissing(String onMissing) {
+            doSetProperty("onMissing", onMissing);
             return this;
         }
         /**
@@ -2140,9 +2450,45 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder maxBatchSize(String maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2157,9 +2503,9 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2344,7 +2690,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * type.
          * 
          * Default: client
-         * Group: producer
+         * Group: common
          * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
@@ -2365,7 +2711,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * type.
          * 
          * Default: client
-         * Group: producer
+         * Group: common
          * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
@@ -2528,7 +2874,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onDuplicate the value to set
          * @return the dsl builder
@@ -2547,7 +2893,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onDuplicate the value to set
          * @return the dsl builder
@@ -2565,7 +2911,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onMissing the value to set
          * @return the dsl builder
@@ -2583,7 +2929,7 @@ public interface OpenFgaEndpointBuilderFactory {
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
          * 
          * Default: error
-         * Group: producer
+         * Group: common
          * 
          * @param onMissing the value to set
          * @return the dsl builder
