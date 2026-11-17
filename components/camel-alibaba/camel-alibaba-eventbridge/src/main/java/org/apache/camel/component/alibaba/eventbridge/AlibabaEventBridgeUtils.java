@@ -59,8 +59,8 @@ public final class AlibabaEventBridgeUtils {
     }
 
     public static EventBridgeClient createClient(AlibabaEventBridgeEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getRegion()) && ObjectHelper.isEmpty(endpoint.getEndpoint())) {
-            throw new IllegalArgumentException("Region or endpoint is required");
+        if (ObjectHelper.isEmpty(endpoint.getEndpoint())) {
+            throw new IllegalArgumentException("Endpoint is required");
         }
 
         Config config = new Config();
@@ -69,9 +69,7 @@ public final class AlibabaEventBridgeUtils {
         if (ObjectHelper.isNotEmpty(endpoint.getRegion())) {
             config.setRegionId(endpoint.getRegion());
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getEndpoint())) {
-            config.setEndpoint(endpoint.getEndpoint());
-        }
+        config.setEndpoint(endpoint.getEndpoint());
         return new EventBridgeClient(config);
     }
 
