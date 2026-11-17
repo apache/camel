@@ -296,7 +296,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         // must convert each entry of the iterator into the value according to
         // the serializer
-        Object value = tryConvertToSerializedType(exchange, message.getBody(), configuration.getValueSerializer());
+        Object value = tryConvertToSerializedType(exchange, message.getBody(), configuration.resolveValueSerializer());
 
         return new ProducerRecord<>(topic, msgPartitionKey, timeStamp, msgKey, value, propagatedHeaders);
     }

@@ -66,7 +66,7 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
             final Exchange ex = innerExchange == null ? exchange : innerExchange;
 
             final Object value = tryConvertToSerializedType(ex, innerMessage.getBody(),
-                    kafkaConfiguration.getValueSerializer());
+                    kafkaConfiguration.resolveValueSerializer());
 
             return new KeyValueHolder<>(
                     body,
@@ -75,7 +75,7 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
                             propagatedHeadersProvider.getHeaders(ex, innerMessage)));
         }
 
-        Object convertedBody = tryConvertToSerializedType(exchange, body, kafkaConfiguration.getValueSerializer());
+        Object convertedBody = tryConvertToSerializedType(exchange, body, kafkaConfiguration.resolveValueSerializer());
         Object key = kafkaConfiguration.getKey() != null
                 ? tryConvertToSerializedType(exchange, kafkaConfiguration.getKey(), kafkaConfiguration.getKeySerializer())
                 : null;

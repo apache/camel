@@ -972,6 +972,207 @@ camel.component.kafka.sasl-jaas-config = org.apache.kafka.common.security.oauthb
 camel.component.kafka.additional-properties[sasl.login.callback.handler.class]=io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler
 ----
 
+=== Schema registry
+
+A schema registry stores the schemas (Avro, JSON Schema or Protobuf) of the records in a topic, and the serializer and deserializer of the registry vendor write and read the records with them.
+The `schemaRegistryVendor` and `schemaFormat` options set up the value serializer (producer), the value deserializer (consumer) and the registry properties of the vendor,
+so that you do not need to know the class names or the property names of the vendor.
+The `schemaRegistryURL` option is set as the registry URL of the vendor.
+
+[width="100%",cols="1m,1m,4",options="header"]
+|===
+| schemaRegistryVendor | schemaFormat | What Camel sets
+| confluent | avro, json, protobuf | The `KafkaAvroSerializer`, `KafkaJsonSchemaSerializer` or `KafkaProtobufSerializer` (and the matching deserializer) of Confluent, and `schema.registry.url`. The producer registers the schemas (the Confluent default). Several registries implement the Confluent registry API, such as Karapace, the Redpanda schema registry and the Confluent compatible API of Apicurio Registry, so `confluent` works for them too.
+| apicurio | avro, json, protobuf | The `AvroKafkaSerializer`, `JsonSchemaKafkaSerializer` or `ProtobufKafkaSerializer` (and the matching deserializer) of Apicurio Registry 3.x, `apicurio.registry.url`, and on the producer `apicurio.registry.auto-register=true`.
+| aws-glue | avro, json, protobuf | The `GlueSchemaRegistryKafkaSerializer` and `GlueSchemaRegistryKafkaDeserializer`, `dataFormat`, on the producer `schemaAutoRegistrationEnabled=true`, and on the consumer of Avro `avroRecordType=GENERIC_RECORD`. The `schemaRegistryURL` is optional and is set as `endpoint` (to override the endpoint of the Glue service).
+| azure | avro | The `KafkaAvroSerializer` and `KafkaAvroDeserializer` of the Azure Schema Registry, `schema.registry.url` (the fully qualified namespace of the Event Hubs namespace), `use.azure.credential=true`, and on the producer `auto.register.schemas=true`.
+|===
+
+The `schemaFormat` is `avro` by default. A format that the vendor does not support, such as `azure` with `protobuf`, fails when the producer or consumer starts.
+The `specificAvroReader` option is set under the property of the vendor.
+
+What you set yourself takes precedence: a `valueSerializer` or `valueDeserializer` other than the default, and any `additionalProperties`, such as a property of the vendor that Camel also sets.
+The key serializer and deserializer are not changed: the keys stay strings unless you set `keySerializer` and `keyDeserializer`.
+Leave `schemaRegistryVendor` unset to configure the serializer, deserializer and registry properties yourself, as before.
+
+The body of the message to send must be a value that the serializer of the vendor accepts, such as an Avro `GenericRecord` or a class generated from the Avro schema.
+
+IMPORTANT: Camel does not include the serde libraries of the vendors: add the serde jar of the vendor and format to your application.
+The Confluent serde jars are not in Maven Central: add the Confluent Maven repository `https://packages.confluent.io/maven/`, or have the jars in a repository of your own.
+
+[width="100%",cols="1m,4",options="header"]
+|===
+| schemaRegistryVendor | Serde jars (Maven groupId:artifactId)
+| confluent | `io.confluent:kafka-avro-serializer`, `io.confluent:kafka-json-schema-serializer` or `io.confluent:kafka-protobuf-serializer`, from `https://packages.confluent.io/maven/`
+| apicurio | `io.apicurio:apicurio-registry-avro-serde-kafka`, `io.apicurio:apicurio-registry-jsonschema-serde-kafka` or `io.apicurio:apicurio-registry-protobuf-serde-kafka` (version 3.x)
+| aws-glue | `software.amazon.glue:schema-registry-serde`
+| azure | `com.microsoft.azure:azure-schemaregistry-kafka-avro`
+|===
+
+For example with Maven, for Confluent and Avro:
+
+[source,xml]
+----
+<repositories>
+  <repository>
+    <id>confluent</id>
+    <url>https://packages.confluent.io/maven/</url>
+  </repository>
+</repositories>
+
+<dependency>
+  <groupId>io.confluent</groupId>
+  <artifactId>kafka-avro-serializer</artifactId>
+  <version>8.0.0</version>
+</dependency>
+----
+
+And with Camel JBang:
+
+[source,bash]
+----
+camel run MyRoute.java --repos=https://packages.confluent.io/maven/ --dep=io.confluent:kafka-avro-serializer:8.0.0
+----
+
+*Confluent Schema Registry*
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:orders?brokers=localhost:9092&schemaRegistryVendor=confluent&schemaRegistryURL=http://localhost:8081")
+    .log("Received ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      parameters:
+        brokers: "localhost:9092"
+        schemaRegistryVendor: confluent
+        schemaRegistryURL: "http://localhost:8081"
+      steps:
+        - log: "Received ${body}"
+----
+====
+
+*Apicurio Registry*
+
+The URL is the URL of the registry API of Apicurio Registry 3.x, which ends with `/apis/registry/v3`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:orders?brokers=localhost:9092&schemaRegistryVendor=apicurio&schemaFormat=protobuf"
+        + "&schemaRegistryURL=http://localhost:8080/apis/registry/v3")
+    .log("Received ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      parameters:
+        brokers: "localhost:9092"
+        schemaRegistryVendor: apicurio
+        schemaFormat: protobuf
+        schemaRegistryURL: "http://localhost:8080/apis/registry/v3"
+      steps:
+        - log: "Received ${body}"
+----
+====
+
+*AWS Glue Schema Registry*
+
+AWS Glue is addressed by the AWS region and the name of the registry, not by a URL.
+The region is taken from the AWS default region provider chain (such as the `AWS_REGION` environment variable), or set with the `region` additional property.
+The registry is `default-registry` unless you set the `registry.name` additional property.
+The AWS credentials are taken from the AWS default credentials provider chain.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:orders?brokers=localhost:9092&schemaRegistryVendor=aws-glue&schemaFormat=json"
+        + "&additionalProperties.region=eu-west-1&additionalProperties.registry.name=my-registry")
+    .log("Received ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      parameters:
+        brokers: "localhost:9092"
+        schemaRegistryVendor: aws-glue
+        schemaFormat: json
+        additionalProperties.region: eu-west-1
+        additionalProperties.registry.name: my-registry
+      steps:
+        - log: "Received ${body}"
+----
+====
+
+*Azure Schema Registry*
+
+The `schemaRegistryURL` is the fully qualified namespace of the Event Hubs namespace, such as `my-namespace.servicebus.windows.net`.
+A producer needs the schema group, which you set with the `schema.group` additional property.
+Camel sets `use.azure.credential=true`, so that the serde authenticates with the `DefaultAzureCredential` of the Azure Identity library (environment variables, managed identity, Azure CLI and so on).
+To use another credential, bind a `com.azure.core.credential.TokenCredential` bean and set it as the `schema.registry.credential` additional property, which takes precedence.
+
+The dependencies of `azure-schemaregistry-kafka-avro` ask for different versions of `com.azure:azure-core`, and Maven picks the older one, which lacks `TokenRequestContext.isCaeEnabled()` that Azure Identity calls: the first send then fails with a `NoSuchMethodError`.
+Add a recent `com.azure:azure-core` next to the serde, or import the `com.azure:azure-sdk-bom`.
+The options to connect to Event Hubs with the Kafka protocol are left out of the example.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:orders")
+    .to("kafka:orders?brokers=my-namespace.servicebus.windows.net:9093"
+        + "&schemaRegistryVendor=azure&schemaRegistryURL=my-namespace.servicebus.windows.net"
+        + "&additionalProperties.schema.group=my-group"
+        + "&additionalProperties.schema.registry.credential=#bean:myCredential");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - to:
+            uri: kafka:orders
+            parameters:
+              brokers: "my-namespace.servicebus.windows.net:9093"
+              schemaRegistryVendor: azure
+              schemaRegistryURL: my-namespace.servicebus.windows.net
+              additionalProperties.schema.group: my-group
+              additionalProperties.schema.registry.credential: "#bean:myCredential"
+----
+====
+
 === Batching Consumer
 
 To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true`.
