@@ -24,8 +24,11 @@ import org.apache.camel.oauth.OAuthCodeFlowCallback;
 import org.apache.camel.oauth.OAuthCodeFlowProcessor;
 import org.apache.camel.oauth.OAuthLogoutProcessor;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -38,11 +41,25 @@ import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
  */
 class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
 
+    @RegisterExtension
+    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
+    static final int PORT = SERVER_PORT.getPort();
+
     static Undertow server;
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
 
     @BeforeAll
     static void setUp() throws Exception {
-        server = createUndertowServer();
+        // Check Keycloak availability before starting Undertow, so the test class skips
+        // cleanly (TestAbortedException) rather than failing with BindException.
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
+        server = createUndertowServer(PORT);
         server.start();
     }
 
@@ -60,8 +77,8 @@ class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
         props.addInitialProperty(CAMEL_OAUTH_BASE_URI, KEYCLOAK_REALM_URL);
         props.addInitialProperty(CAMEL_OAUTH_CLIENT_ID, TEST_CLIENT_ID);
         props.addInitialProperty(CAMEL_OAUTH_CLIENT_SECRET, TEST_CLIENT_SECRET);
-        props.addInitialProperty(CAMEL_OAUTH_REDIRECT_URI, APP_BASE_URL + "auth");
-        props.addInitialProperty(CAMEL_OAUTH_LOGOUT_REDIRECT_URI, APP_BASE_URL);
+        props.addInitialProperty(CAMEL_OAUTH_REDIRECT_URI, getAppBaseUrl() + "auth");
+        props.addInitialProperty(CAMEL_OAUTH_LOGOUT_REDIRECT_URI, getAppBaseUrl());
 
         return context;
     }
