@@ -118,6 +118,15 @@ messages, and grew with each one. An exception from a predicate of `onException`
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
 
+=== camel-core - a to with an expression in its endpoint uri logs a WARN
+
+A `to` resolves its endpoint once, when the route starts, so `to("jms:queue:${header.queue}")` sends every message to
+one queue named by the text of the expression. Camel now logs a WARN for such a `to` when it creates the route, and
+the WARN says to use `toD`. The route works as before. Only the endpoint path is checked, not the options after the
+`?`. The components that evaluate their path for each message are left alone: `language`, the `:#${...}` parameters
+of `sql`, and the components whose path option is marked `supportSimpleExpression` in their metadata, which now
+includes the template of `sql-stored` and the bucket name of `aws2-s3`.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
