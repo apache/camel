@@ -255,6 +255,42 @@ a missing header or session id gave `-32601` and an unknown session `-32603`.
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
 
+=== camel-ai-observability - token counts are numbers and Micrometer Observations carry usage
+
+The GenAI spans recorded through `camel-opentelemetry2` now set `gen_ai.usage.input_tokens` and
+`gen_ai.usage.output_tokens` as numbers (long attributes) instead of strings, as the OpenTelemetry GenAI semantic
+conventions define them. A query or dashboard in the tracing backend that compared them as strings must compare them as
+numbers.
+
+When GenAI observations go through a Micrometer `ObservationRegistry` (for example on Spring Boot), the token usage, the
+response model and the finish reason are now added as high-cardinality key values, as Spring AI does. They reach the
+traces, so the LLM calls recorded by Camel show their token usage there. They are not metric tags: the
+`gen_ai.client.operation` and `gen_ai.client.token.usage` metrics are unchanged.
+
+=== camel-ai-observability - calls traced by Spring AI, quarkus-langchain4j or the OpenTelemetry agent are recorded once
+
+When a `spring-ai-chat` model is built with an `ObservationRegistry` (as Spring Boot does when observation support is
+enabled), or a `langchain4j-chat` / `langchain4j-agent` model traces its calls (quarkus-langchain4j with
+`quarkus-opentelemetry`, or the `langchain4j-observation` listener), or the OpenTelemetry Java agent traces the
+`openai-java` calls of `camel-openai`, Camel no longer records its own GenAI span and metrics for those model calls: the framework already records them, and both together counted every call and its tokens
+twice. Set `camel.aiObservability.deferToFramework=false` to keep the previous behavior.
+
+=== camel-ai-observability - GenAI spans go through camel-opentelemetry2 when it is in use
+
+When both `camel-opentelemetry2` and a Micrometer `ObservationRegistry` are present (for example on Spring Boot with the
+Actuator), the GenAI spans are now created through `camel-opentelemetry2`, in the same tree as the route spans, instead
+of as Micrometer Observations. The `gen_ai.client.operation` timer is still recorded through the `MeterRegistry`.
+Applications that trace through Micrometer only are not affected.
+
+=== camel-platform-http-starter - routes run with the context of the HTTP request
+
+On Spring Boot, a `platform-http` route runs on the application task executor. It now runs with the context captured on
+the request thread when `io.micrometer:context-propagation` is on the classpath (it comes with Micrometer Tracing), as
+`spring.task.execution.propagate-context=true` does for Spring's own executors. The route spans are therefore part of
+the trace of the HTTP request instead of a separate trace, and thread-local context registered with
+context-propagation (for example the Spring Security context, when its accessor is registered) is available in the
+route.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

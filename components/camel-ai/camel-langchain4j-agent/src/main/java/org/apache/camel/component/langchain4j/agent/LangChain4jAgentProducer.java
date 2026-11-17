@@ -52,8 +52,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiMessages;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
@@ -68,11 +70,13 @@ import org.apache.camel.component.langchain4j.agent.api.AbstractAgent;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
+import org.apache.camel.component.langchain4j.agent.api.AgentInvocationListeners;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.CompositeToolProvider;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
+import org.apache.camel.component.langchain4j.core.LangChain4jTracing;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -188,15 +192,23 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange, agent instanceof AgentWithMemory);
         Object chatModel = resolveChatModel(agent);
+        if (GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
+            processObservedRun(exchange, agent, aiAgentBody, toolProvider, chatModel);
+            return;
+        }
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.GENERATE_CONTENT)
                 .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), chatModel))
                 .requestModel(GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), chatModel))
                 .componentScheme("langchain4j-agent")
+                .tracedByFramework(LangChain4jTracing.isTracedByFramework(chatModel))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            Result<String> result = agent.chat(aiAgentBody, toolProvider);
+            Result<String> result;
+            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
+                result = agent.chat(aiAgentBody, toolProvider);
+            }
             exchange.getMessage().setBody(result.content());
             populateResultHeaders(result, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
@@ -211,6 +223,63 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             throw e;
         } finally {
             observation.close();
+        }
+    }
+
+    /**
+     * Runs the agent as an {@code invoke_agent} span, with one {@code chat} generation per model call and one
+     * {@code execute_tool} span per Camel route tool (observability level {@code detailed} and above).
+     */
+    private void processObservedRun(
+            Exchange exchange, Agent agent, AiAgentBody<?> aiAgentBody, ToolProvider toolProvider, Object chatModel) {
+        String system = GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), chatModel);
+        String requestModel = GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), chatModel);
+        GenAiObservation agentRun = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.INVOKE_AGENT)
+                .agentName(endpoint.getAgentId())
+                .system(system)
+                .requestModel(requestModel)
+                .conversationId(aiAgentBody.getMemoryId())
+                .componentScheme("langchain4j-agent")
+                .build());
+        GenAiAgentRunObserver observer
+                = new GenAiAgentRunObserver(exchange, agentRun, system, requestModel, aiAgentBody.getMemoryId());
+        // the model calls are left to the framework when it traces them (quarkus-langchain4j, langchain4j-observation)
+        boolean modelCallsTracedByFramework = GenAiObservability.deferToFramework(exchange.getContext())
+                && LangChain4jTracing.isTracedByFramework(chatModel);
+        agentRun.recordSystemInstructions(aiAgentBody::getSystemMessage);
+        agentRun.recordInputMessages(() -> new GenAiMessages().text(GenAiMessages.USER, aiAgentBody.getUserMessage()));
+        try {
+            Result<String> result;
+            try (GenAiObservation.Scope ignored = agentRun.makeCurrent()) {
+                result = AgentInvocationListeners.invoke(
+                        modelCallsTracedByFramework ? List.of() : observer.listeners(),
+                        () -> agent.chat(aiAgentBody, toolProvider));
+            }
+            exchange.getMessage().setBody(result.content());
+            populateResultHeaders(result, exchange, requestModel);
+            String finishReason = result.finishReason() != null ? result.finishReason().toString() : null;
+            if (observer.observedCalls() > 0 || modelCallsTracedByFramework) {
+                // the model calls carry the token usage; repeating it on the run would count it twice
+                agentRun.recordSuccess(GenAiUsage.of((Long) null, null, finishReason, null));
+            } else {
+                // a custom Agent: its model calls could not be observed, so record the run as one model call
+                agentRun.recordOperationName(GenAiOperationName.GENERATE_CONTENT);
+                agentRun.recordSuccess(GenAiUsage.of(
+                        result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
+                        result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
+                        finishReason, null));
+            }
+            agentRun.recordOutputMessages(() -> new GenAiMessages().text(GenAiMessages.ASSISTANT, result.content()));
+        } catch (RuntimeException e) {
+            applyModerationHeaders(exchange, e);
+            GenAiErrorSupport.apply(exchange, e);
+            observer.finish(e);
+            agentRun.recordError(e);
+            throw e;
+        } finally {
+            observer.finish(null);
+            agentRun.close();
         }
     }
 

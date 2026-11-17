@@ -57,7 +57,7 @@ class GenAiMicrometerObservationTest extends ExchangeTestSupport {
     }
 
     @Test
-    void shouldRecordLowCardinalityKeysWithoutHighCardinalityData() {
+    void shouldKeepUsageAndContentOutOfLowCardinalityKeys() {
         RecordingObservationHandler handler = bindObservationRegistry();
 
         observeSuccess();
@@ -75,7 +75,11 @@ class GenAiMicrometerObservationTest extends ExchangeTestSupport {
                         GenAiAttributes.RESPONSE_MODEL,
                         "prompt",
                         "completion");
-        assertThat(highCardinalityMap(handler.stopped.get(0))).isEmpty();
+        // like Spring AI, usage goes to the trace as high-cardinality values (never to metric tags); no content at
+        // the default level
+        assertThat(highCardinalityMap(handler.stopped.get(0)))
+                .containsKeys(GenAiAttributes.INPUT_TOKENS, GenAiAttributes.OUTPUT_TOKENS)
+                .doesNotContainKeys(GenAiAttributes.INPUT_MESSAGES, GenAiAttributes.OUTPUT_MESSAGES);
     }
 
     @Test
@@ -131,14 +135,34 @@ class GenAiMicrometerObservationTest extends ExchangeTestSupport {
     }
 
     @Test
-    void shouldPreferObservationOverTelemetrySpan() {
+    void shouldPreferTelemetrySpanWhenCamelTracingIsActive() {
+        // camel-opentelemetry2 keeps the GenAI span in the tree of the route spans; an ObservationRegistry alone (for
+        // example Spring Boot without camel-opentelemetry2) still gets the Observation
         RecordingObservationHandler handler = bindObservationRegistry();
         RecordingTracer tracer = bindRecordingTracer();
 
         observeSuccess();
 
-        assertThat(handler.stopped).hasSize(1);
-        assertThat(tracer.closedSpans()).isEmpty();
+        assertThat(tracer.closedSpans()).hasSize(1);
+        assertThat(handler.stopped).isEmpty();
+    }
+
+    @Test
+    void shouldNameAgentAndToolObservationsApartFromClientOperations() {
+        RecordingObservationHandler handler = bindObservationRegistry();
+        Exchange exchange = new DefaultExchange(context);
+
+        GenAiObservation agent = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.INVOKE_AGENT).agentName("order-agent").build());
+        GenAiObservation tool = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.EXECUTE_TOOL).toolName("getOrderStatus").build());
+        tool.close();
+        agent.close();
+
+        assertThat(handler.stopped).extracting(Observation.Context::getName)
+                .containsExactly(GenAiMetrics.TOOL_OPERATION, GenAiMetrics.AGENT_OPERATION);
+        assertThat(handler.stopped).extracting(Observation.Context::getContextualName)
+                .containsExactly("execute_tool getOrderStatus", "invoke_agent order-agent");
     }
 
     @Test

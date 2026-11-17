@@ -110,6 +110,7 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
                 .system("openai")
                 .requestModel(model)
                 .componentScheme("openai")
+                .tracedByFramework(OpenAIJavaAgentTracing.tracedByAgent(exchange.getContext()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         CreateEmbeddingResponse response;

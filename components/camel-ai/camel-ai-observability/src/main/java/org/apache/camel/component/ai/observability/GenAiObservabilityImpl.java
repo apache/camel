@@ -17,8 +17,11 @@
 package org.apache.camel.component.ai.observability;
 
 import java.lang.reflect.Constructor;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -39,6 +42,7 @@ public final class GenAiObservabilityImpl {
     private static final Logger LOG = LoggerFactory.getLogger(GenAiObservabilityImpl.class);
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
     private static final String CLIENT_SPAN_KIND = "CLIENT";
+    private static final String INTERNAL_SPAN_KIND = "INTERNAL";
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
     private static final String MICROMETER_SUPPORT_CLASS
             = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
@@ -106,13 +110,20 @@ public final class GenAiObservabilityImpl {
 
     private static final class DefaultGenAiObservation implements GenAiObservation {
 
+        private static final SpanStorageManagerExchange STORAGE = new SpanStorageManagerExchange();
+
         private final Exchange exchange;
-        private final GenAiObservationContext context;
         private final Tracer tracer;
         private final GenAiMetricsBackend metricsBackend;
         private final GenAiMicrometerObservationBackend.Handle micrometerObservation;
+        private final GenAiObservabilityLevel level;
+        private final int contentMaxLength;
         private final long startNanos;
+        // attributes decided while the call runs, applied when it ends
+        private final Map<String, Object> endAttributes = new LinkedHashMap<>();
+        private GenAiObservationContext context;
         private Span span;
+        private boolean pushed;
         private GenAiUsage usage;
         private Throwable error;
         private boolean closed;
@@ -125,24 +136,69 @@ public final class GenAiObservabilityImpl {
             this.context = context;
             this.tracer = tracer;
             this.metricsBackend = metricsBackend;
+            this.level = GenAiObservability.level(exchange.getContext());
+            this.contentMaxLength = GenAiObservability.contentMaxLength(exchange.getContext());
             this.startNanos = System.nanoTime();
-            this.micrometerObservation = observationBackend.isAvailable() ? observationBackend.start(context) : null;
+            DefaultGenAiObservation parentObservation
+                    = context.parent() instanceof DefaultGenAiObservation p ? p : null;
+            // a camel-telemetry tracer (camel-opentelemetry2) keeps the GenAI spans in the same tree as the route spans,
+            // so it is preferred; the Micrometer Observation path serves setups that trace through Micrometer only
+            boolean camelTracing = tracer != null && tracer.getSpanLifecycleManager() != null;
+            this.micrometerObservation = observationBackend.isAvailable() && !camelTracing
+                    ? observationBackend.start(context,
+                            parentObservation != null ? parentObservation.micrometerObservation : null)
+                    : null;
             if (this.micrometerObservation == null) {
-                startSpan();
+                startSpan(parentObservation);
             }
         }
 
-        private void startSpan() {
+        private boolean isAgentOrTool() {
+            return context.operationName() == GenAiOperationName.INVOKE_AGENT
+                    || context.operationName() == GenAiOperationName.EXECUTE_TOOL;
+        }
+
+        private void startSpan(DefaultGenAiObservation parentObservation) {
             if (tracer == null || tracer.getSpanLifecycleManager() == null) {
                 return;
             }
-            SpanStorageManagerExchange storage = new SpanStorageManagerExchange();
-            Span parent = storage.peek(exchange);
+            Span parent = parentObservation != null && parentObservation.span != null
+                    ? parentObservation.span : STORAGE.peek(exchange);
             SpanLifecycleManager lifecycleManager = tracer.getSpanLifecycleManager();
             var extractor = new CamelHeadersSpanContextPropagationExtractor(exchange.getIn().getHeaders());
-            span = lifecycleManager.create(context.spanName(), CLIENT_SPAN_KIND, parent, extractor);
+            span = lifecycleManager.create(context.spanName(), isAgentOrTool() ? INTERNAL_SPAN_KIND : CLIENT_SPAN_KIND,
+                    parent, extractor);
             lifecycleManager.activate(span);
-            applyContextAttributes(span, context, null, null);
+            startAttributes().forEach((key, value) -> setTag(span, key, value));
+            if (isAgentOrTool()) {
+                // spans started on this exchange (or on the copies made for tool calls) nest under the agent or tool
+                STORAGE.push(exchange, span);
+                pushed = true;
+            }
+        }
+
+        private Map<String, Object> startAttributes() {
+            Map<String, Object> attributes = new LinkedHashMap<>();
+            attributes.put(GenAiAttributes.OPERATION_NAME, context.operationName().value());
+            if (context.operationName() != GenAiOperationName.EXECUTE_TOOL) {
+                attributes.put(GenAiAttributes.SYSTEM, nullToUnknown(context.system()));
+                attributes.put(GenAiAttributes.REQUEST_MODEL, nullToUnknown(context.requestModel()));
+            }
+            if (ObjectHelper.isNotEmpty(context.componentScheme())) {
+                attributes.put(GenAiAttributes.CAMEL_COMPONENT, context.componentScheme());
+            }
+            if (level.includes(GenAiObservabilityLevel.DETAILED)) {
+                if (ObjectHelper.isNotEmpty(context.system()) && !"unknown".equals(context.system())) {
+                    attributes.put(GenAiAttributes.PROVIDER_NAME, context.system());
+                }
+                putIfNotEmpty(attributes, GenAiAttributes.AGENT_NAME, context.agentName());
+                putIfNotEmpty(attributes, GenAiAttributes.TOOL_NAME, context.toolName());
+                putIfNotEmpty(attributes, GenAiAttributes.TOOL_CALL_ID, context.toolCallId());
+                putIfNotEmpty(attributes, GenAiAttributes.CONVERSATION_ID, context.conversationId());
+                context.requestParameters()
+                        .forEach((name, value) -> attributes.put(GenAiAttributes.REQUEST_PREFIX + name, value));
+            }
+            return attributes;
         }
 
         @Override
@@ -156,30 +212,132 @@ public final class GenAiObservabilityImpl {
         }
 
         @Override
+        public void recordCachedInputTokens(Long cachedInputTokens) {
+            if (cachedInputTokens != null && level.includes(GenAiObservabilityLevel.DETAILED)) {
+                endAttributes.put(GenAiAttributes.CACHE_READ_INPUT_TOKENS, cachedInputTokens);
+            }
+        }
+
+        @Override
+        public void recordInputMessages(Supplier<GenAiMessages> messages) {
+            recordMessages(GenAiAttributes.INPUT_MESSAGES, messages);
+        }
+
+        @Override
+        public void recordOutputMessages(Supplier<GenAiMessages> messages) {
+            recordMessages(GenAiAttributes.OUTPUT_MESSAGES, messages);
+        }
+
+        @Override
+        public void recordSystemInstructions(Supplier<String> instructions) {
+            recordContent(GenAiAttributes.SYSTEM_INSTRUCTIONS,
+                    () -> {
+                        String text = instructions.get();
+                        return text != null ? GenAiMessages.systemInstructions(text, contentMaxLength) : null;
+                    });
+        }
+
+        @Override
+        public void recordToolArguments(Supplier<String> arguments) {
+            recordContent(GenAiAttributes.TOOL_CALL_ARGUMENTS,
+                    () -> GenAiMessages.truncate(arguments.get(), contentMaxLength));
+        }
+
+        @Override
+        public void recordToolResult(Supplier<String> result) {
+            recordContent(GenAiAttributes.TOOL_CALL_RESULT, () -> GenAiMessages.truncate(result.get(), contentMaxLength));
+        }
+
+        @Override
+        public Scope makeCurrent() {
+            // the Micrometer Observation path opens its scope when the observation starts
+            if (span == null || closed) {
+                return () -> {
+                    // noop
+                };
+            }
+            Span.Scope scope = span.openScope();
+            return scope::close;
+        }
+
+        @Override
+        public void recordOperationName(GenAiOperationName operationName) {
+            if (operationName != null && operationName != context.operationName()) {
+                context = context.toBuilder().operationName(operationName).build();
+                endAttributes.put(GenAiAttributes.OPERATION_NAME, operationName.value());
+            }
+        }
+
+        private void recordMessages(String key, Supplier<GenAiMessages> messages) {
+            recordContent(key, () -> {
+                GenAiMessages value = messages.get();
+                return value != null && !value.isEmpty() ? value.toJson(contentMaxLength) : null;
+            });
+        }
+
+        private void recordContent(String key, Supplier<String> content) {
+            if (closed || !level.includes(GenAiObservabilityLevel.FULL)) {
+                return;
+            }
+            try {
+                String value = content.get();
+                if (value != null) {
+                    endAttributes.put(key, value);
+                }
+            } catch (RuntimeException e) {
+                // content capture must never break the call being observed
+                LOG.debug("Unable to record GenAI content {}", key, e);
+            }
+        }
+
+        @Override
         public void close() {
             if (closed) {
                 return;
             }
             closed = true;
+            Map<String, Object> attributes = endAttributes();
             if (micrometerObservation != null) {
-                micrometerObservation.stop(error);
+                micrometerObservation.stop(attributes, error);
             } else {
-                closeSpan();
+                closeSpan(attributes);
             }
             recordMetrics();
         }
 
-        private void closeSpan() {
+        private Map<String, Object> endAttributes() {
+            Map<String, Object> attributes = new LinkedHashMap<>(endAttributes);
+            if (usage != null) {
+                if (error == null && ObjectHelper.isNotEmpty(usage.responseModel())) {
+                    attributes.put(GenAiAttributes.RESPONSE_MODEL, usage.responseModel());
+                }
+                if (usage.inputTokens() != null) {
+                    attributes.put(GenAiAttributes.INPUT_TOKENS, usage.inputTokens());
+                }
+                if (usage.outputTokens() != null) {
+                    attributes.put(GenAiAttributes.OUTPUT_TOKENS, usage.outputTokens());
+                }
+                if (usage.finishReason() != null) {
+                    attributes.put(GenAiAttributes.FINISH_REASONS, usage.finishReason());
+                }
+            }
+            if (error != null) {
+                attributes.put(GenAiAttributes.ERROR_TYPE, error.getClass().getSimpleName());
+            }
+            return attributes;
+        }
+
+        private void closeSpan(Map<String, Object> attributes) {
             if (span == null || tracer == null || tracer.getSpanLifecycleManager() == null) {
                 return;
             }
             SpanLifecycleManager lifecycleManager = tracer.getSpanLifecycleManager();
             if (error != null) {
                 span.setError(true);
-                span.setTag(GenAiAttributes.ERROR_TYPE, error.getClass().getSimpleName());
             }
-            if (usage != null) {
-                applyContextAttributes(span, context, usage, error == null ? usage.responseModel() : null);
+            attributes.forEach((key, value) -> setTag(span, key, value));
+            if (pushed) {
+                STORAGE.pull(exchange);
             }
             lifecycleManager.deactivate(span);
             lifecycleManager.close(span);
@@ -187,7 +345,8 @@ public final class GenAiObservabilityImpl {
         }
 
         private void recordMetrics() {
-            if (!metricsBackend.isAvailable()) {
+            // the GenAI client metrics measure model calls; agent runs and tool calls are only traced
+            if (!metricsBackend.isAvailable() || isAgentOrTool()) {
                 return;
             }
             if (micrometerObservation != null) {
@@ -197,27 +356,19 @@ public final class GenAiObservabilityImpl {
             }
         }
 
-        private static void applyContextAttributes(
-                Span span, GenAiObservationContext context, GenAiUsage usage, String responseModel) {
-            span.setTag(GenAiAttributes.OPERATION_NAME, context.operationName().value());
-            span.setTag(GenAiAttributes.SYSTEM, nullToUnknown(context.system()));
-            span.setTag(GenAiAttributes.REQUEST_MODEL, nullToUnknown(context.requestModel()));
-            if (ObjectHelper.isNotEmpty(context.componentScheme())) {
-                span.setTag(GenAiAttributes.CAMEL_COMPONENT, context.componentScheme());
+        private static void setTag(Span span, String key, Object value) {
+            if (value instanceof Long || value instanceof Integer || value instanceof Short) {
+                span.setTag(key, ((Number) value).longValue());
+            } else if (value instanceof Double || value instanceof Float) {
+                span.setTag(key, ((Number) value).doubleValue());
+            } else if (value != null) {
+                span.setTag(key, value.toString());
             }
-            if (responseModel != null && !responseModel.isBlank()) {
-                span.setTag(GenAiAttributes.RESPONSE_MODEL, responseModel);
-            }
-            if (usage != null) {
-                if (usage.inputTokens() != null) {
-                    span.setTag(GenAiAttributes.INPUT_TOKENS, usage.inputTokens().toString());
-                }
-                if (usage.outputTokens() != null) {
-                    span.setTag(GenAiAttributes.OUTPUT_TOKENS, usage.outputTokens().toString());
-                }
-                if (usage.finishReason() != null) {
-                    span.setTag(GenAiAttributes.FINISH_REASONS, usage.finishReason());
-                }
+        }
+
+        private static void putIfNotEmpty(Map<String, Object> attributes, String key, String value) {
+            if (ObjectHelper.isNotEmpty(value)) {
+                attributes.put(key, value);
             }
         }
 
@@ -267,7 +418,7 @@ public final class GenAiObservabilityImpl {
         }
 
         @Override
-        public Handle start(GenAiObservationContext context) {
+        public Handle start(GenAiObservationContext context, Handle parent) {
             return null;
         }
     }

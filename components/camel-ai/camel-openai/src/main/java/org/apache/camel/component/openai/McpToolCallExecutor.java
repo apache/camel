@@ -34,6 +34,11 @@ import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolResult;
 import org.apache.camel.component.ai.tool.AiToolSearch;
@@ -265,9 +270,55 @@ class McpToolCallExecutor extends ServiceSupport {
 
         LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
 
+        // tool calls may run in parallel on the calling exchange: observe each on its own copy so that the spans they
+        // push do not mix
+        GenAiObservation observation = GenAiObservability.isLevel(callingExchange.getContext(),
+                GenAiObservabilityLevel.DETAILED)
+                        ? GenAiObservability.start(callingExchange.copy(), GenAiObservationContext.builder()
+                                .operationName(GenAiOperationName.EXECUTE_TOOL)
+                                .toolName(toolName)
+                                .toolCallId(toolCall.asFunction().id())
+                                .conversationId(conversationId)
+                                .componentScheme("openai")
+                                .build())
+                        : null;
+        try {
+            ToolResult result = executeMcpTool(toolCall, toolState, config, mcpClient, toolName, argsJson, startNanos,
+                    observation);
+            if (observation != null) {
+                observation.recordToolArguments(() -> argsJson);
+                observation.recordToolResult(result::content);
+                if (!result.success()) {
+                    observation.recordError(new IllegalStateException(result.content()));
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            if (observation != null) {
+                observation.recordError(e);
+            }
+            throw e;
+        } finally {
+            if (observation != null) {
+                observation.close();
+            }
+        }
+    }
+
+    private ToolResult executeMcpTool(
+            ChatCompletionMessageToolCall toolCall, McpToolState toolState, OpenAIConfiguration config,
+            McpSyncClient mcpClient, String toolName, String argsJson, long startNanos, GenAiObservation observation)
+            throws Exception {
         try {
             Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-            McpSchema.CallToolResult toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
+            McpSchema.CallToolResult toolResult;
+            if (observation != null) {
+                try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
+                    toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
+                }
+            } else {
+                toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
+            }
 
             if (Boolean.TRUE.equals(toolResult.isError())) {
                 String content = "Error: " + extractTextContent(toolResult.content());

@@ -24,6 +24,16 @@ public final class GenAiMetrics {
     public static final String CLIENT_OPERATION = "gen_ai.client.operation";
     public static final String CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage";
 
+    /**
+     * Micrometer Observation name of an agent run. Agent runs and tool calls are not GenAI client operations, so they
+     * get their own names (as Spring AI names its tool calls {@code spring.ai.tool}) and stay out of the
+     * {@link #CLIENT_OPERATION} timer.
+     */
+    public static final String AGENT_OPERATION = "camel.ai.agent";
+
+    /** Micrometer Observation name of a tool call. */
+    public static final String TOOL_OPERATION = "camel.ai.tool";
+
     public static final String TAG_OPERATION_NAME = "gen_ai.operation.name";
     public static final String TAG_SYSTEM = "gen_ai.system";
     public static final String TAG_REQUEST_MODEL = "gen_ai.request.model";

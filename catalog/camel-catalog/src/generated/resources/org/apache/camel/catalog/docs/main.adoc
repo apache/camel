@@ -791,12 +791,15 @@ The camel.errorRegistry supports 10 options, which are listed below.
 
 
 === Camel GenAI Observability configurations
-The camel.aiObservability supports 1 options, which are listed below.
+The camel.aiObservability supports 4 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| `camel.aiObservability.contentMaxLength` | The maximum length of every text (message, tool argument or result) recorded at level full. Longer texts are cut. | 8192 | int
+| `camel.aiObservability.deferToFramework` | When the AI framework behind a component already traces its model calls and tool calls (Spring AI with an ObservationRegistry, quarkus-langchain4j, a LangChain4j model with an observation listener), Camel does not record its own span and metrics for them, so that they are counted once. | true | boolean
 | `camel.aiObservability.enabled` | Enables GenAI observability for Camel AI producers (OpenTelemetry spans and Micrometer metrics when backends are present). | true | boolean
+| `camel.aiObservability.level` | How much GenAI telemetry is recorded. basic records one span per LLM call with model, token usage and finish reason. detailed adds the structure of agent runs (an agent span with one span per LLM call and per tool call), request parameters, cached tokens and the conversation id. full adds prompts, completions and tool arguments and results, which may hold personal or confidential data. Metrics are not affected. | basic | String
 |===
 
 

@@ -30,6 +30,12 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
 
     @Metadata(defaultValue = "true")
     private boolean enabled = true;
+    @Metadata(defaultValue = "basic", enums = "basic,detailed,full")
+    private String level = "basic";
+    @Metadata(defaultValue = "8192")
+    private int contentMaxLength = 8192;
+    @Metadata(defaultValue = "true")
+    private boolean deferToFramework = true;
 
     public AiObservabilityConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -62,6 +68,73 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
      */
     public AiObservabilityConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    /**
+     * How much GenAI telemetry is recorded. basic records one span per LLM call with model, token usage and finish
+     * reason. detailed adds the structure of agent runs (an agent span with one span per LLM call and per tool call),
+     * request parameters, cached tokens and the conversation id. full adds prompts, completions and tool arguments and
+     * results, which may hold personal or confidential data. Metrics are not affected.
+     */
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    /**
+     * How much GenAI telemetry is recorded. basic records one span per LLM call with model, token usage and finish
+     * reason. detailed adds the structure of agent runs (an agent span with one span per LLM call and per tool call),
+     * request parameters, cached tokens and the conversation id. full adds prompts, completions and tool arguments and
+     * results, which may hold personal or confidential data. Metrics are not affected.
+     */
+    public AiObservabilityConfigurationProperties withLevel(String level) {
+        this.level = level;
+        return this;
+    }
+
+    public boolean isDeferToFramework() {
+        return deferToFramework;
+    }
+
+    /**
+     * When the AI framework behind a component already traces its model calls and tool calls (Spring AI with an
+     * ObservationRegistry, quarkus-langchain4j, a LangChain4j model with an observation listener), Camel does not
+     * record its own span and metrics for them, so that they are counted once.
+     */
+    public void setDeferToFramework(boolean deferToFramework) {
+        this.deferToFramework = deferToFramework;
+    }
+
+    /**
+     * When the AI framework behind a component already traces its model calls and tool calls (Spring AI with an
+     * ObservationRegistry, quarkus-langchain4j, a LangChain4j model with an observation listener), Camel does not
+     * record its own span and metrics for them, so that they are counted once.
+     */
+    public AiObservabilityConfigurationProperties withDeferToFramework(boolean deferToFramework) {
+        this.deferToFramework = deferToFramework;
+        return this;
+    }
+
+    public int getContentMaxLength() {
+        return contentMaxLength;
+    }
+
+    /**
+     * The maximum length of every text (message, tool argument or result) recorded at level full. Longer texts are cut.
+     */
+    public void setContentMaxLength(int contentMaxLength) {
+        this.contentMaxLength = contentMaxLength;
+    }
+
+    /**
+     * The maximum length of every text (message, tool argument or result) recorded at level full. Longer texts are cut.
+     */
+    public AiObservabilityConfigurationProperties withContentMaxLength(int contentMaxLength) {
+        this.contentMaxLength = contentMaxLength;
         return this;
     }
 }
