@@ -66,6 +66,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private FromDefinition input;
     private String routeConfigurationId;
     private transient Set<String> appliedRouteConfigurationIds;
+    private transient List<InterceptDefinition> contextScopedIntercepts;
     private String group;
     private String nodePrefixId;
     private String streamCache;
@@ -1009,6 +1010,23 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     public Set<String> getAppliedRouteConfigurationIds() {
         return appliedRouteConfigurationIds;
+    }
+
+    /**
+     * Returns the context-scoped (global) intercepts that were injected into this route when it was prepared. Unlike
+     * route-scoped intercepts, context-scoped intercepts are shared across all routes; this list is used by the YAML
+     * dumper to emit them as top-level entries, since {@code InterceptReifier} removes them from route outputs during
+     * {@code context.start()}.
+     */
+    public List<InterceptDefinition> getContextScopedIntercepts() {
+        return contextScopedIntercepts;
+    }
+
+    public void addContextScopedIntercept(InterceptDefinition intercept) {
+        if (contextScopedIntercepts == null) {
+            contextScopedIntercepts = new ArrayList<>();
+        }
+        contextScopedIntercepts.add(intercept);
     }
 
     public String getGroup() {

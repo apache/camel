@@ -29,17 +29,21 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
@@ -114,22 +118,50 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         // context scoped onExceptions (a top-level onException in the YAML DSL, an onException in the configure method
         // of a RouteBuilder, or one of a route configuration) are added to the outputs of each route when the routes
         // are prepared, but the YAML DSL does not allow them in the steps of a route
-        List<OnExceptionDefinition> contextScoped = new ArrayList<>();
+        List<OnExceptionDefinition> contextScopedOnExceptions = new ArrayList<>();
+        // context scoped intercepts (intercept, interceptFrom, interceptSendToEndpoint) and onCompletions are also
+        // added to the outputs of each route when the routes are prepared
+        List<InterceptDefinition> contextScopedIntercepts = new ArrayList<>();
+        List<InterceptFromDefinition> contextScopedInterceptFroms = new ArrayList<>();
+        List<InterceptSendToEndpointDefinition> contextScopedInterceptSendTos = new ArrayList<>();
+        List<OnCompletionDefinition> contextScopedOnCompletions = new ArrayList<>();
         if (definition instanceof RoutesDefinition routes) {
-            routes.getRoutes().forEach(route -> collectContextScopedOnExceptions(route, contextScoped));
+            routes.getRoutes().forEach(route -> {
+                collectContextScopedOnExceptions(route, contextScopedOnExceptions);
+                collectContextScopedIntercepts(route, contextScopedIntercepts);
+                collectContextScopedInterceptFroms(route, contextScopedInterceptFroms);
+                collectContextScopedInterceptSendTos(route, contextScopedInterceptSendTos);
+                collectContextScopedOnCompletions(route, contextScopedOnCompletions);
+            });
         } else if (definition instanceof RouteDefinition route) {
-            collectContextScopedOnExceptions(route, contextScoped);
+            collectContextScopedOnExceptions(route, contextScopedOnExceptions);
+            collectContextScopedIntercepts(route, contextScopedIntercepts);
+            collectContextScopedInterceptFroms(route, contextScopedInterceptFroms);
+            collectContextScopedInterceptSendTos(route, contextScopedInterceptSendTos);
+            collectContextScopedOnCompletions(route, contextScopedOnCompletions);
         }
         // the onExceptions of a route configuration are dumped with the route configuration, the others are dumped
         // once, as top-level onExceptions before the routes
-        List<OnExceptionDefinition> topLevel = new ArrayList<>(contextScoped);
-        topLevel.removeIf(oe -> isInRouteConfiguration(context, oe));
+        List<OnExceptionDefinition> topLevelOnExceptions = new ArrayList<>(contextScopedOnExceptions);
+        topLevelOnExceptions.removeIf(oe -> isInRouteConfiguration(context, oe));
+
+        // all context-scoped outputs to suppress from route steps
+        List<Object> allContextScoped = new ArrayList<>();
+        allContextScoped.addAll(contextScopedOnExceptions);
+        allContextScoped.addAll(contextScopedIntercepts);
+        allContextScoped.addAll(contextScopedInterceptFroms);
+        allContextScoped.addAll(contextScopedInterceptSendTos);
+        allContextScoped.addAll(contextScopedOnCompletions);
+
+        // a global (context-level) errorHandler is set on the CamelContext, not on individual routes; it must be
+        // emitted as a top-level entry and not duplicated inside the routes (route.getErrorHandler() is null for it)
+        ErrorHandlerDefinition contextErrorHandler = collectContextErrorHandler(context);
 
         YamlModelWriter writer = new YamlModelWriter() {
             @Override
             protected <T> void doWriteOutputs(JsonObject jo, List<T> list, Function<T, JsonObject> writer) {
-                if (list != null && !contextScoped.isEmpty()) {
-                    list = list.stream().filter(o -> !containsInstance(contextScoped, o)).toList();
+                if (list != null && !allContextScoped.isEmpty()) {
+                    list = list.stream().filter(o -> !containsInstance(allContextScoped, o)).toList();
                 }
                 super.doWriteOutputs(jo, list, writer);
             }
@@ -225,7 +257,23 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
         List<JsonObject> roots = new ArrayList<>();
         try {
-            for (OnExceptionDefinition oe : topLevel) {
+            // top-level errorHandler (global, context-level) before anything else
+            if (contextErrorHandler != null) {
+                roots.add(writer.writeErrorHandlerDefinition(contextErrorHandler));
+            }
+            for (InterceptDefinition intercept : contextScopedIntercepts) {
+                roots.add(writer.writeInterceptDefinition(intercept));
+            }
+            for (InterceptFromDefinition interceptFrom : contextScopedInterceptFroms) {
+                roots.add(writer.writeInterceptFromDefinition(interceptFrom));
+            }
+            for (InterceptSendToEndpointDefinition interceptSendTo : contextScopedInterceptSendTos) {
+                roots.add(writer.writeInterceptSendToEndpointDefinition(interceptSendTo));
+            }
+            for (OnCompletionDefinition onCompletion : contextScopedOnCompletions) {
+                roots.add(writer.writeOnCompletionDefinition(onCompletion));
+            }
+            for (OnExceptionDefinition oe : topLevelOnExceptions) {
                 roots.add(writer.writeOnExceptionDefinition(oe));
             }
             if (definition instanceof RoutesDefinition rd) {
@@ -326,6 +374,90 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 answer.add(oe);
             }
         }
+    }
+
+    /**
+     * Collects the context scoped intercepts that were added to the outputs of the route when it was prepared.
+     * Context-scoped intercepts are also tracked via {@link RouteDefinition#getContextScopedIntercepts()} because
+     * {@code InterceptReifier} removes plain {@code intercept} definitions from route outputs during context start.
+     */
+    private static void collectContextScopedIntercepts(RouteDefinition route, List<InterceptDefinition> answer) {
+        // primary source: persistent list on the route (survives InterceptReifier's removal from outputs)
+        List<InterceptDefinition> persistent = route.getContextScopedIntercepts();
+        if (persistent != null) {
+            for (InterceptDefinition intercept : persistent) {
+                if (!containsInstance(answer, intercept)) {
+                    answer.add(intercept);
+                }
+            }
+        }
+        // fallback: scan route outputs (works before context.start(), complementary to above)
+        for (var output : route.getOutputs()) {
+            // InterceptFromDefinition extends InterceptDefinition, so check for context-scoped and exclude subtypes
+            if (output instanceof InterceptDefinition intercept
+                    && !(output instanceof InterceptFromDefinition)
+                    && !intercept.isRouteScoped()
+                    && !containsInstance(answer, intercept)) {
+                answer.add(intercept);
+            }
+        }
+    }
+
+    /**
+     * Collects the context scoped interceptFroms that were added to the outputs of the route when it was prepared
+     */
+    private static void collectContextScopedInterceptFroms(RouteDefinition route, List<InterceptFromDefinition> answer) {
+        for (var output : route.getOutputs()) {
+            if (output instanceof InterceptFromDefinition interceptFrom
+                    && !interceptFrom.isRouteScoped()
+                    && !containsInstance(answer, interceptFrom)) {
+                answer.add(interceptFrom);
+            }
+        }
+    }
+
+    /**
+     * Collects the context scoped interceptSendToEndpoints that were added to the outputs of the route when it was
+     * prepared
+     */
+    private static void collectContextScopedInterceptSendTos(
+            RouteDefinition route, List<InterceptSendToEndpointDefinition> answer) {
+        for (var output : route.getOutputs()) {
+            if (output instanceof InterceptSendToEndpointDefinition interceptSendTo
+                    && !interceptSendTo.isRouteScoped()
+                    && !containsInstance(answer, interceptSendTo)) {
+                answer.add(interceptSendTo);
+            }
+        }
+    }
+
+    /**
+     * Collects the context scoped onCompletions that were added to the outputs of the route when it was prepared
+     */
+    private static void collectContextScopedOnCompletions(RouteDefinition route, List<OnCompletionDefinition> answer) {
+        for (var output : route.getOutputs()) {
+            if (output instanceof OnCompletionDefinition oc && !oc.isRouteScoped() && !containsInstance(answer, oc)) {
+                answer.add(oc);
+            }
+        }
+    }
+
+    /**
+     * Returns the context-level error handler as an {@link ErrorHandlerDefinition} if one was explicitly set on the
+     * CamelContext (not the built-in default), or {@code null} if no explicit global error handler was configured.
+     */
+    private static ErrorHandlerDefinition collectContextErrorHandler(CamelContext context) {
+        if (context == null) {
+            return null;
+        }
+        ErrorHandlerFactory factory = context.getCamelContextExtension().getErrorHandlerFactory();
+        if (factory == null) {
+            // no explicit global error handler was configured; nothing to emit
+            return null;
+        }
+        ErrorHandlerDefinition def = new ErrorHandlerDefinition();
+        def.setErrorHandlerType(factory);
+        return def;
     }
 
     private static boolean isInRouteConfiguration(CamelContext context, OnExceptionDefinition oe) {

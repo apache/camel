@@ -636,6 +636,11 @@ public final class RouteDefinitionHelper {
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
+                // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                intercept.setRouteScoped(false);
+                // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
+                // from route.getOutputs() during context.start(), so the YAML dumper needs another way to find it
+                route.addContextScopedIntercept(intercept);
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -700,6 +705,8 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
+                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                    intercept.setRouteScoped(false);
                     // init the parent
                     initParent(intercept);
                     // add as first output so intercept is handled before the
@@ -715,6 +722,8 @@ public final class RouteDefinitionHelper {
         if (interceptSendToEndpointDefinitions != null && !interceptSendToEndpointDefinitions.isEmpty()) {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
+                // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                intercept.setRouteScoped(false);
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -743,6 +752,8 @@ public final class RouteDefinitionHelper {
             completions = onCompletions;
             // init the parent
             for (OnCompletionDefinition global : completions) {
+                // mark as context-scoped so the YAML dumper can distinguish global from route-scoped onCompletions
+                global.setRouteScoped(false);
                 initParent(global);
             }
         }
