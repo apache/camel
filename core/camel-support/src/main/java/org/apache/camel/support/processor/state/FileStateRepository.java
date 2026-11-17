@@ -107,7 +107,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     }
 
     /**
-     * Creates a new file based repository using a {@link HashMap} as 1st level cache
+     * Creates a new file based repository using a {@link HashMap} as 1st level cache.
      *
      * @param fileName the file name of the file store (incl directory)
      */
