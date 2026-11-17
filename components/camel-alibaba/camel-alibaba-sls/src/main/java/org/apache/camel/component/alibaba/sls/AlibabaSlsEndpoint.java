@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Write logs, query logs and list Logstores on Alibaba Cloud Simple Log Service (SLS).
+ * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log Service (SLS).
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-sls", title = "Alibaba Simple Log Service (SLS)",
              syntax = "alibaba-sls:operation", category = { Category.CLOUD, Category.MONITORING },

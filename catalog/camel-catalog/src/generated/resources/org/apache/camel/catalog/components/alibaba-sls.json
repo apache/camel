@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "alibaba-sls",
     "title": "Alibaba Simple Log Service (SLS)",
-    "description": "Write logs, query logs and list Logstores on Alibaba Cloud Simple Log Service (SLS).",
+    "description": "Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log Service (SLS).",
     "deprecated": false,
     "firstVersion": "4.23.0",
     "label": "cloud,monitoring",

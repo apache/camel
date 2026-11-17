@@ -2,7 +2,7 @@
 :doctitle: Alibaba Simple Log Service (SLS)
 :shortname: alibaba-sls
 :artifactid: camel-alibaba-sls
-:description: Write logs, query logs and list Logstores on Alibaba Cloud Simple Log Service (SLS).
+:description: Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log Service (SLS).
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:

@@ -208,7 +208,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Write logs, query logs and list Logstores on Alibaba Cloud Simple Log
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
      * Service (SLS).
      * 
      * Category: cloud,monitoring
