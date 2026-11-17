@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +25,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.apache.camel.telemetry.SpanStorageManagerExchange;
@@ -36,9 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * GenAI observability implementation loaded reflectively from {@link GenAiObservability}.
+ * GenAI observability implementation, discovered by {@link GenAiObservability} through the factory finder.
  */
-public final class GenAiObservabilityImpl {
+@JdkService(GenAiObservationFactory.FACTORY)
+public final class GenAiObservabilityImpl implements GenAiObservationFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenAiObservabilityImpl.class);
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
@@ -47,24 +48,15 @@ public final class GenAiObservabilityImpl {
             = "org.apache.camel.micrometer.observability.MicrometerObservabilityTracer";
     private static final String INTERNAL_SPAN_KIND = "INTERNAL";
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
-    private static final String MICROMETER_SUPPORT_CLASS
-            = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
     private static final String OBSERVATION_REGISTRY_CLASS = "io.micrometer.observation.ObservationRegistry";
-    private static final String OBSERVATION_SUPPORT_CLASS
-            = "org.apache.camel.component.ai.observability.GenAiMicrometerObservationSupport";
     private static final GenAiMetricsBackend NO_METRICS_BACKEND = new NoMetricsBackend();
     private static final GenAiMicrometerObservationBackend NO_OBSERVATION_BACKEND = new NoObservationBackend();
     private static final ConcurrentMap<CamelContext, GenAiMetricsBackend> METRICS_BACKENDS = new ConcurrentHashMap<>();
     private static final ConcurrentMap<CamelContext, GenAiMicrometerObservationBackend> OBSERVATION_BACKENDS
             = new ConcurrentHashMap<>();
 
-    private GenAiObservabilityImpl() {
-    }
-
-    /**
-     * Starts a GenAI observation for a single LLM client call. Returns a no-op when no backend is available.
-     */
-    public static GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
+    @Override
+    public GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
         CamelContext camelContext = exchange.getContext();
         GenAiMicrometerObservationBackend observationBackend = resolveObservationBackend(camelContext);
         Tracer tracer = camelContext.hasService(Tracer.class);
@@ -94,14 +86,17 @@ public final class GenAiObservabilityImpl {
 
     private static GenAiMetricsBackend createMetricsBackend(CamelContext camelContext) {
         try {
+            // Micrometer is optional: GenAiMicrometerSupport only loads once the presence check passes
             Class.forName(METER_REGISTRY_CLASS);
-            Class<?> supportClass = Class.forName(MICROMETER_SUPPORT_CLASS);
-            Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
-            return (GenAiMetricsBackend) constructor.newInstance(camelContext);
-        } catch (ReflectiveOperationException | LinkageError e) {
+            return new GenAiMicrometerSupport(camelContext);
+        } catch (ClassNotFoundException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Micrometer metrics backend unavailable for GenAI observability", e);
             }
+            return NO_METRICS_BACKEND;
+        } catch (RuntimeException | LinkageError e) {
+            // such as a Micrometer version mismatch: only this backend is disabled, the others keep working
+            LOG.warn("Unable to create the Micrometer metrics backend for GenAI observability; it is disabled", e);
             return NO_METRICS_BACKEND;
         }
     }
@@ -112,14 +107,18 @@ public final class GenAiObservabilityImpl {
 
     private static GenAiMicrometerObservationBackend createObservationBackend(CamelContext camelContext) {
         try {
+            // Micrometer Observation is optional: GenAiMicrometerObservationSupport only loads once the presence
+            // check passes
             Class.forName(OBSERVATION_REGISTRY_CLASS);
-            Class<?> supportClass = Class.forName(OBSERVATION_SUPPORT_CLASS);
-            Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
-            return (GenAiMicrometerObservationBackend) constructor.newInstance(camelContext);
-        } catch (ReflectiveOperationException | LinkageError e) {
+            return new GenAiMicrometerObservationSupport(camelContext);
+        } catch (ClassNotFoundException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Micrometer Observation backend unavailable for GenAI observability", e);
             }
+            return NO_OBSERVATION_BACKEND;
+        } catch (RuntimeException | LinkageError e) {
+            // such as a Micrometer version mismatch: only this backend is disabled, the others keep working
+            LOG.warn("Unable to create the Micrometer Observation backend for GenAI observability; it is disabled", e);
             return NO_OBSERVATION_BACKEND;
         }
     }

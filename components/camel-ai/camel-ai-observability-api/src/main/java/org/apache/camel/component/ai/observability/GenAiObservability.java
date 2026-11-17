@@ -16,30 +16,29 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Entry point for GenAI observability in Camel AI producers.
  * <p/>
- * The concrete tracing and metrics implementation lives in {@code camel-ai-observability} and is loaded via reflection
- * when that module is on the classpath. Without it, calls return a no-op observation.
+ * The concrete tracing and metrics implementation lives in {@code camel-ai-observability}, which provides a
+ * {@link GenAiObservationFactory}. Without it, calls return a no-op observation.
  */
 public final class GenAiObservability {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenAiObservability.class);
-    private static final String IMPL_CLASS = "org.apache.camel.component.ai.observability.GenAiObservabilityImpl";
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
-    private static final ImplBridge UNAVAILABLE_BRIDGE = new ImplBridge(null);
-    private static final ConcurrentMap<CamelContext, ImplBridge> BRIDGES = new ConcurrentHashMap<>();
+    private static final GenAiObservationFactory NOOP_FACTORY = (exchange, context) -> NOOP;
+    private static final Object FACTORY_LOCK = new Object();
     private static final Set<String> INVALID_LEVEL_REPORTED = ConcurrentHashMap.newKeySet();
 
     private GenAiObservability() {
@@ -147,46 +146,52 @@ public final class GenAiObservability {
             // the AI framework records this call itself; a second span would count it twice
             return NOOP;
         }
-        CamelContext camelContext = exchange.getContext();
-        ImplBridge bridge = BRIDGES.computeIfAbsent(camelContext, GenAiObservability::resolveBridge);
-        if (bridge.startMethod == null) {
-            return NOOP;
-        }
+        GenAiObservationFactory factory = factory(exchange.getContext());
         try {
-            return (GenAiObservation) bridge.startMethod.invoke(null, exchange, context);
-        } catch (ReflectiveOperationException | LinkageError e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to start GenAI observation via {}", IMPL_CLASS, e);
-            }
+            return factory.start(exchange, context);
+        } catch (RuntimeException | LinkageError e) {
+            // observability must never fail the LLM call, not even with a Micrometer or OpenTelemetry version mismatch
+            LOG.debug("Unable to start GenAI observation via {}", factory, e);
             return NOOP;
         }
     }
 
-    private static ImplBridge resolveBridge(CamelContext camelContext) {
-        Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
-        if (implClass == null) {
+    private static GenAiObservationFactory factory(CamelContext camelContext) {
+        // kept as a context plugin so it goes away with its context
+        ExtendedCamelContext extension = camelContext.getCamelContextExtension();
+        GenAiObservationFactory factory = extension.getContextPlugin(GenAiObservationFactory.class);
+        if (factory == null) {
+            synchronized (FACTORY_LOCK) {
+                factory = extension.getContextPlugin(GenAiObservationFactory.class);
+                if (factory == null) {
+                    factory = resolveFactory(camelContext);
+                    extension.addContextPlugin(GenAiObservationFactory.class, factory);
+                }
+            }
+        }
+        return factory;
+    }
+
+    private static GenAiObservationFactory resolveFactory(CamelContext camelContext) {
+        GenAiObservationFactory factory;
+        try {
+            factory = camelContext.getRegistry().findSingleByType(GenAiObservationFactory.class);
+            if (factory == null) {
+                factory = ResolverHelper.resolveService(camelContext, GenAiObservationFactory.FACTORY,
+                        GenAiObservationFactory.class).orElse(null);
+            }
+        } catch (RuntimeException | LinkageError e) {
+            // a broken classpath must not fail the LLM call; the no-op factory is kept so this is reported once
+            LOG.warn("Unable to load the GenAI observability implementation; spans and metrics will not be emitted", e);
+            return NOOP_FACTORY;
+        }
+        if (factory == null) {
             LOG.info(
                     "GenAI observability is enabled but camel-ai-observability is not on the classpath; "
                      + "spans and metrics will not be emitted");
-            return UNAVAILABLE_BRIDGE;
+            return NOOP_FACTORY;
         }
-        try {
-            Method startMethod = implClass.getMethod("start", Exchange.class, GenAiObservationContext.class);
-            return new ImplBridge(startMethod);
-        } catch (ReflectiveOperationException | LinkageError e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to resolve GenAI observability bridge from {}", IMPL_CLASS, e);
-            }
-            return UNAVAILABLE_BRIDGE;
-        }
-    }
-
-    private static final class ImplBridge {
-        private final Method startMethod;
-
-        private ImplBridge(Method startMethod) {
-            this.startMethod = startMethod;
-        }
+        return factory;
     }
 
     private static final class NoopGenAiObservation implements GenAiObservation {
