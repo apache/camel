@@ -21,6 +21,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -76,6 +77,31 @@ public class MainTypeConverterStatisticsEnabledTest {
             assertEquals(before + 1, statistics.getAttemptCounter());
         } finally {
             main.stop();
+        }
+    }
+
+    @Test
+    public void testSystemPropertyFalseOverridesInitialPropertyTrue() throws Exception {
+        // same priority as the auto configuration: a JVM system property wins over an initial property
+        System.setProperty("camel.main.typeConverterStatisticsEnabled", "false");
+        try {
+            Main main = new Main();
+            main.addInitialProperty("camel.main.typeConverterStatisticsEnabled", "true");
+            main.start();
+            try {
+                CamelContext context = main.getCamelContext();
+                TypeConverterRegistry.Statistics statistics = context.getTypeConverterRegistry().getStatistics();
+                long before = statistics.getAttemptCounter();
+
+                assertEquals(123, context.getTypeConverter().convertTo(int.class, "123"));
+
+                assertFalse(context.isTypeConverterStatisticsEnabled());
+                assertEquals(before, statistics.getAttemptCounter());
+            } finally {
+                main.stop();
+            }
+        } finally {
+            System.clearProperty("camel.main.typeConverterStatisticsEnabled");
         }
     }
 
