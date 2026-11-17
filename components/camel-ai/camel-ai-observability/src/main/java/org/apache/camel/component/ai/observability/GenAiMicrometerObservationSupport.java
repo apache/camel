@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.micrometer.observation.Observation;
@@ -52,11 +53,14 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
     }
 
     @Override
-    public Handle start(GenAiObservationContext context) {
+    public Handle start(GenAiObservationContext context, Handle parent) {
         if (observationRegistry == null) {
             return null;
         }
-        Observation observation = Observation.createNotStarted(GenAiMetrics.CLIENT_OPERATION, observationRegistry);
+        Observation observation = Observation.createNotStarted(observationName(context), observationRegistry);
+        if (parent instanceof ObservationHandle parentHandle) {
+            observation.parentObservation(parentHandle.observation);
+        }
         observation.contextualName(context.spanName());
         observation.lowCardinalityKeyValue(GenAiAttributes.OPERATION_NAME, context.operationName().value());
         observation.lowCardinalityKeyValue(GenAiAttributes.SYSTEM, nullToUnknown(context.system()));
@@ -80,6 +84,14 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
             observation.stop();
             throw e;
         }
+    }
+
+    private static String observationName(GenAiObservationContext context) {
+        return switch (context.operationName()) {
+            case INVOKE_AGENT -> GenAiMetrics.AGENT_OPERATION;
+            case EXECUTE_TOOL -> GenAiMetrics.TOOL_OPERATION;
+            default -> GenAiMetrics.CLIENT_OPERATION;
+        };
     }
 
     private static boolean isUsable(ObservationRegistry registry) {
@@ -128,8 +140,13 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         }
 
         @Override
-        public void stop(Throwable error) {
+        public void stop(Map<String, Object> attributes, Throwable error) {
             try {
+                attributes.forEach((key, value) -> {
+                    if (value != null) {
+                        observation.highCardinalityKeyValue(key, value.toString());
+                    }
+                });
                 if (error != null) {
                     observation.lowCardinalityKeyValue(GenAiAttributes.ERROR_TYPE, error.getClass().getSimpleName());
                     observation.error(error);

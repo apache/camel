@@ -2780,6 +2780,12 @@ public abstract class BaseMainSupport extends BaseService {
             // make the setting available to the components when they are in use (at runtime from any thread)
             camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.enabled",
                     Boolean.toString(config.isEnabled()));
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.level",
+                    config.getLevel());
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.contentMaxLength",
+                    Integer.toString(config.getContentMaxLength()));
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.deferToFramework",
+                    Boolean.toString(config.isDeferToFramework()));
         }
     }
 

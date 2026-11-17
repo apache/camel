@@ -40,6 +40,7 @@ import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
+import org.apache.camel.component.langchain4j.core.LangChain4jTracing;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -152,7 +153,10 @@ public class LangChain4jChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            ChatResponse chatResponse = this.chatModel.chat(augmentedChatMessage);
+            ChatResponse chatResponse;
+            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
+                chatResponse = this.chatModel.chat(augmentedChatMessage);
+            }
             populateTokenUsageHeaders(chatResponse, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
@@ -215,7 +219,10 @@ public class LangChain4jChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            ChatResponse chatResponse = this.chatModel.chat(chatMessages);
+            ChatResponse chatResponse;
+            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
+                chatResponse = this.chatModel.chat(chatMessages);
+            }
             populateTokenUsageHeaders(chatResponse, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
@@ -242,6 +249,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
                 .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), chatModel))
                 .requestModel(requestModel)
                 .componentScheme("langchain4j-chat")
+                .tracedByFramework(LangChain4jTracing.isTracedByFramework(chatModel))
                 .build();
     }
 

@@ -23,7 +23,10 @@ public class AiObservabilityConfigurationPropertiesConfigurer extends org.apache
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ContentMaxLength", int.class);
+        map.put("DeferToFramework", boolean.class);
         map.put("Enabled", boolean.class);
+        map.put("Level", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -31,7 +34,12 @@ public class AiObservabilityConfigurationPropertiesConfigurer extends org.apache
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.AiObservabilityConfigurationProperties target = (org.apache.camel.main.AiObservabilityConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "contentmaxlength":
+        case "contentMaxLength": target.setContentMaxLength(property(camelContext, int.class, value)); return true;
+        case "defertoframework":
+        case "deferToFramework": target.setDeferToFramework(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "level": target.setLevel(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -44,7 +52,12 @@ public class AiObservabilityConfigurationPropertiesConfigurer extends org.apache
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "contentmaxlength":
+        case "contentMaxLength": return int.class;
+        case "defertoframework":
+        case "deferToFramework": return boolean.class;
         case "enabled": return boolean.class;
+        case "level": return java.lang.String.class;
         default: return null;
         }
     }
@@ -53,7 +66,12 @@ public class AiObservabilityConfigurationPropertiesConfigurer extends org.apache
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.AiObservabilityConfigurationProperties target = (org.apache.camel.main.AiObservabilityConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "contentmaxlength":
+        case "contentMaxLength": return target.getContentMaxLength();
+        case "defertoframework":
+        case "deferToFramework": return target.isDeferToFramework();
         case "enabled": return target.isEnabled();
+        case "level": return target.getLevel();
         default: return null;
         }
     }
