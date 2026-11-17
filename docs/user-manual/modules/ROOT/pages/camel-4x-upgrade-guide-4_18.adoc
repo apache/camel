@@ -985,6 +985,17 @@ The Camel Main auto-configuration summary shows the value of these options as `x
 These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
 `serviceAccountKey`, are not affected.
 
+=== camel-quartz - a scheduler from the registry gets the CamelContext when the component starts
+
+With a Quartz `Scheduler` set on the quartz component or autowired from the registry, such as the scheduler of
+`spring-boot-starter-quartz`, the component now stores the CamelContext in the scheduler context when it starts, before
+the routes add their jobs. Before, it did so only once the CamelContext was fully started, so a trigger that fired in
+between on a scheduler that was already running failed with `No CamelContext could be found with name`. Such a job now
+runs its route if the route has started. The component now logs a WARN when this scheduler is already running when it
+starts, as a trigger that fires before its route has started is still lost (with Spring Boot, set
+`spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
+`propertiesFile` are set, as they are not used with such a scheduler.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
