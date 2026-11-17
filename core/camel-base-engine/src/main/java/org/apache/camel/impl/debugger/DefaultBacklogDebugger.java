@@ -123,6 +123,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         public boolean awaitExchange(long timeout) throws InterruptedException {
             return latch.await(timeout, TimeUnit.SECONDS);
         }
+
+        /**
+         * Waits (for another exchange) until this exchange continues, or the given time in nanoseconds elapsed.
+         */
+        public void awaitContinue(long nanos) throws InterruptedException {
+            latch.await(nanos, TimeUnit.NANOSECONDS);
+        }
     }
 
     /**
@@ -1078,34 +1085,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                             toNodeShortName, toNodeLabel, level,
                             exchangeId, correlationExchangeId, breadcrumbId,
                             false, false, data);
-            suspendedBreakpointMessages.put(toNode, msg);
-
-            // suspend at this breakpoint
-            SuspendedExchange se = new SuspendedExchange(exchange);
-            suspendedBreakpoints.put(toNode, se);
-
-            // now wait until we should continue
-            logger.log(
-                    String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
-            try {
-                boolean hit = se.awaitExchange(fallbackTimeout);
-                if (!hit) {
-                    // remove breakpoint as it timed out (only the ones of this exchange)
-                    removeMessageOf(toNode, exchange.getExchangeId());
-                    suspendedBreakpoints.remove(toNode, se);
-                    logger.log(
-                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
-                                    exchange.getExchangeId()),
-                            LoggingLevel.WARN);
-                } else {
-                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
-                }
-            } catch (InterruptedException e) {
-                // ignore
-                Thread.currentThread().interrupt();
-            }
+            suspendStep(toNode, exchange, msg);
         }
 
         @Override
@@ -1154,6 +1134,85 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
         }
 
+        /**
+         * Suspends the single-stepped exchange at the node, and waits until it should continue. Another exchange may be
+         * suspended at the node by a node breakpoint: the step then waits until that exchange is no longer suspended
+         * there, as the debugger keeps one suspended exchange per node, and must not replace the other exchange.
+         */
+        private void suspendStep(String toNode, Exchange exchange, BacklogTracerEventMessage msg) {
+            String exchangeId = exchange.getExchangeId();
+            SuspendedExchange se = new SuspendedExchange(exchange);
+            try {
+                if (!awaitNode(toNode, se)) {
+                    return;
+                }
+                // publish the message only while this exchange is the one suspended at the node
+                suspendedBreakpointMessages.compute(toNode, (k, m) -> suspendedBreakpoints.get(k) == se ? msg : m);
+
+                // now wait until we should continue
+                logger.log(
+                        String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
+                                exchangeId));
+                boolean hit = se.awaitExchange(fallbackTimeout);
+                if (!hit) {
+                    // remove breakpoint as it timed out (only the ones of this exchange)
+                    removeMessageOf(toNode, exchangeId);
+                    suspendedBreakpoints.remove(toNode, se);
+                    logger.log(
+                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
+                                    exchangeId),
+                            LoggingLevel.WARN);
+                } else {
+                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
+                            exchangeId));
+                }
+            } catch (InterruptedException e) {
+                // ignore
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        /**
+         * Registers the exchange as the one suspended at the node, after waiting (up to the fallback timeout) until no
+         * other exchange is suspended there.
+         *
+         * @return {@code false} if the exchange should continue without suspending at the node: the wait timed out, or
+         *         the exchange is no longer single-stepped (it was resumed while it waited, or the debugger was
+         *         disabled)
+         */
+        private boolean awaitNode(String toNode, SuspendedExchange se) throws InterruptedException {
+            String exchangeId = se.getExchange().getExchangeId();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(fallbackTimeout);
+            boolean waited = false;
+            SuspendedExchange other;
+            while ((other = suspendedBreakpoints.putIfAbsent(toNode, se)) != null) {
+                long left = deadline - System.nanoTime();
+                if (left <= 0) {
+                    logger.log(
+                            String.format("StepBreakpoint at node %s timed out waiting for exchangeId: %s to continue,"
+                                          + " and is continued exchangeId: %s",
+                                    toNode, other.getExchange().getExchangeId(), exchangeId),
+                            LoggingLevel.WARN);
+                    return false;
+                }
+                if (!waited) {
+                    waited = true;
+                    logger.log(String.format("StepBreakpoint at node %s is waiting for exchangeId: %s suspended there,"
+                                             + " before it suspends exchangeId: %s",
+                            toNode, other.getExchange().getExchangeId(), exchangeId));
+                }
+                // until the other exchange continues, or checks again soon, as its breakpoint can time out and be
+                // removed without a resume
+                other.awaitContinue(Math.min(left, TimeUnit.MILLISECONDS.toNanos(100)));
+            }
+            if (waited && (!isEnabled() || !singleStepExchangeId.contains(exchangeId))) {
+                // the single step of this exchange ended while it waited (resumed, or the debugger was disabled)
+                suspendedBreakpoints.remove(toNode, se);
+                return false;
+            }
+            return true;
+        }
+
         @SuppressWarnings("unchecked")
         private NamedRoute getOriginalRoute(Exchange exchange) {
             List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
@@ -1197,34 +1256,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 msg.setException(cause);
             }
 
-            suspendedBreakpointMessages.put(toNode, msg);
-
-            // suspend at this breakpoint
-            SuspendedExchange se = new SuspendedExchange(exchange);
-            suspendedBreakpoints.put(toNode, se);
-
-            // now wait until we should continue
-            logger.log(
-                    String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
-            try {
-                boolean hit = se.awaitExchange(fallbackTimeout);
-                if (!hit) {
-                    // remove breakpoint as it timed out (only the ones of this exchange)
-                    removeMessageOf(toNode, exchange.getExchangeId());
-                    suspendedBreakpoints.remove(toNode, se);
-                    logger.log(
-                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
-                                    exchange.getExchangeId()),
-                            LoggingLevel.WARN);
-                } else {
-                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
-                }
-            } catch (InterruptedException e) {
-                // ignore
-                Thread.currentThread().interrupt();
-            }
+            suspendStep(toNode, exchange, msg);
         }
     }
 
