@@ -425,7 +425,9 @@ than 22, the entry starts with `[host]:port`.
 
 |`Auth fail for methods '...'`, `Auth fail for user '...': the server did not accept the password`
 |The server refused the credentials: check the username, password or key. With an RSA key and a server that only
-accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`.
+accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`. With `preferredAuthentications`, only
+the methods listed there are tried: the names are not case-sensitive, and a name that JSch does not know (it knows
+`password`, `keyboard-interactive`, `publickey` and `gssapi-with-mic`) is skipped, with a WARN when the endpoint starts.
 
 |`invalid privatekey`
 |JSch cannot read the key, for example because its line breaks were lost. See <<_providing_the_private_key,Providing the private key>>.
@@ -445,6 +447,19 @@ the password is right. A rejected login (`Auth fail ...` or `Auth cancel ...`) d
 `maximumReconnectAttempts`, which applies to the other connection failures. The consumer tries again on its next
 poll, so a wrong password is sent once per poll (and once more when the consumer starts with `autoCreate=true`), and
 the producer tries again on its next message.
+
+=== Operation errors
+
+When the server refuses a request, such as a change of directory, a listing, an upload or a download, the exception is
+a `GenericFileOperationFailedException` whose message ends with the status of the server, for example
+`Cannot list directory: inbox: SSH_FX_NO_SUCH_FILE: No such file`. As with the reply of an FTP server, `getCode()`
+returns the SFTP status code, such as `2` for `SSH_FX_NO_SUCH_FILE` or `3` for `SSH_FX_PERMISSION_DENIED`, and
+`getReason()` its text. JSch reports an I/O failure as `SSH_FX_FAILURE` (`4`), with that failure as the cause.
+
+When the change to a relative directory fails, the message also gives the current directory, which the path starts
+from, such as `Cannot change directory to: inbox: SSH_FX_NO_SUCH_FILE: No such file. The path is relative to the
+current directory: /home/admin`. The directory of the endpoint starts from the login directory, see
+<<_uri_format_and_paths,URI format and paths>>.
 
 === Symbolic links and the starting directory
 

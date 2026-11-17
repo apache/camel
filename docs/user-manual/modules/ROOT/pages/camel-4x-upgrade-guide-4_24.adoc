@@ -558,6 +558,21 @@ starting directory (`autoCreate=true`), it now logs
 `Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.` instead.
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - sftp failures give the status of the server, and preferredAuthentications is not case-sensitive
+
+When the server refuses a request, the `GenericFileOperationFailedException` of the `sftp` component now gives the
+status of the server after its message, such as `Cannot list directory: inbox: SSH_FX_NO_SUCH_FILE: No such file`, and
+`getCode()` and `getReason()` return the SFTP status code and its text, as for `ftp`. Before, the status was only in the
+cause, and `getCode()` was `0`. The messages start as before, except when the attributes of a file cannot be read: the
+message starts with `Cannot get the attributes of: <name>` (or `Cannot list directory: <directory>`) instead of the
+status. A failed change to a relative directory, with `sftp`, `ftp` and `ftps`, also gives the current directory, such
+as `. The path is relative to the current directory: /home/admin`. Update code that compares the whole message.
+
+The `preferredAuthentications` option of `sftp` now takes the method names in any case, and with spaces around them.
+Before, JSch skipped a name such as `Password`, as it compares the names with the lower-case names of the server, and the
+login failed with `Auth fail for methods '...'`. A name that JSch does not know is logged at WARN when the endpoint
+starts. See the xref:components::sftp-component.adoc[SFTP component].
+
 === camel-smb - a starting directory that cannot be created
 
 When the server refuses to create the starting directory of the `smb` consumer as the route starts (`autoCreate=true`),
