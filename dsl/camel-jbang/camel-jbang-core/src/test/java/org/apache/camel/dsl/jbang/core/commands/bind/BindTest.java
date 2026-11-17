@@ -220,7 +220,7 @@ class BindTest extends CamelCommandBaseTestSupport {
                       apiVersion: camel.apache.org/v1
                       name: set-body-action
                     properties:
-                      value: "value"
+                      value: "Order ${header.orderId} received"
                   - ref:
                       kind: Kamelet
                       apiVersion: camel.apache.org/v1
@@ -268,7 +268,7 @@ class BindTest extends CamelCommandBaseTestSupport {
                       apiVersion: camel.apache.org/v1
                       name: set-body-action
                     properties:
-                      value: "value"
+                      value: "Order ${header.orderId} received"
                   - uri: log:info
                     #properties:
                       #key: "value"
@@ -581,6 +581,34 @@ class BindTest extends CamelCommandBaseTestSupport {
                     uri: log:info
                     properties:
                       showHeaders: true
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindUriToUriWithPropertyHoldingAnExpression() throws Exception {
+        Bind command = createCommand("timer:tick", "log:info");
+
+        command.properties = new String[] {
+                "source.message=Order ${header.orderId} received",
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    uri: timer:tick
+                    properties:
+                      message: Order ${header.orderId} received
+                  sink:
+                    uri: log:info
+                    #properties:
+                      #key: "value"
                 """.trim(), output);
     }
 

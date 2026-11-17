@@ -104,11 +104,11 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
             namespaceContext = "      namespace: " + namespace + "\n";
         }
 
-        context = context.replaceFirst("\\{\\{ \\.ApiVersion }}", apiVersionValue);
-        context = context.replaceFirst("\\{\\{ \\.Kind }}", kindValue);
-        context = context.replaceFirst("\\{\\{ \\.Name }}", objectName);
-        context = context.replaceFirst("\\{\\{ \\.Namespace }}\n", namespaceContext);
-        context = context.replaceFirst("\\{\\{ \\.EndpointProperties }}\n",
+        context = context.replace("{{ .ApiVersion }}", apiVersionValue);
+        context = context.replace("{{ .Kind }}", kindValue);
+        context = context.replace("{{ .Name }}", objectName);
+        context = context.replace("{{ .Namespace }}\n", namespaceContext);
+        context = context.replace("{{ .EndpointProperties }}\n",
                 templateProvider.asEndpointProperties(endpointUriProperties));
 
         return context;
