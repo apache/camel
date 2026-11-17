@@ -41,20 +41,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DumpModelRemoveHeadersExcludePatternsTest extends ContextTestSupport {
 
     private static final Map<String, Object> HEADERS = Map.of("header1", "a", "header2", "b", "CamelFoo", "c",
-            "BeerHeineken", "d", "BeerCarlsberg", "e");
+            "BeerHeineken", "d", "BeerCarlsberg", "e", "org.acme.id", "f");
 
     @Test
     public void testDumpModelAsXml() throws Exception {
         assertThat(xml("one")).contains("pattern=\"*\" excludePattern=\"keep\"/>");
         assertThat(xml("headers"))
-                .contains("pattern=\"*\" excludePattern=\"header1|Camel.*|(?:Beer(Heineken|Tuborg))\"/>");
+                .contains("pattern=\"*\" excludePattern=\"header1|Camel.*|(?:Camel*)|(?:Beer(Heineken|Tuborg))"
+                          + "|\\Qorg.acme\\E.*|(?:org.acme*)\"/>");
         assertThat(xml("properties")).contains("pattern=\"p*\" excludePattern=\"p1|p3\"/>");
     }
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
         assertThat(yaml("one")).contains("excludePattern: keep");
-        assertThat(yaml("headers")).contains("excludePattern: header1|Camel.*|(?:Beer(Heineken|Tuborg))");
+        assertThat(yaml("headers")).contains(
+                "excludePattern: header1|Camel.*|(?:Camel*)|(?:Beer(Heineken|Tuborg))|\\Qorg.acme\\E.*|(?:org.acme*)");
         assertThat(yaml("properties")).contains("excludePattern: p1|p3");
     }
 
@@ -85,7 +87,7 @@ public class DumpModelRemoveHeadersExcludePatternsTest extends ContextTestSuppor
         MockEndpoint.assertIsSatisfied(camelContext);
 
         assertThat(headers.getReceivedExchanges().get(0).getMessage().getHeaders())
-                .containsOnlyKeys("header1", "CamelFoo", "BeerHeineken");
+                .containsOnlyKeys("header1", "CamelFoo", "BeerHeineken", "org.acme.id");
         Exchange exchange = properties.getReceivedExchanges().get(0);
         assertThat(exchange.getProperties()).containsKeys("p1", "p3").doesNotContainKey("p2");
     }
@@ -108,7 +110,7 @@ public class DumpModelRemoveHeadersExcludePatternsTest extends ContextTestSuppor
                         .to("mock:one");
 
                 from("direct:headers").routeId("headers")
-                        .removeHeaders("*", "header1", "Camel*", "Beer(Heineken|Tuborg)")
+                        .removeHeaders("*", "header1", "Camel*", "Beer(Heineken|Tuborg)", "org.acme*")
                         .to("mock:headers");
 
                 from("direct:properties").routeId("properties")

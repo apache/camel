@@ -154,16 +154,23 @@ class PatternHelperTest {
         assertEquals("Camel*", PatternHelper.combinePatterns("Camel*"));
         assertEquals("Camel*", PatternHelper.combinePatterns(null, "Camel*"));
         assertEquals("header1|header3", PatternHelper.combinePatterns("header1", "header3"));
-        assertEquals("header1|Camel.*|(?:Beer(Heineken|Tuborg))|\\Q*File\\E.*|\\Qa(\\E",
+        assertEquals("header1|Camel.*|(?:Camel*)|(?:Beer(Heineken|Tuborg))|\\Q*File\\E.*|\\Qa(\\E",
                 PatternHelper.combinePatterns("header1", "Camel*", "Beer(Heineken|Tuborg)", "*File*", "a("));
+        // a wildcard with regular expression characters keeps its wildcard match too, unless it ends with .*
+        assertEquals("\\Qmy.app\\E.*|(?:my.app*)|\\QBeer(X)\\E.*|(?:Beer(X)*)|(?:kafka.*)|\\Q{{keep}}\\E",
+                PatternHelper.combinePatterns("my.app*", "Beer(X)*", "kafka.*", "{{keep}}"));
     }
 
     @Test
     void testCombinePatternsMatchesAsAnyOfThePatterns() {
-        String[] patterns = { "header1", "Camel*", "Beer(Heineken|Tuborg)", ".*Id", "*File*", "a(", "x-y", "*" };
+        String[] patterns = {
+                "header1", "Camel*", "Beer(Heineken|Tuborg)", ".*Id", "my.app*", "Beer(X)*", "kafka.*", "*File*", "a(",
+                "x-y", "*" };
         String[] names = {
-                "header1", "HEADER1", "header2", "Camel", "CamelFileName", "camelfoo", "BeerHeineken",
-                "beertuborg", "BeerCarlsberg", "breadcrumbId", "*FileName", "FileName", "a(", "A(", "a", "x-y", "xy" };
+                "header1", "HEADER1", "header2", "Camel", "Came", "CamelFileName", "camelfoo", "BeerHeineken",
+                "beertuborg", "BeerCarlsberg", "breadcrumbId", "my.app", "my.app.id", "MY.APP.ID", "myXapp", "my.ap",
+                "Beer(X)foo", "BeerX", "BeerXX", "kafka.TOPIC", "kafkaTopic", "*FileName", "FileName", "a(", "A(", "a",
+                "x-y", "xy" };
         for (int i = 0; i < patterns.length; i++) {
             for (int j = i + 1; j <= patterns.length; j++) {
                 String[] some = Arrays.copyOfRange(patterns, i, j);
