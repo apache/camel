@@ -139,12 +139,12 @@ public interface KMSEndpointBuilderFactory {
         }
         /**
          * The region ID of KMS, for example cn-hangzhou. Only used when the
-         * endpoint option is not set, to build the endpoint of KMS. Not used
-         * when the kmsClient option is set or autowired.
+         * endpoint option is not set, to build the endpoint of KMS. One of the
+         * two is required, unless the kmsClient option is set or autowired,
+         * which uses neither.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param region the value to set
@@ -441,6 +441,20 @@ public interface KMSEndpointBuilderFactory {
         public static final KMSHeaderNameBuilder INSTANCE = new KMSHeaderNameBuilder();
 
         /**
+         * The operation that the producer performs, which replaces the
+         * operation of the endpoint. If this header is not set, an exchange
+         * property of the same name replaces it.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaKmsOperation}.
+         */
+        public String alibabaKmsOperation() {
+            return "CamelAlibabaKmsOperation";
+        }
+        /**
          * The ID, alias or ARN of the KMS key for encrypt and generateDataKey.
          * This header replaces the keyId option. If this header is not set, an
          * exchange property of the same name replaces the keyId option.
@@ -458,7 +472,8 @@ public interface KMSEndpointBuilderFactory {
          * The plaintext for encrypt. The producer encodes it in UTF-8 and sends
          * it to KMS in Base64. This header replaces the plaintext option. If
          * this header is not set, an exchange property of the same name
-         * replaces the plaintext option.
+         * replaces the plaintext option. A Map or a POJO fails, as it does in
+         * the message body, since Camel reads it only as its toString().
          * 
          * The option is a: {@code String} type.
          * 
@@ -504,7 +519,8 @@ public interface KMSEndpointBuilderFactory {
          * The number of bytes of the data key for generateDataKey. The value
          * must be from 1 to 1024. This header replaces the numberOfBytes
          * option. If this header is not set, an exchange property of the same
-         * name replaces the numberOfBytes option.
+         * name replaces the numberOfBytes option. Only generateDataKey reads
+         * it, and a value that is not a number fails that operation alone.
          * 
          * The option is a: {@code Integer} type.
          * 
