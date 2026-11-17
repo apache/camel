@@ -339,6 +339,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             } else {
                 throw e;
             }
+            // an automatic reconnect that starts between the disconnect and this close would make it throw 32110
+            // again; Paho reschedules a failed attempt of the reconnect cycle at least 2 s later (the delay
+            // doubles), and the forced disconnect starts no new cycle, so this is not retried
             ownedClient.close(true);
         }
     }
