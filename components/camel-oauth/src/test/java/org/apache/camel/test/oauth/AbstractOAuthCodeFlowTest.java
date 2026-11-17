@@ -17,6 +17,7 @@
 package org.apache.camel.test.oauth;
 
 import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -32,9 +33,9 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
     @Test
     void testCodeFlowAuth() throws Exception {
 
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
-        admin.close();
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
 
         try (CamelContext context = createCamelContext()) {
             addOAuthCodeFlowRoutes(context);
@@ -42,9 +43,9 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
 
             // Verify Realm, Client, and User exist
             var keycloak = getKeycloakAdmin().getKeycloak();
-            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).toRepresentation() != null);
-            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size() == 1);
-            Assumptions.assumeTrue(keycloak.realm(KEYCLOAK_REALM).users().search("alice").size() == 1);
+            Assertions.assertNotNull(keycloak.realm(KEYCLOAK_REALM).toRepresentation());
+            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size());
+            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
 
             LOG.info("Keycloak realm, client, and user available!");
             LOG.info("Open: {}", getAppBaseUrl());
