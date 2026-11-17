@@ -6259,13 +6259,22 @@ empty payload.
 A body that does not convert to bytes, such as a `Map` or a POJO, is no longer sent as its `toString()`: it now fails
 with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
 
-=== camel-alibaba-fc - region is no longer marked as required
+=== camel-alibaba-fc - endpoint is marked as required instead of region
 
-The `region` option of `alibaba-fc` is no longer marked as required. To create the client, the Camel endpoint needs
-the `region` or the `endpoint` option. It needs neither when the `fcClient` option is set or autowired. So the
-endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
-of the component at runtime does not change. A URI with neither option still fails at the first message with
-`Region or endpoint is required`, unless the `fcClient` option is set or autowired.
+The `endpoint` option of `alibaba-fc` is now marked as required, and the `region` option no longer is. The endpoint of
+Function Compute contains the ID of the Alibaba Cloud account, as in `12345.cn-hangzhou.fc.aliyuncs.com`, so the
+region does not determine it.
+
+A URI with `region` and without `endpoint` now fails at the first message with `Endpoint is required`, unless the
+`fcClient` option is set or autowired. Before, the client of the SDK took the host from its own map of regions when
+the region was in this map, such as `account-id.cn-hangzhou.fc.aliyuncs.com`, and Function Compute took the text
+`account-id` as the account ID.
+
+The endpoint validation of the catalog now reports a URI without `endpoint` as missing a required option. Before, it
+reported a URI without `region`. It also reports a URI without `endpoint` when the `fcClient` option is set or
+autowired. Such a route still runs, because the producer then uses neither option.
+
+The `region` option is deprecated, because the producer no longer uses it.
 
 === camel-dropbox - search and get read every page of the result
 

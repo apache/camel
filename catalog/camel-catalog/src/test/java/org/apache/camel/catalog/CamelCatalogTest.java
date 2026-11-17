@@ -1610,6 +1610,11 @@ public class CamelCatalogTest {
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
 
+        uri = "alibaba-fc:invokeFunction?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
         ComponentModel model = catalog.componentModel("alibaba-fc");
         assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaFcOperation".equals(h.getName())));
     }
