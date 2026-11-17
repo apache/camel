@@ -260,7 +260,10 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         if (state == null) {
             if (id != null) {
                 try {
-                    if (isConnected()) {
+                    // the state of the client, not the flag of the group: the flag follows the connection state events,
+                    // so it can still say connected after the client lost the connection, and a foreground delete would
+                    // then hold the close for the connection timeout times the retries
+                    if (client.getZookeeperClient().isConnected()) {
                         client.delete().guaranteed().forPath(id);
                     } else {
                         // the client is disconnected, but its session may still be alive (it reconnects within the session
@@ -278,10 +281,10 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
                 }
             }
             if (creating.get()) {
-                // the client itself as well: the group may not have been told yet that it is connected again (a close
-                // removes the listener of the group first), and the create that did not answer may have been made
-                // just after the reconnect
-                if (isConnected() || client.getZookeeperClient().isConnected()) {
+                // the state of the client here too: the group may not have been told yet that it is connected again
+                // (a close removes the listener of the group first), and the create that did not answer may have been
+                // made just after the reconnect
+                if (client.getZookeeperClient().isConnected()) {
                     deleteUnrecordedNodes();
                 } else {
                     LOG.warn("Ephemeral node could be created in the registry, but ZooKeeper group didn't record its id");
