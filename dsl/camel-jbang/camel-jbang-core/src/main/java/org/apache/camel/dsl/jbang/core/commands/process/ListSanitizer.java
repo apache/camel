@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -187,8 +188,8 @@ public class ListSanitizer extends ProcessWatchCommand {
                     JsonObject jo = new JsonObject();
                     jo.put("pid", JsonValues.pid(integration.pid));
                     jo.put("name", integration.name);
-                    for (String key : List.of("calls", "commits", "total", "rules", "kinds", "violations", "pendingCalls",
-                            "stillPending", "stillPendingWarnings")) {
+                    for (String key : List.of("checks", "calls", "commits", "total", "rules", "kinds", "violations",
+                            "pendingCalls", "stillPending", "stillPendingWarnings")) {
                         // commits only with R2, and the pending calls only with the still pending warning on
                         if (integration.sanitizer.get(key) != null) {
                             jo.put(key, integration.sanitizer.get(key));
@@ -223,13 +224,21 @@ public class ListSanitizer extends ProcessWatchCommand {
                 head.append(", ").append(s.getLongOrDefault("stillPending", 0)).append(" calls reported still pending")
                         .append(" (warnings), ").append(s.getLongOrDefault("pendingCalls", 0)).append(" pending now");
             }
+            // R3 is checked only when the checks of the integration have threads; an integration of a version without
+            // R3 tells no checks, and does not know the check threads
+            Collection<?> checks = s.get("checks") instanceof Collection<?> c ? c : null;
+            boolean r3 = checks != null && checks.contains("threads");
             if (!r2) {
-                head.append(", R2 not checked (camel.sanitizer.checks=callback,commit)");
+                head.append(", R2 not checked (camel.sanitizer.checks=")
+                        .append(r3 ? "callback,commit,threads" : "callback,commit").append(')');
+            }
+            if (checks != null && !r3) {
+                head.append(", R3 not checked (threads is not in camel.sanitizer.checks)");
             }
             printer().println(head.toString());
             if (s.get("rules") instanceof JsonObject rules) {
                 for (Map.Entry<String, Object> e : rules.entrySet()) {
-                    if (r2 || !"R2".equals(e.getKey())) {
+                    if ((r2 || !"R2".equals(e.getKey())) && (r3 || !"R3".equals(e.getKey()))) {
                         printer().println("  " + e.getKey() + ": " + e.getValue());
                     }
                 }

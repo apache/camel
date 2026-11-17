@@ -68,7 +68,7 @@ class SanitizerConfigurationPropertiesTest {
         try {
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("false", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
-            // not published when not set: camel-sanitizer decides (R1 only, and R1 and R2 in a test)
+            // not published when not set: camel-sanitizer decides (R1 and R3, and R1, R2 and R3 in a test)
             assertFalse(pc.resolveProperty("camel.sanitizer.checks").isPresent());
             assertEquals("8", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
