@@ -18,8 +18,14 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
@@ -204,7 +210,9 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                     "The message body must be " + what + " as text (a String, bytes, a stream or a file), but it is a "
                                                + body.getClass().getName()
                                                + ", which Camel reads only as its toString(). Marshal it first, for"
-                                               + " example with marshal().json(), or set the body to the text");
+                                               + " example with marshal().json(), set the body to the text, or, when"
+                                               + " the toString() of the object is the text to send, convert it with"
+                                               + " convertBodyTo(String.class)");
         }
         return text;
     }
@@ -215,7 +223,19 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
      * number, a boolean) is text by itself, whatever its {@code toString()}.
      */
     private static boolean isOnlyToString(Object body, String text) {
-        return BodyFacts.kindOf(body) != BodyTypeRegistry.Kind.PAYLOAD && text.equals(body.toString());
+        return BodyFacts.kindOf(body) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(body)
+                && text.equals(body.toString());
+    }
+
+    /**
+     * A value whose {@code toString()} is its text, rather than a dump of its fields: an id, an address or a point in
+     * time. {@link BodyFacts} counts text, a number, a boolean and an enum as a payload, but not these, and the type
+     * converter has nothing for them either, so they would otherwise be read as only a {@code toString()} (raised in
+     * the review of CAMEL-26521).
+     */
+    private static boolean isTextValue(Object body) {
+        return body instanceof UUID || body instanceof URI || body instanceof URL || body instanceof Temporal
+                || body instanceof TemporalAmount || body instanceof Date;
     }
 
     /**

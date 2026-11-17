@@ -20,11 +20,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -379,6 +382,21 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
 
         assertEquals("Paris", result.getMessage().getBody());
         assertUserMessage("What is the capital of France?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    /** A value whose text is its toString(), which the type converter has nothing for. */
+    @Test
+    void chatReadsAUuidAUriAndAnInstantBodyAsTheirText() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        call(WatsonxAiOperations.chat, uuid);
+        assertUserMessage(uuid.toString(), request("/ml/v1/text/chat").get("messages").get(0));
+
+        call(WatsonxAiOperations.chat, URI.create("https://camel.apache.org"));
+        assertUserMessage("https://camel.apache.org", request("/ml/v1/text/chat").get("messages").get(0));
+
+        Instant instant = Instant.parse("2026-01-01T00:00:00Z");
+        call(WatsonxAiOperations.chat, instant);
+        assertUserMessage(instant.toString(), request("/ml/v1/text/chat").get("messages").get(0));
     }
 
     @Test

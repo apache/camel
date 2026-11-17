@@ -121,13 +121,6 @@ WARNING: When the `logRequests` option is enabled, HTTP requests to the watsonx.
 
 The IBM watsonx.ai component provides the following operations:
 
-Many of them read the message body as text: the prompt of `textGeneration`, `tokenize`, `detect` and
-`deploymentGenerate`, the user message of the chat operations, the texts of `embedding` and `rerank`, and the file
-path, job id or file name of the extraction and classification operations that do not upload. Such a body can be a
-`String`, a `byte[]`, a stream, a file, or anything else Camel converts to its text, such as a `char[]`. A `Map` or a
-POJO fails with an `IllegalArgumentException`, as Camel reads it only as its `toString()`, which is not a prompt:
-marshal it first, for example with `marshal().json()`, or set the body to the text.
-
 ==== Text Generation (Deprecated, use chat instead)
 
 * `textGeneration` - Generate text from a prompt
@@ -214,6 +207,22 @@ NOTE: Document processing operations require Cloud Object Storage (COS) configur
 * `processToolCalls` - Execute tool calls from an assistant message and update the conversation
 
 If you don't specify an operation explicitly, you must set it via the `operation` parameter.
+
+=== Message body read as text
+
+Many operations read the message body as text: the prompt of `textGeneration`, `tokenize`, `detect` and
+`deploymentGenerate`, the user message of the chat operations, the texts of `embedding` and `rerank`, and the file
+path, job id or file name of the extraction and classification operations that do not upload.
+
+Such a body can be a `String`, a `byte[]`, a stream, a file, anything else Camel converts to its text, such as a
+`char[]` or a `ByteBuffer`, or a value whose text is its `toString()`: a `UUID`, a `URI`, a `URL`, a `java.time` value
+or a `Date`.
+
+Any other body, such as a `Map` or a POJO, fails with an `IllegalArgumentException`, since Camel reads it only as its
+`toString()`, which is a dump of its fields rather than a prompt. The rule is the text itself: a body is rejected
+when the text Camel gives for it is no more than its `toString()`. Marshal such a body first, for example with `marshal().json()`, set the body
+to the text, or, when the `toString()` of the object is the text to send, say so with `convertBodyTo(String.class)`
+before the endpoint.
 
 === Common Use Cases
 

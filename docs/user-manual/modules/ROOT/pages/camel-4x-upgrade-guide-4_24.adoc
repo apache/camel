@@ -9602,5 +9602,9 @@ Java notation, and the extraction and classification requests named that text as
 
 Text, a `byte[]`, a stream, a file, and any other body that Camel converts to its text, such as a `char[]` or a
 `ByteBuffer`, are read as before. So are the `List` bodies of `chat`, `embedding` and `rerank`, a `ChatMessage` body of
-the chat operations, and a single value such as a number. Marshal a `Map` or a POJO first, for example with
-`marshal().json()`, or set the body to the text.
+the chat operations, a single value such as a number, and a value whose text is its `toString()`: a `UUID`, a `URI`, a
+`URL`, a `java.time` value or a `Date`.
+
+The rule is the text itself: a body is rejected when the text Camel gives for it is no more than its `toString()`.
+Marshal such a body first, for example with `marshal().json()`, set the body to the text, or, when the `toString()` of
+the object is the text to send, say so with `convertBodyTo(String.class)` before the endpoint.
