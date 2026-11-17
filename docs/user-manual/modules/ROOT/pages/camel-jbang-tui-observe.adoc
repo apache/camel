@@ -210,7 +210,14 @@ listed once.
 
 image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
-The Health and Circuit Breaker tabs have the key too:
+The Routes, SQL Trace, Health and Circuit Breaker tabs have the key too:
+
+* *Routes*: *Shift+F8* on a route whose exchanges fail asks the AI to fix it, with the steps they fail at, their source
+lines and the last error of the route. On a route without failures, it asks the AI to explain where the time goes, with
+its slowest steps.
+* *SQL Trace*: *Shift+F8* on a statement that failed asks the AI to fix it, with the SQL, the route and source line, and
+the error of its exchange. On a slow statement (100 ms or more), it asks the AI why it is slow and what could make it
+faster.
 
 * *Health*: *Shift+F8* asks the AI to fix the checks that are not UP (in the table, the selected one). The question has
 the message of the check, what being DOWN means for the integration (taken out of service, or restarted), its details

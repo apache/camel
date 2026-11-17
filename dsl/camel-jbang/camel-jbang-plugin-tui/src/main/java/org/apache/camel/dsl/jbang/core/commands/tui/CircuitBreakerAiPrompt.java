@@ -82,7 +82,7 @@ final class CircuitBreakerAiPrompt {
         if (source != null) {
             sb.append("It is at ").append(source).append(".\n");
         }
-        ErrorInfo last = lastError(info, cb.routeId);
+        ErrorInfo last = RouteAiPrompt.lastError(info, cb.routeId);
         if (last != null) {
             sb.append("The last error of the route: ").append(RuntimeFailures.failureOf(last)).append('\n');
         }
@@ -107,16 +107,5 @@ final class CircuitBreakerAiPrompt {
             return r.source;
         }
         return null;
-    }
-
-    /** The newest error of the route in the error registry; null when there is none. */
-    private static ErrorInfo lastError(IntegrationInfo info, String routeId) {
-        ErrorInfo last = null;
-        for (ErrorInfo e : info.errors) {
-            if (routeId != null && routeId.equals(e.routeId) && (last == null || e.timestamp > last.timestamp)) {
-                last = e;
-            }
-        }
-        return last;
     }
 }

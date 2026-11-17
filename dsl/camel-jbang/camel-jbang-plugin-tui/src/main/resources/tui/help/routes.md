@@ -66,6 +66,20 @@ processor (step) inside a route, not just the route totals.
 
 - **LOAD** — Three throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU. Higher values mean more messages flowing through. The three windows help you see if traffic is increasing or decreasing
 
+## Fix or Explain with AI
+
+Press `Shift+F8` on a route to ask the AI about it:
+
+- When exchanges failed in the route, or its error handler handled
+  failures, the AI is asked to fix it ("fix with AI"): the question has
+  the counts, the steps the exchanges fail at with their source lines,
+  and the last error of the route.
+- Otherwise, when the route had exchanges, the AI is asked to explain
+  where the time goes ("explain with AI"): the question has the mean,
+  max and percentile times, and the slowest steps with their source
+  lines. The AI suggests what could make it faster and changes no file
+  unless you agree.
+
 ## Route Diagram
 
 Press `d` to see a topology diagram showing how all routes connect to each
@@ -149,6 +163,7 @@ in the diagram.
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `t` — toggle Top mode
+- `Shift+F8` — fix with AI a route whose exchanges fail, or explain with AI where its time goes
 
 **Topology view:**
 - `↑↓←→` — navigate between route boxes
