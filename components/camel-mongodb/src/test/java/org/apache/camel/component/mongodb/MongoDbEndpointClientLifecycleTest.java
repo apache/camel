@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -105,11 +106,19 @@ class MongoDbEndpointClientLifecycleTest extends CamelTestSupport {
         MongoClient componentClient = mock(MongoClient.class, RETURNS_DEEP_STUBS);
         context.getRegistry().bind("beanClient", beanClient);
         context.getRegistry().bind("optionClient", optionClient);
-        context.getComponent("mongodb", MongoDbComponent.class).setMongoConnection(componentClient);
 
-        addRoute("bean", "mongodb:beanClient?database=test&collection=test&operation=findAll");
-        addRoute("option", URI_ENDPOINT + "&mongoConnection=#optionClient");
-        addRoute("component", "mongodb:dummy?database=test&collection=test&operation=findAll");
+        // added before the component has a client, which it would use ahead of the bean named by the path
+        String beanUri = "mongodb:beanClient?database=test&collection=test&operation=findAll";
+        addRoute("bean", beanUri);
+        context.getComponent("mongodb", MongoDbComponent.class).setMongoConnection(componentClient);
+        String optionUri = URI_ENDPOINT + "&mongoConnection=#optionClient";
+        addRoute("option", optionUri);
+        String componentUri = "mongodb:dummy?database=test&collection=test&operation=findAll";
+        addRoute("component", componentUri);
+
+        assertSame(beanClient, context.getEndpoint(beanUri, MongoDbEndpoint.class).getMongoConnection());
+        assertSame(optionClient, context.getEndpoint(optionUri, MongoDbEndpoint.class).getMongoConnection());
+        assertSame(componentClient, context.getEndpoint(componentUri, MongoDbEndpoint.class).getMongoConnection());
         for (String routeId : new String[] { "bean", "option", "component" }) {
             context.getRouteController().stopRoute(routeId);
             assertTrue(context.removeRoute(routeId));

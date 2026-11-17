@@ -545,6 +545,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             } else {
                 mongoClient = MongoClients.create(connectionUri);
             }
+            // doStart() and initializeConnection() both get their client here, so doStop() closes it whichever ran first
             createdMongoConnection = mongoClient;
             LOG.debug("Connection created using provided credentials");
         } else {
