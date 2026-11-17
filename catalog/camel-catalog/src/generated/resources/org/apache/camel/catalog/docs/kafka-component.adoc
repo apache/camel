@@ -364,7 +364,9 @@ consumer resumes where the group stopped.
 
 The group can also be set with the `group.id` Kafka property in `additionalProperties`
 (`additionalProperties.group.id=my-group` on the endpoint, or `camel.component.kafka.additional-properties[group.id]`
-on the component). When both `groupId` and the `group.id` property are set, `groupId` is used.
+on the component). When both `groupId` and the `group.id` property are set, `groupId` is used. A `group.id` set on the
+component applies to every consumer endpoint without `groupId`, so routes that consume the same topic share its
+records.
 
 Without either, the consumer uses a generated group id, a new one at each start, and logs a WARN when it starts:
 

@@ -565,8 +565,11 @@ A Kafka consumer without `groupId` now uses the `group.id` set in `additionalPro
 (`additionalProperties.group.id` on the endpoint, or `camel.component.kafka.additional-properties[group.id]`).
 Before, the consumer replaced it with a generated group id, a new one at each start. Such a consumer now joins that
 group: it starts from the offsets committed by the group (or where `autoOffsetReset` says when the group has none), and
-the instances of the application that use the same group share the records. When both `groupId` and the `group.id`
-property are set, `groupId` is still used.
+the instances of the application that use the same group share the records. With `group.id` in the
+`additionalProperties` of the component, every consumer endpoint without `groupId` now joins that one group, where
+before each had a generated group of its own: routes that consume the same topic now share its records. Set `groupId`
+on each route that must receive every record. When both `groupId` and the `group.id` property are set, `groupId` is
+still used.
 
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
