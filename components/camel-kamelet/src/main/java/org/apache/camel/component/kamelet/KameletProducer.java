@@ -18,8 +18,10 @@ package org.apache.camel.component.kamelet;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -62,8 +64,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
             final KameletConsumer consumer = getConsumer();
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
-                    exchange.setException(new KameletConsumerNotAvailableException(
-                            "No consumers available on endpoint: " + endpoint, exchange));
+                    exchange.setException(new KameletConsumerNotAvailableException(noConsumerMessage(), exchange));
                 } else {
                     LOG.debug("Exchange ignored, no consumers available on endpoint: {}", endpoint);
                 }
@@ -146,6 +147,34 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
         if (ms != null && ms.getManagementAgent() != null) {
             registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
         }
+    }
+
+    /**
+     * The message when there is no consumer: the text users and tools search for, then why there is none (the route of
+     * the Kamelet and its status, or that there is no such route), how long the producer waited, and the options that
+     * change this.
+     */
+    private String noConsumerMessage() {
+        CamelContext context = endpoint.getCamelContext();
+        String id = endpoint.getRouteId();
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("No consumers available on endpoint: ").append(endpoint).append(". ");
+        ServiceStatus status = context.getRoute(id) != null ? context.getRouteController().getRouteStatus(id) : null;
+        if (status != null) {
+            sb.append("Route ").append(id).append(" of Kamelet ").append(endpoint.getTemplateId())
+                    .append(" in CamelContext ").append(context.getName()).append(" consumes from it and is ")
+                    .append(status).append(". ");
+        } else {
+            sb.append("CamelContext ").append(context.getName()).append(" has no route ").append(id)
+                    .append(" of Kamelet ").append(endpoint.getTemplateId()).append(". ");
+        }
+        if (block && timeout > 0) {
+            sb.append("The producer waited ").append(timeout).append(" millis for a consumer");
+        } else {
+            sb.append("The producer did not wait for a consumer");
+        }
+        sb.append(" (see the block, timeout and failIfNoConsumers options)");
+        return sb.toString();
     }
 
     /**

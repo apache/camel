@@ -82,6 +82,13 @@ public class DirectEndpoint extends DefaultEndpoint {
         return answer;
     }
 
+    /**
+     * The key of the consumer in the component: the endpoint uri without its options.
+     */
+    String getKey() {
+        return key;
+    }
+
     @Deprecated
     public DirectConsumer getConsumer() throws InterruptedException {
         return component.getConsumer(key, block, timeout);
