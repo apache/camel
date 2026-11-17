@@ -703,6 +703,14 @@ The `camel.routeId` MDC value is now the id of the route that runs the step, as 
 `camel.main.useMdcLogging`. Before, it was the id of the route that created the exchange, so the log lines of a route
 called with `direct:` (or another route-to-route endpoint) showed the id of the calling route.
 
+=== camel-bindy - fixed-length trim keeps the value 0 of a number padded with '0'
+
+In a fixed-length record, a numeric `@DataField` with `paddingChar = '0'` and `trim = true` that only holds `0`
+characters (for example `000`) is now read as 0. Before, trimming removed every `0` and the field was read as empty:
+`null` for an object type such as `Integer` or `BigDecimal`, `MIN_VALUE` for a primitive such as `int`, the
+`defaultValue` of the field when it has one, and an error for a `required` field. Text fields, and numeric fields
+padded with another char, are not changed.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
