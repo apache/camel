@@ -120,6 +120,21 @@ class GenAiObservabilityLevelSpanTest extends ExchangeTestSupport {
     }
 
     @Test
+    void fullShouldRecordTheToolDefinitionsAndDetailedShouldNot() {
+        for (String level : new String[] { "detailed", "full" }) {
+            level(level);
+            GenAiObservation observation = GenAiObservability.start(new DefaultExchange(context), chat().build());
+            observation.recordToolDefinitions(
+                    () -> new GenAiToolDefinitions().function("getOrderStatus", "Get the status", Map.of("type", "object")));
+            observation.close();
+        }
+
+        assertThat(tracer.closedSpans().get(0).tags()).doesNotContainKey(GenAiAttributes.TOOL_DEFINITIONS);
+        assertThat((String) tracer.closedSpans().get(1).tags().get(GenAiAttributes.TOOL_DEFINITIONS))
+                .contains("\"name\":\"getOrderStatus\"");
+    }
+
+    @Test
     void shouldNotBuildContentBelowLevelFull() {
         level("detailed");
         AtomicBoolean built = new AtomicBoolean();

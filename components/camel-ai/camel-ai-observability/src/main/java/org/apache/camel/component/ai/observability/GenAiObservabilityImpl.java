@@ -257,6 +257,14 @@ public final class GenAiObservabilityImpl {
         }
 
         @Override
+        public void recordToolDefinitions(Supplier<GenAiToolDefinitions> definitions) {
+            recordContent(GenAiAttributes.TOOL_DEFINITIONS, () -> {
+                GenAiToolDefinitions value = definitions.get();
+                return value != null && !value.isEmpty() ? value.toJson(contentMaxLength) : null;
+            });
+        }
+
+        @Override
         public void recordToolArguments(Supplier<String> arguments) {
             recordContent(GenAiAttributes.TOOL_CALL_ARGUMENTS,
                     () -> GenAiMessages.truncate(arguments.get(), contentMaxLength));

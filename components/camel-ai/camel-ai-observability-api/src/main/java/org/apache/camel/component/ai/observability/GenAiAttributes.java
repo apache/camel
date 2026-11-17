@@ -44,6 +44,7 @@ public final class GenAiAttributes {
     public static final String INPUT_MESSAGES = "gen_ai.input.messages";
     public static final String OUTPUT_MESSAGES = "gen_ai.output.messages";
     public static final String SYSTEM_INSTRUCTIONS = "gen_ai.system_instructions";
+    public static final String TOOL_DEFINITIONS = "gen_ai.tool.definitions";
     public static final String TOOL_CALL_ARGUMENTS = "gen_ai.tool.call.arguments";
     public static final String TOOL_CALL_RESULT = "gen_ai.tool.call.result";
 

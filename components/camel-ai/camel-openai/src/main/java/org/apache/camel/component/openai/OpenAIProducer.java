@@ -712,6 +712,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         observation.recordInputMessages(() -> OpenAIGenAiMessages.input(params));
+        observation.recordToolDefinitions(() -> OpenAIGenAiMessages.toolDefinitions(params));
         try {
             ChatCompletion response;
             try (GenAiObservation.Scope ignored = observation.makeCurrent()) {

@@ -74,6 +74,16 @@ public interface GenAiObservation extends AutoCloseable {
     }
 
     /**
+     * Records the tools offered to the model in the request. The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordToolDefinitions(Supplier<GenAiToolDefinitions> definitions) {
+        // noop
+    }
+
+    /**
      * Records the arguments of a tool call (JSON). The supplier is only called at level
      * {@link GenAiObservabilityLevel#FULL}.
      *

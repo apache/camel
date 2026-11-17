@@ -23,12 +23,14 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.internal.JsonSchemaElementJsonUtils;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -45,6 +47,7 @@ import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiToolDefinitions;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 
 /**
@@ -117,6 +120,7 @@ final class GenAiAgentRunObserver {
         }
         GenAiObservation call = GenAiObservability.start(exchange, context.build());
         call.recordInputMessages(() -> toMessages(request.messages()));
+        call.recordToolDefinitions(() -> toToolDefinitions(request.toolSpecifications()));
         openCalls.push(call);
         observedCalls++;
     }
@@ -150,6 +154,18 @@ final class GenAiAgentRunObserver {
             }
         }
         return result;
+    }
+
+    static GenAiToolDefinitions toToolDefinitions(List<ToolSpecification> specifications) {
+        GenAiToolDefinitions definitions = new GenAiToolDefinitions();
+        if (specifications != null) {
+            for (ToolSpecification specification : specifications) {
+                definitions.function(specification.name(), specification.description(),
+                        specification.parameters() != null
+                                ? JsonSchemaElementJsonUtils.toMap(specification.parameters()) : null);
+            }
+        }
+        return definitions;
     }
 
     static GenAiMessages toOutput(AiMessage aiMessage, String finishReason) {

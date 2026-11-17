@@ -130,6 +130,8 @@ class LangChain4jAgentObservabilityLevelTest extends CamelTestSupport {
                 .contains("\"type\":\"tool_call\"", "\"name\":\"getOrderStatus\"", "\"arguments\":{\"orderId\":\"A-1\"}");
         assertThat((String) calls.get(1).tags().get(GenAiAttributes.INPUT_MESSAGES))
                 .contains("\"type\":\"tool_call_response\"", "SHIPPED");
+        assertThat((String) calls.get(0).tags().get(GenAiAttributes.TOOL_DEFINITIONS))
+                .contains("\"type\":\"function\"", "\"name\":\"getOrderStatus\"", "\"orderId\"");
         assertThat(tracer.span("execute_tool getOrderStatus").tags())
                 .containsEntry(GenAiAttributes.TOOL_CALL_ARGUMENTS, "{\"orderId\":\"A-1\"}")
                 .containsEntry(GenAiAttributes.TOOL_CALL_RESULT, "{\"orderId\":\"A-1\",\"status\":\"SHIPPED\"}");

@@ -102,6 +102,8 @@ class OpenAIAgenticObservabilityLevelTest extends CamelTestSupport {
                 .doesNotContainKey(GenAiAttributes.INPUT_TOKENS);
         assertThat((String) run.tags().get(GenAiAttributes.INPUT_MESSAGES)).contains("weather please");
         assertThat(calls).hasSize(2).allSatisfy(call -> assertThat(call.parent()).isSameAs(run));
+        assertThat((String) calls.get(0).tags().get(GenAiAttributes.TOOL_DEFINITIONS))
+                .contains("\"type\":\"function\"", "\"name\":\"get_weather\"");
         assertThat(tool.parent()).isSameAs(run);
         assertThat(tool.tags()).containsEntry(GenAiAttributes.TOOL_NAME, "get_weather")
                 .containsEntry(GenAiAttributes.TOOL_CALL_RESULT, "sunny");

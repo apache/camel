@@ -61,9 +61,9 @@ per tool call (Camel route tools of every component, and the MCP tools of `opena
 `gen_ai.tool.call.id`. Also request parameters (`gen_ai.request.temperature`, `gen_ai.request.max_tokens`,
 `gen_ai.request.top_p`), cached input tokens (`gen_ai.usage.cache_read.input_tokens`), `gen_ai.provider.name`, and the
 conversation id (`gen_ai.conversation.id`) from the chat memory id or the `CamelOpenAIConversationId` header.
-| `full` | Message content: `gen_ai.input.messages`, `gen_ai.output.messages` and `gen_ai.system_instructions` on model
-calls, and `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` on tool calls, in the shape of the OpenTelemetry
-GenAI semantic conventions. Every text is cut at `camel.aiObservability.contentMaxLength` characters (default 8192, a
+| `full` | Message content: `gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions` and the tools
+offered to the model (`gen_ai.tool.definitions`) on model calls, and `gen_ai.tool.call.arguments` and
+`gen_ai.tool.call.result` on tool calls, in the shape of the OpenTelemetry GenAI semantic conventions. Every text is cut at `camel.aiObservability.contentMaxLength` characters (default 8192, a
 value that is not positive means the default). The tool call arguments are recorded as the model sent them, before
 Camel drops the undeclared and reserved (`Camel*`) names; the route of the tool sees the filtered arguments.
 |===

@@ -17,8 +17,11 @@
 package org.apache.camel.component.openai;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.openai.core.ObjectMappers;
+import com.openai.models.FunctionDefinition;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
 import com.openai.models.chat.completions.ChatCompletionContentPart;
@@ -27,7 +30,9 @@ import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionMessage;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
+import com.openai.models.chat.completions.ChatCompletionTool;
 import org.apache.camel.component.ai.observability.GenAiMessages;
+import org.apache.camel.component.ai.observability.GenAiToolDefinitions;
 
 /**
  * Converts Chat Completions requests and responses into the messages of the GenAI semantic conventions, for
@@ -74,6 +79,20 @@ final class OpenAIGenAiMessages {
         messages.text(GenAiMessages.ASSISTANT, message.content().or(message::refusal).orElse(null));
         message.toolCalls().ifPresent(calls -> addToolCalls(messages, calls));
         return messages.finishReason(finishReason);
+    }
+
+    static GenAiToolDefinitions toolDefinitions(ChatCompletionCreateParams params) {
+        GenAiToolDefinitions definitions = new GenAiToolDefinitions();
+        for (ChatCompletionTool tool : params.tools().orElse(List.of())) {
+            tool.function().ifPresent(function -> {
+                FunctionDefinition definition = function.function();
+                definitions.function(definition.name(), definition.description().orElse(null),
+                        definition.parameters()
+                                .map(parameters -> ObjectMappers.jsonMapper().convertValue(parameters, Map.class))
+                                .orElse(null));
+            });
+        }
+        return definitions;
     }
 
     private static void addAssistant(GenAiMessages messages, ChatCompletionAssistantMessageParam assistant) {
