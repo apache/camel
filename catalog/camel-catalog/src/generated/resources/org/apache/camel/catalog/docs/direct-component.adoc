@@ -68,7 +68,7 @@ When no started route consumes from the endpoint, the producer waits up to `time
 default) for one to start, for example while Camel starts or reloads routes.
 Then the exchange fails with `DirectConsumerNotAvailableException`.
 Its message starts with `No consumers available on endpoint:`, and says which route consumes from the endpoint and its
-status, or that no route does (with a close endpoint name when there is one), and how long the producer waited.
+status, or that no route does (with a similar endpoint name when there is one), and how long the producer waited.
 
 Set `block=false` to fail without waiting, or `failIfNoConsumers=false` to drop the message (logged at `DEBUG`) instead
 of failing.
@@ -81,7 +81,7 @@ The common causes are:
 * The producer and the route use a different name, for example because of a typo.
 * The route is stopped or suspended, or it did not start because of `autoStartup=false`.
 * The route is in another CamelContext: a direct endpoint only reaches the routes of its own CamelContext.
-* With the xref:manual::rest-dsl.adoc[Rest DSL], a direct route that only one rest service calls is inlined into that
+* With the xref:manual::rest-dsl.adoc[Rest DSL], a direct route that only one REST service calls is inlined into that
   service (the `inlineRoutes` option, enabled by default), so other routes cannot call it.
 
 NOTE: A `ProducerTemplate` sends only once the CamelContext has started. Sending earlier, for example from a Spring
