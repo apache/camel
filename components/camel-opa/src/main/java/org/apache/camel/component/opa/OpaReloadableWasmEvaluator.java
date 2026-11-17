@@ -180,7 +180,9 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
                     previous.evaluator.close();
                 }
                 return true;
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                // an Error from the module compiler (a LinkageError, say) is a failed load like any other: remembered,
+                // shown in the status and rethrown as it is; the previous snapshot keeps deciding either way
                 synchronized (state) {
                     if (!closed && (generation < 0 || generation == watchGeneration)) {
                         lastFailedRevision = revision;
