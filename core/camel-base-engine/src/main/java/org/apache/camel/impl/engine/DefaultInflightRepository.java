@@ -44,7 +44,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private final LongAdder size = new LongAdder();
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, LongAdder> routeCount = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, RouteCount> routeCount = new ConcurrentHashMap<>();
     private boolean inflightExchangeEnabled;
 
     @Override
@@ -67,17 +67,21 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void add(Exchange exchange, String routeId) {
-        LongAdder existing = routeCount.get(routeId);
+        RouteCount existing = routeCount.get(routeId);
         if (existing != null) {
-            existing.increment();
+            existing.count.increment();
         }
     }
 
     @Override
     public void remove(Exchange exchange, String routeId) {
-        LongAdder existing = routeCount.get(routeId);
+        RouteCount existing = routeCount.get(routeId);
         if (existing != null) {
-            existing.decrement();
+            existing.count.decrement();
+            if (existing.removed) {
+                // the last exchange of a removed route is done (unless the route was added again meanwhile)
+                routeCount.computeIfPresent(routeId, (k, c) -> c.removed && c.count.sum() <= 0 ? null : c);
+            }
         }
     }
 
@@ -88,18 +92,33 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void addRoute(String routeId) {
-        routeCount.putIfAbsent(routeId, new LongAdder());
+        routeCount.compute(routeId, (k, c) -> {
+            if (c == null) {
+                return new RouteCount();
+            }
+            // a route with the same id was removed while some of its exchanges were still in flight (a forced stop):
+            // they are counted until they are done, so that their decrement is not taken from the new route
+            c.removed = false;
+            return c;
+        });
     }
 
     @Override
     public void removeRoute(String routeId) {
-        routeCount.remove(routeId);
+        // the count of a route with exchanges still in flight (a stop that timed out) is kept until they are done
+        routeCount.computeIfPresent(routeId, (k, c) -> {
+            if (c.count.sum() <= 0) {
+                return null;
+            }
+            c.removed = true;
+            return c;
+        });
     }
 
     @Override
     public int size(String routeId) {
-        LongAdder existing = routeCount.get(routeId);
-        return existing != null ? existing.intValue() : 0;
+        RouteCount existing = routeCount.get(routeId);
+        return existing != null ? existing.count.intValue() : 0;
     }
 
     @Override
@@ -285,4 +304,11 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
     }
 
+    /**
+     * The number of inflight exchanges of a route, and whether the route was removed while some were still in flight.
+     */
+    private static final class RouteCount {
+        private final LongAdder count = new LongAdder();
+        private volatile boolean removed;
+    }
 }
