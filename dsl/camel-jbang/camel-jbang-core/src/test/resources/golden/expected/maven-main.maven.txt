@@ -27,7 +27,6 @@ src/main/docker/Dockerfile
 src/main/java/org/example/project/cameljbang/CamelApplication.java
 src/main/resources/application.properties
 src/main/resources/camel/hello.camel.yaml
-src/main/resources/log4j2.component.properties
 src/main/resources/log4j2.properties
 target/runner.jar
 
