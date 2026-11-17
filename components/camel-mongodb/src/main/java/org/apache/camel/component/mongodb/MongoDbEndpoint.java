@@ -268,6 +268,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
+    // the client this endpoint created from hosts or connectionUriString, which it closes when it stops
+    private volatile MongoClient createdMongoConnection;
 
     public MongoDbEndpoint() {
     }
@@ -495,10 +497,35 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     protected void doStart() throws Exception {
         if (mongoConnection == null) {
             mongoConnection = resolveMongoConnection();
+            if (mongoDatabase != null) {
+                // started again after a stop closed the client the endpoint created: the producer and consumer use the
+                // database and collection of the new client
+                mongoDatabase = mongoConnection.getDatabase(database);
+                if (mongoCollection != null) {
+                    mongoCollection = mongoDatabase.getCollection(collection, Document.class);
+                }
+            }
         } else {
             LOG.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
         }
         super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // only the client this endpoint created is closed: a client set with mongoConnection, the client of the
+        // component or a bean from the registry may be shared with other endpoints
+        MongoClient created = createdMongoConnection;
+        if (created != null) {
+            createdMongoConnection = null;
+            if (mongoConnection == created) {
+                // a new client is created when the endpoint is started again
+                mongoConnection = null;
+            }
+            LOG.debug("Closing the MongoClient created by {}", this);
+            created.close();
+        }
     }
 
     private MongoClient resolveMongoConnection() {
@@ -518,6 +545,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             } else {
                 mongoClient = MongoClients.create(connectionUri);
             }
+            createdMongoConnection = mongoClient;
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = getComponent().getMongoConnection();

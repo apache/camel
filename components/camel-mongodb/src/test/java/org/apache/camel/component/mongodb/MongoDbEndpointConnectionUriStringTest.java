@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoClient;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,13 +36,6 @@ class MongoDbEndpointConnectionUriStringTest extends CamelTestSupport {
             = "mongodb:dummy?connectionUriString=RAW(mongodb://localhost:27017/?readPreference=secondaryPreferred)"
               + "&database=test&collection=test&operation=findAll";
 
-    private final List<MongoClient> createdClients = new ArrayList<>();
-
-    @AfterEach
-    void closeCreatedClients() {
-        createdClients.forEach(MongoClient::close);
-    }
-
     @Test
     void connectionUriStringIsUsedInsteadOfTheClientOfTheComponent() {
         MongoClient registryClient = mock(MongoClient.class);
@@ -54,7 +43,7 @@ class MongoDbEndpointConnectionUriStringTest extends CamelTestSupport {
 
         MongoDbEndpoint endpoint = context.getEndpoint(URI_ENDPOINT, MongoDbEndpoint.class);
 
-        MongoClient client = created(endpoint);
+        MongoClient client = endpoint.getMongoConnection();
         assertNotSame(registryClient, client);
         assertEquals(ReadPreference.secondaryPreferred(), client.getReadPreference());
     }
@@ -63,7 +52,7 @@ class MongoDbEndpointConnectionUriStringTest extends CamelTestSupport {
     void connectionUriStringIsUsedWhenNoClientIsInTheRegistry() {
         MongoDbEndpoint endpoint = context.getEndpoint(URI_ENDPOINT, MongoDbEndpoint.class);
 
-        MongoClient client = created(endpoint);
+        MongoClient client = endpoint.getMongoConnection();
         assertNotNull(client);
         assertEquals(ReadPreference.secondaryPreferred(), client.getReadPreference());
     }
@@ -103,11 +92,5 @@ class MongoDbEndpointConnectionUriStringTest extends CamelTestSupport {
                 = context.getEndpoint(URI_ENDPOINT + "&mongoConnection=#explicitClient", MongoDbEndpoint.class);
 
         assertSame(explicitClient, endpoint.getMongoConnection());
-    }
-
-    private MongoClient created(MongoDbEndpoint endpoint) {
-        MongoClient client = endpoint.getMongoConnection();
-        createdClients.add(client);
-        return client;
     }
 }
