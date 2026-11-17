@@ -220,7 +220,7 @@ class BindTest extends CamelCommandBaseTestSupport {
                       apiVersion: camel.apache.org/v1
                       name: set-body-action
                     properties:
-                      value: "value"
+                      value: "Order ${header.orderId} received"
                   - ref:
                       kind: Kamelet
                       apiVersion: camel.apache.org/v1
@@ -268,7 +268,7 @@ class BindTest extends CamelCommandBaseTestSupport {
                       apiVersion: camel.apache.org/v1
                       name: set-body-action
                     properties:
-                      value: "value"
+                      value: "Order ${header.orderId} received"
                   - uri: log:info
                     #properties:
                       #key: "value"
