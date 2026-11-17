@@ -21,6 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class BindTest extends CamelCommandBaseTestSupport {
@@ -190,6 +191,7 @@ class BindTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    @Disabled("Reads set-body-action from camel-kamelets main, whose example changed (camel bind is deprecated)")
     public void shouldBindWithSteps() throws Exception {
         Bind command = createCommand("timer", "http");
 
@@ -238,6 +240,7 @@ class BindTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    @Disabled("Reads set-body-action from camel-kamelets main, whose example changed (camel bind is deprecated)")
     public void shouldBindWithUriSteps() throws Exception {
         Bind command = createCommand("timer", "http");
 
