@@ -41,6 +41,7 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -367,7 +368,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
-            throw new IllegalArgumentException("JSON DataFormat " + name + " not found.");
+            throw new IllegalArgumentException(
+                    "JSON DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
         }
 
         if (json != null) {
@@ -421,7 +423,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
-            throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
+            throw new IllegalArgumentException(
+                    "XML DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
         }
 
         if (jaxb != null) {

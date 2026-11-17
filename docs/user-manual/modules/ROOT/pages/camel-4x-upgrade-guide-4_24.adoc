@@ -127,6 +127,16 @@ the WARN says to use `toD`. The route works as before. Only the endpoint path is
 of `sql`, and the components whose path option is marked `supportSimpleExpression` in their metadata, which now
 includes the template of `sql-stored` and the bucket name of `aws2-s3`.
 
+=== camel-core - Rest DSL binding mode json fails at startup without a JSON data format
+
+A Rest DSL service with `bindingMode` `json` or `json_xml` whose JSON data format (`jackson` unless `jsonDataFormat`
+names another) is not on the classpath now fails when Camel creates the route, with
+`JSON DataFormat jackson not found (the jackson data format is in camel-jackson3; add camel-jackson3 to the classpath).`
+Before, the route started and every request failed with `Cannot bind to json as message body is not json compatible`.
+This is what `xml` binding already did without its XML data format. Add the JSON data format, such as `camel-jackson3`
+(or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
+neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
