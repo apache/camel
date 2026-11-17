@@ -54,6 +54,31 @@ public class MainTypeConverterStatisticsEnabledTest {
         }
     }
 
+    @Test
+    public void testTypeConverterStatisticsEnabledOnContextBeforeBuild() throws Exception {
+        // enabled in code before the context is built: the default (false) of camel.main must not turn it off
+        Main main = new Main() {
+            @Override
+            protected CamelContext createCamelContext() {
+                CamelContext context = super.createCamelContext();
+                context.setTypeConverterStatisticsEnabled(true);
+                return context;
+            }
+        };
+        main.start();
+        try {
+            CamelContext context = main.getCamelContext();
+            TypeConverterRegistry.Statistics statistics = context.getTypeConverterRegistry().getStatistics();
+            long before = statistics.getAttemptCounter();
+
+            assertEquals(123, context.getTypeConverter().convertTo(int.class, "123"));
+
+            assertEquals(before + 1, statistics.getAttemptCounter());
+        } finally {
+            main.stop();
+        }
+    }
+
     private static void assertStatisticsEnabled(Main main) throws Exception {
         main.start();
         try {
