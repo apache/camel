@@ -4075,6 +4075,22 @@ queries instead of `tableName`, set `confirmQuery` too; set it to null or empty 
 instances sharing the table must run this version: older ones see a confirmed key as absent (before 4.14.6 and 4.18.2
 they take it over).
 
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository does not take over the keys it holds
+
+`JdbcOrphanLockAwareIdempotentRepository` now treats a key that the instance itself holds (it added the key and has
+not confirmed or removed it yet) as a duplicate, whatever the age of its `createdAt`: on that instance `contains`
+returns true and `add` returns false. Before, when the keep-alive could not refresh the key for longer than
+`lockMaxAgeMillis` (the database could not be reached), the instance took its own key over, and a copy of a message
+that it was still processing was processed a second time.
+
+Another instance still takes such a key over, as it cannot tell the first instance from one that crashed: choose a
+`lockMaxAgeMillis` longer than the longest database outage the application must survive without processing a message
+twice. When an instance holds keys and its keep-alive has not refreshed them for longer than `lockMaxAgeMillis`, it
+now logs a WARN, and an INFO when it refreshes them again.
+
+Code that sets the `createdAt` of a key older than `lockMaxAgeMillis` and expects the repository that added the key
+to see it as absent, such as a test of the keep-alive, has to check the key with another repository instance.
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
