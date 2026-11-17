@@ -25,17 +25,17 @@ import org.apache.camel.StaticService;
 /**
  * Top-level SPI for Camel's management and observability layer, coordinating JMX registration, lifecycle events, and
  * statistics collection across all Camel artifacts.
- * <p/>
+ * <p>
  * When the {@code camel-management} JAR is on the classpath, {@code JmxManagementStrategy} is activated and delegates
  * MBean registration to a {@link ManagementAgent}. Without that JAR, {@code DefaultManagementStrategy} is used, which
  * still dispatches lifecycle events to registered {@link EventNotifier}s but does not expose JMX MBeans.
- * <p/>
+ * <p>
  * The strategy is the central hub for two concerns: management objects (registering and unregistering Camel components,
  * routes, processors, etc. as MBeans via {@link ManagementObjectStrategy} and {@link ManagementObjectNameStrategy}) and
  * events (delivering {@link CamelEvent} notifications to all registered {@link EventNotifier}s via
  * {@link #notify(CamelEvent)}). A third-party management backend can be plugged in by implementing this interface and
  * providing a {@link ManagementStrategyFactory}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see ManagementAgent
@@ -66,7 +66,7 @@ public interface ManagementStrategy extends StaticService {
      * Determines if an object or name is managed.
      *
      * @param  managedObject the object to consider
-     * @return               <tt>true</tt> if the given object is managed
+     * @return               <code>true</code> if the given object is managed
      */
     boolean isManaged(Object managedObject);
 
@@ -74,7 +74,7 @@ public interface ManagementStrategy extends StaticService {
      * Determines if an object or name is managed.
      *
      * @param  name the name to consider
-     * @return      <tt>true</tt> if the given name is managed
+     * @return      <code>true</code> if the given name is managed
      */
     boolean isManagedName(Object name);
 
@@ -104,8 +104,8 @@ public interface ManagementStrategy extends StaticService {
 
     /**
      * Adds the event notifier to use.
-     * <p/>
-     * Ensure the event notifier has been started if its a {@link Service}, as otherwise it would not be used.
+     * <p>
+     * Ensure the event notifier has been started if it's a {@link Service}, as otherwise it would not be used.
      *
      * @param eventNotifier event notifier
      */
@@ -115,7 +115,7 @@ public interface ManagementStrategy extends StaticService {
      * Removes the event notifier
      *
      * @param  eventNotifier event notifier to remove
-     * @return               <tt>true</tt> if removed, <tt>false</tt> if already removed
+     * @return               <code>true</code> if removed, <code>false</code> if already removed
      */
     boolean removeEventNotifier(EventNotifier eventNotifier);
 
@@ -177,11 +177,11 @@ public interface ManagementStrategy extends StaticService {
 
     /**
      * Filter whether the processor should be managed or not.
-     * <p/>
+     * <p>
      * Is used to filter out unwanted processors to avoid managing at too fine grained level.
      *
      * @param  definition definition of the processor
-     * @return            <tt>true</tt> to manage it
+     * @return            <code>true</code> to manage it
      */
     boolean manageProcessor(NamedNode definition);
 

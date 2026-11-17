@@ -19,17 +19,17 @@ package org.apache.camel.spi;
 /**
  * SPI for components and beans that capture a secret when they are configured, and that therefore need to be told when
  * that secret has been rotated so they can re-authenticate in place.
- * <p/>
+ * <p>
  * When a vault component detects that a secret changed it triggers a {@link ContextReloadStrategy}, which reloads the
  * property placeholders and then all routes. Routes and endpoints are rebuilt from scratch, but components and beans in
  * the {@link Registry} are not, so anything holding a live authenticated resource - a pooled JMS connection factory, a
  * JDBC connection pool, a shared HTTP client - keeps using the credentials it captured at startup.
- * <p/>
+ * <p>
  * Implement this interface on a {@link org.apache.camel.Component}, or register a bean implementing it in the
  * {@link Registry}, to be notified when this happens. The callback runs after the property placeholders have been
  * reloaded and the component options re-applied, but before the routes are restarted, so that by the time the routes
  * come back up the underlying resource is already authenticated with the new secret.
- * <p/>
+ * <p>
  * Implementations should re-establish the authenticated resource rather than assume the process will be restarted, and
  * should be quick: the callback runs inline on the reload, and every implementation is notified before the routes come
  * back. A callback that throws is logged and ignored, so that one component cannot prevent the others from being
@@ -44,7 +44,7 @@ public interface SecretRotationAware {
     /**
      * Callback invoked when the secrets this component or bean captured may have been rotated, and it should
      * re-authenticate in place.
-     * <p/>
+     * <p>
      * The callback is advisory: it says that a reload was triggered, not which secrets changed. Implementations should
      * re-read their configuration and refresh the authenticated resource if the credentials it holds are no longer the
      * configured ones.

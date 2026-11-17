@@ -44,7 +44,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
     @Test
     public void testMulticastParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
+        mock.expectedMessageCount(5);
         mock.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) {
                 // they should all be BA as B is faster than A
@@ -52,7 +52,9 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
             }
         });
 
-        for (int i = 0; i < 10; i++) {
+        // route a delays each message 2 seconds, and they are sent one after the other so that the threads of the
+        // multicast are free for the b branch
+        for (int i = 0; i < 5; i++) {
             template.sendBody("direct:start", "Hello");
         }
 

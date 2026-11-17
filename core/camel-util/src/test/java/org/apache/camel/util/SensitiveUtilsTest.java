@@ -62,6 +62,36 @@ class SensitiveUtilsTest {
     }
 
     @Test
+    void serverAndVaultSecretOptionsAreSensitive() {
+        assertThat(SensitiveUtils.containsSensitive("camel.server.jwtKeystorePassword")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.management.jwtKeystorePassword")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.eventhubConnectionString")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.tenantId")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.gcp.serviceAccountKey")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamUsername")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamPassword")).isTrue();
+        // dash case
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.tenant-id")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.server.jwt-keystore-password")).isTrue();
+        // as loaded from the environment variable CAMEL_VAULT_GCP_SERVICEACCOUNTKEY
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.gcp.serviceaccountkey")).isTrue();
+    }
+
+    @Test
+    void componentOptionsWithTheNameOfASecretMainOptionAreNotSensitive() {
+        // serviceAccountKey and tenantId are secret as camel.vault options only, and not as component options
+        assertThat(SensitiveUtils.containsSensitive("camel.component.google-pubsub.serviceAccountKey")).isFalse();
+        assertThat(SensitiveUtils.containsSensitive("camel.component.azure-storage-datalake.tenantId")).isFalse();
+        assertThat(SensitiveUtils.containsSensitive("serviceAccountKey")).isFalse();
+        assertThat(SensitiveUtils.containsSensitive("tenantId")).isFalse();
+        assertThat(SensitiveUtils.containsSensitive("jwtKeystorePassword")).isFalse();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.tenantId.foo")).isFalse();
+        // and an endpoint uri parameter with such a name is not masked
+        assertThat(URISupport.sanitizeUri("azure-storage-datalake:myaccount?tenantId=mytenant&accountKey=mykey"))
+                .isEqualTo("azure-storage-datalake:myaccount?tenantId=mytenant&accountKey=xxxxxx");
+    }
+
+    @Test
     void maskUserInfoCredentialsMasksPasswordInCommonSchemes() {
         assertThat(SensitiveUtils.maskUserInfoCredentials("mongodb://user:pass@host:27017/db", "xxxxx"))
                 .isEqualTo("mongodb://user:xxxxx@host:27017/db");

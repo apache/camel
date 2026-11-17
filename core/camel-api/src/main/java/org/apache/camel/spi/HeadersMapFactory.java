@@ -22,14 +22,14 @@ import org.apache.camel.Message;
 
 /**
  * SPI factory that creates the {@link java.util.Map} implementation used to store headers on a {@link Message}.
- * <p/>
+ * <p>
  * The factory is discovered via the service key {@link #FACTORY}. The default implementation
  * ({@code DefaultHeadersMapFactory} in {@code camel-base-engine}) returns a case-insensitive linked hash map, which is
  * important for HTTP-style protocols where header names such as {@code content-type} and {@code Content-Type} must be
  * treated as equal. Custom implementations must correctly implement {@link #isInstanceOf(java.util.Map)} (so Camel can
  * detect whether a given map was created by this factory) and {@link #newMap(java.util.Map)} (defensive copy semantics
  * for {@link Message#setHeaders}).
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *
  * @see Message
@@ -50,7 +50,7 @@ public interface HeadersMapFactory {
 
     /**
      * Creates a new {@link Map} and copies over all the content from the existing map.
-     * <p/>
+     * <p>
      * The copy of the content should use defensive copy, so the returned map can add/remove/change the content without
      * affecting the existing map.
      *
@@ -62,17 +62,17 @@ public interface HeadersMapFactory {
     /**
      * Whether the given {@link Map} implementation is created by this factory?
      *
-     * @return <tt>true</tt> if created from this factory, <tt>false</tt> if not
+     * @return <code>true</code> if created from this factory, <code>false</code> if not
      */
     boolean isInstanceOf(Map<String, Object> map);
 
     /**
-     * Whether the created {@link Map} are case insensitive or not.
-     * <p/>
+     * Whether the created {@link Map} is case insensitive or not.
+     * <p>
      * Important: When using case sensitive (this method return false). Then the map is case sensitive which means
-     * headers such as <tt>content-type</tt> and <tt>Content-Type</tt> are two different keys which can be a problem for
-     * some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations
-     * can yield faster performance. Therefore use case sensitive implementation with care.
+     * headers such as <code>content-type</code> and <code>Content-Type</code> are two different keys which can be a
+     * problem for some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive
+     * implementations can yield faster performance. Therefore use case sensitive implementation with care.
      */
     boolean isCaseInsensitive();
 

@@ -18,16 +18,16 @@ package org.apache.camel.spi;
 
 /**
  * Observer that receives {@link CamelEvent} notifications fired by the Camel runtime.
- * <p/>
+ * <p>
  * Notifiers are registered with {@link ManagementStrategy#addEventNotifier(EventNotifier)} and receive every event that
  * {@link ManagementStrategy#notify(CamelEvent)} dispatches. Common uses include emitting metrics (Micrometer,
  * Prometheus), publishing traces, audit logging, and driving test assertions.
- * <p/>
+ * <p>
  * Each event category can be selectively suppressed via the {@code setIgnore*} methods, which avoids the overhead of
  * dispatching events that the notifier does not care about. For example, a metrics-only notifier can ignore all route
  * lifecycle events while still observing exchange sent/completed events. The {@link EventFactory} is the counterpart
  * that constructs the actual event objects.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/event-notifier.html">Event Notifier</a> in the Camel user manual.
  *
  * @see CamelEvent
@@ -46,18 +46,18 @@ public interface EventNotifier {
 
     /**
      * Checks whether notification for the given event is enabled.
-     * <p/>
+     * <p>
      * If disabled the event will not be sent and silently ignored instead.
      *
      * @param  event the event
-     * @return       <tt>true</tt> if the event should be sent, <tt>false</tt> to silently ignore it
+     * @return       <code>true</code> if the event should be sent, <code>false</code> to silently ignore it
      */
     boolean isEnabled(CamelEvent event);
 
     /**
      * Checks whether notification is disabled for all events
      *
-     * @return <tt>true</tt> if disabled and no events is being notified.
+     * @return <code>true</code> if disabled and no events are being notified.
      */
     boolean isDisabled();
 

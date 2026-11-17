@@ -26,8 +26,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * A manager to handle async routing engine, when {@link Exchange}s are being handed over from one thread to another,
  * while the callee thread is blocked waiting for the other threads to complete, before it can continue.
- * <p/>
- * This manager offers insight into the state, and allow to force stuck exchanges to be continued and for blocked
+ * <p>
+ * This manager offers insight into the state, and allows to force stuck exchanges to be continued and for blocked
  * threads to be unblocked, which may happen in case of severe malfunctions (such as the system runs out of memory, a
  * 3rd party never responding, or a timeout not triggering, etc).
  */
@@ -81,7 +81,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
         /**
          * Sets whether statistics is enabled.
          *
-         * @param statisticsEnabled <tt>true</tt> to enable
+         * @param statisticsEnabled <code>true</code> to enable
          */
         void setStatisticsEnabled(boolean statisticsEnabled);
     }
@@ -108,24 +108,24 @@ public interface AsyncProcessorAwaitManager extends StaticService {
 
         /**
          * The id of the route where the exchange was processed when the thread was set to block.
-         * <p/>
-         * Is <tt>null</tt> if message history is disabled.
+         * <p>
+         * Is <code>null</code> if message history is disabled.
          */
         @Nullable
         String getRouteId();
 
         /**
          * The id of the node from the route where the exchange was processed when the thread was set to block.
-         * <p/>
-         * Is <tt>null</tt> if message history is disabled.
+         * <p>
+         * Is <code>null</code> if message history is disabled.
          */
         @Nullable
         String getNodeId();
 
         /**
          * Where the node is in the source, such as {@code orders.camel.yaml:18}
-         * <p/>
-         * Is <tt>null</tt> if message history or source location is disabled.
+         * <p>
+         * Is <code>null</code> if message history or source location is disabled.
          *
          * @since 4.23
          */
@@ -158,9 +158,9 @@ public interface AsyncProcessorAwaitManager extends StaticService {
     /**
      * To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread
      * to be released.
-     * <p/>
-     * <b>Important:</b> Use this with caution as the other thread is still assumed to be process the exchange. Though
-     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
+     * <p>
+     * <b>Important:</b> Use this with caution as the other thread is still assumed to be processing the exchange.
+     * Though if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
      *
@@ -171,9 +171,9 @@ public interface AsyncProcessorAwaitManager extends StaticService {
     /**
      * To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread
      * to be released.
-     * <p/>
-     * <b>Important:</b> Use this with caution as the other thread is still assumed to be process the exchange. Though
-     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
+     * <p>
+     * <b>Important:</b> Use this with caution as the other thread is still assumed to be processing the exchange.
+     * Though if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
      *
@@ -183,14 +183,14 @@ public interface AsyncProcessorAwaitManager extends StaticService {
 
     /**
      * Whether to interrupt any blocking threads during stopping.
-     * <p/>
+     * <p>
      * This is enabled by default which allows Camel to release any blocked thread during shutting down Camel itself.
      */
     boolean isInterruptThreadsWhileStopping();
 
     /**
      * Sets whether to interrupt any blocking threads during stopping.
-     * <p/>
+     * <p>
      * This is enabled by default which allows Camel to release any blocked thread during shutting down Camel itself.
      */
     void setInterruptThreadsWhileStopping(boolean interruptThreadsWhileStopping);

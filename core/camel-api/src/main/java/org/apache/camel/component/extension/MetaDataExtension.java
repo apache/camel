@@ -57,8 +57,8 @@ public interface MetaDataExtension extends ComponentExtension {
          *
          * @param  name                    the attribute name
          * @param  type                    the type of the attribute
-         * @return                         the value of the given attribute or <tt>null</tt> if there is no attribute
-         *                                 for the given name
+         * @return                         the value of the given attribute or <code>null</code> if there is no
+         *                                 attribute for the given name
          * @throws TypeConversionException is thrown if error during type conversion
          */
         <T> @Nullable T getAttribute(String name, Class<T> type);
@@ -66,7 +66,7 @@ public interface MetaDataExtension extends ComponentExtension {
         /**
          * Returns the payload of the meta data as a POJO.
          *
-         * @return the body, can be <tt>null</tt>
+         * @return the body, can be <code>null</code>
          */
         @Nullable
         Object getPayload();

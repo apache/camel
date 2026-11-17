@@ -39,8 +39,8 @@ class ChaosRouteCountsTest extends ChaosTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:toSeda").routeId("toSeda").to("seda:queue");
-                from("seda:queue").routeId("queue").to("mock:queue");
+                from("direct:toSeda").routeId("toSeda").to("seda:queue?pollTimeout=10");
+                from("seda:queue?pollTimeout=10").routeId("queue").to("mock:queue");
                 from("direct:multicast").routeId("multicast").multicast().to("direct:sub", "direct:sub").end()
                         .to("mock:multicast");
                 from("direct:recipientList").routeId("recipientList").recipientList(constant("direct:sub,mock:rl"));

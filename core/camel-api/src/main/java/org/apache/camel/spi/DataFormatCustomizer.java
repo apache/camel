@@ -27,13 +27,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for applying custom configuration to {@link DataFormat} instances as they are created.
- * <p/>
+ * <p>
  * Customizers are discovered from the {@link Registry} and applied to each data format during bootstrap, with
  * {@link #isEnabled(String, DataFormat)} (and an optional {@link Policy}) deciding whether a given data format is
  * customized, and {@link Ordered} controlling the order. Use the {@link #builder()} /
  * {@link #forType(Class, ThrowingConsumer)} helpers to target a concrete data format type. This is the
  * data-format-level counterpart to {@link CamelContextCustomizer}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
  * the Camel user manual.
  *
@@ -86,7 +86,7 @@ public interface DataFormatCustomizer extends Ordered {
      *
      * @param  name   the unique name of the data format
      * @param  target the data format to configure
-     * @return        <tt>true</tt> if the customizer should be applied
+     * @return        <code>true</code> if the customizer should be applied
      */
     default boolean isEnabled(String name, DataFormat target) {
         return true;
@@ -104,9 +104,9 @@ public interface DataFormatCustomizer extends Ordered {
     // ***************************************
 
     /**
-     * Used as additional filer mechanism to control if customizers need to be applied or not. Each of this filter is
+     * Used as additional filter mechanism to control if customizers need to be applied or not. Each of these filters is
      * applied before any of the discovered {@link DataFormatCustomizer} is invoked.
-     * </p>
+     * <p>
      * This interface is useful to implement enable/disable logic on a group of customizers.
      */
     @FunctionalInterface

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Tag;
  * The test forks run in parallel, and two tests on the same port fail to bind, so these tests run after them in a fork
  * of their own, one class at a time (the {@code serial-test} execution in pom.xml).
  */
-@Target(ElementType.TYPE)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Tag("serial")

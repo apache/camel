@@ -31,6 +31,22 @@ class TerminalWidthHelperTest {
         assertTrue(width >= 40, "Terminal width should be at least 40, got: " + width);
     }
 
+    @Test
+    void getTerminalWidthWithoutTerminalRunsNoCommand() {
+        // no stty without a terminal: the default width, and the terminal check is the last thing asked
+        assertEquals(120, TerminalWidthHelper.getTerminalWidth(null, () -> false));
+        assertEquals(120, TerminalWidthHelper.getTerminalWidth("abc", () -> false));
+    }
+
+    @Test
+    void getTerminalWidthPrefersColumns() {
+        // COLUMNS wins, also without a terminal, and the terminal is then not checked
+        assertEquals(100, TerminalWidthHelper.getTerminalWidth("100", () -> {
+            throw new AssertionError("the terminal is not checked when COLUMNS is set");
+        }));
+        assertEquals(40, TerminalWidthHelper.getTerminalWidth("10", () -> false));
+    }
+
     // --- fillWidth ---
 
     @Test

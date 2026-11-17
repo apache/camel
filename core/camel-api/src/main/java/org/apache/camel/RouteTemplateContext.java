@@ -27,13 +27,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Contextual environment provided to a <a href="https://camel.apache.org/manual/route-template.html">route template</a>
  * while it is being instantiated into a concrete {@link Route}.
- * <p/>
+ * <p>
  * A route template is a parameterized route blueprint registered in the {@link CamelContext}. When the template is
  * instantiated (for example by a Kamelet), the framework creates a {@code RouteTemplateContext} that carries the
  * parameter bindings and a local bean repository. Template beans ({@link BeanSupplier}) declared inside the template
  * are resolved through this context rather than the global registry, so each instantiation gets its own private set of
  * beans.
- * <p/>
+ * <p>
  * Implementors provide this context to the template engine; application developers typically interact with it only when
  * writing custom {@code RouteTemplateParameterSource} or Kamelet binding code.
  *
@@ -65,7 +65,7 @@ public interface RouteTemplateContext extends HasCamelContext {
 
     /**
      * Binds the bean to the repository (if possible).
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -78,10 +78,10 @@ public interface RouteTemplateContext extends HasCamelContext {
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
-     * <p/>
+     * <p>
      * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then
      * use {@link #bindAsPrototype(String, Class, Supplier)} instead.
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -94,9 +94,9 @@ public interface RouteTemplateContext extends HasCamelContext {
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
-     * <p/>
+     * <p>
      * Notice that the supplier will be called each time the bean is being looked up (not cached).
-     * <p/>
+     * <p>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
@@ -119,7 +119,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * Gets the property with the given name
      *
      * @param  name name of property
-     * @return      the property value or <tt>null</tt> if no property exists
+     * @return      the property value or <code>null</code> if no property exists
      */
     @Nullable
     Object getProperty(String name);
@@ -131,7 +131,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * matches BUCKETNAMEORARN and BUCKET_NAME_OR_ARN environment variables.
      *
      * @param  name name of property
-     * @return      the property value or <tt>null</tt> if no property exists
+     * @return      the property value or <code>null</code> if no property exists
      */
     @Nullable
     Object getEnvironmentVariable(String name);
@@ -141,7 +141,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      *
      * @param  name                    name of property
      * @param  type                    the type of the property
-     * @return                         the property value or <tt>null</tt> if no property exists
+     * @return                         the property value or <code>null</code> if no property exists
      * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> @Nullable T getProperty(String name, Class<?> type);

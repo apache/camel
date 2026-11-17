@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A breadcrumb record that captures the route id and processing node an {@link Exchange} visited at a given point in
  * time, together with the elapsed processing time at that node.
- * <p/>
+ * <p>
  * History entries are accumulated in the exchange property {@link Exchange#MESSAGE_HISTORY} when message history is
  * enabled on the {@link CamelContext}. They are primarily used for debugging, tracing, and performance analysis, and
  * are surfaced via the Camel debugger and management or monitoring APIs.
@@ -79,8 +79,9 @@ public interface MessageHistory {
 
     /**
      * The class of the message body when this node was reached (the type the body arrived with, before the node
-     * processed it): the canonical class name, the string {@code "null"} when the body was null, or null when not
-     * captured. Cheap to capture: the class, no conversion, no copy.
+     * processed it): the canonical class name, or the class name when the class has none (an anonymous, local or hidden
+     * class), the string {@code "null"} when the body was null, or null when not captured. Cheap to capture: the class,
+     * no conversion, no copy.
      *
      * @since 4.23
      */

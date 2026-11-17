@@ -31,7 +31,7 @@ public interface PluginManager {
      * Gets a plugin of the given type.
      *
      * @param  type the type of the extension
-     * @return      the extension, or <tt>null</tt> if no extension has been installed.
+     * @return      the extension, or <code>null</code> if no extension has been installed.
      */
     <T> @Nullable T getContextPlugin(Class<T> type);
 

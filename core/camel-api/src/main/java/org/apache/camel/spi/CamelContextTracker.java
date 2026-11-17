@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Tracks the creation and destruction of {@link CamelContext} instances across the JVM.
- * <p/>
+ * <p>
  * A tracker is activated by calling {@link #open()} (and deactivated via {@link #close()}); while open it is notified
  * through {@link #contextCreated(CamelContext)} and {@link #contextDestroyed(CamelContext)} for every context that
  * passes its {@link Filter} (by default, non-proxy contexts). Registration is global and static, making this suited to
@@ -55,7 +55,7 @@ public class CamelContextTracker implements Closeable {
          * Whether the given context should be tracked.
          *
          * @param  camelContext the camel context
-         * @return              <tt>true</tt> to track the context
+         * @return              <code>true</code> to track the context
          */
         boolean accept(CamelContext camelContext);
 

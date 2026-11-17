@@ -289,6 +289,28 @@ class SecurityUtilsTest {
     }
 
     @Test
+    void testCamelMainOptionsMatchByWholeKey() {
+        // the camel-main options flagged insecure:dev, generated from the camel-main metadata
+        for (String key : List.of("camel.management.mcpEnabled", "camel.management.openapiUiEnabled",
+                "camel.server.jwtAllowMissingIssuerAndAudience", "camel.management.jwtAllowMissingIssuerAndAudience",
+                "camel.management.devConsoleEnabled", "camel.main.devConsoleEnabled")) {
+            SecurityUtils.SecurityOption option = SecurityUtils.getSecurityOption(key);
+            assertNotNull(option, key);
+            assertEquals(SecurityUtils.INSECURE_DEV, option.category(), key);
+            assertTrue(SecurityUtils.isInsecureValue(key, "true"), key);
+            assertFalse(SecurityUtils.isInsecureValue(key, "false"), key);
+        }
+        // dash case
+        assertTrue(SecurityUtils.isInsecureValue("camel.management.mcp-enabled", "true"));
+        // an option of a component with the same name is not the camel-main option
+        assertNull(SecurityUtils.getSecurityOption("camel.component.foo.mcpEnabled"));
+        assertNull(SecurityUtils.getSecurityOption("camel.component.foo.jwtAllowMissingIssuerAndAudience"));
+        // a camel-main option that is not boolean is insecure with any value that is not empty
+        assertTrue(SecurityUtils.isInsecureValue("camel.chaos.rules", "delay:route1:1000"));
+        assertFalse(SecurityUtils.isInsecureValue("camel.chaos.rules", ""));
+    }
+
+    @Test
     void testLanguageOptionMatchesOnlyItsOwnLanguage() {
         // nested is declared only by the simple and file languages
         assertTrue(SecurityUtils.isInsecureValue("camel.language.simple.nested", "true"));

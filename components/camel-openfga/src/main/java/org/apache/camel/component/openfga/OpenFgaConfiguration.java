@@ -103,6 +103,18 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "10")
     private int maxParallelRequests = 10;
 
+    @UriParam(defaultValue = "client")
+    private OpenFgaBatchCheckMode batchCheckMode = OpenFgaBatchCheckMode.client;
+
+    @UriParam(label = "advanced", defaultValue = "50")
+    private int maxBatchSize = 50;
+
+    @UriParam(defaultValue = "error")
+    private OpenFgaWriteConflictMode onDuplicate = OpenFgaWriteConflictMode.error;
+
+    @UriParam(defaultValue = "error")
+    private OpenFgaWriteConflictMode onMissing = OpenFgaWriteConflictMode.error;
+
     @UriParam
     private Integer pageSize;
 
@@ -465,8 +477,8 @@ public class OpenFgaConfiguration implements Cloneable {
     }
 
     /**
-     * How many of a {@code batchCheck}'s checks may be in flight at once. The batch is issued as one request per
-     * object, so this bounds the load one exchange puts on the server.
+     * How many HTTP requests a {@code batchCheck} may have in flight at once. In client mode each request checks one
+     * object; in server mode each request checks up to {@code maxBatchSize} objects.
      */
     public int getMaxParallelRequests() {
         return maxParallelRequests;
@@ -474,6 +486,57 @@ public class OpenFgaConfiguration implements Cloneable {
 
     public void setMaxParallelRequests(int maxParallelRequests) {
         this.maxParallelRequests = maxParallelRequests;
+    }
+
+    /**
+     * Whether batchCheck fans out individual checks (client, the compatible default) or uses the native server
+     * BatchCheck API (server, requires OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize and
+     * correlates responses back to the original objects. Failures never fall back to an unfiltered result or another
+     * mode.
+     */
+    public OpenFgaBatchCheckMode getBatchCheckMode() {
+        return batchCheckMode;
+    }
+
+    public void setBatchCheckMode(OpenFgaBatchCheckMode batchCheckMode) {
+        this.batchCheckMode = batchCheckMode;
+    }
+
+    /**
+     * Maximum number of checks per native server BatchCheck request, from 1 to 50. Applies only when
+     * batchCheckMode=server; the SDK splits larger input lists into requests of at most this size. 50 is the default
+     * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+     */
+    public int getMaxBatchSize() {
+        return maxBatchSize;
+    }
+
+    public void setMaxBatchSize(int maxBatchSize) {
+        this.maxBatchSize = maxBatchSize;
+    }
+
+    /**
+     * How writeTuples and write handle an existing relationship: error (the default) fails the operation, while ignore
+     * leaves that relationship unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or later.
+     */
+    public OpenFgaWriteConflictMode getOnDuplicate() {
+        return onDuplicate;
+    }
+
+    public void setOnDuplicate(OpenFgaWriteConflictMode onDuplicate) {
+        this.onDuplicate = onDuplicate;
+    }
+
+    /**
+     * How deleteTuples and write handle an absent relationship: error (the default) fails the operation, while ignore
+     * skips that deletion and continues. The ignore mode requires OpenFGA 1.10.0 or later.
+     */
+    public OpenFgaWriteConflictMode getOnMissing() {
+        return onMissing;
+    }
+
+    public void setOnMissing(OpenFgaWriteConflictMode onMissing) {
+        this.onMissing = onMissing;
     }
 
     public Integer getPageSize() {

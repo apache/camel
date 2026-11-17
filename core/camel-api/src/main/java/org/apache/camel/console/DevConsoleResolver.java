@@ -33,7 +33,7 @@ public interface DevConsoleResolver extends CamelContextAware, StaticService {
      * Resolves the given {@link DevConsole}.
      *
      * @param  id the id of the {@link DevConsole}
-     * @return    the resolved {@link DevConsole}, or <tt>null</tt> if not found
+     * @return    the resolved {@link DevConsole}, or <code>null</code> if not found
      */
     @Nullable
     DevConsole resolveDevConsole(String id);
@@ -42,7 +42,7 @@ public interface DevConsoleResolver extends CamelContextAware, StaticService {
      * Lookup existing resolved {@link DevConsole}.
      *
      * @param  id the id of the {@link DevConsole}
-     * @return    the existing {@link DevConsole}, or <tt>null</tt> if not yet resolved or not found
+     * @return    the existing {@link DevConsole}, or <code>null</code> if not yet resolved or not found
      */
     Optional<DevConsole> lookupDevConsole(String id);
 

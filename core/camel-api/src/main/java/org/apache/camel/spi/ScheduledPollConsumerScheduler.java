@@ -21,18 +21,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ShutdownableService;
 
 /**
- * Pluggable scheduler that controls when a {@link org.apache.camel.support.ScheduledPollConsumer} wakes up to poll its
+ * Pluggable scheduler that controls when a {@code org.apache.camel.support.ScheduledPollConsumer} wakes up to poll its
  * source.
- * <p/>
+ * <p>
  * Polling consumers (file, FTP, mail, etc.) delegate all scheduling decisions to this SPI so that the polling trigger
  * can be replaced without changing the consumer itself. The default implementation uses a
  * {@link java.util.concurrent.ScheduledExecutorService} with a fixed or initial delay, while the {@code camel-quartz}
  * component provides an alternative that accepts CRON expressions for time-based firing.
- * <p/>
+ * <p>
  * A scheduler is initialized via {@link #onInit(org.apache.camel.Consumer)} and then activated by calling
  * {@link #startScheduler()}, which begins firing the task registered with {@link #scheduleTask(Runnable)}. The consumer
  * task itself is responsible for calling the consumer's polling logic; the scheduler only controls the firing cadence.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/polling-consumer.html">Polling Consumer</a> in the Camel user manual.
  *
  * @see ExecutorServiceManager
@@ -54,15 +54,15 @@ public interface ScheduledPollConsumerScheduler extends ShutdownableService, Cam
     void scheduleTask(Runnable task);
 
     /**
-     * Attempts to unschedules the last task which was scheduled.
-     * <p/>
+     * Attempts to unschedule the last task which was scheduled.
+     * <p>
      * An implementation may not implement this method.
      */
     void unscheduleTask();
 
     /**
      * Starts the scheduler.
-     * <p/>
+     * <p>
      * If the scheduler is already started, then this is a noop method call.
      */
     void startScheduler();
@@ -70,7 +70,7 @@ public interface ScheduledPollConsumerScheduler extends ShutdownableService, Cam
     /**
      * Whether the scheduler has been started.
      *
-     * @return <tt>true</tt> if started, <tt>false</tt> otherwise.
+     * @return <code>true</code> if started, <code>false</code> otherwise.
      */
     boolean isSchedulerStarted();
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -99,20 +100,22 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
-        Exception cause;
+        Exception cause = null;
+        boolean connected = false;
+        boolean autoCreateFailed = false;
         try {
             connectIfNecessary();
             loggedIn = true;
+            connected = true;
             if (!autoCreatedDone) {
                 autoCreateIfNecessary();
                 autoCreatedDone = true;
             }
         } catch (Exception e) {
             cause = e;
-            String msg = "Cannot connect/login to: " + remoteServer();
-            if (loggedIn && !autoCreatedDone) {
-                msg = "Cannot auto-create starting directory at: " + remoteServer();
-            }
+            // connected, so the starting directory could not be created
+            autoCreateFailed = connected;
+            String msg = autoCreateFailed ? cannotAutoCreate() : "Cannot connect/login to: " + remoteServer();
             LOG.debug(msg, cause);
             loggedIn = false;
             if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
@@ -120,8 +123,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         }
 
-        if (loggedIn && !autoCreatedDone) {
-            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+        if (autoCreateFailed) {
+            String message = cannotAutoCreate() + reason(cause) + ". Will skip this poll.";
             if (!autoCreateWarning) {
                 LOG.warn(message);
                 autoCreateWarning = true;
@@ -129,7 +132,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             return false;
         }
         if (!loggedIn) {
-            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            String message = "Cannot connect/login to: " + remoteServer() + reason(cause) + ". Will skip this poll.";
             if (!loggedInWarning) {
                 LOG.warn(message);
                 loggedInWarning = true;
@@ -144,6 +147,26 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         forceConsumerAsReady();
 
         return true;
+    }
+
+    private String cannotAutoCreate() {
+        return "Cannot auto-create starting directory " + endpoint.getConfiguration().getDirectory() + " at: "
+               + remoteServer();
+    }
+
+    /**
+     * Why the poll is skipped, for the WARN: the message of the cause when there is one, as the sftp operations wrap
+     * the error of the SSH client in an exception whose message only names the server. On one line, as the message can
+     * hold the reply of the server, such as an ftp reply of several lines.
+     */
+    private static String reason(Exception cause) {
+        if (cause == null) {
+            return "";
+        }
+        Throwable reason = cause.getCause() != null ? cause.getCause() : cause;
+        String message = reason.getMessage() != null ? reason.getMessage() : reason.getClass().getName();
+        return " due to: "
+               + message.lines().map(String::strip).filter(line -> !line.isEmpty()).collect(Collectors.joining(" "));
     }
 
     @Override

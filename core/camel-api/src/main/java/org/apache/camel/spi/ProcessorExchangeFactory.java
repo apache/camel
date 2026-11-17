@@ -25,11 +25,11 @@ import org.apache.camel.Processor;
 /**
  * Factory used by {@link org.apache.camel.Processor} implementations (EIPs) when they create copies of the current
  * {@link Exchange} for sub-routing.
- * <p/>
+ * <p>
  * EIPs such as WireTap, Multicast, and Splitter each create one or more derived exchanges (copies or correlated copies)
  * to fan out processing. This factory gives those EIPs the same exchange-pooling benefit as {@link ExchangeFactory}
  * gives to consumers, without conflating the two lifecycle boundaries.
- * <p/>
+ * <p>
  * Like {@link ExchangeFactory}, this factory is pluggable:
  * <ul>
  * <li><b>default</b> — creates a new {@link Exchange} copy per sub-routing invocation.</li>

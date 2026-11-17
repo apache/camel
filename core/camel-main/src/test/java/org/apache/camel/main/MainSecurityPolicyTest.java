@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -567,6 +568,87 @@ public class MainSecurityPolicyTest {
             main.start();
             main.stop();
         });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "camel.management.mcpEnabled", "camel.management.openapiUiEnabled",
+            "camel.server.jwtAllowMissingIssuerAndAudience", "camel.management.jwtAllowMissingIssuerAndAudience" })
+    public void testInsecureDevMainOptionFailsWithProdProfile(String key) {
+        // the camel-main options flagged insecure:dev in the metadata are reported by the security policy
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty(key, "true");
+
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class, main::start);
+        assertTrue(ex.getMessage().contains("[insecure:dev]"), ex.getMessage());
+        assertTrue(ex.getMessage().contains(key), ex.getMessage());
+    }
+
+    @Test
+    public void testInsecureDevMainOptionDisabledWithProdProfile() {
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.management.mcpEnabled", "false");
+        main.addInitialProperty("camel.server.jwtAllowMissingIssuerAndAudience", "false");
+
+        assertDoesNotThrow(() -> {
+            main.start();
+            main.stop();
+        });
+    }
+
+    @Test
+    public void testComponentOptionWithTheNameOfASecretVaultOption() {
+        // serviceAccountKey and tenantId are secret as camel.vault options, but not as component options
+        Main main = new Main();
+        main.bind("google-pubsub", new MyCloudComponent());
+        main.bind("azure-storage-datalake", new MyCloudComponent());
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.component.google-pubsub.serviceAccountKey", "classpath:sa.json");
+        main.addInitialProperty("camel.component.azure-storage-datalake.tenantId", "mytenant");
+
+        assertDoesNotThrow(() -> {
+            main.start();
+            main.stop();
+        });
+    }
+
+    @Test
+    public void testPlainTextSecretVaultOption() {
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.vault.azure.tenantId", "mytenant");
+
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class, main::start);
+        assertTrue(ex.getMessage().contains("camel.vault.azure.tenantId"), ex.getMessage());
+    }
+
+    public static class MyCloudComponent extends DefaultComponent {
+
+        private String serviceAccountKey;
+        private String tenantId;
+
+        public String getServiceAccountKey() {
+            return serviceAccountKey;
+        }
+
+        public void setServiceAccountKey(String serviceAccountKey) {
+            this.serviceAccountKey = serviceAccountKey;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public static class MyTlsComponent extends DefaultComponent {

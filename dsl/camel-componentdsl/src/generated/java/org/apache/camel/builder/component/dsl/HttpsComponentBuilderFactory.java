@@ -376,6 +376,28 @@ public interface HttpsComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The maximum time (in millis) a pooled connection can stay idle and
+         * still be reused. A connection idle for longer is closed when it would
+         * be reused, and the request opens a new one, whatever Keep-Alive
+         * timeout the server announced. Set it below the idle timeout of a NAT,
+         * firewall or load balancer that drops idle connections silently: the
+         * next request on such a connection would otherwise wait for the read
+         * timeout and fail. Zero (the default) or a negative value means no
+         * limit.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionIdleTimeout the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder connectionIdleTimeout(long connectionIdleTimeout) {
+            doSetProperty("connectionIdleTimeout", connectionIdleTimeout);
+            return this;
+        }
+    
         
         /**
          * The maximum number of connections per route.
@@ -595,6 +617,30 @@ public interface HttpsComponentBuilderFactory {
          */
         default HttpsComponentBuilder useSystemProperties(boolean useSystemProperties) {
             doSetProperty("useSystemProperties", useSystemProperties);
+            return this;
+        }
+    
+        
+        /**
+         * The time (in millis) a pooled connection must have been idle before
+         * it is checked, prior to its reuse, for having been closed by the
+         * server. A request sent on a connection that the server closed fails
+         * with NoHttpResponseException, and HttpClient retries it only for
+         * idempotent methods. Zero checks the connection before each reuse, at
+         * the cost of a read of up to 1 millisecond per request; a negative
+         * value disables the check. The check cannot see a connection that a
+         * NAT or firewall dropped silently: use connectionIdleTimeout for that.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param validateAfterInactivity the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder validateAfterInactivity(long validateAfterInactivity) {
+            doSetProperty("validateAfterInactivity", validateAfterInactivity);
             return this;
         }
     
@@ -992,6 +1038,7 @@ public interface HttpsComponentBuilderFactory {
             case "automaticRetriesDisabled": ((HttpComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;
             case "autowiredEnabled": ((HttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientConnectionManager": ((HttpComponent) component).setClientConnectionManager((org.apache.hc.client5.http.io.HttpClientConnectionManager) value); return true;
+            case "connectionIdleTimeout": ((HttpComponent) component).setConnectionIdleTimeout((long) value); return true;
             case "connectionsPerRoute": ((HttpComponent) component).setConnectionsPerRoute((int) value); return true;
             case "connectionStateDisabled": ((HttpComponent) component).setConnectionStateDisabled((boolean) value); return true;
             case "connectionTimeToLive": ((HttpComponent) component).setConnectionTimeToLive((long) value); return true;
@@ -1005,6 +1052,7 @@ public interface HttpsComponentBuilderFactory {
             case "maxTotalConnections": ((HttpComponent) component).setMaxTotalConnections((int) value); return true;
             case "redirectHandlingDisabled": ((HttpComponent) component).setRedirectHandlingDisabled((boolean) value); return true;
             case "useSystemProperties": ((HttpComponent) component).setUseSystemProperties((boolean) value); return true;
+            case "validateAfterInactivity": ((HttpComponent) component).setValidateAfterInactivity((long) value); return true;
             case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "nonProxyHosts": ((HttpComponent) component).setNonProxyHosts((java.lang.String) value); return true;
             case "proxyAuthDomain": ((HttpComponent) component).setProxyAuthDomain((java.lang.String) value); return true;

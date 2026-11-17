@@ -18,13 +18,11 @@ package org.apache.camel;
 
 /**
  * Callback interface for objects that need to perform work on a recurring internal timer tick.
- * <p/>
- * Implementations are registered with the {@link org.apache.camel.support.TimerListenerManager}, which fires
+ * <p>
+ * Implementations are registered with the {@code org.apache.camel.support.TimerListenerManager}, which fires
  * {@link #onTimer()} at a fixed interval for all registered listeners. This is used internally by components such as
  * the throttler and the load-balancer to periodically update rate-limiter windows or health counters without coupling
  * to a scheduler component.
- *
- * @see org.apache.camel.support.TimerListenerManager
  */
 public interface TimerListener {
 

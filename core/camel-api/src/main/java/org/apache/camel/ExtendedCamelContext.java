@@ -53,7 +53,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Internal extension surface of {@link CamelContext}: methods and SPI hooks that custom components, data formats,
  * languages, route policies and tooling may need, but that are <b>not</b> part of the end-user facing API.
- * <p/>
+ * <p>
  * Obtained via {@link CamelContext#getCamelContextExtension()}. End-user route code should depend only on
  * {@link CamelContext}; everything in this interface should be considered an internal contract that may change between
  * minor releases.
@@ -65,7 +65,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Sets the name (id) of this context.
-     * <p/>
+     * <p>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
      * etc. Important: Setting the name should only be set before CamelContext is started.
      *
@@ -100,11 +100,11 @@ public interface ExtendedCamelContext {
 
     /**
      * Sets the registry Camel should use for looking up beans by name or type.
-     * <p/>
+     * <p>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
      * etc. Important: Setting the registry should only be set before CamelContext is started.
      *
-     * @param registry the registry such as DefaultRegistry or
+     * @param registry the registry such as DefaultRegistry
      */
     void setRegistry(Registry registry);
 
@@ -122,7 +122,7 @@ public interface ExtendedCamelContext {
     /**
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
      *
-     * @param      done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
+     * @param      done <code>false</code> to start the process, call again with <code>true</code> to signal it's done.
      * @see             #isSetupRoutes()
      * @deprecated      use {@link #setupRoutes(Runnable)} or {@link #setupRoutes(Callable)} for ScopedValue
      *                  compatibility
@@ -132,21 +132,21 @@ public interface ExtendedCamelContext {
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel.
-     * <p/>
+     * <p>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
-     * <p/>
+     * <p>
      * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
      * camel-spring-xml, then we need to know when spring is setting up the routes, which can happen after the
      * {@link CamelContext} itself is in started state.
      *
-     * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
+     * @return <code>true</code> if current thread is setting up route(s), or <code>false</code> if not.
      * @see    #setupRoutes(boolean)
      */
     boolean isSetupRoutes();
 
     /**
      * Executes the given operation within a "setup routes" context.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param operation the operation to execute
@@ -162,7 +162,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Executes the given callable within a "setup routes" context and returns its result.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param  <T>       the return type
@@ -192,10 +192,10 @@ public interface ExtendedCamelContext {
 
     /**
      * Indicates whether current thread is creating a route as part of starting Camel.
-     * <p/>
+     * <p>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      *
-     * @return the route id currently being created/started, or <tt>null</tt> if not.
+     * @return the route id currently being created/started, or <code>null</code> if not.
      * @see    #createRoute(String)
      */
     @Nullable
@@ -203,7 +203,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Executes the given operation within a "create route" context.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param routeId   the id of the route being created
@@ -220,7 +220,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Executes the given callable within a "create route" context and returns its result.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param  <T>       the return type
@@ -251,7 +251,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Indicates whether current thread is creating a processor as part of starting Camel.
-     * <p/>
+     * <p>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      *
      * @return the current id of the processor being created
@@ -262,7 +262,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Executes the given operation within a "create processor" context.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param processorId the id of the processor being created
@@ -279,7 +279,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Executes the given callable within a "create processor" context and returns its result.
-     * <p/>
+     * <p>
      * This is the preferred method for ScopedValue compatibility on virtual threads.
      *
      * @param  <T>         the return type
@@ -300,7 +300,7 @@ public interface ExtendedCamelContext {
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an
      * {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
-     * <p/>
+     * <p>
      * When a callback is registered it will be executed on the already registered endpoints allowing you to catch-up
      *
      * @param strategy callback to be invoked
@@ -349,7 +349,7 @@ public interface ExtendedCamelContext {
      * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @param  uri the URI of the endpoint
-     * @return     the registered endpoint or <tt>null</tt> if not registered
+     * @return     the registered endpoint or <code>null</code> if not registered
      */
     @Nullable
     Endpoint hasEndpoint(NormalizedEndpointUri uri);
@@ -388,12 +388,12 @@ public interface ExtendedCamelContext {
     NormalizedEndpointUri normalizeUri(String uri);
 
     /**
-     * Returns the order in which the route inputs was started.
-     * <p/>
+     * Returns the order in which the route inputs were started.
+     * <p>
      * The order may not be according to the startupOrder defined on the route. For example a route could be started
      * manually later, or new routes added at runtime.
      *
-     * @return a list in the order how routes was started
+     * @return a list in the order how routes were started
      */
     List<RouteStartupOrder> getRouteStartupOrder();
 
@@ -525,7 +525,7 @@ public interface ExtendedCamelContext {
      * Gets the {@link StepHook} that is asked before every processing step of a route: the one hook that is installed,
      * or a hook that asks all the installed hooks in their order (see {@link #addStepHook(StepHook)}).
      *
-     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @return the hook, or <code>null</code> if no hook is installed
      * @since  4.24
      */
     default @Nullable StepHook getStepHook() {
@@ -708,7 +708,7 @@ public interface ExtendedCamelContext {
      * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}: the one hook that is installed, or a hook that runs
      * all the installed hooks in their order (see {@link #addSendHook(SendHook)}).
      *
-     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @return the hook, or <code>null</code> if no hook is installed
      * @since  4.24
      */
     default @Nullable SendHook getSendHook() {
@@ -804,7 +804,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Parses the given text and resolve any property placeholders - using {{key}}.
-     * <p/>
+     * <p>
      * <b>Important:</b> If resolving placeholders on an endpoint uri, then you SHOULD use
      * EndpointHelper#resolveEndpointUriPropertyPlaceholders instead.
      *
@@ -867,7 +867,7 @@ public interface ExtendedCamelContext {
      * Gets a plugin of the given type.
      *
      * @param  type the type of the extension
-     * @return      the extension, or <tt>null</tt> if no extension has been installed.
+     * @return      the extension, or <code>null</code> if no extension has been installed.
      */
     <T> @Nullable T getContextPlugin(Class<T> type);
 

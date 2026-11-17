@@ -49,6 +49,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -223,6 +225,7 @@ class WebsiteInstallTest {
 
     @Nested
     @DisabledOnOs(OS.WINDOWS)
+    @Execution(ExecutionMode.CONCURRENT)
     class PosixShell {
 
         private static final Path SCRIPT = Paths.get("src/install/install.sh").toAbsolutePath();

@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * Generic builder contract for objects that are assembled in multiple steps before being produced.
- * <p/>
+ * <p>
  * Implementations collect configuration through setters or a fluent API and then materialize the final object via
  * {@link #build()}. Being a {@link FunctionalInterface}, it can also be satisfied by a lambda or method reference
  * wherever a deferred-construction callback is expected (for example in route template bean suppliers).

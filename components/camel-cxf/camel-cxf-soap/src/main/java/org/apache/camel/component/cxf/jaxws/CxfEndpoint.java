@@ -306,8 +306,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "producer",
               description = "Whether to invoke a document-literal wrapped operation in its wrapped form instead of its"
                             + " unwrapped form. If true and dataFormat is POJO, the Camel message body of the request must"
-                            + " hold the wrapper object in place of the parameters of the operation. The consumer does not use"
-                            + " it.")
+                            + " hold the wrapper object in place of the parameters of the operation. Only the request is in"
+                            + " wrapped form: the reply body is a MessageContentsList with the return value of the operation,"
+                            + " as when this option is false, not the response wrapper object. The consumer does not use it.")
     private boolean wrapped;
     @UriParam(label = "producer",
               description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that"

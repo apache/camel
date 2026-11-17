@@ -307,8 +307,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     @Option(name = "sanitizer", hasValue = false,
             description = "Add camel-sanitizer, which reports where the processors of the routes break the contract of"
-                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit also where the commits of the"
-                          + " consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod."
+                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit,threads also where the commits of"
+                          + " the consumers do not run exactly once (camel get sanitizer); on with profile dev, never with"
+                          + " prod."
                           + " Not with Quarkus yet")
     boolean sanitizer;
 

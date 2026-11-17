@@ -1677,6 +1677,21 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaEventBridge() {
+        String uri = "alibaba-eventbridge:putEvents?endpoint=12345.eventbridge.cn-hangzhou.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-eventbridge:putEvents?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
+        ComponentModel model = catalog.componentModel("alibaba-eventbridge");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaEventBridgeOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateEndpointHttpPropertyPlaceholder() {
         String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1704,6 +1719,20 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaSms() {
+        String uri = "alibaba-sms:sendSms?endpoint=dysmsapi.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-sms:sendSms?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        ComponentModel model = catalog.componentModel("alibaba-sms");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaSmsOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
@@ -1727,6 +1756,23 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateEndpointSpringWsConsumerOptions() {
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&outputAction=http://example.com/GetFooResponse&faultAction=http://example.com/GetFooFault";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "spring-ws:http://example.com/ws?outputAction=http://example.com/GetFooResponse"
+              + "&faultAction=http://example.com/GetFooFault";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("outputAction"));
+        assertTrue(result.getNotProducerOnly().contains("faultAction"));
     }
 
     @Test

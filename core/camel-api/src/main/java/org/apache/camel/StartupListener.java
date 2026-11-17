@@ -18,21 +18,21 @@ package org.apache.camel;
 
 /**
  * Allows objects to be notified when {@link CamelContext} has almost done all work when starting.
- * <p/>
- * The state of {@link CamelContext} may still be in <tt>starting</tt> when this callback is invoked, this is by design.
- * The callback is invoked during the routes startup procedure when starting {@link CamelContext}.
- * <p/>
+ * <p>
+ * The state of {@link CamelContext} may still be in <code>starting</code> when this callback is invoked, this is by
+ * design. The callback is invoked during the routes startup procedure when starting {@link CamelContext}.
+ * <p>
  * This can be used to perform any custom work when the entire {@link CamelContext} has been initialized and
  * <b>almost</b> started. This callback is invoked twice during starting the Camel routes, once before the route
  * consumers are started, and once again after the route consumer has just been started. This is by design to allow
  * Camel components to react accordingly and for example to register custom startup listeners during starting consumers.
- * <p/>
- * If you want to have only one callback after the route consumers has been fully started then use the
+ * <p>
+ * If you want to have only one callback after the route consumers have been fully started then use the
  * {@link ExtendedStartupListener} instead.
- * <p/>
+ * <p>
  * For example the QuartzComponent leverages this to ensure the Quartz scheduler does not start until after all the
  * Camel routes and services have already been started.
- * <p/>
+ * <p>
  * <b>Important:</b> You cannot use this listener to add and start new routes to the {@link CamelContext} as this is not
  * supported by design, as this listener plays a role during starting up routes. Instead you can use an
  * {@link org.apache.camel.spi.EventNotifier} and listen on the

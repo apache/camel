@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * Implemented by objects that can be resolved to a producer-facing {@link Endpoint}.
- * <p/>
+ * <p>
  * The DSL and annotation processor call {@link #resolve(CamelContext)} to obtain a concrete {@link Endpoint} when an
  * object used in a {@code to()} clause is not itself an endpoint URI string. This allows richer types (for example,
  * enum constants or wrapper objects) to be used as route destinations without requiring string parsing.

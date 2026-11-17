@@ -136,6 +136,16 @@ public class RouteService extends ChildServiceSupport {
             try {
                 doSetup();
             } catch (Exception e) {
+                // set up again on the next start: the route is not set up (such as when the endpoint failed to create
+                // the consumer), and a next start that skipped the set up would find no consumer and child services
+                lock.lock();
+                try {
+                    input = null;
+                    childServices = null;
+                    setUpDone.set(false);
+                } finally {
+                    lock.unlock();
+                }
                 throw new FailedToStartRouteException(getId(), getLocation(), extractUsefulMessage(e), e);
             }
         }

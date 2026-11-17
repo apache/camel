@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method parameter as a named exchange property when Camel performs
  * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
- * <p/>
+ * <p>
  * Exchange properties are key-value pairs stored on the {@link Exchange} (not on the {@link Message}), surviving across
  * multiple processing steps for the lifetime of the exchange. They are typically used for internal routing state and
  * correlation data. The {@link #value()} attribute names the property to inject; the value is converted to the declared

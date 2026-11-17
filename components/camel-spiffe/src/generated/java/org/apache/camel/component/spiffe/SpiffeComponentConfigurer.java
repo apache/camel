@@ -39,6 +39,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.spiffe.SpiffeConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "localspiffeid":
+        case "localSpiffeId": getOrCreateConfiguration(target).setLocalSpiffeId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.spiffe.SpiffeOperation.class, value)); return true;
         case "preservebody":
         case "preserveBody": getOrCreateConfiguration(target).setPreserveBody(property(camelContext, boolean.class, value)); return true;
@@ -68,6 +70,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return org.apache.camel.component.spiffe.SpiffeConfiguration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "localspiffeid":
+        case "localSpiffeId": return java.lang.String.class;
         case "operation": return org.apache.camel.component.spiffe.SpiffeOperation.class;
         case "preservebody":
         case "preserveBody": return boolean.class;
@@ -93,6 +97,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "localspiffeid":
+        case "localSpiffeId": return getOrCreateConfiguration(target).getLocalSpiffeId();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "preservebody":
         case "preserveBody": return getOrCreateConfiguration(target).isPreserveBody();

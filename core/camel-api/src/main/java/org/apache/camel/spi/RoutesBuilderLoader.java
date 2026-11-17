@@ -22,7 +22,7 @@ import org.apache.camel.StaticService;
 
 /**
  * SPI that loads {@link org.apache.camel.RoutesBuilder} instances from a {@link Resource} identified by file extension.
- * <p/>
+ * <p>
  * Implementations are keyed by the extension they support (e.g. {@code java}, {@code xml}, {@code yaml}, {@code kts})
  * and are discovered at path {@link #FACTORY_PATH}. At startup, {@link org.apache.camel.CamelContext} iterates over the
  * configured route resource locations, selects the appropriate loader via {@link #isSupportedExtension(String)}, and
@@ -43,7 +43,7 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
 
     /**
      * The supported file extension.
-     * <p/>
+     * <p>
      * Implementations should support a single extension only.
      */
     String getSupportedExtension();

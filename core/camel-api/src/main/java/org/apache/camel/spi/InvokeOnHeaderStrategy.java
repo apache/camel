@@ -32,7 +32,7 @@ public interface InvokeOnHeaderStrategy {
 
     /**
      * Returned by {@link #invoke(Object, String, Exchange, AsyncCallback)} when there is no method for the key, so the
-     * caller can tell an unknown key from a void method, which returns <tt>null</tt>.
+     * caller can tell an unknown key from a void method, which returns <code>null</code>.
      *
      * @since 4.24
      */
@@ -50,9 +50,9 @@ public interface InvokeOnHeaderStrategy {
      * @param  key       the header key
      * @param  exchange  the exchange
      * @param  callback  the async callback
-     * @return           option response from invoking the method, or <tt>null</tt> if the method is void if a value is
-     *                   returned, then this value is stored as result on the message body. {@link #NO_METHOD} when
-     *                   there is no method for the key.
+     * @return           optional response from invoking the method, or <code>null</code> if the method is void. If a
+     *                   value is returned, then this value is stored as result on the message body. {@link #NO_METHOD}
+     *                   when there is no method for the key.
      * @throws Exception is thrown if error invoking the method.
      */
     @Nullable

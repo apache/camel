@@ -199,12 +199,12 @@ public class PluginHelperTest {
         // built-in non-plugin-consuming commands → short-circuit
         assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "version"));
         assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "get", "bean"));
+        assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "cmd", "browse"));
 
         // plugin-consuming built-ins → must load
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "run", "foo.yaml"));
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "export"));
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "shell"));
-        assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "cmd", "browse"));
 
         // unknown command (likely plugin-provided) → must load
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "kubernetes", "run"));

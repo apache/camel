@@ -155,7 +155,9 @@ public class JmsConfiguration implements Cloneable {
               description = "Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                             + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
                             + " When doing request/reply over JMS then the option replyToConcurrentConsumers is used to control number"
-                            + " of concurrent consumers on the reply message listener.")
+                            + " of concurrent consumers on the reply message listener."
+                            + " On a topic, each consumer has its own subscription and receives every message,"
+                            + " unless subscriptionShared is enabled.")
     private int concurrentConsumers = 1;
     @UriParam(defaultValue = "1", label = "producer",
               description = "Specifies the default number of concurrent consumers when doing request/reply over JMS."
@@ -225,7 +227,9 @@ public class JmsConfiguration implements Cloneable {
               description = "Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                             + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
                             + " When doing request/reply over JMS then the option replyToMaxConcurrentConsumers is used to control number"
-                            + " of concurrent consumers on the reply message listener.")
+                            + " of concurrent consumers on the reply message listener."
+                            + " On a topic, each consumer has its own subscription and receives every message,"
+                            + " unless subscriptionShared is enabled.")
     private int maxConcurrentConsumers;
     @UriParam(label = "producer",
               description = "Specifies the maximum number of concurrent consumers when using request/reply over JMS."
@@ -1241,6 +1245,9 @@ public class JmsConfiguration implements Cloneable {
      * <p>
      * When doing request/reply over JMS, then the option replyToConcurrentConsumers is used to control the number of
      * concurrent consumers on the reply message listener.
+     * <p>
+     * On a topic, each consumer has its own subscription and receives every message, unless subscriptionShared is
+     * enabled.
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
@@ -1464,6 +1471,9 @@ public class JmsConfiguration implements Cloneable {
      * <p>
      * When doing request/reply over JMS, then the option replyToMaxConcurrentConsumers is used to control the number of
      * concurrent consumers on the reply message listener.
+     * <p>
+     * On a topic, each consumer has its own subscription and receives every message, unless subscriptionShared is
+     * enabled.
      */
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         this.maxConcurrentConsumers = maxConcurrentConsumers;

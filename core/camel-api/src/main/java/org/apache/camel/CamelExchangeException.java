@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link CamelException} that carries the {@link Exchange} whose processing triggered the failure.
- * <p/>
+ * <p>
  * Used by Camel routing internals to attach exchange context to a failure so error handlers, the dead-letter channel
  * and onException clauses can inspect headers, properties and the in-flight {@link Message}. The reference is
  * {@code transient} because exchanges are not guaranteed to be serializable.
@@ -64,8 +64,8 @@ public class CamelExchangeException extends CamelException {
 
     /**
      * Creates an exception message with the provided details.
-     * <p/>
-     * All fields is optional so you can pass in only an exception, or just a message etc. or any combination.
+     * <p>
+     * All fields are optional so you can pass in only an exception, or just a message etc. or any combination.
      *
      * @param  message  the message
      * @param  exchange the exchange
