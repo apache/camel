@@ -57,6 +57,11 @@ performed to create the directory configured for the endpoint. The default
 value for `autoCreate` is `true`. On the contrary, the share must exist; it
 is not automatically created.
 
+When the consumer cannot create the directory as the route starts, for example
+because the identity is not allowed to create directories in the share, or the
+share refuses the credentials, the route still starts: the consumer logs a WARN
+and tries again on each poll.
+
 If no *port* number is provided, Camel will provide default values
 according to the protocol (https 443).
 

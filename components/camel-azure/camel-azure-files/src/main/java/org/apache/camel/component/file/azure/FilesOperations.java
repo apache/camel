@@ -114,8 +114,12 @@ public class FilesOperations extends NormalizedOperations {
         root = getClient().getShareClient(configuration.getShare()).getRootDirectoryClient();
         // TODO what about (starting) directory as the root?
         dirStack.push(root);
-        // TODO translate runtime exception to Camel one?
-        return existsRemote(root);
+        try {
+            return existsRemote(root);
+        } catch (RuntimeException e) {
+            // such as a share that refuses the credentials: the consumer starts, and connects again on each poll
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -197,11 +201,16 @@ public class FilesOperations extends NormalizedOperations {
 
     @Override
     public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
-        boolean success = existsDirectory(directory);
-        if (!success) {
-            success = buildDirectoryStepByStep(directory);
+        try {
+            boolean success = existsDirectory(directory);
+            if (!success) {
+                success = buildDirectoryStepByStep(directory);
+            }
+            return success;
+        } catch (RuntimeException e) {
+            // such as no permission to create directories: the consumer starts, and tries again on each poll
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
-        return success;
     }
 
     private boolean buildDirectoryStepByStep(String dir) {
