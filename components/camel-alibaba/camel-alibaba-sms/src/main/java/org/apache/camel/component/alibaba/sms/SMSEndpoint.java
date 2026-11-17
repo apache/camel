@@ -55,8 +55,8 @@ public class SMSEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "The region ID of Short Message Service, for example cn-hangzhou. Only used when the endpoint"
-                            + " option is not set, to determine the endpoint of Short Message Service. Not used when the"
-                            + " smsClient option is set or autowired.",
+                            + " option is not set, to determine the endpoint of Short Message Service. One of the two options"
+                            + " is required. Not used when the smsClient option is set or autowired.",
               displayName = "Region")
     private String region;
 

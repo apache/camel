@@ -6163,6 +6163,13 @@ body.
 A body that does not convert to bytes, such as a `Map` or a POJO, is no longer encrypted as its `toString()`: it now
 fails with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
 
+=== camel-alibaba-sms - region is no longer marked as required
+
+The `region` option of `alibaba-sms` is no longer marked as required. To create the client, the Camel endpoint needs
+the `region` or the `endpoint` option. It needs neither when the `smsClient` option is set or autowired. So the
+endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
+of the component at runtime does not change.
+
 === camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
 
 When Camel creates the instance itself, the KEM operations of the `pqc` component (including the hybrid KEM
