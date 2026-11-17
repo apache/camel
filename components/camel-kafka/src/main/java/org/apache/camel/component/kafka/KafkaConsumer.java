@@ -211,8 +211,10 @@ public class KafkaConsumer extends DefaultConsumer
         }
         try {
             for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
+                Properties props = getProps(i);
+                endpoint.checkSchemaRegistrySerde(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG);
                 KafkaFetchRecords task = new KafkaFetchRecords(
-                        this, bridge, topic, pattern, Integer.toString(i), getProps(i), consumerListener);
+                        this, bridge, topic, pattern, Integer.toString(i), props, consumerListener);
 
                 // if camel has not been fully started yet then delay starting this consumer to avoid
                 // process incoming message before camel is fully started

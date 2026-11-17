@@ -223,6 +223,25 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         }
     }
 
+    /**
+     * Fails when the value serializer or deserializer that the schemaRegistryVendor sets cannot be loaded, with a
+     * message that names the Maven artifact to add, rather than when Kafka fails to load it. With a custom
+     * {@link KafkaClientFactory}, which may create the client without loading the class by its name, only logs the
+     * message as a WARN.
+     *
+     * @param props the properties of the client, after {@link #updateClassProperties(Properties)}
+     * @param key   value.serializer or value.deserializer
+     */
+    void checkSchemaRegistrySerde(Properties props, String key) {
+        String message = configuration.missingSchemaRegistrySerde(props, key);
+        if (message != null) {
+            if (kafkaClientFactory == null || kafkaClientFactory.getClass() == DefaultKafkaClientFactory.class) {
+                throw new IllegalStateException(message);
+            }
+            LOG.warn("{}", message);
+        }
+    }
+
     public ExecutorService createExecutor(Object source) {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
                 "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());

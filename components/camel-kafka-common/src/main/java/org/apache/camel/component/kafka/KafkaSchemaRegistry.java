@@ -29,8 +29,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
  * <p/>
  * The serializer and deserializer are class names and the properties are keys of the vendor serde libraries, so that
  * Camel does not depend on any vendor library: the user adds the serde jar of the vendor. The keys and class names are
- * the ones of the vendor libraries (Confluent kafka-avro-serializer 8.0, Apicurio Registry 3.x serdes, AWS Glue
- * schema-registry-serde 1.1 and Azure azure-schemaregistry-kafka-avro 1.1).
+ * the ones of the vendor libraries (Confluent kafka-avro-serializer 8.x, Apicurio Registry 3.x serdes, AWS Glue
+ * schema-registry-serde 1.1 and 2.0, and Azure azure-schemaregistry-kafka-avro 1.1).
  */
 final class KafkaSchemaRegistry {
 
@@ -148,6 +148,50 @@ final class KafkaSchemaRegistry {
             case AWS_GLUE -> GLUE_DESERIALIZER;
             default -> "com.microsoft.azure.schemaregistry.kafka.avro.KafkaAvroDeserializer";
         };
+    }
+
+    /**
+     * The Maven artifact (groupId:artifactId) of the serializer and deserializer of the vendor and format.
+     */
+    static String artifact(String vendor, String format) {
+        String f = format(format);
+        return switch (vendor) {
+            case CONFLUENT -> switch (f) {
+                case JSON -> "io.confluent:kafka-json-schema-serializer";
+                case PROTOBUF -> "io.confluent:kafka-protobuf-serializer";
+                default -> "io.confluent:kafka-avro-serializer";
+            };
+            case APICURIO -> switch (f) {
+                case JSON -> "io.apicurio:apicurio-registry-jsonschema-serde-kafka";
+                case PROTOBUF -> "io.apicurio:apicurio-registry-protobuf-serde-kafka";
+                default -> "io.apicurio:apicurio-registry-avro-serde-kafka";
+            };
+            case AWS_GLUE -> "software.amazon.glue:schema-registry-serde";
+            default -> "com.microsoft.azure:azure-schemaregistry-kafka-avro";
+        };
+    }
+
+    /**
+     * The message for a serializer or deserializer of the vendor that cannot be loaded, which names the Maven artifact
+     * to add (and for Confluent, the repository).
+     *
+     * @param kind      serializer or deserializer
+     * @param className the class that cannot be loaded
+     */
+    static String missingSerdeMessage(String vendor, String format, String kind, String className) {
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("Cannot load the value ").append(kind).append(' ').append(className)
+                .append(" of schemaRegistryVendor ").append(vendor).append(" and schemaFormat ").append(format(format))
+                .append(". Add the Maven artifact ").append(artifact(vendor, format)).append(" to the classpath");
+        switch (vendor) {
+            case CONFLUENT -> sb.append(". The Confluent serde jars are not in Maven Central but in the Confluent Maven"
+                                        + " repository https://packages.confluent.io/maven/ (with Camel JBang:"
+                                        + " camel run --repos=confluent).");
+            case APICURIO -> sb.append(" (version 3.x).");
+            case AZURE -> sb.append(", with a recent com.azure:azure-core (its dependencies ask for an older one).");
+            default -> sb.append('.');
+        }
+        return sb.toString();
     }
 
     /**

@@ -43,6 +43,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.config.internals.BrokerSecurityConfigs;
@@ -470,6 +471,34 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         } else {
             addPropertyIfNotFalse(props, KafkaSchemaRegistry.CONFLUENT_SPECIFIC_AVRO_READER, isSpecificAvroReader());
         }
+    }
+
+    /**
+     * Checks the value serializer or deserializer that the schemaRegistryVendor sets. The endpoint replaces the class
+     * names of the serializers and deserializers by the classes that the class resolver of the CamelContext loads
+     * (which downloads the jar with Camel JBang), so the class name of the vendor that is still a String is a class
+     * that none of the class loaders of Camel and Kafka has, and Kafka would fail to load it too.
+     *
+     * @param  props the properties of the client, after the endpoint replaced the class names by the classes
+     * @param  key   value.serializer or value.deserializer
+     * @return       a message that names the Maven artifact of the class to add, or null if the class was loaded, no
+     *               schemaRegistryVendor is set, or the class is not the one of the vendor (such as an explicit
+     *               valueSerializer)
+     */
+    public String missingSchemaRegistrySerde(Properties props, String key) {
+        if (ObjectHelper.isEmpty(schemaRegistryVendor) || !(props.get(key) instanceof String name)) {
+            return null;
+        }
+        String vendor = resolveSchemaRegistryVendor();
+        boolean serializer = ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG.equals(key);
+        String expected = serializer
+                ? KafkaSchemaRegistry.serializer(vendor, getSchemaFormat())
+                : KafkaSchemaRegistry.deserializer(vendor, getSchemaFormat());
+        if (!expected.equals(name.trim())) {
+            return null;
+        }
+        return KafkaSchemaRegistry.missingSerdeMessage(vendor, getSchemaFormat(),
+                serializer ? "serializer" : "deserializer", expected);
     }
 
     private String resolveSchemaRegistryVendor() {

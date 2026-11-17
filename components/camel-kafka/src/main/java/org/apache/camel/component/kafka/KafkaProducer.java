@@ -194,6 +194,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
         }
         if (kafkaProducer == null) {
+            endpoint.checkSchemaRegistrySerde(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);
             createProducer(props);
         }
 
