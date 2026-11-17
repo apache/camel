@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
 
@@ -36,7 +37,8 @@ public class MicrometerAuthorizationEventNotifier extends AbstractMicrometerEven
     @Override
     public void notify(CamelEvent event) {
         AuthorizationDecisionEvent decision = (AuthorizationDecisionEvent) event;
-        Tags common = Tags.of("engine", decision.getEngine().name(), "operation", decision.getOperation().name());
+        Tags common = Tags.of("engine", decision.getEngine().name(), "operation", decision.getOperation().name(),
+                MicrometerConstants.CAMEL_CONTEXT_TAG, getCamelContext().getName(), MicrometerConstants.KIND, "authorization");
         Timer.builder("camel.authorization.duration")
                 .tags(common.and("outcome", decision.getOutcome().name(), "failure", decision.getFailure().name()))
                 .register(getMeterRegistry()).record(decision.getDurationNanos(), TimeUnit.NANOSECONDS);

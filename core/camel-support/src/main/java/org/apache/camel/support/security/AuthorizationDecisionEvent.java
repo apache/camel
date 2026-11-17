@@ -18,6 +18,8 @@ package org.apache.camel.support.security;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Collections;
 
 import org.apache.camel.spi.CamelEvent;
 
@@ -25,6 +27,8 @@ import org.apache.camel.spi.CamelEvent;
  * Immutable authorization observation, without credentials, subjects, resources, inputs, exceptions or Exchange
  * references. Correlation and configured revision are event fields, never default metric labels. Unknown revisions are
  * null.
+ *
+ * @since 4.24
  */
 public final class AuthorizationDecisionEvent implements CamelEvent {
     public enum Engine {
@@ -106,7 +110,7 @@ public final class AuthorizationDecisionEvent implements CamelEvent {
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(allowed, denied, errors, unavailable, failedOpen);
+            return Objects.hash(allowed, denied, errors, unavailable, failedOpen);
         }
 
         @Override
@@ -220,7 +224,7 @@ public final class AuthorizationDecisionEvent implements CamelEvent {
         values.put("exchangeId", exchangeId);
         values.put("routeId", routeId);
         values.put("timestamp", timestamp);
-        return java.util.Collections.unmodifiableMap(values);
+        return Collections.unmodifiableMap(values);
     }
 
     @Override

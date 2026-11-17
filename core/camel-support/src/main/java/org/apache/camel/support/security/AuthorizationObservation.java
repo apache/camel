@@ -21,14 +21,22 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.EventHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Counts;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
 
-/** Optional authorization events through Camel's started EventNotifiers; observer failures cannot affect routing. */
+/**
+ * Optional authorization events through Camel's started EventNotifiers; observer failures cannot affect routing.
+ *
+ * @since 4.24
+ */
 public final class AuthorizationObservation {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthorizationObservation.class);
     private static final AuthorizationObservation DISABLED = new AuthorizationObservation();
     private final CamelContext context;
     private final Engine engine;
@@ -67,15 +75,15 @@ public final class AuthorizationObservation {
         try {
             for (EventNotifier notifier : notifiers(exchange.getContext())) {
                 try {
-                    if (!notifier.isDisabled() && !notifier.isIgnoreExchangeEvents()) {
+                    if (!notifier.isDisabled()) {
                         return new AuthorizationObservation(exchange, engine, operation, revision);
                     }
-                } catch (Throwable ignored) {
-                    // Continue to other notifiers when one opt-out callback is broken.
+                } catch (Throwable failure) {
+                    LOG.warn("Error checking authorization event notifier. This exception will be ignored.", failure);
                 }
             }
-        } catch (Throwable ignored) {
-            // Instrumentation is optional, including all third-party management/notifier callbacks.
+        } catch (Throwable failure) {
+            LOG.warn("Error obtaining authorization event notifiers. This exception will be ignored.", failure);
         }
         return DISABLED;
     }
@@ -164,19 +172,7 @@ public final class AuthorizationObservation {
                         counts[Outcome.ALLOW.ordinal()], counts[Outcome.DENY.ordinal()], counts[Outcome.ERROR.ordinal()],
                         counts[Outcome.UNAVAILABLE.ordinal()], counts[Outcome.FAILED_OPEN.ordinal()]),
                 revision, exchangeId, routeId);
-        try {
-            for (EventNotifier notifier : notifiers(context)) {
-                try {
-                    if (!notifier.isDisabled() && !notifier.isIgnoreExchangeEvents() && notifier.isEnabled(event)) {
-                        notifier.notify(event);
-                    }
-                } catch (Throwable ignored) {
-                    // A broken listener must neither change authorization nor prevent other observers from receiving it.
-                }
-            }
-        } catch (Throwable ignored) {
-            // A broken management strategy cannot change authorization either.
-        }
+        EventHelper.notifyCustomEvent(context, () -> event);
     }
 
     public static boolean interrupted(Throwable failure) {

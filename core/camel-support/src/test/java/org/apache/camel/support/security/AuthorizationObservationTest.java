@@ -100,7 +100,7 @@ class AuthorizationObservationTest {
     }
 
     @Test
-    void notifierOptOutAndEnablementAreHonored() {
+    void customEventsHonorDisablementAndEnablementIndependentlyOfExchangeOptOut() {
         Collector disabled = new Collector() {
             @Override
             public boolean isDisabled() {
@@ -119,7 +119,7 @@ class AuthorizationObservationTest {
                 Operation.MTLS, null);
         observation.complete(Outcome.DENY, AuthorizationDecisionEvent.Failure.NONE);
         assertThat(disabled.events).isEmpty();
-        assertThat(ignored.events).isEmpty();
+        assertThat(ignored.events).hasSize(1);
         assertThat(filtered.events).isEmpty();
     }
 

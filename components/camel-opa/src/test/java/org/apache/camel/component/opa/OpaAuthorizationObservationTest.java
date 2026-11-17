@@ -101,6 +101,20 @@ class OpaAuthorizationObservationTest {
         }
     }
 
+    @Test
+    void structuredMissingAndUnavailableOutcomesDriveObservedCounts() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            Evaluator evaluator = new Evaluator(false);
+            evaluator.batch = Map.of("0", new OpaPolicyEvaluator.BatchElement(true, null),
+                    "1", new OpaPolicyEvaluator.BatchElement(null, new IOException("offline")));
+            Exchange exchange = fixture.exchange();
+            assertThat(evaluator.evaluateBatch(exchange, List.of("allow", "unavailable", "missing")))
+                    .containsExactly(true, false, false);
+            assertThat(fixture.events.getFirst().getCounts()).isEqualTo(new AuthorizationDecisionEvent.Counts(1, 0, 1, 1, 0));
+            assertThat(exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES, List.class)).hasSize(3);
+        }
+    }
+
     private static class Evaluator extends OpaPolicyEvaluator {
         Object decision;
         Exception failure;

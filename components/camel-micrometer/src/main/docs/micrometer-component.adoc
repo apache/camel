@@ -979,6 +979,13 @@ camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
 
 
+=== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.
+
 === Using Camel Micrometer with Spring Boot
 
 When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot autoconfiguration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
@@ -994,10 +1001,3 @@ For example, to capture data with Prometheus, you can add the following dependen
 ----
 
 See the following table for options to specify what metrics to capture, or to turn it off.
-
-== Authorization observations
-
-See xref:manual::authorization-observability.adoc[Authorization observations]
-for optional decision events, low-cardinality metrics and verified-identity
-composition examples. Observations preserve the component's existing decision
-headers and error handling.

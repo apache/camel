@@ -3,8 +3,8 @@
 Camel OPA, OpenFGA and SPIFFE emit optional `AuthorizationDecisionEvent` events
 through the existing Camel `EventNotifier` lifecycle. Register a notifier before
 starting the context. No event or observation clock is created when there are no
-started listeners accepting exchange events. Disabled notifiers,
-`ignoreExchangeEvents` and `isEnabled(event)` are honored. Listener failures do
+started enabled notifiers.
+`isDisabled()` and `isEnabled(event)` are honored independently of `ignoreExchangeEvents`, because these are custom events. Listener failures do
 not change an authorization result or prevent delivery to other listeners.
 
 [source,java]
@@ -44,6 +44,7 @@ verdict is `ERROR` or, where the engine can identify an availability failure,
 `UNAVAILABLE`. `FAILED_OPEN` means configuration allowed processing without a
 verdict. It is distinct from `ALLOW`. For SPIFFE, unavailable Workload API gRPC
 statuses are reported as availability failures; an invalid JWT is a denial.
+The JWT security policy records its final allow or deny once, including a validated identity rejected by its allow list.
 
 Batch counts distinguish allowed and denied decisions from failed elements.
 For mixed successful batches the aggregate outcome prioritizes failed-open,
@@ -69,7 +70,7 @@ context.getManagementStrategy().addEventNotifier(notifier);
 
 The notifier records `camel.authorization.duration`, element counts in
 `camel.authorization.decisions` and, for WASM, `camel.authorization.pool.wait`.
-Labels are fixed enums only: engine, operation, outcome and failure as applicable.
+Decision labels are fixed enums: engine, operation, outcome and failure as applicable. The standard `camelContext` and `kind=authorization` tags identify the configured context and meter category.
 Revision, correlation IDs, route IDs, principal and resource are never metric
 labels. Processing more exchanges or deploying another model revision does not
 create another metric series with the same engine and outcomes.

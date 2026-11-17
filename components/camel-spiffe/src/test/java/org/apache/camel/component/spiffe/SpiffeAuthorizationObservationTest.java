@@ -23,12 +23,17 @@ import java.util.List;
 
 import javax.net.ssl.SSLSession;
 
+import io.grpc.Status;
 import io.spiffe.exception.JwtSvidException;
 import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.workloadapi.WorkloadApiClient;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultExchange;
@@ -77,7 +82,7 @@ class SpiffeAuthorizationObservationTest {
             when(svid.getSpiffeId()).thenReturn(SpiffeId.parse("spiffe://example.org/secret-peer"));
             when(client.validateJwtSvid("secret-token", "audience")).thenReturn(svid)
                     .thenThrow(new JwtSvidException("secret-rejected-token"))
-                    .thenThrow(new JwtSvidException("secret-transport", io.grpc.Status.UNAVAILABLE.asRuntimeException()));
+                    .thenThrow(new JwtSvidException("secret-transport", Status.UNAVAILABLE.asRuntimeException()));
             SpiffeConfiguration configuration = new SpiffeConfiguration();
             configuration.setWorkloadApiClient(client);
             configuration.setOperation(SpiffeOperation.validateJwtSvid);
@@ -105,6 +110,47 @@ class SpiffeAuthorizationObservationTest {
             } finally {
                 producer.stop();
                 endpoint.stop();
+            }
+        }
+    }
+
+    @Test
+    void jwtPolicyRecordsItsFinalVerdictOnceAndPreservesThePayload() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            WorkloadApiClient client = mock(WorkloadApiClient.class);
+            JwtSvid svid = mock(JwtSvid.class);
+            when(svid.getSpiffeId()).thenReturn(SpiffeId.parse("spiffe://example.org/accepted"));
+            when(client.validateJwtSvid("token", "audience")).thenReturn(svid);
+            SpiffeJwtSecurityPolicy policy = new SpiffeJwtSecurityPolicy();
+            policy.setAudience("audience");
+            policy.setAcceptedSpiffeIds("spiffe://example.org/accepted");
+            policy.setWorkloadApiClient(client);
+            Route route = mock(Route.class);
+            when(route.getCamelContext()).thenReturn(fixture.context);
+            policy.beforeWrap(route, null);
+            Processor wrapped = policy.wrap(route, exchange -> assertThat(exchange.getMessage().getBody()).isEqualTo("payload"));
+            ServiceHelper.startService(wrapped);
+            try {
+                Exchange allowed = new DefaultExchange(fixture.context);
+                allowed.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
+                allowed.getMessage().setBody("payload");
+                ((AsyncProcessor) wrapped).process(allowed, done -> { });
+                assertThat(allowed.getException()).isNull();
+                assertThat(allowed.getMessage().getBody()).isEqualTo("payload");
+                assertThat(allowed.getProperty(SpiffeConstants.JWT_IDENTITY)).isInstanceOf(SpiffeJwtIdentity.class);
+                when(svid.getSpiffeId()).thenReturn(SpiffeId.parse("spiffe://example.org/rejected"));
+                Exchange denied = new DefaultExchange(fixture.context);
+                denied.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
+                denied.getMessage().setBody("payload");
+                ((AsyncProcessor) wrapped).process(denied, done -> { });
+                assertThat(denied.getException()).isInstanceOf(CamelAuthorizationException.class);
+                assertThat(denied.getProperty(SpiffeConstants.JWT_IDENTITY)).isNull();
+                assertThat(fixture.events).extracting(AuthorizationDecisionEvent::getOutcome)
+                        .containsExactly(Outcome.ALLOW, Outcome.DENY);
+                assertThat(fixture.events).allSatisfy(event ->
+                        assertThat(event.getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.VALIDATE_JWT));
+            } finally {
+                ServiceHelper.stopService(wrapped);
             }
         }
     }

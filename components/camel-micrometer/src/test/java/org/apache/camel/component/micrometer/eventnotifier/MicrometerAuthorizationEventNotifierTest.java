@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
@@ -61,9 +63,11 @@ class MicrometerAuthorizationEventNotifierTest {
             assertEquals(2, registry.get("camel.authorization.pool.wait").timer().count());
             assertEquals(2.0, registry.get("camel.authorization.decisions").tag("outcome", "FAILED_OPEN").counter().count());
             authorizationMeters.forEach(meter -> {
-                Set<String> keys = meter.getId().getTags().stream().map(io.micrometer.core.instrument.Tag::getKey)
+                Set<String> keys = meter.getId().getTags().stream().map(Tag::getKey)
                         .collect(Collectors.toSet());
-                assertTrue(Set.of("engine", "operation", "outcome", "failure").containsAll(keys));
+                assertTrue(Set.of("engine", "operation", "outcome", "failure", MicrometerConstants.CAMEL_CONTEXT_TAG, MicrometerConstants.KIND).containsAll(keys));
+                assertEquals(context.getName(), meter.getId().getTag(MicrometerConstants.CAMEL_CONTEXT_TAG));
+                assertEquals("authorization", meter.getId().getTag(MicrometerConstants.KIND));
                 assertFalse(meter.getId().toString().contains("secret"));
             });
         } finally {

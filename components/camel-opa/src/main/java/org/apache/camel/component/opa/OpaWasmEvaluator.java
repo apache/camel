@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.wasm.OpaPolicy;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -168,8 +169,8 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     }
 
     @Override
-    protected org.apache.camel.support.security.AuthorizationDecisionEvent.Engine observationEngine() {
-        return org.apache.camel.support.security.AuthorizationDecisionEvent.Engine.OPA_WASM;
+    protected Engine observationEngine() {
+        return Engine.OPA_WASM;
     }
 
     @Override
