@@ -8033,13 +8033,13 @@ behaviour.
 
 === camel-kafka - breakOnFirstError: a failed commit before the break goes to the exception handler
 
-With `breakOnFirstError=true`, the commit that the consumer makes before it breaks out on a failed record can fail or
-time out (for example a `TimeoutException` of `commitSync` with the `SyncCommitManager`). That failure is now reported
-to the `ExceptionHandler` of the consumer, and the consumer still breaks out and polls again from the last committed
-offset. Before, it went to the `pollOnError` strategy, and with `ERROR_HANDLER` (the default), `DISCARD` or `RETRY`
-the failed record and the rest of the poll were skipped.
+With `breakOnFirstError=true`, the commit before the break on a failed record can fail or time out (for example a
+`TimeoutException` of `commitSync` with the `SyncCommitManager`). The consumer now reports that failure to its
+`ExceptionHandler` and still breaks out, polling again from the last committed offset.
+Before, the commit failure went to the `pollOnError` strategy. With `ERROR_HANDLER` (the default), `DISCARD` or
+`RETRY`, the failed record and the rest of the poll were skipped.
 The failure no longer reaches the error handler of the route (such as an `onException` that caught commit timeouts)
-unless `bridgeErrorHandler=true`, and with `pollOnError=STOP` the consumer now reconnects in this case instead of
+unless `bridgeErrorHandler=true`. With `pollOnError=STOP`, the consumer now reconnects in this case instead of
 stopping.
 
 === camel-kafka - the Kafka idempotent and key-value repositories use the acks of the Kafka client
