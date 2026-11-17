@@ -46,7 +46,7 @@ public interface PulsarMessageHeaders {
     String KEY_OUT = "CamelPulsarProducerMessageKey";
     @Metadata(label = "producer", description = "The properties of the message to add.", javaType = "Map<String, String>")
     String PROPERTIES_OUT = "CamelPulsarProducerMessageProperties";
-    @Metadata(label = "producer", description = "The event time of the message message.", javaType = "Long")
+    @Metadata(label = "producer", description = "The event time of the message.", javaType = "Long")
     String EVENT_TIME_OUT = "CamelPulsarProducerMessageEventTime";
     @Metadata(label = "producer", description = "Deliver the message only at or after the specified absolute timestamp."
                                                 + " The timestamp is milliseconds and based on UTC (eg: System.currentTimeMillis)"

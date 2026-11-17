@@ -1841,7 +1841,7 @@ public interface PulsarEndpointBuilderFactory {
             return "CamelPulsarProducerMessageProperties";
         }
         /**
-         * The event time of the message message.
+         * The event time of the message.
          * 
          * The option is a: {@code Long} type.
          * 
