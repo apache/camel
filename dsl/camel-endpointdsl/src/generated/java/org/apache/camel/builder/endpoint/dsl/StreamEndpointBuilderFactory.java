@@ -282,9 +282,9 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Whether to read the input stream in line mode (terminate by line
-         * breaks). Setting this to false, will instead read the entire stream
-         * until EOL. With scanStream, each exchange holds the bytes read in one
-         * scan.
+         * breaks). Setting this to false, will instead read until the end of
+         * the stream. With scanStream, each exchange holds the bytes read in
+         * one scan.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -300,9 +300,9 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Whether to read the input stream in line mode (terminate by line
-         * breaks). Setting this to false, will instead read the entire stream
-         * until EOL. With scanStream, each exchange holds the bytes read in one
-         * scan.
+         * breaks). Setting this to false, will instead read until the end of
+         * the stream. With scanStream, each exchange holds the bytes read in
+         * one scan.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

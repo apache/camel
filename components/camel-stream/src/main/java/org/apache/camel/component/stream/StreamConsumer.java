@@ -380,7 +380,11 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         return processRaw(body, index, true);
     }
 
-    private long processRaw(byte[] body, long index, boolean last) throws Exception {
+    /**
+     * Strategy method for processing the data. last tells whether this is the last exchange of the stream; it is false
+     * for each scan of a scanned stream, which is never complete.
+     */
+    protected long processRaw(byte[] body, long index, boolean last) throws Exception {
         lock.lock();
         try {
             Exchange exchange = createExchange(body, index++, last);

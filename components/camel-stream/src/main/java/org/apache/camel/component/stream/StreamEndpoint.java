@@ -312,7 +312,7 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     /**
      * Whether to read the input stream in line mode (terminate by line breaks). Setting this to false, will instead
-     * read the entire stream until EOL. With scanStream, each exchange holds the bytes read in one scan.
+     * read until the end of the stream. With scanStream, each exchange holds the bytes read in one scan.
      */
     public void setReadLine(boolean readLine) {
         this.readLine = readLine;
