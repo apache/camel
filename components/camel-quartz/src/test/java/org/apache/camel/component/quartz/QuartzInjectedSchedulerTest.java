@@ -130,7 +130,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         assertSame(injected, context.getComponent("quartz", QuartzComponent.class).getScheduler());
         assertEquals(List.of(), jobFailures);
         mock.assertIsSatisfied();
-        assertEquals(1, warningsContaining(RUNNING), warnings::toString);
+        assertEquals(1, warningsContaining(injected, RUNNING), warnings::toString);
     }
 
     @Test
@@ -146,7 +146,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         assertSame(injected, context.getComponent("quartz", QuartzComponent.class).getScheduler());
         assertTrue(injected.isStarted());
         assertEquals(List.of(), jobFailures);
-        assertEquals(0, warningsContaining(RUNNING), warnings::toString);
+        assertEquals(0, warningsContaining(injected, RUNNING), warnings::toString);
     }
 
     @Test
@@ -156,7 +156,8 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         context.start();
 
         mock.assertIsSatisfied();
-        assertEquals(0, warningsContaining(RUNNING), warnings::toString);
+        Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
+        assertEquals(0, warningsContaining(scheduler, RUNNING), warnings::toString);
     }
 
     @Test
@@ -171,8 +172,8 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
 
         assertSame(injected, quartz.getScheduler());
         assertEquals(2, quartz.getScheduler().getMetaData().getThreadPoolSize());
-        assertEquals(1, warningsContaining(IGNORED), warnings::toString);
-        assertEquals(1, warningsContaining("properties, propertiesFile"), warnings::toString);
+        assertEquals(1, warningsContaining(injected, IGNORED), warnings::toString);
+        assertEquals(1, warningsContaining(injected, "properties, propertiesFile"), warnings::toString);
     }
 
     @Test
@@ -186,7 +187,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         context.start();
 
         assertEquals(3, quartz.getScheduler().getMetaData().getThreadPoolSize());
-        assertEquals(0, warningsContaining(IGNORED), warnings::toString);
+        assertEquals(0, warningsContaining(quartz.getScheduler(), IGNORED), warnings::toString);
     }
 
     private Scheduler createScheduler(int threadCount) throws SchedulerException {
@@ -234,8 +235,13 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         return mock;
     }
 
-    private long warningsContaining(String text) {
-        return warnings.stream().filter(message -> message.contains(text)).count();
+    /**
+     * Counts the WARNs about this scheduler only: the appender also gets the WARNs of the other test classes, which run
+     * at the same time (QuartzComponentCamelContextSharedSchedulerTest logs the WARN of a running scheduler).
+     */
+    private long warningsContaining(Scheduler scheduler, String text) throws SchedulerException {
+        String name = " " + scheduler.getSchedulerName() + " ";
+        return warnings.stream().filter(message -> message.contains(name) && message.contains(text)).count();
     }
 
     private static Logger componentLogger() {
