@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +50,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
@@ -168,6 +170,9 @@ public class MulticastProcessor extends BaseProcessorSupport
     protected final Processor onPrepare;
     protected final ProcessorExchangeFactory processorExchangeFactory;
     private final Lock lock = new ReentrantLock();
+    // the parallel tasks that are not done yet, so doShutdown can fail those whose parts the shut down thread pool
+    // never runs
+    private final Set<MulticastTask> parallelTasks = ConcurrentHashMap.newKeySet();
     private final AsyncProcessorAwaitManager awaitManager;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
@@ -490,6 +495,20 @@ public class MulticastProcessor extends BaseProcessorSupport
             } else {
                 this.completion = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
             }
+            if (isParallelProcessing()) {
+                parallelTasks.add(this);
+            }
+        }
+
+        /**
+         * Marks this task as done, which only one caller can do.
+         */
+        private boolean markDone() {
+            if (done.compareAndSet(false, true)) {
+                parallelTasks.remove(this);
+                return true;
+            }
+            return false;
         }
 
         @Override
@@ -600,13 +619,13 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
 
         protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
 
         protected void doDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 cancelTimeoutTask();
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
@@ -626,7 +645,7 @@ public class MulticastProcessor extends BaseProcessorSupport
          * {@link VirtualMachineError} (set on the exchange wrapped in a CamelExecutionException).
          */
         protected void doFailed(Throwable e) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 cancelTimeoutTask();
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
@@ -646,7 +665,7 @@ public class MulticastProcessor extends BaseProcessorSupport
          * Same as {@link #doTimeoutFailed(Exception)} for any {@link Throwable}.
          */
         protected void doTimeoutFailed(Throwable e) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
@@ -1485,6 +1504,14 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doShutdown() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            // an exchange that still waits for a part (its route was stopped by force) never completes once the thread
+            // pool is shut down, as the queued parts are dropped: fail it, so its caller does not wait for ever
+            for (MulticastTask task : parallelTasks) {
+                task.doFailed(new RouteStoppingException("The exchange cannot complete: the thread pool is shut down"));
+            }
+        }
         ServiceHelper.stopAndShutdownServices(
                 processors, errorHandlers != null ? errorHandlers.values() : null,
                 aggregationStrategy, processorExchangeFactory);
@@ -1493,9 +1520,6 @@ public class MulticastProcessor extends BaseProcessorSupport
             errorHandlers.clear();
         }
 
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
         if (shutdownAggregateExecutorService && aggregateExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(aggregateExecutorService);
         }
