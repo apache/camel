@@ -48,6 +48,26 @@ public class PropertiesComponentIgnoreMissingPropertyTest extends ContextTestSup
         Assertions.assertEquals("foo:dummy?a=1&b={{foo}}&c=10", out);
     }
 
+    @Test
+    public void testOptionalPlaceholderDoesNotUrlEncodeOtherParams() {
+        // CAMEL-27111: when an optional placeholder is unset, the remaining parameters
+        // must not be URL-encoded. Values containing URL-special characters (colons, slashes,
+        // question marks, equals signs) must survive the optional-placeholder removal unchanged.
+        String out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new&foo={{?nosuchproperty}}");
+        Assertions.assertEquals("kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new", out);
+
+        // the optional placeholder before the other parameters
+        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "kamelet:http-sink?foo={{?nosuchproperty}}&url=http://127.0.0.1:18089/open/with?q=status_s:new");
+        Assertions.assertEquals("kamelet:http-sink?url=http://127.0.0.1:18089/open/with?q=status_s:new", out);
+
+        // an already encoded value, and a RAW value, are kept as they are
+        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context,
+                "mock:result?a=hello%20world&foo={{?nosuchproperty}}&b=RAW(se+cr&t)");
+        Assertions.assertEquals("mock:result?a=hello%20world&b=RAW(se+cr&t)", out);
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
