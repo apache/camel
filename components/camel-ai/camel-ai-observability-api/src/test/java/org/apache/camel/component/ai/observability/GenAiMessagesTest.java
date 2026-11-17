@@ -67,6 +67,15 @@ class GenAiMessagesTest {
     }
 
     @Test
+    void shouldNotSplitASurrogatePair() {
+        // "ab" followed by an emoji, which is two chars (a surrogate pair)
+        String text = "ab\uD83D\uDE00cd";
+
+        assertThat(GenAiMessages.truncate(text, 3)).isEqualTo("ab...[truncated]");
+        assertThat(GenAiMessages.truncate(text, 4)).isEqualTo("ab\uD83D\uDE00...[truncated]");
+    }
+
+    @Test
     void shouldKeepToolArgumentsThatAreNotJsonAsText() {
         String json = new GenAiMessages().toolCall("1", "lookup", "not json").toJson(100);
 

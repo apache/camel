@@ -36,7 +36,7 @@ public final class GenAiObservabilityProperties {
 
     /**
      * Global property capping the length of every text recorded at level {@code full}. Default is
-     * {@value #DEFAULT_CONTENT_MAX_LENGTH} characters.
+     * {@value #DEFAULT_CONTENT_MAX_LENGTH} characters; a value that is not positive means the default.
      *
      * @since 4.24
      */

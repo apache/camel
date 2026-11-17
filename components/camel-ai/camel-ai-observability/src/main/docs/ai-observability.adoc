@@ -63,7 +63,9 @@ per tool call (Camel route tools of every component, and the MCP tools of `opena
 conversation id (`gen_ai.conversation.id`) from the chat memory id or the `CamelOpenAIConversationId` header.
 | `full` | Message content: `gen_ai.input.messages`, `gen_ai.output.messages` and `gen_ai.system_instructions` on model
 calls, and `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` on tool calls, in the shape of the OpenTelemetry
-GenAI semantic conventions. Every text is cut at `camel.aiObservability.contentMaxLength` characters (default 8192).
+GenAI semantic conventions. Every text is cut at `camel.aiObservability.contentMaxLength` characters (default 8192, a
+value that is not positive means the default). The tool call arguments are recorded as the model sent them, before
+Camel drops the undeclared and reserved (`Camel*`) names; the route of the tool sees the filtered arguments.
 |===
 
 [source,properties]
@@ -75,39 +77,44 @@ camel.aiObservability.level = detailed
 Prompts, completions and tool results can hold personal or confidential data. Use `full` only when the tracing
 backend is allowed to store them.
 
-The levels change the traces only. The metrics stay the same at every level: content and ids are never used as metric
-tags, and agent runs and tool calls are not counted as client operations. At `detailed` the token usage of an agent run
-is recorded per model call instead of once for the run, so the token totals are unchanged.
+Content and ids are never used as metric tags, and the token totals are the same at every level. At `detailed` the
+model calls of an agent run are counted and timed one by one in `gen_ai.client.operation` (instead of one
+`generate_content` operation for the run), and with a Micrometer `ObservationRegistry` the agent runs and tool calls
+are also Observations named `camel.ai.agent` and `camel.ai.tool`, which the Micrometer meter handler turns into timers.
 
 The attributes added by `detailed` and `full` belong to the part of the OpenTelemetry GenAI semantic conventions
 that is still in development, and may change with them.
 
-An agent whose AI service is not built by Camel (a custom `Agent` implementation) cannot be observed call by call: at
+An agent that is not built on `AbstractAgent` (a custom `Agent` implementation) cannot be observed call by call: at
 `detailed` its run is recorded as one `generate_content` model call, as at `basic`.
 
 == Calls already traced by the AI framework
 
 Some AI frameworks trace their own model calls: Spring AI does when its models are built with an `ObservationRegistry`
-(Spring Boot does this when observation support is enabled), quarkus-langchain4j does when `quarkus-opentelemetry` is
-present, and a LangChain4j model does when it has the `langchain4j-observation` listener. When Camel uses such a model,
+that has a Micrometer Tracing handler (as Spring Boot builds them with a tracing bridge; a registry with the meter
+handler only records metrics), quarkus-langchain4j does when `quarkus-opentelemetry` is present, and a LangChain4j
+model does when it has the `langchain4j-observation` listener. When Camel uses such a model,
 it does not record its own span and metrics for the calls the framework records, so that each call is counted once:
 
-* `spring-ai-chat`: the model calls and the Camel route tools called by Spring AI are left to Spring AI.
+* `spring-ai-chat`: the model calls are left to Spring AI, and so are the Camel route tools when the tool calling
+manager of the model traces them (Spring AI gives some models a default manager without a registry).
 * `langchain4j-chat` and `langchain4j-agent`: the model calls are left to the framework. At level `detailed` and above,
 the agent run and the Camel route tools are still recorded by Camel, and the framework's spans nest under the agent run.
-* `openai`: the OpenTelemetry Java agent traces the chat completions and embeddings of `openai-java`, the client used by
-`camel-openai`. When the agent is attached with that instrumentation enabled, those calls are left to it, except at
-level `full`: the agent records the messages as log events, not as span attributes, so Camel keeps its own span and
-logs a warning. Start the JVM with `-Dotel.instrumentation.openai-java.enabled=false` to keep only the Camel spans.
+* `openai`: the `openai-java` instrumentation of OpenTelemetry (in the OpenTelemetry Java agent) wraps the OpenAI client
+used by `camel-openai` and traces its chat completions and embeddings. When the client is wrapped, those calls are left
+to it, except at level `full`: the instrumentation records the messages as log events, not as span attributes, so Camel
+keeps its own span and logs a warning. Start the JVM with `-Dotel.instrumentation.openai-java.enabled=false` to keep
+only the Camel spans.
 
 Set `camel.aiObservability.deferToFramework=false` to record these calls with Camel as well.
 
 == Micrometer Observation
 
 When a non-NOOP `io.micrometer.observation.ObservationRegistry` is in the Camel registry
-(for example a Spring Boot Actuator bean) and `camel-opentelemetry2` is not in use, each GenAI client call is recorded as
-a Micrometer `io.micrometer.observation.Observation` named `gen_ai.client.operation`. With `camel-opentelemetry2`, the
-GenAI spans are created through it, in the same tree as the route spans. At level `detailed`, agent runs and tool calls
+(for example a Spring Boot Actuator bean), each GenAI client call is recorded as a Micrometer
+`io.micrometer.observation.Observation` named `gen_ai.client.operation`, unless a camel-telemetry tracer other than
+`camel-micrometer-observability` is in use (for example `camel-opentelemetry2`): then the GenAI spans are created
+through that tracer, in the same tree as the route spans. At level `detailed`, agent runs and tool calls
 are Observations named `camel.ai.agent` and `camel.ai.tool`, so they stay out of the `gen_ai.client.operation` timer.
 The contextual name uses the same `\{operation} \{model}` form as GenAI telemetry spans
 (for example `chat test-model`).

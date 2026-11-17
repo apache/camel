@@ -79,7 +79,7 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
      * How much GenAI telemetry is recorded. basic records one span per LLM call with model, token usage and finish
      * reason. detailed adds the structure of agent runs (an agent span with one span per LLM call and per tool call),
      * request parameters, cached tokens and the conversation id. full adds prompts, completions and tool arguments and
-     * results, which may hold personal or confidential data. Metrics are not affected.
+     * results, which may hold personal or confidential data. Content and ids never become metric tags.
      */
     public void setLevel(String level) {
         this.level = level;
@@ -89,7 +89,7 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
      * How much GenAI telemetry is recorded. basic records one span per LLM call with model, token usage and finish
      * reason. detailed adds the structure of agent runs (an agent span with one span per LLM call and per tool call),
      * request parameters, cached tokens and the conversation id. full adds prompts, completions and tool arguments and
-     * results, which may hold personal or confidential data. Metrics are not affected.
+     * results, which may hold personal or confidential data. Content and ids never become metric tags.
      */
     public AiObservabilityConfigurationProperties withLevel(String level) {
         this.level = level;
@@ -125,6 +125,7 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
 
     /**
      * The maximum length of every text (message, tool argument or result) recorded at level full. Longer texts are cut.
+     * A value that is not positive means the default.
      */
     public void setContentMaxLength(int contentMaxLength) {
         this.contentMaxLength = contentMaxLength;
@@ -132,6 +133,7 @@ public class AiObservabilityConfigurationProperties implements BootstrapCloseabl
 
     /**
      * The maximum length of every text (message, tool argument or result) recorded at level full. Longer texts are cut.
+     * A value that is not positive means the default.
      */
     public AiObservabilityConfigurationProperties withContentMaxLength(int contentMaxLength) {
         this.contentMaxLength = contentMaxLength;

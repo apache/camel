@@ -21,7 +21,8 @@ import java.util.Locale;
 /**
  * How much GenAI telemetry the Camel AI producers record. Each level includes everything recorded by the previous one.
  * <p/>
- * Metrics are the same at every level; the higher levels only add spans and span attributes.
+ * The higher levels add spans and span attributes; message content and ids never become metric tags. The token totals
+ * are the same at every level, but at {@link #DETAILED} the model calls of an agent run are timed one by one.
  *
  * @since 4.24
  */

@@ -155,7 +155,9 @@ public final class GenAiMessages {
         if (text == null || maxLength <= 0 || text.length() <= maxLength) {
             return text;
         }
-        return text.substring(0, maxLength) + TRUNCATED;
+        // do not split a surrogate pair
+        int end = Character.isHighSurrogate(text.charAt(maxLength - 1)) ? maxLength - 1 : maxLength;
+        return text.substring(0, end) + TRUNCATED;
     }
 
     private static JsonObject message(String role) {

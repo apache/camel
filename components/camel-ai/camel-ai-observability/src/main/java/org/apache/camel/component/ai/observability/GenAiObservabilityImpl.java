@@ -19,6 +19,7 @@ package org.apache.camel.component.ai.observability;
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
@@ -42,6 +43,8 @@ public final class GenAiObservabilityImpl {
     private static final Logger LOG = LoggerFactory.getLogger(GenAiObservabilityImpl.class);
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
     private static final String CLIENT_SPAN_KIND = "CLIENT";
+    private static final String MICROMETER_TRACER_CLASS
+            = "org.apache.camel.micrometer.observability.MicrometerObservabilityTracer";
     private static final String INTERNAL_SPAN_KIND = "INTERNAL";
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
     private static final String MICROMETER_SUPPORT_CLASS
@@ -70,6 +73,19 @@ public final class GenAiObservabilityImpl {
             return NOOP;
         }
         return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend, observationBackend);
+    }
+
+    /**
+     * Whether the camel-telemetry tracer is camel-micrometer-observability's, which traces through Micrometer: then the
+     * GenAI calls keep the Micrometer Observation path.
+     */
+    private static boolean isMicrometerTracer(Tracer tracer) {
+        for (Class<?> type = tracer.getClass(); type != null; type = type.getSuperclass()) {
+            if (MICROMETER_TRACER_CLASS.equals(type.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static GenAiMetricsBackend resolveMetricsBackend(CamelContext camelContext) {
@@ -111,6 +127,9 @@ public final class GenAiObservabilityImpl {
     private static final class DefaultGenAiObservation implements GenAiObservation {
 
         private static final SpanStorageManagerExchange STORAGE = new SpanStorageManagerExchange();
+        private static final Set<String> LOW_CARDINALITY_KEYS = Set.of(
+                GenAiAttributes.OPERATION_NAME, GenAiAttributes.SYSTEM, GenAiAttributes.REQUEST_MODEL,
+                GenAiAttributes.CAMEL_COMPONENT);
 
         private final Exchange exchange;
         private final Tracer tracer;
@@ -121,7 +140,7 @@ public final class GenAiObservabilityImpl {
         private final long startNanos;
         // attributes decided while the call runs, applied when it ends
         private final Map<String, Object> endAttributes = new LinkedHashMap<>();
-        private GenAiObservationContext context;
+        private final GenAiObservationContext context;
         private Span span;
         private boolean pushed;
         private GenAiUsage usage;
@@ -143,7 +162,7 @@ public final class GenAiObservabilityImpl {
                     = context.parent() instanceof DefaultGenAiObservation p ? p : null;
             // a camel-telemetry tracer (camel-opentelemetry2) keeps the GenAI spans in the same tree as the route spans,
             // so it is preferred; the Micrometer Observation path serves setups that trace through Micrometer only
-            boolean camelTracing = tracer != null && tracer.getSpanLifecycleManager() != null;
+            boolean camelTracing = tracer != null && tracer.getSpanLifecycleManager() != null && !isMicrometerTracer(tracer);
             this.micrometerObservation = observationBackend.isAvailable() && !camelTracing
                     ? observationBackend.start(context,
                             parentObservation != null ? parentObservation.micrometerObservation : null)
@@ -260,14 +279,6 @@ public final class GenAiObservabilityImpl {
             return scope::close;
         }
 
-        @Override
-        public void recordOperationName(GenAiOperationName operationName) {
-            if (operationName != null && operationName != context.operationName()) {
-                context = context.toBuilder().operationName(operationName).build();
-                endAttributes.put(GenAiAttributes.OPERATION_NAME, operationName.value());
-            }
-        }
-
         private void recordMessages(String key, Supplier<GenAiMessages> messages) {
             recordContent(key, () -> {
                 GenAiMessages value = messages.get();
@@ -296,11 +307,14 @@ public final class GenAiObservabilityImpl {
                 return;
             }
             closed = true;
-            Map<String, Object> attributes = endAttributes();
             if (micrometerObservation != null) {
+                // the Observation got the low-cardinality keys when it started; the rest goes as high-cardinality values
+                Map<String, Object> attributes = startAttributes();
+                attributes.keySet().removeAll(LOW_CARDINALITY_KEYS);
+                attributes.putAll(endAttributes());
                 micrometerObservation.stop(attributes, error);
             } else {
-                closeSpan(attributes);
+                closeSpan(endAttributes());
             }
             recordMetrics();
         }
@@ -336,7 +350,7 @@ public final class GenAiObservabilityImpl {
                 span.setError(true);
             }
             attributes.forEach((key, value) -> setTag(span, key, value));
-            if (pushed) {
+            if (pushed && STORAGE.peek(exchange) == span) {
                 STORAGE.pull(exchange);
             }
             lifecycleManager.deactivate(span);

@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A custom {@link Agent} does not build its AI service through {@code AbstractAgent}, so its model calls cannot be
- * observed one by one: at level detailed the run is recorded as one model call, with its token usage.
+ * observed one by one: at level detailed the run is recorded as one model call with its token usage, as at level basic.
  */
 class LangChain4jAgentCustomAgentObservabilityTest extends CamelTestSupport {
 
@@ -72,7 +72,7 @@ class LangChain4jAgentCustomAgentObservabilityTest extends CamelTestSupport {
         assertThat(template.requestBody("direct:custom", "Hello", String.class)).isEqualTo("Hi");
 
         assertThat(tracer.genAiSpans()).hasSize(1);
-        assertThat(tracer.genAiSpans().get(0).name()).isEqualTo("invoke_agent custom");
+        assertThat(tracer.genAiSpans().get(0).name()).startsWith("generate_content");
         assertThat(tracer.genAiSpans().get(0).tags())
                 .containsEntry(GenAiAttributes.OPERATION_NAME, "generate_content")
                 .containsEntry(GenAiAttributes.INPUT_TOKENS, 7L)

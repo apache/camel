@@ -93,16 +93,6 @@ public interface GenAiObservation extends AutoCloseable {
     }
 
     /**
-     * Changes the operation recorded for this observation, when it is only known at the end. For example an agent run
-     * whose model calls could not be observed one by one is recorded as a single {@code generate_content} call.
-     *
-     * @since 4.24
-     */
-    default void recordOperationName(GenAiOperationName operationName) {
-        // noop
-    }
-
-    /**
      * Makes the observation current on the calling thread for a synchronous call, so that spans started inside it (by
      * the HTTP client or the AI framework) nest under it. Close the scope on the same thread, before {@link #close()}.
      *

@@ -192,7 +192,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange, agent instanceof AgentWithMemory);
         Object chatModel = resolveChatModel(agent);
-        if (GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
+        // only an agent built on AbstractAgent lets Camel observe its model calls one by one; any other agent is
+        // recorded as one model call, as at level basic
+        if (agent instanceof AbstractAgent<?>
+                && GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
             processObservedRun(exchange, agent, aiAgentBody, toolProvider, chatModel);
             return;
         }
@@ -258,18 +261,9 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             }
             exchange.getMessage().setBody(result.content());
             populateResultHeaders(result, exchange, requestModel);
-            String finishReason = result.finishReason() != null ? result.finishReason().toString() : null;
-            if (observer.observedCalls() > 0 || modelCallsTracedByFramework) {
-                // the model calls carry the token usage; repeating it on the run would count it twice
-                agentRun.recordSuccess(GenAiUsage.of((Long) null, null, finishReason, null));
-            } else {
-                // a custom Agent: its model calls could not be observed, so record the run as one model call
-                agentRun.recordOperationName(GenAiOperationName.GENERATE_CONTENT);
-                agentRun.recordSuccess(GenAiUsage.of(
-                        result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
-                        result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
-                        finishReason, null));
-            }
+            // the model calls carry the token usage; repeating it on the run would count it twice
+            agentRun.recordSuccess(
+                    GenAiUsage.of((Long) null, null, GenAiAgentRunObserver.finishReason(result.finishReason()), null));
             agentRun.recordOutputMessages(() -> new GenAiMessages().text(GenAiMessages.ASSISTANT, result.content()));
         } catch (RuntimeException e) {
             applyModerationHeaders(exchange, e);

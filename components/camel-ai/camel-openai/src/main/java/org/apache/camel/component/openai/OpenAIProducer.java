@@ -590,7 +590,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .system("openai")
                 .requestModel(requestModel)
                 .componentScheme("openai")
-                .tracedByFramework(OpenAIJavaAgentTracing.tracedByAgent(exchange.getContext()))
+                .tracedByFramework(OpenAIClientTracing.tracedByOpenTelemetry(exchange.getContext(), getEndpoint().getClient()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
 
@@ -708,7 +708,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .requestParameter("temperature", params.temperature().orElse(null))
                 .requestParameter("top_p", params.topP().orElse(null))
                 .requestParameter("max_tokens", params.maxCompletionTokens().orElse(null))
-                .tracedByFramework(OpenAIJavaAgentTracing.tracedByAgent(exchange.getContext()))
+                .tracedByFramework(OpenAIClientTracing.tracedByOpenTelemetry(exchange.getContext(), getEndpoint().getClient()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         observation.recordInputMessages(() -> OpenAIGenAiMessages.input(params));

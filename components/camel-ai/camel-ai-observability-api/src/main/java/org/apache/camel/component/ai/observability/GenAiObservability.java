@@ -108,7 +108,11 @@ public final class GenAiObservability {
                 .resolveProperty(GenAiObservabilityProperties.CONTENT_MAX_LENGTH);
         if (property.isPresent()) {
             try {
-                return Integer.parseInt(property.get().trim());
+                int maxLength = Integer.parseInt(property.get().trim());
+                if (maxLength > 0) {
+                    return maxLength;
+                }
+                LOG.debug("{} must be positive, using the default", GenAiObservabilityProperties.CONTENT_MAX_LENGTH);
             } catch (NumberFormatException e) {
                 LOG.debug("Invalid {}: {}", GenAiObservabilityProperties.CONTENT_MAX_LENGTH, property.get());
             }

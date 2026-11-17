@@ -66,6 +66,16 @@ class GenAiObservabilityLevelTest {
     }
 
     @Test
+    void shouldUseTheDefaultContentMaxLengthWhenNotPositive() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getPropertiesComponent().addOverrideProperty(GenAiObservabilityProperties.CONTENT_MAX_LENGTH, "0");
+
+            assertThat(GenAiObservability.contentMaxLength(context))
+                    .isEqualTo(GenAiObservabilityProperties.DEFAULT_CONTENT_MAX_LENGTH);
+        }
+    }
+
+    @Test
     void shouldFallBackToBasicForUnknownLevelOrWhenDisabled() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.getPropertiesComponent().addOverrideProperty(GenAiObservabilityProperties.LEVEL, "verbose");

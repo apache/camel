@@ -30,6 +30,7 @@ import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanContextPropagationExtractor;
@@ -145,6 +146,45 @@ class GenAiMicrometerObservationTest extends ExchangeTestSupport {
 
         assertThat(tracer.closedSpans()).hasSize(1);
         assertThat(handler.stopped).isEmpty();
+    }
+
+    @Test
+    void shouldKeepTheObservationPathWithTheMicrometerObservabilityTracer() {
+        // camel-micrometer-observability traces through Micrometer as well, so the Observation stays the GenAI path
+        RecordingObservationHandler handler = bindObservationRegistry();
+        MicrometerObservabilityTracer tracer = new MicrometerObservabilityTracer();
+        CamelContextAware.trySetCamelContext(tracer, context);
+        tracer.init(context);
+
+        observeSuccess();
+
+        assertThat(handler.stopped).hasSize(1);
+        assertThat(tracer.closedSpans()).isEmpty();
+    }
+
+    @Test
+    void shouldRecordTheDetailedAttributesAsHighCardinalityValues() {
+        context.getPropertiesComponent().addOverrideProperty(GenAiObservabilityProperties.LEVEL, "detailed");
+        RecordingObservationHandler handler = bindObservationRegistry();
+
+        Exchange exchange = new DefaultExchange(context);
+        GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel("test-model")
+                .componentScheme("openai")
+                .conversationId("conv-1")
+                .requestParameter("temperature", 0.2)
+                .build());
+        observation.recordSuccess(GenAiUsage.of(10, 5, "stop", "test-model"));
+        observation.close();
+
+        assertThat(highCardinalityMap(handler.stopped.get(0)))
+                .containsEntry(GenAiAttributes.CONVERSATION_ID, "conv-1")
+                .containsEntry(GenAiAttributes.PROVIDER_NAME, "openai")
+                .containsEntry(GenAiAttributes.REQUEST_PREFIX + "temperature", "0.2")
+                .containsEntry(GenAiAttributes.INPUT_TOKENS, "10")
+                .doesNotContainKeys(GenAiAttributes.OPERATION_NAME, GenAiAttributes.REQUEST_MODEL);
     }
 
     @Test

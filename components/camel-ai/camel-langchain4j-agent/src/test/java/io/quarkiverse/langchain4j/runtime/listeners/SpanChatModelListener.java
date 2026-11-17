@@ -19,7 +19,9 @@ package io.quarkiverse.langchain4j.runtime.listeners;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 
 /**
- * Test stand-in for the quarkus-langchain4j listener that traces each model call.
+ * Test stand-in for the quarkus-langchain4j listener that traces each model call. It carries the real class name, which
+ * the GenAI observability recognises: it would clash if quarkus-langchain4j were ever added to the test classpath of
+ * this module.
  */
 public class SpanChatModelListener implements ChatModelListener {
 }

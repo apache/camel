@@ -200,29 +200,6 @@ class GenAiObservabilityLevelSpanTest extends ExchangeTestSupport {
     }
 
     @Test
-    void shouldRecordAnAgentRunAsOneModelCallWhenItsCallsWereNotObserved() {
-        level("detailed");
-        SimpleMeterRegistry meters = new SimpleMeterRegistry();
-        context.getRegistry().bind("meters", meters);
-
-        GenAiObservation agent = GenAiObservability.start(new DefaultExchange(context), GenAiObservationContext.builder()
-                .operationName(GenAiOperationName.INVOKE_AGENT)
-                .agentName("custom")
-                .system("openai")
-                .requestModel("gpt-4o")
-                .build());
-        agent.recordOperationName(GenAiOperationName.GENERATE_CONTENT);
-        agent.recordSuccess(GenAiUsage.of(30L, 10L, "stop", null));
-        agent.close();
-
-        assertThat(tracer.span("invoke_agent custom").tags())
-                .containsEntry(GenAiAttributes.OPERATION_NAME, "generate_content")
-                .containsEntry(GenAiAttributes.INPUT_TOKENS, 30L);
-        assertThat(meters.find(GenAiMetrics.CLIENT_OPERATION).tag(GenAiMetrics.TAG_OPERATION_NAME, "generate_content")
-                .timer()).isNotNull();
-    }
-
-    @Test
     void shouldLeaveACallTracedByTheFrameworkToTheFramework() {
         GenAiObservation observation
                 = GenAiObservability.start(new DefaultExchange(context), chat().tracedByFramework(true).build());

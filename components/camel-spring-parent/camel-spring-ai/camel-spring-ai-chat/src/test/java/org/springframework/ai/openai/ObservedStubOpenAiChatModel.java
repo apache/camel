@@ -17,6 +17,8 @@
 package org.springframework.ai.openai;
 
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import io.micrometer.tracing.test.simple.SimpleTracer;
 
 /**
  * Test stub of a Spring AI model built with an ObservationRegistry, as Spring Boot builds it when observation support
@@ -28,7 +30,7 @@ public class ObservedStubOpenAiChatModel extends StubOpenAiChatModel {
     private final ObservationRegistry observationRegistry = ObservationRegistry.create();
 
     public ObservedStubOpenAiChatModel() {
-        // a registry without handlers observes nothing (it is a no-op): Spring Boot registers its handlers on it
-        observationRegistry.observationConfig().observationHandler(context -> true);
+        // a registry traces only with a Micrometer Tracing handler, as Spring Boot registers with a tracing bridge
+        observationRegistry.observationConfig().observationHandler(new DefaultTracingObservationHandler(new SimpleTracer()));
     }
 }

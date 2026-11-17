@@ -96,6 +96,7 @@ public class SpringAiChatProducer extends DefaultProducer {
     private ChatClient chatClient;
     private ChatModel observabilityChatModel;
     private volatile Boolean observedBySpringAi;
+    private volatile Boolean toolCallsObservedBySpringAi;
     private SpringAiChatMcpManager mcpManager;
     private Advisor chatMemoryAdvisor;
 
@@ -1247,7 +1248,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             uniqueSpecs.addAll(registry.getToolsByTag(tag));
         }
         final List<ToolCallback> toolCallbacks = uniqueSpecs.stream()
-                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange, isObservedBySpringAi()))
+                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange, areToolCallsObservedBySpringAi()))
                 .collect(Collectors.toList());
 
         LOG.debug("Discovered {} tools from AiToolRegistry for tags: {}", toolCallbacks.size(), tags);
@@ -1445,13 +1446,25 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     /**
-     * Whether Spring AI observes the model calls (and the tool calls) itself.
+     * Whether Spring AI traces the model calls itself.
      */
     private boolean isObservedBySpringAi() {
         Boolean observed = observedBySpringAi;
         if (observed == null) {
-            observed = SpringAiTracing.isObserved(resolveObservabilityModelSource());
+            observed = SpringAiTracing.isModelTraced(resolveObservabilityModelSource());
             observedBySpringAi = observed;
+        }
+        return observed;
+    }
+
+    /**
+     * Whether Spring AI traces the tool calls itself, through the tool calling manager of the model.
+     */
+    private boolean areToolCallsObservedBySpringAi() {
+        Boolean observed = toolCallsObservedBySpringAi;
+        if (observed == null) {
+            observed = SpringAiTracing.areToolCallsTraced(resolveObservabilityModelSource());
+            toolCallsObservedBySpringAi = observed;
         }
         return observed;
     }
