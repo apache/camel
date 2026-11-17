@@ -19,6 +19,7 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -337,6 +338,39 @@ class GridFsConsumerTimestampTest {
         assertFalse(pollThread.get().isAlive(), "the failed poll did not return");
 
         assertEquals(List.of(), reported, "no poll follows, the failure must not be reported as one that is retried");
+    }
+
+    @Test
+    void stopLeavesNoThreadWaitingForThePolls() throws Exception {
+        Set<Thread> before = threadsInRun();
+        startConsumer(QueryStrategy.TimeStamp);
+        awaitFullPolls(1);
+
+        // between two polls, as the polls run every delay
+        consumer.stop();
+
+        Set<Thread> left = threadsInRun();
+        left.removeAll(before);
+        for (Thread thread : left) {
+            thread.join(TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS));
+        }
+        left.retainAll(threadsInRun());
+        assertEquals(Set.of(), left, "a thread of the stopped consumer still waits for its polls");
+    }
+
+    /**
+     * The threads in GridFsConsumer.run(), which starts the polls.
+     */
+    private static Set<Thread> threadsInRun() {
+        Set<Thread> answer = new HashSet<>();
+        Thread.getAllStackTraces().forEach((thread, stack) -> {
+            for (StackTraceElement frame : stack) {
+                if (frame.getClassName().equals(GridFsConsumer.class.getName()) && frame.getMethodName().equals("run")) {
+                    answer.add(thread);
+                }
+            }
+        });
+        return answer;
     }
 
     @ParameterizedTest

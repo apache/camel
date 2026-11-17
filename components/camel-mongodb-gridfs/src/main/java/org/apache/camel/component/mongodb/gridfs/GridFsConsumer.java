@@ -40,7 +40,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.IOHelper;
@@ -80,6 +80,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     // failure is logged at DEBUG instead of being reported again, so a file that fails at every poll is reported once,
     // as for the failures of the polls. It holds the files of one poll only, so it does not grow with the bucket
     private volatile Set<BsonValue> lastFailedFiles = Set.of();
+    // the task that runs the polls, which a stop cancels: once taskExecutor is shut down no poll runs, and a poll
+    // never ends the task on its own
+    private volatile BackgroundTask pollTask;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -89,6 +92,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        BackgroundTask task = pollTask;
+        if (task != null) {
+            // without interrupt: a poll that runs routes the files it found
+            task.cancel(false);
+            pollTask = null;
+        }
         if (taskExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
@@ -132,7 +141,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             fromDate = startDate;
         }
 
-        BlockingTask task = Tasks.backgroundTask()
+        BackgroundTask task = Tasks.backgroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         // maxIterations defaults to Integer.MAX_VALUE (effectively unlimited)
                         .withInterval(Duration.ofMillis(endpoint.getDelay()))
@@ -143,7 +152,14 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 .withName("GridFsPolling")
                 .build();
 
-        task.run(endpoint.getCamelContext(), () -> poll(usesTimestamp, persistsTimestamp, usesAttribute, startDate));
+        pollTask = task;
+        if (!isRunAllowed()) {
+            // stopped before the task was set, so the stop could not cancel it
+            return;
+        }
+        // scheduled, not run: run() would wait on this thread for the end of the polls, which never comes
+        task.schedule(endpoint.getCamelContext(),
+                () -> poll(usesTimestamp, persistsTimestamp, usesAttribute, startDate));
     }
 
     /**
