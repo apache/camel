@@ -960,6 +960,31 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLock != null && IDEMPOTENT_READ_LOCKS.contains(readLock);
     }
 
+    /**
+     * Logs a WARN for consumer options that start but do not do what they say:
+     * <ul>
+     * <li>noop=true with delete=true: delete wins, and the consumer deletes the files.</li>
+     * <li>noop=true with move: noop wins, and the consumer does not move the files.</li>
+     * </ul>
+     * A custom process strategy decides itself what happens to the files, so there is no WARN then.
+     */
+    protected void warnIfConsumerOptionsConflict() {
+        if (noop && processStrategy == null) {
+            if (delete) {
+                LOG.warn("The consumer of {} has both noop=true and delete=true: delete wins, and the files are deleted"
+                         + " after they are processed. Remove delete=true to leave the files in place, or noop=true to"
+                         + " delete them.",
+                        this);
+            }
+            if (move != null) {
+                LOG.warn("The consumer of {} has both noop=true and the move option: noop wins, and the files are not moved"
+                         + " after they are processed. Remove noop=true to move the files, or the move option to leave them"
+                         + " in place.",
+                        this);
+            }
+        }
+    }
+
     public String getCharset() {
         return charset;
     }
