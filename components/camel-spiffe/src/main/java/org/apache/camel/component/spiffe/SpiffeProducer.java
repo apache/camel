@@ -63,7 +63,7 @@ public class SpiffeProducer extends DefaultProducer {
         if (healthCheckRepository != null) {
             producerHealthCheck = new SpiffeProducerHealthCheck(
                     getEndpoint().getId() + "-" + HEALTH_CHECK_IDS.incrementAndGet(), configuration.getOperation(),
-                    configuration.getHealthCheckExpiryThreshold());
+                    configuration.getHealthCheckExpiryThreshold(), localSpiffeId);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
             if (healthCheckRepository.isEnabled() && producerHealthCheck.isEnabled()) {
@@ -86,16 +86,19 @@ public class SpiffeProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         try {
-            // inside the try: a repository that throws must not keep the observer client open or skip super.doStop()
-            if (producerHealthCheck != null) {
-                producerHealthCheck.close();
-                healthCheckRepository.removeHealthCheck(producerHealthCheck);
-                producerHealthCheck = null;
-            }
-            WorkloadApiClient client = healthClient;
-            healthClient = null;
-            if (client != null) {
-                client.close();
+            try {
+                if (producerHealthCheck != null) {
+                    producerHealthCheck.close();
+                    healthCheckRepository.removeHealthCheck(producerHealthCheck);
+                    producerHealthCheck = null;
+                }
+            } finally {
+                // a repository that throws must not keep the observer client open
+                WorkloadApiClient client = healthClient;
+                healthClient = null;
+                if (client != null) {
+                    client.close();
+                }
             }
         } finally {
             super.doStop();

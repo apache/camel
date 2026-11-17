@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.spiffe.bundle.jwtbundle.JwtBundleSet;
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.Watcher;
 import io.spiffe.workloadapi.WorkloadApiClient;
@@ -33,6 +34,8 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 /** Readiness from SDK watch callbacks. Health calls only inspect immutable metadata and never contact the API. */
 public final class SpiffeProducerHealthCheck extends AbstractHealthCheck implements AutoCloseable {
     private final boolean x509;
+    /** The local identity the producer serves when {@code localSpiffeId} is set; null watches the default SVID. */
+    private final SpiffeId localSpiffeId;
     private final long expiryThreshold;
     private final Clock clock;
     private final AtomicReference<Observation> observation
@@ -43,11 +46,21 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
     // that is no longer refreshed and comes close to its expiry
 
     public SpiffeProducerHealthCheck(String id, SpiffeOperation operation, long expiryThreshold) {
-        this(id, operation, expiryThreshold, Clock.systemUTC());
+        this(id, operation, expiryThreshold, null, Clock.systemUTC());
+    }
+
+    public SpiffeProducerHealthCheck(String id, SpiffeOperation operation, long expiryThreshold, SpiffeId localSpiffeId) {
+        this(id, operation, expiryThreshold, localSpiffeId, Clock.systemUTC());
     }
 
     SpiffeProducerHealthCheck(String id, SpiffeOperation operation, long expiryThreshold, Clock clock) {
+        this(id, operation, expiryThreshold, null, clock);
+    }
+
+    SpiffeProducerHealthCheck(String id, SpiffeOperation operation, long expiryThreshold, SpiffeId localSpiffeId,
+                              Clock clock) {
         super("camel", "producer:spiffe-" + id);
+        this.localSpiffeId = localSpiffeId;
         if (expiryThreshold < 0) {
             throw new IllegalArgumentException("healthCheckExpiryThreshold must not be negative");
         }
@@ -66,7 +79,10 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
                     Instant expiry = null;
                     try {
                         if (update != null) {
-                            X509Svid svid = update.getDefaultSvid();
+                            // the identity the producer serves: the configured local one, or the SDK's default
+                            X509Svid svid = localSpiffeId == null
+                                    ? update.getDefaultSvid()
+                                    : SpiffeX509SvidSelector.select(update.getX509Svids(), localSpiffeId);
                             if (svid != null && svid.getLeaf() != null && svid.getLeaf().getNotAfter() != null) {
                                 expiry = svid.getLeaf().getNotAfter().toInstant();
                                 if (svid.getLeaf().getNotBefore() != null) {
@@ -123,6 +139,9 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
         Instant now = clock.instant();
         builder.detail("spiffe.observation", x509 ? "x509-identity" : "jwt-bundles");
         builder.detail("spiffe.watch", current.watch());
+        if (localSpiffeId != null) {
+            builder.detail("spiffe.localSpiffeId", localSpiffeId.toString());
+        }
         builder.detail("spiffe.materialAvailable", current.material());
         if (current.lastUpdate() != null) {
             builder.detail("spiffe.lastUpdate", current.lastUpdate().toString());

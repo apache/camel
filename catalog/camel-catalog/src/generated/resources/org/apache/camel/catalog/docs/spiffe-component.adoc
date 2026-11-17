@@ -643,7 +643,8 @@ If producer checks are enabled dynamically after route startup, restart the rout
 
 The observation depends on the endpoint's configured operation:
 
-* `fetchX509Svid` observes the default workload X.509 identity. Readiness requires an available, unexpired SVID outside
+* `fetchX509Svid` observes the X.509 identity the producer serves: the one named by `localSpiffeId` when that option is
+  set, otherwise the default SVID. Readiness requires an available, unexpired SVID outside
   `healthCheckExpiryThreshold` (default 60000 milliseconds, a duration such as `5m` is accepted). Set the threshold to
   zero to require only that it has not expired. Health details include the observed expiry, remaining validity, and whether the identity is approaching expiry.
 * `fetchJwtSvid` and `validateJwtSvid` observe JWT trust bundles. Readiness requires a non-empty bundle update. Bundles

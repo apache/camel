@@ -27,6 +27,7 @@ import java.util.Map;
 
 import io.spiffe.bundle.jwtbundle.JwtBundle;
 import io.spiffe.bundle.jwtbundle.JwtBundleSet;
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.spiffeid.TrustDomain;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.Watcher;
@@ -153,6 +154,47 @@ class SpiffeProducerHealthCheckTest {
         assertThatThrownBy(() -> new SpiffeProducerHealthCheck("test", SpiffeOperation.fetchX509Svid, -1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("healthCheckExpiryThreshold");
+    }
+
+    @Test
+    void watchesTheConfiguredLocalIdentityInsteadOfTheDefault() throws Exception {
+        SpiffeId billing = SpiffeId.parse("spiffe://example.org/billing");
+        SpiffeProducerHealthCheck check = new SpiffeProducerHealthCheck(
+                "test", SpiffeOperation.fetchX509Svid, 60000,
+                billing, new MutableClock());
+        check.setEnabled(true);
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        check.observe(client);
+        Watcher<X509Context> watcher = x509Watcher(client);
+
+        // the default identity expires soon, the configured one is fine: the check follows the configured one
+        X509Svid defaultSvid = svid(SpiffeId.parse("spiffe://example.org/workload"), NOW.plusSeconds(10));
+        X509Svid billingSvid = svid(billing, NOW.plusSeconds(600));
+        watcher.onUpdate(x509(defaultSvid, List.of(defaultSvid, billingSvid)));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.localSpiffeId", billing.toString())
+                .containsEntry("spiffe.remainingValidityMillis", 600000L);
+
+        // an update that no longer carries the configured identity is unusable material, not a fallback
+        watcher.onUpdate(x509(defaultSvid, List.of(defaultSvid)));
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.materialAvailable", false);
+    }
+
+    private static X509Svid svid(SpiffeId id, Instant expiry) {
+        X509Svid svid = mock(X509Svid.class);
+        X509Certificate leaf = mock(X509Certificate.class);
+        when(leaf.getNotAfter()).thenReturn(Date.from(expiry));
+        when(svid.getLeaf()).thenReturn(leaf);
+        when(svid.getSpiffeId()).thenReturn(id);
+        return svid;
+    }
+
+    private static X509Context x509(X509Svid defaultSvid, List<X509Svid> all) {
+        X509Context context = mock(X509Context.class);
+        when(context.getDefaultSvid()).thenReturn(defaultSvid);
+        when(context.getX509Svids()).thenReturn(all);
+        return context;
     }
 
     private static SpiffeProducerHealthCheck check(SpiffeOperation operation, Clock clock) {
