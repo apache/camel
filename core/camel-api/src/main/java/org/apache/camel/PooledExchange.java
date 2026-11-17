@@ -39,21 +39,21 @@ public interface PooledExchange extends Exchange {
 
     /**
      * Registers a task to run when this exchange is done.
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     void onDone(OnDoneTask task);
 
     /**
      * When the exchange is done being used.
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     void done();
 
     /**
      * Resets the exchange for reuse with the given created timestamp;
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     @Deprecated(since = "4.4.0")
@@ -61,14 +61,14 @@ public interface PooledExchange extends Exchange {
 
     /**
      * Whether this exchange was created to auto release when its unit of work is done
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     void setAutoRelease(boolean autoRelease);
 
     /**
      * Whether this exchange was created to auto release when its unit of work is done
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     boolean isAutoRelease();

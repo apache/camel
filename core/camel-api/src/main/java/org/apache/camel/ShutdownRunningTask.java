@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Per-consumer policy controlling how many pending tasks are processed before the consumer stops during
  * <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful shutdown</a>.
- * <p/>
+ * <p>
  * Set on a route via the DSL {@code .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)} call. Most consumers
  * handle a single task at a time, so the distinction only matters for {@link BatchConsumer} implementations (such as
  * file or JPA consumers) that can have multiple pending messages in a batch when shutdown is triggered.

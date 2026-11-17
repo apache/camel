@@ -45,8 +45,11 @@ public interface SMSEndpointBuilderFactory {
         }
 
         /**
-         * SMS endpoint URL. Carries higher precedence than region based client
-         * initialization.
+         * The endpoint of Short Message Service, which is a host name without
+         * http:// or https://. The producer sends requests to it over HTTPS. If
+         * not set, the region option determines the endpoint, and one of the
+         * two is required. Not used when the smsClient option is set or
+         * autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,7 +63,11 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Out id for the SMS.
+         * The external transaction ID of the SMS message. The
+         * CamelAlibabaSmsOutId header replaces this option for a request that
+         * the producer sends. If that header is not set, an exchange property
+         * of the same name replaces this option. If none of the three is set,
+         * the producer adds no external transaction ID to the request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -74,7 +81,12 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Phone numbers to send SMS to.
+         * The phone numbers of the recipients, which are separated by commas.
+         * Short Message Service accepts at most 1000 phone numbers. The
+         * CamelAlibabaSmsPhoneNumbers header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option. One of the three is
+         * required.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -88,7 +100,10 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Alibaba Cloud region.
+         * The region ID of Short Message Service, for example cn-hangzhou. Only
+         * used when the endpoint option is not set, to determine the endpoint
+         * of Short Message Service. Not used when the smsClient option is set
+         * or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -103,7 +118,11 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * SMS sign name.
+         * The sign name of the SMS message. The value must be an approved sign
+         * name. The CamelAlibabaSmsSignName header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. One of the
+         * three is required.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -117,7 +136,11 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * SMS template code.
+         * The template code of the SMS message. The value must be the code of
+         * an approved template. The CamelAlibabaSmsTemplateCode header replaces
+         * this option for a request that the producer sends. If that header is
+         * not set, an exchange property of the same name replaces this option.
+         * One of the three is required.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -131,7 +154,13 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * SMS template parameters as JSON.
+         * The template parameters of the SMS message as a JSON string. The JSON
+         * string must provide a value for each variable of the template. The
+         * CamelAlibabaSmsTemplateParam header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. If none of
+         * the three is set, the producer adds no template parameters to the
+         * request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -145,7 +174,10 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Access key for the cloud user.
+         * The AccessKey ID of the AccessKey pair for the requests that the
+         * producer sends to Short Message Service. If not set, the accessKey of
+         * the serviceKeys option is used, and one of the two is required. Not
+         * used when the smsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -159,7 +191,10 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * The AccessKey secret of the AccessKey pair for the requests that the
+         * producer sends to Short Message Service. If not set, the secretKey of
+         * the serviceKeys option is used, and one of the two is required. Not
+         * used when the smsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -173,7 +208,11 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the smsClient option is set or autowired.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -188,7 +227,11 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the smsClient option is set or autowired.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -261,7 +304,12 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing SMS client instance.
+         * To use a custom com.aliyun.dysmsapi20170525.Client. The producer
+         * sends its requests with this client, and the region, endpoint,
+         * accessKey, secretKey and serviceKeys options are not used. If no
+         * client is set or autowired, the Camel endpoint creates a client from
+         * these options. It creates this client when the producer processes its
+         * first message.
          * 
          * The option is a: <code>com.aliyun.dysmsapi20170525.Client</code>
          * type.
@@ -276,7 +324,12 @@ public interface SMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing SMS client instance.
+         * To use a custom com.aliyun.dysmsapi20170525.Client. The producer
+         * sends its requests with this client, and the region, endpoint,
+         * accessKey, secretKey and serviceKeys options are not used. If no
+         * client is set or autowired, the Camel endpoint creates a client from
+         * these options. It creates this client when the producer processes its
+         * first message.
          * 
          * The option will be converted to a
          * <code>com.aliyun.dysmsapi20170525.Client</code> type.
@@ -317,7 +370,10 @@ public interface SMSEndpointBuilderFactory {
          * Syntax: <code>alibaba-sms:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaSmsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 1 enums and the value can be one of: sendSms
          * 
          * @param path operation
@@ -337,7 +393,10 @@ public interface SMSEndpointBuilderFactory {
          * Syntax: <code>alibaba-sms:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaSmsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 1 enums and the value can be one of: sendSms
          * 
          * @param componentName to use a custom component name for the endpoint
@@ -361,7 +420,10 @@ public interface SMSEndpointBuilderFactory {
         public static final SMSHeaderNameBuilder INSTANCE = new SMSHeaderNameBuilder();
 
         /**
-         * Phone numbers to send SMS to.
+         * The phone numbers of the recipients, which are separated by commas.
+         * Short Message Service accepts at most 1000 phone numbers. This header
+         * replaces the phoneNumbers option. If this header is not set, an
+         * exchange property of the same name replaces the phoneNumbers option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -373,7 +435,10 @@ public interface SMSEndpointBuilderFactory {
             return "CamelAlibabaSmsPhoneNumbers";
         }
         /**
-         * SMS sign name.
+         * The sign name of the SMS message. The value must be an approved sign
+         * name. This header replaces the signName option. If this header is not
+         * set, an exchange property of the same name replaces the signName
+         * option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -385,7 +450,10 @@ public interface SMSEndpointBuilderFactory {
             return "CamelAlibabaSmsSignName";
         }
         /**
-         * SMS template code.
+         * The template code of the SMS message. The value must be the code of
+         * an approved template. This header replaces the templateCode option.
+         * If this header is not set, an exchange property of the same name
+         * replaces the templateCode option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -397,7 +465,11 @@ public interface SMSEndpointBuilderFactory {
             return "CamelAlibabaSmsTemplateCode";
         }
         /**
-         * SMS template parameters as JSON.
+         * The template parameters of the SMS message as a JSON string. The JSON
+         * string must provide a value for each variable of the template. This
+         * header replaces the templateParam option. If this header is not set,
+         * an exchange property of the same name replaces the templateParam
+         * option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -409,7 +481,9 @@ public interface SMSEndpointBuilderFactory {
             return "CamelAlibabaSmsTemplateParam";
         }
         /**
-         * Out id for the SMS.
+         * The external transaction ID of the SMS message. This header replaces
+         * the outId option. If this header is not set, an exchange property of
+         * the same name replaces the outId option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -421,7 +495,8 @@ public interface SMSEndpointBuilderFactory {
             return "CamelAlibabaSmsOutId";
         }
         /**
-         * Alibaba Cloud request id.
+         * The request ID that Short Message Service returns in the response to
+         * the operation. The producer sets it, unless the exchange fails.
          * 
          * The option is a: {@code String} type.
          * 

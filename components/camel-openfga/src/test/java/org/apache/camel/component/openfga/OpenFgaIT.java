@@ -23,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -383,6 +384,25 @@ class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void filtersWithNativeServerBatchesAcrossChunkBoundaries() {
+        List<String> objects = new ArrayList<>();
+        for (int i = 0; i < 53; i++) {
+            objects.add("document:roadmap");
+        }
+        objects.add("document:budget");
+        objects.add("document:announcement");
+
+        Exchange out = template.request(
+                openfga("batchCheck", "relation=reader&user=user:bob&batchCheckMode=server&maxBatchSize=50"),
+                e -> e.getMessage().setBody(objects));
+
+        assertThat(out.getException()).isNull();
+        List<String> expected = new ArrayList<>(objects);
+        expected.remove("document:budget");
+        assertThat(out.getMessage().getBody(List.class)).containsExactlyElementsOf(expected);
+    }
+
+    @Test
     void grantsAndThenRevokesAccessThroughTheRelationshipGraph() {
         assertThat(check("carol", "budget", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
                 .isEqualTo(false);
@@ -409,6 +429,56 @@ class OpenFgaIT extends CamelTestSupport {
 
         assertThat(check("carol", "budget", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
                 .isEqualTo(false);
+    }
+
+    @Test
+    void atomicallyChangesAReaderIntoAWriter() {
+        Exchange initial
+                = template.request(openfga("writeTuples", "user=user:atomic-user&relation=reader&object=document:atomic-doc"),
+                        e -> {
+                        });
+        assertThat(initial.getException()).isNull();
+
+        Exchange changed = template.request(openfga("write", ""), e -> e.getMessage().setBody(Map.of(
+                "writes", List.of(Map.of("user", "user:atomic-user", "relation", "writer", "object", "document:atomic-doc")),
+                "deletes",
+                List.of(Map.of("user", "user:atomic-user", "relation", "reader", "object", "document:atomic-doc")))));
+
+        assertThat(changed.getException()).isNull();
+        assertThat(changed.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
+        assertThat(changed.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+        assertThat(check("atomic-user", "atomic-doc", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+        assertThat(check("atomic-user", "atomic-doc", "writer").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(true);
+    }
+
+    @Test
+    void rollsBackTheWholeCombinedWriteWhenADeletionFails() {
+        Exchange changed = template.request(openfga("write", ""), e -> e.getMessage().setBody(Map.of(
+                "writes",
+                List.of(Map.of("user", "user:atomic-failure", "relation", "reader", "object", "document:atomic-failure")),
+                "deletes", List.of(Map.of("user", "user:atomic-failure", "relation", "reader", "object", "document:absent")))));
+
+        assertThat(changed.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(check("atomic-failure", "atomic-failure", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+    }
+
+    @Test
+    void ignoresAnExistingWriteAndAMissingDeleteWhenConfigured() {
+        Exchange repeated = template.request(
+                openfga("writeTuples", "user=user:bob&relation=reader&object=document:roadmap&onDuplicate=ignore"),
+                e -> {
+                });
+        assertThat(repeated.getException()).isNull();
+
+        Exchange absent = template.request(
+                openfga("deleteTuples", "user=user:missing&relation=reader&object=document:absent&onMissing=ignore"),
+                e -> {
+                });
+        assertThat(absent.getException()).isNull();
+        assertThat(check("bob", "roadmap", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
     }
 
     @Test

@@ -30,7 +30,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Describes a loadable resource such as a file, classpath entry, or HTTP URL.
- * <p/>
+ * <p>
  * A resource abstracts over its backing location: it exposes the {@link #getScheme() scheme} (file, classpath, http,
  * and so on), the {@link #getLocation() location}, whether it {@link #exists()}, and provides fresh
  * {@link #getInputStream() streams} or {@link #getReader() readers} on each call. Camel loads routes, scripts, and
@@ -60,13 +60,13 @@ public interface Resource {
     /**
      * Whether this resource exists.
      *
-     * @return <tt>true</tt> if the resource exists
+     * @return <code>true</code> if the resource exists
      */
     boolean exists();
 
     /**
      * The {@link URI} of the resource.
-     * </p>
+     * <p>
      * The default implementation creates a {@code URI} object from resource location.
      */
     default URI getURI() {
@@ -75,8 +75,8 @@ public interface Resource {
 
     /**
      * The {@link URL} for the resource or <code>null</code> if the URL can not be computed.
-     * </p>
-     * The default implementation creates a {@code URI} object from resource location.
+     * <p>
+     * The default implementation creates a {@code URL} object from the URI of the resource.
      */
     default @Nullable URL getURL() throws MalformedURLException {
         URI uri = getURI();
@@ -85,14 +85,14 @@ public interface Resource {
 
     /**
      * Returns an {@link InputStream} that reads from the underlying resource.
-     * </p>
+     * <p>
      * Each invocation must return a new {@link InputStream} instance.
      */
     InputStream getInputStream() throws IOException;
 
     /**
      * Returns a {@link Reader} that reads from the underlying resource using UTF-8 as charset.
-     * </p>
+     * <p>
      * Each invocation must return a new {@link Reader}.
      *
      * @see #getInputStream()
@@ -103,7 +103,7 @@ public interface Resource {
 
     /**
      * Returns a {@link Reader} that reads from the underlying resource using the given {@link Charset}
-     * </p>
+     * <p>
      * Each invocation must return a new {@link Reader}.
      *
      * @see #getInputStream()

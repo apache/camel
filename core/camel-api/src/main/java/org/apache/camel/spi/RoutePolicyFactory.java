@@ -23,13 +23,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Factory that creates a {@link RoutePolicy} instance for each route automatically at startup, without requiring the
  * policy to be declared per-route in the DSL.
- * <p/>
+ * <p>
  * Factories are registered globally via {@link org.apache.camel.CamelContext#addRoutePolicyFactory(RoutePolicyFactory)}
  * and are called once per route during {@link org.apache.camel.CamelContext} startup. Returning {@code null} from
  * {@link #createRoutePolicy(org.apache.camel.CamelContext, String, org.apache.camel.NamedNode)} opts that specific
  * route out of the policy. This is useful for cross-cutting concerns such as universal throttling, auditing, or metrics
  * collection that should apply to all routes.
- * <p/>
+ * <p>
  * See the <a href="https://camel.apache.org/manual/route-policy.html">Route Policy</a> documentation for examples.
  *
  * @see RoutePolicy
@@ -42,8 +42,8 @@ public interface RoutePolicyFactory {
      * @param  camelContext the camel context
      * @param  routeId      the route id
      * @param  route        the route definition
-     * @return              the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy
-     *                      for this route
+     * @return              the created {@link org.apache.camel.spi.RoutePolicy}, or <code>null</code> to not use a
+     *                      policy for this route
      */
     @Nullable
     RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route);

@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Result of validating an incoming OAuth 2.0 bearer token.
- * <p/>
+ * <p>
  * Contains the validation outcome (valid/invalid), extracted claims from the token, and an error message when the token
  * is invalid.
  *
@@ -170,7 +170,7 @@ public final class OAuthTokenValidationResult {
 
     /**
      * The principal name for route-level decisions.
-     * <p/>
+     * <p>
      * This implementation returns the {@code sub} claim.
      *
      * @since 4.21
@@ -226,7 +226,7 @@ public final class OAuthTokenValidationResult {
 
     /**
      * All attributes extracted from the token payload (JWT) or introspection response.
-     * <p/>
+     * <p>
      * This is an alias for {@link #getClaims()} using principal-oriented terminology.
      *
      * @since 4.21

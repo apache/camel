@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Thrown (or explicitly constructed and set on an {@link Exchange}) to signal that the current exchange should be
  * rolled back by the error handler.
- * <p/>
+ * <p>
  * When a route uses the {@code rollback()} DSL step or a {@link Processor} throws this exception, the Camel error
  * handler treats it as an intentional rollback rather than an unexpected failure. Transactional resources enlisted in
  * the exchange's unit of work will be rolled back accordingly.

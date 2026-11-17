@@ -20,7 +20,7 @@ import java.io.Closeable;
 
 /**
  * Marker for a service (or other process) that is only needed while Camel is bootstrapping.
- * <p/>
+ * <p>
  * Once bootstrap completes, Camel invokes {@link #close()} so the implementation can release bootstrap-only state, for
  * example clearing internal caches and maps to free memory that is not needed at runtime.
  *

@@ -54,7 +54,7 @@ public interface PeriodTaskScheduler {
      * Gets an existing task by a given type, assuming there is only one task of the given type.
      *
      * @param  type the type of the task
-     * @return      the task, or <tt>null</tt> if no tasks exists
+     * @return      the task, or <code>null</code> if no tasks exists
      */
     <T> @Nullable T getTaskByType(Class<T> type);
 

@@ -28,31 +28,30 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}.
- * <br/>
- * <p/>
+ * <br>
+ * <p>
  * <b>Important:</b> Read the javadoc of each method carefully to ensure the behavior of the method is understood. Some
- * methods is for <tt>InOnly</tt>, others for <tt>InOut</tt> MEP. And some methods throws
- * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
- * {@link Exchange}. <br/>
- * <p/>
- * The {@link ProducerTemplate} is <b>thread safe</b>. <br/>
- * <p/>
- * All the methods which sends a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
+ * methods are for <code>InOnly</code>, others for <code>InOut</code> MEP. And some methods throw
+ * {@link org.apache.camel.CamelExecutionException} while others store any thrown exception on the returned
+ * {@link Exchange}. <br>
+ * <p>
+ * The {@link ProducerTemplate} is <b>thread safe</b>. <br>
+ * <p>
+ * All the methods which send a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
  * could not be created. Or a {@link NoSuchEndpointException} if the endpoint could not be resolved. There may be other
- * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.
- * <br/>
- * <p/>
+ * related exceptions being thrown which occur <i>before</i> the {@link Producer} has started sending the message. <br>
+ * <p>
  * All the sendBody or requestBody methods will return the content according to this strategy:
  * <ul>
  * <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing with the
  * caused exception wrapped</li>
- * <li>The <tt>OUT</tt> body if the pattern is Out capable, otherwise <tt>IN</tt>.
+ * <li>The <code>OUT</code> body if the pattern is Out capable, otherwise <code>IN</code>.
  * </ul>
- * <br/>
- * <p/>
+ * <br>
+ * <p>
  * Before using the template it must be started. And when you are done using the template, make sure to {@link #stop()}
- * the template. <br/>
- * <p/>
+ * the template. <br>
+ * <p>
  * <b>Important note on usage:</b> See this
  * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.
@@ -141,10 +140,10 @@ public interface ProducerTemplate extends Service {
     /**
      * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to
      * send events about the {@link Exchange} being sent.
-     * <p/>
+     * <p>
      * By default this is enabled.
      *
-     * @param enabled <tt>true</tt> to enable, <tt>false</tt> to disable.
+     * @param enabled <code>true</code> to enable, <code>false</code> to disable.
      */
     void setEventNotifierEnabled(boolean enabled);
 
@@ -152,7 +151,7 @@ public interface ProducerTemplate extends Service {
      * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to send
      * events about the {@link Exchange} being sent.
      *
-     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     boolean isEventNotifierEnabled();
 
@@ -165,8 +164,8 @@ public interface ProducerTemplate extends Service {
     // -----------------------------------------------------------------------
 
     /**
-     * Sends the exchange to the default endpoint <br/>
-     * <br/>
+     * Sends the exchange to the default endpoint <br>
+     * <br>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -176,8 +175,8 @@ public interface ProducerTemplate extends Service {
     Exchange send(Exchange exchange);
 
     /**
-     * Sends an exchange to the default endpoint using a supplied processor <br/>
-     * <br/>
+     * Sends an exchange to the default endpoint using a supplied processor <br>
+     * <br>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -187,9 +186,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(Processor processor);
 
     /**
-     * Sends the body to the default endpoint <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -199,9 +198,9 @@ public interface ProducerTemplate extends Service {
     void sendBody(@Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint with a specified header and header value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint with a specified header and header value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -213,9 +212,9 @@ public interface ProducerTemplate extends Service {
     void sendBodyAndHeader(@Nullable Object body, String header, @Nullable Object headerValue) throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint with a specified property and property value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint with a specified property and property value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -228,9 +227,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint with the specified headers and header values <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint with the specified headers and header values <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -244,9 +243,9 @@ public interface ProducerTemplate extends Service {
     // -----------------------------------------------------------------------
 
     /**
-     * Sends the exchange to the given endpoint <br/>
-     * <br/>
-     * <p/>
+     * Sends the exchange to the given endpoint <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -258,9 +257,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(String endpointUri, Exchange exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor <br/>
-     * <br/>
-     * <p/>
+     * Sends an exchange to an endpoint using a supplied processor <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -277,9 +276,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(String endpointUri, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor <br/>
-     * <br/>
-     * <p/>
+     * Sends an exchange to an endpoint using a supplied processor <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -292,9 +291,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(String endpointUri, ExchangePattern pattern, Processor processor);
 
     /**
-     * Sends the exchange to the given endpoint <br/>
-     * <br/>
-     * <p/>
+     * Sends the exchange to the given endpoint <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -305,9 +304,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(Endpoint endpoint, Exchange exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor <br/>
-     * <br/>
-     * <p/>
+     * Sends an exchange to an endpoint using a supplied processor <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -318,9 +317,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(Endpoint endpoint, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor <br/>
-     * <br/>
-     * <p/>
+     * Sends an exchange to an endpoint using a supplied processor <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -333,9 +332,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor <br/>
-     * <br/>
-     * <p/>
+     * Sends an exchange to an endpoint using a supplied processor <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -350,9 +349,9 @@ public interface ProducerTemplate extends Service {
     Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor);
 
     /**
-     * Send the body to an endpoint <br/>
-     * <br/>
-     * <p/>
+     * Send the body to an endpoint <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -363,9 +362,9 @@ public interface ProducerTemplate extends Service {
     void sendBody(Endpoint endpoint, @Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Send the body to an endpoint <br/>
-     * <br/>
-     * <p/>
+     * Send the body to an endpoint <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -382,9 +381,9 @@ public interface ProducerTemplate extends Service {
     void sendBody(String endpointUri, @Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Send the body to an endpoint with the given {@link ExchangePattern} returning any result output body <br/>
-     * <br/>
-     * <p/>
+     * Send the body to an endpoint with the given {@link ExchangePattern} returning any result output body <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -392,16 +391,16 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload
      * @param  pattern                 the message {@link ExchangePattern} such as {@link ExchangePattern#InOnly} or
      *                                 {@link ExchangePattern#InOut}
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
     Object sendBody(Endpoint endpoint, ExchangePattern pattern, @Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Send the body to an endpoint returning any result output body <br/>
-     * <br/>
-     * <p/>
+     * Send the body to an endpoint returning any result output body <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -409,16 +408,16 @@ public interface ProducerTemplate extends Service {
      * @param  pattern                 the message {@link ExchangePattern} such as {@link ExchangePattern#InOnly} or
      *                                 {@link ExchangePattern#InOut}
      * @param  body                    the payload
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
     Object sendBody(String endpointUri, ExchangePattern pattern, @Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified header and header value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified header and header value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -435,9 +434,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified header and header value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified header and header value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -451,9 +450,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified header and header value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified header and header value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -463,7 +462,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload to send
      * @param  header                  the header name
      * @param  headerValue             the header value
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -473,9 +472,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified header and header value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified header and header value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -485,7 +484,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload to send
      * @param  header                  the header name
      * @param  headerValue             the header value
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -495,9 +494,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified property and property value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified property and property value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -511,9 +510,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified property and property value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified property and property value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -527,9 +526,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified property and property value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified property and property value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -539,7 +538,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload to send
      * @param  property                the property name
      * @param  propertyValue           the property value
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -549,9 +548,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with a specified property and property value <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with a specified property and property value <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -561,7 +560,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload to send
      * @param  property                the property name
      * @param  propertyValue           the property value
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -571,9 +570,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with the specified headers and header values <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with the specified headers and header values <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -586,9 +585,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with the specified headers and header values <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with the specified headers and header values <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -601,9 +600,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with the specified headers and header values <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with the specified headers and header values <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -612,7 +611,7 @@ public interface ProducerTemplate extends Service {
      *                                 {@link ExchangePattern#InOut}
      * @param  body                    the payload to send
      * @param  headers                 headers
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -622,9 +621,9 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to an endpoint with the specified headers and header values <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to an endpoint with the specified headers and header values <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -633,7 +632,7 @@ public interface ProducerTemplate extends Service {
      *                                 {@link ExchangePattern#InOut}
      * @param  body                    the payload to send
      * @param  headers                 headers
-     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @return                         the result if {@link ExchangePattern} is OUT capable, otherwise <code>null</code>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
@@ -647,9 +646,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -661,9 +660,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is <b>not</b> thrown from this
      * method, but you can access it from the returned exchange using {@link org.apache.camel.Exchange#getException()}.
      *
@@ -674,10 +673,10 @@ public interface ProducerTemplate extends Service {
     Exchange request(String endpointUri, Processor processor);
 
     /**
-     * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint and returns the result content. Uses an {@link ExchangePattern#InOut}
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -689,10 +688,10 @@ public interface ProducerTemplate extends Service {
     Object requestBody(@Nullable Object body) throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint and returns the result content. Uses an {@link ExchangePattern#InOut}
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -705,9 +704,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -721,9 +720,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -737,9 +736,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -753,9 +752,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -772,10 +771,10 @@ public interface ProducerTemplate extends Service {
     <T> @Nullable T requestBody(String endpointUri, @Nullable Object body, Class<T> type) throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint and returns the result content. Uses an {@link ExchangePattern#InOut}
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -791,9 +790,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -810,9 +809,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -830,9 +829,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -852,9 +851,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
-     * exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -872,9 +871,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -890,9 +889,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -908,9 +907,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -925,10 +924,10 @@ public interface ProducerTemplate extends Service {
             throws CamelExecutionException;
 
     /**
-     * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * Sends the body to the default endpoint and returns the result content. Uses an {@link ExchangePattern#InOut}
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -942,9 +941,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
-     * message exchange pattern. <br/>
-     * <br/>
-     * <p/>
+     * message exchange pattern. <br>
+     * <br>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -1169,7 +1168,7 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Gets the response body from the future handle, will wait until the response is ready.
-     * <p/>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *
@@ -1182,7 +1181,7 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Gets the response body from the future handle, will wait at most the given time for the response to be ready.
-     * <p/>
+     * <p>
      * <b>Notice:</b> that if the processing of the exchange failed with an Exception it is thrown from this method as a
      * {@link org.apache.camel.CamelExecutionException} with the caused exception wrapped.
      *

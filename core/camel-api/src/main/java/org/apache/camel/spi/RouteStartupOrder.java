@@ -25,11 +25,11 @@ import org.apache.camel.Service;
 /**
  * Captures the resolved startup order and associated services for a {@link Route}, used by
  * {@link org.apache.camel.CamelContext} and {@link ShutdownStrategy} to control start and shutdown sequencing.
- * <p/>
+ * <p>
  * At startup, the context builds an ordered list of {@code RouteStartupOrder} instances from each route's configured
  * {@code startupOrder} attribute and passes it to the {@link ShutdownStrategy} at shutdown time (in reverse order, by
  * default). This allows routes with dependencies to be stopped before the routes they depend on.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/configuring-route-startup-ordering-and-autostartup.html"> Configuring
  * Route Startup Ordering and Auto Startup</a> for details.
  *
@@ -40,7 +40,7 @@ public interface RouteStartupOrder {
 
     /**
      * Get the order this route should be started.
-     * <p/>
+     * <p>
      * See more at <a href="https://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html">
      * configuring route startup ordering</a>.
      *

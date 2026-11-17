@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Base interface for backlog event messages that capture exchange snapshots at a point in time, without retaining
  * references to the live {@link org.apache.camel.Exchange}.
- * <p/>
+ * <p>
  * This is the shared contract between {@link BacklogTracerEventMessage} and {@link BacklogErrorEventMessage}.
  *
  * @since 4.21

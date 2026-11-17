@@ -22,15 +22,15 @@ import org.apache.camel.Route;
 
 /**
  * A strategy capable of applying interceptors to a processor.
- * <p/>
- * Its <b>strongly</b> advised to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
+ * <p>
+ * It's <b>strongly</b> advised to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
  * {@link Processor} which ensures the policy works well with the asynchronous routing engine. You can use the
- * {@link org.apache.camel.processor.DelegateAsyncProcessor} to easily return an {@link org.apache.camel.AsyncProcessor}
+ * {@code org.apache.camel.processor.DelegateAsyncProcessor} to easily return an {@link org.apache.camel.AsyncProcessor}
  * and override the
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
  * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
- * <p/>
- * Mind that not all frameworks supports asynchronous routing, for example some transaction managers, such as Spring
+ * <p>
+ * Mind that not all frameworks support asynchronous routing, for example some transaction managers, such as Spring
  * Transaction uses the current thread to store state of the transaction, and thus can't transfer this state to other
  * threads when routing continues asynchronously.
  */
@@ -38,9 +38,9 @@ public interface Policy {
 
     /**
      * Hook invoked before the wrap.
-     * <p/>
+     * <p>
      * This allows you to do any custom logic before the processor is wrapped. For example to manipulate the
-     * {@link org.apache.camel.model.ProcessorDefinition definition}.
+     * {@code ProcessorDefinition}.
      *
      * @param route      the route context
      * @param definition the processor definition

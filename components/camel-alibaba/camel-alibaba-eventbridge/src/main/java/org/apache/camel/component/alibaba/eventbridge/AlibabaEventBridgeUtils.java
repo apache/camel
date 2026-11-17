@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -145,7 +146,9 @@ public final class AlibabaEventBridgeUtils {
                     configuration.eventBusName(), configuration.eventSource(), configuration.eventType(),
                     configuration, client);
 
+            // the SDK client requires an id and generates none
             EventBuilder builder = EventBuilder.builder()
+                    .withId(UUID.randomUUID().toString())
                     .withSource(URI.create(configuration.eventSource()))
                     .withType(configuration.eventType())
                     .withAliyunEventBus(configuration.eventBusName())

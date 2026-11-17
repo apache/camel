@@ -47,47 +47,87 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " requestId the service returns"))
 public class SMSEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
-             enums = "sendSms")
+    @UriPath(description = "The operation that the producer performs. The CamelAlibabaSmsOperation header replaces this option"
+                           + " for a request that the producer sends. If that header is not set, an exchange property of the"
+                           + " same name replaces this option.",
+             displayName = "Operation", label = "producer", enums = "sendSms")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Alibaba Cloud region", displayName = "Region")
+    @UriParam(description = "The region ID of Short Message Service, for example cn-hangzhou. Only used when the endpoint"
+                            + " option is not set, to determine the endpoint of Short Message Service. Not used when the"
+                            + " smsClient option is set or autowired.",
+              displayName = "Region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "SMS endpoint URL. Carries higher precedence than region based client initialization",
+    @UriParam(description = "The endpoint of Short Message Service, which is a host name without http:// or https://. The"
+                            + " producer sends requests to it over HTTPS. If not set, the region option determines the"
+                            + " endpoint, and one of the two is required. Not used when the smsClient option is set or"
+                            + " autowired.",
               displayName = "Endpoint")
     private String endpoint;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Access Key", security = "secret",
-              label = "security")
+    @UriParam(description = "The AccessKey ID of the AccessKey pair for the requests that the producer sends to Short Message"
+                            + " Service. If not set, the accessKey of the serviceKeys option is used, and one of the two is"
+                            + " required. Not used when the smsClient option is set or autowired.",
+              displayName = "Access Key", security = "secret", label = "security")
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key", security = "secret",
-              label = "security")
+    @UriParam(description = "The AccessKey secret of the AccessKey pair for the requests that the producer sends to Short"
+                            + " Message Service. If not set, the secretKey of the serviceKeys option is used, and one of the"
+                            + " two is required. Not used when the smsClient option is set or autowired.",
+              displayName = "Secret Key", security = "secret", label = "security")
     private String secretKey;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Keys",
-              security = "secret", label = "security")
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Its"
+                            + " accessKey is the AccessKey ID and its secretKey is the AccessKey secret. Each of the two is"
+                            + " used when the option of the same name is not set. Not used when the smsClient option is set or"
+                            + " autowired.",
+              displayName = "Service Keys", security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Phone numbers to send SMS to", displayName = "Phone Numbers")
+    @UriParam(description = "The phone numbers of the recipients, which are separated by commas. Short Message Service accepts"
+                            + " at most 1000 phone numbers. The CamelAlibabaSmsPhoneNumbers header replaces this option for a"
+                            + " request that the producer sends. If that header is not set, an exchange property of the same"
+                            + " name replaces this option. One of the three is required.",
+              displayName = "Phone Numbers")
     private String phoneNumbers;
 
-    @UriParam(description = "SMS sign name", displayName = "Sign Name")
+    @UriParam(description = "The sign name of the SMS message. The value must be an approved sign name. The"
+                            + " CamelAlibabaSmsSignName header replaces this option for a request that the producer sends. If"
+                            + " that header is not set, an exchange property of the same name replaces this option. One of the"
+                            + " three is required.",
+              displayName = "Sign Name")
     private String signName;
 
-    @UriParam(description = "SMS template code", displayName = "Template Code")
+    @UriParam(description = "The template code of the SMS message. The value must be the code of an approved template. The"
+                            + " CamelAlibabaSmsTemplateCode header replaces this option for a request that the producer sends."
+                            + " If that header is not set, an exchange property of the same name replaces this option. One of"
+                            + " the three is required.",
+              displayName = "Template Code")
     private String templateCode;
 
-    @UriParam(description = "SMS template parameters as JSON", displayName = "Template Param")
+    @UriParam(description = "The template parameters of the SMS message as a JSON string. The JSON string must provide a value"
+                            + " for each variable of the template. The CamelAlibabaSmsTemplateParam header replaces this option"
+                            + " for a request that the producer sends. If that header is not set, an exchange property of the"
+                            + " same name replaces this option. If none of the three is set, the producer adds no template"
+                            + " parameters to the request.",
+              displayName = "Template Param")
     private String templateParam;
 
-    @UriParam(description = "Out id for the SMS", displayName = "Out Id")
+    @UriParam(description = "The external transaction ID of the SMS message. The CamelAlibabaSmsOutId header replaces this"
+                            + " option for a request that the producer sends. If that header is not set, an exchange property"
+                            + " of the same name replaces this option. If none of the three is set, the producer adds no"
+                            + " external transaction ID to the request.",
+              displayName = "Out Id")
     private String outId;
 
-    @UriParam(description = "Autowire an existing SMS client instance", displayName = "SMS Client", label = "advanced")
+    @UriParam(description = "To use a custom com.aliyun.dysmsapi20170525.Client. The producer sends its requests with this"
+                            + " client, and the region, endpoint, accessKey, secretKey and serviceKeys options are not used. If"
+                            + " no client is set or autowired, the Camel endpoint creates a client from these options. It"
+                            + " creates this client when the producer processes its first message.",
+              displayName = "SMS Client", label = "advanced")
     @Metadata(autowired = true)
     private Client smsClient;
 

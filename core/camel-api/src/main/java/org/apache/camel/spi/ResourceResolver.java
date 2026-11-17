@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for resolving a {@link Resource} for a specific URI scheme.
- * <p/>
+ * <p>
  * Each resolver handles a single {@link #getSupportedScheme() scheme} (such as file, classpath, http) and turns a
  * location into a {@link Resource}, or returns {@code null} if it cannot. The {@link ResourceLoader} dispatches to the
  * matching resolver; scheme-specific resolvers are discovered from {@value #FACTORY_PATH}, with an optional
@@ -46,7 +46,7 @@ public interface ResourceResolver extends StaticService, CamelContextAware {
 
     /**
      * The supported resource scheme.
-     * <p/>
+     * <p>
      * Implementations should support a single scheme only.
      */
     String getSupportedScheme();

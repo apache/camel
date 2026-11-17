@@ -1261,8 +1261,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to invoke a document-literal wrapped operation in its wrapped
          * form instead of its unwrapped form. If true and dataFormat is POJO,
          * the Camel message body of the request must hold the wrapper object in
-         * place of the parameters of the operation. The consumer does not use
-         * it.
+         * place of the parameters of the operation. Only the request is in
+         * wrapped form: the reply body is a MessageContentsList with the return
+         * value of the operation, as when this option is false, not the
+         * response wrapper object. The consumer does not use it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1280,8 +1282,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to invoke a document-literal wrapped operation in its wrapped
          * form instead of its unwrapped form. If true and dataFormat is POJO,
          * the Camel message body of the request must hold the wrapper object in
-         * place of the parameters of the operation. The consumer does not use
-         * it.
+         * place of the parameters of the operation. Only the request is in
+         * wrapped form: the reply body is a MessageContentsList with the return
+         * value of the operation, as when this option is false, not the
+         * response wrapper object. The consumer does not use it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

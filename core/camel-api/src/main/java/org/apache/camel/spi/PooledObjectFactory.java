@@ -110,7 +110,7 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
     /**
      * Acquires an object from the pool (if any)
      *
-     * @return the object or <tt>null</tt> if the pool is empty
+     * @return the object or <code>null</code> if the pool is empty
      */
     @Nullable
     T acquire();

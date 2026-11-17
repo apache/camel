@@ -26,21 +26,21 @@ import org.apache.camel.Message;
 
 /**
  * Marks a method as being invoked for a specific header value.
- * <p/>
- * The method can either be executed synchronously or asynchronously (with {@link AsyncCallback}.
- * <p/>
+ * <p>
+ * The method can either be executed synchronously or asynchronously (with {@link AsyncCallback}).
+ * <p>
  * A method is only asynchronously executed if the method has {@link AsyncCallback} as a parameter. In this situation
- * then the method should not return a value (void). And its the responsible of the method to invoke
+ * then the method should not return a value (void). And it's the responsibility of the method to invoke
  *
  * <pre>
  * callback.done(false)
  * </pre>
  *
  * when to continue routing.
- * <p/>
+ * <p>
  * Synchronous methods can either be void or return a value. If a value is returned then the value will be set as the
  * response body.
- * <p/>
+ * <p>
  * The method accepts the following parameters:
  * <ul>
  * <li>Exchange - the current exchange</li>

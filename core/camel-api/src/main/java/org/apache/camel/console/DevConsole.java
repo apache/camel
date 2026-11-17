@@ -64,7 +64,7 @@ public interface DevConsole {
 
     /**
      * Whether this console is read-only (safe, and does not change any runtime state).
-     * <p/>
+     * <p>
      * Consoles that mutate state (such as starting/stopping a route, sending a message, or triggering a heap dump) must
      * override this method to return {@code false}.
      *

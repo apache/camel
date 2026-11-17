@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Logging severity levels used throughout Camel to control the verbosity of diagnostic output.
- * <p/>
+ * <p>
  * This enum is used wherever Camel accepts a configurable log level: the
  * <a href="https://camel.apache.org/manual/log-eip.html">Log EIP</a>, the {@link org.apache.camel.spi.CamelLogger},
  * error-handler redelivery logging, tracing, the dead-letter channel, and many component-level options. It maps

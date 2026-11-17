@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  * <a href="https://camel.apache.org/event-driven-consumer.html"> Event Driven Consumer</a> and
  * <a href="https://camel.apache.org/message-translator.html"> Message Translator</a> patterns and to process message
  * exchanges.
- * <p/>
+ * <p>
  * Notice if you use a {@link Processor} in a Camel route, then make sure to write the {@link Processor} in a
  * thread-safe way, as the Camel routes can potentially be executed by concurrent threads, and therefore multiple
  * threads can call the same {@link Processor} instance.

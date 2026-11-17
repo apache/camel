@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Registry that stores and resolves {@link Validator} instances for Camel's
  * <a href="https://camel.apache.org/manual/transformer.html">data type validation</a> mechanism.
- * <p/>
+ * <p>
  * The registry maintains two separate caches mirroring the design of {@link TransformerRegistry}:
  * <ul>
  * <li><b>static cache</b> — holds all validators registered at route startup; no eviction, no size limit. Contains
@@ -76,7 +76,7 @@ public interface ValidatorRegistry extends Map<ValidatorKey, Validator>, StaticS
      * Whether the given {@link Validator} is stored in the static cache
      *
      * @param  type the data type
-     * @return      <tt>true</tt> if in static cache, <tt>false</tt> if not
+     * @return      <code>true</code> if in static cache, <code>false</code> if not
      */
     boolean isStatic(DataType type);
 
@@ -84,7 +84,7 @@ public interface ValidatorRegistry extends Map<ValidatorKey, Validator>, StaticS
      * Whether the given {@link Validator} is stored in the dynamic cache
      *
      * @param  type the data type
-     * @return      <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     * @return      <code>true</code> if in dynamic cache, <code>false</code> if not
      */
     boolean isDynamic(DataType type);
 

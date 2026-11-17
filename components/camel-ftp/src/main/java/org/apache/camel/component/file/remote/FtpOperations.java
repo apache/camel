@@ -374,6 +374,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("Deleting file: {}", name);
+        checkName(name);
 
         boolean result;
         String target = name;
@@ -414,6 +415,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
+        checkName(from);
+        checkName(to);
         try {
             reconnectIfNecessary(null);
             return client.rename(from, to);
@@ -426,6 +429,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
+        checkName(directory);
 
         log.trace("buildDirectory({})", directory);
         try {
@@ -457,6 +461,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+        checkName(name);
         // store the name of the file to download on the listener
         clientActivityListener.setDownload(true);
         clientActivityListener.setRemoteFileName(name);
@@ -742,6 +747,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
+        // before the listener and the client, so nothing is sent for a name that is refused
+        checkName(name);
 
         // store the name of the file to upload on the listener
         clientActivityListener.setDownload(false);
@@ -884,6 +891,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        checkName(name);
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
         try {
             return client.storeFile(name, bis);
@@ -897,6 +905,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
+        checkName(name);
         if (endpoint.isFastExistsCheck()) {
             return fastExistsFile(name);
         }
@@ -929,6 +938,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     protected boolean fastExistsFile(String name) throws GenericFileOperationFailedException {
         log.trace("fastExistsFile({})", name);
+        checkName(name);
         try {
             String[] names = client.listNames(name);
             if (names == null) {
@@ -958,6 +968,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
+        checkName(path);
 
         // must compact path so FTP server can traverse correctly
         // use the ftp utils implementation of the compact path
@@ -1045,6 +1056,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             path = ".";
         }
+        checkName(path);
 
         try {
             return checkListing(client.listFiles(path), "directory: " + path);
@@ -1093,6 +1105,26 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return client.sendSiteCommand(command);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * The FTP control connection sends one command per line, so a file or directory name with a carriage return or a
+     * line feed cannot be sent as the argument of a single command. Such a name is refused before any command is sent.
+     * The message gives the character and its index, not the name.
+     */
+    private static void checkName(String name) {
+        if (name == null) {
+            return;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch == '\r' || ch == '\n') {
+                throw new GenericFileOperationFailedException(
+                        String.format("Cannot use the file or directory name: it has the character U+%04X at index %d, and a"
+                                      + " carriage return or a line feed cannot be sent in an FTP command",
+                                (int) ch, i));
+            }
         }
     }
 

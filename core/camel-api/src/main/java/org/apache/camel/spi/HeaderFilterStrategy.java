@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 public interface HeaderFilterStrategy {
 
     /**
-     * The direction is either <tt>IN</tt> or <tt>OUT</tt>.
+     * The direction is either <code>IN</code> or <code>OUT</code>.
      */
     enum Direction {
         IN,
@@ -35,28 +35,28 @@ public interface HeaderFilterStrategy {
     /**
      * Applies filtering logic to Camel Message header that is going to be copied to target message such as CXF and JMS
      * message.
-     * <p/>
-     * It returns <tt>true</tt> if the filtering logic return a match. Otherwise, it returns <tt>false</tt>. A match
-     * means the header should be excluded.
+     * <p>
+     * It returns <code>true</code> if the filtering logic returns a match. Otherwise, it returns <code>false</code>. A
+     * match means the header should be excluded.
      *
      * @param  headerName  the header name
      * @param  headerValue the header value
      * @param  exchange    the context to perform filtering
-     * @return             <tt>true</tt> if this header should be filtered (skipped).
+     * @return             <code>true</code> if this header should be filtered (skipped).
      */
     boolean applyFilterToCamelHeaders(String headerName, @Nullable Object headerValue, Exchange exchange);
 
     /**
      * Applies filtering logic to an external message header such as CXF and JMS message that is going to be copied to
      * Camel message header.
-     * <p/>
-     * It returns <tt>true</tt> if the filtering logic return a match. Otherwise, it returns <tt>false</tt>. A match
-     * means the header should be excluded.
+     * <p>
+     * It returns <code>true</code> if the filtering logic returns a match. Otherwise, it returns <code>false</code>. A
+     * match means the header should be excluded.
      *
      * @param  headerName  the header name
      * @param  headerValue the header value
      * @param  exchange    the context to perform filtering
-     * @return             <tt>true</tt> if this header should be filtered (skipped).
+     * @return             <code>true</code> if this header should be filtered (skipped).
      */
     boolean applyFilterToExternalHeaders(String headerName, @Nullable Object headerValue, Exchange exchange);
 

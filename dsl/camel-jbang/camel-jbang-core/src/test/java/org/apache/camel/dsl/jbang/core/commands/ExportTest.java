@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@UsesWorkingDirectory
 class ExportTest extends CamelCommandBaseTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
@@ -68,6 +67,7 @@ class ExportTest extends CamelCommandBaseTestSupport {
     private static final String RELEASED_CAMEL_VERSION = "4.13.0";
 
     private File workingDir;
+    private final List<File> baseDirs = new ArrayList<>();
 
     @BeforeEach
     @Override
@@ -82,6 +82,7 @@ class ExportTest extends CamelCommandBaseTestSupport {
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
         FileUtil.removeDir(workingDir);
+        baseDirs.forEach(FileUtil::removeDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -1156,10 +1157,15 @@ class ExportTest extends CamelCommandBaseTestSupport {
     }
 
     private int exportWithConsole(RuntimeType rt, String... extraArgs) throws Exception {
+        return exportWithConsole(null, rt, extraArgs);
+    }
+
+    private int exportWithConsole(Path baseDir, RuntimeType rt, String... extraArgs) throws Exception {
         Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir;
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                        "--runtime=%s".formatted(rt.runtime()), "--console"));
+                        "--runtime=%s".formatted(rt.runtime()), "--console", "--port=0"));
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
@@ -1247,6 +1253,7 @@ class ExportTest extends CamelCommandBaseTestSupport {
                 "--quiet",
                 "--runtime=main",
                 "--console",
+                "--port=0",
                 "src/test/resources/devprofile");
         int exit = command.doCall();
 
@@ -1579,52 +1586,54 @@ class ExportTest extends CamelCommandBaseTestSupport {
     @ValueSource(strings = { "camel.metrics.enabled", "camel.management.metricsEnabled", "camel.server.metricsEnabled" })
     void shouldNotDuplicateMetricsDependency(String metricsOption) throws Exception {
         LOG.info("shouldNotDuplicateMetricsDependency {}", metricsOption);
-        File profile = new File(".", "application.properties");
-        try {
-            Files.writeString(profile.toPath(), metricsOption + "=true\n");
+        Path baseDir = baseDirWithApplicationProperties(metricsOption + "=true\n");
 
-            Export command = new Export(new CamelJBangMain());
-            CommandLineTestHelper.parse(command,
-                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                    "--runtime=camel-main",
-                    "src/test/resources/route.yaml");
-            int exit = command.doCall();
+        Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir;
+        CommandLineTestHelper.parse(command,
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--runtime=camel-main",
+                "src/test/resources/route.yaml");
+        int exit = command.doCall();
 
-            assertThat(exit).isEqualTo(0);
-            Model model = readMavenModel();
+        assertThat(exit).isEqualTo(0);
+        Model model = readMavenModel();
 
-            assertThat(model.getDependencies()).extracting(Dependency::getArtifactId)
-                    .as("the metrics option adds camel-micrometer-prometheus")
-                    .contains("camel-micrometer-prometheus");
-            assertEachArtifactOnce(model);
-        } finally {
-            FileUtil.deleteFile(profile);
-        }
+        assertThat(model.getDependencies()).extracting(Dependency::getArtifactId)
+                .as("the metrics option adds camel-micrometer-prometheus")
+                .contains("camel-micrometer-prometheus");
+        assertEachArtifactOnce(model);
+    }
+
+    /**
+     * A base directory of its own with the given application.properties, instead of the working directory that the
+     * tests of the other forks share.
+     */
+    private Path baseDirWithApplicationProperties(String content) throws IOException {
+        Path baseDir = Files.createTempDirectory("camel-export-base");
+        baseDirs.add(baseDir.toFile());
+        Files.writeString(baseDir.resolve("application.properties"), content);
+        return baseDir;
     }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     void shouldNotDuplicateConsoleDependencies(RuntimeType rt) throws Exception {
         LOG.info("shouldNotDuplicateConsoleDependencies {}", rt);
-        File profile = new File(".", "application.properties");
-        try {
-            // a project that has the console options itself, exported with --console: the dependencies of the
-            // console are added for the options and for the flag
-            Files.writeString(profile.toPath(), """
-                    camel.management.devConsoleEnabled=true
-                    camel.management.healthCheckEnabled=true
-                    camel.management.jolokiaEnabled=true
-                    """);
-            int exit = exportWithConsole(rt);
+        // a project that has the console options itself, exported with --console: the dependencies of the
+        // console are added for the options and for the flag
+        Path baseDir = baseDirWithApplicationProperties("""
+                camel.management.devConsoleEnabled=true
+                camel.management.healthCheckEnabled=true
+                camel.management.jolokiaEnabled=true
+                """);
+        int exit = exportWithConsole(baseDir, rt);
 
-            assertThat(exit).isEqualTo(0);
-            Model model = readMavenModel();
+        assertThat(exit).isEqualTo(0);
+        Model model = readMavenModel();
 
-            assertConsoleDependencies(model, rt);
-            assertEachArtifactOnce(model);
-        } finally {
-            FileUtil.deleteFile(profile);
-        }
+        assertConsoleDependencies(model, rt);
+        assertEachArtifactOnce(model);
     }
 
     private static Stream<Arguments> consoleArtifactProvider() {
@@ -1660,31 +1669,27 @@ class ExportTest extends CamelCommandBaseTestSupport {
         // camel-spring-boot 4.19+ requires JDK 21 (Spring Boot 4), as runtimeProvider has it
         Assumptions.assumeTrue(Runtime.version().feature() >= 21, "camel-spring-boot requires JDK 21");
 
-        File profile = new File(".", "application.properties");
-        try {
-            // a profile, so the exported project has an application.properties to read
-            Files.writeString(profile.toPath(), "camel.main.name=platform-http-demo\n");
+        // a profile, so the exported project has an application.properties to read
+        Path baseDir = baseDirWithApplicationProperties("camel.main.name=platform-http-demo\n");
 
-            // --dep=camel-platform-http becomes camel:platform-http, and it is the HTTP server of the exported
-            // project, so the run controller is not needed to keep it alive
-            Export command = new Export(new CamelJBangMain());
-            CommandLineTestHelper.parse(command,
-                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                    "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
-                    CamelCommandBaseTestSupport.quarkusExtRegistry(),
-                    "--dep=camel-platform-http",
-                    "src/test/resources/route.yaml");
-            int exit = command.doCall();
+        // --dep=camel-platform-http becomes camel:platform-http, and it is the HTTP server of the exported
+        // project, so the run controller is not needed to keep it alive
+        Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir;
+        CommandLineTestHelper.parse(command,
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                "--dep=camel-platform-http",
+                "src/test/resources/route.yaml");
+        int exit = command.doCall();
 
-            assertThat(exit).isEqualTo(0);
-            Properties props = loadExportedProperties("application.properties");
-            assertThat(exportedProperty(props, "camel.main.run-controller"))
-                    .as("the export has an HTTP server of its own")
-                    .isNull();
-            assertEachArtifactOnce(readMavenModel());
-        } finally {
-            FileUtil.deleteFile(profile);
-        }
+        assertThat(exit).isEqualTo(0);
+        Properties props = loadExportedProperties("application.properties");
+        assertThat(exportedProperty(props, "camel.main.run-controller"))
+                .as("the export has an HTTP server of its own")
+                .isNull();
+        assertEachArtifactOnce(readMavenModel());
     }
 
     @Test

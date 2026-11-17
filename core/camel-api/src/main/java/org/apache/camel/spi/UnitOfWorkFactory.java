@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 
 /**
  * SPI factory that creates a {@link UnitOfWork} for each incoming {@link org.apache.camel.Exchange}.
- * <p/>
+ * <p>
  * The factory is called by the routing engine at exchange creation time; the returned {@link UnitOfWork} is attached to
  * the exchange for its lifetime. Implementing a custom factory is only necessary for very rare use-cases such as
  * integrating with an external transaction manager or attaching custom synchronization hooks globally. The created
@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
  * breadcrumb ID, MDC propagation, and route-context tracking that the routing engine relies on. Implementing
  * {@link UnitOfWork} from scratch without extending {@code DefaultUnitOfWork} will break async routing and MDC logging
  * in subtle ways.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *
  * @see UnitOfWork

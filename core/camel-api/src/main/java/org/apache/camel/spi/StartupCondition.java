@@ -22,11 +22,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * Pluggable gate evaluated repeatedly before {@link org.apache.camel.CamelContext} finishes starting, allowing startup
  * to be paused until an external prerequisite is satisfied.
- * <p/>
+ * <p>
  * Camel polls each registered {@code StartupCondition} during the startup sequence. If {@link #canContinue} returns
  * {@code false}, startup waits and retries. If the condition is never satisfied within the configured timeout the
  * context aborts startup. Multiple conditions can be registered; all must be satisfied for startup to proceed.
- * <p/>
+ * <p>
  * Typical use cases include waiting for a readiness probe to pass, a required file or directory to appear, an
  * environment variable to be set, or a remote service to become reachable.
  *

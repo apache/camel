@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Thrown when the body of a {@link Message} cannot be converted to the expected type, for example because the body is
  * null or its runtime type is incompatible with the requested type.
- * <p/>
+ * <p>
  * This is the checked variant; for the unchecked equivalent see {@link InvalidPayloadRuntimeException}.
  *
  * @see InvalidPayloadRuntimeException

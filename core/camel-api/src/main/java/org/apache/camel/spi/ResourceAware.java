@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Implemented by objects that want the {@link Resource} they originate from to be injected into them.
- * <p/>
+ * <p>
  * When Camel creates an object from a resource (for example a route loaded from a file), it sets the originating
  * {@link Resource} on the object if it implements this interface, so the object can later refer back to where it came
  * from. The {@link #trySetResource(Object, Resource)} helper performs this injection conditionally.
@@ -44,7 +44,7 @@ public interface ResourceAware {
     /**
      * Gets the {@link Resource}.
      *
-     * @return the resource, or <tt>null</tt> if none is set
+     * @return the resource, or <code>null</code> if none is set
      */
     @Nullable
     Resource getResource();

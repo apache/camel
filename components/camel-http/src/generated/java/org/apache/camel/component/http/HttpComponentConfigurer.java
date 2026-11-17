@@ -36,6 +36,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.hc.client5.http.io.HttpClientConnectionManager.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.setConnectTimeout(property(camelContext, long.class, value)); return true;
+        case "connectionidletimeout":
+        case "connectionIdleTimeout": target.setConnectionIdleTimeout(property(camelContext, long.class, value)); return true;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, long.class, value)); return true;
         case "connectionstatedisabled":
@@ -124,6 +126,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
         case "useragent":
         case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "validateafterinactivity":
+        case "validateAfterInactivity": target.setValidateAfterInactivity(property(camelContext, long.class, value)); return true;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;
@@ -150,6 +154,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "clientConnectionManager": return org.apache.hc.client5.http.io.HttpClientConnectionManager.class;
         case "connecttimeout":
         case "connectTimeout": return long.class;
+        case "connectionidletimeout":
+        case "connectionIdleTimeout": return long.class;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return long.class;
         case "connectionstatedisabled":
@@ -238,6 +244,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "useSystemProperties": return boolean.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
+        case "validateafterinactivity":
+        case "validateAfterInactivity": return long.class;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         default: return null;
@@ -260,6 +268,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "clientConnectionManager": return target.getClientConnectionManager();
         case "connecttimeout":
         case "connectTimeout": return target.getConnectTimeout();
+        case "connectionidletimeout":
+        case "connectionIdleTimeout": return target.getConnectionIdleTimeout();
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return target.getConnectionRequestTimeout();
         case "connectionstatedisabled":
@@ -348,6 +358,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "useSystemProperties": return target.isUseSystemProperties();
         case "useragent":
         case "userAgent": return target.getUserAgent();
+        case "validateafterinactivity":
+        case "validateAfterInactivity": return target.getValidateAfterInactivity();
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;

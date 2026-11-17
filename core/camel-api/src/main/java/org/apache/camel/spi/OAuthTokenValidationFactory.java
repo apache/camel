@@ -20,13 +20,13 @@ import org.apache.camel.CamelContext;
 
 /**
  * Factory for validating incoming OAuth 2.0 bearer tokens (JWT and opaque).
- * <p/>
+ * <p>
  * JWT tokens are validated locally via JWKS (signature, expiry, audience, issuer). Opaque tokens are validated via RFC
  * 7662 introspection.
- * <p/>
+ * <p>
  * The camel-oauth component provides the default implementation. Runtime-specific integrations can provide their own
  * implementation backed by their native security stack.
- * <p/>
+ * <p>
  * Implementations that call identity-provider infrastructure, such as OIDC discovery, JWKS endpoints, or RFC 7662
  * introspection endpoints, should apply bounded connect/read timeouts and avoid unbounded blocking in
  * request-processing paths.
@@ -42,7 +42,7 @@ public interface OAuthTokenValidationFactory {
 
     /**
      * Validates a bearer token using explicit configuration.
-     * <p/>
+     * <p>
      * The error contract distinguishes three failure modes:
      * <ul>
      * <li><b>Configuration errors</b> (missing JWKS endpoint, missing client credentials) throw
@@ -66,7 +66,7 @@ public interface OAuthTokenValidationFactory {
 
     /**
      * Validates a bearer token using a named profile from Camel properties.
-     * <p/>
+     * <p>
      * Properties are resolved from {@code camel.oauth.<profileName>.*}:
      * <ul>
      * <li>{@code camel.oauth.<profileName>.base-uri} — base URL for OIDC auto-discovery from
@@ -116,7 +116,7 @@ public interface OAuthTokenValidationFactory {
 
     /**
      * Validates a bearer token using the default (unnamed) profile.
-     * <p/>
+     * <p>
      * Properties are resolved from {@code camel.oauth.*} directly (backward compatible with existing single-IdP
      * configuration).
      *
@@ -132,7 +132,7 @@ public interface OAuthTokenValidationFactory {
 
     /**
      * Validates explicit token validation configuration without validating a token.
-     * <p/>
+     * <p>
      * Implementations should fail fast for static configuration errors such as missing endpoints, missing client
      * credentials, insecure endpoint URLs, or missing expected issuer/audience policy.
      *

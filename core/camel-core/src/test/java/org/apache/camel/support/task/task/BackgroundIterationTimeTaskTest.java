@@ -32,6 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
 
+    // these tests count the iterations of a task and do not measure the elapsed time, so the budgets of one second are
+    // shortened to a fifth of it (and the slow predicate with them) and the test is five times faster
+    @Override
+    protected long slowPredicateMillis() {
+        return 400;
+    }
+
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
     @Timeout(10)
@@ -41,7 +48,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxIterations(3)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .withInitialDelay(Duration.ZERO)
                         // use unlimited duration so we're sure that the task is really canceled after maxIterations
                         .withUnlimitedDuration()
@@ -60,9 +67,9 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofSeconds(1))
-                        .withInitialDelay(Duration.ofSeconds(1))
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withInterval(Duration.ofMillis(200))
+                        .withInitialDelay(Duration.ofMillis(200))
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .withMaxIterations(5)
                         .build())
                 .build();
@@ -79,7 +86,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .withInitialDelay(Duration.ZERO)
                         .withMaxIterations(3)
                         .build())
@@ -98,9 +105,9 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .withInitialDelay(Duration.ZERO)
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(4)
                         .build())
                 .build();
@@ -119,7 +126,8 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxIterations(4)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withInterval(Duration.ofMillis(200))
                         .withInitialDelay(Duration.ZERO)
                         .build())
                 .build();
@@ -137,9 +145,10 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofSeconds(1))
-                        .withInitialDelay(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
+                        .withInitialDelay(Duration.ofMillis(200))
                         .withMaxIterations(4)
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .build())
                 .build();
 
@@ -156,7 +165,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.iterationTimeBudget()
                         .withMaxIterations(Integer.MAX_VALUE)
-                        .withInitialDelay(Duration.ofSeconds(1))
+                        .withInitialDelay(Duration.ofMillis(200))
                         .withUnlimitedDuration()
                         .build())
                 .build();

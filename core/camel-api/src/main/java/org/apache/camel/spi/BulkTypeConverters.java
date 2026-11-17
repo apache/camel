@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A source-code-generated, compile-time-optimized bundle of {@link TypeConverter} instances for use with the
  * <a href="https://camel.apache.org/manual/type-converter.html">type conversion</a> infrastructure.
- * <p/>
+ * <p>
  * During the Camel build phase, all classes annotated with {@link org.apache.camel.Converter} in a module are collected
  * and merged into a single generated class implementing this interface. At runtime the {@link TypeConverterRegistry}
  * registers each such bulk class once via {@link TypeConverterRegistry#addBulkTypeConverters(BulkTypeConverters)},
@@ -45,37 +45,37 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      *
      * @param  toType   the type to convert to
      * @param  fromType the type to convert from
-     * @return          the type converter or <tt>null</tt> if not found.
+     * @return          the type converter or <code>null</code> if not found.
      */
     @Nullable
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
      * Converts the value to the specified type in the context of an exchange
-     * <p/>
+     * <p>
      * Used when conversion requires extra information from the current exchange (such as encoding).
      *
      * @param  from                    the from type
      * @param  to                      the to type
      * @param  exchange                the current exchange
      * @param  value                   the value to be converted
-     * @return                         the converted value, <tt>null</tt> if no converter can covert this, or
-     *                                 <tt>Void.class</tt> if a converter converted the value to null and was allowed to
-     *                                 return null.
+     * @return                         the converted value, <code>null</code> if no converter can convert this, or
+     *                                 <code>Void.class</code> if a converter converted the value to null and was
+     *                                 allowed to return null.
      * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> @Nullable T convertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException;
 
     /**
-     * Tries to convert the value to the specified type, returning <tt>null</tt> if not possible to convert.
-     * <p/>
+     * Tries to convert the value to the specified type, returning <code>null</code> if not possible to convert.
+     * <p>
      * This method will <b>not</b> throw an exception if an exception occurred during conversion.
      *
      * @param  from  the from type
      * @param  to    the to type
      * @param  value the value to be converted
-     * @return       the converted value, or <tt>null</tt> if not possible to convert
+     * @return       the converted value, or <code>null</code> if not possible to convert
      */
     default <T> @Nullable T tryConvertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException {
@@ -93,16 +93,16 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
 
     /**
      * Converts the value to the specified type in the context of an exchange
-     * <p/>
+     * <p>
      * Used when conversion requires extra information from the current exchange (such as encoding).
      *
      * @param  from                               the from type
      * @param  to                                 the to type
      * @param  exchange                           the current exchange
      * @param  value                              the value to be converted
-     * @return                                    the converted value, is never <tt>null</tt>
+     * @return                                    the converted value, is never <code>null</code>
      * @throws TypeConversionException            is thrown if error during type conversion
-     * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
+     * @throws NoTypeConversionAvailableException if no type converters exist to convert to the given type
      */
     @SuppressWarnings("NullAway")
     default <T> T mandatoryConvertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)

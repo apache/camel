@@ -20,22 +20,45 @@ import org.apache.camel.spi.Metadata;
 
 public final class KMSHeaders {
 
-    @Metadata(label = "producer", description = "KMS key id override", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The ID, alias or ARN of the KMS key for encrypt and generateDataKey. This header replaces the"
+                            + " keyId option. If this header is not set, an exchange property of the same name replaces the"
+                            + " keyId option.",
+              javaType = "String")
     public static final String KEY_ID = KMSProperties.KEY_ID;
 
-    @Metadata(label = "producer", description = "Plaintext to encrypt", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The plaintext for encrypt. The producer encodes it in UTF-8 and sends it to KMS in Base64. This"
+                            + " header replaces the plaintext option. If this header is not set, an exchange property of the"
+                            + " same name replaces the plaintext option.",
+              javaType = "String")
     public static final String PLAINTEXT = KMSProperties.PLAINTEXT;
 
-    @Metadata(label = "producer", description = "Ciphertext blob to decrypt", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The ciphertext blob for decrypt, for example from the response to encrypt or generateDataKey. This"
+                            + " header replaces the ciphertextBlob option. If this header is not set, an exchange property of"
+                            + " the same name replaces the ciphertextBlob option.",
+              javaType = "String")
     public static final String CIPHERTEXT_BLOB = KMSProperties.CIPHERTEXT_BLOB;
 
-    @Metadata(label = "producer", description = "Key spec for generateDataKey", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The key spec of the data key for generateDataKey. The value must be AES_256 or AES_128. KMS does"
+                            + " not use it when the number of bytes is set as well. This header replaces the keySpec option. If"
+                            + " this header is not set, an exchange property of the same name replaces the keySpec option.",
+              javaType = "String")
     public static final String KEY_SPEC = KMSProperties.KEY_SPEC;
 
-    @Metadata(label = "producer", description = "Number of bytes for generateDataKey", javaType = "Integer")
+    @Metadata(label = "producer",
+              description = "The number of bytes of the data key for generateDataKey. The value must be from 1 to 1024. This"
+                            + " header replaces the numberOfBytes option. If this header is not set, an exchange property of"
+                            + " the same name replaces the numberOfBytes option.",
+              javaType = "Integer")
     public static final String NUMBER_OF_BYTES = KMSProperties.NUMBER_OF_BYTES;
 
-    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The request ID that KMS returns in the response to the operation. The producer sets it, unless the"
+                            + " exchange fails.",
+              javaType = "String")
     public static final String REQUEST_ID = KMSProperties.REQUEST_ID;
 
     private KMSHeaders() {

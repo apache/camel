@@ -25,11 +25,11 @@ import org.jspecify.annotations.Nullable;
  * {@code split}, ...), the same steps the {@link StepHook} is asked for. A listener only observes: it must not change
  * the exchange, and what it throws cannot change the routing. It is meant for development and test tools that check the
  * contracts of {@link org.apache.camel.AsyncProcessor} and {@link org.apache.camel.AsyncCallback}.
- * <p/>
+ * <p>
  * Listeners are installed with {@link org.apache.camel.ExtendedCamelContext#addStepListener(StepListener)}. Unlike the
  * {@link StepHook}, many can be installed. They are called in the order they were added, and must not depend on that
  * order.
- * <p/>
+ * <p>
  * <b>Where it is called.</b> Whether a step gets the listeners is decided when its route is created. When at least one
  * listener is installed then, the channel of each step (the default channel of Camel, not a channel of a custom
  * {@link InternalProcessorFactory}) adds a small wrapper around the processor of the step and the
@@ -41,31 +41,31 @@ import org.jspecify.annotations.Nullable;
  * a route is created, the route is built as without this SPI, and a step costs nothing more. A step that has the
  * wrapper reads the listeners installed at the start of each call, so a listener added later is called by the routes
  * that have the wrapper.
- * <p/>
+ * <p>
  * With no {@link InterceptStrategy} on the step, the listeners see the call of the processor of the step itself. A
  * strategy can hide part of that call: {@code intercept()} calls the processor later, after the intercept route, so the
  * listeners do not see its own return value or what it throws; a strategy that returns a plain
  * {@link org.apache.camel.Processor} makes the call wait until the processor is done, so a second call of the callback
  * of the processor is not seen; and a strategy that catches what the processor throws hides the throw.
- * <p/>
+ * <p>
  * <b>The state of a call.</b> {@link #onStepCall(Exchange, String, String)} returns a state for the call, and the other
  * methods get it back. The state is held by the callback of the call, so it lives as long as anything can still call
  * that callback; it should therefore hold ids, names, threads or stacks, never the exchange.
- * <p/>
+ * <p>
  * <b>Threads.</b> The listeners are called on the thread of the event, by many threads at the same time: they must be
  * thread-safe and quick. Only {@link #onStepCall(Exchange, String, String)} may read the exchange. The other methods
  * can run on a thread that does not own the exchange, so they get only the state.
  * {@link #onStepCallback(Object, boolean)} can come before {@link #onStepReturn(Object, boolean)}, on the same thread
  * (the callback is called before {@code process} returns) or on another one.
- * <p/>
+ * <p>
  * <b>Failures.</b> What a listener throws cannot change the routing. It is caught and logged at WARN once per listener
  * (then at DEBUG). The processor is called whatever {@link #onStepCall(Exchange, String, String)} did, the callback of
  * the call is called after the listeners, and what the processor throws is thrown on unchanged. A listener whose
  * {@link #onStepCall(Exchange, String, String)} threw gets no more events for that call.
- * <p/>
+ * <p>
  * A call keeps the listeners that were installed when it started, so a listener that is removed meanwhile still gets
  * the callback of a call it saw start.
- * <p/>
+ * <p>
  * All methods have an empty default. Their names differ from {@link StepHook#beforeStep(Exchange, String)}, so one
  * class can implement both.
  *

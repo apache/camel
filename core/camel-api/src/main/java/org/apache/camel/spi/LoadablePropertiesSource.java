@@ -24,12 +24,12 @@ import org.apache.camel.Ordered;
 /**
  * A {@link PropertiesSource} whose properties can be loaded all at once during initialization, such as a .properties
  * file.
- * <p/>
+ * <p>
  * In addition to looking up single values, a loadable source can return its entire set of properties via
  * {@link #loadProperties()} (optionally filtered by key) and can re-read them from the location to support reloading.
  * Like any source it may implement {@link Ordered} to control precedence; the source with the highest precedence (the
  * lowest number) is used first.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
  * Camel user manual.
  *

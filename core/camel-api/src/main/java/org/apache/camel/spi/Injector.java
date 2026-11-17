@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * Pluggable strategy for instantiating objects, optionally performing dependency injection as part of creation.
- * <p/>
+ * <p>
  * Camel uses the injector whenever it needs to create an instance of a user-supplied type (beans, processors, type
  * converters, and so on) so that the surrounding runtime controls instantiation. The default implementation uses
  * straightforward reflection, while runtimes such as Spring or Quarkus provide implementations that resolve and inject
@@ -26,7 +26,7 @@ package org.apache.camel.spi;
  * no-arg constructor, a static factory method, a factory class, and with or without bean post processing applied by
  * {@link CamelBeanPostProcessor}. {@link #supportsAutoWiring()} reports whether the injector can autowire constructor
  * dependencies.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/bean-integration.html">Bean Integration</a> in the Camel user manual.
  *
  * @see CamelBeanPostProcessor

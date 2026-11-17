@@ -26,6 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * The first fire of a timer with {@code delay=0} must not be dropped when its route is (re)started at runtime on an
  * already started CamelContext.
@@ -40,9 +42,10 @@ public class TimerFirstFireAfterRouteRestartTest extends ContextTestSupport {
     public void testFirstFireNotDroppedOnRouteRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
-        // the timer fires once when the route is started with the CamelContext
-        mock.expectedMessageCount(1);
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        // the timer fires once when the route is started with the CamelContext, and the custom timer runs the
+        // task synchronously, so it has fired before the test starts; an expectation set now would leave a latch
+        // that nothing counts down, and the reset below would wait for it
+        assertEquals(1, mock.getReceivedCounter());
 
         mock.reset();
 

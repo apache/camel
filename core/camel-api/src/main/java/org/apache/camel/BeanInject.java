@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a field, method, constructor, or parameter as an injection point for a bean obtained from the Camel
  * <a href="https://camel.apache.org/manual/registry.html">{@link org.apache.camel.spi.Registry}</a>.
- * <p/>
+ * <p>
  * When Camel performs bean post-processing it resolves the injection by looking up the registry: by name if
  * {@link #value()} is set, or by type if no name is provided. The resolved bean is then injected at the annotated site.
  * If no matching bean is found an exception is thrown at startup.

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.aliyun.mns.client.CloudQueue;
+import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.model.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -49,9 +50,9 @@ public class MNSConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         MNSEndpoint endpoint = getEndpoint();
-        endpoint.initClient();
+        MNSClient client = endpoint.initClient();
 
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(endpoint.getQueueName());
+        CloudQueue queue = client.getQueueRef(endpoint.getQueueName());
         List<Message> messages = receiveMessages(queue, endpoint.getMaxMessagesPerPoll(), endpoint.getWaitSeconds());
 
         forceConsumerAsReady();
@@ -123,10 +124,13 @@ public class MNSConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - index - 1;
 
+            // the receipt handle to delete the message with once the exchange is done. It is taken now, as the route
+            // may remove the headers or replace the message before it ends
+            final String receiptHandle = exchange.getIn().getHeader(MNSHeaders.RECEIPT_HANDLE, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    processCommit(exchange, receiptHandle);
                 }
 
                 @Override
@@ -147,12 +151,29 @@ public class MNSConsumer extends ScheduledBatchPollingConsumer {
         return total;
     }
 
+    /**
+     * Strategy to delete the message after being processed, with the receipt handle of the
+     * {@link MNSHeaders#RECEIPT_HANDLE} header.
+     *
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
+     */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange) {
+        processCommit(exchange, exchange.getIn().getHeader(MNSHeaders.RECEIPT_HANDLE, String.class));
+    }
+
+    /**
+     * Strategy to delete the message after being processed.
+     *
+     * @param exchange      the exchange
+     * @param receiptHandle the receipt handle the message of the exchange was received with
+     */
+    protected void processCommit(Exchange exchange, String receiptHandle) {
         if (!getEndpoint().isDeleteAfterRead()) {
             return;
         }
         try {
-            String receiptHandle = exchange.getIn().getHeader(MNSHeaders.RECEIPT_HANDLE, String.class);
             if (ObjectHelper.isEmpty(receiptHandle)) {
                 return;
             }
