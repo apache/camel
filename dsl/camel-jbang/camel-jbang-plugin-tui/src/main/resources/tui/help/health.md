@@ -34,6 +34,15 @@ Under both, `ready` and `live` are drawn second by second over the last
 minutes, as the TUI read them: a check that went DOWN and came back
 between two looks at the tab shows there, with how long it was down.
 
+Press `Shift+F8` to ask the AI why a check is DOWN. The AI panel opens
+with a question about the checks that are not UP (in the table, the
+selected one): the message, what it means for the integration, the
+details of the check (such as its route and endpoint), the source line
+of its route and the stack trace of the error. The AI finds the cause
+and fixes it when it is in your routes or configuration, or says how to
+start or reach what is down when it is outside the integration, such as
+a broker that is not running.
+
 Press `t` for the checks one by one in the table below, and `d` there
 for only the DOWN ones. The More menu has a `DOWN` badge on Health while
 a check is DOWN.
@@ -110,3 +119,4 @@ when to restart it.
 - `S` — reverse sort order
 - `t` — the checks one by one in a table, or the page again
 - `d` — in the table: show only the checks that are DOWN, or all of them again
+- `Shift+F8` — fix with AI: on the page, the checks that are not UP; in the table, the selected one when it is not UP

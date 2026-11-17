@@ -29,6 +29,8 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -179,6 +181,43 @@ class CircuitBreakerTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // explain with AI (CAMEL-25362): why the selected breaker opened, or why its calls fail
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            CircuitBreakerInfo cb = info != null ? selectedBreaker(info) : null;
+            if (cb != null && ctx.askAiCallback != null) {
+                if (CircuitBreakerAiPrompt.hasTrouble(cb)) {
+                    ctx.askAiCallback.ask(CircuitBreakerAiPrompt.of(info, cb));
+                } else if (ctx.notificationCallback != null) {
+                    ctx.notificationCallback.accept("This circuit breaker is closed and no call failed: ask the AI with F8",
+                            false);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        CircuitBreakerInfo cb = info != null && ctx.askAiCallback != null ? selectedBreaker(info) : null;
+        if (cb != null && CircuitBreakerAiPrompt.hasTrouble(cb)) {
+            hint(spans, "Shift+F8", "explain with AI");
+        }
+    }
+
+    /** The breaker selected in the table, in the order it is shown; null when none is. */
+    CircuitBreakerInfo selectedBreaker(IntegrationInfo info) {
+        List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
+        sorted.sort(this::sortCb);
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
     }
 
     private int sortCb(CircuitBreakerInfo a, CircuitBreakerInfo b) {

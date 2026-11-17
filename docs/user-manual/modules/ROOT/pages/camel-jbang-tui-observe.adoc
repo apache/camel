@@ -210,6 +210,17 @@ listed once.
 
 image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
+The Health and Circuit Breaker tabs have the key too:
+
+* *Health*: *Shift+F8* asks the AI to fix the checks that are not UP (in the table, the selected one). The question has
+the message of the check, what being DOWN means for the integration (taken out of service, or restarted), its details
+such as the route and endpoint, the source line of its route, and the stack trace of the error. The AI tells whether the
+cause is in the project, and fixes it there, or outside the integration, such as a broker that is not running.
+* *Circuit Breaker*: *Shift+F8* asks the AI to explain the selected circuit breaker when it is open or half open, or its
+calls failed, timed out or were rejected. The question has its state and counters, its configuration, its line in the
+source and the last error of its route. An open circuit breaker is often the breaker doing its job, so the AI explains
+and suggests, and changes no file unless you agree.
+
 The Log tab shows the log in one of three views, and *c* goes to the next one:
 
 * *compact* (the default): the time, level, logger and message of each line, as the date, pid and thread take most of

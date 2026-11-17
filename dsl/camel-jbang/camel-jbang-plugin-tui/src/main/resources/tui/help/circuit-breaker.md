@@ -101,6 +101,17 @@ The bottom panel shows when a circuit breaker is selected:
   fallback, timeout, bulkhead (calls rejected because the bulkhead
   was full) and timing statistics (mean/min/max processing time)
 
+## Explain with AI
+
+Press `Shift+F8` on a circuit breaker that is open or half open, or
+whose calls failed, timed out or were rejected, to ask the AI about it.
+The AI panel opens with a question made of its state and counters, its
+configuration, its line in the source and the last error of its route.
+The AI tells whether the breaker did its job (the service it protects
+failed or was slow) or whether its configuration does not fit the
+traffic, and suggests what to change. It changes no file unless you
+agree.
+
 ## Configuration Tips
 
 Common Resilience4j settings you can tune in your route:
@@ -117,3 +128,4 @@ Common Resilience4j settings you can tune in your route:
 - `Up/Down` — select circuit breaker
 - `s` — cycle sort column
 - `S` — reverse sort order
+- `Shift+F8` — explain with AI why the selected circuit breaker is open, or why its calls fail
