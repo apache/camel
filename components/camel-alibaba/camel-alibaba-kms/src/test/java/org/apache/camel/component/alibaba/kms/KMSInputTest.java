@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.alibaba.kms;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
+import java.util.UUID;
 
 import com.aliyun.kms20160120.Client;
 import com.aliyun.kms20160120.models.EncryptRequest;
@@ -42,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -100,6 +103,24 @@ class KMSInputTest extends CamelTestSupport {
                 "secret".getBytes(StandardCharsets.UTF_8));
 
         assertThat(encryptedPlaintext()).isEqualTo("secret".getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** A value whose text is its toString(), which the type converter has nothing for. */
+    @Test
+    void aUuidAndAUriPlaintextHeaderAreEncryptedAsTheirText() throws Exception {
+        stubEncrypt();
+        UUID uuid = UUID.randomUUID();
+
+        template.sendBodyAndHeader("direct:kms", null, KMSHeaders.PLAINTEXT, uuid);
+
+        assertThat(encryptedPlaintext()).isEqualTo(uuid.toString().getBytes(StandardCharsets.UTF_8));
+
+        template.sendBodyAndHeader("direct:kms", null, KMSHeaders.PLAINTEXT, URI.create("https://camel.apache.org"));
+
+        ArgumentCaptor<EncryptRequest> request = ArgumentCaptor.forClass(EncryptRequest.class);
+        verify(kmsClient, times(2)).encrypt(request.capture());
+        assertThat(Base64.getDecoder().decode(request.getValue().getPlaintext()))
+                .isEqualTo("https://camel.apache.org".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
