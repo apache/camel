@@ -45,21 +45,19 @@ class LoadTest extends CamelCommandBaseTestSupport {
     private static final int PHASE_STARTED = 5;
 
     private File workingDir;
-    private Path previousHome;
 
     @BeforeEach
     @Override
     public void setup() throws Exception {
         super.setup();
+        useTestWorkDir();
         // the routes run in this JVM, and their CLI connector reads the actions in the user home
-        previousHome = CommandLineHelper.getHomeDir();
-        CommandLineHelper.useHomeDir(HomeHelper.resolveHomeDir());
+        useHomeDir(Path.of(HomeHelper.resolveHomeDir()));
         workingDir = Files.createTempDirectory("camel-load").toFile();
     }
 
     @AfterEach
     public void end() throws IOException {
-        CommandLineHelper.useHomeDir(previousHome.toString());
         FileUtil.removeDir(workingDir);
     }
 
@@ -82,8 +80,9 @@ class LoadTest extends CamelCommandBaseTestSupport {
         AtomicReference<Exception> loadFailure = new AtomicReference<>();
         Runnable r = () -> {
             try {
-                // wait until the integration has started: the status file is in the home dir
-                await().atMost(10, TimeUnit.SECONDS).until(LoadTest::integrationStarted);
+                // wait until the integration has started: the status file is in the home dir, and it is empty or
+                // incomplete while the integration writes it
+                await().atMost(10, TimeUnit.SECONDS).ignoreExceptions().until(LoadTest::integrationStarted);
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
