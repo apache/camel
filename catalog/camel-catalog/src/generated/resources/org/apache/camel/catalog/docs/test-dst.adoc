@@ -121,7 +121,7 @@ a|* commits by Kafka's auto-commit, by manual synchronous or asynchronous commit
 * route restart, also while the consumer polls
 * route suspend and resume, with a second request while the consumer handles the first
 * partitions revoked and assigned again by a rebalance while records are processed
-|CAMEL-25313, CAMEL-25756
+|CAMEL-25313, CAMEL-25756, CAMEL-26967
 
 |camel-kafka-share
 |`KafkaShareWorld` (`KafkaShareConsumerDstTest`)
