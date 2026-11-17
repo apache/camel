@@ -25,12 +25,12 @@ import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
 @CamelSpringTest
-public class ConsumerWSANewChannelParamsToTests extends AbstractConsumerTests {
+public class ConsumerWSANewChannelParamsActionTest extends AbstractConsumerTests {
 
     @Override
     public ActionCallback channelIn(String actionUri) throws URISyntaxException {
         // new channel
-        return toAndReplyTo(actionUri, "mailto:reply-to-trigger@new-channel.com");
+        return actionAndReplyTo(actionUri, "mailto:reply-to-trigger@new-channel.com");
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConsumerWSANewChannelParamsToTests extends AbstractConsumerTests {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[] { "org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsTOTests-context.xml" });
+                new String[] { "org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsActionTests-context.xml" });
     }
 
 }
