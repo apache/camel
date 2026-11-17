@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -32,6 +34,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -1140,8 +1143,27 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 ConnectionFactory cf = beans.iterator().next();
                 configuration.setConnectionFactory(cf);
             } else if (beans.size() > 1) {
-                LOG.debug("Cannot autowire ConnectionFactory as {} instances found in registry.", beans.size());
+                List<String> names = connectionFactoryBeanNames();
+                LOG.debug("Cannot autowire ConnectionFactory as {} instances found in registry: {}", beans.size(), names);
+                String example = names.isEmpty() ? "<bean name>" : names.get(0);
+                configuration.setConnectionFactoryNotAutowiredReason(
+                        "The component did not autowire one, because the registry has " + beans.size()
+                                                                     + " jakarta.jms.ConnectionFactory beans: "
+                                                                     + String.join(", ", names)
+                                                                     + ". Set the connectionFactory option to one of them,"
+                                                                     + " such as connectionFactory=#" + example);
+            } else {
+                configuration.setConnectionFactoryNotAutowiredReason(
+                        "The registry has no jakarta.jms.ConnectionFactory bean to autowire. Create the ConnectionFactory"
+                                                                     + " of the client library of the broker as a bean,"
+                                                                     + " or set the connectionFactory option");
             }
+        } else if (configuration.getConnectionFactory() == null) {
+            configuration.setConnectionFactoryNotAutowiredReason("The component does not autowire one, because "
+                                                                 + (configuration.getTransactionManager() != null
+                                                                         ? "a transactionManager is set"
+                                                                         : "allowAutoWiredConnectionFactory is false")
+                                                                 + ". Set the connectionFactory option");
         }
 
         if (configuration.getDestinationResolver() == null && isAllowAutoWiredDestinationResolver()) {
@@ -1169,6 +1191,19 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         }
 
         super.doInit();
+    }
+
+    /**
+     * The names of the connection factory beans in the registry, for the error when none of them is autowired.
+     */
+    private List<String> connectionFactoryBeanNames() {
+        try {
+            return getCamelContext().getRegistry().findByTypeWithName(ConnectionFactory.class).keySet().stream()
+                    .filter(Objects::nonNull).sorted().toList();
+        } catch (Exception e) {
+            LOG.debug("Cannot get the names of the ConnectionFactory beans in the registry. This exception is ignored.", e);
+            return List.of();
+        }
     }
 
     @Override
@@ -1225,6 +1260,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         // lets make sure we copy the configuration as each endpoint can
         // customize its own version
         JmsConfiguration newConfiguration = getConfiguration().copy();
+        newConfiguration.setEndpointUriForErrors(URISupport.stripQuery(uri));
         JmsEndpoint endpoint;
         if (pubSubDomain) {
             if (tempDestination) {
