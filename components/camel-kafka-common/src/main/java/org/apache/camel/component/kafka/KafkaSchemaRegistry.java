@@ -112,7 +112,10 @@ final class KafkaSchemaRegistry {
      * The value serializer class name of the vendor and format.
      */
     static String serializer(String vendor, String format) {
-        String f = format(format);
+        return serializerOf(vendor, format(format));
+    }
+
+    private static String serializerOf(String vendor, String f) {
         return switch (vendor) {
             case CONFLUENT -> switch (f) {
                 case JSON -> "io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer";
@@ -133,7 +136,10 @@ final class KafkaSchemaRegistry {
      * The value deserializer class name of the vendor and format.
      */
     static String deserializer(String vendor, String format) {
-        String f = format(format);
+        return deserializerOf(vendor, format(format));
+    }
+
+    private static String deserializerOf(String vendor, String f) {
         return switch (vendor) {
             case CONFLUENT -> switch (f) {
                 case JSON -> "io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer";
@@ -218,14 +224,15 @@ final class KafkaSchemaRegistry {
      * Sets the value serializer (unless the user set one) and the producer properties of the vendor.
      */
     static void applyProducer(Properties props, String vendor, String format, boolean explicitSerializer) {
+        String f = format(format);
         if (!explicitSerializer) {
-            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, serializer(vendor, format));
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, serializerOf(vendor, f));
         }
         switch (vendor) {
             // Confluent registers the schemas by default (auto.register.schemas=true)
             case APICURIO -> props.put(APICURIO_AUTO_REGISTER, Boolean.TRUE);
             case AWS_GLUE -> {
-                props.put(GLUE_DATA_FORMAT, format(format).toUpperCase(Locale.ROOT));
+                props.put(GLUE_DATA_FORMAT, f.toUpperCase(Locale.ROOT));
                 props.put(GLUE_AUTO_REGISTRATION, Boolean.TRUE);
             }
             case AZURE -> {
@@ -244,10 +251,10 @@ final class KafkaSchemaRegistry {
      */
     static void applyConsumer(
             Properties props, String vendor, String format, boolean specificAvroReader, boolean explicitDeserializer) {
-        if (!explicitDeserializer) {
-            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer(vendor, format));
-        }
         String f = format(format);
+        if (!explicitDeserializer) {
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializerOf(vendor, f));
+        }
         boolean avro = AVRO.equals(f);
         switch (vendor) {
             case APICURIO -> {

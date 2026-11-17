@@ -212,7 +212,10 @@ public class KafkaConsumer extends DefaultConsumer
         try {
             for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
                 Properties props = getProps(i);
-                endpoint.checkSchemaRegistrySerde(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG);
+                if (i == 0) {
+                    // the deserializer is the same for every consumer, so check it once
+                    endpoint.checkSchemaRegistrySerde(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG);
+                }
                 KafkaFetchRecords task = new KafkaFetchRecords(
                         this, bridge, topic, pattern, Integer.toString(i), props, consumerListener);
 
