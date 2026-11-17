@@ -56,6 +56,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private ScheduledExecutorService taskExecutor;
     private volatile boolean shuttingDown;
+    private volatile OperationsExecutor opsService;
 
     public ZooKeeperConsumer(ZooKeeperEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -66,6 +67,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        // the consumer can be stopped and started again (by a route policy or JMX)
+        shuttingDown = false;
         connection = zkm.getConnection();
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
@@ -77,7 +80,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         taskExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "ZooKeeperReconnectTask");
 
-        OperationsExecutor opsService = new OperationsExecutor();
+        opsService = new OperationsExecutor();
         executor.submit(opsService);
     }
 
@@ -91,6 +94,13 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         if (taskExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
+        }
+        OperationsExecutor ops = opsService;
+        if (ops != null) {
+            // the thread of this start must end: it may wait for an operation or a watch that never comes, and it
+            // must not take the operations of a later start
+            ops.stop();
+            opsService = null;
         }
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
         zkm.shutdown();
@@ -141,9 +151,33 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         private WatchedEvent watchedEvent;
 
+        private volatile boolean stopped;
+
+        private volatile Thread thread;
+
+        /**
+         * Ends this thread: the consumer stopped. The thread is interrupted, unless the consumer is stopped from this
+         * thread (such as by a route policy when an exchange is done).
+         */
+        void stop() {
+            stopped = true;
+            Thread t = thread;
+            if (t != null && t != Thread.currentThread()) {
+                t.interrupt();
+            }
+        }
+
+        private boolean isRunning() {
+            return !stopped && isRunAllowed();
+        }
+
         @Override
         public void run() {
-            while (isRunAllowed()) {
+            thread = Thread.currentThread();
+            if (stopped) {
+                return;
+            }
+            while (isRunning()) {
                 try {
                     current = operations.take();
                     if (LOG.isTraceEnabled()) {
@@ -166,6 +200,10 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    if (!isRunning()) {
+                        // interrupted by the stop of the consumer
+                        break;
+                    }
                     handleException(e);
                     restarted = backoffAndThenRestart();
                 } catch (Exception e) {
@@ -174,7 +212,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                 } finally {
                     // after a restart the queue holds the operations of the new sequence; a copy of the failed one
                     // (which may use a handle whose session expired) must not be added to them
-                    if (configuration.isRepeat() && !restarted) {
+                    if (configuration.isRepeat() && !restarted && isRunning()) {
                         try {
                             operations.offer(current.createCopy());
                         } catch (Exception e) {
@@ -193,7 +231,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
          */
         private boolean backoffAndThenRestart() {
             try {
-                if (isRunAllowed()) {
+                if (isRunning()) {
                     // Use Camel's task API for reconnection backoff delay instead of Thread.sleep()
                     // We use initialDelay for the actual delay, and maxIterations(1) to run once
                     Tasks.backgroundTask()
@@ -208,12 +246,15 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                             .build()
                             .run(getEndpoint().getCamelContext(), () -> true);
 
-                    if (isRunAllowed()) {
+                    if (isRunning()) {
                         connection = zkm.getConnection();
-                        if (!isRunAllowed()) {
+                        if (!isRunning()) {
                             // stopped while the connection was created: doStop may already have closed the holder,
-                            // so close the new handle (and its client threads) here
-                            zkm.shutdown();
+                            // so close the new handle (and its client threads) here, unless the consumer was started
+                            // again and uses it
+                            if (!isRunAllowed()) {
+                                zkm.shutdown();
+                            }
                             return false;
                         }
                         initializeConsumer();
