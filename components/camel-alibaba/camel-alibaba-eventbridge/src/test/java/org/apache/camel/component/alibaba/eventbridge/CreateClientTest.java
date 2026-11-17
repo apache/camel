@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.alibaba.eventbridge;
 
+import com.aliyun.eventbridge.EventBridgeClient;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateClientTest {
@@ -32,5 +34,18 @@ class CreateClientTest {
         assertThatThrownBy(() -> AlibabaEventBridgeUtils.createClient(endpoint))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Endpoint is required");
+    }
+
+    @Test
+    void anEndpointWithoutARegionCreatesAClient() {
+        AlibabaEventBridgeEndpoint endpoint = new AlibabaEventBridgeEndpoint();
+        endpoint.setEndpoint("12345.eventbridge.cn-hangzhou.aliyuncs.com");
+        endpoint.setAccessKey("accessKey");
+        endpoint.setSecretKey("secretKey");
+
+        EventBridgeClient client = AlibabaEventBridgeUtils.createClient(endpoint);
+
+        assertThat(client._endpoint).isEqualTo("12345.eventbridge.cn-hangzhou.aliyuncs.com");
+        assertThat(client._regionId).isNull();
     }
 }
