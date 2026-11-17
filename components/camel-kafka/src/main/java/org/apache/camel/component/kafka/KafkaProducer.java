@@ -79,6 +79,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private WritableHealthCheckRepository healthCheckRepository;
     private String clientId;
     private String transactionId;
+    private String valueSerializer;
     private final KafkaEndpoint endpoint;
     private final KafkaConfiguration configuration;
     private ExecutorService workerPool;
@@ -146,6 +147,23 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         this.workerPool = workerPool;
     }
 
+    /**
+     * The class name of the value serializer that the Kafka producer gets: the valueSerializer option, the serializer
+     * of the schemaRegistryVendor, or value.serializer from additionalProperties. The message body is converted for
+     * this serializer.
+     */
+    static String valueSerializerClassName(Properties props) {
+        Object serializer = props.get(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);
+        if (serializer instanceof Class<?> type) {
+            return type.getName();
+        }
+        return serializer != null ? serializer.toString().trim() : null;
+    }
+
+    String getValueSerializer() {
+        return valueSerializer != null ? valueSerializer : configuration.getValueSerializer();
+    }
+
     static String resolveExactlyOnceTransactionalId(String configuredTransactionId, String routeId) {
         return ObjectHelper.isEmpty(routeId) ? configuredTransactionId : configuredTransactionId + "-" + routeId;
     }
@@ -156,6 +174,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         CamelContextAware.trySetCamelContext(configuration.getHeaderSerializer(), getEndpoint().getCamelContext());
 
         Properties props = getProps();
+        valueSerializer = valueSerializerClassName(props);
         String configuredTransactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
                 ? configuration.getTransactionalId() : props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
         if (configuration.isExactlyOnce() && ObjectHelper.isEmpty(configuredTransactionId)) {
@@ -271,7 +290,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         Iterator<Object> iterator = getObjectIterator(body);
 
-        return new KeyValueHolderIterator(iterator, exchange, configuration, topic, propagatedHeadersProvider);
+        return new KeyValueHolderIterator(
+                iterator, exchange, configuration, getValueSerializer(), topic, propagatedHeadersProvider);
     }
 
     protected ProducerRecord<Object, Object> createRecord(Exchange exchange, Message message) {
@@ -296,7 +316,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         // must convert each entry of the iterator into the value according to
         // the serializer
-        Object value = tryConvertToSerializedType(exchange, message.getBody(), configuration.getValueSerializer());
+        Object value = tryConvertToSerializedType(exchange, message.getBody(), getValueSerializer());
 
         return new ProducerRecord<>(topic, msgPartitionKey, timeStamp, msgKey, value, propagatedHeaders);
     }

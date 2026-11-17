@@ -230,6 +230,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         applyCommonClientProperties(props);
         addPropertyIfNotEmpty(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializer());
         addPropertyIfNotEmpty(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializer());
+        applySchemaRegistryProducerProperties(props, getValueSerializer());
         addPropertyIfNotEmpty(props, ProducerConfig.ACKS_CONFIG, getRequestRequiredAcks());
         addPropertyIfNotEmpty(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotEmpty(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
@@ -261,6 +262,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         applyCommonClientProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializer());
         addPropertyIfNotEmpty(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializer());
+        applySchemaRegistryConsumerProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MIN_BYTES_CONFIG, getFetchMinBytes());
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MAX_BYTES_CONFIG, getFetchMaxBytes());
         // classic-only properties: skip when using the new consumer protocol (KIP-848)
@@ -285,7 +287,6 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         addPropertyIfNotEmpty(props, ConsumerConfig.CHECK_CRCS_CONFIG, getCheckCrcs());
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, getFetchWaitMaxMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.ISOLATION_LEVEL_CONFIG, getIsolationLevel());
-        addPropertyIfNotFalse(props, "specific.avro.reader", isSpecificAvroReader());
 
         applySecurityProperties(props);
         applyAdditionalProperties(props);
