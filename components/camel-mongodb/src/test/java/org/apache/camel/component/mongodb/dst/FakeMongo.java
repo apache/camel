@@ -95,7 +95,7 @@ final class FakeMongo {
     Runnable onInterrupt = () -> {
     };
 
-    /** An entry of the change stream of the collection. */
+    /** An entry of the change stream of the collection. seq is 1-based (the index in the oplog + 1). */
     record Event(long seq, OperationType type, String id) {
         BsonDocument token() {
             return new BsonDocument("_data", new BsonString(String.format("%016x", seq)));
@@ -456,6 +456,9 @@ final class FakeMongo {
             }
             BsonDocument ns = e.type() == OperationType.INVALIDATE
                     ? null : new BsonDocument("db", new BsonString(DATABASE)).append("coll", new BsonString(COLLECTION));
+            // positional arguments of the MongoDB Java driver 5.14: operationType, resumeToken, ns, nsType, to,
+            // fullDocument, fullDocumentBeforeChange, documentKey, clusterTime, updateDescription, txnNumber, lsid,
+            // wallTime, splitEvent, extraElements
             return new ChangeStreamDocument<>(
                     e.type().getValue(), e.token(), ns, null, null, full, null, key, null, null, null, null, null, null,
                     null);
