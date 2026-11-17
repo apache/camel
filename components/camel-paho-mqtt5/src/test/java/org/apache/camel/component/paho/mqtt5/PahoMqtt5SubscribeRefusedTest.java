@@ -42,7 +42,6 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,7 +105,7 @@ class PahoMqtt5SubscribeRefusedTest extends CamelTestSupport {
         callback.getValue().connectComplete(true, "tcp://localhost:1883");
 
         // the stop of the restart closes the client, and so does the start that fails
-        verify(client, timeout(10_000).times(2)).close(true);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(client, times(2)).close(true));
         verify(client, times(3)).subscribe("test", 2);
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(context.getRouteController().getRouteStatus(ROUTE_ID))
@@ -154,8 +153,9 @@ class PahoMqtt5SubscribeRefusedTest extends CamelTestSupport {
 
         // the reconnect subscribes again (refused), the stop of the restart closes the client, and so does the start
         // that fails
-        verify(client, timeout(10_000)).connectWithResult(any(MqttConnectionOptions.class));
-        verify(client, timeout(10_000).times(2)).close(true);
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> verify(client).connectWithResult(any(MqttConnectionOptions.class)));
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(client, times(2)).close(true));
         verify(client, times(3)).subscribe("test", 1);
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(context.getRouteController().getRouteStatus(ROUTE_ID))
