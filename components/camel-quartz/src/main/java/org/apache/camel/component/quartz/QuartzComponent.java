@@ -60,6 +60,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private final List<SchedulerInitTask> schedulerInitTasks = new ArrayList<>();
     private volatile boolean schedulerInitTasksDone;
     private volatile boolean shouldStopScheduler;
+    private volatile boolean schedulerStartedByComponent;
 
     @Metadata(label = "advanced", autowired = true)
     private Scheduler scheduler;
@@ -483,6 +484,52 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
         if (scheduler == null) {
             createAndInitScheduler();
+        } else if (!shouldStopScheduler) {
+            // a scheduler set on this component, or autowired from the registry, can already run (Spring starts the
+            // scheduler of spring-boot-starter-quartz before Camel), and the endpoints add their jobs when they start:
+            // store the CamelContext now, so their jobs find it before onCamelContextFullyStarted
+            storeCamelContextInQuartzContext();
+            warnIfSchedulerOptionsAreIgnored();
+            warnIfSchedulerIsRunning();
+        }
+    }
+
+    /**
+     * Called when the scheduler was set on this component, or autowired from the registry: the options that configure
+     * the scheduler this component creates are not used.
+     */
+    private void warnIfSchedulerOptionsAreIgnored() throws SchedulerException {
+        List<String> ignored = new ArrayList<>(3);
+        if (properties != null) {
+            ignored.add("properties");
+        }
+        if (propertiesRef != null) {
+            ignored.add("propertiesRef");
+        }
+        if (propertiesFile != null) {
+            ignored.add("propertiesFile");
+        }
+        if (!ignored.isEmpty()) {
+            LOG.warn("The options {} of the quartz component are ignored, as the Quartz scheduler {} is set on the component"
+                     + " or autowired from the registry. Configure that scheduler instead.",
+                    String.join(", ", ignored), scheduler.getSchedulerName());
+        }
+    }
+
+    /**
+     * Called when the scheduler was set on this component, or autowired from the registry. When it already runs, a job
+     * that fires before the consumer of its route has started is lost (the route is not started yet, or this component
+     * is not started yet for a trigger in a persistent job store). No WARN for a scheduler that this component started,
+     * before a restart of the CamelContext.
+     */
+    private void warnIfSchedulerIsRunning() throws SchedulerException {
+        if (!schedulerStartedByComponent && scheduler.isStarted() && !scheduler.isInStandbyMode()) {
+            LOG.warn("The Quartz scheduler {} set on the quartz component or autowired from the registry is already running,"
+                     + " so a trigger that fires before its route has started is lost."
+                     + " Let the quartz component start the scheduler once the routes have started"
+                     + " (autoStartScheduler=true, the default): with spring-boot-starter-quartz,"
+                     + " set spring.quartz.auto-startup=false.",
+                    scheduler.getSchedulerName());
         }
     }
 
@@ -575,6 +622,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             } else {
                 LOG.info("Starting Quartz scheduler: {}", scheduler);
                 scheduler.start();
+                schedulerStartedByComponent = true;
             }
         }
     }

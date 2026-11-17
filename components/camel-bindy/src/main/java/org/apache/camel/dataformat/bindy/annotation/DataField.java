@@ -106,7 +106,9 @@ public @interface DataField {
     boolean required() default false;
 
     /**
-     * Indicates if the value should be trimmed
+     * Indicates if the value should be trimmed. In a fixed-length record, unmarshal removes the padding char (on the
+     * left with align R, on the right with L, on both sides with B); a number padded with '0' that is only made of '0'
+     * is read as 0.
      */
     boolean trim() default false;
 

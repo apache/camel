@@ -66,7 +66,6 @@ public class FCEndpoint extends DefaultEndpoint {
                             + " not set, to build the endpoint of Function Compute. Not used when the fcClient option is set or"
                             + " autowired.",
               displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of Function Compute, which is a host name without http:// or https://. The producer"

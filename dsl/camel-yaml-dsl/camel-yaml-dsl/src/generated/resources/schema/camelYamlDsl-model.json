@@ -5991,7 +5991,7 @@
       }, {
         "name" : "excludePattern",
         "type" : "string",
-        "description" : "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.",
+        "description" : "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3.",
         "title" : "Exclude Pattern",
         "displayName" : "Exclude Pattern",
         "kind" : "attribute",
@@ -6057,7 +6057,7 @@
       }, {
         "name" : "excludePattern",
         "type" : "string",
-        "description" : "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.",
+        "description" : "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3.",
         "title" : "Exclude Pattern",
         "displayName" : "Exclude Pattern",
         "kind" : "attribute",
@@ -18970,7 +18970,7 @@
       }, {
         "name" : "producerApiDoc",
         "type" : "string",
-        "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.",
+        "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document.",
         "title" : "Producer Api Doc",
         "displayName" : "Producer Api Doc",
         "kind" : "attribute",

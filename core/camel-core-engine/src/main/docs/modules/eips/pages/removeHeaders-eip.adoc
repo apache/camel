@@ -111,6 +111,55 @@ YAML::
 ----
 ====
 
+== Keeping some headers
+
+The `excludePattern` option keeps the headers it matches, with the same rules as `pattern`.
+It is a single pattern: to keep several headers, use a regular expression with `|` (a comma does not separate patterns).
+In Java, you can also give several exclude patterns as arguments.
+
+The following removes all headers, except `header1`, `header3` and the headers that start with `Camel`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .removeHeaders("*", "header1", "header3", "Camel*")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeHeaders pattern="*" excludePattern="header1|header3|Camel.*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeHeaders:
+            pattern: "*"
+            excludePattern: "header1|header3|Camel.*"
+        - to:
+            uri: mock:result
+----
+====
+
+NOTE: Inside a regular expression, `Camel*` means `Came` followed by any number of `l`: use `Camel.*` to match the headers
+that start with `Camel`.
+
 == Leaking Camel headers when sending to an endpoint
 
 When I send a message to a Camel endpoint such as the

@@ -21,7 +21,7 @@ package org.apache.camel.spi;
  * keeps its data only in the memory of this JVM. Such data is lost when the application stops: after a restart an
  * idempotent consumer lets the same messages through again, a file consumer with noop=true reads the same files again,
  * and an aggregator has lost the groups it was building.
- * <p/>
+ * <p>
  * Only true counts: false means that the data is kept elsewhere, or that the store cannot tell, such as a cache whose
  * provider does not say where it keeps its entries. A store that can be configured either way, such as a cache with or
  * without a disk tier, or a store that delegates to another store, answers for the configuration in use.
