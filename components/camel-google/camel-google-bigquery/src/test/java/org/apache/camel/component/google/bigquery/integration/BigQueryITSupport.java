@@ -22,7 +22,11 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.google.cloud.NoCredentials;
 import com.google.cloud.bigquery.BigQueryException;
+import com.google.cloud.bigquery.BigQueryOptions;
+import com.google.cloud.bigquery.DatasetId;
+import com.google.cloud.bigquery.DatasetInfo;
 import com.google.cloud.bigquery.Field;
 import com.google.cloud.bigquery.FieldList;
 import com.google.cloud.bigquery.JobId;
@@ -41,14 +45,25 @@ import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
+import org.apache.camel.test.infra.google.bigquery.services.GoogleBigQueryService;
+import org.apache.camel.test.infra.google.bigquery.services.GoogleBigQueryServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.junit6.TestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Runs the integration tests against the BigQuery of Floci GCP, or with {@code -Dgoogle.instance.type=remote} against
+ * the one of Google Cloud, with the credentials of {@code simple.properties}. Either way, the tests take the project
+ * and the dataset of {@code simple.properties}: Floci GCP accepts any project id.
+ */
 public class BigQueryITSupport extends CamelTestSupport {
+    @RegisterExtension
+    public static GoogleBigQueryService service = GoogleBigQueryServiceFactory.createSingletonService();
+
     public static final String SERVICE_KEY;
     public static final String SERVICE_ACCOUNT;
     public static final String PROJECT_ID;
@@ -72,20 +87,11 @@ public class BigQueryITSupport extends CamelTestSupport {
         return TestSupport.loadExternalPropertiesQuietly(BigQueryITSupport.class.getClassLoader(), "simple.properties");
     }
 
-    // This is used by JUnit to to dynamically enable / disable the integration tests
-    @SuppressWarnings("unused")
-    private static boolean hasCredentials() {
-        return SERVICE_KEY != null && SERVICE_ACCOUNT != null || CREDENTIALS_FILE_LOCATION != null;
-    }
-
     protected void addBigqueryComponent(CamelContext context) {
 
         GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration()
                 .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
 
-        connectionFactory = new GoogleBigQueryConnectionFactory()
-                .setServiceAccountKeyFile(configuration.getServiceAccountKey())
-                .setCamelContext(context);
         configuration.setConnectionFactory(connectionFactory);
 
         GoogleBigQueryComponent component = new GoogleBigQueryComponent(configuration);
@@ -99,9 +105,6 @@ public class BigQueryITSupport extends CamelTestSupport {
 
         GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration()
                 .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
-        connectionFactory = new GoogleBigQueryConnectionFactory()
-                .setServiceAccountKeyFile(configuration.getServiceAccountKey())
-                .setCamelContext(context);
         configuration.setConnectionFactory(connectionFactory);
 
         GoogleBigQuerySQLComponent component = new GoogleBigQuerySQLComponent(configuration);
@@ -114,9 +117,56 @@ public class BigQueryITSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        connectionFactory = createConnectionFactory(context);
         addBigqueryComponent(context);
         addBigquerySqlComponent(context);
+        if (!isRemote()) {
+            createLocalDataset();
+        }
         return context;
+    }
+
+    // the BigQuery of Google Cloud with -Dgoogle.instance.type=remote, and the one of Floci GCP otherwise
+    private static boolean isRemote() {
+        return "remote".equals(System.getProperty("google.instance.type"));
+    }
+
+    // the credentials that ran the tests against a real project, before they ran on Floci GCP
+    private static boolean hasCredentials() {
+        return SERVICE_KEY != null && SERVICE_ACCOUNT != null || CREDENTIALS_FILE_LOCATION != null;
+    }
+
+    private static GoogleBigQueryConnectionFactory createConnectionFactory(CamelContext context) {
+        if (isRemote()) {
+            return new GoogleBigQueryConnectionFactory()
+                    .setServiceAccountKeyFile(CREDENTIALS_FILE_LOCATION)
+                    .setCamelContext(context);
+        }
+        // so that a run on Floci GCP is not taken for one against the project of the credentials
+        if (hasCredentials()) {
+            throw new IllegalStateException(
+                    "simple.properties gives credentials: add -Dgoogle.instance.type=remote to run the tests against"
+                                            + " the BigQuery of that project");
+        }
+        // Floci GCP accepts any credentials: the client of the factory would take the application default ones
+        return new GoogleBigQueryConnectionFactory(
+                BigQueryOptions.newBuilder()
+                        .setHost(service.endpoint())
+                        .setProjectId(PROJECT_ID)
+                        .setCredentials(NoCredentials.getInstance())
+                        .build()
+                        .getService());
+    }
+
+    // the project of Google Cloud has the dataset of the tests, Floci GCP starts without it
+    private void createLocalDataset() throws Exception {
+        try {
+            getConnectionFactory().getDefaultClient().create(DatasetInfo.of(DatasetId.of(PROJECT_ID, DATASET_ID)));
+        } catch (BigQueryException e) {
+            if (e.getCode() != 409) {
+                throw e;
+            }
+        }
     }
 
     @BindToRegistry("prop")
