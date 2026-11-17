@@ -105,6 +105,40 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- The serdes of the schema registry vendors, to check the class names that schemaRegistryVendor sets
+             (KafkaSchemaRegistryVendorClassesTest), and so that their versions in the parent pom are kept up to date.
+             The Confluent serdes are not here: they are only in the Confluent Maven repository. -->
+        <dependency>
+            <groupId>io.apicurio</groupId>
+            <artifactId>apicurio-registry-avro-serde-kafka</artifactId>
+            <version>${apicurio-registry-sdk-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.apicurio</groupId>
+            <artifactId>apicurio-registry-jsonschema-serde-kafka</artifactId>
+            <version>${apicurio-registry-sdk-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.apicurio</groupId>
+            <artifactId>apicurio-registry-protobuf-serde-kafka</artifactId>
+            <version>${apicurio-registry-sdk-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.glue</groupId>
+            <artifactId>schema-registry-serde</artifactId>
+            <version>${aws-glue-schema-registry-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-schemaregistry-kafka-avro</artifactId>
+            <version>${azure-schemaregistry-kafka-avro-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

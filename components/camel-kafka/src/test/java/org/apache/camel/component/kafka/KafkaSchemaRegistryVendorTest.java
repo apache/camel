@@ -24,12 +24,12 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.Consumer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -435,11 +435,30 @@ class KafkaSchemaRegistryVendorTest {
                 Arguments.of("azure", "avro", "com.microsoft.azure:azure-schemaregistry-kafka-avro"));
     }
 
+    // the serde jars of Apicurio, AWS Glue and Azure are test dependencies (KafkaSchemaRegistryVendorClassesTest),
+    // so only the Confluent ones, which are not in Maven Central, are missing from the test classpath
+    static Stream<Arguments> missingArtifacts() {
+        return artifacts().filter(a -> "confluent".equals(a.get()[0]));
+    }
+
     @ParameterizedTest(name = "{0} {1}")
     @MethodSource("artifacts")
+    void missingSerdeMessageNamesTheArtifact(String vendor, String format, String artifact) {
+        assertEquals(artifact, KafkaSchemaRegistry.artifact(vendor, format));
+        String className = KafkaSchemaRegistry.serializer(vendor, format);
+        String msg = KafkaSchemaRegistry.missingSerdeMessage(vendor, format, "serializer", className);
+        assertTrue(msg.startsWith("Cannot load the value serializer " + className + " of schemaRegistryVendor " + vendor
+                                  + " and schemaFormat " + format + ". Add the Maven artifact " + artifact
+                                  + " to the classpath"),
+                msg);
+        assertEquals("confluent".equals(vendor), msg.contains("camel run --repos=confluent"), msg);
+    }
+
+    @ParameterizedTest(name = "{0} {1}")
+    @MethodSource("missingArtifacts")
     void producerFailsToStartWithoutTheSerializerAndNamesTheArtifact(String vendor, String format, String artifact)
             throws Exception {
-        // the serde jars of the vendors are not on the test classpath
+        // the Confluent serde jars are not on the test classpath
         KafkaEndpoint endpoint = context.getEndpoint(
                 "kafka:mytopic?brokers=localhost:39092&schemaRegistryVendor=" + vendor + "&schemaFormat=" + format,
                 KafkaEndpoint.class);
@@ -459,7 +478,7 @@ class KafkaSchemaRegistryVendorTest {
     }
 
     @ParameterizedTest(name = "{0} {1}")
-    @MethodSource("artifacts")
+    @MethodSource("missingArtifacts")
     void consumerFailsToStartWithoutTheDeserializerAndNamesTheArtifact(String vendor, String format, String artifact)
             throws Exception {
         KafkaEndpoint endpoint = context.getEndpoint(
