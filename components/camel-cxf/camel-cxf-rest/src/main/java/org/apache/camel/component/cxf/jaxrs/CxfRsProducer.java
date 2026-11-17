@@ -67,6 +67,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
+    // the name of the operation header before CxfConstants.OPERATION_NAME replaced it
+    private static final String FORMER_OPERATION_NAME = "operationName";
+
     private boolean throwException;
 
     // using a cache of factory beans instead of setting the address of a single cfb
@@ -190,7 +193,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     protected void invokeAsyncProxyClient(Exchange exchange, final AsyncCallback callback) throws Exception {
         Message inMessage = exchange.getIn();
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
-        String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
+        String methodName = getMethodName(inMessage);
         Client target;
 
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfRsEndpointUtils
@@ -443,7 +446,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     protected void invokeProxyClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
-        String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
+        String methodName = getMethodName(inMessage);
         Client target = null;
 
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfRsEndpointUtils
@@ -516,6 +519,25 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
             }
         }
+    }
+
+    /**
+     * The name of the method of the resource classes that the proxy-based client API invokes, from the
+     * CamelCxfOperationName header. The operationName header, which CamelCxfOperationName replaced, is not read.
+     */
+    private static String getMethodName(Message inMessage) throws NoSuchMethodException {
+        String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
+        if (methodName == null) {
+            String message = "The " + CxfConstants.OPERATION_NAME + " header is not set: with the proxy-based client API"
+                             + " (httpClientAPI=false) the producer invokes the method of the resource classes that this"
+                             + " header names.";
+            if (inMessage.getHeader(FORMER_OPERATION_NAME) != null) {
+                message += " The producer does not read the " + FORMER_OPERATION_NAME + " header, which "
+                           + CxfConstants.OPERATION_NAME + " replaced.";
+            }
+            throw new NoSuchMethodException(message);
+        }
+        return methodName;
     }
 
     private Method findRightMethod(

@@ -52,6 +52,9 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         //filter the operationName and operationName
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
         getOutFilter().add(CxfConstants.OPERATION_NAMESPACE.toLowerCase());
+        // and the former names of these headers, which the producer no longer reads
+        getOutFilter().add("operationname");
+        getOutFilter().add("operationnamespace");
 
         // Request and response context Maps will be passed to CXF Client APIs
         getOutFilter().add(Client.REQUEST_CONTEXT.toLowerCase());
