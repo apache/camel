@@ -121,6 +121,13 @@ WARNING: When the `logRequests` option is enabled, HTTP requests to the watsonx.
 
 The IBM watsonx.ai component provides the following operations:
 
+Many of them read the message body as text: the prompt of `textGeneration`, `tokenize`, `detect` and
+`deploymentGenerate`, the user message of the chat operations, the texts of `embedding` and `rerank`, and the file
+path, job id or file name of the extraction and classification operations that do not upload. Such a body can be a
+`String`, a `byte[]`, a stream, a file, or anything else Camel converts to its text, such as a `char[]`. A `Map` or a
+POJO fails with an `IllegalArgumentException`, as Camel reads it only as its `toString()`, which is not a prompt:
+marshal it first, for example with `marshal().json()`, or set the body to the text.
+
 ==== Text Generation (Deprecated, use chat instead)
 
 * `textGeneration` - Generate text from a prompt

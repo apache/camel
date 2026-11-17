@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -364,6 +365,23 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void chatReadsACharArrayBodyAsTheUserMessage() throws Exception {
+        Exchange result = call(WatsonxAiOperations.chat, "What is the capital of France?".toCharArray());
+
+        assertEquals("Paris", result.getMessage().getBody());
+        assertUserMessage("What is the capital of France?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
+    void chatReadsAByteBufferBodyAsTheUserMessage() throws Exception {
+        Exchange result = call(WatsonxAiOperations.chat,
+                ByteBuffer.wrap("What is the capital of France?".getBytes(StandardCharsets.UTF_8)));
+
+        assertEquals("Paris", result.getMessage().getBody());
+        assertUserMessage("What is the capital of France?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
     void chatFailsWithoutABody() {
         Exchange result = send(WatsonxAiOperations.chat, null);
 
@@ -427,6 +445,103 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         JsonNode request = request("/ml/v1/text/rerank");
         assertEquals(1, request.get("inputs").size());
         assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asText());
+    }
+
+    // a Map or a POJO body, which Camel reads only as its toString()
+
+    @Test
+    void chatFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.chat, Map.of("question", "What is the capital of France?"));
+
+        assertOnlyToStringFailure(result, "the user message", "Map");
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/chat"), "no request is sent");
+    }
+
+    @Test
+    void chatFailsForAPojoBody() {
+        Exchange result = send(WatsonxAiOperations.chat, new Question("What is the capital of France?"));
+
+        assertOnlyToStringFailure(result, "the user message", Question.class.getName());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/chat"), "no request is sent");
+    }
+
+    @Test
+    void chatStreamingFailsForAMapBody() {
+        Consumer<String> streamConsumer = chunk -> {
+        };
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.chatStreaming);
+            exchange.getIn().setHeader(WatsonxAiConstants.STREAM_CONSUMER, streamConsumer);
+            exchange.getIn().setBody(Map.of("question", "What is the capital of France?"));
+        });
+
+        assertOnlyToStringFailure(result, "the user message", "Map");
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/chat_stream"), "no request is sent");
+    }
+
+    @Test
+    void deploymentChatFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.deploymentChat, Map.of("question", "What is the capital of France?"));
+
+        assertOnlyToStringFailure(result, "the user message", "Map");
+        assertFalse(REQUESTS.containsKey("/ml/v1/deployments/my-deployment/text/chat"), "no request is sent");
+    }
+
+    @Test
+    void embeddingFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.embedding, Map.of("text", "Apache Camel"));
+
+        assertOnlyToStringFailure(result, "the input text", "Map");
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/embeddings"), "no request is sent");
+    }
+
+    @Test
+    void rerankFailsForAPojoBody() {
+        Exchange result = rerank(new Question("Apache Camel is an integration framework"));
+
+        assertOnlyToStringFailure(result, "the input text", Question.class.getName());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/rerank"), "no request is sent");
+    }
+
+    /** textGeneration, tokenize, detect and deploymentGenerate read the prompt the same way. */
+    @Test
+    void textGenerationFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.textGeneration, Map.of("prompt", "What is the capital of France?"));
+
+        assertOnlyToStringFailure(result, "the prompt", "Map");
+    }
+
+    @Test
+    void tokenizeFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.tokenize, Map.of("prompt", "What is the capital of France?"));
+
+        assertOnlyToStringFailure(result, "the prompt", "Map");
+    }
+
+    /** The extraction and classification operations read their file path and job id the same way. */
+    @Test
+    void textExtractionFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.textExtraction, Map.of("filePath", "report.pdf"));
+
+        assertOnlyToStringFailure(result, "the file path", "Map");
+    }
+
+    @Test
+    void textClassificationFetchFailsForAMapBody() {
+        Exchange result = send(WatsonxAiOperations.textClassificationFetch, Map.of("id", "classification-1"));
+
+        assertOnlyToStringFailure(result, "the classification id", "Map");
+    }
+
+    private static void assertOnlyToStringFailure(Exchange result, String what, String type) {
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("must be " + what + " as text"), e.getMessage());
+        assertTrue(e.getMessage().contains(type), e.getMessage());
+        assertTrue(e.getMessage().contains("Marshal it first"), e.getMessage());
+    }
+
+    /** A POJO body, which has no type converter to text. */
+    private record Question(String question) {
     }
 
     private Exchange send(WatsonxAiOperations operation, Object body) {
