@@ -1211,7 +1211,7 @@ DEBUG FileConsumer is idempotent and the file has been consumed before. Will ski
 ==== Using a file-based idempotent repository
 
 In this section we will use the file-based idempotent repository
-`org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
+`org.apache.camel.support.processor.idempotent.FileIdempotentRepository` instead
 of the in-memory one that is used as default.
 This repository uses a first level cache to avoid reading the file
 repository. It will only use the file repository to store the content of
@@ -1219,14 +1219,52 @@ the first level cache. Thereby, the repository can survive server restarts.
 It will load the content of the file into the first level cache upon
 startup. The file structure is basic as it stores the key in
 separate lines in the file. By default, the file store has a size limit
-of 1mb. When the file grows larger, Camel will truncate the file store,
-rebuilding the content by flushing the first level cache into a fresh
-empty file.
+of 32mb. When the file grows larger, Camel drops the oldest entries from
+the file store (1000 by default) to make room for new ones.
 
-We configure our repository using Spring XML creating our file
-idempotent repository and define our file consumer to use our repository
-with the `idempotentRepository` using `#` sign to indicate
-Registry lookup:
+We declare the repository as a bean with the name of its file (`fileName`), and define our file consumer to use
+the repository with the `idempotentRepository` option, using `#bean:` to look it up in the Registry. The files that
+were read are not read again after a restart, and a new file is:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@BindToRegistry("readFiles")
+public IdempotentRepository readFiles() {
+    return FileIdempotentRepository.fileIdempotentRepository("/var/data/read-files.dat");
+}
+
+@Override
+public void configure() {
+    from("file:/var/data/in?noop=true&idempotentRepository=#bean:readFiles")
+        .log("${header.CamelFileName}");
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: readFiles
+      type: "#class:org.apache.camel.support.processor.idempotent.FileIdempotentRepository"
+      properties:
+        fileName: /var/data/read-files.dat
+- route:
+    from:
+      uri: file:/var/data/in
+      parameters:
+        noop: true
+        idempotentRepository: "#bean:readFiles"
+      steps:
+        - log: "${header.CamelFileName}"
+----
+====
+
+The `fileName` option takes the file name as plain text. Use `fileStore` instead when you have a `java.io.File`.
 
 ==== Using a JPA based idempotent repository
 

@@ -71,7 +71,10 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Metadata(description = "The maximum size of the 1st-level in-memory cache", defaultValue = "1000")
     private int cacheSize;
-    @Metadata(description = "File name of the repository (incl directory)", required = true)
+    @Metadata(description = "File name of the repository (incl directory). Either fileName or fileStore must be set.")
+    private String fileName;
+    @Metadata(description = "File of the repository (incl directory) as a java.io.File. Either fileName or fileStore must be"
+                            + " set.")
     private File fileStore;
     @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
               defaultValue = "" + 32 * 1024 * 1000L)
@@ -86,6 +89,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     public FileIdempotentRepository(File fileStore, Map<String, Object> cache) {
         this.fileStore = fileStore;
+        this.fileName = fileStore != null ? fileStore.getPath() : null;
         this.cache = cache;
     }
 
@@ -138,6 +142,49 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      */
     public static IdempotentRepository fileIdempotentRepository(File store, Map<String, Object> cache) {
         return new FileIdempotentRepository(store, cache);
+    }
+
+    /**
+     * Creates a new file based repository using a {@link LRUCache} as 1st level cache with a default of 1000 entries in
+     * the cache.
+     *
+     * @param fileName the file name of the file store (incl directory)
+     */
+    public static IdempotentRepository fileIdempotentRepository(String fileName) {
+        return fileIdempotentRepository(new File(fileName));
+    }
+
+    /**
+     * Creates a new file based repository using a {@link LRUCache} as 1st level cache.
+     *
+     * @param fileName  the file name of the file store (incl directory)
+     * @param cacheSize the cache size
+     */
+    public static IdempotentRepository fileIdempotentRepository(String fileName, int cacheSize) {
+        return fileIdempotentRepository(new File(fileName), cacheSize);
+    }
+
+    /**
+     * Creates a new file based repository using a {@link LRUCache} as 1st level cache.
+     *
+     * @param fileName         the file name of the file store (incl directory)
+     * @param cacheSize        the cache size
+     * @param maxFileStoreSize the max size in bytes for the filestore file
+     */
+    public static IdempotentRepository fileIdempotentRepository(String fileName, int cacheSize, long maxFileStoreSize) {
+        return fileIdempotentRepository(new File(fileName), cacheSize, maxFileStoreSize);
+    }
+
+    /**
+     * Creates a new file based repository using the given {@link java.util.Map} as 1st level cache.
+     * <p>
+     * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a memory leak.
+     *
+     * @param fileName the file name of the file store (incl directory)
+     * @param cache    the cache to use as 1st level cache
+     */
+    public static IdempotentRepository fileIdempotentRepository(String fileName, Map<String, Object> cache) {
+        return fileIdempotentRepository(new File(fileName), cache);
     }
 
     @Override
@@ -229,8 +276,25 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         return fileStore;
     }
 
+    /**
+     * Sets the file of the repository (incl directory).
+     */
     public void setFileStore(File fileStore) {
         this.fileStore = fileStore;
+        this.fileName = fileStore != null ? fileStore.getPath() : null;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Sets the file name of the repository (incl directory), such as when the repository is declared as a bean in YAML
+     * or properties.
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+        this.fileStore = fileName != null ? new File(fileName) : null;
     }
 
     @ManagedAttribute(description = "The file path for the store")
@@ -537,7 +601,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(fileStore, "fileStore", this);
+        ObjectHelper.notNull(fileStore, "fileStore or fileName", this);
 
         if (this.cache == null) {
             // default use a 1st level cache

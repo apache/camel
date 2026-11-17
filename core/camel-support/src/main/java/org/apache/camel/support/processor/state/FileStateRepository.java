@@ -106,6 +106,37 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         return new FileStateRepository(store, cache);
     }
 
+    /**
+     * Creates a new file based repository using a {@link HashMap} as 1st level cache
+     *
+     * @param fileName the file name of the file store (incl directory)
+     */
+    public static FileStateRepository fileStateRepository(String fileName) {
+        return fileStateRepository(new File(fileName));
+    }
+
+    /**
+     * Creates a new file based repository using a {@link HashMap} as 1st level cache.
+     *
+     * @param fileName         the file name of the file store (incl directory)
+     * @param maxFileStoreSize the max size in bytes for the fileStore file
+     */
+    public static FileStateRepository fileStateRepository(String fileName, long maxFileStoreSize) {
+        return fileStateRepository(new File(fileName), maxFileStoreSize);
+    }
+
+    /**
+     * Creates a new file based repository using the given {@link java.util.Map} as 1st level cache.
+     * <p>
+     * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a memory leak.
+     *
+     * @param fileName the file name of the file store (incl directory)
+     * @param cache    the cache to use as 1st level cache
+     */
+    public static FileStateRepository fileStateRepository(String fileName, Map<String, String> cache) {
+        return fileStateRepository(new File(fileName), cache);
+    }
+
     @Override
     @ManagedOperation(description = "Adds the value of the given key to the store")
     public void setState(String key, String value) {
@@ -295,7 +326,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(fileStore, "fileStore", this);
+        ObjectHelper.notNull(fileStore, "fileStore or fileName", this);
 
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {
@@ -321,8 +352,23 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         return fileStore;
     }
 
+    /**
+     * Sets the file of the repository (incl directory).
+     */
     public void setFileStore(File fileStore) {
         this.fileStore = fileStore;
+    }
+
+    public String getFileName() {
+        return fileStore != null ? fileStore.getPath() : null;
+    }
+
+    /**
+     * Sets the file name of the repository (incl directory), such as when the repository is declared as a bean in YAML
+     * or properties.
+     */
+    public void setFileName(String fileName) {
+        this.fileStore = fileName != null ? new File(fileName) : null;
     }
 
     @ManagedAttribute(description = "The file path for the store")
