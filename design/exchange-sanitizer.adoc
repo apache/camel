@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-14
+last-updated: 2026-11-17
 status: implementable
 see-also:
   - "CAMEL-26630"
@@ -45,10 +45,11 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1, 2, 3, 5 and 6 of the order of work are built, and the first part of step 4: the step listener SPI, the module
+Steps 1, 2, 3, 5 and 6 of the order of work are built, and most of step 4: the step listener SPI, the module
 with R1, the JUnit extension and the CI switch, the on completion listener SPI with R2, the `AsyncProcessor` contract of
-R3, the dev console with `camel get sanitizer` and `camel run --sanitizer`, and R1 "still pending". The rest is
-design.
+R3 and its sampled overlaps, the dev console with `camel get sanitizer` and `camel run --sanitizer`, and R1 "still
+pending". The runs of R3 on the test suites of the async components, the TLA+ model and the JMH run of R3, and R4, are
+still to do.
 
 == Motivation
 
@@ -298,8 +299,8 @@ call that threw is not compared (R1). The first camel-core run found one process
 with the value of the producer after it), which is fixed with its own JIRA. The check is on by default, also in profile
 `dev`: a small record per call, and a stack only for a callback on another thread before the return, or for a report
 (see Cost).
-Its check is `threads` in `camel.sanitizer.checks`, shared with the sampled overlaps below when they are built
-(`overlapSampling` switches the sampling). What Validation asks of R3 is done for this part on camel-core only: the
+Its check is `threads` in `camel.sanitizer.checks`, shared with the sampled overlaps below (`overlapSampling` switches
+the sampling). What Validation asks of R3 is done for this part on camel-core only: the
 runs on the async component suites, a TLA+ model of its record and the JMH run come with the sampled overlaps, before
 R3 is complete. The record of this part is two values compared under one lock; its tests drive every order of the
 return and the callbacks, on one thread and on two, and race them.
@@ -318,6 +319,29 @@ async components (netty, netty-http, vertx-http, JMS request/reply), not only on
 because of the pauses (a short timeout, a throttler) fails with its own assertion, not with a sanitizer report, so the
 two can be told apart; such a test class turns the sampling off for itself (see Using it). The pauses and
 `pendingTimeout` use the system clock, not `TimeSource`, so a virtual clock of camel-test-dst does not stretch them.
+
+The sampled overlaps are built so. The points are the calls of the step listener (`onStepCall` before the processor,
+`onStepCallback` before the callback goes on) and of the on completion listener (`onCompletionRun`), from one more
+listener of each kind that the sanitizer adds only when the sampling is on, after its other listeners; with the
+sampling off nothing is added, so it costs nothing. The windows are a map keyed by the id of the exchange (read at the
+call of a step and at an on completion, on the thread that owns the exchange then) to the point and the id of the
+thread that watches; they hold no exchange and live only while their thread pauses. A thread at a point first looks
+for a window of another thread on the same exchange and marks it, with its own stack, and only then counts the point
+and may open a window of its own (at most one window per exchange). The thread that watched takes its own stack when
+its window closes, as it is still at its point, and reports both. Two cases are not reported. Two threads that both
+continue an exchange because of a violation already reported for it (a callback called twice, a callback after a
+throw, a return value that differs from the value of the callback, a commit run twice) overlap because of that
+violation; the thread that continues the exchange a second time reports it before it comes to its next point, as the
+listeners of R1, of the contract of R3 and of R2 are called before the one of the windows, so the report is there when
+the window closes, and the overlap is not reported again. This also hides an overlap with another cause in the same
+exchange, which already has its report. And an exchange gets at most one report of an overlap: the first window that
+closes with an overlap claims the exchange. A copy that keeps the id of its exchange is another exchange: most such
+copies are routed one after the other (a `loop` with `copy`, a routing slip, a failover load balancer), but a
+transport in the same JVM that rebuilds the exchange with the id of the sender (`transferExchange` of netty and mina,
+the seda of hazelcast) routes it beside the sender. So a window also holds the identity hash of its exchange, and only
+a point of the same exchange object marks it. With the CI switch, the camel-core suite (9522 tests, a window at 1 in 100 points)
+reports no overlap but the one its test breaks on purpose, and so does a run of about 6800 of its tests with a window at
+1 in 5 points; the runs on the async component suites are still to do.
 
 === R4: tasks dropped at shutdown
 
@@ -602,10 +626,11 @@ test scope and run its own suite with it.
 sanitizer. Ignored with profile `prod`.
 |`camel.sanitizer.checks` |`callback,commit,threads,tasks` |The checks to run: R1, R2, R3, R4. Built so far:
 `callback,threads`, and `callback,commit,threads` in a test (R2 costs more per message, see Cost); `threads` is the
-`AsyncProcessor` contract of R3 so far.
+`AsyncProcessor` contract of R3, and its sampled overlaps when `overlapSampling` is more than `0`.
 |`camel.sanitizer.stackDepth` |`32` |Frames kept of each stack; `0` keeps only the thread name, which costs least.
 |`camel.sanitizer.overlapSampling` |`0`, `100` in the JUnit extension |R3 watch windows: every Nth point (a counter,
-not random, so a rerun samples the same points of the same run); `0` is off.
+not random, so a rerun samples the same points of the same run); `0` is off. `@CamelSanitizer(overlapSampling = ...)`
+of a test class wins over it.
 |`camel.sanitizer.overlapWindow` |`1ms` |How long a sampled thread waits for an overlapping access.
 |`camel.sanitizer.pendingTimeout` |`60s` |When a pending callback is reported as still pending (R1).
 |`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops.
@@ -645,8 +670,8 @@ either way the sanitizer is off there.
 
 *In a test.* Add the `camel-sanitizer` dependency in test scope and `@CamelSanitizer`, as shown in "Checking your own
 processors and components". `@CamelSanitizer` is meta-annotated with `@ExtendWith(CamelSanitizerExtension.class)`, as
-`@CamelMainTest` and `@DstTest` are, and its attributes tune it (`checks`, `overlapSampling`). The JUnit types live in
-`org.apache.camel.sanitizer.junit`.
+`@CamelMainTest` and `@DstTest` are, and its attributes tune it (`checks`, `overlapSampling`; only `overlapSampling` is
+built). The JUnit types live in `org.apache.camel.sanitizer.junit`.
 
 The extension marks the test on its thread in `beforeAll` and `beforeEach`, before any `beforeEach` of other extensions
 (such as the one of `@CamelMainTest`, which builds the context there), so the order of the annotations does not matter.
@@ -759,8 +784,9 @@ Each step is its own pull request after this document:
   listener (#29436); then R2, with the JMH run with the sanitizer on (see Cost: R2 is on by default only in tests).
   Done.
 . R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites. The
-  contract is done, narrowed for the reactive executor as described in R3, with the run on camel-core; the sampled
-  overlaps and the runs on the async component suites are not.
+  contract is done, narrowed for the reactive executor as described in R3, with the run on camel-core. The sampled
+  overlaps are done, with the run on camel-core; the runs on the async component suites, the TLA+ model of the
+  windows and the JMH run are not.
 . The dev console, `camel get sanitizer` and `camel run --sanitizer`. Done: `camel get sanitizer` asks the integration
   for the console through the CLI connector when it runs, rather than reading it from the status file that is written
   each second, as the report can list 1000 violations with their stacks.

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,6 +67,10 @@ import org.slf4j.LoggerFactory;
  * {@code target/camel-sanitizer/<test class>.txt} (or the directory of the system property
  * {@code camel.sanitizer.reportDir}), so a rerun of a failed test cannot hide it.
  * <p/>
+ * In the contexts tied to a class, rule R3 opens a watch window at 1 in 100 points where the routing engine uses an
+ * exchange, unless the class sets {@link CamelSanitizer#overlapSampling()} (or {@code camel.sanitizer.overlapSampling}
+ * is set).
+ * <p/>
  * It uses only the JUnit Jupiter extension API, so it works with camel-test-junit5, camel-test-junit6 and tests that
  * use neither. The tests of one class must run one at a time (the default of JUnit, also when classes run in parallel):
  * the violations of tests of one class that run at the same time cannot be told apart.
@@ -98,7 +103,8 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
         if (store.getOrComputeIfAbsent(OWNER + context.getUniqueId(), k -> this) != this) {
             return;
         }
-        SanitizerTestSession session = SanitizerTestSession.open(context.getRequiredTestClass().getName());
+        SanitizerTestSession session = SanitizerTestSession.open(context.getRequiredTestClass().getName(),
+                overlapSampling(context.getRequiredTestClass()));
         store.put(SESSION, session);
         store.put(MARKED_BEFORE + context.getUniqueId(), new SanitizerTestSession[] { session.mark() });
         store.put(BETWEEN_TESTS + context.getUniqueId(), Collections.synchronizedList(new ArrayList<SanitizerViolation>()));
@@ -191,6 +197,20 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
             }
         }
         return false;
+    }
+
+    /**
+     * The sampling of the watch windows of rule R3 that the nearest {@link CamelSanitizer} of the class (its own or
+     * inherited, or of an enclosing class) sets, or -1.
+     */
+    private static int overlapSampling(Class<?> testClass) {
+        for (Class<?> c = testClass; c != null; c = c.getEnclosingClass()) {
+            Optional<CamelSanitizer> found = AnnotationSupport.findAnnotation(c, CamelSanitizer.class);
+            if (found.isPresent()) {
+                return found.get().overlapSampling();
+            }
+        }
+        return -1;
     }
 
     private static boolean matches(ExpectSanitizerViolation expected, SanitizerViolation violation) {

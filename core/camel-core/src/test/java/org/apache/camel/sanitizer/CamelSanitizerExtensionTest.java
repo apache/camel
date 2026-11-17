@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
@@ -108,6 +109,15 @@ class CamelSanitizerExtensionTest {
             assertTrue(failure.getTestIdentifier().isTest(), failure.getTestIdentifier().getDisplayName());
             assertInstanceOf(SanitizerViolationError.class, failure.getException());
         }
+    }
+
+    @Test
+    void aTestClassTurnsTheWatchWindowsOffForItself() {
+        // the watch windows of rule R3 are on in a test (1 in 100 points), unless the class turns them off
+        TestExecutionSummary summary = run(WatchWindowsByDefault.class);
+        assertEquals(1, summary.getTestsSucceededCount(), () -> summary.getFailures().toString());
+        TestExecutionSummary off = run(WatchWindowsOff.class);
+        assertEquals(1, off.getTestsSucceededCount(), () -> off.getFailures().toString());
     }
 
     @Test
@@ -193,6 +203,27 @@ class CamelSanitizerExtensionTest {
         @RepeatedTest(2)
         void breaksTheRuleEachTime() {
             template.send("direct:broken", e -> e.getMessage().setBody("x"));
+        }
+    }
+
+    @CamelSanitizer
+    static class WatchWindowsByDefault extends ContextTestSupport {
+        @Test
+        void watchesAt1In100Points() {
+            // unless camel.sanitizer.overlapSampling is set for the run
+            assertEquals(Integer.getInteger("camel.sanitizer.overlapSampling", 100),
+                    Sanitizer.get(context).getOverlaps().getSampling());
+        }
+    }
+
+    @CamelSanitizer(overlapSampling = 0)
+    static class WatchWindowsOff extends ContextTestSupport {
+        @Test
+        void watchesNothing() {
+            assertNotNull(Sanitizer.get(context));
+            assertNull(Sanitizer.get(context).getOverlaps());
+            assertTrue(context.getCamelContextExtension().getStepListeners().stream()
+                    .noneMatch(SanitizerOverlapListener.class::isInstance));
         }
     }
 

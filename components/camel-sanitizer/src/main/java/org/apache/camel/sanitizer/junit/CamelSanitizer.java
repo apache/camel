@@ -39,6 +39,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
  *
  * A test that breaks a rule on purpose says so with {@link ExpectSanitizerViolation}. See
  * {@link CamelSanitizerExtension} for how a violation is charged to a test.
+ * <p/>
+ * In a test, rule R3 opens a short watch window at 1 in 100 points where the routing engine uses an exchange, and
+ * pauses the thread in it. A test class with timing that the pauses would break turns them off for itself:
+ *
+ * <pre>
+ * &#64;CamelSanitizer(overlapSampling = 0)
+ * class ThrottlerRouteTest extends CamelTestSupport {
+ *     ...
+ * }
+ * </pre>
  *
  * @since 4.24
  */
@@ -48,4 +58,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Target({ ElementType.TYPE })
 @ExtendWith(CamelSanitizerExtension.class)
 public @interface CamelSanitizer {
+
+    /**
+     * The watch windows of rule R3 in the CamelContexts of this test class: one is opened at every Nth point where the
+     * routing engine uses an exchange, and its thread pauses in it ({@code camel.sanitizer.overlapWindow}). {@code 0}
+     * turns them off, such as for a class with a short timeout or a throttler that the pauses would break. The default,
+     * {@code -1}, is {@code camel.sanitizer.overlapSampling} when it is set, else {@code 100}. A value set here wins
+     * over {@code camel.sanitizer.overlapSampling}.
+     */
+    int overlapSampling() default -1;
 }

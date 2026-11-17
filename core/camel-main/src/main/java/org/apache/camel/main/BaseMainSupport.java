@@ -2886,6 +2886,12 @@ public abstract class BaseMainSupport extends BaseService {
             pc.addOverrideProperty(PREFIX_SANITIZER + "checks", config.getChecks());
         }
         pc.addOverrideProperty(PREFIX_SANITIZER + "stackDepth", Integer.toString(config.getStackDepth()));
+        if (config.getOverlapSampling() != null) {
+            pc.addOverrideProperty(PREFIX_SANITIZER + "overlapSampling", config.getOverlapSampling().toString());
+        }
+        if (config.getOverlapWindow() != null) {
+            pc.addOverrideProperty(PREFIX_SANITIZER + "overlapWindow", config.getOverlapWindow());
+        }
         if (config.getPendingTimeout() != null) {
             pc.addOverrideProperty(PREFIX_SANITIZER + "pendingTimeout", config.getPendingTimeout());
         }

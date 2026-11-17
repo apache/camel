@@ -19,6 +19,7 @@ package org.apache.camel.sanitizer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,6 +31,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -253,6 +255,72 @@ final class BrokenUserCode {
                 callback.done(false);
             });
             return false;
+        }
+    }
+
+    /**
+     * Rule R3, the overlaps: sends the exchange itself, not a copy, to another route on a thread of its pool (a wire
+     * tap by hand), and goes on. The route and the other route then use the same exchange at the same time. The
+     * callback is called once and with the value process returns, so rules R1 and the contract of R3 have nothing to
+     * report.
+     */
+    static final class SendsTheExchangeAside extends AsyncProcessorSupport {
+
+        final CountDownLatch asideDone = new CountDownLatch(1);
+        private final ExecutorService pool;
+        private final ProducerTemplate template;
+        private final String uri;
+
+        SendsTheExchangeAside(ExecutorService pool, ProducerTemplate template, String uri) {
+            this.pool = pool;
+            this.template = template;
+            this.uri = uri;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            pool.execute(() -> {
+                try {
+                    template.send(uri, exchange);
+                } finally {
+                    asideDone.countDown();
+                }
+            });
+            callback.done(true);
+            return true;
+        }
+    }
+
+    /**
+     * Correct, as the caller of a circuit breaker: runs the exchange through another route on a thread of its pool, and
+     * waits for that task before it calls its callback. The caller only waits meanwhile, so the exchange is used by one
+     * thread at a time.
+     */
+    static final class WaitsForItsTask extends AsyncProcessorSupport {
+
+        private final ExecutorService pool;
+        private final ProducerTemplate template;
+        private final String uri;
+
+        WaitsForItsTask(ExecutorService pool, ProducerTemplate template, String uri) {
+            this.pool = pool;
+            this.template = template;
+            this.uri = uri;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            Future<?> task = pool.submit(() -> template.send(uri, exchange));
+            try {
+                task.get(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                exchange.setException(e);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
         }
     }
 
