@@ -17,6 +17,7 @@
 package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
@@ -25,11 +26,19 @@ import io.spiffe.workloadapi.WorkloadApiClient;
 import io.spiffe.workloadapi.X509Context;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 public class SpiffeProducer extends DefaultProducer {
     private final SpiffeId localSpiffeId;
+
+    /** Several producers of one endpoint register one check each; the id names the endpoint and numbers them. */
+    private static final AtomicInteger HEALTH_CHECK_IDS = new AtomicInteger();
+    private WritableHealthCheckRepository healthCheckRepository;
+    private SpiffeProducerHealthCheck producerHealthCheck;
+    private WorkloadApiClient healthClient;
 
     public SpiffeProducer(final SpiffeEndpoint endpoint) {
         super(endpoint);
@@ -39,6 +48,61 @@ public class SpiffeProducer extends DefaultProducer {
     @Override
     public SpiffeEndpoint getEndpoint() {
         return (SpiffeEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        SpiffeConfiguration configuration = getEndpoint().getConfiguration();
+        if (configuration.getWorkloadApiClient() != null) {
+            // A supplied client need not use the configured/default socket, and has no watcher unsubscribe API.
+            return;
+        }
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new SpiffeProducerHealthCheck(
+                    getEndpoint().getId() + "-" + HEALTH_CHECK_IDS.incrementAndGet(), configuration.getOperation(),
+                    configuration.getHealthCheckExpiryThreshold(), localSpiffeId);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+            if (healthCheckRepository.isEnabled() && producerHealthCheck.isEnabled()) {
+                try {
+                    // A separate SDK-managed client makes the subscription cancellable on producer stop, even
+                    // when the endpoint remains cached or has other producers. No client is created by health calls.
+                    healthClient = SpiffeEndpoint.createWorkloadApiClient(configuration.getSpiffeSocketPath());
+                    producerHealthCheck.observe(healthClient);
+                } catch (Exception e) {
+                    producerHealthCheck.unavailable();
+                    if (healthClient != null) {
+                        healthClient.close();
+                        healthClient = null;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            try {
+                if (producerHealthCheck != null) {
+                    producerHealthCheck.close();
+                    healthCheckRepository.removeHealthCheck(producerHealthCheck);
+                    producerHealthCheck = null;
+                }
+            } finally {
+                // a repository that throws must not keep the observer client open
+                WorkloadApiClient client = healthClient;
+                healthClient = null;
+                if (client != null) {
+                    client.close();
+                }
+            }
+        } finally {
+            super.doStop();
+        }
     }
 
     @Override

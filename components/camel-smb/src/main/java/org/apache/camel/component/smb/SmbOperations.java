@@ -281,7 +281,8 @@ public class SmbOperations implements SmbFileOperations {
             files.mkdirs(share, normalize(directory));
         } catch (SMBRuntimeException smbre) {
             safeDisconnect(smbre);
-            throw smbre;
+            // the consumer starts when the starting directory cannot be created, and tries again on each poll
+            throw new GenericFileOperationFailedException(smbre.getMessage(), smbre);
         }
         return true;
     }

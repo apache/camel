@@ -119,7 +119,7 @@
         <clickhouse-client-version>0.11.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <citrus-version>5.1.0</citrus-version>
+        <citrus-version>5.2.0</citrus-version>
         <classgraph-version>4.8.199</classgraph-version>
         <cloudant-version>0.10.22</cloudant-version>
         <com-ibm-mq-jakarta-client-version>10.0.1.0</com-ibm-mq-jakarta-client-version>
@@ -546,7 +546,7 @@
         <tika-version>4.1.0</tika-version>
         <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-servlet-version>2.3.27.Final</undertow-servlet-version>
+        <undertow-ee-version>2.0.3.Final</undertow-ee-version>
         <undertow-version>2.4.4.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
@@ -4135,27 +4135,6 @@
                             <groupId>ant-contrib</groupId>
                             <artifactId>ant-contrib</artifactId>
                             <version>1.0b3</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-trax</artifactId>
-                            <version>1.8.0</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-nodeps</artifactId>
-                            <version>1.8.1</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.openjpa</groupId>
-                            <artifactId>openjpa-persistence-jdbc</artifactId>
-                            <version>${openjpa-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>ant</groupId>

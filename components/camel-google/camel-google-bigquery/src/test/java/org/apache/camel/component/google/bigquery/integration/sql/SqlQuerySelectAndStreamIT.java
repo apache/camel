@@ -29,7 +29,6 @@ import org.apache.camel.component.google.bigquery.integration.BigQueryITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
@@ -38,8 +37,6 @@ import static org.assertj.core.api.InstanceOfAssertFactories.iterator;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SqlQuerySelectAndStreamIT extends BigQueryITSupport {
 

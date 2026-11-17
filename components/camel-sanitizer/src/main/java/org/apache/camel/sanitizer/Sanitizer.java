@@ -118,12 +118,14 @@ public final class Sanitizer {
     private final boolean callbacks;
     // the commits of consumers followed for rule R2 (null when it is off)
     private final Commits commits;
+    // whether rule R3 is checked (the value process returns and the value of its callback)
+    private final boolean threads;
     // the innermost step whose process runs on this thread, for the reports of R2 (only when R2 is on)
     private final ThreadLocal<SanitizerStepListener.StepCall> currentStep;
     private final AtomicBoolean droppedLogged = new AtomicBoolean();
 
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session) {
-        this(camelContext, stackDepth, session, true, false, 0, null);
+        this(camelContext, stackDepth, session, true, false, false, 0, null);
     }
 
     /**
@@ -133,14 +135,14 @@ public final class Sanitizer {
      *                       call is reported as still pending; 0 for never
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, long pendingTimeout) {
-        this(camelContext, stackDepth, session, true, false, pendingTimeout, null);
+        this(camelContext, stackDepth, session, true, false, false, pendingTimeout, null);
     }
 
     /**
      * Rule R1 only, with this table of the pending calls.
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, PendingCalls pending) {
-        this(camelContext, stackDepth, session, true, false, 0, pending);
+        this(camelContext, stackDepth, session, true, false, false, 0, pending);
     }
 
     /**
@@ -149,7 +151,7 @@ public final class Sanitizer {
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
               boolean commits) {
-        this(camelContext, stackDepth, session, callbacks, commits, 0, null);
+        this(camelContext, stackDepth, session, callbacks, commits, false, 0, null);
     }
 
     /**
@@ -161,15 +163,28 @@ public final class Sanitizer {
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
               boolean commits, long pendingTimeout) {
-        this(camelContext, stackDepth, session, callbacks, commits, pendingTimeout, null);
+        this(camelContext, stackDepth, session, callbacks, commits, false, pendingTimeout, null);
+    }
+
+    /**
+     * @param callbacks      whether rule R1 is checked
+     * @param commits        whether rule R2 is checked
+     * @param threads        whether rule R3 is checked
+     * @param pendingTimeout after how many milliseconds without anything happening in an exchange its innermost pending
+     *                       call is reported as still pending; 0 for never. Only with R1
+     */
+    Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
+              boolean commits, boolean threads, long pendingTimeout) {
+        this(camelContext, stackDepth, session, callbacks, commits, threads, pendingTimeout, null);
     }
 
     private Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
-                      boolean commits, long pendingTimeout, PendingCalls pending) {
+                      boolean commits, boolean threads, long pendingTimeout, PendingCalls pending) {
         this.camelContext = camelContext;
         this.stackDepth = stackDepth;
         this.session = session;
         this.callbacks = callbacks;
+        this.threads = threads;
         this.commits = commits ? new Commits() : null;
         this.currentStep = commits ? new ThreadLocal<>() : null;
         if (pending != null) {
@@ -229,6 +244,30 @@ public final class Sanitizer {
      */
     boolean isCheckingCallbacks() {
         return callbacks;
+    }
+
+    /**
+     * Whether rule R3 (the value process returns and the value of its callback) is checked.
+     */
+    boolean isCheckingThreads() {
+        return threads;
+    }
+
+    /**
+     * The checks that run, as in camel.sanitizer.checks: callback (R1), commit (R2) and threads (R3).
+     */
+    List<String> getChecks() {
+        List<String> checks = new ArrayList<>(3);
+        if (callbacks) {
+            checks.add(SanitizerContextServicePlugin.CHECK_CALLBACK);
+        }
+        if (commits != null) {
+            checks.add(SanitizerContextServicePlugin.CHECK_COMMIT);
+        }
+        if (threads) {
+            checks.add(SanitizerContextServicePlugin.CHECK_THREADS);
+        }
+        return checks;
     }
 
     /**
@@ -312,6 +351,7 @@ public final class Sanitizer {
     private static boolean isOwnFrame(String className) {
         return className.equals(Sanitizer.class.getName())
                 || className.startsWith(SanitizerStepListener.class.getName())
+                || className.startsWith(SanitizerDoneSyncListener.class.getName())
                 || className.startsWith(SanitizerOnCompletionListener.class.getName())
                 || className.startsWith(Commits.class.getName())
                 || className.equals(OnCompletionListenerHelper.class.getName())
@@ -389,7 +429,9 @@ public final class Sanitizer {
         sb.append("Exchange sanitizer: ").append(violation.getTitle()).append(" (").append(violation.getRule()).append(")\n");
         appendWhere(sb, exchangeId, routeId, stepId, processor);
         sb.append(details);
-        sb.append("  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
+        sb.append("R3".equals(violation.getRule())
+                ? "  process(exchange, callback) must return the value its callback is called with (see AsyncProcessor).\n"
+                : "  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
                   + " (see AsyncProcessor).\n");
         sb.append("  Usual fix: ").append(violation.getFix()).append('.');
         return new SanitizerViolation(

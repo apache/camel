@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.exception.ConflictException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
@@ -165,8 +166,9 @@ public class FlociAzContainer extends GenericContainer<FlociAzContainer> {
             LOG.debug("Removing the container {} that Floci AZ started", Arrays.toString(container.getNames()));
             try {
                 client.removeContainerCmd(container.getId()).withForce(true).withRemoveVolumes(true).exec();
-            } catch (NotFoundException e) {
-                LOG.debug("The container {} was already removed", container.getId());
+            } catch (NotFoundException | ConflictException e) {
+                // another stop, such as the one of a shutdown hook, removed it or is removing it
+                LOG.debug("The container {} was already removed, or is being removed", container.getId());
             }
         }
     }

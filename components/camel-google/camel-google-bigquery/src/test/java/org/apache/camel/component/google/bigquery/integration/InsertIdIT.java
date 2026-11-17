@@ -31,10 +31,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+// Floci GCP inserts every row of tabledata.insertAll: it does not drop the ones of an insertId already seen, as BigQuery
+// does on a best-effort basis
+@EnabledIfSystemProperty(named = "google.instance.type", matches = "remote",
+                         disabledReason = "Floci GCP does not de-duplicate the rows of tabledata.insertAll by insertId")
 public class InsertIdIT extends BigQueryITSupport {
     private static final String TABLE_ID = "insertId";
 

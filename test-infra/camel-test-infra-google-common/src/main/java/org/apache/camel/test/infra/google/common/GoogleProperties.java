@@ -22,6 +22,10 @@ public final class GoogleProperties {
      * The image of Floci GCP, which runs the local Google Cloud services
      */
     public static final String GOOGLE_CONTAINER = "google.container";
+    /**
+     * The image of floci-duck, the SQL engine that Floci GCP starts for the queries of BigQuery
+     */
+    public static final String BIGQUERY_ENGINE_CONTAINER = "google.bigquery.engine.container";
 
     private GoogleProperties() {
 

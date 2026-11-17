@@ -234,6 +234,78 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
+         * The WS-Addressing Action header of a SOAP fault that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param faultAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder faultAction(java.net.URI faultAction) {
+            doSetProperty("faultAction", faultAction);
+            return this;
+        }
+        /**
+         * The WS-Addressing Action header of a SOAP fault that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option will be converted to a <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param faultAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder faultAction(String faultAction) {
+            doSetProperty("faultAction", faultAction);
+            return this;
+        }
+        /**
+         * The WS-Addressing Action header of the response that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder outputAction(java.net.URI outputAction) {
+            doSetProperty("outputAction", outputAction);
+            return this;
+        }
+        /**
+         * The WS-Addressing Action header of the response that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option will be converted to a <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder outputAction(String outputAction) {
+            doSetProperty("outputAction", outputAction);
+            return this;
+        }
+        /**
          * To use a custom org.apache.camel.support.jsse.SSLContextParameters
          * for the HTTPS requests that the producer sends. Only applied to a
          * message sender of the WebServiceTemplate whose class is exactly
@@ -604,42 +676,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WS-Addressing Action header of a SOAP fault that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param faultAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder faultAction(java.net.URI faultAction) {
-            doSetProperty("faultAction", faultAction);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of a SOAP fault that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param faultAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder faultAction(String faultAction) {
-            doSetProperty("faultAction", faultAction);
-            return this;
-        }
-        /**
          * The address of the WS-Addressing FaultTo header of the request that
          * the producer sends. Only used when the wsAddressingAction option or
          * the CamelSpringWebserviceAddressingAction header is set. The
@@ -749,42 +785,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(String messageSender) {
             doSetProperty("messageSender", messageSender);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of the response that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder outputAction(java.net.URI outputAction) {
-            doSetProperty("outputAction", outputAction);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of the response that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder outputAction(String outputAction) {
-            doSetProperty("outputAction", outputAction);
             return this;
         }
         /**
