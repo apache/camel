@@ -52,6 +52,9 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     // Last issue that was processed by the integration
     private Issue latestIssue;
+    // Whether the latest issue was looked up since the consumer started: until then no issue is routed, as all issues
+    // that exist when the consumer starts are older than the new ones
+    private volatile boolean latestIssueLookedUp;
     // timezone of the current user authenticated
     private DateTimeZone userTimeZone;
 
@@ -63,9 +66,13 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        latestIssue = findLatestIssue();
-        if (latestIssue != null) {
-            LOG.debug("Init: Latest issue: {}", latestIssue.getKey());
+        latestIssue = null;
+        latestIssueLookedUp = false;
+        try {
+            lookUpLatestIssue();
+        } catch (Exception e) {
+            // without the latest issue every existing issue would be taken as new: look it up again at the next poll
+            LOG.warn("Cannot find the latest issue at startup (will try again at the next poll): {}", e.getMessage(), e);
         }
 
         userTimeZone = getUserTimeZone();
@@ -101,20 +108,29 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
      * @return latest {@link Issue} or null
      */
     private Issue findLatestIssue() {
-        try {
-            // get the issues, ordered so that the latest one is the first one returned by the query
-            Queue<Issue> issues = getIssues(getEndpoint().getJql() + " ORDER BY created DESC", 1);
-            if (!issues.isEmpty()) {
-                return issues.peek();
-            }
-        } catch (Exception e) {
-            // ignore
+        // get the issues, ordered so that the latest one is the first one returned by the query
+        Queue<Issue> issues = getIssues(getEndpoint().getJql() + " ORDER BY created DESC", 1);
+        if (!issues.isEmpty()) {
+            return issues.peek();
         }
         // in case there aren't any issues...
         return null;
     }
 
+    private void lookUpLatestIssue() {
+        latestIssue = findLatestIssue();
+        latestIssueLookedUp = true;
+        if (latestIssue != null) {
+            LOG.debug("Init: Latest issue: {}", latestIssue.getKey());
+        }
+    }
+
     protected int doPoll() throws Exception {
+        if (!latestIssueLookedUp) {
+            // the lookup failed at startup: a failure now fails the poll, and it is tried again at the next poll
+            lookUpLatestIssue();
+            return 0;
+        }
         // it may happen the poll() is called while the route is doing the initial load,
         // this way we need to wait for the latestIssueId being associated to the last indexed issue id
         Queue<Issue> newIssues = getNewIssues();
