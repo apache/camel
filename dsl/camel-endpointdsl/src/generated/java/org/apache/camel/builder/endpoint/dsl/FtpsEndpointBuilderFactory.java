@@ -875,6 +875,8 @@ public interface FtpsEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -893,6 +895,8 @@ public interface FtpsEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -950,7 +954,10 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom idempotent key. By default the absolute path of the
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
+         * idempotentKey=${file:name}-${file:size}. It is used only with
+         * idempotent=true (noop=true turns it on), or by an idempotent read
+         * lock (readLock=idempotent, idempotent-changed or idempotent-rename)
+         * of the file component.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -966,7 +973,10 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -983,7 +993,10 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.

@@ -46,6 +46,34 @@ the route is not yet stopped when the control bus step returns.
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-main - the server and vault options flagged secret are sensitive keys
+
+The options `camel.server.jwtKeystorePassword`, `camel.management.jwtKeystorePassword`,
+`camel.vault.azure.eventhubConnectionString`, `camel.vault.azure.tenantId`, `camel.vault.gcp.serviceAccountKey`,
+`camel.vault.ibm.eventStreamUsername` and `camel.vault.ibm.eventStreamPassword` are flagged secret, and are now also
+sensitive keys, like the other secret options. The Camel Main auto-configuration summary shows their value as `xxxxxx`.
+These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
+`serviceAccountKey`, are not affected.
+
+The `camel.security.secretPolicy` check now also reports these options when they are configured as plain text,
+including a value set through an environment variable: a warning by default, and the startup fails with
+`camel.main.profile=prod`. Configure them with a property placeholder or a vault reference instead.
+A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
+behind a property placeholder too.
+
+=== camel-main - more options are reported by the insecure:dev security policy
+
+These camel-main options are flagged `insecure:dev`, and the `camel.security.insecureDevPolicy` check now reports them
+when they are set to `true`: a warning by default, and the startup fails with `camel.main.profile=prod`.
+
+* `camel.management.mcpEnabled`
+* `camel.management.openapiUiEnabled`
+* `camel.server.jwtAllowMissingIssuerAndAudience`
+* `camel.management.jwtAllowMissingIssuerAndAudience`
+
+To keep one of them enabled in production, set `camel.security.insecureDevPolicy=allow`, or add the key to
+`camel.security.allowedProperties`.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
@@ -84,6 +112,16 @@ keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `
 `getFinallyClause()` and `getOutputsWithoutCatches()` are derived from the outputs on each call: a clause removed from
 the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
 no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
+
+=== camel-core-model - EIP options given an expression in the Java DSL keep its language
+
+In the Java DSL, `completionSize`, `completionTimeout` and `completionPredicate` of the Aggregate EIP, and `handled`,
+`continued` and `retryWhile` of `onException`, keep an expression made with `simple(...)`, `header(...)` or another
+expression builder as its language and text, as the EIPs that take an expression directly do. Each route created from
+a route template now has its own copy of the expression, so a template parameter in it, such as
+`+completionSize(simple("{{size}}"))+`, takes the value of that route: before, every route used the value of the first
+route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
+`CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
 
 === camel-ehcache - shared CacheManager and changed defaults
 
@@ -142,6 +180,23 @@ The entities that an earlier JPA step of the exchange read or saved with that `E
 a failure, as the JPA specification leaves them after a rollback. A route that handles the failure (for example with
 `onException` and `handled(true)`, or `doCatch`) and goes on using them can no longer load their lazy associations,
 and the next JPA step of the exchange uses a new `EntityManager`.
+
+=== camel-jpa - skipLockedEntity skips a locked entity with SKIP LOCKED on Hibernate
+
+With `skipLockedEntity=true`, Hibernate and a pessimistic `lockModeType` (the default `PESSIMISTIC_WRITE`), the consumer
+now locks each entity with a select of the entity with `SKIP LOCKED`, instead of `EntityManager.lock` with the
+`jakarta.persistence.lock.timeout` hint `0` (`NOWAIT`). The select returns no row for an entity that another transaction
+holds, and the consumer skips the entity.
+
+On PostgreSQL, the consumer now skips the locked entity and commits the poll. Before, the failed `NOWAIT` lock aborted the
+transaction, the poll was rolled back, and the entities that it had routed before the locked one were routed again by
+the next poll, for as long as the other transaction held the lock.
+
+On every database, an entity that another consumer has deleted (`consumeDelete=true`, the default) since the poll
+listed it is now skipped.
+Before, its lock failed with an `OptimisticLockException`, and the poll was rolled back.
+
+Other JPA providers, and the optimistic lock modes, are not affected.
 
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
@@ -297,8 +352,27 @@ By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1
 client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
 `+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
 default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
-not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
-Quarkus engines.
+not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected.
+
+Spring Boot applications using `camel-mcp-server-starter` validate the `Origin` header when
+`spring.ai.mcp.server.protocol=STREAMABLE`, `camel.mcp-server.enabled` is not `false`, and Camel's Streamable HTTP
+transport is selected. `camel.mcp-server.enabled` defaults to `true`. By default, Camel's transport is selected when
+`camel.mcp-server.tags` is set. Set `camel.mcp-server.transport-enabled=true` to select Camel's transport without
+tags, or set it to `false` to keep Spring AI's transport even when tags are set. When Spring AI's transport is kept,
+Camel's `Origin` validation is not installed. The check covers every request (`POST`, the SSE `GET`, and `DELETE`).
+Requests without an `Origin` header are accepted. Requests with an `Origin` header are accepted only when the origin
+matches the allowed list; other origins receive HTTP 403. By default, only loopback origins are allowed. Configure
+`camel.mcp-server.allowed-origins` to allow browser clients from other origins, for example:
+
+[source,properties]
+----
+camel.mcp-server.allowed-origins = https://app.example.com, http://localhost:*
+----
+
+The configured list replaces the loopback default. The allowed-origin entries follow the same rules as on Camel Main:
+the wildcard entry `+*+` and entries not of the form `scheme://host[:port]` fail startup. An application-provided
+Spring AI transport provider must configure its own `Origin` validator. This Spring Boot transport change does not
+affect the Quarkus engine.
 
 
 === camel-oauth - the scp claim is included in scope checks
@@ -413,6 +487,18 @@ the `include` or `antInclude` option.
 
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - ftp and ftps refuse a file or directory name with a carriage return or a line feed
+
+The `ftp` and `ftps` components now refuse a remote file or directory name with a carriage return or a line feed, with
+a `GenericFileOperationFailedException`, before they send any command to the server for it. This applies to the name
+the producer writes (the `CamelFileName` header, `tempFileName`, `doneFileName` and `moveExisting`), to the directories
+it creates or changes to, and to the names the consumer retrieves, deletes, renames or lists.
+
+The FTP control connection sends one command per line, so such a name cannot be sent as one command. Before, the server
+got the name cut at the line break: the operation failed or acted on another file, and the replies of the later
+commands on that connection could get out of step. Remove or replace these characters in the name before the producer.
+The `sftp` component is not affected. See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-ftp - a directory listing the server refuses fails the poll
 
 The `ftp` and `ftps` consumers now fail the poll when the server refuses the listing of a directory, for example the
@@ -421,6 +507,23 @@ The `ftp` and `ftps` consumers now fail the poll when the server refuses the lis
 Before, the refused listing was taken as an empty directory: the polls found no files and logged nothing. The replies
 450 and 550 (a directory that is missing or empty) still give an empty listing. If such a consumer now fails, set
 `passiveMode=true`. See the xref:components::ftp-component.adoc[FTP component].
+
+=== camel-ftp - sftp sends the password once per connection, and does not retry a rejected login
+
+The `sftp` component now gives the password to the server once per connection, and no longer connects again when the
+server rejected the login: `maximumReconnectAttempts` applies to the other connection failures only. Before, a wrong
+password was sent up to 6 times per connection (the `MaxAuthTries` of JSch), on up to `maximumReconnectAttempts` (3)
+connections: 18 times per poll of the consumer, and 18 more when the consumer started with `autoCreate=true`, which is
+enough to lock the account on a server with a lockout policy. The consumer now tries again on its next poll, and the
+producer on its next message. When the server asks for the password again on the same connection, the connection
+ends, with the cause `Auth fail for user '<username>': the server did not accept the password`.
+
+The WARN that a consumer of the `ftp`, `ftps`, `sftp` and `mina-sftp` components logs when it cannot connect,
+`Cannot connect/login to: ... Will skip this poll.`, now gives the reason before `Will skip this poll.`, such as
+`due to: Auth fail for methods 'publickey,password'`, on one line. When the consumer connects but cannot create its
+starting directory (`autoCreate=true`), it now logs
+`Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.` instead.
+See the xref:components::sftp-component.adoc[SFTP component].
 
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
@@ -477,6 +580,23 @@ close the JMS consumer and session. Before, the body was read when the exchange 
 closed, so the body of an ActiveMQ Artemis large message failed with `AMQ219023`. A message whose body cannot be read
 (such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and the message is
 rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged.
+
+=== camel-jms - a topic consumer with several concurrent consumers and no shared subscription logs a WARN
+
+A consumer on a topic with `concurrentConsumers` or `maxConcurrentConsumers` greater than 1 and without
+`subscriptionShared=true` now logs a WARN when it starts. Each of its consumers has its own subscription, so every
+message is processed once per consumer; this is unchanged. This also applies when the option is set on the component
+and the route consumes from a topic, and to camel-activemq, camel-activemq6 and camel-amqp. To process each message
+once, set `subscriptionShared=true` with a `subscriptionName`, or use a single consumer on the topic.
+
+=== camel-sjms, camel-sjms2 - pollEnrich and ConsumerTemplate read the message before they close the session
+
+`pollEnrich` and a `ConsumerTemplate` on an `sjms` or `sjms2` endpoint now read the body and the headers of the message
+before they commit the session (or acknowledge the message) and close the JMS consumer, session and connection. Before,
+the body was read when the exchange first used it, after the connection was closed, so the body of an ActiveMQ Artemis
+large message failed with `AMQ219023`. A message whose body cannot be read (such as an `ObjectMessage` while
+`objectMessageEnabled` is `false`) now fails the receive itself, and the message is rolled back with `transacted=true`,
+or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged, and lost.
 
 === camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
 
@@ -562,6 +682,12 @@ is now sent with the first request; before, the request failed with `IllegalStat
 `authMethod=NTLM`, on the endpoint or in the `httpConfiguration` of the component, now authenticates with NTLM also
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
+
+=== camel-mdc - camel.routeId is the route being run
+
+The `camel.routeId` MDC value is now the id of the route that runs the step, as with the deprecated
+`camel.main.useMdcLogging`. Before, it was the id of the route that created the exchange, so the log lines of a route
+called with `direct:` (or another route-to-route endpoint) showed the id of the calling route.
 
 === Java
 
@@ -1377,6 +1503,19 @@ consumer cache of a consumer template evicts the polling consumer (see `maximumC
 queue is still returned. A polling consumer that was never started still waits for a message, as before. A caller that
 loops on `receive()` should stop on a `null` result.
 
+=== camel-main - OS environment variables can have underscores between the words of an option
+
+An OS environment variable for a camel-main option can now have underscores between the words of the option name. For
+example, `CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY` and `CAMEL_VAULT_GCP_SERVICEACCOUNTKEY` both set the
+option `camel.vault.gcp.serviceAccountKey`, and `CAMEL_MAIN_SHUTDOWN_TIMEOUT` sets `camel.main.shutdownTimeout`. This is
+how the `CAMEL_COMPONENT_*` variables already work. The variable becomes a key in lower case, such as
+`camel.vault.gcp.serviceaccountkey`, which sets the option because option names are matched ignoring case.
+
+Before, each underscore was turned into a dot. The variables that the vault components document, such as
+`CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY`, `CAMEL_VAULT_AWS_ACCESS_KEY` or `CAMEL_VAULT_AZURE_TENANT_ID`, failed the startup
+of a Camel Main application with `Cannot find getter method`. They now configure the matching `camel.vault.*` option.
+A variable that matches no camel-main option keeps the old mapping.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
@@ -1801,6 +1940,26 @@ section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
+=== camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead` or `moveAfterRead`, the `aws2-s3` and `azure-storage-blob` consumers now delete or move the
+object they consumed, in the bucket or container of the endpoint. Before, they took the key and the bucket from the
+`CamelAwsS3Key` and `CamelAwsS3BucketName` headers, and the name of the blob from the `CamelAzureStorageBlobBlobName`
+header, as the route left them. A route that set these headers, for example to write a copy of the object under
+another name, deleted or moved that copy, and the consumed object was consumed again by the next poll. A route that
+removed them deleted nothing.
+
+The `aws2-sqs` consumer now deletes the message with the receipt handle it received it with. Before, it took the
+`CamelAwsSqsReceiptHandle` header as the route left it, so a route that removed the headers or replaced the message
+did not delete it, and the message was received again after its visibility timeout.
+
+A failure of the `aws2-s3` consumer to delete or move an object that the AWS client raises itself (for example when S3
+cannot be reached) now goes to the exception handler of the consumer, as a failure that S3 answers does.
+
+The consumers now call `processCommit(Exchange, String)` with the key, the name of the blob or the receipt handle. A
+subclass of `AWS2S3Consumer`, `BlobConsumer` or `Sqs2Consumer` that overrides `processCommit(Exchange)` must override
+the new method instead. `processCommit(Exchange)` is deprecated.
 
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
@@ -5962,6 +6121,18 @@ checked at all. A consumer with `needClientAuth=true` and the option set now acc
 instead of rejecting all of them. Consumers that share a server through `nettySharedHttpServer` never applied the
 option, and are unchanged. The option still verifies the host on a `netty-http` producer.
 
+=== camel-alibaba-eventbridge - endpoint is marked as required instead of region
+
+The `endpoint` option of `alibaba-eventbridge` is now marked as required, and the `region` option no longer is. The
+client of the SDK needs the endpoint, and the region does not determine it.
+
+The endpoint validation of the catalog now reports a URI without `endpoint` as missing a required option. Before, it
+reported a URI without `region`. It also reports a URI without `endpoint` when the `eventBridgeClient` option is set
+or autowired. Such a route still runs, because the producer then uses neither option.
+
+A URI with `region` and without `endpoint` already failed at the first message, unless a client was set or autowired.
+It now fails with `Endpoint is required` instead of `'endpoint' can not be unset` from the SDK.
+
 === camel-alibaba-oss - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
@@ -6003,6 +6174,13 @@ body.
 
 A body that does not convert to bytes, such as a `Map` or a POJO, is no longer encrypted as its `toString()`: it now
 fails with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
+
+=== camel-alibaba-sms - region is no longer marked as required
+
+The `region` option of `alibaba-sms` is no longer marked as required. To create the client, the Camel endpoint needs
+the `region` or the `endpoint` option. It needs neither when the `smsClient` option is set or autowired. So the
+endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
+of the component at runtime does not change.
 
 === camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
 
@@ -6051,6 +6229,12 @@ consumed earlier in the route. They are still set as exchange properties too, as
 which receives the messages of a queue, does not use the option. A producer with `operation=receiveMessage` still
 fails, now with a message that says so. Remove `operation=receiveMessage` from consumer endpoints, which tooling that
 validates endpoint options now reports.
+
+=== camel-alibaba-mns - MNSEndpoint.initClient returns the client
+
+The public method `MNSEndpoint.initClient()` now returns the `MNSClient` that the producer and the consumer send their
+requests with, instead of `void`. A call that ignores the result compiles as before, but code compiled against an
+earlier version must be recompiled, and a subclass that overrides `initClient()` must return the client.
 
 === camel-minio - a listed object that cannot be got is skipped
 
@@ -6459,6 +6643,23 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 `WARN` with the stack trace, at every poll that lists the object). Before, the poll failed, and as every poll lists the
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
+
+=== camel-google-storage, camel-minio, camel-alibaba-mns - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead` or `moveAfterRead`, the `google-storage` and `minio` consumers now delete or move the object
+they consumed, in the bucket of the endpoint. Before, they took the name and the bucket of the object from the
+`CamelGoogleCloudStorageObjectName` and `CamelGoogleCloudStorageBucketName` headers, or from the `CamelMinioObjectName`
+and `CamelMinioBucketName` headers, as the route left them. A route that set the object name header, for example to
+write a copy of the object under another name, deleted or moved that copy, and the consumed object was consumed again
+by the next poll. A route that removed these headers deleted nothing.
+
+The `alibaba-mns` consumer now deletes the message with the receipt handle it received it with. Before, it took the
+`CamelAlibabaMnsReceiptHandle` header as the route left it, so a route that removed the headers or replaced the message
+did not delete it, and the message was received again once it was visible again.
+
+The consumers now call `processCommit(Exchange, String)` with the name of the object or the receipt handle. A subclass
+of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
+the new method instead. `processCommit(Exchange)` is deprecated.
 
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
@@ -7518,6 +7719,16 @@ conversion error. Previously it gave an empty SOAP body. A reply body that is an
 The `spring-ws` producer now sends a `File` body, the file of a `file` or `ftp` consumer, and an `InputStream` body
 (also when stream caching is off) as XML. Previously these failed with an `InvalidPayloadException`.
 
+=== camel-spring-ws - outputAction and faultAction are consumer options
+
+The `outputAction` and `faultAction` options of the `spring-ws` endpoint now have the label `consumer` instead of
+`producer`, as only the consumer uses them. In the Endpoint DSL, both methods moved from
+`SpringWebserviceEndpointProducerBuilder` to `SpringWebserviceEndpointConsumerBuilder` and return the consumer builder.
+A call of one of them on the producer builder no longer compiles, and neither does
+`to(springWs(...).outputAction(...))`. Code compiled against an earlier version that calls one of them must be
+recompiled. Remove the two options from producer endpoints: they had no effect there, and the endpoint validation of the
+catalog now reports them in producer-only mode. The behavior of the component at runtime does not change.
+
 === camel-ignite - cache PUT of a Map, the existing query results, RUN bodies and missing operations
 
 With `fireExistingQueryResults=true`, the `ignite-cache` consumer now sends each entry that the initial query finds
@@ -8412,6 +8623,13 @@ The asynchronous sends of the `ProducerTemplate` now fire one `ExchangeSendingEv
 send; before, each event was fired twice. Tracing (camel-tracing, camel-telemetry), which builds its spans from these
 events, now sees one sending/sent pair per asynchronous send of the `ProducerTemplate` instead of two.
 
+=== camel-core - an injected producer whose producer calls the callback and then throws
+
+The same now applies to the producers that `@EndpointInject` and `@Produce` inject (`Producer` fields and the
+`@Produce` proxies, made by the `DeferServiceFactory`): when the producer of the endpoint calls the callback and then
+throws, the exception is logged at WARN and no longer set on the exchange, and the callback is called once. Before, the
+exchange failed with that exception after the producer completed it, and the callback was called a second time.
+
 === camel-core - a hook before each step of a route
 
 A new SPI `org.apache.camel.spi.StepHook`, added with `ExtendedCamelContext.addStepHook`, can fail or delay each step of
@@ -9239,6 +9457,14 @@ could not start, such as with Docker down, was gone without a word. Now:
 The output of the service goes to `~/.camel/<pid>-run.log`, instead of a pipe that nobody read. `camel infra stop`
 removes it.
 
+=== camel-launcher - the generate plugin installs on first use
+
+The Camel CLI launcher, as installed by the install script or a package manager such as Homebrew, no longer has the
+generate plugin in it: the plugin and the OpenAPI generator it uses are about 24 MB, a fifth of the download. The first
+`camel generate` downloads the plugin from Maven Central into the local Maven repository, and adds it to the plugin
+configuration, as for `camel edit`. To have it on a machine that is offline later, run `camel generate --help` once
+while it is online.
+
 === camel-jbang - camel run loads one version of each library
 
 `camel run` downloads the JARs of each component when it is first used. It now keeps one version of each library: when
@@ -9368,6 +9594,32 @@ dropped from the consumer header tables of the `hazelcast-map` and `hazelcast-re
 their consumer sets it. Nothing replaces it: the cache the event came from is named by `CamelHazelcastCacheName`, and a
 route that needs to know which kind of cache that is can take it from the endpoint it consumes from.
 
+=== camel-whatsapp - both documented headers are deprecated
+
+`CamelWhatsAppPhoneNumberId` and `CamelWhatsAppRecipientPhoneNumberId` were the only two headers the component
+documented, and it reads neither. A route that sets them gets no error and no effect.
+
+The phone number ID is the path parameter of the endpoint, so set it in the URI:
+
+[source,java]
+----
+from("direct:start")
+    .to("whatsapp:1234567890?authorizationToken=token");
+----
+
+The recipient is the `to` field of the `BaseMessage` the producer converts the body to, since `WhatsAppProducer` sends
+`exchange.getIn().getBody(BaseMessage.class)` as it is:
+
+[source,java]
+----
+TextMessageRequest request = new TextMessageRequest();
+request.setTo("15550001111");
+request.setText(new TextMessage());
+request.getText().setBody("Hello");
+----
+
+Both headers are now deprecated, each with a `deprecationNote` that names the replacement.
+
 === camel-docker - the loggingFilter and followRedirectFilter options are deprecated
 
 Neither option has had any effect since Camel 2.18, when the docker-java 3.x upgrade removed the
@@ -9399,3 +9651,21 @@ ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html?resolv
 endpoint.setJakartaServletWebApplication(
         JakartaServletWebApplication.buildApplication(servletContext));
 ----
+
+=== camel-alibaba-kms - a Map or a POJO in the plaintext header fails, and only generateDataKey reads numberOfBytes
+
+A `Map` or a POJO in the `CamelAlibabaKmsPlaintext` header, or in the exchange property of the same name, now fails
+with an `IllegalArgumentException` instead of being encrypted as its `toString()`. CAMEL-26258 made the same value in
+the message body fail with an `InvalidPayloadException`; the header kept encrypting the text of the object. Marshal
+such a value first, for example with `marshal().json()`, or set the header to the text. Text, bytes, a stream, a file
+and a value whose text is its `toString()`, such as a `UUID`, a `URI` or a `java.time` value, are read as before.
+
+The `CamelAlibabaKmsNumberOfBytes` header and the exchange property of the same name are now read only by
+`generateDataKey`, which is the only operation that sends the value. Before, every exchange resolved them, so a value
+that is not a number failed `encrypt` and `decrypt` too, with a `TypeConversionException` from the conversion of the
+header. Such a value now fails `generateDataKey` alone, with an `IllegalArgumentException` that names the header, and
+an empty value counts as unset.
+
+The `region` option is no longer marked as required in the catalog, since `region` or `endpoint` is required and the
+`kmsClient` option replaces both. The producer still fails with "Region or endpoint is required" when it has to create
+a client and neither is set.

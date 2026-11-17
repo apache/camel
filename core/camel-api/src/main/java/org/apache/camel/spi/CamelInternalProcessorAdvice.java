@@ -21,12 +21,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An advice (before and after) to execute cross-cutting functionality in the Camel routing engine.
- * <p/>
+ * <p>
  * The Camel routing engine will execute the {@link #before(org.apache.camel.Exchange)} and
- * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order.
+ * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order (see
+ * {@code org.apache.camel.impl.engine.CamelInternalProcessor}).
  *
  * @param <T>
- * @see       org.apache.camel.impl.engine.CamelInternalProcessor
  * @since     3.0
  */
 public interface CamelInternalProcessorAdvice<T> {
@@ -36,7 +36,7 @@ public interface CamelInternalProcessorAdvice<T> {
      *
      * @param  exchange  the current exchange
      * @return           any state to keep and provide as data to the {@link #after(org.apache.camel.Exchange, Object)}
-     *                   method, or use <tt>null</tt> for no state.
+     *                   method, or use <code>null</code> for no state.
      * @throws Exception is thrown if error during the call.
      */
     @Nullable

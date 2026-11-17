@@ -45,8 +45,10 @@ public interface KMSEndpointBuilderFactory {
         }
 
         /**
-         * KMS endpoint URL. Carries higher precedence than region based client
-         * initialization.
+         * The endpoint of KMS, which is a host name without http:// or
+         * https://. The producer sends requests to it over HTTPS. If not set,
+         * the region option determines the endpoint, and one of the two is
+         * required. Not used when the kmsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,7 +62,11 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * KMS key id.
+         * The ID, alias or ARN of the KMS key for encrypt and generateDataKey.
+         * The CamelAlibabaKmsKeyId header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option. One of the three is
+         * required for encrypt and generateDataKey.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -74,7 +80,12 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Key spec for generateDataKey.
+         * The key spec of the data key for generateDataKey. The value must be
+         * AES_256 or AES_128. KMS does not use it when the number of bytes is
+         * set as well. The CamelAlibabaKmsKeySpec header replaces this option
+         * for a request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. If none of
+         * the three is set, the producer adds no key spec to the request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -88,7 +99,12 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of bytes for generateDataKey.
+         * The number of bytes of the data key for generateDataKey. The value
+         * must be from 1 to 1024. The CamelAlibabaKmsNumberOfBytes header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option. If none of the three is set, the producer adds no number
+         * of bytes to the request.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -102,7 +118,12 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of bytes for generateDataKey.
+         * The number of bytes of the data key for generateDataKey. The value
+         * must be from 1 to 1024. The CamelAlibabaKmsNumberOfBytes header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option. If none of the three is set, the producer adds no number
+         * of bytes to the request.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -117,11 +138,13 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Alibaba Cloud region.
+         * The region ID of KMS, for example cn-hangzhou. Only used when the
+         * endpoint option is not set, to build the endpoint of KMS. One of the
+         * two is required, unless the kmsClient option is set or autowired,
+         * which uses neither.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param region the value to set
@@ -132,7 +155,10 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Access key for the cloud user.
+         * The AccessKey ID of the AccessKey pair for the requests that the
+         * producer sends to KMS. If not set, the accessKey of the serviceKeys
+         * option is used, and one of the two is required. Not used when the
+         * kmsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -146,7 +172,12 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Ciphertext blob to decrypt.
+         * The ciphertext blob for decrypt, for example from the response to
+         * encrypt or generateDataKey. The CamelAlibabaKmsCiphertextBlob header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option. If none of the three is set, the producer takes the
+         * ciphertext blob from the message body as text.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -160,7 +191,12 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Plaintext to encrypt.
+         * The plaintext for encrypt. The producer encodes it in UTF-8 and sends
+         * it to KMS in Base64. The CamelAlibabaKmsPlaintext header replaces
+         * this option for a request that the producer sends. If that header is
+         * not set, an exchange property of the same name replaces this option.
+         * If none of the three is set, the producer takes the plaintext from
+         * the message body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -174,7 +210,10 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * The AccessKey secret of the AccessKey pair for the requests that the
+         * producer sends to KMS. If not set, the secretKey of the serviceKeys
+         * option is used, and one of the two is required. Not used when the
+         * kmsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -188,7 +227,11 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the kmsClient option is set or autowired.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -203,7 +246,11 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the kmsClient option is set or autowired.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -276,7 +323,11 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing KMS client instance.
+         * To use a custom com.aliyun.kms20160120.Client. The producer sends its
+         * requests with this client, and the region, endpoint, accessKey,
+         * secretKey and serviceKeys options are not used. If no client is set
+         * or autowired, the Camel endpoint creates a client from these options.
+         * It creates this client when the producer processes its first message.
          * 
          * The option is a: <code>com.aliyun.kms20160120.Client</code> type.
          * 
@@ -290,7 +341,11 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing KMS client instance.
+         * To use a custom com.aliyun.kms20160120.Client. The producer sends its
+         * requests with this client, and the region, endpoint, accessKey,
+         * secretKey and serviceKeys options are not used. If no client is set
+         * or autowired, the Camel endpoint creates a client from these options.
+         * It creates this client when the producer processes its first message.
          * 
          * The option will be converted to a
          * <code>com.aliyun.kms20160120.Client</code> type.
@@ -333,7 +388,10 @@ public interface KMSEndpointBuilderFactory {
          * Syntax: <code>alibaba-kms:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaKmsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 3 enums and the value can be one of: encrypt, decrypt,
          * generateDataKey
          * 
@@ -355,7 +413,10 @@ public interface KMSEndpointBuilderFactory {
          * Syntax: <code>alibaba-kms:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaKmsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 3 enums and the value can be one of: encrypt, decrypt,
          * generateDataKey
          * 
@@ -380,7 +441,23 @@ public interface KMSEndpointBuilderFactory {
         public static final KMSHeaderNameBuilder INSTANCE = new KMSHeaderNameBuilder();
 
         /**
-         * KMS key id override.
+         * The operation that the producer performs, which replaces the
+         * operation of the endpoint. If this header is not set, an exchange
+         * property of the same name replaces it.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaKmsOperation}.
+         */
+        public String alibabaKmsOperation() {
+            return "CamelAlibabaKmsOperation";
+        }
+        /**
+         * The ID, alias or ARN of the KMS key for encrypt and generateDataKey.
+         * This header replaces the keyId option. If this header is not set, an
+         * exchange property of the same name replaces the keyId option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -392,7 +469,11 @@ public interface KMSEndpointBuilderFactory {
             return "CamelAlibabaKmsKeyId";
         }
         /**
-         * Plaintext to encrypt.
+         * The plaintext for encrypt. The producer encodes it in UTF-8 and sends
+         * it to KMS in Base64. This header replaces the plaintext option. If
+         * this header is not set, an exchange property of the same name
+         * replaces the plaintext option. A Map or a POJO fails, as it does in
+         * the message body, since Camel reads it only as its toString().
          * 
          * The option is a: {@code String} type.
          * 
@@ -404,7 +485,10 @@ public interface KMSEndpointBuilderFactory {
             return "CamelAlibabaKmsPlaintext";
         }
         /**
-         * Ciphertext blob to decrypt.
+         * The ciphertext blob for decrypt, for example from the response to
+         * encrypt or generateDataKey. This header replaces the ciphertextBlob
+         * option. If this header is not set, an exchange property of the same
+         * name replaces the ciphertextBlob option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -416,7 +500,11 @@ public interface KMSEndpointBuilderFactory {
             return "CamelAlibabaKmsCiphertextBlob";
         }
         /**
-         * Key spec for generateDataKey.
+         * The key spec of the data key for generateDataKey. The value must be
+         * AES_256 or AES_128. KMS does not use it when the number of bytes is
+         * set as well. This header replaces the keySpec option. If this header
+         * is not set, an exchange property of the same name replaces the
+         * keySpec option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -428,7 +516,11 @@ public interface KMSEndpointBuilderFactory {
             return "CamelAlibabaKmsKeySpec";
         }
         /**
-         * Number of bytes for generateDataKey.
+         * The number of bytes of the data key for generateDataKey. The value
+         * must be from 1 to 1024. This header replaces the numberOfBytes
+         * option. If this header is not set, an exchange property of the same
+         * name replaces the numberOfBytes option. Only generateDataKey reads
+         * it, and a value that is not a number fails that operation alone.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -440,7 +532,8 @@ public interface KMSEndpointBuilderFactory {
             return "CamelAlibabaKmsNumberOfBytes";
         }
         /**
-         * Alibaba Cloud request id.
+         * The request ID that KMS returns in the response to the operation. The
+         * producer sets it, unless the exchange fails.
          * 
          * The option is a: {@code String} type.
          * 

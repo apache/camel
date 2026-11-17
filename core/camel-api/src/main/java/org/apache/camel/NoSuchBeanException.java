@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown when a bean cannot be found in the Camel {@link org.apache.camel.spi.Registry} by name or by type.
- * <p/>
+ * <p>
  * Raised by registry lookup methods such as
  * {@link org.apache.camel.CamelContext#getRegistry()}{@code .lookupByName(String)},
  * {@link org.apache.camel.CamelContext#getRegistry()}{@code .lookupByNameAndType(String, Class)}, the bean component,

@@ -25,7 +25,7 @@ import static org.apache.camel.util.URISupport.sanitizeUri;
 /**
  * Thrown when the {@link CamelContext} fails to resolve a URI to an {@link Endpoint}, for example because the scheme is
  * unknown, the component is not on the classpath, or the URI contains invalid parameters.
- * <p/>
+ * <p>
  * The reported URI is sanitized (credentials are masked) before being included in the exception message.
  *
  * @see Endpoint

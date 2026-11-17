@@ -20,11 +20,11 @@ import org.apache.camel.CamelContext;
 
 /**
  * Event handler invoked after the {@link CamelContext} has fully stopped.
- * <p/>
+ * <p>
  * Implementations are registered in the {@link Registry} and discovered by Camel during bootstrap. By the time this
  * callback fires all routes and services have been shut down, making it the place for final cleanup once the context is
  * no longer operational. For the full set of lifecycle callbacks see {@link OnCamelContextEvent}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
  *
  * @see   OnCamelContextEvent

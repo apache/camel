@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
  * Provides a hook for custom {@link org.apache.camel.Processor} or {@link org.apache.camel.Component} instances to
  * respond to completed or failed processing of an {@link Exchange} rather like Spring's
  * {@code org.springframework.transaction.support.TransactionSynchronization}
- * <p/>
+ * <p>
  * <b>The commit of a consumer.</b> A consumer typically adds a synchronization to the exchange before it routes it, to
  * commit or roll back its message when the exchange is done (such as moving or deleting a file). It moves into the unit
  * of work that is created for the exchange. For such a commit the routing engine keeps this contract:

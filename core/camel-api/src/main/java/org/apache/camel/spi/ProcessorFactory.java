@@ -23,16 +23,15 @@ import org.apache.camel.Route;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A factory to create {@link Processor} based on the {@link org.apache.camel.model.ProcessorDefinition definition}.
- * <p/>
+ * A factory to create {@link Processor} based on the {@code ProcessorDefinition}.
+ * <p>
  * This allows you to implement a custom factory in which you can control the creation of the processors. It also allows
- * you to manipulate the {@link org.apache.camel.model.ProcessorDefinition definition}s for example to configure or
- * change options. Its also possible to add new steps in the route by adding outputs to
- * {@link org.apache.camel.model.ProcessorDefinition definition}s.
- * <p/>
+ * you to manipulate the {@code ProcessorDefinition}s for example to configure or change options. It's also possible to
+ * add new steps in the route by adding outputs to {@code ProcessorDefinition}s.
+ * <p>
  * <b>Important:</b> A custom ProcessorFactory should extend the default implementation
- * <tt>org.apache.camel.processor.DefaultProcessorFactory</tt> and in the overridden methods, super should be called to
- * let the default implementation create the processor when custom processors is not created.
+ * <code>org.apache.camel.processor.DefaultProcessorFactory</code> and in the overridden methods, super should be called
+ * to let the default implementation create the processor when custom processors are not created.
  */
 public interface ProcessorFactory {
 
@@ -43,14 +42,14 @@ public interface ProcessorFactory {
 
     /**
      * Creates the child processor.
-     * <p/>
+     * <p>
      * The child processor is an output from the given definition, for example the sub route in a splitter EIP.
      *
      * @param  route      the route context
      * @param  definition the definition which represents the processor
      * @param  mandatory  whether or not the child is mandatory
-     * @return            the created processor, or <tt>null</tt> to let the default implementation in Camel create the
-     *                    processor.
+     * @return            the created processor, or <code>null</code> to let the default implementation in Camel create
+     *                    the processor.
      * @throws Exception  can be thrown if error creating the processor
      */
     @Nullable
@@ -61,8 +60,8 @@ public interface ProcessorFactory {
      *
      * @param  route      the route context
      * @param  definition the definition which represents the processor
-     * @return            the created processor, or <tt>null</tt> to let the default implementation in Camel create the
-     *                    processor.
+     * @return            the created processor, or <code>null</code> to let the default implementation in Camel create
+     *                    the processor.
      * @throws Exception  can be thrown if error creating the processor
      */
     @Nullable
@@ -75,7 +74,7 @@ public interface ProcessorFactory {
      * @param  camelContext   the camel context
      * @param  definitionName the name of the definition that represents the processor
      * @param  args           arguments for creating the processor (optimized to use fixed order of parameters)
-     * @return                the created processor, or <tt>null</tt> if this situation is not yet implemented.
+     * @return                the created processor, or <code>null</code> if this situation is not yet implemented.
      * @throws Exception      can be thrown if error creating the processor
      */
     @Nullable

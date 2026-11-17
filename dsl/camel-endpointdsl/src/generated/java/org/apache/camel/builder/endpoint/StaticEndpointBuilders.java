@@ -313,7 +313,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-eventbridge:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The
+     * CamelAlibabaEventBridgeOperation header replaces this option for a
+     * request that the producer sends. If that header is not set, an exchange
+     * property of the same name replaces this option.
      * There are 1 enums and the value can be one of: putEvents
      * 
      * @param path operation
@@ -333,7 +336,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-eventbridge:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The
+     * CamelAlibabaEventBridgeOperation header replaces this option for a
+     * request that the producer sends. If that header is not set, an exchange
+     * property of the same name replaces this option.
      * There are 1 enums and the value can be one of: putEvents
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -406,7 +412,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-kms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaKmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: encrypt, decrypt,
      * generateDataKey
      * 
@@ -428,7 +437,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-kms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaKmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: encrypt, decrypt,
      * generateDataKey
      * 
@@ -625,7 +637,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 1 enums and the value can be one of: sendSms
      * 
      * @param path operation
@@ -645,7 +660,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 1 enums and the value can be one of: sendSms
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -13420,9 +13438,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 10 enums and the value can be one of: check, batchCheck,
+     * There are 11 enums and the value can be one of: check, batchCheck,
      * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples
+     * writeTuples, deleteTuples, write
      * 
      * @param path operation
      * @return the dsl builder
@@ -13446,9 +13464,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 10 enums and the value can be one of: check, batchCheck,
+     * There are 11 enums and the value can be one of: check, batchCheck,
      * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples
+     * writeTuples, deleteTuples, write
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

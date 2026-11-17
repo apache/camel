@@ -202,6 +202,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
             LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
+        warnIfIdempotentOptionsUnused();
 
         if (!getConfiguration().isUseList() && getFileName() == null) {
             throw new IllegalArgumentException(

@@ -56,12 +56,14 @@ import org.slf4j.LoggerFactory;
                                           @BodyType.When(option = "operation", value = "writeTuples",
                                                          carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "deleteTuples",
-                                                         carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }) },
+                                                         carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "write", carriers = Carrier.MAP) },
                                   description = "batchCheck: the objects to check, as a List or comma-separated text."
                                                 + " writeTuples and deleteTuples: a Map with user, relation and object, a"
                                                 + " ClientTupleKey, or a List of them, used only when none of user,"
-                                                + " relation and object is configured; text fails, unmarshal JSON first. The"
-                                                + " other operations do not read the body"),
+                                                + " relation and object is configured; text fails, unmarshal JSON first."
+                                                + " write: a Map containing writes/deletes collections of Maps with exactly"
+                                                + " user, relation and object entries. Other operations do not read the body"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "check",
@@ -87,8 +89,10 @@ import org.slf4j.LoggerFactory;
                                            @BodyType.When(option = "operation", value = "writeTuples",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "deleteTuples",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "write",
                                                           carriers = Carrier.UNCHANGED) },
-                                   description = "check, writeTuples and deleteTuples keep the body: the verdict is in the"
+                                   description = "check, writeTuples, deleteTuples and write keep the body: the verdict is in the"
                                                  + " CamelOpenFgaAllowed header, the count in CamelOpenFgaWrittenTuples or"
                                                  + " CamelOpenFgaDeletedTuples. batchCheck: the allowed objects of the body;"
                                                  + " the list operations: a List of String identifiers; readTuples and"
@@ -142,6 +146,22 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
      * decision and is a thoroughly misleading thing to debug.
      */
     private void validateOperationOptions() {
+        if (operation == OpenFgaOperation.batchCheck && configuration.getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
+            if (configuration.getMaxBatchSize() < 1 || configuration.getMaxBatchSize() > 50) {
+                throw new IllegalArgumentException("maxBatchSize must be between 1 and 50 for server batch checks");
+            }
+            if (configuration.getMaxParallelRequests() < 1) {
+                throw new IllegalArgumentException("maxParallelRequests must be at least 1 for server batch checks");
+            }
+        }
+        if ((operation == OpenFgaOperation.writeTuples || operation == OpenFgaOperation.write)
+                && configuration.getOnDuplicate() == null) {
+            throw new IllegalArgumentException("onDuplicate must be error or ignore");
+        }
+        if ((operation == OpenFgaOperation.deleteTuples || operation == OpenFgaOperation.write)
+                && configuration.getOnMissing() == null) {
+            throw new IllegalArgumentException("onMissing must be error or ignore");
+        }
         switch (operation) {
             case check, batchCheck -> {
                 require(configuration.getUser(), "user", "names the subject to authorize");
@@ -169,7 +189,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                 require(configuration.getRelation(), "relation", "names the relation to expand");
             }
             default -> {
-                // writeTuples and deleteTuples take their tuples from the message body, falling back to the
+                // writeTuples, deleteTuples and write take their tuples from the message body, falling back to the
                 // user/relation/object triple; readTuples treats user, relation and object as an optional filter and
                 // readChanges needs nothing at all - so none of them has anything that must be configured up front
             }

@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Factory for creating fresh {@link DataFormat} instances on demand, used when a data format requires per-use
  * instantiation rather than sharing a single instance across the route.
- * <p/>
+ * <p>
  * Most data formats are stateless singletons resolved directly from the registry or the META-INF service files. This
  * factory is needed for formats that hold mutable per-invocation state (codec contexts, stream writers, etc.) and must
  * therefore not be reused concurrently. When Camel encounters a {@code DataFormatFactory} in the registry, it calls

@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Utility class for managing the lifecycle of bootstrap-phase {@link PropertyConfigurer} instances generated for
  * {@link Configurer @Configurer(bootstrap = true)} types.
- * <p/>
+ * <p>
  * During {@link org.apache.camel.CamelContext} startup, generated configurers for bootstrap-only types (such as main
  * configuration classes that are only configured once) are held in memory. After the context has finished starting,
  * calling {@link #clearBootstrapConfigurers()} releases those maps to reduce the steady-state memory footprint. Modules

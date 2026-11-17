@@ -28,13 +28,13 @@ import org.jspecify.annotations.Nullable;
  * observes: it must not change the exchanges, the units of work or the lists it is given, and what it throws cannot
  * change the routing. It is meant for development and test tools that check the contract of the commit of a consumer,
  * described on {@link Synchronization}.
- * <p/>
+ * <p>
  * Listeners are installed with
  * {@link org.apache.camel.ExtendedCamelContext#addOnCompletionListener(OnCompletionListener)}. Many can be installed.
  * They are called in the order they were added, and must not depend on that order. Unlike the {@link StepListener},
  * they are read at each event, so a listener added or removed while the routes run is called, or no longer called, from
  * the next event on. With no listener installed, each of these places only checks that the list of listeners is empty.
- * <p/>
+ * <p>
  * <b>Where it is called.</b>
  * <ul>
  * <li>{@link #onUnitOfWork(Exchange, UnitOfWork, List)} when an exchange is given a unit of work (also one it shares
@@ -56,19 +56,19 @@ import org.jspecify.annotations.Nullable;
  * done, or when a list of on completions that was taken out is run).</li>
  * </ul>
  * Exchange created, completed and failed are events of the {@link EventNotifier}, so they are not in this listener.
- * <p/>
+ * <p>
  * <b>Threads.</b> The listeners are called on the thread that makes the change, by many threads at the same time: they
  * must be thread-safe and quick. The order above holds for the events of one thread; events of different threads (such
  * as the parts of a parallel split that share a unit of work) are not ordered with each other. A listener may read the
  * exchanges it is given on that thread. It should not keep the exchanges or the on completions, so these can be
  * released when the exchange is done. The lists it is given are unmodifiable, and valid during the call only.
- * <p/>
+ * <p>
  * An exchange that is created as a copy of another ({@link Exchange#copy()}) starts with the unit of work of that
  * exchange, without {@link #onUnitOfWork(Exchange, UnitOfWork, List)}.
- * <p/>
+ * <p>
  * <b>Failures.</b> What a listener throws cannot change the routing. It is caught and logged at WARN once per listener
  * (then at DEBUG), and the change or the run of the on completion happens as without the listener.
- * <p/>
+ * <p>
  * All methods have an empty default.
  *
  * @since 4.24

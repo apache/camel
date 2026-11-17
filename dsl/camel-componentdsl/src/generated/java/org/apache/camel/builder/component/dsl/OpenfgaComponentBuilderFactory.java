@@ -93,6 +93,28 @@ public interface OpenfgaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaBatchCheckMode&lt;/code&gt; type.
+         * 
+         * Default: client
+         * Group: producer
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+    
         /**
          * Context passed to the CEL expressions of any conditioned relation the
          * check touches, as a map resolved from the registry -
@@ -253,6 +275,47 @@ public interface OpenfgaComponentBuilderFactory {
          */
         default OpenfgaComponentBuilder object(java.lang.String object) {
             doSetProperty("object", object);
+            return this;
+        }
+    
+        
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: producer
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+    
+        
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: producer
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
             return this;
         }
     
@@ -462,9 +525,29 @@ public interface OpenfgaComponentBuilderFactory {
     
         
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+    
+        
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -761,6 +844,7 @@ public interface OpenfgaComponentBuilderFactory {
             switch (name) {
             case "apiUrl": getOrCreateConfiguration((OpenFgaComponent) component).setApiUrl((java.lang.String) value); return true;
             case "authorizationModelId": getOrCreateConfiguration((OpenFgaComponent) component).setAuthorizationModelId((java.lang.String) value); return true;
+            case "batchCheckMode": getOrCreateConfiguration((OpenFgaComponent) component).setBatchCheckMode((org.apache.camel.component.openfga.OpenFgaBatchCheckMode) value); return true;
             case "conditionContext": getOrCreateConfiguration((OpenFgaComponent) component).setConditionContext((java.util.Map) value); return true;
             case "configuration": ((OpenFgaComponent) component).setConfiguration((org.apache.camel.component.openfga.OpenFgaConfiguration) value); return true;
             case "consistency": getOrCreateConfiguration((OpenFgaComponent) component).setConsistency((java.lang.String) value); return true;
@@ -768,6 +852,8 @@ public interface OpenfgaComponentBuilderFactory {
             case "continuationToken": getOrCreateConfiguration((OpenFgaComponent) component).setContinuationToken((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "object": getOrCreateConfiguration((OpenFgaComponent) component).setObject((java.lang.String) value); return true;
+            case "onDuplicate": getOrCreateConfiguration((OpenFgaComponent) component).setOnDuplicate((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
+            case "onMissing": getOrCreateConfiguration((OpenFgaComponent) component).setOnMissing((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
             case "pageSize": getOrCreateConfiguration((OpenFgaComponent) component).setPageSize((java.lang.Integer) value); return true;
             case "relation": getOrCreateConfiguration((OpenFgaComponent) component).setRelation((java.lang.String) value); return true;
             case "relations": getOrCreateConfiguration((OpenFgaComponent) component).setRelations((java.lang.String) value); return true;
@@ -778,6 +864,7 @@ public interface OpenfgaComponentBuilderFactory {
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;
+            case "maxBatchSize": getOrCreateConfiguration((OpenFgaComponent) component).setMaxBatchSize((int) value); return true;
             case "maxParallelRequests": getOrCreateConfiguration((OpenFgaComponent) component).setMaxParallelRequests((int) value); return true;
             case "maxRetries": getOrCreateConfiguration((OpenFgaComponent) component).setMaxRetries((int) value); return true;
             case "openFgaClient": getOrCreateConfiguration((OpenFgaComponent) component).setOpenFgaClient((dev.openfga.sdk.api.client.OpenFgaClient) value); return true;

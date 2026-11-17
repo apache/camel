@@ -88,18 +88,6 @@ public class SpringWebserviceConfiguration {
                             + " headers.")
     private URI wsAddressingAction;
     @UriParam(label = "producer",
-              description = "The WS-Addressing Action header of the response that the consumer returns. Only used when"
-                            + " endpointMapping is a WSACamelEndpointMapping. If not set, the Action header of the request"
-                            + " followed by the outputActionSuffix of the WSACamelEndpointMapping is used, and that suffix is"
-                            + " Response by default. The producer does not use it.")
-    private URI outputAction;
-    @UriParam(label = "producer",
-              description = "The WS-Addressing Action header of a SOAP fault that the consumer returns. Only used when"
-                            + " endpointMapping is a WSACamelEndpointMapping. If not set, the Action header of the request"
-                            + " followed by the faultActionSuffix of the WSACamelEndpointMapping is used, and that suffix is"
-                            + " Response by default. The producer does not use it.")
-    private URI faultAction;
-    @UriParam(label = "producer",
               description = "The address of the WS-Addressing FaultTo header of the request that the producer sends. Only used"
                             + " when the wsAddressingAction option or the CamelSpringWebserviceAddressingAction header is set."
                             + " The CamelSpringWebserviceAddressingFaultTo header replaces this option for a request that the"
@@ -171,6 +159,18 @@ public class SpringWebserviceConfiguration {
                             + " a SoapActionEndpointMapping, maps requests to this bean. When type is beanname, the component"
                             + " sets this option to the CamelEndpointDispatcher bean in the registry whose name is lookupKey.")
     private CamelEndpointDispatcher endpointDispatcher;
+    @UriParam(label = "consumer",
+              description = "The WS-Addressing Action header of the response that the consumer returns. Only used when"
+                            + " endpointMapping is a WSACamelEndpointMapping. If not set, the Action header of the request"
+                            + " followed by the outputActionSuffix of the WSACamelEndpointMapping is used, and that suffix is"
+                            + " Response by default.")
+    private URI outputAction;
+    @UriParam(label = "consumer",
+              description = "The WS-Addressing Action header of a SOAP fault that the consumer returns. Only used when"
+                            + " endpointMapping is a WSACamelEndpointMapping. If not set, the Action header of the request"
+                            + " followed by the faultActionSuffix of the WSACamelEndpointMapping is used, and that suffix is"
+                            + " Response by default.")
+    private URI faultAction;
 
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;

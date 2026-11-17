@@ -22,12 +22,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Strategy for handling exceptions that arise in asynchronous or background processing where a normal exception
  * propagation path does not exist, such as in a {@link org.apache.camel.Consumer}'s polling thread.
- * <p/>
+ * <p>
  * Unlike the route-level {@link ErrorHandler}, which handles exceptions thrown by processors inside a route,
  * {@code ExceptionHandler} is used by infrastructure code (consumers, schedulers, Quartz jobs, background threads) that
  * cannot propagate exceptions through the normal routing chain. The default implementation logs the exception and
  * continues; custom implementations can re-route, alert, or escalate as needed.
- * <p/>
+ * <p>
  * Implementations must <b>not</b> throw exceptions from their {@code handleException} methods, because the handler is
  * typically called from within an existing catch block and a secondary exception would mask the original failure.
  *

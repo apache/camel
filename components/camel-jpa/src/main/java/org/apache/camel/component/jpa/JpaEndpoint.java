@@ -521,7 +521,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To configure whether to use NOWAIT on lock and silently skip the entity.
+     * To configure whether to skip an entity that another transaction has locked, instead of waiting for its lock, so
+     * that several consumers can share a table. With Hibernate and a pessimistic lockModeType, the consumer locks the
+     * entity with SKIP LOCKED, where the database supports it: an entity that another transaction holds, or that is no
+     * longer in the database, is skipped, and the poll goes on, also on PostgreSQL. Otherwise the consumer gives the
+     * lock the timeout 0 (NOWAIT, if the JPA provider applies it), and a lock that fails is handled as one that times
+     * out with lockTimeout.
      */
     public void setSkipLockedEntity(boolean skipLockedEntity) {
         this.skipLockedEntity = skipLockedEntity;
@@ -536,10 +541,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      * is given to the JPA provider as the jakarta.persistence.lock.timeout hint, which the provider applies if the
      * database supports it: for example Hibernate on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
      * timeout: the lock waits as long as the database lets it, which on PostgreSQL is until the other transaction ends.
-     * A lock that times out is handled like one that skipLockedEntity could not get. On PostgreSQL it rolls back the
-     * poll: the entities that the poll routed before the locked one are routed again by each poll, for as long as the
-     * other transaction holds the lock, so the route must be idempotent. Not used with skipLockedEntity, which does not
-     * wait at all. The value is in millis, and must not be negative.
+     * On PostgreSQL a lock that times out rolls back the poll: the entities that the poll routed before the locked one
+     * are routed again by each poll, for as long as the other transaction holds the lock, so the route must be
+     * idempotent. Not used with skipLockedEntity. The value is in millis, and must not be negative.
      */
     public void setLockTimeout(long lockTimeout) {
         this.lockTimeout = lockTimeout;

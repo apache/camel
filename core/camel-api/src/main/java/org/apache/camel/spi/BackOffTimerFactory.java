@@ -23,17 +23,17 @@ import org.apache.camel.util.backoff.BackOffTimer;
 /**
  * SPI factory for creating {@link org.apache.camel.util.backoff.BackOffTimer} instances used to schedule retry or
  * back-off tasks.
- * <p/>
+ * <p>
  * A {@link org.apache.camel.util.backoff.BackOffTimer} drives retries described by a
  * {@link org.apache.camel.util.backoff.BackOff} policy (fixed delay, exponential back-off, max elapsed time, etc.)
  * using a {@link java.util.concurrent.ScheduledExecutorService} as the underlying scheduler. Camel's
  * {@link SupervisingRouteController} uses back-off timers to schedule route restart attempts after failure.
- * <p/>
+ * <p>
  * The two factory methods cover the common cases: obtain a timer that manages its own scheduler via
  * {@link #newBackOffTimer(String)}, or supply an externally managed scheduler via
  * {@link #newBackOffTimer(String, java.util.concurrent.ScheduledExecutorService)} to share thread pool resources. The
  * timer must be started and stopped through its service lifecycle.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
  *
  * @see   org.apache.camel.util.backoff.BackOff

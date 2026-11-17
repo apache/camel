@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * Strategy for assigning the name of a {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * Camel uses the name strategy to determine the context's name, which appears in logs, management (JMX), and tooling. A
  * strategy may return a fixed name or compute a fresh one each time (for example using a counter to keep names unique
  * across multiple contexts in the same JVM); {@link #isFixedName()} reports which. {@link ManagementNameStrategy} is
@@ -30,7 +30,7 @@ public interface CamelContextNameStrategy {
 
     /**
      * Gets the name
-     * <p/>
+     * <p>
      * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
      * is always fixed.
      *
@@ -40,7 +40,7 @@ public interface CamelContextNameStrategy {
 
     /**
      * Gets the next calculated name, if this strategy is not using fixed names.
-     * <p/>
+     * <p>
      * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
      * is always fixed.
      *
@@ -49,9 +49,9 @@ public interface CamelContextNameStrategy {
     String getNextName();
 
     /**
-     * Whether the name will be fixed, or allow re-calculation such as by using an unique counter.
+     * Whether the name will be fixed, or allow re-calculation such as by using a unique counter.
      *
-     * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
+     * @return <code>true</code> for fixed names, <code>false</code> for names which can be re-calculated
      */
     boolean isFixedName();
 }

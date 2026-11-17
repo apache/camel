@@ -21,12 +21,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a route-level node in the Camel route model, identified by a route id.
- * <p/>
+ * <p>
  * While {@link NamedNode} identifies any model node (EIP step, route, etc.) by a generic id, {@code NamedRoute} is more
  * specific: it marks a top-level route definition. Implementations expose the route id, an optional description, and
  * the source {@link org.apache.camel.spi.Resource} from which the route was loaded (e.g., a YAML file or an in-memory
  * string).
- * <p/>
+ * <p>
  * This interface is used internally by the framework and by management / tooling layers to enumerate routes and map
  * them back to their definition source.
  *

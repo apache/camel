@@ -24,16 +24,16 @@ import org.apache.camel.StaticService;
 
 /**
  * Registry to cache endpoints in memory.
- * <p/>
+ * <p>
  * The registry contains two caches:
  * <ul>
  * <li>static - which keeps all the endpoints in the cache for the entire lifecycle</li>
- * <li>dynamic - which keeps the endpoints in a {@link org.apache.camel.support.LRUCache} and may evict endpoints which
- * hasn't been requested recently</li>
+ * <li>dynamic - which keeps the endpoints in a {@code org.apache.camel.support.LRUCache} and may evict endpoints which
+ * haven't been requested recently</li>
  * </ul>
  * The static cache stores all the endpoints that are created as part of setting up and starting routes. The static
  * cache has no upper limit.
- * <p/>
+ * <p>
  * The dynamic cache stores the endpoints that are created and used ad-hoc, such as from custom Java code that creates
  * new endpoints etc. The dynamic cache has an upper limit, that by default is 1000 entries.
  */
@@ -63,7 +63,7 @@ public interface EndpointRegistry extends Map<NormalizedEndpointUri, Endpoint>, 
      * Whether the given endpoint is stored in the static cache
      *
      * @param  key the endpoint key
-     * @return     <tt>true</tt> if in static cache, <tt>false</tt> if not
+     * @return     <code>true</code> if in static cache, <code>false</code> if not
      */
     boolean isStatic(String key);
 
@@ -71,7 +71,7 @@ public interface EndpointRegistry extends Map<NormalizedEndpointUri, Endpoint>, 
      * Whether the given endpoint is stored in the dynamic cache
      *
      * @param  key the endpoint key
-     * @return     <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     * @return     <code>true</code> if in dynamic cache, <code>false</code> if not
      */
     boolean isDynamic(String key);
 
@@ -79,7 +79,7 @@ public interface EndpointRegistry extends Map<NormalizedEndpointUri, Endpoint>, 
      * Whether the given endpoint is stored in the registry
      *
      * @param  key the endpoint key
-     * @return     <tt>true</tt> if present, <tt>false</tt> if not
+     * @return     <code>true</code> if present, <code>false</code> if not
      */
     @Override
     boolean containsKey(Object key);

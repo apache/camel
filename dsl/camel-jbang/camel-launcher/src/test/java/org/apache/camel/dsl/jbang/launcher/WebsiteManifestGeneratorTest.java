@@ -30,6 +30,10 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -47,6 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WebsiteManifestGeneratorTest {
 
     private static final Path GENERATOR = Paths.get("src/jreleaser/java/WebsiteManifestGenerator.java");
+
+    // The generator compiled once for the whole class: launching it as a source file (`java X.java`) recompiles it in
+    // memory on every call, which costs ~0.5s wall and ~2s CPU per test, against ~0.03s for the compiled class.
+    @TempDir
+    static Path generatorClasses;
 
     // Must stay byte-identical to WebsiteManifestGenerator.LICENSE_HEADER: the generator now prepends
     // this ASF header to every manifest, and the assertions below compare the output byte-for-byte.
@@ -75,11 +84,31 @@ class WebsiteManifestGeneratorTest {
         String stderr;
     }
 
+    @BeforeAll
+    static void compileGenerator() {
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        // -proc:none: the generator only uses JDK classes, so do not run the annotation processors javac would
+        // otherwise discover on the test class path
+        assertEquals(0,
+                compiler.run(null, null, null, "-proc:none", "-d", generatorClasses.toString(), GENERATOR.toString()),
+                "the generator did not compile");
+    }
+
     private Result run(String... args) throws Exception {
+        return launch(List.of("-XX:TieredStopAtLevel=1", "-cp", generatorClasses.toString(), "WebsiteManifestGenerator"),
+                args);
+    }
+
+    // The way camel-package.sh runs the generator: keep at least one test on this path.
+    private Result runFromSource(String... args) throws Exception {
+        return launch(List.of(GENERATOR.toString()), args);
+    }
+
+    private Result launch(List<String> javaArgs, String... args) throws Exception {
         String javaBin = Paths.get(System.getProperty("java.home"), "bin", "java").toString();
         List<String> cmd = new ArrayList<>();
         cmd.add(javaBin);
-        cmd.add(GENERATOR.toString());
+        cmd.addAll(javaArgs);
         Collections.addAll(cmd, args);
         Process p = new ProcessBuilder(cmd).start();
         String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
@@ -114,7 +143,7 @@ class WebsiteManifestGeneratorTest {
         Path zip = writeFixture(work, "camel-launcher-4.22.0-bin.zip", "zip-content-A");
         Path output = work.resolve("website");
 
-        Result r = run("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(), "--output",
+        Result r = runFromSource("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(), "--output",
                 output.toString(), "--latest", "true");
 
         assertEquals(0, r.exit, r.stderr);

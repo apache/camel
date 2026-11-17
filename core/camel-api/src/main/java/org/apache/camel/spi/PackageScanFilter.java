@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Predicate applied by {@link PackageScanClassResolver} during classpath scanning to determine whether a discovered
  * class should be included in the result set.
- * <p/>
+ * <p>
  * Implementations receive each candidate class and return {@code true} to include it or {@code false} to skip it.
  * Because this is a {@link FunctionalInterface}, a filter can be expressed as a lambda or method reference:
  *

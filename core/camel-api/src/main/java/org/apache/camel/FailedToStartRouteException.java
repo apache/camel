@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Thrown when a previously built {@link Route} fails to start as part of the {@link CamelContext} startup or a
  * {@link org.apache.camel.spi.RouteController} {@code startRoute} call.
- * <p/>
+ * <p>
  * Carries the failing {@code routeId} and the source location (where available) so error messages can point at the
  * offending DSL. For failures during route construction itself use {@link FailedToCreateRouteException}.
  */

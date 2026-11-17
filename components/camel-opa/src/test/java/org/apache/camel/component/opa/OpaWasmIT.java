@@ -34,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.test.infra.opa.services.OpaWasmBundleBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -163,6 +164,19 @@ public class OpaWasmIT extends CamelTestSupport {
                 from("direct:failopen").to(wasm("authz/allow") + "&failOpen=true");
             }
         })).doesNotThrowAnyException();
+    }
+
+    @Test
+    void evaluatesTheCustomInputInsteadOfTheDefaultEnvelope() {
+        context.getRegistry().bind("domainInput", ExpressionBuilder.bodyExpression());
+        Map<String, Object> input = Map.of("headers", Map.of("user", "alice"));
+
+        Exchange out = template.request(wasm("authz/allow") + "&inputExpression=#domainInput",
+                e -> e.getMessage().setBody(input));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getBody()).isSameAs(input);
     }
 
     @Test

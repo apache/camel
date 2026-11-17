@@ -30,9 +30,10 @@ import org.junit.jupiter.api.Tag;
  * {@code ./application.properties} file in the module directory.
  * <p/>
  * The test forks run in parallel and share the working directory, so these tests run after them in a fork of their own,
- * one class at a time (the {@code serial-test} execution in pom.xml).
+ * one class at a time (the {@code serial-test} execution in pom.xml). On a method, only that test runs there and the
+ * other tests of the class run in the parallel forks.
  */
-@Target(ElementType.TYPE)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Tag("serial")

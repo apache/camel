@@ -56,7 +56,11 @@ import org.slf4j.LoggerFactory;
 public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
-    private static final int LOCK_RENEW_INTERVAL_SECONDS = 10;
+    // the lock renewer runs every LOCK_RENEW_INTERVAL_SECONDS (or a second later) and renews a lock that expires
+    // within LOCK_RENEW_BEFORE_EXPIRY_SECONDS, so its first renewal comes with more than 14 seconds left, and a
+    // transient failure of it is retried by the next run with more than 8 seconds left (when the runs come on time)
+    private static final int LOCK_RENEW_INTERVAL_SECONDS = 5;
+    private static final int LOCK_RENEW_BEFORE_EXPIRY_SECONDS = 20;
     // Azure recommends putting the exception type in the dead-letter reason and its stack trace in the description,
     // but both are length-limited: the .NET and JavaScript SDKs cap them at 4096 (MaxDeadLetterReasonLength, applied
     // to the description as well), and Azure separately warns that a stack trace here can push a message past the
@@ -389,11 +393,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                     continue;
                 }
 
-                // renew if the lock expires before the run after the next one: the period task scheduler runs this
-                // task every LOCK_RENEW_INTERVAL_SECONDS or a second later, so waiting for the next run when the lock
-                // expires within one interval can be too late, and the renewal itself is a call to Service Bus
+                // renew if the lock expires within LOCK_RENEW_BEFORE_EXPIRY_SECONDS (several runs before it expires)
                 Instant lockExpiry = entry.lockedUntil.toInstant();
-                if (now.plusSeconds(2L * LOCK_RENEW_INTERVAL_SECONDS).isAfter(lockExpiry)) {
+                if (now.plusSeconds(LOCK_RENEW_BEFORE_EXPIRY_SECONDS).isAfter(lockExpiry)) {
                     client.renewMessageLock(entry.message)
                             .subscribe(
                                     newLockedUntil -> {

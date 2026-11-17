@@ -36,6 +36,13 @@ public class DataSetConsumerTest extends ContextTestSupport {
     final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "&dataSetIndex=strict";
     final String resultUri = "mock://result";
 
+    // the tests add a route, set the expectations and then start the context; a context that is already started
+    // starts the dataset consumer at once, and its messages race with the expectations
+    @Override
+    public boolean isUseAdviceWith() {
+        return true;
+    }
+
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createCamelRegistry();
@@ -80,14 +87,14 @@ public class DataSetConsumerTest extends ContextTestSupport {
             }
         });
 
-        assertEquals(dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount(),
-                "expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint");
-
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
         context.start();
+
+        assertEquals(dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount(),
+                "expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint");
 
         assertMockEndpointsSatisfied();
     }

@@ -83,6 +83,16 @@ public class BodyFactsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testTheConsumerGaveABodyWithoutCanonicalName() {
+        Object body = new Object() {
+        };
+        template.sendBody("direct:unchanged", body);
+        assertEquals(List.of("the body is an object of class " + body.getClass().getName()
+                             + ", unchanged since from: direct://unchanged"),
+                seen);
+    }
+
+    @Test
     public void testTheStepThatSetTheBody() {
         template.sendBody("direct:setBy", "hello");
         assertEquals(1, seen.size());

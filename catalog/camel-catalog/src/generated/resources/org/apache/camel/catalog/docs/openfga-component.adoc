@@ -53,7 +53,7 @@ openfga:operation[?options]
 ------------------------------------------------------------
 
 Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `readTuples`,
-`readChanges`, `expand`, `writeTuples` or `deleteTuples`.
+`readChanges`, `expand`, `writeTuples`, `deleteTuples` or `write`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -250,6 +250,25 @@ from("direct:listDocuments")
 
 The body comes back holding only the identifiers the check allowed, in the order it was given them.
 
+By default, `batchCheckMode=client` sends one Check request per object, with at most `maxParallelRequests`
+(default 10) in flight. This is compatible with older OpenFGA servers.
+
+For OpenFGA 1.8.0 or later, set `batchCheckMode=server` to use the native BatchCheck API. The SDK groups checks into
+HTTP requests containing at most `maxBatchSize` checks (default 50, configurable from 1 to 50; 50 is the default
+per-request limit of an OpenFGA server, `max-checks-per-batch-check`, and the component does not go above it even
+when a server is configured to accept more), and sends at most `maxParallelRequests` of those requests concurrently. Results are correlated back to their input positions, preserving
+order and duplicate identifiers even when the server returns answers out of order. For example:
+
+[source,java]
+------------------------------------------------------------
+.to("openfga:batchCheck?storeId={{fga.store}}&relation=reader&user=user:anne"
+    + "&batchCheckMode=server&maxBatchSize=50&maxParallelRequests=2")
+------------------------------------------------------------
+
+The bounded wait accounts for the number of HTTP-request waves in the selected mode. An item error, an incomplete
+response, or a failed request fails the entire filter, including when `failOpen=true`; server mode does not silently
+fall back to client mode. SDK request retries remain governed by `maxRetries`.
+
 `listObjects` answers the same question from the other end — ask OpenFGA which objects the subject can reach,
 rather than filtering a list you already have:
 
@@ -353,6 +372,41 @@ producer fails and names the part that is missing.
 
 A typed wildcard — `user:*`, OpenFGA's "everyone" — is accepted here, because writing that tuple is how a resource
 is shared publicly and is a deliberate act by the route. It is *refused* as the subject of a check; see below.
+
+=== Mutation conflicts and atomic updates
+
+By default, `onDuplicate=error` makes an existing relationship fail a write, and `onMissing=error` makes an absent
+relationship fail a delete. On OpenFGA 1.10.0 or later, select `onDuplicate=ignore` or `onMissing=ignore` explicitly
+for reconciliation routes that should leave an already-satisfied operation unchanged. These options apply to
+`writeTuples` and `deleteTuples`, respectively, and both apply to `write`.
+
+Use `write` to grant and revoke relationships in one atomic request. With no configured `user`/`relation`/`object`,
+the body is a Map containing `writes` and/or `deletes` collections. Each entry is an ordinary Map with `user`,
+`relation` and `object`; a `timestamp` entry, as `readTuples` returns it, is ignored, so a page of `readTuples` can be
+revoked as it is. A `condition` entry is written through on a write and ignored on a delete. Other body shapes or entry
+fields are rejected. For example:
+
+[source,java]
+------------------------------------------------------------
+Map<String, Object> changes = Map.of(
+    "writes", List.of(Map.of("user", "user:anne", "relation", "writer", "object", "document:budget")),
+    "deletes", List.of(Map.of("user", "user:anne", "relation", "reader", "object", "document:budget")));
+template.requestBody("openfga:write?storeId={{fga.store}}&authorizationModelId={{fga.model}}", changes);
+------------------------------------------------------------
+
+The component requires at least one tuple and rejects an all-empty write, and the sum of writes and deletes cannot
+exceed 100. It rejects larger transactions before calling OpenFGA and never splits this atomic update into
+independently committed requests. A failed transaction remains a failure even when `failOpen=true`. The component
+applies an endpoint-configured model revision to the transaction. A server configured with a lower tuple limit can
+reject a request within the component's limit.
+
+The configured-tuple precedence also applies to `write`: when any of `user`/`relation`/`object` is configured, that
+triple supplies one write, the body is ignored, and no deletes are taken from it. A missing configured part fails
+rather than falling back to the body.
+
+Successful mutations preserve the input body. `CamelOpenFgaWrittenTuples` and `CamelOpenFgaDeletedTuples` report the
+number of submitted operations, including any that the selected ignore mode skipped; they do not report the number of
+rows changed in storage. The combined `write` operation sets both counters, including zero for an omitted side.
 
 == Security
 
@@ -509,8 +563,8 @@ YAML::
 ----
 ====
 
-It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`. On `batchCheck` the batch fans
-out into one check per object and the context goes on *every* item, so each object is judged against the same facts.
+It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`. On `batchCheck` the context goes
+on *every* item in either client or server mode, so each object is judged against the same facts.
 
 `OpenFgaSecurityPolicy` takes both options as well, through `setContextualTuples` and `setConditionContext`. They are
 no more dangerous on the policy than on an endpoint and no less: either way the value comes from whoever configured

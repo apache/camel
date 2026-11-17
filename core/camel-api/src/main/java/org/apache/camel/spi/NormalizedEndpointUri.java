@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * An Uri which has been normalized.
- * <p/>
+ * <p>
  * This is intended for internal optimizations or third party EIP or component implementations that can be optimized to
  * pre normalize endpoints under certain use-cases.
  *

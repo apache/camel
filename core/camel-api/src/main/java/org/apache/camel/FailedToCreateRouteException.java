@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Thrown when Camel cannot build a {@link Route} from a {@link RoutesBuilder} or route model, for example because an
  * {@link Endpoint} cannot be resolved, a referenced bean or processor is missing, or DSL validation fails.
- * <p/>
+ * <p>
  * Distinct from {@link FailedToStartRouteException}, which signals that a successfully built route failed during the
  * start phase of the {@link CamelContext} lifecycle.
  */

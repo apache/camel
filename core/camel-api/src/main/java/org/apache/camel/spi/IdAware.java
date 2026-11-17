@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Marker for an object whose id can be injected, such as EIP {@link org.apache.camel.Processor}s created from Camel
  * routes.
- * <p/>
+ * <p>
  * Camel assigns the id (explicit or auto-generated) so it is available at runtime, which makes it easier to map the
  * object back to its corresponding model definition. Extends {@link HasId} to add the ability to set the id.
  *

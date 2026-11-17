@@ -18,11 +18,11 @@ package org.apache.camel;
 
 /**
  * A service that sends {@link Exchange}s to an {@link Endpoint}.
- * <p/>
+ * <p>
  * A producer is created by calling {@link Endpoint#createProducer()} and participates in the Camel lifecycle as a
  * {@link Service}. Calls to {@link #process(Exchange)} block until processing of the exchange completes; for
  * non-blocking dispatch use {@link AsyncProducer}.
- * <p/>
+ * <p>
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.

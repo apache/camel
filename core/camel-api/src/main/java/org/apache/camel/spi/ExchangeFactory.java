@@ -25,10 +25,10 @@ import org.jspecify.annotations.Nullable;
 /**
  * Factory used by {@link Consumer} (and {@link org.apache.camel.PollingConsumer}) to create the {@link Exchange} that
  * carries an incoming message into Camel.
- * <p/>
+ * <p>
  * This factory governs only the exchanges that enter Camel from the outside world via a consumer. Sub-exchanges created
  * internally (e.g., by the Splitter EIP) are outside this contract and use {@link ProcessorExchangeFactory} instead.
- * <p/>
+ * <p>
  * The factory is pluggable to support two exchange-lifecycle strategies:
  * <ul>
  * <li><b>default</b> — allocates a fresh {@link Exchange} for every inbound message; simple and GC-friendly for

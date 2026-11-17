@@ -127,10 +127,6 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>info.picocli</groupId>
-                    <artifactId>picocli</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.github.freva</groupId>
                     <artifactId>ascii-table</artifactId>
                 </exclusion>

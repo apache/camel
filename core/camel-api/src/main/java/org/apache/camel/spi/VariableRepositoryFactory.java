@@ -46,7 +46,7 @@ public interface VariableRepositoryFactory {
      * Gets the {@link VariableRepository} for the given id
      *
      * @param  id the repository id
-     * @return    the repository or <tt>null</tt> if none found
+     * @return    the repository or <code>null</code> if none found
      */
     @Nullable
     VariableRepository getVariableRepository(String id);

@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Tracks the lifecycle of a single {@link org.apache.camel.Exchange} as it flows through the routing engine, and
  * provides hooks for {@link Synchronization} callbacks and async continuation coordination.
- * <p/>
+ * <p>
  * A {@code UnitOfWork} instance is created per exchange by {@link UnitOfWorkFactory} and attached to it for the
  * exchange's entire lifetime. It accumulates {@link Synchronization} objects (via
  * {@link #addSynchronization(Synchronization)}); these callbacks fire {@code onComplete} or {@code onFailure} when the
@@ -38,10 +38,10 @@ import org.jspecify.annotations.Nullable;
  * {@link CamelMDCService} — carries MDC values across continuation threads so that log entries on async threads retain
  * the same correlation keys. The relationship to a JPA or Spring transaction is intentionally loose: the unit of work
  * may span multiple transactions, or a single transaction may span multiple units of work.
- * <p/>
+ * <p>
  * Most production code should extend {@code DefaultUnitOfWork} from {@code camel-base-engine} rather than implement
  * this interface directly. See {@link UnitOfWorkFactory} for details on plugging in a custom impl.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *
  * @see UnitOfWorkFactory
@@ -68,7 +68,7 @@ public interface UnitOfWork {
 
     /**
      * Clears the unit of work from user data, so it may be reused.
-     * <p/>
+     * <p>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     void reset();
@@ -99,14 +99,14 @@ public interface UnitOfWork {
      * Checks if the passed synchronization hook is already part of this unit of work.
      *
      * @param  synchronization the hook
-     * @return                 <tt>true</tt>, if the passed synchronization is part of this unit of work, else
-     *                         <tt>false</tt>
+     * @return                 <code>true</code>, if the passed synchronization is part of this unit of work, else
+     *                         <code>false</code>
      */
     boolean containsSynchronization(Synchronization synchronization);
 
     /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
-     * <p/>
+     * <p>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that is continued and
      * routed in the async thread should do the on completion callbacks instead of the original synchronous thread.
      *
@@ -116,12 +116,12 @@ public interface UnitOfWork {
 
     /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
-     * <p/>
+     * <p>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that is continued and
      * routed in the async thread should do the on completion callbacks instead of the original synchronous thread.
      *
      * @param target the target exchange
-     * @param filter optional filter to only handover if filter returns <tt>true</tt>
+     * @param filter optional filter to only handover if filter returns <code>true</code>
      */
     void handoverSynchronization(Exchange target, @Nullable Predicate<Synchronization> filter);
 
@@ -130,13 +130,13 @@ public interface UnitOfWork {
      * {@link #handoverSynchronization(Exchange, Predicate)} does, and tells which ones were handed over (a
      * {@link SynchronizationVetoable} can refuse to be handed over). Camel calls it instead of
      * {@link #handoverSynchronization(Exchange, Predicate)} when an {@link OnCompletionListener} is installed.
-     * <p/>
+     * <p>
      * The default hands over with {@link #handoverSynchronization(Exchange)} or
      * {@link #handoverSynchronization(Exchange, Predicate)}, as Camel does without a listener, and returns
      * {@code null}, as it does not know what was handed over; so a custom {@link UnitOfWork} hands over as before.
      *
      * @param  target the target exchange
-     * @param  filter optional filter to only handover if filter returns <tt>true</tt>
+     * @param  filter optional filter to only handover if filter returns <code>true</code>
      * @return        the synchronizations that were handed over (empty if none), or {@code null} if not known
      * @since         4.24
      */
@@ -175,10 +175,10 @@ public interface UnitOfWork {
 
     /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
-     * <p/>
+     * <p>
      * The original message is only returned if the option
-     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled an
-     * <tt>IllegalStateException</tt> is thrown.
+     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If it's disabled an
+     * <code>IllegalStateException</code> is thrown.
      *
      * @return the original IN {@link Message}, or {@code null} if the original message is not available
      */
@@ -188,7 +188,7 @@ public interface UnitOfWork {
     /**
      * Are we transacted?
      *
-     * @return <tt>true</tt> if transacted, <tt>false</tt> otherwise
+     * @return <code>true</code> if transacted, <code>false</code> otherwise
      */
     boolean isTransacted();
 
@@ -196,13 +196,13 @@ public interface UnitOfWork {
      * Are we already transacted by the given transaction key?
      *
      * @param  key the transaction key
-     * @return     <tt>true</tt> if already, <tt>false</tt> otherwise
+     * @return     <code>true</code> if already, <code>false</code> otherwise
      */
     boolean isTransactedBy(Object key);
 
     /**
      * Mark this UnitOfWork as being transacted by the given transaction key.
-     * <p/>
+     * <p>
      * When the transaction is completed then invoke the {@link #endTransactedBy(Object)} method using the same key.
      *
      * @param key the transaction key
@@ -218,18 +218,18 @@ public interface UnitOfWork {
 
     /**
      * Gets the {@link Route} that this {@link UnitOfWork} currently is being routed through.
-     * <p/>
+     * <p>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the {@link org.apache.camel.Route}
      * can change over time.
      *
-     * @return the route, maybe be <tt>null</tt> if not routed through a route currently.
+     * @return the route, may be <code>null</code> if not routed through a route currently.
      */
     @Nullable
     Route getRoute();
 
     /**
      * Pushes the {@link Route} that this {@link UnitOfWork} currently is being routed through.
-     * <p/>
+     * <p>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the {@link org.apache.camel.Route}
      * can change over time.
      *
@@ -240,18 +240,18 @@ public interface UnitOfWork {
     /**
      * When finished being routed under the current {@link org.apache.camel.Route} it should be removed.
      *
-     * @return the route or <tt>null</tt> if none existed
+     * @return the route or <code>null</code> if none existed
      */
     @Nullable
     Route popRoute();
 
     /**
      * Gets the {@link Route} level-of-depth that this {@link UnitOfWork} currently is being routed through.
-     * <p/>
+     * <p>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the level of depth can change over
      * time.
      *
-     * If level is 1 then the current route is at the first route (original route). Maybe be <tt>0</tt> if not routed
+     * If level is 1 then the current route is at the first route (original route). May be <code>0</code> if not routed
      * through a route currently.
      *
      * @return the route level-of-depth
@@ -260,11 +260,11 @@ public interface UnitOfWork {
 
     /**
      * Gets the {@link Route} level-of-depth that this {@link UnitOfWork} currently is being routed through.
-     * <p/>
+     * <p>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the level of depth can change over
      * time.
      * <p>
-     * If level is 1 then the current route is at the first route (original route). Maybe be <tt>0</tt> if not routed
+     * If level is 1 then the current route is at the first route (original route). May be <code>0</code> if not routed
      * through a route currently.
      *
      * @param  includeRouteTemplate whether to include routes created by route templates
@@ -276,9 +276,9 @@ public interface UnitOfWork {
     /**
      * Gets the number of routes on the route stack that this {@link UnitOfWork} currently is being routed through,
      * which match the given filter.
-     * <p/>
+     * <p>
      * For example to know whether the current route is the outermost route of a route group on the stack.
-     * <p/>
+     * <p>
      * The default returns {@code 0}, which means a custom {@link UnitOfWork} that does not override this method will
      * not benefit from the route-group deduplication in {@code ManagedRouteGroup}. Implementations that maintain their
      * own route stack should override this method.
@@ -298,11 +298,11 @@ public interface UnitOfWork {
 
     /**
      * Strategy for work to be executed before processing.
-     * <p/>
+     * <p>
      * For example the MDCUnitOfWork leverages this to ensure MDC is handled correctly during routing exchanges using
      * the asynchronous routing engine.
-     * <p/>
-     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
+     * <p>
+     * This requires {@link #isBeforeAfterProcess()} returns <code>true</code> to be enabled.
      *
      * @param  processor the processor to be executed
      * @param  exchange  the current exchange
@@ -313,8 +313,8 @@ public interface UnitOfWork {
 
     /**
      * Strategy for work to be executed after the processing
-     * <p/>
-     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
+     * <p>
+     * This requires {@link #isBeforeAfterProcess()} returns <code>true</code> to be enabled.
      *
      * @param processor the processor executed
      * @param exchange  the current exchange
@@ -325,10 +325,10 @@ public interface UnitOfWork {
 
     /**
      * Create a child unit of work, which is associated to this unit of work as its parent.
-     * <p/>
+     * <p>
      * This is often used when EIPs need to support child unit of works. For example a splitter, where the sub messages
      * of the splitter all participate in the same sub unit of work. That sub unit of work then decides whether the
-     * Splitter (in general) is failed or a processed successfully.
+     * Splitter (in general) is failed or processed successfully.
      *
      * @param  childExchange the child exchange
      * @return               the created child unit of work

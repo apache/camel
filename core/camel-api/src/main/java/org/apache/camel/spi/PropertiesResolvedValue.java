@@ -20,11 +20,11 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Captures how a single {@link PropertiesComponent} property placeholder was resolved, for inspection and tooling.
- * <p/>
+ * <p>
  * Each instance records the placeholder {@code name}, the {@code originalValue} (the raw placeholder expression), the
  * resolved {@code value}, any {@code defaultValue} that applied, and the {@code source} that provided the value. Camel
  * tracks these so the resolved configuration can be reviewed, for example by the developer console or diagnostics.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
  * Camel user manual.
  *

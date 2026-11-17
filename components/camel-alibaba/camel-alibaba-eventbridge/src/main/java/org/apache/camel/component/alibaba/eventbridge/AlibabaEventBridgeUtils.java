@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,8 +59,8 @@ public final class AlibabaEventBridgeUtils {
     }
 
     public static EventBridgeClient createClient(AlibabaEventBridgeEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getRegion()) && ObjectHelper.isEmpty(endpoint.getEndpoint())) {
-            throw new IllegalArgumentException("Region or endpoint is required");
+        if (ObjectHelper.isEmpty(endpoint.getEndpoint())) {
+            throw new IllegalArgumentException("Endpoint is required");
         }
 
         Config config = new Config();
@@ -68,9 +69,7 @@ public final class AlibabaEventBridgeUtils {
         if (ObjectHelper.isNotEmpty(endpoint.getRegion())) {
             config.setRegionId(endpoint.getRegion());
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getEndpoint())) {
-            config.setEndpoint(endpoint.getEndpoint());
-        }
+        config.setEndpoint(endpoint.getEndpoint());
         return new EventBridgeClient(config);
     }
 
@@ -145,7 +144,9 @@ public final class AlibabaEventBridgeUtils {
                     configuration.eventBusName(), configuration.eventSource(), configuration.eventType(),
                     configuration, client);
 
+            // the SDK client requires an id and generates none
             EventBuilder builder = EventBuilder.builder()
+                    .withId(UUID.randomUUID().toString())
                     .withSource(URI.create(configuration.eventSource()))
                     .withType(configuration.eventType())
                     .withAliyunEventBus(configuration.eventBusName())

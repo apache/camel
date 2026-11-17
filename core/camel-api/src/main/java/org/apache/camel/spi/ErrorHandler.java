@@ -21,11 +21,11 @@ import org.apache.camel.Processor;
 /**
  * Marker interface identifying a {@link org.apache.camel.Processor} as an error-handling wrapper, as described in the
  * <a href="https://camel.apache.org/manual/error-handler.html">Error Handler</a> documentation.
- * <p/>
+ * <p>
  * Camel wraps each route's processing pipeline in an {@code ErrorHandler} at startup. The handler intercepts exceptions
  * thrown during message processing and applies the configured error-handling strategy, such as retrying with back-off
  * ({@code RedeliveryErrorHandler}), sending to a dead letter channel, or simply logging and continuing.
- * <p/>
+ * <p>
  * All built-in error handler implementations (NoErrorHandler, DefaultErrorHandler, DeadLetterChannel,
  * TransactionErrorHandler) implement this interface, making it possible for Camel internals to detect whether a
  * {@link org.apache.camel.Processor} is an error handler without needing to know the concrete type.

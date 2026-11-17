@@ -27,10 +27,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A <a href="https://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
- * <p/>
+ * <p>
  * A component is registered in the {@link CamelContext} under a URI scheme (for example {@code "kafka"} or
  * {@code "file"}) and is responsible for creating {@link Endpoint} instances for URIs that match that scheme.
- * <p/>
+ * <p>
  * Components participate in the Camel lifecycle as {@link Service}s: they are started before any of their endpoints and
  * stopped after the last endpoint is stopped.
  *
@@ -41,7 +41,7 @@ public interface Component extends CamelContextAware, Service {
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI.
-     * <p/>
+     * <p>
      * See {@link #useRawUri()} for controlling whether the passed in uri should be as-is (raw), or encoded (default).
      *
      * @param  uri       the URI to create; either raw or encoded (default)
@@ -55,7 +55,7 @@ public interface Component extends CamelContextAware, Service {
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI.
-     * <p/>
+     * <p>
      * See {@link #useRawUri()} for controlling whether the passed in uri should be as-is (raw), or encoded (default).
      *
      * @param  uri        the URI to create; either raw or encoded (default)
@@ -70,17 +70,17 @@ public interface Component extends CamelContextAware, Service {
 
     /**
      * Whether to use raw or encoded uri, when creating endpoints.
-     * <p/>
-     * <b>Notice:</b> When using raw uris, then the parameter values is raw as well.
+     * <p>
+     * <b>Notice:</b> When using raw uris, then the parameter values are raw as well.
      *
-     * @return <tt>true</tt> to use raw uris, <tt>false</tt> to use encoded uris (default).
+     * @return <code>true</code> to use raw uris, <code>false</code> to use encoded uris (default).
      */
     boolean useRawUri();
 
     /**
      * Gets the component {@link PropertyConfigurer}.
      *
-     * @return the configurer, or <tt>null</tt> if the component does not support using property configurer.
+     * @return the configurer, or <code>null</code> if the component does not support using property configurer.
      */
     default @Nullable PropertyConfigurer getComponentPropertyConfigurer() {
         return null;
@@ -89,7 +89,7 @@ public interface Component extends CamelContextAware, Service {
     /**
      * Gets the endpoint {@link PropertyConfigurer}.
      *
-     * @return the configurer, or <tt>null</tt> if the endpoint does not support using property configurer.
+     * @return the configurer, or <code>null</code> if the endpoint does not support using property configurer.
      */
     default @Nullable PropertyConfigurer getEndpointPropertyConfigurer() {
         return null;

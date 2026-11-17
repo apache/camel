@@ -23,18 +23,18 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Tagging interface to indicate that a type is capable of caching the underlying data stream.
- * <p/>
+ * <p>
  * This is a useful feature for avoiding message re-readability issues. This interface is mainly used by the
  * {@link org.apache.camel.spi.StreamCachingStrategy} for determining if/how to wrap a stream-based message.
- * <p/>
- * The Camel routing engine uses the {@link org.apache.camel.processor.CamelInternalProcessor.StreamCachingAdvice} to
+ * <p>
+ * The Camel routing engine uses the {@code org.apache.camel.processor.CamelInternalProcessor.StreamCachingAdvice} to
  * apply the stream cache during routing.
- * <p/>
+ * <p>
  * It is recommended in the {@link #copy(Exchange)} method to let the copied stream start from the start. If the
- * implementation does not support copy, then return <tt>null</tt>.
- * <p/>
- * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
- * users to create as instances, but they are part of Camels
+ * implementation does not support copy, then return <code>null</code>.
+ * <p>
+ * <b>Important:</b> All the classes from the Camel release that implement {@link StreamCache} are NOT intended for end
+ * users to create as instances, but they are part of Camel's
  * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  *
  * @see org.apache.camel.spi.StreamCachingStrategy
@@ -58,14 +58,14 @@ public interface StreamCache {
 
     /**
      * Create a copy of the stream. If possible use the same cached data in the copied instance.
-     * <p/>
+     * <p>
      * This method is useful for parallel processing.
-     * <p/>
+     * <p>
      * Implementations note: A copy of the stream is recommended to read from the start of the stream.
      *
      * @param  exchange            exchange in which the stream cache object is used; can be used to delete resources of
      *                             the stream cache when the exchange is completed
-     * @return                     a copy, or <tt>null</tt> if copy is not possible
+     * @return                     a copy, or <code>null</code> if copy is not possible
      * @throws java.io.IOException is thrown if the copy fails
      */
     @Nullable
@@ -78,9 +78,9 @@ public interface StreamCache {
 
     /**
      * Gets the length of the cached stream.
-     * <p/>
-     * The implementation may return <tt>0</tt> in cases where the length cannot be computed, or if the implementation
-     * does not support this.
+     * <p>
+     * The implementation may return <code>0</code> in cases where the length cannot be computed, or if the
+     * implementation does not support this.
      *
      * @return number of bytes in the cache.
      */

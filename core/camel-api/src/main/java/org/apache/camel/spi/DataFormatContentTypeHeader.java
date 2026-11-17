@@ -24,11 +24,11 @@ package org.apache.camel.spi;
 public interface DataFormatContentTypeHeader {
 
     /**
-     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format if the
+     * Whether the data format should set the <code>Content-Type</code> header with the type from the data format if the
      * data format is capable of doing so.
-     * <p/>
-     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt> for data
-     * formats marshalling to JSON etc.
+     * <p>
+     * For example <code>application/xml</code> for data formats marshalling to XML, or <code>application/json</code>
+     * for data formats marshalling to JSON etc.
      */
     void setContentTypeHeader(boolean contentTypeHeader);
 }

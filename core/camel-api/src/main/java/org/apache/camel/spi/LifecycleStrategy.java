@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Observer SPI that receives callbacks for every significant lifecycle event in a
  * {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * Callbacks cover the full lifecycle of the context itself (initializing, starting, started, stopping, stopped), plus
  * every {@link org.apache.camel.Component}, {@link org.apache.camel.Endpoint}, {@link org.apache.camel.Route}, and
  * {@link org.apache.camel.Service} that is added, started, stopped, or removed. Thread pool creation and shutdown are
@@ -40,7 +40,7 @@ import org.jspecify.annotations.Nullable;
  * ({@link ManagementStrategy}) is the primary built-in implementor; it registers and unregisters MBeans in response to
  * lifecycle events. Implementations may throw {@link org.apache.camel.VetoCamelContextStartException} from
  * {@link #onContextInitializing} to prevent context startup.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
  *
  * @see ManagementStrategy
@@ -52,8 +52,8 @@ public interface LifecycleStrategy {
      *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
-     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
-     *                                        starting itself.
+     *                                        exceptions will be logged at <code>WARN</code> level by Camel, which will
+     *                                        continue starting itself.
      */
     default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
     }
@@ -63,8 +63,8 @@ public interface LifecycleStrategy {
      *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
-     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
-     *                                        starting itself.
+     *                                        exceptions will be logged at <code>WARN</code> level by Camel, which will
+     *                                        continue starting itself.
      */
     default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
     }
@@ -74,8 +74,8 @@ public interface LifecycleStrategy {
      *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
-     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
-     *                                        starting itself.
+     *                                        exceptions will be logged at <code>WARN</code> level by Camel, which will
+     *                                        continue starting itself.
      */
     default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
     }

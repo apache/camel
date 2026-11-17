@@ -1,0 +1,65 @@
+---
+title: OPA WASM static data preparation
+authors:
+  - "@oscerd"
+reviewers: []
+approvers: []
+creation-date: 2026-11-11
+last-updated: 2026-11-16
+status: implemented
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Decision
+
+CAMEL-26839 prepares the configured entrypoint and immutable data once in each `OpaWasmEvaluator` pool-instance
+factory. The constructor still borrows an instance to validate initialization before startup completes. A failed
+evaluation still discards its lease, and every replacement is prepared by the same factory. Pool capacity,
+borrowing timeouts, decision normalization and `failOpen` behavior are unchanged.
+
+This deliberately revises the previous comment that every borrow must restore the configured entrypoint and data.
+The evaluator owns its private pool; borrowers supply input and evaluate, and never replace its entrypoint or data.
+The SDK's input operation already resets the transient heap. Reapplying the same data therefore adds parsing work
+without establishing an additional boundary between requests. Tests pin both ordinary reuse and request-scoped
+data overrides, so future SDK upgrades must preserve this contract or restore defensive preparation.
+
+== SDK and ABI evidence
+
+The managed SDK is `com.styra.opa:opa-java-wasm:1.1.0`. Inspection of its installed bytecode with `javap -p -c`
+agrees with the https://github.com/open-policy-agent/opa-java-wasm/blob/1.1.0/core/src/main/java/com/styra/opa/wasm/OpaPolicy.java[official 1.1.0 source]:
+
+* `entrypoint(String)` exports and parses the entrypoint map to resolve the numeric entrypoint.
+* `data(String)` frees the previous data value, rewinds to `baseHeapPtr`, UTF-8 encodes and parses the document,
+  then saves `dataHeapPtr`.
+* `input(String)`, called by `evaluate(String)`, rewinds to `dataHeapPtr` before loading the next input.
+* `reset()` is package-private and also clears data and entrypoint. Camel's own pool does not call the SDK pool
+  or its reset operation.
+
+The https://www.openpolicyagent.org/docs/wasm[OPA WASM ABI documentation] describes the data/input heap boundary.
+The tests use the exact OPA compiler pinned by test-infra, `1.22.2`, and exercise real compiled WASM, including a
+conflicting complete-rule result that causes a runtime error. There are no reflection-based SDK modifications,
+shared SDK policy instances, or committed WASM binaries.
+
+== Correctness coverage
+
+`OpaWasmStaticDataIT` compiles the fixture using test-infra by default. It checks:
+
+* 1000 alternating allow/deny decisions with varying input sizes on a single reused instance.
+* Eight workers sharing four pooled instances, with per-user inputs and alternating decisions.
+* Actual WASM runtime failures followed by correct allow/deny decisions from replacements.
+* Discarding a real failed instance creates a different, initialized instance with the configured static data.
+* A request-scoped `with data.permissions as ...` override does not change following requests' static data.
+* Missing entrypoint startup validation and bare-module evaluation without bundled data.
+
+All six tests also passed using a locally generated module from the pinned official compiler. This standalone run
+used the explicit `camel.opa.staticDataModule` test override, without Docker. The default Docker compilation path
+and the regular Maven integration-test lifecycle still require normal project validation.
+
+== Measurements and reproduction
+
+The smoke measurements that led to this decision (a per-borrow parse of about 1 MiB of data cost about 50 decisions
+per second on one thread, against about 400,000 per second when the data is prepared once), their raw samples and the
+commands that reproduce them with `OpaWasmStaticDataBenchmark` are recorded in the pull request of CAMEL-26839. They
+are not JMH results and not capacity targets.

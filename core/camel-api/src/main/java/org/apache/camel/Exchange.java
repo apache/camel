@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * An Exchange is the message container holding the information during the entire routing of a {@link Message} received
  * by a {@link Consumer}.
- * <p/>
+ * <p>
  * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the current
  * {@link Message} via {@link #getMessage()}. The {@link Exchange} also holds meta-data during its entire lifetime
  * stored as properties accessible using the various {@link #getProperty(String)} methods. The
@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  * SLA related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
  * routing the {@link Exception} that caused the failure is stored and accessible via the {@link #getException()}
  * method.
- * <p/>
+ * <p>
  * An Exchange is created when a {@link Consumer} receives a request. A new {@link Message} is created, the request is
  * set as the body of the {@link Message} and depending on the {@link Consumer} other {@link Endpoint} and protocol
  * related information is added as headers on the {@link Message}. Then an Exchange is created and the newly created
@@ -43,7 +43,7 @@ import org.jspecify.annotations.Nullable;
  * then sent down the {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as the name
  * suggests is what processes the {@link Message} in the Exchange. Camel provides a large number of useful processors
  * out-of-the-box, and it also allows you to create your own.
- * <p/>
+ * <p>
  * To access or modify the current message, use the {@link #getMessage()} method. Camel uses {@link #getMessage()} to
  * obtain the current message during routing. If a {@link Processor} modifies the message, those changes are visible to
  * subsequent processors. The {@link ExchangePattern} determines whether a reply is expected (InOut) or not (InOnly).
@@ -382,7 +382,7 @@ public interface Exchange extends VariableAware {
      * Returns a property associated with this exchange by the key
      *
      * @param  key the exchange key
-     * @return     the value of the given property or <tt>null</tt> if there is no property for the given key
+     * @return     the value of the given property or <code>null</code> if there is no property for the given key
      * @since      3.9
      */
     @Nullable
@@ -393,8 +393,8 @@ public interface Exchange extends VariableAware {
      *
      * @param  key  the exchange key
      * @param  type the type of the property
-     * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
-     *              <tt>null</tt> if it cannot be converted to the given type
+     * @return      the value of the given property or <code>null</code> if there is no property for the given name or
+     *              <code>null</code> if it cannot be converted to the given type
      *
      * @since       3.9
      */
@@ -406,8 +406,8 @@ public interface Exchange extends VariableAware {
      * @param  key          the exchange key
      * @param  defaultValue the default value to return if property was absent
      * @param  type         the type of the property
-     * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
-     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     * @return              the value of the given property or <code>defaultValue</code> if there is no property for the
+     *                      given name or <code>null</code> if it cannot be converted to the given type
      *
      * @since               3.9
      */
@@ -436,7 +436,7 @@ public interface Exchange extends VariableAware {
      * Returns a property associated with this exchange by name
      *
      * @param  name the name of the property
-     * @return      the value of the given property or <tt>null</tt> if there is no property for the given name
+     * @return      the value of the given property or <code>null</code> if there is no property for the given name
      */
     @Nullable
     @Metadata(label = "api",
@@ -453,8 +453,8 @@ public interface Exchange extends VariableAware {
      *
      * @param  name the name of the property
      * @param  type the type of the property
-     * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
-     *              <tt>null</tt> if it cannot be converted to the given type
+     * @return      the value of the given property or <code>null</code> if there is no property for the given name or
+     *              <code>null</code> if it cannot be converted to the given type
      */
     <T> @Nullable T getProperty(String name, Class<T> type);
 
@@ -464,8 +464,8 @@ public interface Exchange extends VariableAware {
      * @param  name         the name of the property
      * @param  defaultValue the default value to return if property was absent
      * @param  type         the type of the property
-     * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
-     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     * @return              the value of the given property or <code>defaultValue</code> if there is no property for the
+     *                      given name or <code>null</code> if it cannot be converted to the given type
      */
     <T> @Nullable T getProperty(String name, Object defaultValue, Class<T> type);
 
@@ -498,8 +498,8 @@ public interface Exchange extends VariableAware {
     boolean removeProperties(String pattern);
 
     /**
-     * Removes the properties from this exchange that match the given <tt>pattern</tt>, except for the ones matching one
-     * or more <tt>excludePatterns</tt>
+     * Removes the properties from this exchange that match the given <code>pattern</code>, except for the ones matching
+     * one or more <code>excludePatterns</code>
      *
      * @param  pattern         pattern of names that should be removed
      * @param  excludePatterns one or more pattern of properties names that should be excluded (= preserved)
@@ -526,7 +526,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns whether any properties have been set
      *
-     * @return <tt>true</tt> if any property has been set
+     * @return <code>true</code> if any property has been set
      */
     boolean hasProperties();
 
@@ -535,7 +535,7 @@ public interface Exchange extends VariableAware {
      *
      * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then variables will be from the current exchange.
-     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
+     * @return      the value of the given variable or <code>null</code> if there is no variable for the given name
      * @since       4.4
      */
     @Nullable
@@ -551,8 +551,8 @@ public interface Exchange extends VariableAware {
      * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then variables will be from the current exchange.
      * @param  type the type of the variable
-     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
-     *              <tt>null</tt> if it cannot be converted to the given type
+     * @return      the value of the given variable or <code>null</code> if there is no variable for the given name or
+     *              <code>null</code> if it cannot be converted to the given type
      *
      * @since       4.4
      */
@@ -565,8 +565,8 @@ public interface Exchange extends VariableAware {
      *                      repository. If no repo-id is provided, then variables will be from the current exchange.
      * @param  defaultValue the default value to return if variable was absent
      * @param  type         the type of the variable
-     * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
-     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     * @return              the value of the given variable or <code>defaultValue</code> if there is no variable for the
+     *                      given name or <code>null</code> if it cannot be converted to the given type
      *
      * @since               4.4
      */
@@ -586,13 +586,13 @@ public interface Exchange extends VariableAware {
     void setVariable(String name, @Nullable Object value);
 
     /**
-     * Removes the given variable
+     * Removes the given variable.
      *
-     * If the name is <tt>*</tt> then all variables from the current exchange is removed, and null is returned.
+     * If the name is <code>*</code> then all variables from the current exchange are removed, and null is returned.
      *
      * @param  name the variable name. Can be prefixed with repo-id:name to remove the variable in a specific
      *              repository. If no repo-id is provided, then the variable from the current exchange will be removed
-     * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
+     * @return      the old value of the variable, or <code>null</code> if there was no variable for the given name
      * @since       4.4
      */
     @Nullable
@@ -609,7 +609,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns whether any variables have been set on the current exchange
      *
-     * @return <tt>true</tt> if any variables has been set on the current exchange
+     * @return <code>true</code> if any variables have been set on the current exchange
      * @since  4.4
      */
     boolean hasVariables();
@@ -642,7 +642,7 @@ public interface Exchange extends VariableAware {
      * Returns the current message as the given type
      *
      * @param  type the given type
-     * @return      the message as the given type or <tt>null</tt> if not possible to convert to given type
+     * @return      the message as the given type or <code>null</code> if not possible to convert to given type
      * @since       3.0
      */
     <T> @Nullable T getMessage(Class<T> type);
@@ -659,7 +659,7 @@ public interface Exchange extends VariableAware {
      * Returns the inbound request message as the given type
      *
      * @param  type the given type
-     * @return      the message as the given type or <tt>null</tt> if not possible to convert to given type
+     * @return      the message as the given type or <code>null</code> if not possible to convert to given type
      */
     <T> @Nullable T getIn(Class<T> type);
 
@@ -672,12 +672,12 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the outbound message, lazily creating one if one has not already been associated with this exchange.
-     * <p/>
-     * <br/>
+     * <p>
+     * <br>
      * <b>Important:</b> If you want to change the current message, then use {@link #getIn()} instead as it will ensure
-     * headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use this method.
-     * <p/>
-     * <br/>
+     * headers etc. are kept and propagated when routing continues. Bottom line end users should rarely use this method.
+     * <p>
+     * <br>
      * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
      *
      * @return     the response
@@ -689,16 +689,16 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the outbound request message as the given type
-     * <p/>
-     * <br/>
+     * <p>
+     * <br>
      * <b>Important:</b> If you want to change the current message, then use {@link #getIn()} instead as it will ensure
-     * headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use this method.
-     * <p/>
-     * <br/>
+     * headers etc. are kept and propagated when routing continues. Bottom line end users should rarely use this method.
+     * <p>
+     * <br>
      * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
      *
      * @param      type the given type
-     * @return          the message as the given type or <tt>null</tt> if not possible to convert to given type
+     * @return          the message as the given type or <code>null</code> if not possible to convert to given type
      * @see             #getIn(Class)
      * @deprecated      use {@link #getMessage(Class)}
      */
@@ -708,7 +708,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns whether an OUT message has been set or not.
      *
-     * @return     <tt>true</tt> if an OUT message exists, <tt>false</tt> otherwise.
+     * @return     <code>true</code> if an OUT message exists, <code>false</code> otherwise.
      * @deprecated use {@link #getMessage()}
      */
     @Deprecated(since = "3.0.0")
@@ -737,20 +737,20 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the exception associated with this exchange.
-     * <p/>
-     * Is used to get the caused exception that typically have been wrapped in some sort of Camel wrapper exception
-     * <p/>
+     * <p>
+     * Is used to get the caused exception that typically has been wrapped in some sort of Camel wrapper exception
+     * <p>
      * The strategy is to look in the exception hierarchy to find the first given cause that matches the type. Will
      * start from the bottom (the real cause) and walk upwards.
      *
      * @param  type the exception type
-     * @return      the exception (or <tt>null</tt> if no caused exception matched)
+     * @return      the exception (or <code>null</code> if no caused exception matched)
      */
     <T> @Nullable T getException(Class<T> type);
 
     /**
      * Sets the exception associated with this exchange
-     * <p/>
+     * <p>
      * Camel will wrap {@link Throwable} into {@link Exception} type to accommodate for the {@link #getException()}
      * method returning a plain {@link Exception} type.
      *
@@ -783,18 +783,18 @@ public interface Exchange extends VariableAware {
     /**
      * Sets whether this exchange is marked to stop and not continue routing.
      *
-     * @param routeStop <tt>true</tt> to stop routing
+     * @param routeStop <code>true</code> to stop routing
      */
     void setRouteStop(boolean routeStop);
 
     /**
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
-     * <p/>
+     * <p>
      * <b>Important: </b> It is not always possible to determine if the message is a redelivery or not, and therefore
-     * <tt>false</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
+     * <code>false</code> is returned. Such an example would be a JDBC message. However JMS brokers provide details if a
      * message is redelivered.
      *
-     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
+     * @return <code>true</code> if redelivered, <code>false</code> if not or not able to determine
      */
     boolean isExternalRedelivered();
 
@@ -835,10 +835,10 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message
-     * exchange, otherwise this property will be <tt>null</tt>.
+     * exchange, otherwise this property will be <code>null</code>.
      *
      * Note: In case this message exchange has been cloned through another parent message exchange (which itself has
-     * been created through the consumer of it's own endpoint), then if desired one could still retrieve the consumer
+     * been created through the consumer of its own endpoint), then if desired one could still retrieve the consumer
      * endpoint of such a parent message exchange as the following:
      *
      * <pre>
@@ -850,18 +850,18 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint created the
-     * message exchange, otherwise his property will be <tt>null</tt>.
+     * message exchange, otherwise this property will be <code>null</code>.
      *
      * Note: In case this message exchange has been cloned through another parent message exchange then this method
-     * would return the <tt>fromRouteId<tt> property of that exchange.
+     * would return the <code>fromRouteId</code> property of that exchange.
      */
     @Nullable
     @Metadata(label = "api", description = "The id of the route that created the exchange.")
     String getFromRouteId();
 
     /**
-     * Returns the route group of the route that originated this message exchange, or <tt>null</tt> if the route has no
-     * group or if this exchange was not created by a route consumer.
+     * Returns the route group of the route that originated this message exchange, or <code>null</code> if the route has
+     * no group or if this exchange was not created by a route consumer.
      */
     @Nullable
     String getFromRouteGroup();

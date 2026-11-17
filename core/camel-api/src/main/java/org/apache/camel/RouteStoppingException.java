@@ -22,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
  * An exchange cut off because its route, or the {@link CamelContext}, is being stopped while the exchange is in flight:
  * a route stop, a route reload in dev mode, or the graceful shutdown timing out. Nothing in the route failed; a
  * consumer that rolls back, such as file, delivers the message again.
- * <p/>
+ * <p>
  * It extends {@link RejectedExecutionException}, which Camel used for this before, so an
  * {@code onException(RejectedExecutionException.class)} or a catch of it still matches. A real rejection (a thread pool
  * or a queue that is full) stays a plain {@link RejectedExecutionException}.

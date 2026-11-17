@@ -43,9 +43,9 @@ public interface RestConsumerFactory {
      * @param  verb          HTTP verb such as GET, POST
      * @param  basePath      base path
      * @param  uriTemplate   uri template
-     * @param  consumes      media-types for what this REST service consume as input (accept-type), is <tt>null</tt> or
-     *                       <tt>&#42;/&#42;</tt> for anything
-     * @param  produces      media-types for what this REST service produces as output, can be <tt>null</tt>
+     * @param  consumes      media-types for what this REST service consume as input (accept-type), is <code>null</code>
+     *                       or <code>&#42;/&#42;</code> for anything
+     * @param  produces      media-types for what this REST service produces as output, can be <code>null</code>
      * @param  configuration REST configuration
      * @param  parameters    additional parameters
      * @return               a newly created REST consumer

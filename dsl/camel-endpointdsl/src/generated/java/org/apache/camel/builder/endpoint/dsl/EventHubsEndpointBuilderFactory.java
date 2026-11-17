@@ -1291,7 +1291,7 @@ public interface EventHubsEndpointBuilderFactory {
          * It sets the instant, in UTC, of when the event was enqueued in the
          * Event Hub partition. This is only present on a received EventData.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: consumer
          * 

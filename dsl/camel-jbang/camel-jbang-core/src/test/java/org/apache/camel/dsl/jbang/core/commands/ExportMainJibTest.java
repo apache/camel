@@ -37,11 +37,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@UsesWorkingDirectory
 class ExportMainJibTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
-    private File profile = new File(".", "application.properties");
+    private File baseDir;
+    private File profile;
 
     @BeforeEach
     @Override
@@ -49,13 +49,16 @@ class ExportMainJibTest extends CamelCommandBaseTestSupport {
         super.setup();
         useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
+        // a base directory of its own: the application.properties of the module directory is shared with the other forks
+        baseDir = Files.createTempDirectory("camel-export-base").toFile();
+        profile = new File(baseDir, "application.properties");
     }
 
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
         FileUtil.removeDir(workingDir);
-        FileUtil.deleteFile(profile);
+        FileUtil.removeDir(baseDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -71,6 +74,7 @@ class ExportMainJibTest extends CamelCommandBaseTestSupport {
                 StandardCopyOption.REPLACE_EXISTING);
 
         Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--java-version=21",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),
@@ -104,6 +108,7 @@ class ExportMainJibTest extends CamelCommandBaseTestSupport {
                 StandardCopyOption.REPLACE_EXISTING);
 
         Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),

@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for validating incoming OAuth 2.0 bearer tokens.
- * <p/>
+ * <p>
  * Used by {@link OAuthTokenValidationFactory} to validate JWT tokens locally via JWKS or opaque tokens via RFC 7662
  * introspection.
  *
@@ -188,7 +188,7 @@ public class OAuthTokenValidationConfig {
 
     /**
      * First configured expected audience claim, or null when no audience is configured.
-     * <p/>
+     * <p>
      * Prefer {@link #getExpectedAudiences()} for new code that accepts multiple audiences.
      *
      * @since 4.21

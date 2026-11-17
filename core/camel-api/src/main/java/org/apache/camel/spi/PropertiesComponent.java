@@ -30,7 +30,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * SPI for the Camel property-placeholder subsystem, which resolves {@code {{key}}} tokens in endpoint URIs, DSL
  * expressions, and configuration values.
- * <p/>
+ * <p>
  * An implementation is obtained via {@link org.apache.camel.CamelContext#getPropertiesComponent()} and is discovered at
  * startup via the service key {@link #FACTORY}. Property values are sourced from one or more {@link PropertiesSource}
  * implementations (classpath {@code .properties} files, environment variables, system properties, and cloud-vault
@@ -38,10 +38,10 @@ import org.jspecify.annotations.Nullable;
  * resolution is supported via {@link PropertiesFunction} instances registered with
  * {@link #addPropertiesFunction(PropertiesFunction)}; they handle tokens of the form {@code {{name:remainder}}} and
  * power the built-in {@code env:}, {@code sys:}, and {@code secret:} functions.
- * <p/>
+ * <p>
  * Three scoped property layers allow test isolation without touching the shared properties file: override properties
  * (highest priority), initial properties, and thread-local properties.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using Property Placeholder</a> in the
  * Camel user manual.
  *
@@ -292,17 +292,17 @@ public interface PropertiesComponent extends StaticService {
     void setLocalProperties(@Nullable Properties localProperties);
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
-     * currently in use.
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <code>null</code> if
+     * not currently in use.
      */
     @Nullable
     Properties getLocalProperties();
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
-     * currently in use.
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <code>null</code> if
+     * not currently in use.
      *
-     * @return a {@link Map} representing the local properties, or <tt>null</tt> if not currently in use.
+     * @return a {@link Map} representing the local properties, or <code>null</code> if not currently in use.
      */
     @SuppressWarnings("unchecked")
     default @Nullable Map<String, Object> getLocalPropertiesAsMap() {
@@ -311,10 +311,10 @@ public interface PropertiesComponent extends StaticService {
 
     /**
      * Encoding to use when loading properties file from the file system or classpath.
-     * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * <p>
+     * If no encoding has been set, then the properties files are loaded using ISO-8859-1 encoding (latin-1) as
      * documented by {@link java.util.Properties#load(java.io.InputStream)}
-     * <p/>
+     * <p>
      * Important you must set encoding before setting locations.
      */
     void setEncoding(String encoding);

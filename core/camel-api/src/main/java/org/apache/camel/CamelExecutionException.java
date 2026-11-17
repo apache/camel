@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Exception occurred during execution/processing of an {@link Exchange}.
- * <p/>
+ * <p>
  * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate} to send messages to Camel.
  */
 public class CamelExecutionException extends RuntimeExchangeException {
