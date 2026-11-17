@@ -118,6 +118,12 @@
             <artifactId>camel-management</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- the Rest DSL json binding of some tests needs a JSON data format -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson3</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
