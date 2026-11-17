@@ -1135,7 +1135,13 @@ public interface KafkaEndpointBuilderFactory {
          * A string that uniquely identifies the group of consumer processes to
          * which this consumer belongs. By setting the same group id, multiple
          * processes can indicate that they are all part of the same consumer
-         * group. This option is required for consumers.
+         * group. It takes precedence over a group.id set in
+         * additionalProperties. If neither is set, the consumer uses a
+         * generated group id, a new one at each start, and logs a WARN: it does
+         * not resume from the offsets committed before a restart, and each
+         * instance of the application receives every record. Set it on a
+         * consumer that must resume after a restart or share the records with
+         * other instances.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
