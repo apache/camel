@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -168,6 +169,49 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    void testSneakyCheckedExceptionBeforeCallbackFailsTheExchange() throws Exception {
+        UnitOfWorkProducer producer = new UnitOfWorkProducer(new ThrowingEndpoint().createProducer());
+        ServiceHelper.startService(producer);
+        try {
+            Exchange exchange = context.getEndpoint("direct:start").createExchange();
+            exchange.getMessage().setHeader("mode", "checked");
+            AtomicInteger done = new AtomicInteger();
+
+            boolean sync = producer.process(exchange, doneSync -> done.incrementAndGet());
+
+            // a checked exception thrown sneakily fails the exchange as well, and the unit of work is done once
+            assertEquals(1, done.get());
+            assertTrue(sync);
+            assertInstanceOf(IOException.class, exchange.getException());
+            assertEquals(0, context.getInflightRepository().size());
+            assertEquals(1, unitOfWorkDone.get());
+        } finally {
+            ServiceHelper.stopService(producer);
+        }
+    }
+
+    @Test
+    void testTransactedExchangeUsesTheSyncProcessOfTheProducer() throws Exception {
+        UnitOfWorkProducer producer = new UnitOfWorkProducer(new ThrowingEndpoint().createProducer());
+        ServiceHelper.startService(producer);
+        try {
+            Exchange exchange = context.getEndpoint("direct:start").createExchange();
+            exchange.getMessage().setHeader("mode", "ok");
+            exchange.getExchangeExtension().setTransacted(true);
+
+            producer.process(exchange);
+
+            // as before, a transacted exchange is sent with the sync process of the producer
+            assertEquals("Sync", exchange.getMessage().getBody());
+            assertNull(exchange.getException());
+            assertEquals(0, context.getInflightRepository().size());
+            assertEquals(1, unitOfWorkDone.get());
+        } finally {
+            ServiceHelper.stopService(producer);
+        }
+    }
+
+    @Test
     void testVirtualMachineErrorIsThrownOn() throws Exception {
         UnitOfWorkProducer producer = new UnitOfWorkProducer(new ThrowingEndpoint().createProducer());
         ServiceHelper.startService(producer);
@@ -230,6 +274,11 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> RuntimeException sneakyThrow(Throwable t) throws T {
+        throw (T) t;
+    }
+
     private final class ThrowingEndpoint extends DefaultEndpoint {
 
         ThrowingEndpoint() {
@@ -240,6 +289,12 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
         @Override
         public Producer createProducer() {
             return new DefaultAsyncProducer(this) {
+                @Override
+                public void process(Exchange exchange) {
+                    // the sync path that a transacted exchange uses
+                    exchange.getMessage().setBody("Sync");
+                }
+
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     String mode = exchange.getMessage().getHeader("mode", String.class);
@@ -256,6 +311,7 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
                         case "save" -> savedCallback.set(callback);
                         case "error" -> throw new AssertionError("Simulated producer that throws an Error");
                         case "vm" -> throw new StackOverflowError("Simulated");
+                        case "checked" -> throw sneakyThrow(new IOException("Simulated checked exception"));
                         default -> {
                         }
                     }

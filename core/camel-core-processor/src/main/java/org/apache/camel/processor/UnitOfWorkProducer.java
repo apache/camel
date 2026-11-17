@@ -104,7 +104,9 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
      * and the exchange does not stay in the inflight repository. An exception the producer throws after it called the
      * callback is thrown on as it is, as before: the caller, which knows that its callback was called, handles it. A
      * further call of the callback is ignored, as the unit of work is done once. As for a processor (CAMEL-26741), an
-     * {@link Error} is handled as an exception, and a {@link VirtualMachineError} is thrown on as before.
+     * {@link Error} (and a checked exception thrown sneakily) is handled as an exception, and a
+     * {@link VirtualMachineError} is thrown on as before. The sync {@link #process(Exchange)}, which a transacted
+     * exchange uses, calls the sync process of the producer as before.
      */
     private static final class ProducerSend extends DelegateAsyncProcessor {
 
@@ -116,13 +118,21 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         }
 
         @Override
+        public void process(Exchange exchange) throws Exception {
+            // a transacted exchange is sent with the sync process of the producer, as before (some producers, such as
+            // the direct producer, have a separate sync path); an exception it throws reaches the caller
+            processor.process(exchange);
+        }
+
+        @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             SendCallback send = new SendCallback(producer, callback);
             try {
                 return processor.process(exchange, send);
             } catch (VirtualMachineError e) {
                 throw e;
-            } catch (RuntimeException | Error e) {
+            } catch (Throwable e) {
+                // Throwable also covers a checked exception thrown sneakily
                 if (!send.compareAndSet(false, true)) {
                     // the producer called the callback and then threw: the unit of work is already done
                     throw e;
