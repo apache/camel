@@ -7700,6 +7700,16 @@ conversion error. Previously it gave an empty SOAP body. A reply body that is an
 The `spring-ws` producer now sends a `File` body, the file of a `file` or `ftp` consumer, and an `InputStream` body
 (also when stream caching is off) as XML. Previously these failed with an `InvalidPayloadException`.
 
+=== camel-spring-ws - outputAction and faultAction are consumer options
+
+The `outputAction` and `faultAction` options of the `spring-ws` endpoint now have the label `consumer` instead of
+`producer`, as only the consumer uses them. In the Endpoint DSL, both methods moved from
+`SpringWebserviceEndpointProducerBuilder` to `SpringWebserviceEndpointConsumerBuilder` and return the consumer builder.
+A call of one of them on the producer builder no longer compiles, and neither does
+`to(springWs(...).outputAction(...))`. Code compiled against an earlier version that calls one of them must be
+recompiled. Remove the two options from producer endpoints: they had no effect there, and the endpoint validation of the
+catalog now reports them in producer-only mode. The behavior of the component at runtime does not change.
+
 === camel-ignite - cache PUT of a Map, the existing query results, RUN bodies and missing operations
 
 With `fireExistingQueryResults=true`, the `ignite-cache` consumer now sends each entry that the initial query finds
