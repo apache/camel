@@ -23,8 +23,6 @@ import org.aesh.command.Command;
 import org.aesh.command.invocation.CommandInvocation;
 import org.citrusframework.jbang.cli.CitrusJBangMain;
 import org.citrusframework.jbang.cli.commands.Agent;
-import org.citrusframework.jbang.cli.commands.AgentRun;
-import org.citrusframework.jbang.cli.commands.AgentStop;
 
 /**
  * Overrides the Citrus {@link Agent} group command so that the {@code start} subcommand dispatches to
@@ -42,7 +40,7 @@ public class TestAgent extends Agent {
     public List<Command<CommandInvocation>> getCommands() {
         return List.of(
                 new TestAgentStart(getMain()),
-                new AgentRun(getMain()),
-                new AgentStop(getMain()));
+                new TestAgentRun(getMain()),
+                new TestAgentStop(getMain()));
     }
 }
