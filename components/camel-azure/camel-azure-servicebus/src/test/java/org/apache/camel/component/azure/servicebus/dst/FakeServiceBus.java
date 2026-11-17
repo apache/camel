@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.azure.core.amqp.exception.AmqpErrorCondition;
@@ -133,8 +134,14 @@ final class FakeServiceBus {
     /** Called with the delivery ("id#n") when a message is delivered. */
     Consumer<String> onDelivery = d -> {
     };
-    /** Called with the delivery when an injected renewal fault hits it. */
-    Consumer<String> onRenewFault = d -> {
+    /**
+     * Called with the delivery and the expiry of its lock (or -1 when it holds no lock) when an injected renewal fault
+     * hits it.
+     */
+    BiConsumer<String, Long> onRenewFault = (d, lockedUntil) -> {
+    };
+    /** Called with the delivery when a renewal (of the consumer or of the processor client) extended its lock. */
+    Consumer<String> onRenewed = d -> {
     };
     /** Called with "delivery STATE" when the consumer settles a delivery, before the outcome is known. */
     Consumer<String> onSettle = d -> {
@@ -209,6 +216,16 @@ final class FakeServiceBus {
     private static ServiceBusException transientFailure(ServiceBusErrorSource source) {
         return new ServiceBusException(
                 new AmqpException(true, AmqpErrorCondition.SERVER_BUSY_ERROR, "dst: the server is busy", null), source);
+    }
+
+    /** The expiry of the lock with this token, or -1 when no message holds it (without expiring the locks first). */
+    private long lockedUntil(String token) {
+        for (Msg m : messages.values()) {
+            if (m.state == State.LOCKED && token.equals(m.lockToken)) {
+                return m.lockedUntil;
+            }
+        }
+        return -1;
     }
 
     private Msg locked(String token) {
@@ -338,6 +355,7 @@ final class FakeServiceBus {
             }
             m.lockedUntil = dst.now() + lockDurationMillis;
             ledger.record("processorRenewed", "q", delivery);
+            onRenewed.accept(delivery);
             renewLockWhileProcessed(lockRenewal, renewal, token, delivery, m.lockedUntil, until, closed);
         });
     }
@@ -428,7 +446,7 @@ final class FakeServiceBus {
             }
             if (faults && dst.chance(renewFailRate)) {
                 ledger.record("renewFault", "q", delivery);
-                onRenewFault.accept(delivery);
+                onRenewFault.accept(delivery, lockedUntil(token));
                 return Mono.error(Dst.injected(transientFailure(ServiceBusErrorSource.RENEW_LOCK)));
             }
             // the server handles the renewal after its latency: a lock that expires before that is lost
@@ -440,6 +458,7 @@ final class FakeServiceBus {
             }
             m.lockedUntil = dst.now() + latency + lockDurationMillis;
             ledger.record("renewed", "q", delivery);
+            onRenewed.accept(delivery);
             return Mono.just(
                     OffsetDateTime.ofInstant(Instant.ofEpochMilli(Dst.EPOCH_MILLIS + m.lockedUntil), ZoneOffset.UTC));
         });

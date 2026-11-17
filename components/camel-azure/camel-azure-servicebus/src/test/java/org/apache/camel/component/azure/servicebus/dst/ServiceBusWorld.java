@@ -67,18 +67,20 @@ import static org.mockito.Mockito.when;
  * the renewals and the fault rates.
  * <p>
  * Properties: no lock is lost, and no message is delivered again, while the consumer holds the message, unless an
- * injected renewal of its lock failed, the route was stopped while it was processed (once a stop timed out the consumer
- * stops renewing, and the exchange goes on), or maxAutoLockRenewDuration passed. The consumer renews a lock again after
- * a transient renewal error, but only at its next run: the lock renewer runs about every 11 seconds, so one transient
- * renewal error can still lose a 30 second lock. {@code -Ddst.servicebus.strictRenew=true} does not excuse a failed
- * renewal, and still fails on some seeds. The message of a completed exchange is completed, unless its settlement
- * failed, found its lock lost under one of those excuses, or came after the close() of a stop that timed out while the
- * exchange was in flight (by design); a graceful stop keeps the processor client open for the exchanges in flight (the
- * V2 processor of the SDK closes its receiver on stop(), see FakeServiceBus; CAMEL-26970), so a settlement inside the
- * graceful wait must find it open; a message is completed only after its exchange completed, and abandoned or
- * dead-lettered only after it failed (or was in flight when a stop timed out, see below); once the faults cleared every
- * message is completed or dead-lettered; the consumer settles each delivery at most once and renews only what it holds,
- * through an open client.
+ * injected renewal of its lock failed less than one run of the lock renewer before the lock expired, the route was
+ * stopped while it was processed (once a stop timed out the consumer stops renewing, and the exchange goes on), or
+ * maxAutoLockRenewDuration passed. The consumer renews a lock again after a transient renewal error (CAMEL-26969), but
+ * only at its next run (CAMEL-27066): the lock renewer runs every 10 seconds or a second later, so a transient renewal
+ * error in the last 11 seconds of a lock (plus the latency of the renewal) can still lose it. An earlier failed renewal
+ * is no excuse, so a renewer that gave up after one error would fail. {@code -Ddst.servicebus.strictRenew=true} does
+ * not excuse a failed renewal at all, and still fails on some seeds until CAMEL-27066 is fixed. The message of a
+ * completed exchange is completed, unless its settlement failed, found its lock lost under one of those excuses, or
+ * came after the close() of a stop that timed out while the exchange was in flight (by design); a graceful stop keeps
+ * the processor client open for the exchanges in flight (the V2 processor of the SDK closes its receiver on stop(), see
+ * FakeServiceBus; CAMEL-26970), so a settlement inside the graceful wait must find it open; a message is completed only
+ * after its exchange completed, and abandoned or dead-lettered only after it failed (or was in flight when a stop timed
+ * out, see below); once the faults cleared every message is completed or dead-lettered; the consumer settles each
+ * delivery at most once and renews only what it holds, through an open client.
  * <p>
  * The operator stops the route as DefaultShutdownStrategy does (its ShutdownTask), with the wait of the strategy as
  * tasks of the operator (see {@link #gracefulStop}): a processMessage call that waits until the consumer stops would
@@ -103,19 +105,26 @@ import static org.mockito.Mockito.when;
                   "processing is slower than the lock duration" },
           invariants = {
                   "no lock is lost and no message is delivered again while the consumer holds it, unless a renewal"
-                         + " failed, the route was stopped or maxAutoLockRenewDuration passed",
-                  "the message of a completed exchange is completed, unless its settlement failed, its lock was"
-                                                                                                + " lost as excused above, or a forced stop closed the client first",
+                         + " failed less than one renewer run before the lock expired, the route was stopped or"
+                         + " maxAutoLockRenewDuration passed",
+                  "the message of a completed exchange is completed, unless its settlement failed, its lock was lost"
+                                                               + " as excused above, or a forced stop closed the client first",
                   "a message is completed only after its exchange completed",
                   "a message is abandoned or dead-lettered only after its exchange failed",
                   "every message is completed or dead-lettered once the faults cleared",
                   "the consumer settles a delivery at most once and renews only what it holds, through an open client" },
-          issues = { "CAMEL-25701", "CAMEL-26956", "CAMEL-26969", "CAMEL-26970" })
+          issues = { "CAMEL-25701", "CAMEL-26956", "CAMEL-26969", "CAMEL-26970", "CAMEL-27066" })
 final class ServiceBusWorld {
 
     static final String ROUTE = "servicebus";
-    /** Excuses a lost lock only when the renewal found it lost (not after an injected transient renewal failure). */
+    /**
+     * Excuses a lost lock only when the renewal found it lost, not after an injected transient renewal failure: the
+     * consumer retries a failed renewal only at its next run (CAMEL-27066), so this fails on some seeds until it is
+     * fixed.
+     */
     static final boolean STRICT_RENEW = Boolean.getBoolean("dst.servicebus.strictRenew");
+    /** The longest time between two runs of the lock renewer of the consumer: every 10 seconds, or a second later. */
+    static final long RENEWER_RUN_MILLIS = 11_000;
 
     private final Dst dst;
     private final DstLedger ledger;
@@ -146,6 +155,11 @@ final class ServiceBusWorld {
      * in progress has two).
      */
     private final Set<String> inProgress = new HashSet<>();
+    /**
+     * The deliveries whose last renewal failed less than one run of the lock renewer (RENEWER_RUN_MILLIS, plus the
+     * latency of a renewal) before their lock expired: the retry at the next run comes too late (CAMEL-27066). A later
+     * renewal that extended the lock removes the delivery again.
+     */
     private final Set<String> renewFaulted = new HashSet<>();
     /** The deliveries in progress when the route was stopped: the consumer stops renewing their locks. */
     private final Set<String> heldAtStop = new HashSet<>();
@@ -190,7 +204,8 @@ final class ServiceBusWorld {
         this.deadLettering = dst.chance(0.3);
         this.processFailRate = dst.pick(List.of(0.0, 0.05, 0.2));
         bus.onDelivery = this::delivered;
-        bus.onRenewFault = renewFaulted::add;
+        bus.onRenewFault = this::renewFault;
+        bus.onRenewed = renewFaulted::remove;
         bus.onSettle = this::settling;
         bus.onSettled = this::settled;
         bus.onLockExpired = this::lockExpired;
@@ -255,7 +270,8 @@ final class ServiceBusWorld {
                             () -> bus.violations.isEmpty() && violations.isEmpty()
                                     ? null : bus.violations + " " + violations + " (" + config() + ")"),
                     Invariants.of("no lock is lost and no message is delivered again while the consumer holds it,"
-                                  + " unless a renewal failed, the route was stopped or maxAutoLockRenewDuration passed",
+                                  + " unless a renewal failed less than one renewer run before the lock expired, the"
+                                  + " route was stopped or maxAutoLockRenewDuration passed",
                             () -> redeliveredWhileHeld.isEmpty() && lostWhileHeld.isEmpty()
                                     ? null : redeliveredWhileHeld + " " + lostWhileHeld + " (" + config() + ")"),
                     Invariants.of("the message of a completed exchange is completed, unless its settlement failed, its"
@@ -342,9 +358,27 @@ final class ServiceBusWorld {
     }
 
     /**
-     * Why the consumer may lose the lock of a delivery it holds: an injected renewal failure (the consumer renews again
-     * only at its next run, which can come after the lock expired), a route stop while it was processed (the consumer
-     * stops renewing once the stop timed out), or a hold longer than maxAutoLockRenewDuration.
+     * An injected renewal failure excuses the loss of the lock only when the next run of the lock renewer comes too
+     * late to renew it: the renewer runs every 10 seconds or a second later (the period task scheduler ticks every
+     * second), and the renewal itself takes up to renewLatencyMaxMillis.
+     */
+    private void renewFault(String delivery, long lockedUntil) {
+        if (lockedUntil < 0) {
+            // the lock was lost already: its loss was judged when it expired
+            return;
+        }
+        if (lockedUntil - dst.now() <= RENEWER_RUN_MILLIS + bus.renewLatencyMaxMillis) {
+            renewFaulted.add(delivery);
+        } else {
+            renewFaulted.remove(delivery);
+        }
+    }
+
+    /**
+     * Why the consumer may lose the lock of a delivery it holds: an injected renewal failure in the last run of the
+     * lock renewer before the lock expired (the consumer renews again only at its next run, CAMEL-27066), a route stop
+     * while it was processed (the consumer stops renewing once the stop timed out), or a hold longer than
+     * maxAutoLockRenewDuration.
      */
     private boolean excused(String delivery) {
         Long at = routedAt.get(delivery);
