@@ -855,44 +855,9 @@ public abstract class BaseMainSupport extends BaseService {
         // Check programmatic configuration first (main.configure().withVirtualThreadsEnabled(true))
         boolean enabled = mainConfigurationProperties.isVirtualThreadsEnabled();
 
-        if (!enabled && mainConfigurationProperties.isAutoConfigurationEnabled()) {
-            // Check initial properties (main.addInitialProperty / main.setInitialProperties)
-            if (initialProperties != null) {
-                String val = initialProperties.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled) {
-                // Load from PropertiesComponent (application.properties, etc.)
-                OrderedLocationProperties props = (OrderedLocationProperties) camelContext.getPropertiesComponent()
-                        .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
-                String val = props.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled && mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-                Properties envProps = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
-                String val = envProps.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled && mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-                Properties sysProps = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
-                String val = sysProps.getProperty("camel.main.virtualThreadsEnabled");
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (enabled) {
-                mainConfigurationProperties.setVirtualThreadsEnabled(true);
-            }
+        if (!enabled && isEnabledInConfiguration(camelContext, "camel.main.virtualThreadsEnabled")) {
+            enabled = true;
+            mainConfigurationProperties.setVirtualThreadsEnabled(true);
         }
 
         if (enabled) {
@@ -977,6 +942,67 @@ public abstract class BaseMainSupport extends BaseService {
                 scs.addStartupCondition(camelContext.getInjector().newInstance(clazz));
             }
         }
+    }
+
+    /**
+     * Enables the type converter statistics before the CamelContext is built, as the type converter registry is created
+     * when the context is built, and its statistics cannot be enabled afterwards (CAMEL-27103).
+     */
+    private void configureTypeConverterStatisticsEarly(CamelContext camelContext) {
+        // Check programmatic configuration first (main.configure().withTypeConverterStatisticsEnabled(true))
+        boolean enabled = mainConfigurationProperties.isTypeConverterStatisticsEnabled();
+
+        if (!enabled && isEnabledInConfiguration(camelContext, "camel.main.typeConverterStatisticsEnabled")) {
+            enabled = true;
+            mainConfigurationProperties.setTypeConverterStatisticsEnabled(true);
+        }
+
+        if (enabled) {
+            camelContext.setTypeConverterStatisticsEnabled(true);
+        }
+    }
+
+    /**
+     * Whether a boolean option of Camel Main is set to true in the configuration, for options that must be known before
+     * the CamelContext is built, which is before the configuration is applied by the auto configuration.
+     * <p>
+     * The key is looked up ignoring case, as the auto configuration does: OS environment variables are mapped to keys
+     * in lower case.
+     */
+    private boolean isEnabledInConfiguration(CamelContext camelContext, String key) {
+        if (!mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            return false;
+        }
+
+        // Check initial properties (main.addInitialProperty / main.setInitialProperties)
+        if (initialProperties != null && isTrue(initialProperties, key)) {
+            return true;
+        }
+
+        // Load from PropertiesComponent (application.properties, etc.)
+        OrderedLocationProperties props = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+        if (isTrue(props, key)) {
+            return true;
+        }
+
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()
+                && isTrue(MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." }), key)) {
+            return true;
+        }
+
+        return mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()
+                && isTrue(MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." }), key);
+    }
+
+    private static boolean isTrue(Properties properties, String key) {
+        String name = optionKey(key);
+        for (String k : properties.stringPropertyNames()) {
+            if (optionKey(k).equalsIgnoreCase(name)) {
+                return Boolean.parseBoolean(properties.getProperty(k));
+            }
+        }
+        return false;
     }
 
     protected void configureRoutesLoader(CamelContext camelContext) {
@@ -1068,6 +1094,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureMainListener(camelContext);
         // configure virtual threads early before build() to avoid ThreadType DCL race
         configureVirtualThreadsEarly(camelContext);
+        // the type converter registry is created by build(), and its statistics cannot be enabled afterwards
+        configureTypeConverterStatisticsEarly(camelContext);
 
         // ensure camel context is build
         camelContext.build();

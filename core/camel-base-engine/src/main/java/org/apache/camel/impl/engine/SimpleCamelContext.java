@@ -33,7 +33,6 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResolver;
-import org.apache.camel.impl.converter.CoreTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -189,15 +188,6 @@ public class SimpleCamelContext extends AbstractCamelContext {
         return new DefaultTypeConverter(
                 getCamelContextReference(), PluginHelper.getPackageScanClassResolver(getCamelContextReference()), getInjector(),
                 isLoadTypeConverters(), isTypeConverterStatisticsEnabled());
-    }
-
-    @Override
-    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
-        super.setTypeConverterStatisticsEnabled(typeConverterStatisticsEnabled);
-        // the type converter is created when the context is built, which can be before this option is set (CAMEL-27103)
-        if (getTypeConverter() instanceof CoreTypeConverterRegistry registry) {
-            registry.setStatisticsEnabled(isTypeConverterStatisticsEnabled());
-        }
     }
 
     @Override

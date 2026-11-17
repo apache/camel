@@ -64,8 +64,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     // special enum converter for optional performance
     protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
 
-    // not final: the registry is created when the CamelContext is built, which can be before the option is set
-    private volatile ConverterStatistics statistics;
+    private final ConverterStatistics statistics;
 
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
@@ -81,25 +80,11 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     private final AtomicLong lookupsVersion = new AtomicLong();
 
     protected CoreTypeConverterRegistry(boolean statisticsEnabled) {
-        statistics = createStatistics(statisticsEnabled);
-    }
-
-    /**
-     * Enables or disables the utilization statistics.
-     * <p>
-     * The registry is created when the CamelContext is built, which can be before the option is configured (such as
-     * with Camel Main), so it can be changed afterwards. When it changes, the counters start again from zero.
-     *
-     * @param statisticsEnabled <code>true</code> to enable, <code>false</code> to disable
-     */
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        if (statisticsEnabled != statistics.isStatisticsEnabled()) {
-            statistics = createStatistics(statisticsEnabled);
+        if (statisticsEnabled) {
+            statistics = new TypeConverterStatistics();
+        } else {
+            statistics = new NoopTypeConverterStatistics();
         }
-    }
-
-    private static ConverterStatistics createStatistics(boolean statisticsEnabled) {
-        return statisticsEnabled ? new TypeConverterStatistics() : new NoopTypeConverterStatistics();
     }
 
     @Override

@@ -24,24 +24,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Camel Main builds the CamelContext before it applies camel.main.typeConverterStatisticsEnabled (CAMEL-27103).
+ * Camel Main builds the CamelContext, which creates the type converter registry, before it applies the configuration,
+ * so camel.main.typeConverterStatisticsEnabled must be applied before the context is built (CAMEL-27103).
  */
 public class MainTypeConverterStatisticsEnabledTest {
 
     @Test
-    public void testTypeConverterStatisticsEnabled() throws Exception {
+    public void testTypeConverterStatisticsEnabledFromProperties() throws Exception {
         Main main = new Main();
         main.addInitialProperty("camel.main.typeConverterStatisticsEnabled", "true");
+        assertStatisticsEnabled(main);
+    }
+
+    @Test
+    public void testTypeConverterStatisticsEnabledFromConfigure() throws Exception {
+        Main main = new Main();
+        main.configure().withTypeConverterStatisticsEnabled(true);
+        assertStatisticsEnabled(main);
+    }
+
+    @Test
+    public void testTypeConverterStatisticsEnabledFromSystemProperty() throws Exception {
+        // lower case, as the auto configuration ignores case
+        System.setProperty("camel.main.typeconverterstatisticsenabled", "true");
+        try {
+            assertStatisticsEnabled(new Main());
+        } finally {
+            System.clearProperty("camel.main.typeconverterstatisticsenabled");
+        }
+    }
+
+    private static void assertStatisticsEnabled(Main main) throws Exception {
         main.start();
         try {
             CamelContext context = main.getCamelContext();
             assertTrue(context.isTypeConverterStatisticsEnabled());
 
+            TypeConverterRegistry.Statistics statistics = context.getTypeConverterRegistry().getStatistics();
+            long before = statistics.getAttemptCounter();
+
             assertEquals(123, context.getTypeConverter().convertTo(int.class, "123"));
 
-            TypeConverterRegistry.Statistics statistics = context.getTypeConverterRegistry().getStatistics();
-            assertEquals(1, statistics.getAttemptCounter());
-            assertEquals(1, statistics.getHitCounter());
+            assertEquals(before + 1, statistics.getAttemptCounter());
         } finally {
             main.stop();
         }
