@@ -25,12 +25,7 @@ import org.citrusframework.jbang.cli.CitrusJBangMain;
 import org.citrusframework.jbang.cli.commands.AgentStart;
 
 /**
- * Resolves citrus-agent artifacts into the plugin classloader before the Citrus agent start command runs. This avoids a
- * classloader identity conflict in {@code ClassLoaderHelper.instantiateType()}: the Citrus {@code AgentStart} command
- * dynamically resolves the citrus-agent module and wraps the TCCL in an {@code OpenURLClassLoader}. When the plugin
- * runs inside Camel JBang, the {@code CitrusAgentConfiguration} class loaded by that wrapper can differ (by classloader
- * identity) from the one on the plugin classloader, causing the constructor lookup to fail. Pre-loading the artifacts
- * into the plugin classloader keeps everything on one classloader so the identity check passes.
+ * Adjusts the thread context class loader and configures logging for the duration of the Citrus agent start command.
  */
 public class TestAgentStart extends AgentStart {
 
@@ -45,7 +40,7 @@ public class TestAgentStart extends AgentStart {
                 RuntimeUtil.configureLog("info", true, false, false, false, null, null);
             } catch (Exception e) {
                 printer().printErr("Failed to configure logging for agent start command '%s': %s"
-                        .formatted(e.getClass(), e.getMessage()));
+                        .formatted(e.getClass().getName(), e.getMessage()));
             }
             return super.execute(inv);
         }, invocation);

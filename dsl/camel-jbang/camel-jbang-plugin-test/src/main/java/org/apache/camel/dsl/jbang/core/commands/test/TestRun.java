@@ -20,15 +20,13 @@ package org.apache.camel.dsl.jbang.core.commands.test;
 import org.aesh.command.CommandException;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
-import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
-import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.cli.CitrusJBangMain;
 import org.citrusframework.jbang.cli.commands.Run;
 
 /**
- * Sets the Camel JBang version and adjusts the thread context class loader for the duration of the Citrus test run so
- * that Citrus can resolve its resources.
+ * Adjusts the thread context class loader and configures logging for the duration of the Citrus test run so that Citrus
+ * can resolve its resources.
  */
 public class TestRun extends Run {
 
@@ -38,9 +36,6 @@ public class TestRun extends Run {
 
     @Override
     public CommandResult execute(CommandInvocation invocation) throws CommandException, InterruptedException {
-        System.setProperty("citrus.jbang.version", CitrusVersion.version());
-        System.setProperty("citrus.camel.jbang.version", new VersionHelper().getVersion());
-
         return TestPlugin.withClassLoader(inv -> {
             configureLogging();
             return super.execute(inv);
@@ -64,7 +59,7 @@ public class TestRun extends Run {
             }
         } catch (Exception e) {
             printer().printErr("Failed to configure logging for run command '%s': %s"
-                    .formatted(e.getClass(), e.getMessage()));
+                    .formatted(e.getClass().getName(), e.getMessage()));
         }
     }
 }

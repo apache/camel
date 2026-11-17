@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.aesh.command.CommandException;
 import org.aesh.command.CommandResult;
 import org.aesh.command.impl.internal.OptionType;
 import org.aesh.command.impl.internal.ProcessedCommand;
@@ -74,7 +75,7 @@ public class TestInit extends Init implements CommandTree.ParsedCommandAware {
 
     @Override
     public CommandResult execute(CommandInvocation invocation)
-            throws org.aesh.command.CommandException, InterruptedException {
+            throws CommandException, InterruptedException {
         return TestPlugin.withClassLoader(inv -> {
             try {
                 Path target = targetFile();
@@ -83,7 +84,7 @@ public class TestInit extends Init implements CommandTree.ParsedCommandAware {
                     return CommandResult.FAILURE;
                 }
                 return super.execute(inv);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 printer().println(
                         "Error: Failed to initialize test: %s %s".formatted(e.getClass().getName(), e.getMessage()));
                 return CommandResult.FAILURE;

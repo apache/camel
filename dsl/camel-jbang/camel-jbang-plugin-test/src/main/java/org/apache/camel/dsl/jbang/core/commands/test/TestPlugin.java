@@ -19,18 +19,18 @@ package org.apache.camel.dsl.jbang.core.commands.test;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+import org.aesh.command.CommandException;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.run.common.PluginExporter;
 import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.cli.CitrusJBangMain;
-import org.citrusframework.jbang.cli.commands.AgentRun;
-import org.citrusframework.jbang.cli.commands.AgentStop;
-import org.citrusframework.jbang.cli.commands.ListTests;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0", appliesTo = { "export" })
 public class TestPlugin implements Plugin {
@@ -46,11 +46,11 @@ public class TestPlugin implements Plugin {
                 .addSubcommand("init", new CommandTree(new TestInit(citrus)))
                 .addSubcommand("inspect", new CommandTree(new TestInspect(citrus)))
                 .addSubcommand("run", new CommandTree(new TestRun(citrus)))
-                .addSubcommand("ps", new CommandTree(new ListTests(citrus)), "ls")
+                .addSubcommand("ps", new CommandTree(new TestListTests(citrus)), "ls")
                 .addSubcommand("agent", new CommandTree(new TestAgent(citrus))
                         .addSubcommand("start", new CommandTree(new TestAgentStart(citrus)))
-                        .addSubcommand("run", new CommandTree(new AgentRun(citrus)))
-                        .addSubcommand("stop", new CommandTree(new AgentStop(citrus)))));
+                        .addSubcommand("run", new CommandTree(new TestAgentRun(citrus)))
+                        .addSubcommand("stop", new CommandTree(new TestAgentStop(citrus)))));
     }
 
     @Override
@@ -64,11 +64,15 @@ public class TestPlugin implements Plugin {
 
     /**
      * Executes a Citrus command with the plugin class loader set as the thread context class loader, restoring the
-     * original class loader afterward. In the Camel Launcher runtime the class loader is already correct.
+     * original class loader afterward. Also sets the Citrus and Camel version system properties that Citrus commands
+     * use for Maven artifact resolution. In the Camel Launcher runtime the class loader is already correct.
      */
     static CommandResult withClassLoader(
             CitrusCommandAction action, CommandInvocation invocation)
-            throws org.aesh.command.CommandException, InterruptedException {
+            throws CommandException, InterruptedException {
+        System.setProperty("citrus.jbang.version", CitrusVersion.version());
+        System.setProperty("citrus.camel.jbang.version", new VersionHelper().getVersion());
+
         if (!isCamelLauncherRuntime()) {
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             try {
@@ -91,7 +95,7 @@ public class TestPlugin implements Plugin {
     @FunctionalInterface
     interface CitrusCommandAction {
         CommandResult execute(CommandInvocation invocation)
-                throws org.aesh.command.CommandException, InterruptedException;
+                throws CommandException, InterruptedException;
     }
 
     /**
