@@ -155,7 +155,8 @@ public class GroovyExpression extends ExpressionSupport {
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         } catch (groovy.lang.MissingMethodException e) {
             // new JsonSlurper().parseText(body) on a body of bytes: parseText takes text (r26 of the local-model
-            // benchmark, a JMS message read as JSON in connect-service-jms-request-reply step 3)
+            // benchmark, a JMS message read as JSON in connect-service-jms-request-reply step 3). camel-groovy adds
+            // parseText for bytes as a Groovy extension module (CAMEL-27150): this is for a runtime that does not load it
             String hint = bytesToParseTextHint(exchange, e);
             if (hint == null) {
                 throw e;

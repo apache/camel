@@ -387,6 +387,13 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-ai-tool - suspending a route no longer stops it, and tool calls in flight complete when the route stops
+
+Suspending an `ai-tool` route, with `suspendRoute` or `context.suspend()`, now suspends the route instead of stopping
+it: the tool is deregistered, tool calls in flight complete, a new call to the suspended tool is refused, and resuming
+the route registers the tool again. When an `ai-tool` route is stopped, or Camel shuts down gracefully, tool calls in
+flight now complete instead of failing.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
@@ -740,7 +747,13 @@ carry the built-in `kc-admin-api` client scope, and rejects other tokens with `4
 assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
 `clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
 pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
-and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2 on amd64 and against
+Keycloak 26.0.5 on ppc64le.
+
+The `createOrganization` operation no longer sends the `autoRedirect` and `identityProviderAlias` fields of the
+organization domain, which the Keycloak 26.8 client library serializes (`autoRedirect` with the value `false`) and a
+Keycloak 26.0 server rejects with `400 Bad Request`. The producer never set these fields, so nothing changes for a
+Keycloak 26.8 server.
 
 === camel-kubernetes - the context reload on a secret or config map update lists the resources
 
@@ -2693,6 +2706,8 @@ trust store of the JVM was always used.
 * With `certificatePath`, the certificates in that file (PEM or DER) are trusted instead of the default trust store of
   the JVM, and the endpoint or the function fails to start when the file cannot be read. Remove `certificatePath` to
   keep the default trust store of the JVM.
+  The file is a path of the file system, or a resource with the `classpath:` or `file:` prefix. Other prefixes, such
+  as `http:`, are rejected.
 * With `verifySsl=false`, neither the certificate nor the host name of the server is checked. The option is now marked
   as an insecure SSL setting, so the security policy reports `camel.component.cyberark-vault.verifySsl=false`, which
   fails the startup with `camel.main.profile=prod`. Set `certificatePath` to the certificate of the server or of its

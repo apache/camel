@@ -118,6 +118,12 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "&description=Returns null body with output schema"
                      + "&outputSchema=classpath:output-schemas/weather-result.json")
                         .setBody(constant((Object) null));
+
+                from("ai-tool:suspendableTool"
+                     + "?tags=test"
+                     + "&description=A tool whose route is suspended and resumed")
+                        .routeId("suspendableTool")
+                        .setBody(constant("suspendable result"));
             }
         };
     }
@@ -277,6 +283,27 @@ public class AiToolExecutorTest extends CamelTestSupport {
         AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
         assertThat(error.message()).contains("No route processor available for tool 'nullProc'");
         assertThat(error.cause()).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void testExecuteReturnsExecutionErrorForSuspendedTool() throws Exception {
+        // a caller can hold a spec it obtained before the route was suspended
+        AiToolSpec spec = findSpec("suspendableTool");
+        context.getRouteController().suspendRoute("suspendableTool");
+
+        AiToolResult refused = AiToolExecutor.execute(spec, null, new DefaultExchange(context));
+
+        assertThat(refused).isInstanceOf(AiToolResult.ExecutionError.class);
+        AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) refused;
+        assertThat(error.message()).isEqualTo("Tool 'suspendableTool' is suspended");
+        assertThat(error.cause()).isInstanceOf(IllegalStateException.class);
+
+        context.getRouteController().resumeRoute("suspendableTool");
+
+        assertThat(findSpec("suspendableTool")).isSameAs(spec);
+        AiToolResult result = AiToolExecutor.execute(spec, null, new DefaultExchange(context));
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        assertThat(((AiToolResult.Success) result).value()).isEqualTo("suspendable result");
     }
 
     @Test

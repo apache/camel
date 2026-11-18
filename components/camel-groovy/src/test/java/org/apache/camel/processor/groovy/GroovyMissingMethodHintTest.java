@@ -30,11 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * new JsonSlurper().parseText(body) on a body of bytes gets a MissingMethodException whose first line says that
- * parseText takes text, and how to read the bytes (r26 of the local-model benchmark: a JMS message read as JSON).
+ * new JsonSlurper().parseText(body) on a body of bytes got a MissingMethodException, whose first line says that
+ * parseText takes text and how to read the bytes (r26 of the local-model benchmark: a JMS message read as JSON). Since
+ * CAMEL-27150 camel-groovy adds parseText for bytes and streams as a Groovy extension module, so the call parses them;
+ * the hint stays for a runtime where Groovy does not load that module.
  */
 public class GroovyMissingMethodHintTest extends CamelTestSupport {
 
@@ -42,27 +43,15 @@ public class GroovyMissingMethodHintTest extends CamelTestSupport {
             .getBytes(StandardCharsets.UTF_8);
 
     @Test
-    public void parseTextOfBytesSaysToParseTheBytes() {
-        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:body", ORDER));
-        MissingMethodException cause = assertInstanceOf(MissingMethodException.class, e.getCause());
-        // the hint is on the first line, which is the line a log shows
-        String first = cause.getMessage().lines().findFirst().orElseThrow();
-        assertTrue(first.startsWith("No signature of method: parseText for class: groovy.json.JsonSlurper"), first);
-        assertTrue(first.contains("(the body is bytes (a byte[])"), first);
-        assertTrue(first.contains("parseText takes text, so parse the bytes with new groovy.json.JsonSlurper().parse(body),"
-                                  + " or unmarshal it first (unmarshal: json"),
-                first);
+    public void parseTextOfBytesParsesThem() {
+        Object out = template.requestBody("direct:body", ORDER);
+        assertEquals(List.of(Map.of("sku", "A1")), out);
     }
 
     @Test
-    public void parseTextOfBytesInAHeaderSaysToParseTheBytes() {
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBodyAndHeader("direct:header", "x", "stock", ORDER));
-        MissingMethodException cause = assertInstanceOf(MissingMethodException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("(the value is bytes (a byte[]), and parseText takes text: parse the bytes"
-                                               + " with new groovy.json.JsonSlurper().parse(...))"),
-                cause.getMessage());
-        assertFalse(cause.getMessage().contains("the body is"), cause.getMessage());
+    public void parseTextOfBytesInAHeaderParsesThem() {
+        Object out = template.requestBodyAndHeader("direct:header", "x", "stock", ORDER);
+        assertEquals(Map.of("orderId", "ORD-1001", "lines", List.of(Map.of("sku", "A1"))), out);
     }
 
     @Test
