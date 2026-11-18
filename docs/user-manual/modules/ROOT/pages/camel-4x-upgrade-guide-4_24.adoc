@@ -9996,13 +9996,23 @@ It also removes Kamelets that were little used and did not work well. Use the Ca
 * `google-functions-sink`
 * `caffeine-action`
 
+It removes the variants whose options the plain Kamelets now have:
+
+[cols="2,2,3",options="header"]
+|===
+| Removed Kamelet | Use instead | What to change
+| `http-secured-sink`, `http-secured-source` | `http-sink`, `http-source` | Only the name. The login options are the same
+| `jms-pooled-apache-artemis-sink` | `jms-apache-artemis-sink` | Only the name. The plain sink now pools its connections, with the same pool options
+| `jms-pooled-apache-artemis-source` | `jms-apache-artemis-source` | The name, and remove the three pool options
+|===
+
 The demo Kamelets `bitcoin-source`, `chuck-norris-source`, `earthquake-source` and `wttrin-source` are no longer in the
 catalog. They are kept as examples in the `examples/kamelets` directory of the camel-kamelets repository. To run one, use
 `camel run route.yaml --local-kamelet-dir=examples/kamelets`.
 
 The public `KameletPrefixSchemeEnum` of `camel-kamelets-catalog` loses the entries of these Kamelets: `dropbox`, the
 `twitter_*` entries, `azure_storage_blob_changefeed`, `elasticsearch_search`, `google_functions`, the `kubernetes_*`
-entries, `bitcoin`, `chuck_norris` and `wttrin`.
+entries, `bitcoin`, `chuck_norris`, `wttrin` and `http_secured`.
 
 === Kamelets - deprecated Kamelets
 
@@ -10011,9 +10021,6 @@ These Kamelets still work, and will be removed in a later release:
 [cols="2,2,3",options="header"]
 |===
 | Deprecated Kamelet | Use instead | What to change
-| `http-secured-sink`, `http-secured-source` | `http-sink`, `http-source` | Only the name. The login options are the same
-| `jms-pooled-apache-artemis-sink` | `jms-apache-artemis-sink` | Only the name. The plain sink now pools its connections, with the same pool options
-| `jms-pooled-apache-artemis-source` | `jms-apache-artemis-source` | The name, and remove the three pool options
 | `kafka-apicurio-registry-not-secured-sink`, `kafka-apicurio-registry-not-secured-source`,
 `kafka-batch-apicurio-registry-not-secured-source`, `kafka-batch-apicurio-registry-source`,
 `kafka-not-secured-apicurio-registry-json-source`, `kafka-not-secured-apicurio-registry-sink`,
@@ -10035,8 +10042,7 @@ To connect without security, as before, set `saslAuthType: NONE`.
 
 === Kamelets - messaging sinks no longer wait for a reply
 
-`jms-apache-artemis-sink`, `jms-pooled-apache-artemis-sink`, `jms-amqp-10-sink`, `jms-ibm-mq-sink`,
-`spring-rabbitmq-sink` and `nats-sink` now send a message without waiting for a reply, also when the message expects
+`jms-apache-artemis-sink`, `jms-amqp-10-sink`, `jms-ibm-mq-sink`, `spring-rabbitmq-sink` and `nats-sink` now send a message without waiting for a reply, also when the message expects
 one, such as a message from `webhook-source`. The caller gets its own message back, instead of the answer of a
 receiver.
 
