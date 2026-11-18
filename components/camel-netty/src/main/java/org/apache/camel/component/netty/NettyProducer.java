@@ -337,6 +337,19 @@ public class NettyProducer extends DefaultAsyncProducer {
             } else {
                 channel.pipeline().replace(oldHandler, "timeout", newHandler);
             }
+        } else if (configuration.isSync() && configuration.getRequestTimeout() > 0
+                && channel.pipeline().get("timeout") == null) {
+            // the reply to the previous request on this channel removed the timeout (ClientChannelHandler), and only a
+            // borrow from the producer pool adds it again (activateObject): a channel that is used again without a
+            // borrow (producerPoolEnabled=false, or reuseChannel=true) needs it added here, or the request never times out
+            LOG.trace("Adding the request timeout of {} millis to channel: {}", configuration.getRequestTimeout(), channel);
+            try {
+                channel.pipeline().addBefore("handler", "timeout",
+                        new ReadTimeoutHandler(configuration.getRequestTimeout(), TimeUnit.MILLISECONDS));
+            } catch (IllegalArgumentException e) {
+                // another request on this shared channel (producerPoolEnabled=false) added it meanwhile
+                LOG.trace("The request timeout was added to channel: {} meanwhile", channel);
+            }
         }
 
         //This will refer to original callback since netty will release body by itself
