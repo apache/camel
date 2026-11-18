@@ -41,10 +41,10 @@ import org.apache.sshd.server.auth.keyboard.UserAuthKeyboardInteractiveFactory;
 import org.apache.sshd.server.auth.password.UserAuthPasswordFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -58,10 +58,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * rejected the login, as each rejected login counts towards the lockout policy of the server. Other connection failures
  * are retried as before. The WARN of the consumer says why it cannot connect.
  */
-@Isolated
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
+    // @Order(0) keeps the server alive until after the CamelContext (@Order(1) in CamelTestSupport) shuts down,
+    // which prevents in-flight polls from logging spurious "Connection refused" WARNs during teardown.
+    @Order(0)
     @RegisterExtension
     CountingSftpEmbeddedService service = new CountingSftpEmbeddedService();
 
@@ -75,6 +77,18 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
     @AfterEach
     void releaseWarnings() {
         warnings.detach();
+    }
+
+    /**
+     * Filters the captured WARNs to those logged by the consumer for this test's server port. Each WARN contains
+     * {@code localhost:<port>}, which is unique per test instance, so this removes any stray WARNs from a concurrent
+     * test using a different port.
+     */
+    private List<String> warningsForThisTest(int port) {
+        String portMarker = "@localhost:" + port;
+        return warnings.messages().stream()
+                .filter(m -> m.contains(portMarker))
+                .toList();
     }
 
     @ParameterizedTest
@@ -92,7 +106,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
         assertEquals(List.of("Cannot connect/login to: sftp://admin@localhost:" + service.getPort()
                              + " due to: Auth fail for user 'admin': the server did not accept the password."
                              + " Will skip this poll."),
-                warnings.messages());
+                warningsForThisTest(service.getPort()));
     }
 
     @Test
@@ -121,7 +135,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, service.passwordChecks());
-        assertTrue(warnings.messages().isEmpty(), "No WARN: " + warnings.messages());
+        assertTrue(warningsForThisTest(service.getPort()).isEmpty(), "No WARN: " + warnings.messages());
     }
 
     @Test
@@ -146,7 +160,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
             assertEquals(List.of("Cannot connect/login to: sftp://admin@localhost:" + server.getPort()
                                  + " due to: connection is closed by foreign host. Will skip this poll."),
-                    warnings.messages());
+                    warningsForThisTest(server.getPort()));
         }
     }
 
@@ -237,8 +251,13 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
         private void accept() {
             while (!socket.isClosed()) {
-                try (Socket ignored = socket.accept()) {
+                try (Socket accepted = socket.accept()) {
                     connections.incrementAndGet();
+                    // Read and discard whatever the client sent before closing. Without this, closing with unread data
+                    // resets the connection on some platforms (e.g. macOS), and JSch reports "Connection reset" instead
+                    // of "connection is closed by foreign host".
+                    accepted.setSoTimeout(1000);
+                    accepted.getInputStream().read(new byte[256]);
                 } catch (IOException e) {
                     // closed
                 }
