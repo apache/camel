@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -155,20 +157,58 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         private volatile Thread thread;
 
+        // guards processing, and the check of stopped before an exchange is routed
+        private final Lock lock = new ReentrantLock();
+
+        // guarded by lock: an exchange is being routed on this thread
+        private boolean processing;
+
         /**
-         * Ends this thread: the consumer stopped. The thread is interrupted, unless the consumer is stopped from this
-         * thread (such as by a route policy when an exchange is done).
+         * Ends this thread: the consumer stopped. The thread is interrupted while it waits for an operation or a watch,
+         * but not while it routes an exchange (a graceful shutdown stops the consumer first, then waits for the
+         * exchange to complete), and not when the consumer is stopped from this thread (such as by a route policy when
+         * an exchange is done). After the exchange, the loop sees the stop and ends.
          */
         void stop() {
-            stopped = true;
-            Thread t = thread;
-            if (t != null && t != Thread.currentThread()) {
-                t.interrupt();
+            lock.lock();
+            try {
+                stopped = true;
+                Thread t = thread;
+                if (!processing && t != null && t != Thread.currentThread()) {
+                    t.interrupt();
+                }
+            } finally {
+                lock.unlock();
             }
         }
 
         private boolean isRunning() {
             return !stopped && isRunAllowed();
+        }
+
+        /**
+         * @return false if the consumer was stopped, and no exchange must be routed
+         */
+        private boolean beginProcessing() {
+            lock.lock();
+            try {
+                if (stopped) {
+                    return false;
+                }
+                processing = true;
+                return true;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        private void endProcessing() {
+            lock.lock();
+            try {
+                processing = false;
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override
@@ -195,7 +235,15 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                         watchedEvent = ZooKeeperUtils.getWatchedEvent(current);
                     }
                     if (result != null && current.shouldProduceExchange()) {
-                        getProcessor().process(createExchange(node, result, watchedEvent));
+                        if (!beginProcessing()) {
+                            // stopped while the operation completed: the exchange is not created
+                            break;
+                        }
+                        try {
+                            getProcessor().process(createExchange(node, result, watchedEvent));
+                        } finally {
+                            endProcessing();
+                        }
                         watchedEvent = null;
                     }
                 } catch (InterruptedException e) {

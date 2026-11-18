@@ -21,10 +21,15 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.operations.FutureEventDrivenOperation;
@@ -41,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -119,22 +125,67 @@ class ZooKeeperConsumerRestartTest extends CamelTestSupport {
 
         // update through the consumer's own session once it waits for a change, so the change cannot be missed
         ZooKeeperEndpoint endpoint = (ZooKeeperEndpoint) context.getRoute("watch").getEndpoint();
-        await().atMost(20, TimeUnit.SECONDS).until(ZooKeeperConsumerRestartTest::operationsThreadWaitsForAChange);
+        await().atMost(20, TimeUnit.SECONDS).until(this::operationsThreadWaitsForAChange);
         endpoint.getConnectionManager().getConnection().setData(NODE, bytes("two"), -1);
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(received(mock, "two"),
                 "the consumer did not consume the update made after it was started again"));
     }
 
-    private static long operationsThreads() {
+    @Test
+    void stopDoesNotInterruptTheExchangeBeingRouted() throws Exception {
+        CountDownLatch entered = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        AtomicBoolean completed = new AtomicBoolean();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("zookeeper://127.0.0.1:" + port + NODE).routeId("blocking")
+                        .process(e -> {
+                            entered.countDown();
+                            try {
+                                completed.set(release.await(20, TimeUnit.SECONDS));
+                            } catch (InterruptedException ie) {
+                                failure.set(ie);
+                                Thread.currentThread().interrupt();
+                            }
+                        });
+            }
+        });
+        assertTrue(entered.await(20, TimeUnit.SECONDS), "the exchange was not routed");
+
+        // a graceful stop stops the consumer first (it is not Suspendable), then waits for the exchange
+        StatefulService consumer = (StatefulService) context.getRoute("blocking").getConsumer();
+        CompletableFuture<Void> stop = CompletableFuture.runAsync(() -> {
+            try {
+                context.getRouteController().stopRoute("blocking", 20, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        });
+        await().atMost(20, TimeUnit.SECONDS).until(consumer::isStopped);
+
+        release.countDown();
+        stop.get(30, TimeUnit.SECONDS);
+        assertNull(failure.get(), "the exchange being routed was interrupted by the stop");
+        assertTrue(completed.get(), "the exchange being routed did not complete");
+    }
+
+    private long operationsThreads() {
+        // only the threads of this context, in case other tests run in the same JVM
+        String contextName = "(" + context.getName() + ")";
         return Thread.getAllStackTraces().keySet().stream()
                 .filter(t -> t.getName().contains("Camel-Zookeeper OperationsExecutor"))
+                .filter(t -> t.getName().contains(contextName))
                 .filter(Thread::isAlive)
                 .count();
     }
 
-    private static boolean operationsThreadWaitsForAChange() {
+    private boolean operationsThreadWaitsForAChange() {
+        String contextName = "(" + context.getName() + ")";
         return Thread.getAllStackTraces().entrySet().stream()
                 .filter(e -> e.getKey().getName().contains("Camel-Zookeeper OperationsExecutor"))
+                .filter(e -> e.getKey().getName().contains(contextName))
                 .filter(e -> e.getKey().getState() == Thread.State.WAITING)
                 .anyMatch(e -> Arrays.stream(e.getValue())
                         .anyMatch(f -> FutureEventDrivenOperation.class.getName().equals(f.getClassName())
