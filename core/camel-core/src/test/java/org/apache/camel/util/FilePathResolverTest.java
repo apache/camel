@@ -17,11 +17,13 @@
 package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated("Writes system properties: as a lock writer among the concurrent tests, it would hold back every test reading them until the longest one ends")
 public class FilePathResolverTest {
 
     @Test

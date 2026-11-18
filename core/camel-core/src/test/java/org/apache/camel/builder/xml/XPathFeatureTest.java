@@ -33,6 +33,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@Isolated("Writes system properties: as a lock writer among the concurrent tests, it would hold back every test reading them until the longest one ends")
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
 

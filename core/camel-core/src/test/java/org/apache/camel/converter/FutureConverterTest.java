@@ -19,6 +19,7 @@ package org.apache.camel.converter;
 import java.sql.Timestamp;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,6 +30,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -89,6 +91,9 @@ public class FutureConverterTest extends ContextTestSupport {
         Object out = context.getTypeConverter().convertTo(String.class, future);
         // should be null since its cancelled
         assertNull(out);
+
+        // cancelling the future does not stop the exchange: let it complete, so the shutdown does not wait for it
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
     }
 
     @Test
