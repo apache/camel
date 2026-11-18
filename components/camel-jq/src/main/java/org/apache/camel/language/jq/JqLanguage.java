@@ -16,10 +16,8 @@
  */
 package org.apache.camel.language.jq;
 
-import net.thisptr.jackson.jq.JsonQuery;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Versions;
-import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
+import net.thisptr.jackson.jq.v2.core.Environment;
+import net.thisptr.jackson.jq.v2.core.EnvironmentBuilder;
 import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.BodyType;
@@ -28,6 +26,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
+import tools.jackson.databind.JsonNode;
 
 @Language("jq")
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
@@ -39,29 +38,26 @@ import org.apache.camel.support.SingleInputTypedLanguageSupport;
                                                    + " gives none"))
 public class JqLanguage extends SingleInputTypedLanguageSupport implements StaticService {
 
-    private Scope rootScope;
+    private Environment<JsonNode> environment;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init() {
         if (getCamelContext() != null) {
-            this.rootScope = CamelContextHelper.findSingleByType(getCamelContext(), Scope.class);
+            this.environment = CamelContextHelper.findSingleByType(getCamelContext(), Environment.class);
         }
-        if (this.rootScope == null) {
-            this.rootScope = Scope.newEmptyScope();
-            this.rootScope.setModuleLoader(BuiltinModuleLoader.getInstance());
+        if (this.environment == null) {
+            // a custom environment is used as-is, as an environment cannot be changed once built
+            EnvironmentBuilder<JsonNode> builder = JqFunctions.newEnvironmentBuilder(getCamelContext());
             if (getCamelContext() != null) {
-                JqFunctions.load(getCamelContext(), rootScope);
+                JqFunctions.loadFromRegistry(getCamelContext(), builder);
             }
+            this.environment = builder.build();
         }
-
-        if (getCamelContext() != null) {
-            JqFunctions.loadFromRegistry(getCamelContext(), rootScope);
-        }
-        JqFunctions.loadLocal(rootScope);
     }
 
-    public Scope getRootScope() {
-        return rootScope;
+    public Environment<JsonNode> getEnvironment() {
+        return environment;
     }
 
     @Override
@@ -76,7 +72,7 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
 
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
-        JqExpression answer = new JqExpression(Scope.newChildScope(rootScope), expression);
+        JqExpression answer = new JqExpression(environment, expression);
         answer.setResultType(property(Class.class, properties, 0, null));
         answer.setSource(source);
         if (getCamelContext() != null) {
@@ -88,14 +84,14 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     // use by tooling
     public boolean validateExpression(String expression) throws Exception {
         init();
-        JsonQuery jq = JsonQuery.compile(expression, Versions.JQ_1_7);
+        environment.compile(expression);
         return true;
     }
 
     // use by tooling
     public boolean validatePredicate(String expression) throws Exception {
         init();
-        JsonQuery.compile(expression, Versions.JQ_1_7);
+        environment.compile(expression);
         return true;
     }
 

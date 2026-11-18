@@ -43,16 +43,41 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.thisptr</groupId>
-            <artifactId>jackson-jq</artifactId>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-core</artifactId>
             <version>${jackson-jq-version}</version>
         </dependency>
         <dependency>
-            <groupId>net.thisptr</groupId>
-            <artifactId>jackson-jq-extra</artifactId>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-json-provider-impl-jackson3</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-regex-impl-joni</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-ext-module-random</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-ext-module-time</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-ext-module-uri</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thisptr.jackson.jq.v2</groupId>
+            <artifactId>jackson-jq-ext-module-uuid</artifactId>
             <version>${jackson-jq-version}</version>
         </dependency>
 
@@ -66,6 +91,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- a body can still be a Jackson 2 node -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

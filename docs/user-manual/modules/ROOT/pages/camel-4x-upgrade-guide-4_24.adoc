@@ -9352,10 +9352,10 @@ to your application, unless a library it uses still needs it; at most `jackson-a
 Jackson 2, for example an `ObjectMapper` it got through `camel-salesforce`, declare `jackson-databind` yourself.
 
 *Components that stay on Jackson 2.* `camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`, `camel-jackson-protobuf`,
-`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
+`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
 `camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi` and `camel-tahu` still use Jackson 2. Where
 they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`, not the
-`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq` expression
+`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jslt` transform
 after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
 
 *Jackson 2 nodes.* A component on Jackson 3 accepts JSON text, bytes, streams, Maps, Lists and `tools.jackson.databind.JsonNode`
@@ -9609,6 +9609,63 @@ Jackson 2 is no longer used.
 
 The limits on what is parsed are those of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million
 characters (it was 20 million). To change them, register a mapper with your own `StreamReadConstraints`.
+
+=== Jackson 3 - camel-jq
+
+`camel-jq` now uses jackson-jq 2 with its Jackson 3 provider, instead of jackson-jq 1 on Jackson 2. It depends on
+`camel-jackson3` instead of `camel-jackson`, and no longer brings Jackson 2 to your application: if your code uses Jackson 2,
+declare it yourself. The jackson-jq artifacts moved to the `net.thisptr.jackson.jq.v2` group: `net.thisptr:jackson-jq` and
+`net.thisptr:jackson-jq-extra` are replaced by `jackson-jq-core`, `jackson-jq-json-provider-impl-jackson3`,
+`jackson-jq-regex-impl-joni` and the `jackson-jq-ext-module-*` modules, which `camel-jq` brings.
+
+*With `camel-jackson` in the same application.* As `camel-jq` brings `camel-jackson3`, an application that also has
+`camel-jackson` now has both, and the Jackson 3 `jackson` data format is used for `marshal().json()` and `unmarshal().json()`
+(see _One data format name, two artifacts_ above): JSON is written with the defaults of Jackson 3, and on Spring Boot the
+`camel.dataformat.jackson.*` options of `camel-jackson-starter` no longer apply, as they configure the Jackson 2 data format.
+To keep the Jackson 2 data format, configure a `JacksonDataFormat` of `camel-jackson` explicitly in the route.
+
+*Results and input.* An expression without a `resultType` returns a `tools.jackson.databind.JsonNode`, where it returned a
+`com.fasterxml.jackson.databind.JsonNode`; its conversion to another type uses the type converters of `camel-jackson3`. An
+input that is a node of either line works: a Jackson 2 node is read as its JSON text. A Jackson 2 `resultType`, such as
+`com.fasterxml.jackson.databind.JsonNode`, is converted from the JSON text of the result, which needs `camel-jackson` on the
+classpath. The type converters of `camel-jackson3` use the `tools.jackson` `ObjectMapper` of the registry when there is
+exactly one: on Spring Boot 4 this is the `JsonMapper` of Spring Boot, so the `spring.jackson.*` settings apply to how jq
+reads its input and converts its results.
+
+*Functions in expressions.*
+
+* `constant` takes a JSON value: write `constant("sweden")` instead of `constant(sweden)`.
+* `hostname` no longer exists.
+* The functions of `jackson-jq-extra` are now in jq modules, which an expression imports before it calls their functions
+  with the module prefix, for example `import "jackson-jq/uuid" as uuid; .id = uuid::uuid4`:
++
+[cols="1,2"]
+|===
+| Module | Functions
+
+| `jackson-jq/uuid` | `uuid4`
+| `jackson-jq/random` | `random`
+| `jackson-jq/time` | `timestamp`, `strftime`, `strptime`
+| `jackson-jq/uri` | `uriparse`, `uridecode`
+|===
+
+The Camel functions (`header`, `property`, `variable`, `constant` and `body`) need no import.
+
+*Custom functions and scope.* The jackson-jq 1 types are gone, so Java code that extends `camel-jq` must be ported:
+
+* A function in the registry must implement `net.thisptr.jackson.jq.v2.spi.Function`, whose `bind` method replaces `apply`.
+  As before, a function bound as `name/arity`, such as `contains/1`, takes that number of arguments, and one bound under
+  its name alone takes any number. A function with the name and arity of a Camel function, such as `header/1`, is
+  ignored with a WARN, as the Camel function wins as before.
+* A custom root scope is now a `net.thisptr.jackson.jq.v2.core.Environment<tools.jackson.databind.JsonNode>` in the
+  registry, instead of a `net.thisptr.jackson.jq.Scope`. An environment cannot be changed once built, so Camel uses it as it
+  is: it no longer adds the Camel functions and the functions of the registry to it. Build it with
+  `JqFunctions.newEnvironmentBuilder(camelContext)`, which loads the jq builtins, the Camel functions and the modules on the
+  classpath, and define your own functions on that builder with `defineFunction`.
+* The `JqExpression(Scope, String)` constructor is replaced by `JqExpression(Environment<JsonNode>, String)`.
+* `JqExpression.getScope()` and `setScope()` are replaced by `getEnvironment()` and `setEnvironment()`, and
+  `JqLanguage.getRootScope()` by `getEnvironment()`. `JqFunctions.load()` and `loadLocal()` are removed, and
+  `JqFunctions.loadFromRegistry()` takes an `EnvironmentBuilder`.
 
 === Jackson 3 - camel-kafka
 
