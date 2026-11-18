@@ -9219,6 +9219,15 @@ Rename the alias of the key to the algorithm of the key, for example `RS256` for
 keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
 ----
 
+=== camel-cyberark-vault - certificatePath accepts the classpath: and file: prefixes
+
+The `certificatePath` option of the endpoint and of the vault configuration (`camel.vault.cyberark.certificatePath`)
+now also accepts a resource with the `classpath:` or `file:` prefix. A path without a prefix is still read from the
+file system. Other prefixes, such as `http:`, are rejected when the endpoint or the vault starts.
+
+`ConjurClientFactory.createSslContext` takes the `CamelContext` as a new first parameter, to load a `classpath:`
+resource. Code that calls this method directly must pass the `CamelContext`.
+
 === Jackson 3
 
 Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,
