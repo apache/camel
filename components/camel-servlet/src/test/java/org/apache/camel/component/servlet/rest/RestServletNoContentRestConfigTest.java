@@ -108,7 +108,8 @@ public class RestServletNoContentRestConfigTest extends ServletCamelRouterTestSu
             @Override
             public void configure() {
                 restConfiguration().component("servlet").host("localhost")
-                        .bindingMode(RestBindingMode.auto).enableNoContentResponse(true);
+                        .bindingMode(RestBindingMode.auto).enableNoContentResponse(true)
+                        .dataFormatProperty("xml.out.allowPartClassFromHeader", "true");
 
                 rest("/v1/empty")
                         .get("/country").to("direct:v1country")

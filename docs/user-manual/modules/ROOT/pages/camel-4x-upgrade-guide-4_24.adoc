@@ -198,6 +198,22 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request). The REST binding does not take this
+option from the JAXB data format configured on the CamelContext (such as `camel.dataformat.jaxb.*` in Camel Main).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
@@ -1738,9 +1754,9 @@ now also apply to the data formats that the Rest DSL binding creates for `json` 
 to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
 instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
 `xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`,
-`unmarshalType`, `useList`, `collectionType` and `partClass` options are not taken over: the body type comes from the
-`type` and `outType` of the verb, and the other options can be set with `camel.rest.dataFormatProperties` when the
-binding needs them.
+`unmarshalType`, `useList`, `collectionType`, `partClass` and `allowPartClassFromHeader` options are not taken over:
+the body type comes from the `type` and `outType` of the verb, and the other options can be set with
+`camel.rest.dataFormatProperties` when the binding needs them.
 
 === camel-support - API components use one thread pool per CamelContext
 
