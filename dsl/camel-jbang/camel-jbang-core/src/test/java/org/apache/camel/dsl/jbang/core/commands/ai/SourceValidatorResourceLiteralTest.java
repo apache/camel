@@ -18,13 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-24882: a script that returns 'resource:file:x' returns that text; the validator says to add resolveResource:
- * true or to use constant/simple. CAMEL-25982: with resolveResource: true the name has no scheme.
+ * true or to use constant/simple. CAMEL-25982: with resolveResource: true the name has no scheme. CAMEL-27146: only the
+ * script is read, not the other keys under the language.
  */
 class SourceValidatorResourceLiteralTest {
 
@@ -99,6 +101,97 @@ class SourceValidatorResourceLiteralTest {
         assertThat(errors.get(0))
                 .startsWith("Line 7: groovy: with resolveResource: true the script must return the name without a"
                             + " scheme, 'resource:order.json' instead of 'resource:file:order.json'");
+    }
+
+    @Test
+    void aResourceValueUnderAnotherKeyIsNotAScript() {
+        // r35 (local-model benchmark): a model wrote the file under the wrong key resource: and was told that the
+        // script returns the text, so it wrote the file name as the script, which groovy ran as code
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                resource: "resource:file:shipment-mapping.groovy"
+                        - setBody:
+                            expression:
+                              groovy:
+                                resultType: java.util.Map
+                                resourceUri: "resource:file:shipment-mapping.groovy"
+                """;
+        assertThat(BeanRefChecks.validateReturnedResourceLiterals(yaml)).isEmpty();
+    }
+
+    @Test
+    void theScriptUnderExpressionIsReadAmongTheOtherOptions() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                resultType: java.lang.String
+                                expression: |
+                                  def counter = exchange.getProperty('CamelTimerCounter', Integer) ?: 0
+                                  counter == 0 ? 'resource:file:order.json' : 'resource:file:other.json'
+                                trim: true
+                """;
+        List<String> errors = BeanRefChecks.validateReturnedResourceLiterals(yaml);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0))
+                .startsWith("Line 7: groovy: the script returns the text 'resource:file:order.json', not the file");
+    }
+
+    @Test
+    void aFlowMappingIsReadByItsExpression() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy: {expression: "resource:file:shipment-mapping.groovy"}
+                        - setBody:
+                            expression:
+                              groovy: {resource: "resource:file:shipment-mapping.groovy"}
+                        - setBody:
+                            expression:
+                              groovy: {expression: "'resource:order.json'", resolveResource: true}
+                        - setBody:
+                            expression:
+                              groovy: {expression: "'resource:file:order.json'"}
+                """;
+        List<String> errors = BeanRefChecks.validateReturnedResourceLiterals(yaml);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0))
+                .startsWith("Line 16: groovy: the script returns the text 'resource:file:order.json', not the file");
+    }
+
+    @Test
+    void aWrongKeyGetsOnlyTheSchemaMessage() {
+        String yaml = """
+                - route:
+                    id: data-mapping
+                    from:
+                      uri: timer:order?repeatCount=1
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                resource: "resource:file:shipment-mapping.groovy"
+                        - log:
+                            message: "Shipment: ${body}"
+                """;
+        List<String> errors = SourceValidator.validate("data-mapping.camel.yaml", yaml, new DefaultCamelCatalog(), null);
+        assertThat(errors).anyMatch(e -> e.contains("property 'resource' is not defined")
+                && e.contains("write groovy: {expression: \"resource:file:shipment-mapping.groovy\"}"));
+        assertThat(errors).noneMatch(e -> e.contains("the script returns the text"));
     }
 
 }
