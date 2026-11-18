@@ -2828,7 +2828,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(sb, "instanceClassName", def.getInstanceClassName(), null);
-        doWriteAttribute(sb, "library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute(sb, "library", toString(def.getLibrary()), "Jackson");
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(sb, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(sb, "include", def.getInclude(), null);

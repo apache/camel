@@ -48,7 +48,7 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(description = "Class name to use for marshal and unmarshalling.")
     private String instanceClassName;
     @XmlAttribute
-    @Metadata(defaultValue = "avroJackson", description = "Which Avro library to use.")
+    @Metadata(defaultValue = "Jackson", description = "Which Avro library to use.")
     private AvroLibrary library = AvroLibrary.Jackson;
     @XmlAttribute
     @Metadata(label = "advanced",
