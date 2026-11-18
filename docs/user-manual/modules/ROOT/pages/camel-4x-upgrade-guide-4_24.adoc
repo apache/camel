@@ -10028,6 +10028,22 @@ These Kamelets still work, and will be removed in a later release:
 | `kafka-source`, `kafka-sink` and `kafka-batch-source` | Use the schema registry options of the Kafka Kamelets
 |===
 
+=== Kamelets - renamed options
+
+These Kamelet options had the name of a parameter that the `kamelet:` component takes for itself. Given on a `kamelet:`
+endpoint, they never reached the Kamelet: `location` was read as the place to load the Kamelet from, so the route failed
+to start. Set as `camel.kamelet.<name>.<option>` properties, such as in a Camel K Pipe, they worked, so rename them:
+
+[cols="2,1,1",options="header"]
+|===
+| Kamelet | Old name | New name
+| `google-vertexai-sink` | `location` | `region` (required)
+| `ibm-cos-sink`, `ibm-cos-source` | `location` | `region`
+| `fhir-sink`, `pulsar-sink` | `lazyStartProducer` | `lazyStart`
+|===
+
+With the old name, `google-vertexai-sink` fails at startup because `region` is missing, and the other Kamelets ignore it.
+
 === Kamelets - Kafka Kamelets require saslAuthType
 
 `kafka-sink`, `kafka-batch-source` and `ceph-event-based-source` have no default for `saslAuthType` any more, as was
