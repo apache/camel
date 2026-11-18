@@ -24,6 +24,7 @@ import com.atlassian.jira.rest.client.api.domain.User;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.util.CastUtils;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -42,6 +43,12 @@ import org.slf4j.LoggerFactory;
  * <p>
  * NOTE: We manually add "ORDER BY created DESC" to the JQL in order to optimize startup (the latest issues one at a
  * time) and to correctly get the newest issue.
+ * <p>
+ * If the search for the latest issue fails at startup, the polls ask for the issues created since the consumer started
+ * instead, until one is found: the JQL asks for the minute of the start, and only the issues whose creation date is
+ * after the start are kept. That start is read from the local clock and compared with the creation dates of the server,
+ * so while the lookup has failed, a clock skew between the two (usually seconds with NTP) can route an issue created
+ * just before the start, or miss one created just after it.
  */
 public class NewIssuesConsumer extends AbstractJiraConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(NewIssuesConsumer.class);
@@ -52,9 +59,11 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     // Last issue that was processed by the integration
     private Issue latestIssue;
-    // Whether the latest issue was looked up since the consumer started: until then no issue is routed, as all issues
-    // that exist when the consumer starts are older than the new ones
+    // Whether the latest issue was looked up when the consumer started. If not, the issues created after the start are
+    // the new ones, as all issues that exist when the consumer starts are older
     private volatile boolean latestIssueLookedUp;
+    // when the consumer started, by the local clock
+    private DateTime startTime;
     // timezone of the current user authenticated
     private DateTimeZone userTimeZone;
 
@@ -64,18 +73,22 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
+        // before super.doStart(), which starts the polls: they use what is set here
+        startTime = DateTime.now();
         latestIssue = null;
         latestIssueLookedUp = false;
+        // also before the lookup: the polls that follow a failed lookup need it
+        userTimeZone = getUserTimeZone();
         try {
             lookUpLatestIssue();
         } catch (Exception e) {
-            // without the latest issue every existing issue would be taken as new: look it up again at the next poll
-            LOG.warn("Cannot find the latest issue at startup (will try again at the next poll): {}", e.getMessage(), e);
+            // without the latest issue every existing issue would be taken as new: the polls ask for the issues created
+            // since the start instead
+            LOG.warn("Cannot find the latest issue at startup (the polls will ask for the issues created since the start): {}",
+                    e.getMessage(), e);
         }
 
-        userTimeZone = getUserTimeZone();
+        super.doStart();
     }
 
     /**
@@ -85,6 +98,15 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
      */
     private String getServerTimestamp() {
         return latestIssue.getCreationDate().withZone(userTimeZone).toString(JIRA_DATE_FORMAT);
+    }
+
+    /**
+     * The start of the consumer in the timezone of the user, as the JQL expects it.
+     *
+     * @return timestamp string used in the JQL
+     */
+    private String getStartTimestamp() {
+        return startTime.withZone(userTimeZone).toString(JIRA_DATE_FORMAT);
     }
 
     /**
@@ -126,11 +148,6 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
     }
 
     protected int doPoll() throws Exception {
-        if (!latestIssueLookedUp) {
-            // the lookup failed at startup: a failure now fails the poll, and it is tried again at the next poll
-            lookUpLatestIssue();
-            return 0;
-        }
         // it may happen the poll() is called while the route is doing the initial load,
         // this way we need to wait for the latestIssueId being associated to the last indexed issue id
         Queue<Issue> newIssues = getNewIssues();
@@ -148,12 +165,12 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         Queue<Issue> issues;
         // If we have processed an issue before, use its timestamp to get only the newer ones
         if (latestIssue != null) {
-            String jqlFilter = String.format(NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql());
-            // all of them: the newest one becomes the latest issue, so a new issue left out by maxResults would never
-            // be returned again; maxResults is the page size here
-            int maxResults = getEndpoint().getMaxResults();
-            int pageSize = maxResults > 0 ? Math.min(maxResults, SEARCH_MAX_PER_QUERY) : SEARCH_MAX_PER_QUERY;
-            issues = getIssues(jqlFilter, SEARCH_START_AT, pageSize, Integer.MAX_VALUE);
+            issues = getAllIssues(String.format(NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql()));
+        } else if (!latestIssueLookedUp) {
+            // the lookup failed at startup: the issues created since the start are the new ones. The JQL returns the
+            // issues of the minute of the start too, so keep those created after it
+            issues = getAllIssues(String.format(NEW_ISSUES_JQL_FORMAT, getStartTimestamp(), getEndpoint().getJql()));
+            issues.removeIf(i -> !i.getCreationDate().isAfter(startTime));
         } else {
             issues = getIssues(getEndpoint().getJql());
         }
@@ -173,5 +190,15 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
             }
         }
         return issues;
+    }
+
+    /**
+     * All the issues of the JQL: the newest one becomes the latest issue, so a new issue left out by maxResults would
+     * never be returned again; maxResults is the page size here.
+     */
+    private Queue<Issue> getAllIssues(String jql) {
+        int maxResults = getEndpoint().getMaxResults();
+        int pageSize = maxResults > 0 ? Math.min(maxResults, SEARCH_MAX_PER_QUERY) : SEARCH_MAX_PER_QUERY;
+        return getIssues(jql, SEARCH_START_AT, pageSize, Integer.MAX_VALUE);
     }
 }

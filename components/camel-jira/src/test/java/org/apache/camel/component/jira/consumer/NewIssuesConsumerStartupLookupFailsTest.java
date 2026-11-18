@@ -143,6 +143,7 @@ public class NewIssuesConsumerStartupLookupFailsTest extends CamelTestSupport {
 
         List<Object> bodies = mockResult.getReceivedExchanges().stream().map(e -> e.getMessage().getBody()).toList();
         assertEquals(List.of(NEW_ISSUE), bodies, "only the issue created after the start is new");
-        assertEquals(2, latestIssueSearches.get(), "the latest issue is looked up again after the failed lookup");
+        assertEquals(1, latestIssueSearches.get(),
+                "the polls ask for the issues created since the start, not for the latest issue again");
     }
 }
