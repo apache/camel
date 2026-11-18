@@ -604,7 +604,7 @@ The camel.vault.cyberark supports 9 options, which are listed below.
 | `camel.vault.cyberark.account` | The CyberArk Conjur account name |  | String
 | `camel.vault.cyberark.apiKey` | The API key for authentication |  | String
 | `camel.vault.cyberark.authToken` | Pre-authenticated token to use |  | String
-| `camel.vault.cyberark.certificatePath` | Path to the SSL certificate for verification |  | String
+| `camel.vault.cyberark.certificatePath` | Path of a file with the SSL certificate to trust when connecting to CyberArk Conjur, in PEM or DER format: a path of the file system, or a resource with the file: or classpath: prefix. Other prefixes, such as http:, are not supported. |  | String
 | `camel.vault.cyberark.password` | The password for authentication |  | String
 | `camel.vault.cyberark.secrets` | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | `camel.vault.cyberark.url` | The CyberArk Conjur instance URL |  | String
