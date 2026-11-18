@@ -151,6 +151,22 @@ class SftpOperationFailureMessageIT extends BaseServerTestSupport {
     }
 
     @Test
+    void storeOfABodyThatIsNotFileContentSaysWhy() {
+        // a List, as unmarshal: csv leaves it: the directory is fine, the body is not file content (CAMEL-27151)
+        Exchange out = template.send(uri(dir("failed"), ""), e -> {
+            e.getIn().setBody(List.of(List.of("INV-3006", "12.x")));
+            e.getIn().setHeader(Exchange.FILE_NAME, "invoices.csv");
+        });
+
+        GenericFileOperationFailedException e
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, out.getException());
+        assertTrue(e.getMessage().startsWith("Cannot store file: "), e.getMessage());
+        assertTrue(e.getMessage().contains("the body is a List, which is not file content: marshal it first (marshal: csv,"
+                                           + " for the file name invoices.csv)"),
+                e.getMessage());
+    }
+
+    @Test
     void deleteAndListFailuresGiveTheStatus() {
         SftpEndpoint endpoint = context.getEndpoint(uri("", ""), SftpEndpoint.class);
         RemoteFileOperations<SftpRemoteFile> operations = endpoint.createRemoteFileOperations();
