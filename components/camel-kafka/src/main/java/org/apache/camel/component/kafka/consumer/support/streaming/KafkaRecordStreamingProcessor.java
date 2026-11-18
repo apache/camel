@@ -28,7 +28,10 @@ import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.InterruptException;
+import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,12 +125,25 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             // we should just do a commit (vs the original forceCommit)
             // when route uses NOOP Commit Manager it will rely
             // on the route implementation to explicitly commit offset
-            // when route uses Synch/Asynch Commit Manager it will
-            // ALWAYS commit the offset for the failing record
-            // and will ALWAYS retry it
-            commitManager.commit(topicPartition);
+            // when route uses Synch/Asynch Commit Manager it commits the offset of the
+            // records before the failing record. That commit can fail or time out: the
+            // consumer still breaks out and polls again from the last committed offset
+            try {
+                commitManager.commit(topicPartition);
+            } catch (WakeupException | InterruptException e) {
+                throw e;
+            } catch (KafkaException e) {
+                // the commit failed or timed out (a commitSync timeout may still have been applied): break out anyway,
+                // so the new Kafka consumer polls again from the committed offset. Leaving the batch through the
+                // exception would let the same consumer go on after the records of this batch that were not routed
+                exceptionHandler.handleException(
+                        "Error committing the offset of the records before the failed record on partition "
+                                                 + topicPartition
+                                                 + ". The consumer polls again from the last committed offset.",
+                        e);
+            }
 
-            // continue to next partition
+            // break out: the consumer reconnects and polls again from the committed offset
             return true;
         } else {
             // will handle/log the exception and then continue to next
