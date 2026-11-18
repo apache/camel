@@ -495,9 +495,15 @@ For an authenticated tool call, the bridge exposes the following exchange proper
 
 * `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes`, and `CamelMcpOAuthClaims` contain the subject,
   scopes, and claims from the validated token.
-* `CamelMcpSecurityPrincipalName` and `CamelMcpSecurityPrincipalRoles` expose the runtime-neutral
-  caller name and roles when available. Roles are extracted from common `roles`,
-  `realm_access.roles`, or `groups` claim shapes.
+* `CamelAiToolSecurityPrincipalName` and `CamelAiToolSecurityPrincipalRoles` expose the runtime-neutral
+  caller name and roles when available. The roles are the first of the `roles`,
+  `realm_access.roles` and `groups` claims that is an array: the claims are not merged, and
+  client roles (`resource_access`) are not read. With Keycloak, realm roles work as issued, and a
+  client role or a group needs a mapper into the `roles` claim, which is then read instead of the
+  realm roles; the group mapper writes the full path (`/finance-team`) unless its "Full group path"
+  switch is off. The `allowedRoles` option of an xref:ROOT:ai-tool-component.adoc[ai-tool] route
+  checks these roles before the route runs. Without an authenticated caller, as over stdio or on a
+  server without authentication, they are not set and a tool with `allowedRoles` refuses every call.
 * `CamelOAuthTokenValidationResult` contains the full Camel OAuth validation result for route code
   that already consumes the standard HTTP OAuth exchange property.
 

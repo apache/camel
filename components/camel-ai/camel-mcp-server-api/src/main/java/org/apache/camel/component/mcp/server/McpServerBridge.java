@@ -871,7 +871,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(error.message(), true);
             } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
                 // The denial message is already generic and caller-safe, so it is safe to return to the MCP client.
-                LOG.warn("MCP tool '{}' call denied by authorization policy", spec.getName());
+                LOG.warn("MCP tool '{}' call denied by the authorization check", spec.getName());
                 return new McpToolCallResult(denied.message(), true);
             } else {
                 AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
