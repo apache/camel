@@ -203,9 +203,13 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             long delay = next != null
                     ? next.getDelay(TimeUnit.NANOSECONDS) : TimeUnit.MILLISECONDS.toNanos(getTimePeriodMillis());
             asyncExecutor.schedule(call, delay, TimeUnit.NANOSECONDS);
-            return false;
+            // a thread pool that is shut down drops the task without an exception (CallerRuns)
+            return failIfShutdown(call);
         } catch (final RejectedExecutionException e) {
-            call.rejected();
+            if (!call.rejected()) {
+                // doShutdown has already failed the exchange and called the callback
+                return false;
+            }
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",

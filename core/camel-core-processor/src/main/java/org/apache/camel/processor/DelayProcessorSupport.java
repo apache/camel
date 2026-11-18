@@ -136,11 +136,23 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
                             delay, exchange.getExchangeId());
                 }
                 executorService.schedule(call, delay, TimeUnit.MILLISECONDS);
+                if (shutdownExecutorService && executorService.isShutdown() && scheduledCalls.remove(call)) {
+                    // the thread pool was shut down while the task was handed to it: with the CallerRuns rejected
+                    // policy (the default) it drops the task without an exception, and doShutdown may have failed
+                    // the scheduled tasks before this one was added
+                    delayedCount.decrementAndGet();
+                    failNotRun(exchange);
+                    callback.done(true);
+                    return true;
+                }
                 // tell Camel routing engine we continue routing asynchronous
                 return false;
             } catch (RejectedExecutionException e) {
+                if (!scheduledCalls.remove(call)) {
+                    // doShutdown has already failed the exchange and called the callback
+                    return false;
+                }
                 // we were not allowed to run the ProcessCall, so need to decrement the counter here
-                scheduledCalls.remove(call);
                 delayedCount.decrementAndGet();
                 if (isCallerRunsWhenRejected()) {
                     if (!isRunAllowed()) {
@@ -294,13 +306,15 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
         for (ProcessCall call : scheduledCalls) {
             if (scheduledCalls.remove(call)) {
                 delayedCount.decrementAndGet();
-                Exchange exchange = call.exchange;
-                LOG.debug("Delayed task is not run as the processor is shut down, for exchangeId: {}",
-                        exchange.getExchangeId());
-                exchange.setException(new RouteStoppingException("The delayed exchange is not run: the Delay is shut down"));
+                failNotRun(call.exchange);
                 call.callback.done(false);
             }
         }
+    }
+
+    private static void failNotRun(Exchange exchange) {
+        LOG.debug("Delayed task is not run as the processor is shut down, for exchangeId: {}", exchange.getExchangeId());
+        exchange.setException(new RouteStoppingException("The delayed exchange is not run: the Delay is shut down"));
     }
 
     @Override

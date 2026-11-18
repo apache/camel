@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An exchange that waits in the thread pool of a Delay, Throttle (asyncDelayed) or Threads EIP when its route is
@@ -165,7 +166,7 @@ class AsyncDelayedRemoveRouteTest extends ContextTestSupport {
                     Thread.currentThread().interrupt();
                 }
             });
-            assertEquals(true, busy.await(5, TimeUnit.SECONDS));
+            assertTrue(busy.await(5, TimeUnit.SECONDS));
             CompletableFuture<Exchange> future = template.asyncSend("direct:user", e -> e.getMessage().setBody("waiting"));
             await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size("user") == 1);
 

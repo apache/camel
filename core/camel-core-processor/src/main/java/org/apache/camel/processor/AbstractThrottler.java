@@ -112,9 +112,19 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
 
         /**
          * The thread pool did not take the task (rejected), so it is no longer queued.
+         *
+         * @return true if the caller still owns the exchange, false if doShutdown has already failed the exchange and
+         *         called the callback (the caller must then leave the exchange alone)
          */
-        void rejected() {
-            asyncCalls.remove(this);
+        boolean rejected() {
+            return asyncCalls.remove(this);
+        }
+
+        private void fail() {
+            // the exchange is no longer queued (a later throttler must process it synchronously)
+            exchange.removeProperty(PROPERTY_EXCHANGE_STATE);
+            exchange.setException(
+                    new RouteStoppingException("Throttled exchange is not processed as the throttler is shut down"));
         }
     }
 
@@ -138,13 +148,28 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
             if (asyncCalls.remove(call)) {
                 LOG.debug("Throttled exchange is not processed as the throttler is shut down, exchangeId: {}",
                         call.exchange.getExchangeId());
-                // the exchange is no longer queued (a later throttler must process it synchronously)
-                call.exchange.removeProperty(PROPERTY_EXCHANGE_STATE);
-                call.exchange.setException(
-                        new RouteStoppingException("Throttled exchange is not processed as the throttler is shut down"));
+                call.fail();
                 call.callback.done(false);
             }
         }
+    }
+
+    /**
+     * Fails the exchange in the calling thread when the thread pool of this EIP was shut down while the task was handed
+     * to it. With the CallerRuns rejected policy (the default) a thread pool that is shut down drops the task without
+     * an exception, and doShutdown may have failed the queued tasks before this one was added.
+     *
+     * @return true if the exchange was failed here and the callback was called synchronously
+     */
+    boolean failIfShutdown(AsyncCall call) {
+        if (shutdownAsyncExecutor && asyncExecutor.isShutdown() && asyncCalls.remove(call)) {
+            LOG.debug("Throttled exchange is not processed as the throttler is shut down, exchangeId: {}",
+                    call.exchange.getExchangeId());
+            call.fail();
+            call.callback.done(true);
+            return true;
+        }
+        return false;
     }
 
     protected static boolean handleInterrupt(
