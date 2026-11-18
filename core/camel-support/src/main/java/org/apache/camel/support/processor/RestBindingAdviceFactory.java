@@ -198,8 +198,8 @@ public class RestBindingAdviceFactory {
     }
 
     private static void copyOptions(CamelContext camelContext, String name, DataFormat source, DataFormat target) {
-        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer(name + "-dataformat", camelContext);
+        PropertyConfigurer configurer
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext, name + "-dataformat", source);
         if (configurer == null) {
             configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, source);
         }

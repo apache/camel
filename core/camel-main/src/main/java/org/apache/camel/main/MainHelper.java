@@ -42,6 +42,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -501,7 +502,7 @@ public final class MainHelper {
             return null;
         }
         PropertyConfigurer configurer
-                = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name + "-" + kind, context);
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(context, name + "-" + kind, target);
         // the configurer that PackageDataFormatMojo or PackageLanguageMojo generates for a type is named after it
         if (configurer != null && configurer.getClass().getName().equals(target.getClass().getName() + "Configurer")) {
             return configurer;
