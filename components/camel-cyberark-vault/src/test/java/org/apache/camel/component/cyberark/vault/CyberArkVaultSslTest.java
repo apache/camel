@@ -145,6 +145,27 @@ class CyberArkVaultSslTest extends CamelTestSupport {
     }
 
     @Test
+    void certificatePathOnTheClasspathTrustsTheServer() {
+        assertEquals("secret-value",
+                getSecret("localhost", "&certificatePath=classpath:" + SSL_RESOURCES.substring(1) + "conjur-server.pem"));
+    }
+
+    @Test
+    void certificatePathWithTheFilePrefixTrustsTheServer() {
+        assertEquals("secret-value", getSecret("localhost", "&certificatePath=RAW(file:" + certificatePath + ")"));
+    }
+
+    @Test
+    void certificatePathWithAnotherPrefixFailsAtStart() throws Exception {
+        Endpoint endpoint = context.getComponent("cyberark-vault").createEndpoint(
+                "cyberark-vault:secret?secretId=db/password&url=https://localhost:1&account=myaccount&authToken=my-token"
+                                                                                  + "&certificatePath=RAW(http://localhost/conjur.pem)");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::start);
+        assertTrue(e.getMessage().contains("classpath: and file:"), e.getMessage());
+    }
+
+    @Test
     void propertiesFunctionUsesTheCertificatePathOfTheVaultConfiguration() throws Exception {
         var vault = context.getVaultConfiguration().cyberark();
         vault.setCertificatePath(certificatePath);

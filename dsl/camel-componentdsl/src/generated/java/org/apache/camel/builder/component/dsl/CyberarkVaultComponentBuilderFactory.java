@@ -226,7 +226,10 @@ public interface CyberarkVaultComponentBuilderFactory {
          * Path of a file with the SSL certificate to trust when connecting to
          * CyberArk Conjur, for example the certificate of a private CA, in PEM
          * or DER format. The certificates in the file are trusted instead of
-         * the default trust store of the JVM. Not used when verifySsl is false.
+         * the default trust store of the JVM. A path of the file system, or a
+         * resource with the file: or classpath: prefix, for example
+         * classpath:conjur-ca.pem. Other prefixes, such as http:, are not
+         * supported. Not used when verifySsl is false.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
