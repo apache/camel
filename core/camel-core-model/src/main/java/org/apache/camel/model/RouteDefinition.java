@@ -67,6 +67,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private String routeConfigurationId;
     private transient Set<String> appliedRouteConfigurationIds;
     private transient List<InterceptDefinition> contextScopedIntercepts;
+    private transient List<OnCompletionDefinition> contextScopedOnCompletions;
     private String group;
     private String nodePrefixId;
     private String streamCache;
@@ -162,6 +163,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public void resetPrepare() {
         appliedRouteConfigurationIds = null;
+        contextScopedIntercepts = null;
+        contextScopedOnCompletions = null;
     }
 
     @Override
@@ -1027,6 +1030,23 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
             contextScopedIntercepts = new ArrayList<>();
         }
         contextScopedIntercepts.add(intercept);
+    }
+
+    /**
+     * Returns the context-scoped (global) onCompletions that were injected into this route when it was prepared. This
+     * list is used by the YAML dumper to emit them as top-level entries without touching the runtime
+     * {@code routeScoped} flag on {@link OnCompletionDefinition}, which already has runtime semantics in
+     * {@code OnCompletionProcessor.shouldSkip()}.
+     */
+    public List<OnCompletionDefinition> getContextScopedOnCompletions() {
+        return contextScopedOnCompletions;
+    }
+
+    public void addContextScopedOnCompletion(OnCompletionDefinition onCompletion) {
+        if (contextScopedOnCompletions == null) {
+            contextScopedOnCompletions = new ArrayList<>();
+        }
+        contextScopedOnCompletions.add(onCompletion);
     }
 
     public String getGroup() {

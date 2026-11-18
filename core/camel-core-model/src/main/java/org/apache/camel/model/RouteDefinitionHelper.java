@@ -449,7 +449,7 @@ public final class RouteDefinitionHelper {
         initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions,
                 interceptSendToEndpointDefinitions);
         // then on completion
-        initOnCompletions(abstracts, upper, onCompletions);
+        initOnCompletions(route, abstracts, upper, onCompletions);
         // then sagas
         initSagas(abstracts, lower);
         // then transactions
@@ -736,7 +736,7 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initOnCompletions(
-            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
             List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
@@ -750,10 +750,13 @@ public final class RouteDefinitionHelper {
         // only add global onCompletion if there are no route already
         if (completions.isEmpty() && onCompletions != null) {
             completions = onCompletions;
-            // init the parent
+            // init the parent and record as context-scoped for the YAML dumper
+            // NOTE: do NOT call setRouteScoped(false) here — routeScoped already drives runtime behaviour in
+            // OnCompletionProcessor.shouldSkip() and OnCompletionReifier per-configuration dedup. Named route
+            // configurations intentionally keep routeScoped=true (see CAMEL-25135). Instead, track them on the
+            // route via a separate transient list that the YAML dumper can read without touching the runtime flag.
             for (OnCompletionDefinition global : completions) {
-                // mark as context-scoped so the YAML dumper can distinguish global from route-scoped onCompletions
-                global.setRouteScoped(false);
+                route.addContextScopedOnCompletion(global);
                 initParent(global);
             }
         }

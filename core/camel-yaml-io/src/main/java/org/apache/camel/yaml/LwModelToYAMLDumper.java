@@ -57,6 +57,9 @@ import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -145,6 +148,16 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         List<OnExceptionDefinition> topLevelOnExceptions = new ArrayList<>(contextScopedOnExceptions);
         topLevelOnExceptions.removeIf(oe -> isInRouteConfiguration(context, oe));
 
+        // similarly, filter out constructs that belong to a route configuration (they are dumped with the config)
+        List<InterceptDefinition> topLevelIntercepts = new ArrayList<>(contextScopedIntercepts);
+        topLevelIntercepts.removeIf(i -> isInterceptInRouteConfiguration(context, i));
+        List<InterceptFromDefinition> topLevelInterceptFroms = new ArrayList<>(contextScopedInterceptFroms);
+        topLevelInterceptFroms.removeIf(i -> isInterceptFromInRouteConfiguration(context, i));
+        List<InterceptSendToEndpointDefinition> topLevelInterceptSendTos = new ArrayList<>(contextScopedInterceptSendTos);
+        topLevelInterceptSendTos.removeIf(i -> isInterceptSendToInRouteConfiguration(context, i));
+        List<OnCompletionDefinition> topLevelOnCompletions = new ArrayList<>(contextScopedOnCompletions);
+        topLevelOnCompletions.removeIf(oc -> isOnCompletionInRouteConfiguration(context, oc));
+
         // all context-scoped outputs to suppress from route steps
         List<Object> allContextScoped = new ArrayList<>();
         allContextScoped.addAll(contextScopedOnExceptions);
@@ -154,8 +167,11 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         allContextScoped.addAll(contextScopedOnCompletions);
 
         // a global (context-level) errorHandler is set on the CamelContext, not on individual routes; it must be
-        // emitted as a top-level entry and not duplicated inside the routes (route.getErrorHandler() is null for it)
-        ErrorHandlerDefinition contextErrorHandler = collectContextErrorHandler(context);
+        // emitted as a top-level entry and not duplicated inside the routes (route.getErrorHandler() is null for it);
+        // only emit it when dumping routes — rests, templates and route configurations do not carry a context errorHandler
+        ErrorHandlerDefinition contextErrorHandler
+                = (definition instanceof RoutesDefinition || definition instanceof RouteDefinition)
+                        ? collectContextErrorHandler(context) : null;
 
         YamlModelWriter writer = new YamlModelWriter() {
             @Override
@@ -261,16 +277,16 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             if (contextErrorHandler != null) {
                 roots.add(writer.writeErrorHandlerDefinition(contextErrorHandler));
             }
-            for (InterceptDefinition intercept : contextScopedIntercepts) {
+            for (InterceptDefinition intercept : topLevelIntercepts) {
                 roots.add(writer.writeInterceptDefinition(intercept));
             }
-            for (InterceptFromDefinition interceptFrom : contextScopedInterceptFroms) {
+            for (InterceptFromDefinition interceptFrom : topLevelInterceptFroms) {
                 roots.add(writer.writeInterceptFromDefinition(interceptFrom));
             }
-            for (InterceptSendToEndpointDefinition interceptSendTo : contextScopedInterceptSendTos) {
+            for (InterceptSendToEndpointDefinition interceptSendTo : topLevelInterceptSendTos) {
                 roots.add(writer.writeInterceptSendToEndpointDefinition(interceptSendTo));
             }
-            for (OnCompletionDefinition onCompletion : contextScopedOnCompletions) {
+            for (OnCompletionDefinition onCompletion : topLevelOnCompletions) {
                 roots.add(writer.writeOnCompletionDefinition(onCompletion));
             }
             for (OnExceptionDefinition oe : topLevelOnExceptions) {
@@ -377,28 +393,17 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
     }
 
     /**
-     * Collects the context scoped intercepts that were added to the outputs of the route when it was prepared.
-     * Context-scoped intercepts are also tracked via {@link RouteDefinition#getContextScopedIntercepts()} because
-     * {@code InterceptReifier} removes plain {@code intercept} definitions from route outputs during context start.
+     * Collects the context scoped intercepts that were added to the route when it was prepared. The persistent list on
+     * the route is used as the primary source because {@code InterceptReifier} removes plain {@code intercept}
+     * definitions from route outputs during {@code context.start()}.
      */
     private static void collectContextScopedIntercepts(RouteDefinition route, List<InterceptDefinition> answer) {
-        // primary source: persistent list on the route (survives InterceptReifier's removal from outputs)
         List<InterceptDefinition> persistent = route.getContextScopedIntercepts();
         if (persistent != null) {
             for (InterceptDefinition intercept : persistent) {
                 if (!containsInstance(answer, intercept)) {
                     answer.add(intercept);
                 }
-            }
-        }
-        // fallback: scan route outputs (works before context.start(), complementary to above)
-        for (var output : route.getOutputs()) {
-            // InterceptFromDefinition extends InterceptDefinition, so check for context-scoped and exclude subtypes
-            if (output instanceof InterceptDefinition intercept
-                    && !(output instanceof InterceptFromDefinition)
-                    && !intercept.isRouteScoped()
-                    && !containsInstance(answer, intercept)) {
-                answer.add(intercept);
             }
         }
     }
@@ -432,19 +437,26 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
     }
 
     /**
-     * Collects the context scoped onCompletions that were added to the outputs of the route when it was prepared
+     * Collects the context scoped onCompletions that were recorded on the route when it was prepared. Uses the
+     * persistent list rather than scanning outputs and checking {@code !oc.isRouteScoped()}, because
+     * {@code routeScoped} already has runtime semantics in {@code OnCompletionProcessor.shouldSkip()} and must not be
+     * altered.
      */
     private static void collectContextScopedOnCompletions(RouteDefinition route, List<OnCompletionDefinition> answer) {
-        for (var output : route.getOutputs()) {
-            if (output instanceof OnCompletionDefinition oc && !oc.isRouteScoped() && !containsInstance(answer, oc)) {
-                answer.add(oc);
+        List<OnCompletionDefinition> persistent = route.getContextScopedOnCompletions();
+        if (persistent != null) {
+            for (OnCompletionDefinition oc : persistent) {
+                if (!containsInstance(answer, oc)) {
+                    answer.add(oc);
+                }
             }
         }
     }
 
     /**
      * Returns the context-level error handler as an {@link ErrorHandlerDefinition} if one was explicitly set on the
-     * CamelContext (not the built-in default), or {@code null} if no explicit global error handler was configured.
+     * CamelContext using one of the built-in types, or {@code null} otherwise. Custom {@code ErrorHandlerFactory}
+     * implementations cannot be serialized to YAML and are skipped.
      */
     private static ErrorHandlerDefinition collectContextErrorHandler(CamelContext context) {
         if (context == null) {
@@ -453,6 +465,14 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         ErrorHandlerFactory factory = context.getCamelContextExtension().getErrorHandlerFactory();
         if (factory == null) {
             // no explicit global error handler was configured; nothing to emit
+            return null;
+        }
+        // only the built-in types (DefaultErrorHandlerDefinition subclasses, NoErrorHandlerDefinition,
+        // RefErrorHandlerDefinition) are known to the YAML writer; a custom ErrorHandlerFactory cannot be
+        // serialized to YAML and would produce an empty errorHandler: {} — skip it
+        if (!(factory instanceof DefaultErrorHandlerDefinition)
+                && !(factory instanceof NoErrorHandlerDefinition)
+                && !(factory instanceof RefErrorHandlerDefinition)) {
             return null;
         }
         ErrorHandlerDefinition def = new ErrorHandlerDefinition();
@@ -465,6 +485,57 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         if (model != null) {
             for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
                 if (containsInstance(config.getOnExceptions(), oe)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isInterceptInRouteConfiguration(CamelContext context, InterceptDefinition intercept) {
+        Model model = context != null ? context.getCamelContextExtension().getContextPlugin(Model.class) : null;
+        if (model != null) {
+            for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                if (containsInstance(config.getIntercepts(), intercept)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isInterceptFromInRouteConfiguration(
+            CamelContext context, InterceptFromDefinition interceptFrom) {
+        Model model = context != null ? context.getCamelContextExtension().getContextPlugin(Model.class) : null;
+        if (model != null) {
+            for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                if (containsInstance(config.getInterceptFroms(), interceptFrom)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isInterceptSendToInRouteConfiguration(
+            CamelContext context, InterceptSendToEndpointDefinition interceptSendTo) {
+        Model model = context != null ? context.getCamelContextExtension().getContextPlugin(Model.class) : null;
+        if (model != null) {
+            for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                if (containsInstance(config.getInterceptSendTos(), interceptSendTo)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isOnCompletionInRouteConfiguration(
+            CamelContext context, OnCompletionDefinition onCompletion) {
+        Model model = context != null ? context.getCamelContextExtension().getContextPlugin(Model.class) : null;
+        if (model != null) {
+            for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                if (containsInstance(config.getOnCompletions(), onCompletion)) {
                     return true;
                 }
             }

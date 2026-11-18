@@ -216,8 +216,9 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
         }
     }
 
-    @Test
-    void topLevelErrorHandlerIsDumpedAsTopLevel() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void topLevelErrorHandlerIsDumpedAsTopLevel(boolean started) throws Exception {
         loadRoutes("""
                 - errorHandler:
                     deadLetterChannel:
@@ -235,11 +236,18 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
                       steps:
                         - to: mock:second
                 """);
+        if (started) {
+            context.start();
+        }
         String yaml = dumpRoutes();
+        if (started) {
+            context.stop();
+        }
 
         // written once as top-level, not inside any route
         assertThat(yaml).startsWith("- errorHandler:");
         assertThat(yaml.split("errorHandler:", -1)).hasSize(2);
+        assertThat(yaml).contains("deadLetterUri: log:dead");
         assertThat(yaml).contains("id: first").contains("id: second");
 
         // the dump is valid for the YAML DSL schema and the deadLetter channel is active
@@ -248,6 +256,33 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
         assertThat(context.getRouteDefinitions()).hasSize(2);
         assertThat(context.getCamelContextExtension().getErrorHandlerFactory())
                 .isInstanceOf(DeadLetterChannelDefinition.class);
+    }
+
+    @Test
+    void namedRouteConfigurationInterceptIsNotDumpedAsTopLevel() throws Exception {
+        // a named route configuration's intercept must NOT be emitted as a top-level entry — it already
+        // appears inside the routeConfiguration block and must not be duplicated as a top-level intercept
+        loadRoutes("""
+                - routeConfiguration:
+                    id: myConfig
+                    intercept:
+                      steps:
+                        - log:
+                            message: "intercepted via config"
+                - route:
+                    id: first
+                    routeConfigurationId: myConfig
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+                """);
+        String yaml = dumpRoutes();
+
+        // when dumping only routes, the route configuration's intercept must NOT be hoisted to a top-level
+        // entry — it belongs to the named routeConfiguration, not to the top-level route scope
+        assertThat(yaml).doesNotContain("- intercept:");
+        assertThat(yaml).contains("id: first");
     }
 
     private String dumpRoutes() throws Exception {
