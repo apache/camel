@@ -759,10 +759,10 @@ public interface AlibabaSlsEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AlibabaSlsListLogstoreName}.
+         * @return the name of the header {@code AlibabaSlsListLogStoreName}.
          */
-        public String alibabaSlsListLogstoreName() {
-            return "CamelAlibabaSlsListLogstoreName";
+        public String alibabaSlsListLogStoreName() {
+            return "CamelAlibabaSlsListLogStoreName";
         }
         /**
          * The type of the Logstore for listLogStores. The value must be

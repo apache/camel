@@ -51,7 +51,7 @@ public final class AlibabaSlsProperties {
     public static final String REVERSE = "CamelAlibabaSlsReverse";
 
     @Metadata(label = "producer", description = "Log store name prefix filter for listLogStores", javaType = "String")
-    public static final String LOGSTORE_NAME = "CamelAlibabaSlsListLogstoreName";
+    public static final String LOGSTORE_NAME = "CamelAlibabaSlsListLogStoreName";
 
     @Metadata(label = "producer", description = "List mode for listLogStores", javaType = "String")
     public static final String MODE = "CamelAlibabaSlsMode";

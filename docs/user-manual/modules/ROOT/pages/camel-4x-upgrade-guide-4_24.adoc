@@ -6417,9 +6417,9 @@ the `region` or the `endpoint` option. It needs neither when the `smsClient` opt
 endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
 of the component at runtime does not change.
 
-=== camel-alibaba-sls - the header of listLogStores is named CamelAlibabaSlsListLogstoreName
+=== camel-alibaba-sls - the header of listLogStores is named CamelAlibabaSlsListLogStoreName
 
-The header with the name of the Logstore for `listLogStores` is now `CamelAlibabaSlsListLogstoreName`. Before, it was
+The header with the name of the Logstore for `listLogStores` is now `CamelAlibabaSlsListLogStoreName`. Before, it was
 `CamelAlibabaSlsLogstoreName`. That name differs from `CamelAlibabaSlsLogStoreName`, the Logstore of `putLogs` and
 `getLogs`, only in the case of one letter. Camel header names are case-insensitive by default, so the two names were one
 header. A header set for `putLogs` or `getLogs` also limited a later `listLogStores` to the Logstores whose name
@@ -6430,7 +6430,7 @@ Routes that use the constant `AlibabaSlsHeaders.LOGSTORE_NAME` work without chan
 that use the header or the exchange property by its literal name must use the new name. By default, the producer now
 reads a header with the previous name only as the Logstore of `putLogs` and `getLogs`. The producer no longer reads an
 exchange property with the previous name. The Endpoint DSL method `alibabaSlsLogstoreName()` is now
-`alibabaSlsListLogstoreName()`.
+`alibabaSlsListLogStoreName()`.
 
 === camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
 
