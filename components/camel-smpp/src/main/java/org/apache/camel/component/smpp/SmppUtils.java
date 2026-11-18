@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.service.BaseService;
-import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.bean.Alphabet;
@@ -321,7 +321,7 @@ public final class SmppUtils {
         }
     }
 
-    public static BlockingTask newReconnectTask(
+    public static BackgroundTask newReconnectTask(
             ScheduledExecutorService service, String taskName, long initialReconnectDelay,
             long reconnectDelay, int maxReconnect) {
         return Tasks.backgroundTask()
