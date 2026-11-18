@@ -21,8 +21,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jsmpp.session.BindRequest;
@@ -113,6 +116,46 @@ class SmppStopDuringReconnectTest extends CamelTestSupport {
         context.getRouteController().stopRoute("smpp");
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> threadsWaitingToReconnect(type) == 0);
+        // the cancelled reconnect task is no longer registered
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> PluginHelper.getTaskManagerRegistry(context.getCamelContextExtension()).getSize() == 0);
+    }
+
+    @Test
+    void consumerStoppedAndStartedInPlaceStillReconnects() throws Exception {
+        SmppEndpoint endpoint = context.getEndpoint(fastReconnectUri(), SmppEndpoint.class);
+        Consumer consumer = endpoint.createConsumer(exchange -> {
+        });
+        reconnectsAfterRestartInPlace(consumer);
+    }
+
+    @Test
+    void producerStoppedAndStartedInPlaceStillReconnects() throws Exception {
+        SmppEndpoint endpoint = context.getEndpoint(fastReconnectUri(), SmppEndpoint.class);
+        reconnectsAfterRestartInPlace(endpoint.createProducer());
+    }
+
+    private static String fastReconnectUri() {
+        return "smpp://smppclient@localhost:" + port.getPort()
+               + "?password=password&initialReconnectDelay=100&reconnectDelay=100";
+    }
+
+    private void reconnectsAfterRestartInPlace(Service service) throws Exception {
+        try {
+            // started, stopped and started again on the same instance (as suspendRoute and resumeRoute do for a
+            // service that is not Suspendable)
+            service.start();
+            service.stop();
+            service.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> serverSessions.size() == 2);
+
+            // the SMSC closes the session, and still accepts connections, so the reconnect must bind again
+            serverSessions.get(1).close();
+
+            await().atMost(10, TimeUnit.SECONDS).until(() -> serverSessions.size() == 3);
+        } finally {
+            service.stop();
+        }
     }
 
     private static long threadsWaitingToReconnect(Class<?> type) {

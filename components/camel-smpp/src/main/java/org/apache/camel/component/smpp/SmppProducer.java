@@ -56,7 +56,8 @@ public class SmppProducer extends DefaultProducer {
     private final SmppConfiguration configuration;
     private final SessionStateListener internalSessionStateListener;
     private final ReentrantLock connectLock = new ReentrantLock();
-    private final ScheduledExecutorService reconnectService;
+    // created again by a start after a stop, as the stop shuts it down
+    private volatile ScheduledExecutorService reconnectService;
 
     private SMPPSession session;
     // the reconnect task that the thread which reported the lost session waits for, so that a stop can release it
@@ -86,6 +87,7 @@ public class SmppProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        restartReconnectService();
 
         if (!getConfiguration().isLazySessionCreation()) {
             if (connectLock.tryLock()) {
@@ -184,6 +186,17 @@ public class SmppProducer extends DefaultProducer {
 
         SmppCommand command = getEndpoint().getBinding().createSmppCommand(session, exchange);
         command.execute(exchange);
+    }
+
+    /**
+     * A stop shuts down the reconnect service. When this instance is started again in place (such as by suspendRoute
+     * and resumeRoute, which stop and start a service that is not Suspendable), a lost session would otherwise schedule
+     * its reconnect task on the shut down service, where it never runs.
+     */
+    private void restartReconnectService() {
+        if (reconnectService.isShutdown()) {
+            reconnectService = createExecutor(this, getEndpoint(), RECONNECT_TASK_NAME);
+        }
     }
 
     @Override
