@@ -76,6 +76,7 @@ Headers:
 
 * `CamelCqlQuery` (optional, `String` or `SimpleStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
+A `SimpleStatement` carries its own values: the message body is not bound to it.
 
 ==== Outgoing Message
 

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -110,6 +111,6 @@ public class CassandraComponentProducerNamedIT extends BaseCassandra {
 
         IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
         assertTrue(cause.getMessage().contains(":lastname"), cause.getMessage());
-        assertEquals(null, findUser("g_nodet"));
+        assertNull(findUser("g_nodet"));
     }
 }
