@@ -77,13 +77,19 @@ behind a property placeholder too.
 
 === camel-main - the security policy checks the beans that route files define
 
-The security policy now also checks the properties of the beans that YAML and XML route files define in their `beans`
-section, as it checks a bean configured from `camel.beans.*` properties. A property is reported under the key
+With camel-main and the Camel CLI, the security policy now also checks the properties of the beans that route files
+define (the `beans` section of a YAML or XML DSL file, and the beans of a Spring XML or Blueprint XML file), as it
+checks a bean configured from `camel.beans.*` properties. A property is reported under the key
 `camel.beans.<name>.<property>`, such as `camel.beans.opaPolicy.failOpen`.
 
 A bean in a route file that sets an insecure option or a plain-text secret is now reported: a warning by default, and
 the startup fails with `camel.main.profile=prod`. Configure a secret with a property placeholder or a vault reference
 instead, or add the key to `camel.security.allowedProperties` to allow it.
+
+The secrets include the user name: `user` and `username` are secret keys, like `password`. So a `DataSource` bean in a
+route file with `username: sa` now logs a warning with `camel run`, and fails the startup with
+`camel.main.profile=prod`, as `camel.beans.myDataSource.username=sa` in `application.properties` already does. Use a
+property placeholder instead, such as `username: "{{db.username}}"`.
 
 === camel-main - more options are reported by the insecure:dev security policy
 

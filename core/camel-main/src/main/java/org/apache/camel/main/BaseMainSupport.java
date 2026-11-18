@@ -1141,16 +1141,19 @@ public abstract class BaseMainSupport extends BaseService {
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
             configureRoutes(camelContext);
             recorder.endStep(step);
-
-            // the beans that the routes define (such as the beans section of a YAML or XML DSL file) are not
-            // configured from camel.* properties, so their properties are checked once the routes are loaded
-            enforceSecurityPoliciesOnBeans(camelContext);
         }
 
         // after the routes are read (org.apache.camel.spi.RoutesBuilderLoader did their work), we may have
         // new classes defined, so main implementations may have to reconfigure the registry using newly
         // available bean definitions
         postProcessCamelRegistry(camelContext, mainConfigurationProperties);
+
+        if (standalone) {
+            // the beans that the routes define (such as the beans section of a YAML or XML DSL file) are not
+            // configured from camel.* properties, so their properties are checked once the routes are loaded and
+            // the registry is post-processed (which adds the delayed Spring XML and Blueprint XML beans)
+            enforceSecurityPoliciesOnBeans(camelContext);
+        }
 
         // allow doing custom configuration before camel is started
         if (!listeners.isEmpty()) {
