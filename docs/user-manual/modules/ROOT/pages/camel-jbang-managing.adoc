@@ -36,7 +36,9 @@ stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `-
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_ — unless an
 integration has exactly that name: with `dude` and `dude2` running, `camel stop dude` stops only `dude`, and
 `camel stop dude*` stops both. Append `!` to match only that name (`camel stop dude!`), or give the PID.
-A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
+A PID must be a running Camel integration, or the process that launched one, such as the shell or the JBang launcher
+of `camel run` (which test tools such as Citrus keep): then the Camel integrations it launched are stopped, and the
+process itself is not signalled. A name or PID that matches nothing exits with code `3`
 (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 
 Restart an integration (stop + re-launch):
