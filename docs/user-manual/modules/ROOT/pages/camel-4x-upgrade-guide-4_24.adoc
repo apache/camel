@@ -75,6 +75,16 @@ including a value set through an environment variable: a warning by default, and
 A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
 behind a property placeholder too.
 
+=== camel-main - the security policy checks the beans that route files define
+
+The security policy now also checks the properties of the beans that YAML and XML route files define in their `beans`
+section, as it checks a bean configured from `camel.beans.*` properties. A property is reported under the key
+`camel.beans.<name>.<property>`, such as `camel.beans.opaPolicy.failOpen`.
+
+A bean in a route file that sets an insecure option or a plain-text secret is now reported: a warning by default, and
+the startup fails with `camel.main.profile=prod`. Configure a secret with a property placeholder or a vault reference
+instead, or add the key to `camel.security.allowedProperties` to allow it.
+
 === camel-main - more options are reported by the insecure:dev security policy
 
 These camel-main options are flagged `insecure:dev`, and the `camel.security.insecureDevPolicy` check now reports them

@@ -37,6 +37,11 @@ an option that merely has the same name as an insecure option of another compone
 camel-hivemq) is not flagged. Any other property (such as `camel.ssl.trustAllCertificates`) is checked by the
 option name.
 
+The properties of the beans that YAML and XML route files define in their `beans` section are checked once the routes
+are loaded, under the key of a bean configured from properties: `camel.beans.<name>.<property>`, such as
+`camel.beans.opaPolicy.failOpen`. The same key goes in `camel.security.allowedProperties` to allow one of them. The
+options set in the endpoint URIs of the routes are not checked.
+
 == Policy levels
 
 Each category can be set to one of three enforcement levels:
