@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Micrometer Observation-backed instrumentation. Loaded reflectively only when {@link ObservationRegistry} is on the
- * classpath.
+ * Micrometer Observation-backed instrumentation. Only loaded when {@link ObservationRegistry} is on the classpath.
  */
 final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservationBackend {
 
