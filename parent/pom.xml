@@ -58,7 +58,7 @@
         <sourcecheckExcludesComma />
 
         <!-- dependency versions -->
-        <activemq-version>5.19.11</activemq-version>
+        <activemq-version>5.19.12</activemq-version>
         <activemq6-version>6.3.2</activemq6-version>
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
         <aesh-version>3.19.1</aesh-version>
