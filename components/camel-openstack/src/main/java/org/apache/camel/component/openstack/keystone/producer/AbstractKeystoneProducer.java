@@ -20,6 +20,7 @@ import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.openstack4j.api.OSClient;
 
+@Deprecated(since = "4.24")
 public abstract class AbstractKeystoneProducer extends AbstractOpenstackProducer {
 
     OSClient.OSClientV3 osV3Client;

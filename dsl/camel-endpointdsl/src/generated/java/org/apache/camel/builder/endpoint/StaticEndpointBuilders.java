@@ -13694,6 +13694,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String path) {
         return openstackCinder("openstack-cinder", path);
     }
@@ -13715,6 +13716,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String componentName, String path) {
         return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13734,6 +13736,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String path) {
         return openstackGlance("openstack-glance", path);
     }
@@ -13755,6 +13758,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String componentName, String path) {
         return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13775,6 +13779,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String path) {
         return openstackKeystone("openstack-keystone", path);
     }
@@ -13797,6 +13802,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String componentName, String path) {
         return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13816,6 +13822,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String path) {
         return openstackNeutron("openstack-neutron", path);
     }
@@ -13837,6 +13844,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String componentName, String path) {
         return NeutronEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13856,6 +13864,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String path) {
         return openstackNova("openstack-nova", path);
     }
@@ -13877,6 +13886,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String componentName, String path) {
         return NovaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13896,6 +13906,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String path) {
         return openstackSwift("openstack-swift", path);
     }
@@ -13917,6 +13928,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String componentName, String path) {
         return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

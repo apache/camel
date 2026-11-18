@@ -28,6 +28,7 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Keypair;
 
+@Deprecated(since = "4.24")
 public class KeypairProducer extends AbstractOpenstackProducer {
 
     public KeypairProducer(NovaEndpoint endpoint, OSClient client) {

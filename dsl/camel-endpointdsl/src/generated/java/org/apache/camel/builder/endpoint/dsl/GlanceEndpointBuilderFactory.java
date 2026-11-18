@@ -234,6 +234,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default GlanceHeaderNameBuilder openstackGlance() {
             return GlanceHeaderNameBuilder.INSTANCE;
         }
@@ -253,6 +254,7 @@ public interface GlanceEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default GlanceEndpointBuilder openstackGlance(String path) {
             return GlanceEndpointBuilderFactory.endpointBuilder("openstack-glance", path);
         }
@@ -274,6 +276,7 @@ public interface GlanceEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default GlanceEndpointBuilder openstackGlance(String componentName, String path) {
             return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

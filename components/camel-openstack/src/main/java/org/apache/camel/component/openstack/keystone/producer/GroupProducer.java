@@ -31,6 +31,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Group;
 import org.openstack4j.model.identity.v3.builder.GroupBuilder;
 
+@Deprecated(since = "4.24")
 public class GroupProducer extends AbstractKeystoneProducer {
 
     public GroupProducer(KeystoneEndpoint endpoint, OSClient client) {

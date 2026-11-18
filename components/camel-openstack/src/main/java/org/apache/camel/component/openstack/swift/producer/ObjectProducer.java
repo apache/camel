@@ -34,6 +34,7 @@ import org.openstack4j.model.storage.object.SwiftObject;
 import org.openstack4j.model.storage.object.options.ObjectListOptions;
 import org.openstack4j.model.storage.object.options.ObjectLocation;
 
+@Deprecated(since = "4.24")
 public class ObjectProducer extends AbstractOpenstackProducer {
 
     public ObjectProducer(SwiftEndpoint endpoint, OSClient client) {

@@ -26,6 +26,7 @@ import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 
+@Deprecated(since = "4.24")
 public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
 
     public static final String V2 = "V2";

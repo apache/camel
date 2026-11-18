@@ -249,6 +249,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default CinderHeaderNameBuilder openstackCinder() {
             return CinderHeaderNameBuilder.INSTANCE;
         }
@@ -268,6 +269,7 @@ public interface CinderEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default CinderEndpointBuilder openstackCinder(String path) {
             return CinderEndpointBuilderFactory.endpointBuilder("openstack-cinder", path);
         }
@@ -289,6 +291,7 @@ public interface CinderEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default CinderEndpointBuilder openstackCinder(String componentName, String path) {
             return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
