@@ -35,6 +35,7 @@ import org.openstack4j.model.network.Subnet;
 import org.openstack4j.model.network.builder.SubnetBuilder;
 import org.openstack4j.openstack.networking.domain.NeutronPool;
 
+@Deprecated(since = "4.24")
 public class SubnetProducer extends AbstractOpenstackProducer {
 
     public SubnetProducer(NeutronEndpoint endpoint, OSClient client) {

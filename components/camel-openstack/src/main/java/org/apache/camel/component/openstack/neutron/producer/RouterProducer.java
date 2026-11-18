@@ -35,6 +35,7 @@ import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.RouterInterface;
 import org.openstack4j.model.network.builder.RouterBuilder;
 
+@Deprecated(since = "4.24")
 public class RouterProducer extends AbstractOpenstackProducer {
 
     public RouterProducer(NeutronEndpoint endpoint, OSClient client) {

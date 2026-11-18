@@ -56,6 +56,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                                                  + "download() gives the content), a List of them for getAll. For containers: a List of "
                                                  + "SwiftContainer for get and getAll; create and update keep the body. getMetadata gives a Map of "
                                                  + "the metadata; delete and the metadata updates keep the body"))
+@Deprecated(since = "4.24")
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects,containers")

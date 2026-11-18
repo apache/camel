@@ -3326,6 +3326,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderHeaderNameBuilder openstackCinder() {
         return CinderEndpointBuilderFactory.CinderHeaderNameBuilder.INSTANCE;
     }
@@ -3339,6 +3340,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder openstackGlance() {
         return GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder.INSTANCE;
     }
@@ -3353,6 +3355,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder openstackKeystone() {
         return KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder.INSTANCE;
     }
@@ -3366,6 +3369,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder openstackNeutron() {
         return NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder.INSTANCE;
     }
@@ -3379,6 +3383,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaHeaderNameBuilder openstackNova() {
         return NovaEndpointBuilderFactory.NovaHeaderNameBuilder.INSTANCE;
     }
@@ -3392,6 +3397,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder openstackSwift() {
         return SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder.INSTANCE;
     }

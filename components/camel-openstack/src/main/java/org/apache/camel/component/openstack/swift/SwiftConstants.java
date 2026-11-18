@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.swift;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.24")
 public final class SwiftConstants extends OpenstackConstants {
 
     public static final String SWIFT_SUBSYSTEM_OBJECTS = "objects";

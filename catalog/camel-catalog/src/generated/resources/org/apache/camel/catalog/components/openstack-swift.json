@@ -4,7 +4,7 @@
     "name": "openstack-swift",
     "title": "OpenStack Swift",
     "description": "Access OpenStack Swift object\/blob store.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.swift.SwiftComponent",

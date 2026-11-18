@@ -31,6 +31,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.identity.v3.builder.UserBuilder;
 
+@Deprecated(since = "4.24")
 public class UserProducer extends AbstractKeystoneProducer {
 
     public UserProducer(KeystoneEndpoint endpoint, OSClient client) {

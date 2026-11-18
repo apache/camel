@@ -31,6 +31,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.builder.DomainBuilder;
 
+@Deprecated(since = "4.24")
 public class DomainProducer extends AbstractKeystoneProducer {
 
     public DomainProducer(KeystoneEndpoint endpoint, OSClient client) {

@@ -22,6 +22,7 @@ import org.apache.camel.spi.Metadata;
  * General camel-openstack component constants. The main purpose for this class is to avoid duplication general
  * constants in each submodule.
  */
+@Deprecated(since = "4.24")
 public class OpenstackConstants {
 
     // The schemes

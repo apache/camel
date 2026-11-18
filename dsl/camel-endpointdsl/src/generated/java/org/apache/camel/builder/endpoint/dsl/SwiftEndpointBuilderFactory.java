@@ -249,6 +249,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default SwiftHeaderNameBuilder openstackSwift() {
             return SwiftHeaderNameBuilder.INSTANCE;
         }
@@ -268,6 +269,7 @@ public interface SwiftEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default SwiftEndpointBuilder openstackSwift(String path) {
             return SwiftEndpointBuilderFactory.endpointBuilder("openstack-swift", path);
         }
@@ -289,6 +291,7 @@ public interface SwiftEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default SwiftEndpointBuilder openstackSwift(String componentName, String path) {
             return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

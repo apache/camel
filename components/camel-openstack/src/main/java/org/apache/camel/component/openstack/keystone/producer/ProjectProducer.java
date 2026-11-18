@@ -31,6 +31,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Project;
 import org.openstack4j.model.identity.v3.builder.ProjectBuilder;
 
+@Deprecated(since = "4.24")
 public class ProjectProducer extends AbstractKeystoneProducer {
 
     public ProjectProducer(KeystoneEndpoint endpoint, OSClient client) {
