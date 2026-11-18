@@ -228,19 +228,6 @@ public final class GenericFileHelper {
     }
 
     /**
-     * Gets the message body as an input stream with the content encoded in the given charset.
-     * <p/>
-     * The body is read as a {@link Reader} (which decodes the content the same way as converting the body to a
-     * {@link String}) and encoded while the stream is read, so a big body is not loaded into memory. A {@link String}
-     * body, or a body that cannot be read as a {@link Reader}, is encoded as a whole.
-     *
-     * @param  exchange                the exchange
-     * @param  charset                 the charset to encode the content with
-     * @return                         the input stream
-     * @throws InvalidPayloadException if the body cannot be converted
-     * @throws IOException             if the charset is not supported
-     */
-    /**
      * The body as a stream to write to a file of the given name. A Map, a List or an object (a body unmarshalled from
      * JSON, XML or CSV, or built in the route) cannot become one, and the converter's message only names the
      * conversion: says what the body is, the step that set it, and the marshal that writes it, in the data format the
@@ -263,6 +250,19 @@ public final class GenericFileHelper {
         }
     }
 
+    /**
+     * Gets the message body as an input stream with the content encoded in the given charset.
+     * <p/>
+     * The body is read as a {@link Reader} (which decodes the content the same way as converting the body to a
+     * {@link String}) and encoded while the stream is read, so a big body is not loaded into memory. A {@link String}
+     * body, or a body that cannot be read as a {@link Reader}, is encoded as a whole.
+     *
+     * @param  exchange                the exchange
+     * @param  charset                 the charset to encode the content with
+     * @return                         the input stream
+     * @throws InvalidPayloadException if the body cannot be converted
+     * @throws IOException             if the charset is not supported
+     */
     public static InputStream toInputStream(Exchange exchange, String charset) throws InvalidPayloadException, IOException {
         Message message = exchange.getIn();
         if (!(message.getBody() instanceof String)) {
