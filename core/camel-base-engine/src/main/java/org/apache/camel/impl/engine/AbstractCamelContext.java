@@ -193,6 +193,7 @@ import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -874,11 +875,17 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
-        return doGetEndpoint(uri, null, parameters, normalized, prototype);
+        return doGetEndpoint(uri, null, parameters, normalized, prototype, false);
     }
 
     protected Endpoint doGetEndpoint(
             String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        return doGetEndpoint(uri, explicitRawUri, parameters, normalized, prototype, false);
+    }
+
+    protected Endpoint doGetEndpoint(
+            String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype,
+            boolean literalOptionBinding) {
         // ensure CamelContext are initialized before we can get an endpoint
         build();
 
@@ -945,9 +952,14 @@ public abstract class AbstractCamelContext extends BaseService
                     LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                     // Have the component create the endpoint if it can.
-                    answer = component.createEndpoint(
-                            component.useRawUri() ? rawUri : uri,
-                            parameters);
+                    String createUri = component.useRawUri() ? rawUri : uri;
+                    // when the uri was computed from the current message at runtime its query option values must be
+                    // bound as literal text (no property-placeholder and no bean/class reference resolution)
+                    if (literalOptionBinding && component instanceof DefaultComponent dc) {
+                        answer = dc.createEndpoint(createUri, parameters, true);
+                    } else {
+                        answer = component.createEndpoint(createUri, parameters);
+                    }
 
                     if (answer != null && LOG.isDebugEnabled()) {
                         LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,

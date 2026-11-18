@@ -333,8 +333,10 @@ public class SendDynamicProcessor extends BaseProcessorSupport
                 throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
             // optimize and normalize endpoint without re-resolving property placeholders on the
-            // per-message evaluated recipient (see resolveUri and CAMEL-24282)
-            return NormalizedUri.newNormalizedUri(uri, false);
+            // per-message evaluated recipient (see resolveUri and CAMEL-24282). The per-message recipient
+            // comes from the message, so its query option values are bound as literal text as well (no
+            // property-placeholder and no bean/class reference resolution) - CAMEL-27160
+            return NormalizedUri.newNormalizedUri(uri, false, true);
         }
         return null;
     }
