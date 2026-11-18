@@ -10070,6 +10070,10 @@ Other changes to the messaging Kamelets:
   being set to `application/json`.
 * `mqtt-source` and `mqtt5-source` without a `clientId` connect with a generated client ID instead of `mqtt-source`.
   This matters only for broker ACLs or monitoring that use that ID.
+* `spring-rabbitmq-source` and `spring-rabbitmq-sink` with `protocol: amqps` check the certificate of the broker
+  against the trust store of Java, and that it names the host in `host`. A broker whose certificate Java does not
+  trust, or that is for another name, no longer connects. Add its CA to the trust store of Java, or give it with the new
+  `sslTruststoreLocation` and `sslTruststorePassword` options. `protocol: amqp`, the default, is unchanged.
 
 === Kamelets - other changes in behaviour
 
@@ -10078,6 +10082,8 @@ Other changes to the messaging Kamelets:
 * The SQL and Cassandra Kamelets send a query with `+` to the database unchanged. A query that worked around this, for
   example with `%2B`, now sends a literal `%2B`.
 * `google-sheets-source` with `majorDimension=COLUMNS` reads columns.
+* `mongodb-changes-stream-source` sends the whole document for an update, read again from the collection, instead of
+  `null`. Set the new `fullDocument` option to `default` for the old behaviour.
 * `redis-sink` sends a PUBLISH that has no channel header to the channels of the `channels` option (default `one`),
   instead of failing.
 * The GitHub source Kamelets poll every 60 seconds instead of every 500 milliseconds. Set `delay` to poll more often.
