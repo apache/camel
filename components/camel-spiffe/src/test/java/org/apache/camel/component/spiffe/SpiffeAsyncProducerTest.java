@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spiffe;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +35,31 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SpiffeAsyncProducerTest {
+    @Test
+    void preserveBodyRetainsPayloadAndClearsPreviousIdentityOnFailedValidation() throws Exception {
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(SpiffeId.parse("spiffe://example.org/peer"));
+        when(client.validateJwtSvid("token", "audience")).thenReturn(svid);
+        try (Fixture fixture = new Fixture(client)) {
+            fixture.endpoint.getConfiguration().setPreserveBody(true);
+            Exchange exchange = new DefaultExchange(fixture.context);
+            Object payload = java.util.List.of("request", "payload");
+            exchange.getMessage().setBody(payload);
+            exchange.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(payload);
+            assertThat(exchange.getProperty(SpiffeConstants.JWT_IDENTITY)).isInstanceOf(SpiffeJwtIdentity.class);
+            when(client.validateJwtSvid("token", "audience")).thenThrow(new JwtSvidException("invalid"));
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(JwtSvidException.class);
+            assertThat(exchange.getProperty(SpiffeConstants.JWT_IDENTITY)).isNull();
+            assertThat(exchange.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(payload);
+        }
+    }
+
     @Test
     void capturesTokenAndAudienceBeforeQueueingAndCompletesOffTheCaller() throws Exception {
         WorkloadApiClient client = mock(WorkloadApiClient.class);
@@ -120,7 +146,7 @@ class SpiffeAsyncProducerTest {
             fixture.producer.stop();
             assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(calls).hasValue(1);
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
             assertThat(exchange.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
         }
     }

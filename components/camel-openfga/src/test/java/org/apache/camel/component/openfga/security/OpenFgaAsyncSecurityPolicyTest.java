@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openfga.security;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,7 +42,7 @@ class OpenFgaAsyncSecurityPolicyTest {
     @Test
     void guardReleasesCallerAndPreservesDownstreamAsyncCallback() throws Exception {
         OpenFgaClient client = mock(OpenFgaClient.class);
-        java.util.concurrent.CompletableFuture<ClientCheckResponse> pending = new java.util.concurrent.CompletableFuture<>();
+        CompletableFuture<ClientCheckResponse> pending = new CompletableFuture<>();
         when(client.check(any(), any())).thenReturn(pending);
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
@@ -70,7 +71,7 @@ class OpenFgaAsyncSecurityPolicyTest {
         OpenFgaClient client = mock(OpenFgaClient.class);
         ClientCheckResponse denied = mock(ClientCheckResponse.class);
         when(denied.getAllowed()).thenReturn(false);
-        when(client.check(any(), any())).thenReturn(java.util.concurrent.CompletableFuture.completedFuture(denied));
+        when(client.check(any(), any())).thenReturn(CompletableFuture.completedFuture(denied));
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
             CountDownLatch completed = new CountDownLatch(1);

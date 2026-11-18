@@ -14,33 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spiffe;
+package org.apache.camel.support.security;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
-/** Managed bounded authorization work; cancelled or stopped tasks can never commit a late result to the caller. */
-public final class SpiffeAsyncExecutor implements AutoCloseable {
+/**
+ * Managed bounded authorization work. Cancelled tasks cannot commit a late result, and downstream routing does not
+ * consume authorization admission capacity.
+ *
+ * @since 4.24
+ */
+public final class AuthorizationAsyncExecutor implements AutoCloseable {
     @FunctionalInterface
     public interface Action {
         CompletableFuture<?> run() throws Exception;
@@ -55,33 +67,27 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
     private final ExecutorService executor;
     private final ScheduledExecutorService deadlines;
     private final ExecutorService completions;
-    private final java.util.concurrent.BlockingQueue<Runnable> completionQueue;
-    private final java.util.concurrent.Semaphore workerSlots;
+    private final Semaphore workerSlots;
     private final long timeout;
-    private final java.util.concurrent.Semaphore permits;
+    private final Semaphore permits;
     private final Set<Task> tasks = ConcurrentHashMap.newKeySet();
     private final Object lifecycle = new Object();
     private volatile boolean closed;
 
-    public SpiffeAsyncExecutor(CamelContext context, Object owner, int poolSize, int queueSize, long timeout) {
+    public AuthorizationAsyncExecutor(CamelContext context, Object owner, int poolSize, int queueSize, long timeout) {
         if (poolSize <= 0 || queueSize <= 0 || timeout <= 0) {
             throw new IllegalArgumentException("asyncPoolSize, asyncQueueSize and asyncTimeout must be positive");
         }
         this.context = context;
         this.timeout = timeout;
         int capacity = Math.addExact(poolSize, queueSize);
-        permits = new java.util.concurrent.Semaphore(capacity);
-        workerSlots = new java.util.concurrent.Semaphore(poolSize);
-        completionQueue = new java.util.concurrent.ArrayBlockingQueue<>(capacity);
-        ThreadPoolProfile profile = profile("SpiffeAuthorization", poolSize, capacity);
-        executor = context.getExecutorServiceManager().newThreadPool(owner, "SpiffeAuthorization", profile);
-        deadlines = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(owner, "SpiffeAuthorizationDeadline");
-        int completionWorkers = Math.min(capacity, Math.max(2, poolSize));
-        completions = context.getExecutorServiceManager().newThreadPool(owner, "SpiffeAuthorizationCompletion",
-                profile("SpiffeAuthorizationCompletion", completionWorkers, capacity));
-        for (int index = 0; index < completionWorkers; index++) {
-            completions.execute(this::completeWork);
-        }
+        permits = new Semaphore(capacity);
+        workerSlots = new Semaphore(poolSize);
+        ThreadPoolProfile profile = profile("Authorization", poolSize, capacity);
+        executor = context.getExecutorServiceManager().newThreadPool(owner, "Authorization", profile);
+        deadlines = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(owner, "AuthorizationDeadline");
+        // A continuation can run the rest of the route. It must not be limited by the authorization worker count.
+        completions = context.getExecutorServiceManager().newCachedThreadPool(owner, "AuthorizationContinuation");
     }
 
     private static ThreadPoolProfile profile(String name, int workers, int capacity) {
@@ -97,27 +103,9 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
         return profile;
     }
 
-    private void completeWork() {
-        while (!closed || !tasks.isEmpty() || !completionQueue.isEmpty()) {
-            try {
-                Runnable completion = completionQueue.poll(100, TimeUnit.MILLISECONDS);
-                if (completion != null) {
-                    try {
-                        completion.run();
-                    } catch (Throwable ignored) {
-                        // A callback is external routing code. Its failure must not retire the completion worker.
-                    }
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
-    }
-
     public static CompletableFuture<Exchange> processFuture(
-            Exchange exchange, org.apache.camel.AsyncProcessor processor,
-            SpiffeAsyncExecutor executor) {
+            Exchange exchange, AsyncProcessor processor,
+            AuthorizationAsyncExecutor executor) {
         CompletableFuture<Exchange> result = new CompletableFuture<>() {
             @Override
             public boolean cancel(boolean interrupt) {
@@ -139,7 +127,7 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
 
     public boolean process(Exchange original, AsyncCallback callback, Preparation preparation) {
         if (!permits.tryAcquire()) {
-            original.setException(new java.util.concurrent.RejectedExecutionException("Authorization capacity is exhausted"));
+            original.setException(new RejectedExecutionException("Authorization capacity is exhausted"));
             callback.done(true);
             return true;
         }
@@ -151,7 +139,12 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
             snapshot.getMessage().setBody(copyValue(snapshot.getMessage().getBody()));
             snapshot.getMessage().setHeaders(copyMap(snapshot.getMessage().getHeaders()));
             snapshot.getProperties().replaceAll((key, value) -> copyValue(value));
-            task = new Task(original, snapshot, callback, preparation.prepare(snapshot));
+            Map<String, Object> initialHeaders = new LinkedHashMap<>(snapshot.getMessage().getHeaders());
+            Map<String, Object> initialProperties = new LinkedHashMap<>(snapshot.getProperties());
+            Object initialBody = snapshot.getMessage().getBody();
+            task = new Task(
+                    original, snapshot, callback, preparation.prepare(snapshot),
+                    initialBody, initialHeaders, initialProperties);
         } catch (Exception e) {
             permits.release();
             original.setException(e);
@@ -174,6 +167,54 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
                 task.finish(e, true);
                 return true;
             }
+        }
+    }
+
+    public <T> CompletableFuture<T> bound(CompletableFuture<T> source, long timeoutMillis) {
+        Objects.requireNonNull(source, "Authorization request future");
+        RequestFuture<T> result = new RequestFuture<>(source);
+        ScheduledFuture<?> deadline;
+        try {
+            deadline = deadlines.schedule(() -> {
+                if (result.completeExceptionally(new TimeoutException("Authorization request deadline exceeded"))) {
+                    source.cancel(true);
+                }
+            }, timeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (RuntimeException e) {
+            source.cancel(true);
+            throw e;
+        }
+        result.whenComplete((value, failure) -> deadline.cancel(false));
+        source.whenComplete((value, failure) -> {
+            deadline.cancel(false);
+            if (failure != null) {
+                result.completeExceptionally(failure);
+            } else {
+                result.complete(value);
+            }
+        });
+        return result;
+    }
+
+    private static class RequestFuture<T> extends CompletableFuture<T> {
+        private final CompletableFuture<?> source;
+
+        RequestFuture(CompletableFuture<?> source) {
+            this.source = source;
+        }
+
+        @Override
+        public boolean cancel(boolean interrupt) {
+            if (!super.cancel(interrupt)) {
+                return false;
+            }
+            source.cancel(interrupt);
+            return true;
+        }
+
+        @Override
+        public <U> CompletableFuture<U> newIncompleteFuture() {
+            return new RequestFuture<>(this);
         }
     }
 
@@ -201,8 +242,15 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
         tasks.forEach(task -> task.finish(new CancellationException("Authorization executor stopped"), false));
         context.getExecutorServiceManager().shutdownNow(executor);
         context.getExecutorServiceManager().shutdownNow(deadlines);
-        // Existing completion workers drain every admitted callback; do not discard queued routing continuations.
-        completions.shutdown();
+        shutdownCompletionsIfDrained();
+    }
+
+    private void shutdownCompletionsIfDrained() {
+        // A winner can still be between claiming its task and submitting the callback. Keep the executor alive until
+        // every admitted decision has been committed, then drain callbacks through Camel without interrupting them.
+        if (closed && tasks.isEmpty()) {
+            context.getExecutorServiceManager().shutdown(completions);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -215,10 +263,10 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
     }
 
     private static Object copyValue(Object value) {
-        return copyValue(value, new java.util.IdentityHashMap<>());
+        return copyValue(value, new IdentityHashMap<>());
     }
 
-    private static Object copyValue(Object value, java.util.IdentityHashMap<Object, Object> visited) {
+    private static Object copyValue(Object value, IdentityHashMap<Object, Object> visited) {
         if (visited.containsKey(value)) {
             return visited.get(value);
         }
@@ -243,7 +291,11 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
         private final AsyncCallback callback;
         private final Action action;
         private final AtomicBoolean finished = new AtomicBoolean();
-        private final AtomicBoolean callbackFinished = new AtomicBoolean();
+        private final AtomicBoolean decisionCommitted = new AtomicBoolean();
+        private final Object initialBody;
+        private final Map<String, Object> initialHeaders;
+        private final Map<String, Object> initialProperties;
+        private final Object runnerLock = new Object();
         private final AtomicBoolean permitReleased = new AtomicBoolean();
         private volatile boolean executionActive;
         private volatile boolean submissionReturned;
@@ -251,11 +303,15 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
         private final AtomicReference<CompletableFuture<?>> request = new AtomicReference<>();
         private volatile ScheduledFuture<?> deadline;
 
-        Task(Exchange original, Exchange snapshot, AsyncCallback callback, Action action) {
+        Task(Exchange original, Exchange snapshot, AsyncCallback callback, Action action,
+             Object initialBody, Map<String, Object> initialHeaders, Map<String, Object> initialProperties) {
             this.original = original;
             this.snapshot = snapshot;
             this.callback = callback;
             this.action = action;
+            this.initialBody = initialBody;
+            this.initialHeaders = initialHeaders;
+            this.initialProperties = initialProperties;
         }
 
         @Override
@@ -263,8 +319,13 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
             if (finished.get()) {
                 return;
             }
-            executionActive = true;
-            runner.set(Thread.currentThread());
+            synchronized (runnerLock) {
+                if (finished.get()) {
+                    return;
+                }
+                executionActive = true;
+                runner.set(Thread.currentThread());
+            }
             boolean workerAcquired = false;
             try {
                 if (finished.get()) {
@@ -294,15 +355,17 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
                 if (workerAcquired) {
                     workerSlots.release();
                 }
-                runner.set(null);
-                executionActive = false;
+                synchronized (runnerLock) {
+                    runner.set(null);
+                    executionActive = false;
+                }
                 releasePermit();
             }
         }
 
         private void releasePermit() {
             // Logical timeout does not free physical capacity while an SDK call ignores interruption.
-            if (finished.get() && callbackFinished.get() && (!executionActive || submissionReturned)
+            if (finished.get() && decisionCommitted.get() && (!executionActive || submissionReturned)
                     && permitReleased.compareAndSet(false, true)) {
                 permits.release();
             }
@@ -326,7 +389,7 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
                 Throwable failure = unwrap(error);
                 original.setException(
                         original.getException() instanceof InterruptedException ? original.getException() : failure);
-                if (executor instanceof java.util.concurrent.ThreadPoolExecutor pool) {
+                if (executor instanceof ThreadPoolExecutor pool) {
                     pool.remove(this);
                 }
             }
@@ -336,7 +399,7 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
                             = original.getException() instanceof InterruptedException ? original.getException() : error;
                     if (failure == null) {
                         try {
-                            ExchangeHelper.copyResults(original, snapshot);
+                            commitResults();
                         } catch (Throwable e) {
                             original.setException(e);
                         }
@@ -350,29 +413,52 @@ public final class SpiffeAsyncExecutor implements AutoCloseable {
                         } catch (Throwable ignored) {
                             // Cancellation is best effort; a broken SDK future must not discard the caller's callback.
                         } finally {
-                            Thread thread = runner.get();
-                            if (thread != null && thread != Thread.currentThread()) {
-                                thread.interrupt();
+                            synchronized (runnerLock) {
+                                Thread thread = runner.get();
+                                if (thread != null && thread != Thread.currentThread()) {
+                                    thread.interrupt();
+                                }
                             }
                         }
                     }
-                    callback.done(doneSync);
                 } finally {
-                    callbackFinished.set(true);
+                    // Authorization ends before the routing continuation; downstream work owns its own concurrency.
+                    decisionCommitted.set(true);
                     tasks.remove(this);
                     releasePermit();
+                    shutdownCompletionsIfDrained();
                 }
+                callback.done(doneSync);
             };
             if (doneSync) {
                 completion.run();
             } else {
-                // A task retains its admission permit until this callback returns, so at most capacity entries exist.
-                completionQueue.add(completion);
+                completions.execute(completion);
             }
         }
 
+        private void commitResults() {
+            // Input containers were snapshotted only to isolate authorization. Preserve the caller's references unless
+            // the operation explicitly replaced an output, rather than copying the entire snapshot exchange back.
+            if (snapshot.getMessage().getBody() != initialBody) {
+                original.getMessage().setBody(snapshot.getMessage().getBody());
+            }
+            commitMap(original.getMessage().getHeaders(), snapshot.getMessage().getHeaders(), initialHeaders);
+            commitMap(original.getProperties(), snapshot.getProperties(), initialProperties);
+            original.setException(snapshot.getException());
+        }
+
+        private void commitMap(Map<String, Object> destination, Map<String, Object> result, Map<String, Object> initial) {
+            initial.keySet().stream().filter(key -> !result.containsKey(key)).forEach(destination::remove);
+            result.forEach((key, value) -> {
+                if (!initial.containsKey(key) || value != initial.get(key)) {
+                    destination.put(key, value);
+                }
+            });
+        }
+
         private Throwable unwrap(Throwable error) {
-            return error instanceof java.util.concurrent.CompletionException && error.getCause() != null
+            return error instanceof CompletionException && error.getCause() != null
                     ? error.getCause() : error;
         }
     }

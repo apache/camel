@@ -19,28 +19,164 @@ package org.apache.camel.component.opa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OpaAsyncExecutorTest {
     @Test
+    void cancellationCannotInterruptTheNextTaskReusingItsWorker() throws Exception {
+        CountDownLatch interruptEntered = new CountDownLatch(1);
+        CountDownLatch releaseInterrupt = new CountDownLatch(1);
+        AtomicReference<Thread> firstRunner = new AtomicReference<>();
+        AtomicBoolean intercepted = new AtomicBoolean();
+        try (var context = new DefaultCamelContext()) {
+            context.getExecutorServiceManager().addThreadFactoryListener((source, factory) -> action -> {
+                Thread template = factory.newThread(action);
+                Thread thread = new Thread(action, template.getName()) {
+                    @Override
+                    public void interrupt() {
+                        if (this == firstRunner.get() && intercepted.compareAndSet(false, true)) {
+                            interruptEntered.countDown();
+                            try {
+                                awaitIgnoringInterrupt(releaseInterrupt);
+                            } catch (Exception e) {
+                                throw new IllegalStateException(e);
+                            }
+                        }
+                        super.interrupt();
+                    }
+                };
+                thread.setDaemon(template.isDaemon());
+                return thread;
+            });
+            try (var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+                Exchange first = new DefaultExchange(context);
+                Exchange second = new DefaultExchange(context);
+                CountDownLatch firstEntered = new CountDownLatch(1);
+                CountDownLatch releaseFirst = new CountDownLatch(1);
+                CountDownLatch firstReturning = new CountDownLatch(1);
+                CountDownLatch secondEntered = new CountDownLatch(1);
+                CountDownLatch secondCallback = new CountDownLatch(1);
+                executor.process(first, doneSync -> {
+                }, snapshot -> () -> {
+                    firstRunner.set(Thread.currentThread());
+                    firstEntered.countDown();
+                    awaitIgnoringInterrupt(releaseFirst);
+                    firstReturning.countDown();
+                    return CompletableFuture.completedFuture(null);
+                });
+                assertThat(firstEntered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> secondCallback.countDown(), snapshot -> () -> {
+                    secondEntered.countDown();
+                    assertThat(Thread.currentThread().isInterrupted()).isFalse();
+                    return CompletableFuture.completedFuture(null);
+                });
+                try {
+                    executor.cancel(first);
+                    assertThat(interruptEntered.await(5, TimeUnit.SECONDS)).isTrue();
+                    releaseFirst.countDown();
+                    assertThat(firstReturning.await(5, TimeUnit.SECONDS)).isTrue();
+                    // The first task still owns the worker while cancellation interrupts it under runnerLock.
+                    assertThat(secondEntered.await(100, TimeUnit.MILLISECONDS)).isFalse();
+                } finally {
+                    releaseFirst.countDown();
+                    releaseInterrupt.countDown();
+                }
+                assertThat(secondCallback.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(secondEntered.getCount()).isZero();
+                assertThat(second.getException()).isNull();
+            }
+        } finally {
+            releaseInterrupt.countDown();
+        }
+    }
+
+    @Test
+    void blockedRoutingCallbacksDoNotHoldAuthorizationCapacityOrLimitOtherContinuations() throws Exception {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(3);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch returned = new CountDownLatch(3);
+            try {
+                for (int index = 0; index < 3; index++) {
+                    Exchange exchange = new DefaultExchange(context);
+                    CountDownLatch thisCallback = new CountDownLatch(1);
+                    assertThat(executor.process(exchange, doneSync -> {
+                        thisCallback.countDown();
+                        entered.countDown();
+                        try {
+                            awaitIgnoringInterrupt(release);
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        } finally {
+                            returned.countDown();
+                        }
+                    }, snapshot -> () -> CompletableFuture.completedFuture(null))).isFalse();
+                    assertThat(thisCallback.await(5, TimeUnit.SECONDS)).isTrue();
+                    assertThat(exchange.getException()).isNull();
+                }
+                assertThat(entered.getCount()).isZero();
+            } finally {
+                release.countDown();
+            }
+            assertThat(returned.await(5, TimeUnit.SECONDS)).isTrue();
+        }
+    }
+
+    @Test
+    void committingDecisionPreservesUnchangedCallerContainerInstancesAndTypes() throws Exception {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            Exchange exchange = new DefaultExchange(context);
+            List<String> body = List.of("immutable");
+            Map<String, String> header = new java.util.TreeMap<>(Map.of("key", "value"));
+            List<String> property = new ArrayList<>(List.of("shared"));
+            exchange.getMessage().setBody(body);
+            exchange.getMessage().setHeader("untouched", header);
+            exchange.setProperty("untouched", property);
+            CountDownLatch callback = new CountDownLatch(1);
+            executor.process(exchange, doneSync -> callback.countDown(), snapshot -> () -> {
+                assertThat(snapshot.getMessage().getBody()).isNotSameAs(body);
+                assertThat(snapshot.getMessage().getHeader("untouched")).isNotSameAs(header);
+                assertThat(snapshot.getProperty("untouched")).isNotSameAs(property);
+                snapshot.getMessage().setHeader("decision", true);
+                return CompletableFuture.completedFuture(null);
+            });
+            assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(body);
+            assertThat(exchange.getMessage().getHeader("untouched")).isSameAs(header);
+            assertThat(exchange.getProperty("untouched")).isSameAs(property);
+            assertThat(exchange.getMessage().getHeader("decision")).isEqualTo(true);
+        }
+    }
+
+    @Test
     void boundedSaturationRejectsWithoutRunningOnTheCaller() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 1, 5000)) {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
             CountDownLatch entered = new CountDownLatch(1);
             CountDownLatch release = new CountDownLatch(1);
             CountDownLatch callbacks = new CountDownLatch(2);
             AtomicInteger count = new AtomicInteger();
             Thread caller = Thread.currentThread();
-            OpaAsyncExecutor.Preparation work = snapshot -> () -> {
+            AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
                 assertThat(Thread.currentThread()).isNotSameAs(caller);
                 entered.countDown();
                 assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
@@ -65,7 +201,7 @@ class OpaAsyncExecutorTest {
                     assertThat(doneSync).isTrue();
                     rejectionCallbacks.incrementAndGet();
                 }, work)).isTrue();
-                assertThat(rejected.getException()).isInstanceOf(java.util.concurrent.RejectedExecutionException.class);
+                assertThat(rejected.getException()).isInstanceOf(RejectedExecutionException.class);
                 assertThat(rejectionCallbacks).hasValue(1);
             } finally {
                 release.countDown();
@@ -79,7 +215,7 @@ class OpaAsyncExecutorTest {
 
     @Test
     void deadlineCompletesOnceAndLateWorkerCannotMutateTheCaller() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 1, 300)) {
+        try (var context = new DefaultCamelContext(); var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 300)) {
             CountDownLatch entered = new CountDownLatch(1);
             CountDownLatch release = new CountDownLatch(1);
             CountDownLatch workerDone = new CountDownLatch(1);
@@ -99,7 +235,7 @@ class OpaAsyncExecutorTest {
                 });
                 assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
                 assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
-                assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.TimeoutException.class);
+                assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
             } finally {
                 release.countDown();
             }
@@ -111,12 +247,13 @@ class OpaAsyncExecutorTest {
 
     @Test
     void stopCancelsRunningAndQueuedWorkExactlyOnce() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 1, 5000)) {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
             CountDownLatch entered = new CountDownLatch(1);
             CountDownLatch release = new CountDownLatch(1);
             CountDownLatch callbacks = new CountDownLatch(2);
             AtomicInteger calls = new AtomicInteger();
-            OpaAsyncExecutor.Preparation work = snapshot -> () -> {
+            AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
                 entered.countDown();
                 awaitIgnoringInterrupt(release);
                 return CompletableFuture.completedFuture(null);
@@ -135,8 +272,8 @@ class OpaAsyncExecutorTest {
                 }, work);
                 executor.close();
                 assertThat(callbacks.await(5, TimeUnit.SECONDS)).isTrue();
-                assertThat(first.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
-                assertThat(second.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+                assertThat(first.getException()).isInstanceOf(CancellationException.class);
+                assertThat(second.getException()).isInstanceOf(CancellationException.class);
                 assertThat(calls).hasValue(2);
             } finally {
                 release.countDown();
@@ -146,7 +283,8 @@ class OpaAsyncExecutorTest {
 
     @Test
     void snapshotsContainerValuesWithoutCompletingTheOriginalUnitOfWork() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 1, 5000)) {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
             Exchange exchange = new DefaultExchange(context);
             var originalUnitOfWork = org.mockito.Mockito.mock(org.apache.camel.spi.UnitOfWork.class);
             exchange.getExchangeExtension().setUnitOfWork(originalUnitOfWork);
@@ -174,7 +312,7 @@ class OpaAsyncExecutorTest {
 
     @Test
     void blockedRoutingCallbackCannotStallAnotherAuthorizationDeadline() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 2, 200)) {
+        try (var context = new DefaultCamelContext(); var executor = new AuthorizationAsyncExecutor(context, this, 1, 2, 200)) {
             CountDownLatch callbackEntered = new CountDownLatch(1);
             CountDownLatch releaseCallback = new CountDownLatch(1);
             CountDownLatch secondCallback = new CountDownLatch(1);
@@ -192,7 +330,7 @@ class OpaAsyncExecutorTest {
                 assertThat(callbackEntered.await(5, TimeUnit.SECONDS)).isTrue();
                 executor.process(second, doneSync -> secondCallback.countDown(), snapshot -> CompletableFuture::new);
                 assertThat(secondCallback.await(2, TimeUnit.SECONDS)).isTrue();
-                assertThat(second.getException()).isInstanceOf(java.util.concurrent.TimeoutException.class);
+                assertThat(second.getException()).isInstanceOf(TimeoutException.class);
             } finally {
                 releaseCallback.countDown();
             }
@@ -201,12 +339,16 @@ class OpaAsyncExecutorTest {
 
     @Test
     void resultCopyFailureStillCompletesTheCallbackExactlyOnce() throws Exception {
-        try (var context = new DefaultCamelContext(); var executor = new OpaAsyncExecutor(context, this, 1, 1, 1000)) {
+        try (var context = new DefaultCamelContext();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 1000)) {
             Exchange exchange = new DefaultExchange(context);
             exchange.setIn(new org.apache.camel.support.DefaultMessage(context) {
                 @Override
-                public void copyFrom(org.apache.camel.Message source) {
-                    throw new IllegalStateException("Result copy failed");
+                public void setBody(Object body) {
+                    if ("replacement".equals(body)) {
+                        throw new IllegalStateException("Result copy failed");
+                    }
+                    super.setBody(body);
                 }
             });
             CountDownLatch callback = new CountDownLatch(1);
@@ -215,7 +357,10 @@ class OpaAsyncExecutorTest {
                 calls.incrementAndGet();
                 callback.countDown();
             },
-                    snapshot -> () -> CompletableFuture.completedFuture(null));
+                    snapshot -> () -> {
+                        snapshot.getMessage().setBody("replacement");
+                        return CompletableFuture.completedFuture(null);
+                    });
             assertThat(callback.await(2, TimeUnit.SECONDS)).isTrue();
             assertThat(calls).hasValue(1);
             assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class).hasMessage("Result copy failed");
@@ -243,12 +388,12 @@ class OpaAsyncExecutorTest {
                     });
                 }
             });
-            try (var executor = new OpaAsyncExecutor(context, this, 1, 1, 200)) {
+            try (var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 200)) {
                 CountDownLatch entered = new CountDownLatch(1);
                 CountDownLatch release = new CountDownLatch(1);
                 CountDownLatch firstDone = new CountDownLatch(1);
                 AtomicInteger actualInvocations = new AtomicInteger();
-                OpaAsyncExecutor.Preparation work = snapshot -> () -> {
+                AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
                     actualInvocations.incrementAndGet();
                     entered.countDown();
                     awaitIgnoringInterrupt(release);

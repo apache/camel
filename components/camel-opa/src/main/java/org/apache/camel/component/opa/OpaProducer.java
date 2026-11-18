@@ -17,6 +17,7 @@
 package org.apache.camel.component.opa;
 
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
@@ -24,10 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.apache.camel.util.ObjectHelper;
 
 public class OpaProducer extends DefaultAsyncProducer {
-    private OpaAsyncExecutor asyncExecutor;
+    private AuthorizationAsyncExecutor asyncExecutor;
 
     private OpaProducerHealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -47,7 +49,7 @@ public class OpaProducer extends DefaultAsyncProducer {
 
         OpaConfiguration configuration = getEndpoint().getConfiguration();
         if (configuration.isAsyncProcessing()) {
-            asyncExecutor = new OpaAsyncExecutor(
+            asyncExecutor = new AuthorizationAsyncExecutor(
                     getEndpoint().getCamelContext(), this,
                     configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
         }
@@ -96,7 +98,7 @@ public class OpaProducer extends DefaultAsyncProducer {
             processBlocking(exchange);
             return;
         }
-        OpaAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
@@ -115,8 +117,8 @@ public class OpaProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        return OpaAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return AuthorizationAsyncExecutor.processFuture(exchange, this, asyncExecutor);
     }
 
     @Override
@@ -130,21 +132,17 @@ public class OpaProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
-        exchange.getMessage().removeHeader(OpaConstants.DECISION_ALLOW);
-        exchange.getMessage().removeHeader(OpaConstants.DECISION);
-        exchange.getMessage().removeHeader(OpaConstants.POLICY_PATH);
-        exchange.getMessage().removeHeader(OpaConstants.DECISION_FAILED_OPEN);
-        exchange.getMessage().removeHeader(OpaConstants.BATCH_DECISION);
-        OpaAsyncExecutor executor = asyncExecutor;
+        OpaPolicyEvaluator.clearDecisionHeaders(exchange);
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         if (executor == null) {
-            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
+            exchange.setException(new CancellationException("Authorization producer is not started"));
             callback.done(true);
             return true;
         }
         return executor.process(exchange, callback, this::prepareAsync);
     }
 
-    private OpaAsyncExecutor.Action prepareAsync(Exchange snapshot) throws Exception {
+    private AuthorizationAsyncExecutor.Action prepareAsync(Exchange snapshot) throws Exception {
         OpaPolicyEvaluator evaluator = getEndpoint().getEvaluator();
         boolean batch = getEndpoint().getConfiguration().isBatch();
         Object body = snapshot.getMessage().getBody();

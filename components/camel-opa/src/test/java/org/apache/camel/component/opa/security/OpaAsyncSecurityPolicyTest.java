@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa.security;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.component.opa.OpaConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -79,9 +81,9 @@ class OpaAsyncSecurityPolicyTest {
             fixture.processor.process(exchange, doneSync -> completed.countDown());
             assertThat(completed.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(exchange.getException()).isInstanceOf(CamelAuthorizationException.class);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.opa.OpaConstants.DECISION_ALLOW))
+            assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW))
                     .isEqualTo(false);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.opa.OpaConstants.DECISION))
+            assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION))
                     .isEqualTo(false);
             assertThat(exchange.getMessage().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID))
                     .isEqualTo("OpaSecurityPolicy");
@@ -95,14 +97,14 @@ class OpaAsyncSecurityPolicyTest {
         try (Fixture fixture = new Fixture(client)) {
             fixture.processor.stop();
             Exchange exchange = new DefaultExchange(fixture.context);
-            exchange.getMessage().setHeader(org.apache.camel.component.opa.OpaConstants.DECISION_ALLOW, true);
-            exchange.getMessage().setHeader(org.apache.camel.component.opa.OpaConstants.DECISION, true);
-            java.util.concurrent.atomic.AtomicInteger callbacks = new java.util.concurrent.atomic.AtomicInteger();
+            exchange.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            exchange.getMessage().setHeader(OpaConstants.DECISION, true);
+            AtomicInteger callbacks = new AtomicInteger();
             assertThat(fixture.processor.process(exchange, ignored -> callbacks.incrementAndGet())).isTrue();
             assertThat(callbacks.get()).isEqualTo(1);
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.opa.OpaConstants.DECISION_ALLOW)).isNull();
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.opa.OpaConstants.DECISION)).isNull();
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+            assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+            assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION)).isNull();
             assertThat(fixture.forwarded.get()).isNull();
         }
     }

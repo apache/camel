@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.openfga.security;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.openfga.OpenFgaAsyncExecutor;
 import org.apache.camel.component.openfga.OpenFgaAuthorizer;
 import org.apache.camel.component.openfga.OpenFgaConstants;
 import org.apache.camel.component.openfga.OpenFgaEvaluationException;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 
 /**
  * Enforces the decision of an {@link OpenFgaSecurityPolicy} before the wrapped processor runs.
@@ -35,7 +38,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
 
     private final OpenFgaSecurityPolicy policy;
-    private OpenFgaAsyncExecutor asyncExecutor;
+    private AuthorizationAsyncExecutor asyncExecutor;
 
     public OpenFgaSecurityProcessor(Processor processor, OpenFgaSecurityPolicy policy) {
         super(processor);
@@ -47,7 +50,7 @@ public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
         super.doStart();
         // drives the policy's readiness-check registration; a policy shared by several routes counts them
         if (policy.isAsyncProcessing()) {
-            asyncExecutor = new OpenFgaAsyncExecutor(
+            asyncExecutor = new AuthorizationAsyncExecutor(
                     policy.getCamelContext(), this,
                     policy.getAsyncPoolSize(), policy.getAsyncQueueSize(), policy.getAsyncTimeout());
         }
@@ -68,7 +71,7 @@ public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        OpenFgaAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
@@ -84,21 +87,15 @@ public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        return OpenFgaAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return AuthorizationAsyncExecutor.processFuture(exchange, this, asyncExecutor);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (policy.isAsyncProcessing()) {
-            exchange.getMessage().removeHeader(OpenFgaConstants.ALLOWED);
-            exchange.getMessage().removeHeader(OpenFgaConstants.FAILED_OPEN);
-            exchange.getMessage().removeHeader(OpenFgaConstants.DENY_REASON);
-            exchange.getMessage().removeHeader(OpenFgaConstants.USER);
-            exchange.getMessage().removeHeader(OpenFgaConstants.OBJECT);
-            exchange.getMessage().removeHeader(OpenFgaConstants.RELATION);
-            exchange.getMessage().removeHeader(OpenFgaConstants.STORE_ID);
-            OpenFgaAsyncExecutor executor = asyncExecutor;
+            OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+            AuthorizationAsyncExecutor executor = asyncExecutor;
             if (executor == null) {
                 exchange.setException(new CamelAuthorizationException("Authorization policy is not started", exchange));
                 markFailure(exchange);
@@ -129,13 +126,13 @@ public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
                     super.process(exchange, downstreamSync -> callback.done(doneSync && downstreamSync));
                 }
             }, snapshot -> {
-                OpenFgaAsyncExecutor.Action action = authorizer.prepareCheckAsync(snapshot, executor);
+                AuthorizationAsyncExecutor.Action action = authorizer.prepareCheckAsync(snapshot, executor);
                 return () -> action.run().handle((allowed, error) -> {
                     if (error != null) {
                         Throwable failure
-                                = error instanceof java.util.concurrent.CompletionException && error.getCause() != null
+                                = error instanceof CompletionException && error.getCause() != null
                                         ? error.getCause() : error;
-                        throw new java.util.concurrent.CompletionException(
+                        throw new CompletionException(
                                 new CamelAuthorizationException(
                                         "Could not ask OpenFGA whether the exchange may proceed", snapshot, failure));
                     }

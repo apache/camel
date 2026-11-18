@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.styra.opa.OPAClient;
 import com.styra.opa.OPAException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,12 +96,14 @@ class OpaAsyncProducerTest {
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
             exchange.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            exchange.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, java.util.List.of("forged"));
             var future = fixture.producer.processAsync(exchange);
             assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(future.cancel(true)).isTrue();
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+            assertThat(exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES)).isNull();
         }
     }
 
@@ -110,9 +119,9 @@ class OpaAsyncProducerTest {
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
             CountDownLatch callerDone = new CountDownLatch(1);
-            java.util.concurrent.atomic.AtomicReference<Throwable> failure
-                    = new java.util.concurrent.atomic.AtomicReference<>();
-            java.util.concurrent.atomic.AtomicBoolean interrupted = new java.util.concurrent.atomic.AtomicBoolean();
+            AtomicReference<Throwable> failure
+                    = new AtomicReference<>();
+            AtomicBoolean interrupted = new AtomicBoolean();
             Thread caller = Thread.startVirtualThread(() -> {
                 try {
                     fixture.producer.process(exchange);
@@ -154,17 +163,30 @@ class OpaAsyncProducerTest {
         CountDownLatch releaseCopy = new CountDownLatch(1);
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
-            exchange.setIn(new org.apache.camel.support.DefaultMessage(fixture.context) {
+            exchange.setIn(new DefaultMessage(fixture.context) {
                 @Override
-                public void copyFrom(org.apache.camel.Message source) {
-                    copying.countDown();
-                    try {
-                        assertThat(releaseCopy.await(5, TimeUnit.SECONDS)).isTrue();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new IllegalStateException(e);
-                    }
-                    super.copyFrom(source);
+                public Map<String, Object> getHeaders() {
+                    Map<String, Object> actual = super.getHeaders();
+                    return new AbstractMap<>() {
+                        @Override
+                        public Set<Entry<String, Object>> entrySet() {
+                            return actual.entrySet();
+                        }
+
+                        @Override
+                        public Object put(String name, Object value) {
+                            if (OpaConstants.DECISION_ALLOW.equals(name)) {
+                                copying.countDown();
+                                try {
+                                    assertThat(releaseCopy.await(5, TimeUnit.SECONDS)).isTrue();
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    throw new IllegalStateException(e);
+                                }
+                            }
+                            return actual.put(name, value);
+                        }
+                    };
                 }
             });
             var result = fixture.producer.processAsync(exchange);
@@ -189,7 +211,7 @@ class OpaAsyncProducerTest {
             AtomicInteger callbacks = new AtomicInteger();
             assertThat(fixture.producer.process(exchange, ignored -> callbacks.incrementAndGet())).isTrue();
             assertThat(callbacks.get()).isEqualTo(1);
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION)).isNull();
         }

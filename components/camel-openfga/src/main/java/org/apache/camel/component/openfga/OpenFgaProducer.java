@@ -23,7 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
@@ -34,7 +36,6 @@ import dev.openfga.sdk.api.client.model.ClientListRelationsRequest;
 import dev.openfga.sdk.api.client.model.ClientListUsersRequest;
 import dev.openfga.sdk.api.client.model.ClientReadChangesRequest;
 import dev.openfga.sdk.api.client.model.ClientReadRequest;
-import dev.openfga.sdk.api.client.model.ClientReadResponse;
 import dev.openfga.sdk.api.client.model.ClientRelationshipCondition;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
@@ -59,13 +60,14 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OpenFgaProducer extends DefaultAsyncProducer {
 
-    private OpenFgaAsyncExecutor asyncExecutor;
+    private AuthorizationAsyncExecutor asyncExecutor;
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFgaProducer.class);
 
@@ -89,7 +91,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
         OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
         if (configuration.isAsyncProcessing()) {
-            asyncExecutor = new OpenFgaAsyncExecutor(
+            asyncExecutor = new AuthorizationAsyncExecutor(
                     getEndpoint().getCamelContext(), this,
                     configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
         }
@@ -136,7 +138,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             processBlocking(exchange);
             return;
         }
-        OpenFgaAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
@@ -155,8 +157,8 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        return OpenFgaAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return AuthorizationAsyncExecutor.processFuture(exchange, this, asyncExecutor);
     }
 
     @Override
@@ -176,9 +178,9 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             default -> {
             }
         }
-        OpenFgaAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         if (executor == null) {
-            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
+            exchange.setException(new CancellationException("Authorization producer is not started"));
             callback.done(true);
             return true;
         }
@@ -195,7 +197,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     private static void applyPreparedContext(
             Consumer<List<ClientTupleKey>> tuples, Consumer<Object> context,
             List<ClientTupleKey> resolved, OpenFgaAuthorizer authorizer, boolean async) {
-        applyContext(tuples, value -> context.accept(async ? OpenFgaAsyncExecutor.snapshotValue(value) : value), resolved,
+        applyContext(tuples, value -> context.accept(async ? AuthorizationAsyncExecutor.snapshotValue(value) : value), resolved,
                 authorizer);
     }
 
@@ -273,7 +275,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                             // one check in the batch never got an answer. Returning the rest would quietly present a partial
                             // filter as a complete one, so the whole operation fails - and unlike a single check, there is no
                             // failOpen here, because "proceed" for a filter would mean handing back everything unfiltered
-                            throw new java.util.concurrent.CompletionException(
+                            throw new CompletionException(
                                     new OpenFgaEvaluationException(
                                             "OpenFGA failed to answer part of a batch check for " + user, exchange,
                                             response.getThrowable()));
@@ -455,33 +457,33 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         return invocation(authorizer, exchange, "read the stored tuples",
                 () -> authorizer.getClient().read(request, options), response -> {
 
-        List<Map<String, Object>> tuples = new ArrayList<>();
-        if (response.getTuples() != null) {
-            // qualified because this class already has its own Tuple, the holder the write paths use; that one is
-            // referenced far more often, so it keeps the simple name
-            for (dev.openfga.sdk.api.model.Tuple tuple : response.getTuples()) {
-                TupleKey key = tuple.getKey();
-                if (key == null) {
-                    continue;
-                }
-                // the user/relation/object keys are deliberately the ones writeTuples and deleteTuples accept, so a
-                // route can feed what it read straight back into a revoke without reshaping it
-                Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put("user", key.getUser());
-                entry.put("relation", key.getRelation());
-                entry.put("object", key.getObject());
-                // a stored tuple can carry a relationship condition; surface it so a route can read it back and feed
-                // it straight into a write, the same way the identity parts round-trip
-                RelationshipCondition condition = key.getCondition();
-                if (condition != null) {
-                    entry.put("condition", conditionAsMap(condition));
-                }
-                entry.put("timestamp", tuple.getTimestamp());
-                tuples.add(entry);
-            }
-        }
-        setContinuationToken(exchange, response.getContinuationToken());
-        exchange.getMessage().setBody(tuples);
+                    List<Map<String, Object>> tuples = new ArrayList<>();
+                    if (response.getTuples() != null) {
+                        // qualified because this class already has its own Tuple, the holder the write paths use; that one is
+                        // referenced far more often, so it keeps the simple name
+                        for (dev.openfga.sdk.api.model.Tuple tuple : response.getTuples()) {
+                            TupleKey key = tuple.getKey();
+                            if (key == null) {
+                                continue;
+                            }
+                            // the user/relation/object keys are deliberately the ones writeTuples and deleteTuples accept, so a
+                            // route can feed what it read straight back into a revoke without reshaping it
+                            Map<String, Object> entry = new LinkedHashMap<>();
+                            entry.put("user", key.getUser());
+                            entry.put("relation", key.getRelation());
+                            entry.put("object", key.getObject());
+                            // a stored tuple can carry a relationship condition; surface it so a route can read it back and feed
+                            // it straight into a write, the same way the identity parts round-trip
+                            RelationshipCondition condition = key.getCondition();
+                            if (condition != null) {
+                                entry.put("condition", conditionAsMap(condition));
+                            }
+                            entry.put("timestamp", tuple.getTimestamp());
+                            tuples.add(entry);
+                        }
+                    }
+                    setContinuationToken(exchange, response.getContinuationToken());
+                    exchange.getMessage().setBody(tuples);
                 }, null);
     }
 
@@ -511,30 +513,30 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         return invocation(authorizer, exchange, "read the change log",
                 () -> authorizer.getClient().readChanges(request, options), response -> {
 
-        List<Map<String, Object>> changes = new ArrayList<>();
-        if (response.getChanges() != null) {
-            for (TupleChange change : response.getChanges()) {
-                TupleKey key = change.getTupleKey();
-                if (key == null) {
-                    continue;
-                }
-                Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put("user", key.getUser());
-                entry.put("relation", key.getRelation());
-                entry.put("object", key.getObject());
-                RelationshipCondition condition = key.getCondition();
-                if (condition != null) {
-                    entry.put("condition", conditionAsMap(condition));
-                }
-                // the enum's name rather than the enum, so a route can compare against "WRITE" without importing
-                // an SDK type, and so the body marshals without a custom serializer
-                entry.put("operation", change.getOperation() != null ? change.getOperation().name() : null);
-                entry.put("timestamp", change.getTimestamp());
-                changes.add(entry);
-            }
-        }
-        setContinuationToken(exchange, response.getContinuationToken());
-        exchange.getMessage().setBody(changes);
+                    List<Map<String, Object>> changes = new ArrayList<>();
+                    if (response.getChanges() != null) {
+                        for (TupleChange change : response.getChanges()) {
+                            TupleKey key = change.getTupleKey();
+                            if (key == null) {
+                                continue;
+                            }
+                            Map<String, Object> entry = new LinkedHashMap<>();
+                            entry.put("user", key.getUser());
+                            entry.put("relation", key.getRelation());
+                            entry.put("object", key.getObject());
+                            RelationshipCondition condition = key.getCondition();
+                            if (condition != null) {
+                                entry.put("condition", conditionAsMap(condition));
+                            }
+                            // the enum's name rather than the enum, so a route can compare against "WRITE" without importing
+                            // an SDK type, and so the body marshals without a custom serializer
+                            entry.put("operation", change.getOperation() != null ? change.getOperation().name() : null);
+                            entry.put("timestamp", change.getTimestamp());
+                            changes.add(entry);
+                        }
+                    }
+                    setContinuationToken(exchange, response.getContinuationToken());
+                    exchange.getMessage().setBody(changes);
                 }, null);
     }
 
@@ -819,8 +821,8 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     /**
      * Builds the relationship condition a write should carry from the way the body expressed it: an SDK
      * {@link ClientRelationshipCondition} as is, or a {@code Map} of {@code name} and {@code context} - the shape
-     * {@link #readTuples} and {@link #readChanges} project a stored condition as, so a route can feed one straight
-     * back. A body with no condition keeps writing an unconditioned tuple.
+     * {@code readTuples} and {@code readChanges} project a stored condition as, so a route can feed one straight back.
+     * A body with no condition keeps writing an unconditioned tuple.
      */
     private static ClientRelationshipCondition toCondition(Object raw) {
         if (raw == null) {
@@ -1012,7 +1014,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     private interface PreparedOperation {
         void runSync() throws Exception;
 
-        CompletableFuture<?> runAsync(OpenFgaAsyncExecutor executor);
+        CompletableFuture<?> runAsync(AuthorizationAsyncExecutor executor);
     }
 
     private static final PreparedOperation NOOP = new PreparedOperation() {
@@ -1021,7 +1023,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public CompletableFuture<?> runAsync(OpenFgaAsyncExecutor executor) {
+        public CompletableFuture<?> runAsync(AuthorizationAsyncExecutor executor) {
             return CompletableFuture.completedFuture(null);
         }
     };
@@ -1036,7 +1038,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                         ? authorizer.await(exchange, what, call) : authorizer.await(exchange, what, call, budget);
                 try {
                     result.accept(response);
-                } catch (java.util.concurrent.CompletionException e) {
+                } catch (CompletionException e) {
                     if (e.getCause() instanceof Exception cause) {
                         throw cause;
                     }
@@ -1045,7 +1047,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             }
 
             @Override
-            public CompletableFuture<?> runAsync(OpenFgaAsyncExecutor executor) {
+            public CompletableFuture<?> runAsync(AuthorizationAsyncExecutor executor) {
                 CompletableFuture<T> future = budget == null
                         ? authorizer.awaitAsync(executor, exchange, what, call)
                         : authorizer.awaitAsync(executor, exchange, what, call, budget);

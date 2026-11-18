@@ -76,7 +76,7 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
     private int asyncPoolSize = 4;
     @Metadata(label = "advanced", defaultValue = "100")
     private int asyncQueueSize = 100;
-    @Metadata(label = "advanced", defaultValue = "30000")
+    @Metadata(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long asyncTimeout = 30000;
 
     public boolean isAsyncProcessing() {
@@ -326,7 +326,7 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
         return new OpenFgaSecurityProcessor(processor, this);
     }
 
-    org.apache.camel.CamelContext getCamelContext() {
+    CamelContext getCamelContext() {
         return camelContext;
     }
 

@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
@@ -156,7 +158,7 @@ class OpenFgaAsyncProducerTest {
             assertThat(submitted.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(result.cancel(true)).isTrue();
             org.awaitility.Awaitility.await().atMost(5, TimeUnit.SECONDS).until(pending::isCancelled);
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
             assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
         }
     }
@@ -171,7 +173,7 @@ class OpenFgaAsyncProducerTest {
             configuration.setFailOpen(true);
         })) {
             Exchange exchange = fixture.producer.processAsync(fixture.exchange()).get(5, TimeUnit.SECONDS);
-            assertThat(exchange.getException()).isInstanceOf(java.util.concurrent.TimeoutException.class);
+            assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
             assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
             assertThat(exchange.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isNull();
             assertThat(pending.isCancelled()).isTrue();
@@ -200,13 +202,13 @@ class OpenFgaAsyncProducerTest {
             Exchange third = fixture.exchange();
             AtomicInteger rejected = new AtomicInteger();
             assertThat(fixture.producer.process(third, doneSync -> rejected.incrementAndGet())).isTrue();
-            assertThat(third.getException()).isInstanceOf(java.util.concurrent.RejectedExecutionException.class);
+            assertThat(third.getException()).isInstanceOf(RejectedExecutionException.class);
             fixture.producer.stop();
             assertThat(completed.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(callbacks).hasValue(2);
             assertThat(rejected).hasValue(1);
-            assertThat(first.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
-            assertThat(second.getException()).isInstanceOf(java.util.concurrent.CancellationException.class);
+            assertThat(first.getException()).isInstanceOf(CancellationException.class);
+            assertThat(second.getException()).isInstanceOf(CancellationException.class);
         }
     }
 

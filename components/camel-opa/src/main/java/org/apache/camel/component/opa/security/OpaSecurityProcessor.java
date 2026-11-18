@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.opa.security;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.opa.OpaAsyncExecutor;
+import org.apache.camel.component.opa.OpaConstants;
 import org.apache.camel.component.opa.OpaPolicyEvaluationException;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 
 /**
  * Enforces the decision of an {@link OpaSecurityPolicy} before the wrapped processor runs.
@@ -34,7 +38,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 public class OpaSecurityProcessor extends DelegateAsyncProcessor {
 
     private final OpaSecurityPolicy policy;
-    private OpaAsyncExecutor asyncExecutor;
+    private AuthorizationAsyncExecutor asyncExecutor;
 
     public OpaSecurityProcessor(Processor processor, OpaSecurityPolicy policy) {
         super(processor);
@@ -46,7 +50,7 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
         super.doStart();
         // drives the policy's readiness-check registration; a policy shared by several routes counts them
         if (policy.isAsyncProcessing()) {
-            asyncExecutor = new OpaAsyncExecutor(
+            asyncExecutor = new AuthorizationAsyncExecutor(
                     policy.getCamelContext(), this,
                     policy.getAsyncPoolSize(), policy.getAsyncQueueSize(), policy.getAsyncTimeout());
         }
@@ -67,7 +71,7 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        OpaAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
@@ -83,21 +87,17 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        return OpaAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return AuthorizationAsyncExecutor.processFuture(exchange, this, asyncExecutor);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (policy.isAsyncProcessing()) {
-            exchange.getMessage().removeHeader(org.apache.camel.component.opa.OpaConstants.DECISION_ALLOW);
-            exchange.getMessage().removeHeader(org.apache.camel.component.opa.OpaConstants.DECISION_FAILED_OPEN);
-            exchange.getMessage().removeHeader(org.apache.camel.component.opa.OpaConstants.DECISION);
-            exchange.getMessage().removeHeader(org.apache.camel.component.opa.OpaConstants.POLICY_PATH);
-            exchange.getMessage().removeHeader(org.apache.camel.component.opa.OpaConstants.BATCH_DECISION);
-            OpaAsyncExecutor executor = asyncExecutor;
+            OpaPolicyEvaluator.clearDecisionHeaders(exchange);
+            AuthorizationAsyncExecutor executor = asyncExecutor;
             if (executor == null) {
-                exchange.setException(new java.util.concurrent.CancellationException("Authorization policy is not started"));
+                exchange.setException(new CancellationException("Authorization policy is not started"));
                 markFailure(exchange);
                 callback.done(true);
                 return true;
@@ -114,7 +114,7 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
                     markFailure(exchange);
                     callback.done(doneSync);
                 } else if (!Boolean.TRUE.equals(exchange.getMessage().getHeader(
-                        org.apache.camel.component.opa.OpaConstants.DECISION_ALLOW))) {
+                        OpaConstants.DECISION_ALLOW))) {
                     markFailure(exchange);
                     exchange.setException(new CamelAuthorizationException("Denied by policy " + path, exchange));
                     callback.done(doneSync);
@@ -123,7 +123,7 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
                 }
             }, snapshot -> () -> {
                 evaluator.evaluate(snapshot);
-                return java.util.concurrent.CompletableFuture.completedFuture(null);
+                return CompletableFuture.completedFuture(null);
             });
         }
         try {

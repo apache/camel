@@ -847,11 +847,18 @@ none is created per exchange.
 
 The authorization worker limit is enforced even with Camel's virtual-thread pool
 factory. Cancelled blocking calls retain capacity until their SDK invocation
-returns. Separate bounded completion workers deliver routing callbacks so a
-callback cannot occupy the deadline scheduler. Each asynchronous producer or
-wrapped policy uses one deadline scheduler and up to `max(2, asyncPoolSize)`
-completion workers, capped by the admitted-invocation limit. Completion callbacks
-must follow Camel's nonblocking callback contract.
+returns. Routing callbacks use a separate Camel-managed cached executor, independent of
+`asyncPoolSize`, so a callback cannot occupy the deadline scheduler or limit
+subsequent authorization work. Authorization admission is released when the decision
+is committed, before invoking the callback. Downstream route concurrency follows
+the route's own configuration. Each producer or wrapped policy uses one deadline
+scheduler, and idle continuation workers expire through the cached executor.
+
+The continuation executor has no admission limit. With platform threads, a blocking
+downstream continuation can occupy one thread; with virtual threads, each continuation
+uses a virtual thread. `asyncPoolSize` and `asyncQueueSize` bound authorization work,
+not downstream thread or memory use. Configure downstream concurrency through the
+route's consumer or concurrency controls when it needs a separate limit.
 
 `asyncTimeout` defaults to 30000 milliseconds and must be positive. It covers
 queueing, SDK invocation and authorization completion, not downstream route

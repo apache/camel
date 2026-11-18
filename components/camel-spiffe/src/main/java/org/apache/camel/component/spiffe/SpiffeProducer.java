@@ -17,6 +17,7 @@
 package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
 import io.spiffe.svid.jwtsvid.JwtSvid;
@@ -26,10 +27,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.apache.camel.util.ObjectHelper;
 
 public class SpiffeProducer extends DefaultAsyncProducer {
-    private SpiffeAsyncExecutor asyncExecutor;
+    private AuthorizationAsyncExecutor asyncExecutor;
 
     public SpiffeProducer(final SpiffeEndpoint endpoint) {
         super(endpoint);
@@ -45,7 +47,7 @@ public class SpiffeProducer extends DefaultAsyncProducer {
         super.doStart();
         SpiffeConfiguration configuration = getEndpoint().getConfiguration();
         if (configuration.isAsyncProcessing()) {
-            asyncExecutor = new SpiffeAsyncExecutor(
+            asyncExecutor = new AuthorizationAsyncExecutor(
                     getEndpoint().getCamelContext(), this,
                     configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
         }
@@ -66,7 +68,7 @@ public class SpiffeProducer extends DefaultAsyncProducer {
             processBlocking(exchange);
             return;
         }
-        SpiffeAsyncExecutor executor = asyncExecutor;
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
@@ -85,8 +87,8 @@ public class SpiffeProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        return SpiffeAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return AuthorizationAsyncExecutor.processFuture(exchange, this, asyncExecutor);
     }
 
     @Override
@@ -100,23 +102,30 @@ public class SpiffeProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
-        SpiffeAsyncExecutor executor = asyncExecutor;
+        if (determineOperation(exchange) == SpiffeOperation.validateJwtSvid) {
+            SpiffeJwtValidator.clearIdentity(exchange);
+        }
+        AuthorizationAsyncExecutor executor = asyncExecutor;
         if (executor == null) {
-            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
+            exchange.setException(new CancellationException("Authorization producer is not started"));
             callback.done(true);
             return true;
         }
         return executor.process(exchange, callback, this::prepareAsync);
     }
 
-    private SpiffeAsyncExecutor.Action prepareAsync(Exchange snapshot) throws Exception {
+    private AuthorizationAsyncExecutor.Action prepareAsync(Exchange snapshot) throws Exception {
         WorkloadApiClient client = getEndpoint().getWorkloadApiClient();
         SpiffeOperation operation = determineOperation(snapshot);
         if (operation == SpiffeOperation.validateJwtSvid) {
-            String token = resolveToken(snapshot);
-            String[] audiences = resolveConfiguredAudiences();
+            boolean preserveBody = getEndpoint().getConfiguration().isPreserveBody();
+            String audience = getEndpoint().getConfiguration().getAudience();
             return () -> {
-                applyValidatedSvid(client, snapshot, token, audiences);
+                JwtSvid svid = SpiffeJwtValidator.validate(client, snapshot, audience, !preserveBody);
+                SpiffeJwtValidator.recordIdentity(snapshot, svid, true);
+                if (!preserveBody) {
+                    getMessageForResponse(snapshot).setBody(svid);
+                }
                 return CompletableFuture.completedFuture(null);
             };
         }
