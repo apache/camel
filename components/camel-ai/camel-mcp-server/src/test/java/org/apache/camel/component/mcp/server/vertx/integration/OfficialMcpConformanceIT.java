@@ -96,6 +96,33 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
         }
     }
 
+    /**
+     * Adjusts the MCP server configuration of a variant of this test.
+     */
+    protected void configure(McpServerConfiguration configuration) {
+    }
+
+    /**
+     * The npm package of the conformance suite.
+     */
+    protected String conformancePackage() {
+        return CONFORMANCE_PACKAGE;
+    }
+
+    /**
+     * The arguments that select the scenarios to run; none for the active suite.
+     */
+    protected List<String> scenarioArguments() {
+        return List.of();
+    }
+
+    /**
+     * The classpath resource listing the scenarios expected to fail.
+     */
+    protected String expectedFailuresResource() {
+        return "expected-failures.yaml";
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -109,6 +136,7 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
 
         McpServerConfiguration configuration = new McpServerConfiguration();
         configuration.setTags(CONFORMANCE_TAG);
+        configure(configuration);
         McpServerBridge bridge = new McpServerBridge(configuration);
         camelContext.addService(bridge);
 
@@ -254,8 +282,8 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
                 fail("Official MCP conformance suite failed (exit " + exitCode + ").\n"
                      + "Output:\n" + output + "\n"
                      + "To register a known failure add the scenario name to " + expectedFailures.getFileName() + ".\n"
-                     + "Re-run manually: npx " + CONFORMANCE_PACKAGE + " server"
-                     + " --url " + serverUrl
+                     + "Re-run manually: npx " + conformancePackage() + " server"
+                     + " --url " + serverUrl + " " + String.join(" ", scenarioArguments())
                      + " --expected-failures " + expectedFailures.toAbsolutePath());
             }
         } finally {
@@ -272,32 +300,33 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
      * {@code target/test-classes/} during the process-test-resources phase, so the classpath lookup works both under
      * Maven and in an IDE that mirrors that layout.
      */
-    private static Path expectedFailuresPath() throws Exception {
-        URL resource = OfficialMcpConformanceIT.class.getResource("/expected-failures.yaml");
+    private Path expectedFailuresPath() throws Exception {
+        URL resource = OfficialMcpConformanceIT.class.getResource("/" + expectedFailuresResource());
         if (resource != null) {
             return Paths.get(resource.toURI());
         }
         // Fallback for IDE runs whose resource root is the source directory
-        Path fromSource = Paths.get("src/test/resources/expected-failures.yaml");
+        Path fromSource = Paths.get("src/test/resources/" + expectedFailuresResource());
         if (Files.exists(fromSource)) {
             return fromSource;
         }
         // Return a path whose absence will be reported clearly by npx
-        return Paths.get("expected-failures.yaml");
+        return Paths.get(expectedFailuresResource());
     }
 
-    private static List<String> buildConformanceCommand(String serverUrl, Path expectedFailures) throws Exception {
+    private List<String> buildConformanceCommand(String serverUrl, Path expectedFailures) throws Exception {
         if (!Files.exists(expectedFailures)) {
-            fail("expected-failures.yaml not found at " + expectedFailures.toAbsolutePath()
+            fail(expectedFailuresResource() + " not found at " + expectedFailures.toAbsolutePath()
                  + " — cannot run the conformance suite without a baseline");
         }
         List<String> cmd = new ArrayList<>();
         cmd.add("npx");
         cmd.add("--yes");
-        cmd.add(CONFORMANCE_PACKAGE);
+        cmd.add(conformancePackage());
         cmd.add("server");
         cmd.add("--url");
         cmd.add(serverUrl);
+        cmd.addAll(scenarioArguments());
         cmd.add("--expected-failures");
         cmd.add(expectedFailures.toAbsolutePath().toString());
         return cmd;

@@ -487,7 +487,7 @@ class McpServerMainOAuthTest {
         return builder;
     }
 
-    private static final class TestOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
+    static final class TestOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
 
         @Override
         public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
