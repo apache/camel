@@ -457,6 +457,12 @@ scopes are removed. Consequently, a token that has a required scope only in `scp
 `OAuthTokenValidationResult.hasScope(...)` check where it did not pass before. Review authorization
 rules that intentionally relied on ignoring `scp`.
 
+=== camel-cassandraql - a Map body binds the named markers
+
+The `cql` producer binds a `Map` body by name: each named marker of the statement, such as `:login`,
+takes the value of the `Map` entry of that name. Before, a `Map` body was bound as the value of a single
+marker. To keep that, such as for a column of type `map`, wrap the `Map` in a `List`.
+
 === camel-mina-sftp - checking whether a file exists takes one lstat request
 
 The `mina-sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,
