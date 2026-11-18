@@ -127,6 +127,22 @@ the WARN says to use `toD`. The route works as before. Only the endpoint path is
 of `sql`, and the components whose path option is marked `supportSimpleExpression` in their metadata, which now
 includes the template of `sql-stored` and the bucket name of `aws2-s3`.
 
+=== camel-core - option values of a dynamic endpoint computed from the message are bound as literal text
+
+The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
+`dynamicRouter` -- compute their target endpoint from the current message at runtime. The query option values of that
+per-message endpoint are now bound as literal text: a property-placeholder token (`{{...}}`) or a bean or class
+reference token (`#class:`, `#bean:`, `#type:`) that appears in a runtime-computed option value is kept verbatim, so it
+is neither resolved as a property nor used to look up a bean or instantiate a class. This extends to the option binding
+the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave the endpoint path, where property
+placeholders in the computed path are not resolved. `recipientList`, `routingSlip` and `dynamicRouter` still resolve
+property placeholders in the computed uri string, only their option values change.
+
+Property placeholders written in the static route template are still resolved once when the route starts, so
+`toD("mock:foo?delay={{myDelay}}")` is unchanged. A `#bean:`, `#class:` or `#type:` reference, however, was resolved
+when the endpoint was created, so such a reference in the option of a dynamic endpoint is now kept literal as well:
+configure that option on the component, or use a static `to(...)` endpoint, if it must be resolved.
+
 === camel-core - Rest DSL binding mode json fails at startup without a JSON data format
 
 A Rest DSL service with `bindingMode` `json` or `json_xml` whose JSON data format (`jackson` unless `jsonDataFormat`

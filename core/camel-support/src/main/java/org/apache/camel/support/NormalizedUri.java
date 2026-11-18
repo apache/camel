@@ -33,9 +33,17 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
     // NormalizedEndpointUri (e.g. from SendDynamicProcessor / toD).
     private final String rawUri;
 
-    private NormalizedUri(String normalizedValue, String rawUri) {
+    // Whether the endpoint uri was computed from the current message at runtime (for example the per-message
+    // recipient of toD, enrich, wireTap, pollEnrich, recipientList, routingSlip or dynamicRouter). When true the
+    // query option values are bound as literal text, i.e. without property-placeholder resolution and without
+    // bean/class reference (#class:, #bean:, #type:, ...) resolution, because those segments come from the message
+    // and not from the route. Not part of equals/hashCode: the endpoint registry key stays the uri alone.
+    private final boolean literalOptionBinding;
+
+    private NormalizedUri(String normalizedValue, String rawUri, boolean literalOptionBinding) {
         super(normalizedValue);
         this.rawUri = rawUri;
+        this.literalOptionBinding = literalOptionBinding;
     }
 
     /**
@@ -46,10 +54,25 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * @return            the created normalized uri
      */
     public static NormalizedUri newNormalizedUri(String uri, boolean normalized) {
+        return newNormalizedUri(uri, normalized, false);
+    }
+
+    /**
+     * Creates a new {@link NormalizedUri} instance.
+     *
+     * @param  uri                  the uri
+     * @param  normalized           whether its already normalized
+     * @param  literalOptionBinding whether the query option values were computed from the current message and must be
+     *                              bound as literal text (no property-placeholder and no bean/class reference
+     *                              resolution)
+     * @return                      the created normalized uri
+     * @since                       4.24
+     */
+    public static NormalizedUri newNormalizedUri(String uri, boolean normalized, boolean literalOptionBinding) {
         if (normalized) {
-            return new NormalizedUri(uri, null);
+            return new NormalizedUri(uri, null, literalOptionBinding);
         } else {
-            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri);
+            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri, literalOptionBinding);
         }
     }
 
@@ -66,6 +89,17 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      */
     public String getRawUri() {
         return rawUri;
+    }
+
+    /**
+     * Whether the query option values of this uri were computed from the current message at runtime and must therefore
+     * be bound as literal text, that is without property-placeholder resolution and without bean/class reference
+     * ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution.
+     *
+     * @since 4.24
+     */
+    public boolean isLiteralOptionBinding() {
+        return literalOptionBinding;
     }
 
     @Override
