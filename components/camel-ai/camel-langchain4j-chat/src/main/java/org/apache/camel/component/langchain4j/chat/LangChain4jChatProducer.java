@@ -153,10 +153,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            ChatResponse chatResponse;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                chatResponse = this.chatModel.chat(augmentedChatMessage);
-            }
+            ChatResponse chatResponse = this.chatModel.chat(augmentedChatMessage);
             populateTokenUsageHeaders(chatResponse, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
@@ -219,10 +216,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            ChatResponse chatResponse;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                chatResponse = this.chatModel.chat(chatMessages);
-            }
+            ChatResponse chatResponse = this.chatModel.chat(chatMessages);
             populateTokenUsageHeaders(chatResponse, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,

@@ -283,18 +283,6 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
             recordContent(GenAiAttributes.TOOL_CALL_RESULT, () -> GenAiMessages.truncate(result.get(), contentMaxLength));
         }
 
-        @Override
-        public Scope makeCurrent() {
-            // the Micrometer Observation path opens its scope when the observation starts
-            if (span == null || closed) {
-                return () -> {
-                    // noop
-                };
-            }
-            Span.Scope scope = span.openScope();
-            return scope::close;
-        }
-
         private void recordMessages(String key, Supplier<GenAiMessages> messages) {
             recordContent(key, () -> {
                 GenAiMessages value = messages.get();

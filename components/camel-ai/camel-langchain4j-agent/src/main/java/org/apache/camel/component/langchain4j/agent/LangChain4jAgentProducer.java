@@ -208,10 +208,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            Result<String> result;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                result = agent.chat(aiAgentBody, toolProvider);
-            }
+            Result<String> result = agent.chat(aiAgentBody, toolProvider);
             exchange.getMessage().setBody(result.content());
             populateResultHeaders(result, exchange, observationContext.requestModel());
             observation.recordSuccess(GenAiUsage.of(
@@ -253,12 +250,9 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         agentRun.recordSystemInstructions(aiAgentBody::getSystemMessage);
         agentRun.recordInputMessages(() -> new GenAiMessages().text(GenAiMessages.USER, aiAgentBody.getUserMessage()));
         try {
-            Result<String> result;
-            try (GenAiObservation.Scope ignored = agentRun.makeCurrent()) {
-                result = AgentInvocationListeners.invoke(
-                        modelCallsTracedByFramework ? List.of() : observer.listeners(),
-                        () -> agent.chat(aiAgentBody, toolProvider));
-            }
+            Result<String> result = AgentInvocationListeners.invoke(
+                    modelCallsTracedByFramework ? List.of() : observer.listeners(),
+                    () -> agent.chat(aiAgentBody, toolProvider));
             exchange.getMessage().setBody(result.content());
             populateResultHeaders(result, exchange, requestModel);
             // the model calls carry the token usage; repeating it on the run would count it twice

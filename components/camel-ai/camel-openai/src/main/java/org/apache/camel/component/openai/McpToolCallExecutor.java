@@ -311,14 +311,7 @@ class McpToolCallExecutor extends ServiceSupport {
             throws Exception {
         try {
             Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-            McpSchema.CallToolResult toolResult;
-            if (observation != null) {
-                try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                    toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
-                }
-            } else {
-                toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
-            }
+            McpSchema.CallToolResult toolResult = endpoint.callTool(mcpClient, toolName, argsMap);
 
             if (Boolean.TRUE.equals(toolResult.isError())) {
                 String content = "Error: " + extractTextContent(toolResult.content());
