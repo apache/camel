@@ -42,7 +42,7 @@ public final class AlibabaSlsHeaders {
     public static final String LOG_STORE_NAME = AlibabaSlsProperties.LOG_STORE_NAME;
 
     @Metadata(label = "producer",
-              description = "The query statement or analytic statement for getLogs. This header replaces the query"
+              description = "The search statement or analytic statement for getLogs. This header replaces the query"
                             + " option. If this header is not set, an exchange property of the same name replaces the"
                             + " query option.",
               javaType = "String")
@@ -132,7 +132,7 @@ public final class AlibabaSlsHeaders {
 
     @Metadata(label = "producer",
               description = "The request ID that Simple Log Service returns in the response to the operation. The"
-                            + " producer sets it, unless the exchange fails.",
+                            + " producer sets it when the response has one.",
               javaType = "String")
     public static final String REQUEST_ID = AlibabaSlsProperties.REQUEST_ID;
 

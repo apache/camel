@@ -107,10 +107,10 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
               displayName = "Log Store Name")
     private String logStoreName;
 
-    @UriParam(description = "The query statement or analytic statement for getLogs. The CamelAlibabaSlsQuery header"
+    @UriParam(description = "The search statement or analytic statement for getLogs. The CamelAlibabaSlsQuery header"
                             + " replaces this option for a request that the producer sends. If that header is not set,"
                             + " an exchange property of the same name replaces this option. If none of the three is"
-                            + " set, the producer adds no query statement or analytic statement to the request.",
+                            + " set, the producer adds no search statement or analytic statement to the request.",
               displayName = "Query", label = "getLogs")
     private String query;
 

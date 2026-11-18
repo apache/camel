@@ -235,11 +235,11 @@ public interface AlibabaSlsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The query statement or analytic statement for getLogs. The
+         * The search statement or analytic statement for getLogs. The
          * CamelAlibabaSlsQuery header replaces this option for a request that
          * the producer sends. If that header is not set, an exchange property
          * of the same name replaces this option. If none of the three is set,
-         * the producer adds no query statement or analytic statement to the
+         * the producer adds no search statement or analytic statement to the
          * request.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -644,7 +644,7 @@ public interface AlibabaSlsEndpointBuilderFactory {
             return "CamelAlibabaSlsLogStoreName";
         }
         /**
-         * The query statement or analytic statement for getLogs. This header
+         * The search statement or analytic statement for getLogs. This header
          * replaces the query option. If this header is not set, an exchange
          * property of the same name replaces the query option.
          * 
@@ -827,7 +827,7 @@ public interface AlibabaSlsEndpointBuilderFactory {
         }
         /**
          * The request ID that Simple Log Service returns in the response to the
-         * operation. The producer sets it, unless the exchange fails.
+         * operation. The producer sets it when the response has one.
          * 
          * The option is a: {@code String} type.
          * 
