@@ -97,7 +97,12 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
                 return new RouteCount();
             }
             // a route with the same id was removed while some of its exchanges were still in flight (a forced stop):
-            // they are counted until they are done, so that their decrement is not taken from the new route
+            // they are counted until they are done, so that their decrement is not taken from the new route.
+            // This is on purpose: an exchange of the removed route that never ends (such as a blocking call without a
+            // timeout, often the reason for the forced stop) keeps size(routeId) of the new route at 1 or more, so a
+            // later graceful stop or reload of the route waits for its timeout, and route-scoped throttling and the
+            // JMX inflight count include it. That exchange is still running, so this errs on the side of waiting for
+            // it, where dropping its count would take the new route to -1 when it is done
             c.removed = false;
             return c;
         });
@@ -113,6 +118,9 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             c.removed = true;
             return c;
         });
+        // the last exchange may be done between the check above and the mark, and then not see the mark: check again,
+        // so that either this method or that exchange takes the entry out of the map
+        routeCount.computeIfPresent(routeId, (k, c) -> c.removed && c.count.sum() <= 0 ? null : c);
     }
 
     @Override
