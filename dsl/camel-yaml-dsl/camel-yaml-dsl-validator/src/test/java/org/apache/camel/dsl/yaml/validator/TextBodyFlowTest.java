@@ -826,6 +826,42 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadOnTheBytesAJmsConsumerGave() {
+        // r32 to r35 (connect-service-jms-request-reply step 3): the stock service gets the order as a byte[] from JMS,
+        // and a script read body.lines: "No such property: lines for class: [B". lines is a property of text, so the
+        // walk let it through while it took bytes for text (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: stock
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "def orderLines = body.lines; orderLines ? 'reserved' : 'empty'"
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts bytes
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("byte[]"), List.of("payload"));
+        assertThat(lines(yaml, bytes)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - in the running app, from: jms:queue:stock gave a byte[]");
+            assertThat(m).contains("unmarshal it first with the data format of the payload");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        ProjectFacts text
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("java.lang.String"), List.of("payload"));
+        assertThat(lines(yaml, text)).isEmpty();
+        assertThat(lines(yaml.replace("body.lines", "body.length"), bytes)).isEmpty();
+    }
+
+    @Test
     public void testTheBodyAProducerReturnedInTheRunningApp() {
         // a sql call returns a List of rows, which a file write cannot write as it is
         String yaml = """

@@ -85,6 +85,13 @@ final class TextBodyFlow {
     private static final Set<String> TEXT_PROPERTIES = Set.of("bytes", "text", "class", "empty", "blank", "length",
             "size", "toString", "trim", "lines", "chars", "hashCode");
 
+    /**
+     * What can be read from a byte[] without parsing it: its length or size, whether it is empty, and what any object
+     * has. Not the properties of text, such as lines, text or trim (CAMEL-27154).
+     */
+    private static final Set<String> BYTES_PROPERTIES = Set.of("class", "length", "size", "empty", "toString",
+            "hashCode");
+
     /** What the file consumer's GenericFile has besides: ${body.fileName} reads the file, not its content. */
     private static final Set<String> FILE_PROPERTIES = Set.of("file", "fileName", "fileNameOnly", "fileLength",
             "lastModified", "charset", "extendedAttributes", "body", "parent", "absoluteFilePath", "relativeFilePath",
@@ -235,13 +242,18 @@ final class TextBodyFlow {
     /**
      * Text: the payload as it was read or written; marshalled when a marshal wrote it from parsed data; the resource it
      * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it; emptied when a setBody set
-     * it to null or to empty text, which has no field to read; and when a pollEnrich polled it, the data that was the
-     * body before it.
+     * it to null or to empty text, which has no field to read; when a pollEnrich polled it, the data that was the body
+     * before it; and bytes when it is known to be a byte[], which has none of the properties of text (CAMEL-27154).
      */
     record Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied,
-            Replaced replaced)
+            Replaced replaced, boolean bytes)
             implements
                 Body {
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied,
+             Replaced replaced) {
+            this(origin, format, file, marshalled, resource, emptied, replaced, false);
+        }
 
         Text(String origin, String format) {
             this(origin, format, false, false, null, null, null);
@@ -265,6 +277,9 @@ final class TextBodyFlow {
 
         /** The names that can be read from this body without parsing it. */
         Set<String> readable() {
+            if (bytes) {
+                return BYTES_PROPERTIES;
+            }
             if (!file) {
                 return TEXT_PROPERTIES;
             }
@@ -459,7 +474,9 @@ final class TextBodyFlow {
             // the file as read has the format of the files it reads, and the data of the files in its directory
             return out.file()
                     ? new Text(consumer, fileFormat(from), true, false, directoryKey(uri, from))
-                    : new Text(consumer + " as " + out.inWords(), out.dataFormat());
+                    : new Text(
+                            consumer + " as " + out.inWords(), out.dataFormat(), false, false, null, null, null,
+                            onlyBytes(out));
         }
         return out.data() ? new Parsed(consumer + " as " + out.inWords(), out.dataFormat()) : null;
     }
@@ -503,7 +520,9 @@ final class TextBodyFlow {
             return null;
         }
         if (out.payload()) {
-            return new Text(origin + " as " + out.inWords(), out.dataFormat(), out.file());
+            return new Text(
+                    origin + " as " + out.inWords(), out.dataFormat(), out.file(), false, null, null, null,
+                    onlyBytes(out));
         }
         return out.data() ? new Parsed(origin + " as " + out.inWords(), out.dataFormat()) : null;
     }
@@ -789,10 +808,17 @@ final class TextBodyFlow {
         }
         String origin = "in the running app, " + what + " " + inWords(seen.types());
         return switch (seen.kinds().get(0)) {
-            case "payload" -> new Text(origin, null, seen.types().stream().anyMatch(TextBodyFlow::isFile));
+            case "payload" -> new Text(
+                    origin, null, seen.types().stream().anyMatch(TextBodyFlow::isFile), false, null,
+                    null, null, seen.types().stream().allMatch("byte[]"::equals));
             case "data", "collection" -> new Parsed(origin, null);
             default -> null;
         };
+    }
+
+    /** Whether the catalog says the body is bytes, and nothing else but no body: a byte[] (CAMEL-27154). */
+    private static boolean onlyBytes(CatalogBodyTypes.Answer out) {
+        return out.carriers().contains("bytes") && out.carriers().stream().allMatch(c -> "bytes".equals(c) || "null".equals(c));
     }
 
     /** Whether a body type is the file as a file consumer reads it. */
@@ -1837,11 +1863,19 @@ final class TextBodyFlow {
                 .messageKey("type")
                 .format(new MessageFormat("{0}"))
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + read
-                           + (text.file()
-                                   ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
-                                   : ", but the body here is still text, not parsed data - ")
+                           + unparsed(text)
                            + text.origin() + ": " + fix)
                 .build();
+    }
+
+    /** The body in a report of a field read on it: the file as it was read, bytes or text, none of them parsed. */
+    private static String unparsed(Text text) {
+        if (text.file()) {
+            return ", but the body here is the file as it was read (a GenericFile), not parsed data - ";
+        }
+        return text.bytes()
+                ? ", but the body here is still bytes (a byte[]), not parsed data - "
+                : ", but the body here is still text, not parsed data - ";
     }
 
     private static Error error(NodePath at, String routeId, String read, Text text) {
@@ -1885,9 +1919,7 @@ final class TextBodyFlow {
                 .messageKey("type")
                 .format(new MessageFormat("{0}"))
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + read
-                           + (text.file()
-                                   ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
-                                   : ", but the body here is still text, not parsed data - ")
+                           + unparsed(text)
                            + text.origin() + ": " + fix)
                 .build();
     }
