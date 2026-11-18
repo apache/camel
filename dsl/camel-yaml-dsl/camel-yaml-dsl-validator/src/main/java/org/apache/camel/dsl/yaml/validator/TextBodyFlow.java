@@ -742,7 +742,7 @@ final class TextBodyFlow {
                 return polled instanceof Text t && body instanceof Parsed data
                         ? new Text(
                                 t.origin(), t.format(), t.file(), t.marshalled(), t.resource(), t.emptied(),
-                                new Replaced(data, name, variableFor(t.resource())))
+                                new Replaced(data, name, variableFor(t.resource())), t.bytes())
                         : polled;
             }
             case "kamelet" -> {
@@ -792,9 +792,10 @@ final class TextBodyFlow {
         Body end = walk(steps, body, new NodePath(PathType.JSON_POINTER), w.called());
         w.seen().remove(normalize(uri));
         if (end instanceof Text t) {
+            // a byte[] stays bytes, which has none of the properties of text (CAMEL-27154)
             return new Text(
-                    "to: " + normalize(uri) + " returns it as text (" + t.origin() + ")", t.format(),
-                    t.file());
+                    "to: " + normalize(uri) + " returns it as " + (t.bytes() ? "bytes" : "text") + " (" + t.origin() + ")",
+                    t.format(), t.file(), false, null, null, null, t.bytes());
         } else if (end instanceof Parsed p) {
             return new Parsed("to: " + normalize(uri) + " returns it as data (" + p.origin() + ")", p.format());
         }
