@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.nio.file.Files;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,5 +79,23 @@ class FtpChangeDirectoryFailureMessageIT extends FtpServerTestSupport {
 
         assertNull(out.getException());
         assertTrue(Files.exists(service.getFtpRootDir().resolve("existing/hello.txt")));
+    }
+
+    @Test
+    void storeOfABodyThatIsNotFileContentSaysWhy() throws Exception {
+        // a List, as unmarshal: csv leaves it, to a directory that exists: the body is not file content (CAMEL-27151)
+        Files.createDirectories(service.getFtpRootDir().resolve("failed"));
+        Exchange out = template.send("ftp://admin@localhost:{{ftp.server.port}}/failed?password=admin", e -> {
+            e.getIn().setBody(List.of(List.of("INV-3006", "12.x")));
+            e.getIn().setHeader(Exchange.FILE_NAME, "invoices.csv");
+        });
+
+        GenericFileOperationFailedException e
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, out.getException());
+        assertTrue(e.getMessage().startsWith("Cannot store file: "), e.getMessage());
+        assertTrue(e.getMessage().contains("the body is a List, which is not file content: marshal it first (marshal: csv,"
+                                           + " for the file name invoices.csv)"),
+                e.getMessage());
+        assertFalse(Files.exists(service.getFtpRootDir().resolve("failed/invoices.csv")));
     }
 }

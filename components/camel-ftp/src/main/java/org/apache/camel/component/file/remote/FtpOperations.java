@@ -844,7 +844,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     is = GenericFileHelper.toInputStream(exchange, charset);
                     log.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
-                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                    is = GenericFileHelper.mandatoryBodyStream(exchange, exchange.getIn(), FileUtil.stripPath(name));
                 }
             }
 
@@ -883,7 +883,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } catch (InvalidPayloadException e) {
-            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+            // say why: the body cannot be written as it is (CAMEL-27151)
+            throw new GenericFileOperationFailedException("Cannot store file: " + name + ": " + e.getMessage(), e);
         } finally {
             IOHelper.close(is, "store: " + name, log);
         }

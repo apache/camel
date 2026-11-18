@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -239,6 +240,29 @@ public final class GenericFileHelper {
      * @throws InvalidPayloadException if the body cannot be converted
      * @throws IOException             if the charset is not supported
      */
+    /**
+     * The body as a stream to write to a file of the given name. A Map, a List or an object (a body unmarshalled from
+     * JSON, XML or CSV, or built in the route) cannot become one, and the converter's message only names the
+     * conversion: says what the body is, the step that set it, and the marshal that writes it, in the data format the
+     * file name names (CAMEL-25751, CAMEL-25749). The file, ftp and sftp producers read the body with it (CAMEL-27151).
+     */
+    public static InputStream mandatoryBodyStream(Exchange exchange, Message message, String fileName)
+            throws InvalidPayloadException {
+        try {
+            return message.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, fileName);
+            if (hint != null) {
+                InvalidPayloadException answer = new InvalidPayloadException(
+                        exchange, InputStream.class, message,
+                        BodyFacts.describe(exchange) + ", which is not file content: " + hint);
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
+        }
+    }
+
     public static InputStream toInputStream(Exchange exchange, String charset) throws InvalidPayloadException, IOException {
         Message message = exchange.getIn();
         if (!(message.getBody() instanceof String)) {
