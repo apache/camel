@@ -9266,6 +9266,17 @@ starts, as a trigger that fires before its route has started is still lost (with
 `spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
 `propertiesFile` are set, as they are not used with such a scheduler.
 
+=== camel-quartz - the Quartz poll scheduler uses a trigger that is already in the scheduler
+
+A polling consumer with `scheduler=quartz` and a `scheduler.triggerId` whose trigger is already in the Quartz scheduler
+when it starts, with the same cron, now uses that trigger. Before, the start failed with an
+`ObjectAlreadyExistsException` (unless the job store is clustered): the trigger is kept when the route stops with
+`scheduler.deleteJob=false`, and a persistent job store keeps it when the application did not stop gracefully.
+
+A trigger that is in the scheduler for the job of another route (the same `scheduler.triggerId` and
+`scheduler.triggerGroup` in two routes) now fails the start with an `IllegalArgumentException` that names that route,
+also with a clustered job store, where the second route used to start and never poll.
+
 === camel-langchain4j-ingest - a media document whose type cannot be told is filtered
 
 With `modality=media` and no `contentType` set, a document whose media type cannot be told from the extension of its

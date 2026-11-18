@@ -73,6 +73,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     private volatile JobDetail job;
     private volatile boolean scheduled;
     private volatile TriggerKey rescheduleKey;
+    // the trigger was already in the scheduler when this scheduler started (kept by deleteJob=false, or left in a
+    // persistent job store), so it is not scheduled again
+    private volatile boolean triggerExists;
 
     @Override
     public void onInit(Consumer consumer) {
@@ -92,7 +95,10 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     public void unscheduleTask() {
-        LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+        if (trigger != null) {
+            // no trigger when the start failed before it was set up (a trigger key used by another route)
+            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+        }
         try {
             unscheduleJob();
         } catch (SchedulerException e) {
@@ -102,11 +108,30 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     public void startScheduler() {
+        if (trigger == null) {
+            // the start of this scheduler failed before it set up the trigger (a trigger key used by another route);
+            // the file consumer starts the scheduler also when its start failed, which must not hide that failure
+            LOG.debug("Not scheduling as there is no trigger");
+            return;
+        }
         if (!scheduled) {
             try {
                 if (rescheduleKey != null) {
                     LOG.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
                     quartzScheduler.rescheduleJob(rescheduleKey, trigger);
+                } else if (triggerExists) {
+                    // the trigger (and its job) are already in the scheduler with the same cron: scheduling them
+                    // again would fail with ObjectAlreadyExistsException, so use the stored trigger
+                    TriggerKey triggerKey = trigger.getKey();
+                    CronTrigger existing = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
+                    if (existing == null) {
+                        // removed from the scheduler since this scheduler started
+                        LOG.debug("Scheduling job: {} with trigger: {}", job, triggerKey);
+                        quartzScheduler.scheduleJob(job, trigger);
+                    } else {
+                        LOG.debug("Job: {} with trigger: {} is already scheduled", job, triggerKey);
+                        trigger = existing;
+                    }
                 } else {
                     LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
                     try {
@@ -232,6 +257,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             id = "trigger-" + getCamelContext().getUuidGenerator().generateUuid();
         }
 
+        triggerExists = false;
+        // the trigger of an earlier start: if this start fails (a trigger key used by another route), the stop that
+        // follows must not unschedule the trigger with that key, which is now the other route's, and startScheduler
+        // must not schedule it again
+        trigger = null;
         CronTrigger existingTrigger = null;
         TriggerKey triggerKey = null;
         if (triggerId != null && triggerGroup != null) {
@@ -274,10 +304,10 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                 PropertyBindingSupport.bindProperties(camelContext, trigger, copy);
             }
         } else {
-            checkTriggerIsNonConflicting(existingTrigger);
+            job = quartzScheduler.getJobDetail(existingTrigger.getJobKey());
+            checkTriggerIsNonConflicting(existingTrigger, job);
 
             LOG.debug("Trigger with key {} is already present in scheduler. Only updating it.", triggerKey);
-            job = quartzScheduler.getJobDetail(existingTrigger.getJobKey());
             JobDataMap jobData = job.getJobDataMap();
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
@@ -292,6 +322,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
             if (hasTriggerChanged(existingTrigger, trigger)) {
                 rescheduleKey = triggerKey;
+            } else {
+                triggerExists = true;
             }
         }
     }
@@ -317,8 +349,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         rescheduleKey = null;
     }
 
-    private void checkTriggerIsNonConflicting(Trigger trigger) {
-        JobDataMap jobDataMap = trigger.getJobDataMap();
+    private void checkTriggerIsNonConflicting(Trigger trigger, JobDetail jobDetail) {
+        // the route id is stored on the job (see doStart), not on the trigger
+        JobDataMap jobDataMap = jobDetail != null ? jobDetail.getJobDataMap() : trigger.getJobDataMap();
         String routeIdFromTrigger = jobDataMap.getString("routeId");
         if (routeIdFromTrigger != null && !routeIdFromTrigger.equals(routeId)) {
             throw new IllegalArgumentException(
