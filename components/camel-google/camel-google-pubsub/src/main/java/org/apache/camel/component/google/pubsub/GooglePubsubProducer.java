@@ -18,6 +18,7 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
@@ -137,7 +138,16 @@ public class GooglePubsubProducer extends DefaultProducer {
         PubsubMessage message = messageBuilder.build();
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
-        exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
+        try {
+            exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
+        } catch (ExecutionException e) {
+            if (orderingKey != null && endpoint.isMessageOrderingEnabled()) {
+                // the publisher pauses an ordering key after a failed publish, so a redelivery and the later messages
+                // with that key would fail at once
+                publisher.resumePublish(orderingKey);
+            }
+            throw e;
+        }
     }
 
     private static ByteString toByteString(Exchange exchange, GooglePubsubEndpoint endpoint) throws Exception {
