@@ -460,6 +460,59 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of the roles a caller needs to call the tool,
+         * for example finance,controlling. Any one of them is enough unless
+         * allRolesRequired is set. The roles are checked before the route runs,
+         * against the caller's roles in the exchange property
+         * CamelMcpSecurityPrincipalRoles: a call without that property is
+         * refused. A value that is set but names no role refuses every call.
+         * Set it on the component as the default of every tool route, or per
+         * endpoint to replace it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param allowedRoles the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allowedRoles(String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * Whether the caller needs all the roles in allowedRoles, rather than
+         * any one of them. Has no effect when allowedRoles is not set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allRolesRequired the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allRolesRequired(boolean allRolesRequired) {
+            doSetProperty("allRolesRequired", allRolesRequired);
+            return this;
+        }
+        /**
+         * Whether the caller needs all the roles in allowedRoles, rather than
+         * any one of them. Has no effect when allowedRoles is not set.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allRolesRequired the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allRolesRequired(String allRolesRequired) {
+            doSetProperty("allRolesRequired", allRolesRequired);
+            return this;
+        }
+        /**
          * Reference to an org.apache.camel.spi.AuthorizationPolicy used to
          * authorize tool calls before the route runs. Set it on the component
          * to guard every tool route by construction, or per endpoint to

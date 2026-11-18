@@ -133,6 +133,21 @@ public class AiToolConfiguration implements Cloneable {
                             + "model as a short refusal rather than a stack trace.")
     private AuthorizationPolicy authorizationPolicy;
 
+    @Metadata(label = "consumer,security")
+    @UriParam(description = "Comma-separated list of the roles a caller needs to call the tool, for example "
+                            + "finance,controlling. Any one of them is enough unless allRolesRequired is set. The roles "
+                            + "are checked before the route runs, against the caller's roles in the exchange property "
+                            + "CamelMcpSecurityPrincipalRoles: a call without that property is refused. A value that "
+                            + "is set but names no role refuses every call. Set it on the component as the default of "
+                            + "every tool route, or per endpoint to replace it.")
+    private String allowedRoles;
+
+    @Metadata(label = "consumer,security")
+    @UriParam(defaultValue = "false", description = "Whether the caller needs all the roles in allowedRoles, rather "
+                                                    + "than any one of them. Has no effect when allowedRoles is not "
+                                                    + "set.")
+    private boolean allRolesRequired;
+
     public AiToolConfiguration() {
     }
 
@@ -254,6 +269,22 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setAuthorizationPolicy(AuthorizationPolicy authorizationPolicy) {
         this.authorizationPolicy = authorizationPolicy;
+    }
+
+    public String getAllowedRoles() {
+        return allowedRoles;
+    }
+
+    public void setAllowedRoles(String allowedRoles) {
+        this.allowedRoles = allowedRoles;
+    }
+
+    public boolean isAllRolesRequired() {
+        return allRolesRequired;
+    }
+
+    public void setAllRolesRequired(boolean allRolesRequired) {
+        this.allRolesRequired = allRolesRequired;
     }
 
     public AiToolConfiguration copy() {

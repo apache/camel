@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -59,45 +60,68 @@ public class AiToolConsumer extends DefaultConsumer {
     }
 
     /**
-     * Wraps the tool route's processor with the configured {@link AuthorizationPolicy}, if any, so the call is
-     * authorized before the route runs. The policy is applied via {@code beforeWrap} then {@code wrap} (as the
-     * {@code .policy()} DSL does through {@code PolicyReifier}); the wrapped processor is started and stopped with this
-     * consumer. Because {@code getProcessor()} is the route's <em>outer</em> processor, the guard runs in front of the
-     * route (before its unit of work, tracing and error handling): a denied call is logged and returned to the model as
+     * Puts the authorization guard in front of the tool route's processor, so the call is authorized before the route
+     * runs. The guard is the {@code allowedRoles} check and the configured {@link AuthorizationPolicy}, whichever are
+     * set. The roles check is the outer one: with both set the roles are checked first, and a call that fails them does
+     * not reach the policy. An {@code allowedRoles} that is set but names no role is still a guard, which refuses every
+     * call. The route starts, so that one misconfigured tool does not stop the other routes, and a {@code WARN} says
+     * that the tool refuses its calls.
+     * <p>
+     * The policy is applied via {@code beforeWrap} then {@code wrap} (as the {@code .policy()} DSL does through
+     * {@code PolicyReifier}); the wrapped processor is started and stopped with this consumer. Because
+     * {@code getProcessor()} is the route's <em>outer</em> processor, the guard runs in front of the route (before its
+     * unit of work, tracing and error handling): a denied call is logged and returned to the model as
      * {@link AiToolResult.AuthorizationDenied}, but it does not produce a route span or metric. There is no
      * {@code ProcessorDefinition} here (the component owns the guard, not the DSL), so {@code beforeWrap} gets a
      * {@code null} definition, which Camel's {@link AuthorizationPolicy} implementations ignore (they use only the
      * route). Called from {@link #prepare()} before the tool is registered, so the tool is never discoverable
-     * unguarded; idempotent (a policy already applied is not wrapped twice).
+     * unguarded; idempotent (a guard already applied is not wrapped twice).
      */
-    private void applyAuthorizationPolicy() throws Exception {
+    private void applyAuthorizationGuard() throws Exception {
         if (toolProcessor != null) {
             return;
         }
         AuthorizationPolicy policy = configuration.getAuthorizationPolicy();
-        Processor target = getProcessor();
-        if (policy == null || target == null) {
+        String allowedRoles = configuration.getAllowedRoles();
+        if (policy == null && allowedRoles == null) {
             return;
         }
-        policy.beforeWrap(getRoute(), null);
-        Processor guarded = policy.wrap(getRoute(), target);
+        Processor target = getProcessor();
+        if (target == null) {
+            return;
+        }
+        Processor guarded = target;
+        if (policy != null) {
+            policy.beforeWrap(getRoute(), null);
+            guarded = policy.wrap(getRoute(), guarded);
+            LOG.debug("Tool '{}' is guarded by authorization policy {}", toolName, policy.getClass().getName());
+        }
+        if (allowedRoles != null) {
+            List<String> roles = List.of(AiToolParameterHelper.splitTags(allowedRoles));
+            if (roles.isEmpty()) {
+                LOG.warn("Tool '{}' sets an allowedRoles that names no role, so every call to it is refused", toolName);
+            } else {
+                LOG.debug("Tool '{}' is guarded by allowedRoles {} (allRolesRequired={})", toolName, roles,
+                        configuration.isAllRolesRequired());
+            }
+            guarded = new AiToolAllowedRolesProcessor(guarded, toolName, roles, configuration.isAllRolesRequired());
+        }
         ServiceHelper.startService(guarded);
         toolProcessor = guarded;
-        LOG.debug("Tool '{}' is guarded by authorization policy {}", toolName, policy.getClass().getName());
     }
 
     /**
-     * The processor {@link AiToolExecutor} invokes for this tool: the authorization-guarded processor when an
-     * {@link AuthorizationPolicy} is configured, otherwise the plain route processor. Fails <em>closed</em>: if a
-     * policy is configured but the guard is not yet in place, it returns a processor that denies the call rather than
-     * exposing the unguarded route processor.
+     * The processor {@link AiToolExecutor} invokes for this tool: the authorization guard when {@code allowedRoles} or
+     * an {@link AuthorizationPolicy} is set, otherwise the plain route processor. Fails <em>closed</em>: if either is
+     * set but the guard is not in place, it returns a processor that denies the call rather than exposing the unguarded
+     * route processor.
      */
     Processor getToolProcessor() {
         Processor guarded = toolProcessor;
         if (guarded != null) {
             return guarded;
         }
-        if (configuration.getAuthorizationPolicy() != null) {
+        if (configuration.getAuthorizationPolicy() != null || configuration.getAllowedRoles() != null) {
             // fail closed: never fall back to the unguarded route processor while a policy is configured
             return exchange -> {
                 throw new CamelAuthorizationException(
@@ -187,7 +211,7 @@ public class AiToolConsumer extends DefaultConsumer {
 
         // Apply the authorization guard BEFORE the tool is registered (register() follows in both doStart() and
         // registerEarly()), so the tool is never discoverable in an unguarded state during route warm-up.
-        applyAuthorizationPolicy();
+        applyAuthorizationGuard();
     }
 
     @Override

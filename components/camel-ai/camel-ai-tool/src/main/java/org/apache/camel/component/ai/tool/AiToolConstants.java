@@ -19,9 +19,29 @@ package org.apache.camel.component.ai.tool;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Headers populated when an AI framework invokes a tool route.
+ * Headers populated when an AI framework invokes a tool route, and the exchange properties that carry the caller's
+ * identity to it.
  */
 public final class AiToolConstants {
+
+    /**
+     * Exchange property carrying the caller's role names (a {@code Collection<String>}), which the {@code allowedRoles}
+     * option checks. Over the MCP server the bridge sets it from the authenticated caller; on the other paths the
+     * calling route sets it before the agent runs. It is an exchange property rather than a message header because on a
+     * tool route the headers carry the tool arguments, which the model controls.
+     *
+     * @since 4.24
+     */
+    public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelMcpSecurityPrincipalRoles";
+
+    /**
+     * Exchange property carrying the caller's name (a {@code String}), set where
+     * {@link #SECURITY_PRINCIPAL_ROLES_PROPERTY} is. The log entry of a call that {@code allowedRoles} refused names
+     * the caller with it.
+     *
+     * @since 4.24
+     */
+    public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = "CamelMcpSecurityPrincipalName";
 
     @Metadata(label = "consumer", description = "The tool invocation identifier supplied by the calling framework. "
                                                 + "Absent when the framework does not supply one.",
