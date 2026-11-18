@@ -228,6 +228,21 @@ logs a warning the first time. Before, the consumer restored the headers and exc
 Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
 exchange properties.
 
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
+
 === camel-milo - the OPC UA client validates the server certificate
 
 When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components

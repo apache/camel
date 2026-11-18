@@ -191,6 +191,25 @@ logs a warning the first time. Before, the consumer restored the headers and exc
 Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
 exchange properties.
 
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+With `allowPartClassFromHeader=true`, the headers now apply to their own message only. Before, a header also changed
+the `partClass` and `partNamespace` of the data format, so later messages without the header used the class or
+namespace of an earlier message.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
