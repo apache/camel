@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jms.integration.activemq;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,11 +31,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ActiveMQ specific unit test
  */
 public class ActiveMQConsumeWildcardQueuesIT extends AbstractJMSTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQConsumeWildcardQueuesIT.class);
 
     @Order(2)
     @RegisterExtension
@@ -43,6 +50,19 @@ public class ActiveMQConsumeWildcardQueuesIT extends AbstractJMSTest {
 
     @Test
     public void testWildcard() throws Exception {
+        // Warm-up probe for CAMEL-27105: right after route startup there is a brief window
+        // where the broker's wildcard consumer isn't fully registered yet, so a message to
+        // a brand-new matching address can be silently dropped. Wait for this throwaway
+        // probe to round-trip (or time out) before trusting the real sends below.
+        NotifyBuilder ready = new NotifyBuilder(context).whenDone(1).create();
+        template.sendBody("activemq:queue:sport.warmup", "warmup");
+        if (!ready.matches(3, TimeUnit.SECONDS)) {
+            LOG.info("Warm-up probe for the wildcard consumer (activemq:queue:sport.#) did not arrive within 3s;"
+                     + " proceeding anyway (see CAMEL-27105)");
+        }
+        ready.destroy();
+        getMockEndpoint("mock:other").reset();
+
         MockEndpoint chelsea = getMockEndpoint("mock:chelsea");
         chelsea.expectedBodiesReceived("B");
         MockEndpoint first = getMockEndpoint("mock:1st");
