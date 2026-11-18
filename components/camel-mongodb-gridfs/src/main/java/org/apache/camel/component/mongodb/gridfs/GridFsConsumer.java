@@ -21,7 +21,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import com.mongodb.BasicDBObject;
@@ -62,13 +61,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
     private final GridFsEndpoint endpoint;
     private volatile ScheduledExecutorService taskExecutor;
-    private volatile ExecutorService executor;
     // the polls ask for the files uploaded after this date. With the TimeStamp and PersistentTimestamp strategies it
     // is the upload date of the newest file that was routed, kept between the polls. The strategies with a file
     // attribute keep the start date, because the attribute already makes sure that a file is routed once, and a file
     // whose upload date is older than one that was routed already (another uploader, clock skew) is still found.
-    // Two threads use it: run() sets the start value on the thread of the executor, before it schedules the polls;
-    // the polls then read and move it on the thread of the taskExecutor.
+    // Two threads use it: run() sets the start value on the thread that starts the consumer, before it schedules the
+    // polls; the polls then read and move it on the thread of the taskExecutor.
     private volatile Date fromDate;
     // the collection and the document of the persistent timestamp, read by the first poll that can reach MongoDB.
     // run() resets them before it schedules the polls, the polls then use them on the thread of the taskExecutor
@@ -94,17 +92,14 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         super.doStop();
         BackgroundTask task = pollTask;
         if (task != null) {
-            // without interrupt: a poll that runs routes the files it found
+            // without interrupt: a poll that is running finishes the file it is routing, then stops, as its loop
+            // checks isStarted()
             task.cancel(false);
             pollTask = null;
         }
         if (taskExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
-        }
-        if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
-            executor = null;
         }
     }
 
@@ -113,9 +108,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         super.doStart();
         taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "GridFsPollingTask");
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
-                1);
-        executor.execute(this);
+        // run() only schedules the polls and returns, so it runs on this thread
+        run();
     }
 
     @Override

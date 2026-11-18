@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +48,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
@@ -341,36 +342,25 @@ class GridFsConsumerTimestampTest {
     }
 
     @Test
-    void stopLeavesNoThreadWaitingForThePolls() throws Exception {
-        Set<Thread> before = threadsInRun();
-        startConsumer(QueryStrategy.TimeStamp);
+    void stopCancelsThePolls() throws Exception {
+        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(context.getCamelContextExtension());
+        int tasksBefore = registry.getSize();
+        AtomicInteger pollCount = new AtomicInteger();
+        onPoll = pollCount::incrementAndGet;
+        // polls far apart, so that the stop comes between two polls
+        startConsumer(QueryStrategy.TimeStamp, 500);
         awaitFullPolls(1);
+        assertEquals(tasksBefore + 1, registry.getSize(), "the polls run as a task of the registry");
 
-        // between two polls, as the polls run every delay
         consumer.stop();
 
-        Set<Thread> left = threadsInRun();
-        left.removeAll(before);
-        for (Thread thread : left) {
-            thread.join(TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS));
-        }
-        left.retainAll(threadsInRun());
-        assertEquals(Set.of(), left, "a thread of the stopped consumer still waits for its polls");
-    }
-
-    /**
-     * The threads in GridFsConsumer.run(), which starts the polls.
-     */
-    private static Set<Thread> threadsInRun() {
-        Set<Thread> answer = new HashSet<>();
-        Thread.getAllStackTraces().forEach((thread, stack) -> {
-            for (StackTraceElement frame : stack) {
-                if (frame.getClassName().equals(GridFsConsumer.class.getName()) && frame.getMethodName().equals("run")) {
-                    answer.add(thread);
-                }
-            }
-        });
-        return answer;
+        // a task that is not cancelled stays in the registry, as only one of its runs takes it out
+        assertEquals(tasksBefore, registry.getSize(), "the stopped consumer left its task in the registry");
+        int pollsAtStop = pollCount.get();
+        CountDownLatch nextPoll = new CountDownLatch(1);
+        polls = nextPoll;
+        assertFalse(nextPoll.await(2, TimeUnit.SECONDS), "the stopped consumer polled again");
+        assertEquals(pollsAtStop, pollCount.get(), "the stopped consumer polled again");
     }
 
     @ParameterizedTest
