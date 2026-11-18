@@ -2304,6 +2304,17 @@ section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
 
+=== camel-google-pubsub - the synchronous consumer acks the message it received
+
+With `synchronousPull=true` and the default `ackMode`, the `google-pubsub` consumer now acks (or nacks, when the exchange
+failed) the message it received, with the ack id it received it with. Before, it took the ack id from the
+`CamelGooglePubsubMsgAckId` header as the route left it. A route that removed the headers, or replaced the message,
+acked nothing and logged a WARN, and a route that changed the header acked another ack id: the message was delivered
+again after its ack deadline, and again after each later delivery.
+
+Manual acknowledgement (`ackMode=NONE`) is unchanged: the `GooglePubsubAcknowledge` of the synchronous consumer acks
+the ack ids of the exchange given to `ack` or `nack`, so that an aggregated exchange acks every grouped message.
+
 === camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
 
 With `deleteAfterRead` or `moveAfterRead`, the `aws2-s3` and `azure-storage-blob` consumers now delete or move the
