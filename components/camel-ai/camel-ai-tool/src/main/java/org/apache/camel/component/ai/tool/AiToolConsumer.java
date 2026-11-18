@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
@@ -29,10 +30,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consumer that registers a Camel route as an AI tool in the {@link AiToolRegistry} on start and deregisters on stop.
+ * <p>
+ * It is {@link Suspendable}, so a route stop or graceful shutdown suspends it first, which deregisters the tool, and
+ * stops it once the tool calls in flight have completed or the shutdown timeout has elapsed. Suspending the route
+ * deregisters the tool without stopping the route, and resuming it registers the same tool spec again. A suspended tool
+ * refuses new calls.
  *
  * @since 4.22
  */
-public class AiToolConsumer extends DefaultConsumer {
+public class AiToolConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AiToolConsumer.class);
 
