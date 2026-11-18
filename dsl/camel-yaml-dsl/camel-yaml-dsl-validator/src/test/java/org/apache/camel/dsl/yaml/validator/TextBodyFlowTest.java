@@ -862,6 +862,34 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadAfterConvertBodyToBytes() {
+        // convertBodyTo byte[] makes bytes, not text: lines is not a property of a byte[] (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: bytes
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: hello
+                        - convertBodyTo:
+                            type: byte[]
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - convertBodyTo byte[] makes it bytes");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        assertThat(lines(yaml.replace("type: byte[]", "type: String"))).isEmpty();
+        assertThat(lines(yaml.replace("body.lines.size()", "body.length"))).isEmpty();
+    }
+
+    @Test
     public void testTheBodyAProducerReturnedInTheRunningApp() {
         // a sql call returns a List of rows, which a file write cannot write as it is
         String yaml = """

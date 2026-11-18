@@ -711,8 +711,13 @@ final class TextBodyFlow {
             case "convertBodyTo" -> {
                 String type = value != null && value.isObject() && value.has("type") ? value.get("type").asString("")
                         : value != null && value.isString() ? value.asString() : "";
-                return "String".equals(type) || "java.lang.String".equals(type) || "byte[]".equals(type)
-                        ? new Text("convertBodyTo " + type + " makes it text", body != null ? body.format() : null)
+                String format = body != null ? body.format() : null;
+                if ("byte[]".equals(type)) {
+                    // a byte[] has none of the properties of text, such as lines or trim (CAMEL-27154)
+                    return new Text("convertBodyTo byte[] makes it bytes", format, false, false, null, null, null, true);
+                }
+                return "String".equals(type) || "java.lang.String".equals(type)
+                        ? new Text("convertBodyTo " + type + " makes it text", format)
                         : null;
             }
             case "transformDataType" -> {
