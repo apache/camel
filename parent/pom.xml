@@ -4660,6 +4660,10 @@
                                 </goals>
                                 <configuration>
                                     <propertyName>jacocoAgent</propertyName>
+                                    <!-- Only instrument Camel classes: instrumenting third party libraries slows down the tests for no coverage value -->
+                                    <includes>
+                                        <include>org/apache/camel/**</include>
+                                    </includes>
                                     <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
                                     <excludes>
                                         <exclude>**/CamelThreadFactory*</exclude>
