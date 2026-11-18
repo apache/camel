@@ -346,6 +346,52 @@ class McpServerBridgeTest extends CamelTestSupport {
     }
 
     @Test
+    void testProtocolEraDefaultsToDualWithSessions() {
+        assertThat(engine.info().protocolEra()).isEqualTo(McpProtocolEra.DUAL);
+        assertThat(engine.info().stateless()).isFalse();
+        assertThat(engine.info().sessions()).isTrue();
+    }
+
+    @Test
+    void testProtocolEraAndStatelessPassedToEngine() throws Exception {
+        CamelContext eraContext = new DefaultCamelContext();
+        RecordingMcpServerEngine eraEngine = new RecordingMcpServerEngine();
+        eraContext.getRegistry().bind("mcpServerEngine", eraEngine);
+        McpServerConfiguration configuration = new McpServerConfiguration();
+        configuration.setTags("crm");
+        configuration.setProtocolEra(" Legacy ");
+        configuration.setStateless(true);
+        McpServerBridge eraBridge = new McpServerBridge(configuration);
+        eraContext.addService(eraBridge);
+        eraContext.start();
+        eraBridge.start();
+
+        try {
+            assertThat(eraEngine.info().protocolEra()).isEqualTo(McpProtocolEra.LEGACY);
+            assertThat(eraEngine.info().stateless()).isTrue();
+            assertThat(eraEngine.info().sessions()).isFalse();
+        } finally {
+            eraBridge.stop();
+            eraContext.stop();
+        }
+    }
+
+    @Test
+    void testUnknownProtocolEraFailsTheStart() throws Exception {
+        try (DefaultCamelContext eraContext = new DefaultCamelContext()) {
+            eraContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setProtocolEra("2026-07-28");
+            McpServerBridge eraBridge = new McpServerBridge(configuration);
+
+            assertThatThrownBy(() -> eraContext.addService(eraBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Invalid MCP protocol era '2026-07-28': expected legacy, dual or modern");
+        }
+    }
+
+    @Test
     void testAllowedHostThatCanNeverMatchFailsTheStart() throws Exception {
         try (DefaultCamelContext hostContext = new DefaultCamelContext()) {
             hostContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());

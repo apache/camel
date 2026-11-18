@@ -66,17 +66,10 @@ server:
   - resources-subscribe
   - resources-unsubscribe
 
-  # --- prompts/* (not yet implemented, CAMEL-26355) ---
-  # Camel MCP server does not expose a prompts endpoint. Prompts are distinct from
-  # ai-tool and ai-resource routes and have no Camel DSL equivalent yet.
-  - prompts-list
+  # --- prompts/get: prompts are served (CAMEL-26355), but this test registers no ai-prompt route ---
   - prompts-get-simple
   - prompts-get-with-args
   - prompts-get-embedded-resource
   - prompts-get-with-image
 
-  # --- DNS rebinding protection (partial — one of two checks fails, CAMEL-26359) ---
-  # Camel's HTTP server accepts requests with a valid localhost Host/Origin header,
-  # but does not yet reject requests with a non-localhost Host/Origin header.
-  # The passing check (valid-localhost-accepted) is NOT listed here (it already passes).
-  - dns-rebinding-protection
+  # DNS rebinding protection passes since the Origin check on /mcp (CAMEL-26359).

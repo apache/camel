@@ -145,6 +145,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                      + "Set tags to opt-in the tools, resources and prompts to expose.");
         }
 
+        // fails the startup on a value that is not an era, before anything is served
+        McpProtocolEra protocolEra = McpProtocolEra.parse(configuration.getProtocolEra());
         engine = resolveEngine();
         validateOAuthConfiguration(engine);
         CamelContextAware.trySetCamelContext(engine, camelContext);
@@ -163,7 +165,15 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 McpServerOrigins.parseAllowedOrigins(configuration.getAllowedOrigins()),
                 configuration.getOauthProfile(), configuration.getRequiredScopes(),
                 configuration.getResourceUri(),
-                McpServerHosts.parseAllowedHosts(configuration.getAllowedHosts())));
+                McpServerHosts.parseAllowedHosts(configuration.getAllowedHosts()),
+                protocolEra, configuration.isStateless()));
+
+        if ((protocolEra != McpProtocolEra.DUAL || configuration.isStateless())
+                && !engine.supportsProtocolEraConfiguration()) {
+            LOG.warn("The MCP protocol era ({}) and stateless ({}) options are ignored by engine {}: the runtime's "
+                     + "native MCP server configuration decides which protocol versions are served, and how",
+                    protocolEra.value(), configuration.isStateless(), engine.getClass().getSimpleName());
+        }
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {

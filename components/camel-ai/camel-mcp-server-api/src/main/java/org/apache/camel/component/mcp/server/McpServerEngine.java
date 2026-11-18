@@ -175,4 +175,15 @@ public interface McpServerEngine extends Service, CamelContextAware {
     default boolean supportsOAuthConfiguration() {
         return false;
     }
+
+    /**
+     * Whether this engine honours {@link McpServerInfo#protocolEra()} and {@link McpServerInfo#stateless()}. The
+     * default is false: the protocol versions such an engine serves, and whether with sessions, are decided by its
+     * runtime, and the bridge warns when a protocol era other than the default, or the stateless option, is configured.
+     *
+     * @since 4.24
+     */
+    default boolean supportsProtocolEraConfiguration() {
+        return false;
+    }
 }

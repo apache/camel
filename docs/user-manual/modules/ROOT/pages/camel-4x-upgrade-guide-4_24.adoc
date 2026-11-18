@@ -454,6 +454,20 @@ Spring AI transport provider must configure its own `Origin` validator. This Spr
 affect the Quarkus engine.
 
 
+=== camel-mcp-server - MCP protocol version 2026-07-28 is served on /mcp
+
+On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now also serves clients of MCP protocol version
+2026-07-28, next to the protocol versions that open with an `initialize` handshake, and chooses for each request from
+the protocol version it carries. A client that opens with `initialize` is served as before, with a session. A client
+of 2026-07-28 has no session: a restart of the application, or a request reaching another instance, does not end it.
+Clients that try 2026-07-28 first and fall back to `initialize` (for example the client of the MCP Python SDK) now use
+2026-07-28.
+
+Serving 2026-07-28 is a preview, built on an API of the MCP Java SDK that may still change. Set the new option
+`camel.server.mcp-protocol-era = legacy` to serve only the protocol versions that open with `initialize`, as before;
+`modern` serves only 2026-07-28. The new option `camel.server.mcp-stateless = true` also serves the clients that open
+with `initialize` without a session. The MCP Java SDK is upgraded to 2.2.0.
+
 === camel-oauth - the scp claim is included in scope checks
 
 JWT validation and token introspection now read scopes from both the standard `scope` claim and the
