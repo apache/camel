@@ -257,7 +257,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     total);
         }
 
-        for (int index = 0; index < total && isBatchAllowed(); index++) {
+        int index = 0;
+        for (; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
             Exchange exchange = holder.exchange;
@@ -325,6 +326,19 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             }
         }
 
+        if (index < total) {
+            // the consumer is stopping and routed only part of the batch. The onConsumeBatchComplete query is for the
+            // whole batch (it cannot tell the rows apart, for example "delete from projects"): it is not run, so the
+            // rows that were not routed are left as they are and are consumed again by the next poll
+            if (onConsumeBatchComplete != null) {
+                LOG.info("Not running the onConsumeBatchComplete query, as the consumer is stopping and routed only {} of"
+                         + " the {} rows of the batch",
+                        index, total);
+            }
+            releaseNotRouted(exchanges);
+            return total;
+        }
+
         try {
             if (onConsumeBatchComplete != null) {
                 int updateCount;
@@ -347,6 +361,16 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return total;
+    }
+
+    /**
+     * Releases the exchanges of the rows that the consumer did not route, as it is stopping.
+     */
+    private void releaseNotRouted(Queue<Object> exchanges) {
+        Object next;
+        while ((next = exchanges.poll()) != null) {
+            releaseExchange(ObjectHelper.cast(DataHolder.class, next).exchange, false);
+        }
     }
 
     public String getOnConsume() {
