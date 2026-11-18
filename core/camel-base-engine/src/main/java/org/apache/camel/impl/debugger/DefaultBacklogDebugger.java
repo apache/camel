@@ -631,6 +631,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         if (isSingleStepMode()) {
             logger.log("Step breakpoint is already in single step mode, so stepping instead.");
             step();
+            // the step may let an exchange that waited for a node suspend there: it must not be stepped on as well
+            return;
         }
 
         if (suspendedBreakpointMessages.size() != 1) {
@@ -660,6 +662,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         if (isSingleStepMode()) {
             logger.log("Step breakpoint " + nodeId + " is already in single step mode, so stepping instead.");
             step();
+            // the step may let an exchange that waited for a node suspend there: it must not be stepped on as well
+            return;
         }
 
         logger.log("Step breakpoint " + nodeId);
@@ -1137,15 +1141,18 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         /**
          * Suspends the single-stepped exchange at the node, and waits until it should continue. Another exchange may be
          * suspended at the node by a node breakpoint: the step then waits until that exchange is no longer suspended
-         * there, as the debugger keeps one suspended exchange per node, and must not replace the other exchange.
+         * there, as the debugger keeps one suspended exchange per node, and must not replace the other exchange. The
+         * step can so wait up to twice the fallback timeout: for the node, then at the node.
          */
         private void suspendStep(String toNode, Exchange exchange, BacklogTracerEventMessage msg) {
             String exchangeId = exchange.getExchangeId();
             SuspendedExchange se = new SuspendedExchange(exchange);
+            boolean registered = false;
             try {
                 if (!awaitNode(toNode, se)) {
                     return;
                 }
+                registered = true;
                 // publish the message only while this exchange is the one suspended at the node
                 suspendedBreakpointMessages.compute(toNode, (k, m) -> suspendedBreakpoints.get(k) == se ? msg : m);
 
@@ -1154,9 +1161,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                         String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
                                 exchangeId));
                 boolean hit = se.awaitExchange(fallbackTimeout);
+                // a resume removes the message, then the suspended exchange: the message published above between
+                // the two must not stay at the node (only the message of this exchange is removed)
+                removeMessageOf(toNode, exchangeId);
                 if (!hit) {
                     // remove breakpoint as it timed out (only the ones of this exchange)
-                    removeMessageOf(toNode, exchangeId);
                     suspendedBreakpoints.remove(toNode, se);
                     logger.log(
                             String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
@@ -1167,7 +1176,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                             exchangeId));
                 }
             } catch (InterruptedException e) {
-                // ignore
+                if (registered) {
+                    // the exchange continues: a later step to this node must not wait for it
+                    removeMessageOf(toNode, exchangeId);
+                    suspendedBreakpoints.remove(toNode, se);
+                }
                 Thread.currentThread().interrupt();
             }
         }
@@ -1205,12 +1218,24 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 // removed without a resume
                 other.awaitContinue(Math.min(left, TimeUnit.MILLISECONDS.toNanos(100)));
             }
-            if (waited && (!isEnabled() || !singleStepExchangeId.contains(exchangeId))) {
+            if (waited && (!isEnabled() || !isSingleStepped(se.getExchange()))) {
                 // the single step of this exchange ended while it waited (resumed, or the debugger was disabled)
                 suspendedBreakpoints.remove(toNode, se);
                 return false;
             }
             return true;
+        }
+
+        /**
+         * Whether the exchange is still single-stepped: by its own id, or by the id of the exchange it was created from
+         * (such as a split or multicast part), as the debugger also steps those.
+         */
+        private boolean isSingleStepped(Exchange exchange) {
+            if (singleStepExchangeId.contains(exchange.getExchangeId())) {
+                return true;
+            }
+            String id = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            return id != null && singleStepExchangeId.contains(id);
         }
 
         @SuppressWarnings("unchecked")

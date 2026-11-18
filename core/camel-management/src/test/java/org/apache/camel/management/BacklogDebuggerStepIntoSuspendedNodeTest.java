@@ -132,6 +132,73 @@ public class BacklogDebuggerStepIntoSuspendedNodeTest extends ManagementTestSupp
         assertEquals(Set.of(), debugger.getSuspendedExchangeIds());
     }
 
+    @Test
+    public void testStepBreakpointInSingleStepModeOnlySteps() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Second", "First");
+
+        debugger.addBreakpoint("bar");
+        template.sendBody("seda:start", "Second");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of("bar"), debugger.getSuspendedBreakpointNodeIds()));
+        String second = debugger.getSuspendedExchangeIds().iterator().next();
+
+        debugger.addBreakpoint("foo");
+        template.sendBody("seda:start", "First");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of("foo", "bar"), debugger.getSuspendedBreakpointNodeIds()));
+        String first = debugger.getSuspendedExchangeIds().stream().filter(id -> !id.equals(second)).findFirst()
+                .orElseThrow();
+        long counter = debugger.getDebugCounter();
+        debugger.stepBreakpoint("foo");
+        await().atMost(5, TimeUnit.SECONDS).until(() -> debugger.getDebugCounter() > counter);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of(second), debugger.getSuspendedExchangeIds()));
+
+        // in single step mode, stepBreakpoint() steps (as the dev console and camel debug do): the second exchange
+        // continues, and the first exchange then stays suspended at bar, it is not stepped on past it
+        debugger.stepBreakpoint();
+        await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEquals(Set.of(first), debugger.getSuspendedExchangeIds());
+            assertEquals(Set.of("bar"), debugger.getSuspendedBreakpointNodeIds());
+        });
+
+        debugger.resumeBreakpoint("bar");
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
+    }
+
+    @Test
+    public void testSplitPartWaitsForTheNodeAndSuspendsThere() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(2);
+
+        debugger.addBreakpoint("split-foo");
+        template.sendBody("seda:split", "a,b");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of("split-foo"), debugger.getSuspendedBreakpointNodeIds()));
+        debugger.stepBreakpoint("split-foo");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of("split"), debugger.getSuspendedBreakpointNodeIds()));
+
+        // the parts are single-stepped as the split exchange is: one is suspended at inner, the other waits for it
+        long counter = debugger.getDebugCounter();
+        debugger.step();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> debugger.getDebugCounter() >= counter + 2);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of("inner"), debugger.getSuspendedBreakpointNodeIds()));
+
+        // a step continues the first part to the next node, and the part that waited is suspended at inner (it is
+        // still single-stepped through the split exchange, its correlation id)
+        debugger.step();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of("inner", "split-result"), debugger.getSuspendedBreakpointNodeIds()));
+
+        // a resume ends the single step, and both parts complete
+        debugger.resumeBreakpoint("inner");
+        debugger.resumeAll();
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -144,6 +211,13 @@ public class BacklogDebuggerStepIntoSuspendedNodeTest extends ManagementTestSupp
                         .setHeader("node", constant("bar")).id("bar")
                         .convertBodyTo(String.class)
                         .to("mock:result");
+
+                from("seda:split")
+                        .setProperty("num", constant(1)).id("split-foo")
+                        .split(body().tokenize(",")).parallelProcessing().id("split")
+                            .setHeader("node", constant("inner")).id("inner")
+                            .to("mock:split").id("split-result")
+                        .end();
             }
         };
     }
