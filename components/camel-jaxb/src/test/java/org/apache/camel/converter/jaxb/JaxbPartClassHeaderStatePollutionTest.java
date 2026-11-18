@@ -122,6 +122,7 @@ public class JaxbPartClassHeaderStatePollutionTest extends CamelTestSupport {
             public void configure() {
                 JaxbDataFormat jaxb = new JaxbDataFormat();
                 jaxb.setContextPath("org.apache.camel.example");
+                jaxb.setAllowPartClassFromHeader(true);
 
                 from("direct:unmarshal")
                         .unmarshal(jaxb)
@@ -130,6 +131,7 @@ public class JaxbPartClassHeaderStatePollutionTest extends CamelTestSupport {
                 JaxbDataFormat jaxbMarshal = new JaxbDataFormat();
                 jaxbMarshal.setContextPath("org.apache.camel.example");
                 jaxbMarshal.setPrettyPrint(true);
+                jaxbMarshal.setAllowPartClassFromHeader(true);
 
                 from("direct:marshal")
                         .marshal(jaxbMarshal)

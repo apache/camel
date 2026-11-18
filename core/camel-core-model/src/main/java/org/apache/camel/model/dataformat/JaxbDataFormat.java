@@ -72,6 +72,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String partNamespace;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String allowPartClassFromHeader;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.Map")
     private String namespacePrefix;
     @XmlAttribute
@@ -113,6 +116,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.fragment = source.fragment;
         this.partClass = source.partClass;
         this.partNamespace = source.partNamespace;
+        this.allowPartClassFromHeader = source.allowPartClassFromHeader;
         this.namespacePrefix = source.namespacePrefix;
         this.xmlStreamWriterWrapper = source.xmlStreamWriterWrapper;
         this.schemaLocation = source.schemaLocation;
@@ -142,6 +146,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.fragment = builder.fragment;
         this.partClass = builder.partClass;
         this.partNamespace = builder.partNamespace;
+        this.allowPartClassFromHeader = builder.allowPartClassFromHeader;
         this.namespacePrefix = builder.namespacePrefix;
         this.xmlStreamWriterWrapper = builder.xmlStreamWriterWrapper;
         this.schemaLocation = builder.schemaLocation;
@@ -314,6 +319,19 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.partNamespace = partNamespace;
     }
 
+    public String getAllowPartClassFromHeader() {
+        return allowPartClassFromHeader;
+    }
+
+    /**
+     * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass
+     * and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets these headers
+     * itself, not on routes that receive them from external systems.
+     */
+    public void setAllowPartClassFromHeader(String allowPartClassFromHeader) {
+        this.allowPartClassFromHeader = allowPartClassFromHeader;
+    }
+
     public String getNamespacePrefix() {
         return namespacePrefix;
     }
@@ -416,6 +434,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String fragment;
         private String partClass;
         private String partNamespace;
+        private String allowPartClassFromHeader;
         private String namespacePrefix;
         private String xmlStreamWriterWrapper;
         private String schemaLocation;
@@ -616,6 +635,26 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder partNamespace(String partNamespace) {
             this.partNamespace = partNamespace;
+            return this;
+        }
+
+        /**
+         * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
+         * partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets
+         * these headers itself, not on routes that receive them from external systems.
+         */
+        public Builder allowPartClassFromHeader(String allowPartClassFromHeader) {
+            this.allowPartClassFromHeader = allowPartClassFromHeader;
+            return this;
+        }
+
+        /**
+         * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
+         * partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets
+         * these headers itself, not on routes that receive them from external systems.
+         */
+        public Builder allowPartClassFromHeader(boolean allowPartClassFromHeader) {
+            this.allowPartClassFromHeader = Boolean.toString(allowPartClassFromHeader);
             return this;
         }
 
