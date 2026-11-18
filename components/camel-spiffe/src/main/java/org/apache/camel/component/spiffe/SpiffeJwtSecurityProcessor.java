@@ -23,11 +23,11 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
-import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

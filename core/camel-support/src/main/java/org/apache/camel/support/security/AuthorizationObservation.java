@@ -22,13 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Counts;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Optional authorization events through Camel's started EventNotifiers; observer failures cannot affect routing.

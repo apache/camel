@@ -24,12 +24,12 @@ import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.workloadapi.WorkloadApiClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
-import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationObservation;
+import org.apache.camel.util.ObjectHelper;
 
 /** Shared JWT validation for the producer and the route security policy. */
 final class SpiffeJwtValidator {
@@ -41,8 +41,10 @@ final class SpiffeJwtValidator {
         return validate(client, exchange, configuredAudience, allowBodyToken, true);
     }
 
-    static JwtSvid validate(WorkloadApiClient client, Exchange exchange, String configuredAudience, boolean allowBodyToken,
-                           boolean observe) throws JwtSvidException {
+    static JwtSvid validate(
+            WorkloadApiClient client, Exchange exchange, String configuredAudience, boolean allowBodyToken,
+            boolean observe)
+            throws JwtSvidException {
         if (!observe) {
             return validateInternal(client, exchange, configuredAudience, allowBodyToken);
         }
@@ -63,12 +65,16 @@ final class SpiffeJwtValidator {
         Status.Code code = Status.fromThrowable(e).getCode();
         boolean unavailable = !interrupted && (code == Status.Code.UNAVAILABLE || code == Status.Code.DEADLINE_EXCEEDED);
         boolean denied = e instanceof JwtSvidException || e instanceof IllegalArgumentException;
-        observation.complete(interrupted ? Outcome.ERROR : unavailable ? Outcome.UNAVAILABLE : denied ? Outcome.DENY : Outcome.ERROR,
-                interrupted ? Failure.INTERRUPTED : unavailable ? Failure.UNAVAILABLE : denied ? Failure.NONE : Failure.EVALUATION);
+        observation.complete(
+                interrupted ? Outcome.ERROR : unavailable ? Outcome.UNAVAILABLE : denied ? Outcome.DENY : Outcome.ERROR,
+                interrupted ? Failure.INTERRUPTED : unavailable ? Failure.UNAVAILABLE : denied ? Failure.NONE
+                        : Failure.EVALUATION);
     }
 
-    private static JwtSvid validateInternal(WorkloadApiClient client, Exchange exchange, String configuredAudience,
-                                          boolean allowBodyToken) throws JwtSvidException {
+    private static JwtSvid validateInternal(
+            WorkloadApiClient client, Exchange exchange, String configuredAudience,
+            boolean allowBodyToken)
+            throws JwtSvidException {
         clearIdentity(exchange);
         Message message = exchange.getMessage();
         String token = message.getHeader(SpiffeConstants.TOKEN, String.class);

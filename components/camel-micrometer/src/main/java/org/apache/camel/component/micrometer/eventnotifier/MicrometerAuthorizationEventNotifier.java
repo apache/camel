@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
-import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.component.micrometer.MicrometerConstants;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
 

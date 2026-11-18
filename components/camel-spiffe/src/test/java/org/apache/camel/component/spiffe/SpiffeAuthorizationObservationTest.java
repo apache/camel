@@ -28,18 +28,18 @@ import io.spiffe.exception.JwtSvidException;
 import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.workloadapi.WorkloadApiClient;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -128,13 +128,15 @@ class SpiffeAuthorizationObservationTest {
             Route route = mock(Route.class);
             when(route.getCamelContext()).thenReturn(fixture.context);
             policy.beforeWrap(route, null);
-            Processor wrapped = policy.wrap(route, exchange -> assertThat(exchange.getMessage().getBody()).isEqualTo("payload"));
+            Processor wrapped
+                    = policy.wrap(route, exchange -> assertThat(exchange.getMessage().getBody()).isEqualTo("payload"));
             ServiceHelper.startService(wrapped);
             try {
                 Exchange allowed = new DefaultExchange(fixture.context);
                 allowed.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
                 allowed.getMessage().setBody("payload");
-                ((AsyncProcessor) wrapped).process(allowed, done -> { });
+                ((AsyncProcessor) wrapped).process(allowed, done -> {
+                });
                 assertThat(allowed.getException()).isNull();
                 assertThat(allowed.getMessage().getBody()).isEqualTo("payload");
                 assertThat(allowed.getProperty(SpiffeConstants.JWT_IDENTITY)).isInstanceOf(SpiffeJwtIdentity.class);
@@ -142,13 +144,14 @@ class SpiffeAuthorizationObservationTest {
                 Exchange denied = new DefaultExchange(fixture.context);
                 denied.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
                 denied.getMessage().setBody("payload");
-                ((AsyncProcessor) wrapped).process(denied, done -> { });
+                ((AsyncProcessor) wrapped).process(denied, done -> {
+                });
                 assertThat(denied.getException()).isInstanceOf(CamelAuthorizationException.class);
                 assertThat(denied.getProperty(SpiffeConstants.JWT_IDENTITY)).isNull();
                 assertThat(fixture.events).extracting(AuthorizationDecisionEvent::getOutcome)
                         .containsExactly(Outcome.ALLOW, Outcome.DENY);
-                assertThat(fixture.events).allSatisfy(event ->
-                        assertThat(event.getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.VALIDATE_JWT));
+                assertThat(fixture.events).allSatisfy(
+                        event -> assertThat(event.getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.VALIDATE_JWT));
             } finally {
                 ServiceHelper.stopService(wrapped);
             }

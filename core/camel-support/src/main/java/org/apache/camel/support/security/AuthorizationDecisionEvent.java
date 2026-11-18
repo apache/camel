@@ -16,10 +16,10 @@
  */
 package org.apache.camel.support.security;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Collections;
 
 import org.apache.camel.spi.CamelEvent;
 

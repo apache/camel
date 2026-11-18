@@ -19,8 +19,8 @@ package org.apache.camel.component.micrometer.eventnotifier;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -65,7 +65,8 @@ class MicrometerAuthorizationEventNotifierTest {
             authorizationMeters.forEach(meter -> {
                 Set<String> keys = meter.getId().getTags().stream().map(Tag::getKey)
                         .collect(Collectors.toSet());
-                assertTrue(Set.of("engine", "operation", "outcome", "failure", MicrometerConstants.CAMEL_CONTEXT_TAG, MicrometerConstants.KIND).containsAll(keys));
+                assertTrue(Set.of("engine", "operation", "outcome", "failure", MicrometerConstants.CAMEL_CONTEXT_TAG,
+                        MicrometerConstants.KIND).containsAll(keys));
                 assertEquals(context.getName(), meter.getId().getTag(MicrometerConstants.CAMEL_CONTEXT_TAG));
                 assertEquals("authorization", meter.getId().getTag(MicrometerConstants.KIND));
                 assertFalse(meter.getId().toString().contains("secret"));

@@ -1629,8 +1629,8 @@ public final class EventHelper {
     }
 
     /**
-     * Delivers an application-defined event through the standard notifier isolation and logging path. Custom events
-     * are filtered by {@link EventNotifier#isEnabled(CamelEvent)}, independently of exchange event opt-outs.
+     * Delivers an application-defined event through the standard notifier isolation and logging path. Custom events are
+     * filtered by {@link EventNotifier#isEnabled(CamelEvent)}, independently of exchange event opt-outs.
      *
      * @since 4.24
      */
