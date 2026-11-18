@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Enumeration;
 
 import org.apache.camel.CamelContext;
@@ -144,8 +145,12 @@ public class KameletJacksonBothLinesTest extends CamelTestSupport {
         }
 
         private static URL findInJackson2(String uri) {
-            String jar = org.apache.camel.component.jackson.JacksonDataFormat.class.getProtectionDomain().getCodeSource()
-                    .getLocation().toString();
+            CodeSource source = org.apache.camel.component.jackson.JacksonDataFormat.class.getProtectionDomain()
+                    .getCodeSource();
+            if (source == null) {
+                return null;
+            }
+            String jar = source.getLocation().toString();
             try {
                 Enumeration<URL> urls = Jackson2ConfigurersFirstClassResolver.class.getClassLoader().getResources(uri);
                 while (urls.hasMoreElements()) {

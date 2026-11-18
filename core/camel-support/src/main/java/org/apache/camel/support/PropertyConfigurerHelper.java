@@ -79,15 +79,15 @@ public final class PropertyConfigurerHelper {
         if (targetType.getName().endsWith("Component")) {
             String name = StringHelper.before(targetType.getSimpleName(), "Component");
             name = StringHelper.camelCaseToDash(name) + "-component";
-            return resolvePropertyConfigurerByName(context, name, targetType);
+            return resolvePropertyConfigurerByNameForType(context, name, targetType);
         } else if (targetType.getName().endsWith("Language")) {
             String name = StringHelper.before(targetType.getSimpleName(), "Language");
             name = StringHelper.camelCaseToDash(name) + "-language";
-            return resolvePropertyConfigurerByName(context, name, targetType);
+            return resolvePropertyConfigurerByNameForType(context, name, targetType);
         } else if (targetType.getName().endsWith("DataFormat")) {
             String name = StringHelper.before(targetType.getSimpleName(), "DataFormat");
             name = StringHelper.camelCaseToDash(name) + "-dataformat";
-            return resolvePropertyConfigurerByName(context, name, targetType);
+            return resolvePropertyConfigurerByNameForType(context, name, targetType);
         }
 
         if (targetType.isAnonymousClass()) {
@@ -125,10 +125,10 @@ public final class PropertyConfigurerHelper {
      * @return         the resolved configurer, or <code>null</code> if no configurer could be found
      */
     public static PropertyConfigurer resolvePropertyConfigurerByName(CamelContext context, String name, Object target) {
-        return resolvePropertyConfigurerByName(context, name, target != null ? target.getClass() : null);
+        return resolvePropertyConfigurerByNameForType(context, name, target != null ? target.getClass() : null);
     }
 
-    private static PropertyConfigurer resolvePropertyConfigurerByName(
+    private static PropertyConfigurer resolvePropertyConfigurerByNameForType(
             CamelContext context, String name, Class<?> targetType) {
         ObjectHelper.notNull(context, "context");
 
