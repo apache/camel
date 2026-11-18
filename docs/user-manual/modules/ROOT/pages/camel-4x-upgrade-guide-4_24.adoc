@@ -2693,6 +2693,8 @@ trust store of the JVM was always used.
 * With `certificatePath`, the certificates in that file (PEM or DER) are trusted instead of the default trust store of
   the JVM, and the endpoint or the function fails to start when the file cannot be read. Remove `certificatePath` to
   keep the default trust store of the JVM.
+  The file is a path of the file system, or a resource with the `classpath:` or `file:` prefix. Other prefixes, such
+  as `http:`, are rejected.
 * With `verifySsl=false`, neither the certificate nor the host name of the server is checked. The option is now marked
   as an insecure SSL setting, so the security policy reports `camel.component.cyberark-vault.verifySsl=false`, which
   fails the startup with `camel.main.profile=prod`. Set `certificatePath` to the certificate of the server or of its
@@ -9218,15 +9220,6 @@ Rename the alias of the key to the algorithm of the key, for example `RS256` for
 ----
 keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
 ----
-
-=== camel-cyberark-vault - certificatePath accepts the classpath: and file: prefixes
-
-The `certificatePath` option of the endpoint and of the vault configuration (`camel.vault.cyberark.certificatePath`)
-now also accepts a resource with the `classpath:` or `file:` prefix. A path without a prefix is still read from the
-file system. Other prefixes, such as `http:`, are rejected when the endpoint or the vault starts.
-
-`ConjurClientFactory.createSslContext` takes the `CamelContext` as a new first parameter, to load a `classpath:`
-resource. Code that calls this method directly must pass the `CamelContext`.
 
 === Jackson 3
 
