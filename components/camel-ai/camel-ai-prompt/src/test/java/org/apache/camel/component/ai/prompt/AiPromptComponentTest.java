@@ -126,7 +126,8 @@ class AiPromptComponentTest extends CamelTestSupport {
         assertThat(refused).isInstanceOf(AiPromptResult.ExecutionError.class);
         AiPromptResult.ExecutionError error = (AiPromptResult.ExecutionError) refused;
         assertThat(error.message()).isEqualTo("Prompt 'suspendable' is suspended");
-        assertThat(error.cause()).isInstanceOf(IllegalStateException.class);
+        assertThat(error.cause()).isInstanceOf(IllegalStateException.class)
+                .hasMessage("Prompt 'suspendable' is suspended");
 
         context.getRouteController().resumeRoute("suspendable-route");
 
