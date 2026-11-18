@@ -60,6 +60,7 @@ org
       ├── models (JSON schema)
       ├── models-app (JSON schema)
       ├── others (JSON schema)
+      ├── patterns (JSON recipes)
       ├── releases (JSON schema)
       ├── schemas (XML and JSON schemas)
       ├── test-infra (JSON schema)
@@ -93,6 +94,74 @@ The YAML DSL model is a generated data structure describing every valid key at e
 nesting level in the YAML DSL, with types, descriptions, required flags, default values,
 and enum choices. It can be used by third-party tooling (editors, IDE plugins, visual
 designers) to provide context-aware code completion and validation for YAML DSL routes.
+
+=== Pattern recipes for AI-assisted development
+
+The catalog also ships a curated, machine-readable set of integration-pattern recipes at
+`org/apache/camel/catalog/patterns/recipes.json`. Tooling can load this resource from the
+same `camel-catalog` JAR as the component, EIP, and YAML DSL metadata.
+
+The resource is accessed through the existing `CamelCatalog.loadResource` API:
+
+[source,java]
+----
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+try (InputStream stream = catalog.loadResource("patterns", "recipes.json")) {
+    if (stream == null) {
+        throw new IllegalStateException("Pattern recipes are not available in this catalog");
+    }
+
+    String recipesJson = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+    // Parse recipesJson with the JSON library used by your tooling.
+}
+----
+
+`loadResource("patterns", "recipes.json")` loads the resource belonging to the catalog version
+currently in use. When generating code for a different Camel release, call `loadVersion(version)`
+first and check its return value. Do not combine recipes from one release with component or EIP
+metadata from another release.
+
+The top-level JSON document contains `schemaVersion`, `description`, and a `recipes` array.
+Each recipe describes:
+
+- `id`, `name`, and `problem`: stable identity and the integration problem being addressed
+- `components` and `eips`: the Camel components and EIPs involved
+- `recommendedOptions`: structured objects with `target`, `name`, `value`, and `reason`; `target` identifies a Camel component or model, and `name` identifies an option checked against that catalog model
+- `componentRequirements`: dependencies and runtime capabilities required by the recipe
+- `exampleRoute`: the primary route snippet, including its DSL and source
+- `transportVariants` (optional): named transport-specific alternatives, each with its own component and YAML route snippet
+- `pitfalls`: limitations and operational considerations
+- `examples`: links to JBang examples, with repository, path, URL, coverage, and explanatory note
+- `exampleAvailability`: an explanation used when no suitable JBang example is available
+- `referenceDocs` (optional): links to relevant Camel documentation pages
+
+AI tooling should use the recipe as a starting point, not as proof that a complete application
+can be deployed without further configuration. In particular:
+
+. Select a recipe by its stable `id` or by matching the `problem` statement.
+. Check `components` and `eips` against the same version's `componentModel` and `eipModel`.
+. Validate endpoint URIs and option names against the catalog, and validate YAML against the
+  YAML DSL supported by that Camel release.
+. Read `componentRequirements` and `pitfalls` before producing a route. External services,
+  brokers, databases, repositories, transaction managers, credentials, and beans may still need
+  application-specific configuration.
+. Interpret `examples[].coverage` carefully:
+  * `direct` means the linked example demonstrates the pattern itself.
+  * `related` means it demonstrates a related EIP or a building block, not the complete recipe.
+  * `building-block` means it demonstrates an integration dependency or capability used by the recipe.
+. Do not present a related or building-block example as an exact implementation of the recipe.
+  When `examples` is empty, use `exampleAvailability` rather than inventing a link.
+
+The recipe snippets are concise examples for AI-assisted development. They are not a substitute
+for reviewing the version-matched component and EIP documentation, supplying application
+configuration, or validating the generated integration before deployment.
 
 === Finding components by protocol or product name
 

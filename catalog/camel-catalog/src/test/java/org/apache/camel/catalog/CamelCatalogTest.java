@@ -2270,6 +2270,66 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void patternRecipesResource() throws Exception {
+        String json;
+        try (InputStream is = catalog.loadResource("patterns", "recipes.json")) {
+            assertNotNull(is);
+            json = loadText(is);
+        }
+
+        JsonObject patternRecipes = JsonMapper.deserialize(json);
+        assertNotNull(patternRecipes);
+        assertEquals("1", String.valueOf(patternRecipes.get("schemaVersion")));
+        assertNotNull(patternRecipes.getString("description"));
+
+        java.util.Collection<?> recipes = patternRecipes.getCollection("recipes");
+        assertNotNull(recipes);
+        assertEquals(10, recipes.size());
+
+        java.util.Set<String> ids = new java.util.HashSet<>();
+
+        for (Object value : recipes) {
+            assertTrue(value instanceof JsonObject, "Each recipe must be a JSON object");
+
+            JsonObject recipe = (JsonObject) value;
+            String id = recipe.getString("id");
+
+            assertNotNull(id, "Each recipe must have an id");
+            assertTrue(ids.add(id), "Duplicate recipe id: " + id);
+            assertNotNull(recipe.getString("name"), id + " needs a name");
+            assertNotNull(recipe.getString("problem"), id + " needs a problem statement");
+
+            assertNotNull(recipe.getCollection("components"), id + " needs components");
+            assertNotNull(recipe.getCollection("eips"), id + " needs EIPs");
+            assertNotNull(recipe.getCollection("recommendedOptions"), id + " needs recommendedOptions");
+            assertNotNull(recipe.getCollection("pitfalls"), id + " needs pitfalls");
+            assertNotNull(recipe.getCollection("examples"), id + " needs examples");
+
+            JsonObject route = recipe.getJsonObject("exampleRoute");
+            assertNotNull(route, id + " needs exampleRoute");
+            assertEquals("yaml", route.getString("dsl"), id + " must use YAML DSL");
+
+            String source = route.getString("source");
+            assertNotNull(source, id + " needs YAML source");
+            assertTrue(!source.isBlank(), id + " YAML source must not be empty");
+        }
+
+        assertEquals(
+                java.util.Set.of(
+                        "idempotent-consumer",
+                        "content-based-routing-with-validation",
+                        "file-polling-with-idempotent-repository",
+                        "throttling-rate-limiting",
+                        "error-handling-dead-letter-redelivery",
+                        "jms-asynchronous-request-reply",
+                        "circuit-breaker-with-fallback",
+                        "scatter-gather-with-timeout",
+                        "transactional-outbox",
+                        "saga-coordination-with-compensation"),
+                ids);
+    }
+
+    @Test
     public void devConsolesOpenApiSpec() {
         String json = catalog.devConsolesOpenApiSpec();
         Assertions.assertNotNull(json);
