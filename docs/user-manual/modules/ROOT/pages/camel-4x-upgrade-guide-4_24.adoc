@@ -387,6 +387,13 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-ai-tool - suspending a route no longer stops it, and tool calls in flight complete when the route stops
+
+Suspending an `ai-tool` route, with `suspendRoute` or `context.suspend()`, now suspends the route instead of stopping
+it: the tool is deregistered, tool calls in flight complete, a new call to the suspended tool is refused, and resuming
+the route registers the tool again. When an `ai-tool` route is stopped, or Camel shuts down gracefully, tool calls in
+flight now complete instead of failing.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
