@@ -410,6 +410,12 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (RejectedExecutionException e) {
                 state.reject();
             }
+            if (shutdownExecutorService && executorService.isShutdown()) {
+                // doShutdown shut the thread pool down meanwhile, maybe before it saw this task: with the CallerRuns
+                // policy the pool drops the task without an exception, so fail the exchange here (a no-op when
+                // doShutdown or reject() completed it already)
+                state.doFailed(new RouteStoppingException("The exchange cannot complete: the thread pool is shut down"));
+            }
         } else {
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleQueue(state);

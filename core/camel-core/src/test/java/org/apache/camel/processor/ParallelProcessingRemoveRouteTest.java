@@ -21,16 +21,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A parallel Multicast, Split or Recipient List with its own thread pool, whose route is stopped after the shutdown
@@ -106,10 +110,58 @@ class ParallelProcessingRemoveRouteTest extends ContextTestSupport {
         assertCompletedOnRemove();
     }
 
+    @Test
+    void testRecipientListRemoveRouteCompletesBeforeTheStrategyIsShutDown() throws Exception {
+        RecordingStrategy strategy = new RecordingStrategy();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").routeId("parallel")
+                        .recipientList(body()).parallelProcessing().executorService("one").aggregationStrategy(strategy);
+            }
+        });
+        context.start();
+        assertCompletedOnRemove();
+
+        assertTrue(strategy.completed, "the failed exchange did not go through onCompletion of the strategy");
+        assertFalse(strategy.shutDownAtCompletion, "onCompletion ran on a strategy that was shut down already");
+    }
+
+    @Test
+    void testMulticastReachedAfterTheRouteIsRemoved() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // the exchange waits before the Multicast, which then gets it after its thread pool is shut down. No
+                // error handler: the one of the route would already fail the exchange, as its route is stopping
+                errorHandler(noErrorHandler());
+                from("direct:start").routeId("parallel")
+                        .to("direct:block")
+                        .multicast().parallelProcessing().executorService("one")
+                        .to("mock:a", "mock:b");
+            }
+        });
+        context.start();
+
+        CompletableFuture<Exchange> future = template.asyncSend("direct:start", e -> e.getMessage().setBody("A"));
+        assertTrue(blocked.await(5, TimeUnit.SECONDS));
+        try {
+            context.getRouteController().stopRoute("parallel", 100, TimeUnit.MILLISECONDS);
+            context.removeRoute("parallel");
+        } finally {
+            latch.countDown();
+        }
+
+        // the thread pool drops the task without an exception (CallerRuns policy), so the Multicast fails the exchange
+        Exchange out = future.get(10, TimeUnit.SECONDS);
+        assertInstanceOf(RouteStoppingException.class, out.getException());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
+    }
+
     private void assertCompletedOnRemove() throws Exception {
         CompletableFuture<Exchange> future = template.asyncSend("direct:start",
                 e -> e.getMessage().setBody(List.of("direct:block", "mock:b")));
-        assertEquals(true, blocked.await(5, TimeUnit.SECONDS));
+        assertTrue(blocked.await(5, TimeUnit.SECONDS));
 
         try {
             // the shutdown timeout runs out, the route is stopped by force, then removed
@@ -117,10 +169,31 @@ class ParallelProcessingRemoveRouteTest extends ContextTestSupport {
             context.removeRoute("parallel");
 
             Exchange out = future.get(10, TimeUnit.SECONDS);
-            assertNotNull(out.getException());
+            // the shutdown of the EIP fails the exchange. The first part, which the shutdown of the thread pool
+            // interrupts, fails as well, but it cannot complete the exchange, as the second part never runs
+            assertInstanceOf(RouteStoppingException.class, out.getException());
         } finally {
             latch.countDown();
         }
         await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
+    }
+
+    /**
+     * Records whether it was shut down when the exchange completed.
+     */
+    private static final class RecordingStrategy extends ServiceSupport implements AggregationStrategy {
+        private volatile boolean completed;
+        private volatile boolean shutDownAtCompletion;
+
+        @Override
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            return newExchange != null ? newExchange : oldExchange;
+        }
+
+        @Override
+        public void onCompletion(Exchange exchange, Exchange inputExchange) {
+            shutDownAtCompletion = isShutdown();
+            completed = true;
+        }
     }
 }

@@ -233,12 +233,14 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache, aggregationStrategy, recipientListProcessor);
+        ServiceHelper.stopService(recipientListProcessor, producerCache, aggregationStrategy);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy, recipientListProcessor);
+        // the processor first, as Multicast and Split do: its shutdown fails the exchanges that still wait for a part,
+        // and they go through onCompletion of the aggregation strategy and give their producers back to the cache
+        ServiceHelper.stopAndShutdownServices(recipientListProcessor, producerCache, aggregationStrategy);
 
         if (aggregateExecutorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(aggregateExecutorService);
