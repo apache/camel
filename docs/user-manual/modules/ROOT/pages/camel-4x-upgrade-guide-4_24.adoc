@@ -740,7 +740,13 @@ carry the built-in `kc-admin-api` client scope, and rejects other tokens with `4
 assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
 `clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
 pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
-and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2 on amd64 and against
+Keycloak 26.0.5 on ppc64le.
+
+The `createOrganization` operation no longer sends the `autoRedirect` and `identityProviderAlias` fields of the
+organization domain, which the Keycloak 26.8 client library serializes (`autoRedirect` with the value `false`) and a
+Keycloak 26.0 server rejects with `400 Bad Request`. The producer never set these fields, so nothing changes for a
+Keycloak 26.8 server.
 
 === camel-kubernetes - the context reload on a secret or config map update lists the resources
 
