@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.integration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,9 @@ class KafkaConsumerGroupInstanceIdIT extends BaseKafkaTestSupport {
             }
         });
 
+        // the group does not exist until the first consumer has joined it: describing it fails with GroupIdNotFoundException
         await().atMost(60, TimeUnit.SECONDS)
+                .ignoreException(ExecutionException.class)
                 .untilAsserted(() -> assertEquals(Set.of("camel-0", "camel-1", "camel-2"), groupInstanceIds()));
 
         MockEndpoint result = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
