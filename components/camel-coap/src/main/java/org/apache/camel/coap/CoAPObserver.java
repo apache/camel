@@ -36,6 +36,9 @@ import org.eclipse.californium.core.network.Endpoint;
  */
 public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     // how long a stop waits for the answer to the cancel of the observation, before it releases the endpoint of the client
+    // (the wait only runs out when no answer comes, such as when the server cannot be reached: then each stop of an
+    // observe consumer takes up to this long, one after the other on a context shutdown; the wait stays in the stop so
+    // that the endpoint is released before the stop returns, also when the JVM exits after it)
     private static final long CANCEL_TIMEOUT_MILLIS = 5000;
 
     private final CoAPEndpoint endpoint;
@@ -177,7 +180,9 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
             if (!cancelled) {
                 CoAPObserver.this.onLoad(response);
             } else if (!response.getOptions().hasObserve()) {
-                // the answer to the cancel (a notification that was already on its way has the observe option)
+                // the answer to the cancel (a notification that was already on its way has the observe option). A
+                // server that wrongly answers the cancel with the observe option is not seen here, and the stop then
+                // waits for CANCEL_TIMEOUT_MILLIS
                 cancelDone.countDown();
             }
         }
