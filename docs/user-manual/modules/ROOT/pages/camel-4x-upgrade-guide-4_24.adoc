@@ -10022,3 +10022,17 @@ an empty value counts as unset.
 The `region` option is no longer marked as required in the catalog, since `region` or `endpoint` is required and the
 `kmsClient` option replaces both. The producer still fails with "Region or endpoint is required" when it has to create
 a client and neither is set.
+
+=== camel-nats - the host name of the server is verified over TLS
+
+When the connection uses TLS (`secure=true`, or a `tls://` server address), camel-nats now checks that the certificate
+of the NATS server matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate
+trusted by the trust store was accepted, whatever host the certificate was issued for. To keep the host name for TLS,
+the client connects to the fastest of the IP addresses of a host name (the happy eyeballs mode of jnats), instead of
+replacing the host name by its IP addresses first.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; an IP
+address must be listed as a subject alternative name of the certificate. This also applies to the servers that the
+NATS cluster announces, which are often IP addresses. Use certificates that match the hosts, or set the new
+`hostnameVerification` option to `false` to keep the previous behaviour. An `opentls://` server address still trusts
+any certificate and is not checked.
