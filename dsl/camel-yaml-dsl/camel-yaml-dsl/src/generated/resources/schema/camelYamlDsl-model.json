@@ -12077,13 +12077,24 @@
         "group" : "advanced",
         "label" : "advanced"
       }, {
+        "name" : "allowPartClassFromHeader",
+        "type" : "boolean",
+        "description" : "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets these headers itself, not on routes that receive them from external systems.",
+        "title" : "Allow Part Class From Header",
+        "default" : "false",
+        "displayName" : "Allow Part Class From Header",
+        "kind" : "attribute",
+        "index" : 14,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
         "name" : "namespacePrefix",
         "type" : "string",
         "description" : "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.",
         "title" : "Namespace Prefix",
         "displayName" : "Namespace Prefix",
         "kind" : "attribute",
-        "index" : 14,
+        "index" : 15,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -12093,7 +12104,7 @@
         "title" : "Xml Stream Writer Wrapper",
         "displayName" : "Xml Stream Writer Wrapper",
         "kind" : "attribute",
-        "index" : 15,
+        "index" : 16,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -12103,7 +12114,7 @@
         "title" : "Schema Location",
         "displayName" : "Schema Location",
         "kind" : "attribute",
-        "index" : 16,
+        "index" : 17,
         "group" : "common"
       }, {
         "name" : "noNamespaceSchemaLocation",
@@ -12112,7 +12123,7 @@
         "title" : "No Namespace Schema Location",
         "displayName" : "No Namespace Schema Location",
         "kind" : "attribute",
-        "index" : 17,
+        "index" : 18,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -12122,7 +12133,7 @@
         "title" : "Jaxb Provider Properties",
         "displayName" : "Jaxb Provider Properties",
         "kind" : "attribute",
-        "index" : 18,
+        "index" : 19,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -12133,7 +12144,7 @@
         "default" : "true",
         "displayName" : "Content Type Header",
         "kind" : "attribute",
-        "index" : 19,
+        "index" : 20,
         "group" : "common"
       }, {
         "name" : "accessExternalSchemaProtocols",
@@ -12142,7 +12153,7 @@
         "title" : "Access External Schema Protocols",
         "displayName" : "Access External Schema Protocols",
         "kind" : "attribute",
-        "index" : 20,
+        "index" : 21,
         "group" : "security",
         "label" : "security"
       } ]

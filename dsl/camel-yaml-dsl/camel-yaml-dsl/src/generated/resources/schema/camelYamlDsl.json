@@ -11003,6 +11003,12 @@
             "title" : "Access External Schema Protocols",
             "description" : "Only in use if schema validation has been enabled. Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element."
           },
+          "allowPartClassFromHeader" : {
+            "type" : "boolean",
+            "title" : "Allow Part Class From Header",
+            "description" : "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets these headers itself, not on routes that receive them from external systems.",
+            "default" : false
+          },
           "contentTypeHeader" : {
             "type" : "boolean",
             "title" : "Content Type Header",

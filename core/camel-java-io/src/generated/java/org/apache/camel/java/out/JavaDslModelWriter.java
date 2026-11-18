@@ -3117,6 +3117,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "fragment", def.getFragment(), null);
         doWriteAttribute(sb, "partClass", def.getPartClass(), null);
         doWriteAttribute(sb, "partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute(sb, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute(sb, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(sb, "xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute(sb, "schemaLocation", def.getSchemaLocation(), null);
