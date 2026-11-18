@@ -97,6 +97,7 @@ public class BacklogDebuggerStepIntoSuspendedNodeTest extends ManagementTestSupp
             assertEquals(Set.of(first), debugger.getSuspendedExchangeIds());
             String dump = debugger.dumpTracedMessagesAsXml("bar");
             assertTrue(dump != null && dump.contains(first), dump);
+            assertTrue(dump.contains("First"), dump);
         });
 
         // the first exchange is resumed too, and both exchanges complete
@@ -161,6 +162,8 @@ public class BacklogDebuggerStepIntoSuspendedNodeTest extends ManagementTestSupp
         await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             assertEquals(Set.of(first), debugger.getSuspendedExchangeIds());
             assertEquals(Set.of("bar"), debugger.getSuspendedBreakpointNodeIds());
+            String dump = debugger.dumpTracedMessagesAsXml("bar");
+            assertTrue(dump != null && dump.contains(first) && dump.contains("First"), dump);
         });
 
         debugger.resumeBreakpoint("bar");
