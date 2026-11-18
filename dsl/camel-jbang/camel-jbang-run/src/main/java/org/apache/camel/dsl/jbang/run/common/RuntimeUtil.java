@@ -27,7 +27,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import org.apache.camel.util.IOHelper;
@@ -143,8 +142,12 @@ public final class RuntimeUtil {
             }
             content = content + System.lineSeparator() + sj;
 
-            name = CamelHome.getWorkDir().resolve("log4j2.properties").toString();
-            Files.writeString(Paths.get(name), content);
+            Path logFile = CamelHome.getWorkDir().resolve("log4j2.properties");
+            if (logFile.getParent() != null) {
+                Files.createDirectories(logFile.getParent());
+            }
+            Files.writeString(logFile, content);
+            name = logFile.toString();
             // the categories are part of what the command asks for
             location = Path.of(name).toAbsolutePath().toUri() + "#" + content.hashCode();
         } else if (export) {
