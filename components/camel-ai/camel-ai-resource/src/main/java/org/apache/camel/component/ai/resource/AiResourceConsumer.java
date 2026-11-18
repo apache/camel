@@ -19,6 +19,7 @@ package org.apache.camel.component.ai.resource;
 import java.util.Arrays;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
@@ -27,10 +28,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Consumer that registers a Camel route as an AI resource in the {@link AiResourceRegistry} on start and deregisters on
  * stop.
+ * <p>
+ * It is {@link Suspendable}, so a route stop or graceful shutdown suspends it first, which deregisters the resource or
+ * resource template, and stops it once the resource reads in flight have completed or the shutdown timeout has elapsed.
+ * Suspending the route deregisters the resource or resource template without stopping the route, and resuming it
+ * registers the same spec again. A suspended resource refuses new reads.
  *
  * @since 4.23
  */
-public class AiResourceConsumer extends DefaultConsumer {
+public class AiResourceConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AiResourceConsumer.class);
 
