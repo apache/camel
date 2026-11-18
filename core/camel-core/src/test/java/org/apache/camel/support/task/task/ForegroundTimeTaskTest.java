@@ -103,13 +103,14 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateMaxDuration() {
-        // It should run 5 times in 800 milliseconds because there is no initial delay
+        // the budget stays at 5 seconds (1 second interval): it relies on the elapsed time, so a shorter budget
+        // leaves too little slack for the fifth iteration when many tests run in parallel
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(1000))
+                        .withMaxDuration(Duration.ofSeconds(5))
                         .withMaxIterations(50)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofMillis(200))
+                        .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 

@@ -23,10 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
 
-@ResourceLock(Resources.SYSTEM_PROPERTIES)
 @Isolated("Writes system properties: as a lock writer among the concurrent tests, it would hold back every test reading them until the longest one ends")
 public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSupport {
     @Override

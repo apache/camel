@@ -25,8 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.parallel.Isolated;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +54,6 @@ class CreateContextValueTest {
     }
 
     @EnabledForJreRange(min = JRE.JAVA_25)
-    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     @Test
     void getCreateRouteDoesNotThrowWithVirtualThreadsEnabled() throws Exception {
         enableVirtualThreads();
