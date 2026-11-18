@@ -10074,6 +10074,9 @@ Other changes to the messaging Kamelets:
   against the trust store of Java, and that it names the host in `host`. A broker whose certificate Java does not
   trust, or that is for another name, no longer connects. Add its CA to the trust store of Java, or give it with the new
   `sslTruststoreLocation` and `sslTruststorePassword` options. `protocol: amqp`, the default, is unchanged.
+* `pulsar-sink` also takes the message key from a plain `key` header, which `pulsar-source` sets, so a key carries
+  over from one Kamelet to the other. When both are set, the `CamelPulsarProducerMessageKey` header wins. Messages that
+  had a `key` header for another purpose now use it as the Pulsar key.
 
 === Kamelets - other changes in behaviour
 
@@ -10089,6 +10092,10 @@ Other changes to the messaging Kamelets:
 * The GitHub source Kamelets poll every 60 seconds instead of every 500 milliseconds. Set `delay` to poll more often.
 * The Jira sink Kamelets give an issue the description of the `ce-issueDescription` header when the body is empty.
 * `rest-openapi-sink` with `clientRequestValidation=true` rejects an invalid request instead of sending it.
+* In `mail-sink`, a `ce-to` or `ce-cc` header replaces only its own option. Before, either of them dropped all the
+  recipient options, including bcc.
+* `aws-translate-action` no longer requires `sourceLanguage`. With neither it nor `autodetectSourceLanguage`, the
+  Kamelet starts, and each message fails.
 * `scp-sink` takes a path or a `classpath:` resource in `knownHostsUri`. A `file://` or `http(s)://` value, which
   never worked, is rejected.
 * `header-matches-filter-action` requires `headerName`, `jira-source` requires `jql`, `salesforce-create-sink`
