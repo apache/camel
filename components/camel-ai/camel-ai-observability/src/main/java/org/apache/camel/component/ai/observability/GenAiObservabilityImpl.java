@@ -19,8 +19,6 @@ package org.apache.camel.component.ai.observability;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
@@ -51,16 +49,18 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
     private static final String OBSERVATION_REGISTRY_CLASS = "io.micrometer.observation.ObservationRegistry";
     private static final GenAiMetricsBackend NO_METRICS_BACKEND = new NoMetricsBackend();
     private static final GenAiMicrometerObservationBackend NO_OBSERVATION_BACKEND = new NoObservationBackend();
-    private static final ConcurrentMap<CamelContext, GenAiMetricsBackend> METRICS_BACKENDS = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<CamelContext, GenAiMicrometerObservationBackend> OBSERVATION_BACKENDS
-            = new ConcurrentHashMap<>();
+
+    // one instance per CamelContext (GenAiObservability keeps it as a context plugin), so the backends found in its
+    // registry are resolved once and go away with it
+    private volatile Backends backends;
 
     @Override
     public GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
         CamelContext camelContext = exchange.getContext();
-        GenAiMicrometerObservationBackend observationBackend = resolveObservationBackend(camelContext);
+        Backends resolved = backends(camelContext);
+        GenAiMicrometerObservationBackend observationBackend = resolved.observation();
         Tracer tracer = camelContext.hasService(Tracer.class);
-        GenAiMetricsBackend metricsBackend = resolveMetricsBackend(camelContext);
+        GenAiMetricsBackend metricsBackend = resolved.metrics();
         if (!observationBackend.isAvailable() && tracer == null && !metricsBackend.isAvailable()) {
             return NOOP;
         }
@@ -80,8 +80,18 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
         return false;
     }
 
-    private static GenAiMetricsBackend resolveMetricsBackend(CamelContext camelContext) {
-        return METRICS_BACKENDS.computeIfAbsent(camelContext, GenAiObservabilityImpl::createMetricsBackend);
+    private Backends backends(CamelContext camelContext) {
+        Backends answer = backends;
+        if (answer == null) {
+            synchronized (this) {
+                answer = backends;
+                if (answer == null) {
+                    answer = new Backends(createMetricsBackend(camelContext), createObservationBackend(camelContext));
+                    backends = answer;
+                }
+            }
+        }
+        return answer;
     }
 
     private static GenAiMetricsBackend createMetricsBackend(CamelContext camelContext) {
@@ -101,10 +111,6 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
         }
     }
 
-    private static GenAiMicrometerObservationBackend resolveObservationBackend(CamelContext camelContext) {
-        return OBSERVATION_BACKENDS.computeIfAbsent(camelContext, GenAiObservabilityImpl::createObservationBackend);
-    }
-
     private static GenAiMicrometerObservationBackend createObservationBackend(CamelContext camelContext) {
         try {
             // Micrometer Observation is optional: GenAiMicrometerObservationSupport only loads once the presence
@@ -121,6 +127,9 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
             LOG.warn("Unable to create the Micrometer Observation backend for GenAI observability; it is disabled", e);
             return NO_OBSERVATION_BACKEND;
         }
+    }
+
+    private record Backends(GenAiMetricsBackend metrics, GenAiMicrometerObservationBackend observation) {
     }
 
     private static final class DefaultGenAiObservation implements GenAiObservation {
