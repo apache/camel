@@ -99,6 +99,7 @@ public class JaxbDataFormat extends ServiceSupport
     // partial support
     private QName partNamespace;
     private Class<?> partClass;
+    private boolean allowPartClassFromHeader;
     private Map<String, String> namespacePrefix;
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
@@ -189,8 +190,12 @@ public class JaxbDataFormat extends ServiceSupport
 
         Object element = graph;
         QName partNamespaceOnDataFormat = getPartNamespace();
-        String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
-        String partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
+        String partClassFromHeader = null;
+        String partNamespaceFromHeader = null;
+        if (allowPartClassFromHeader) {
+            partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
+            partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
+        }
         if ((partClass != null || partClassFromHeader != null)
                 && (partNamespaceOnDataFormat != null || partNamespaceFromHeader != null)) {
             element = toElement(graph, partClassFromHeader, partNamespaceFromHeader, partNamespaceOnDataFormat);
@@ -290,9 +295,11 @@ public class JaxbDataFormat extends ServiceSupport
     private Object toElement(
             Object graph, String partClassFromHeader, String partNamespaceFromHeader, QName partNamespaceOnDataFormat)
             throws JAXBException {
+        Class<?> effectivePartClass = partClass;
         if (partClassFromHeader != null) {
             try {
-                partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                effectivePartClass
+                        = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
             } catch (ClassNotFoundException e) {
                 throw new JAXBException(e);
             }
@@ -300,7 +307,7 @@ public class JaxbDataFormat extends ServiceSupport
         if (partNamespaceFromHeader != null) {
             partNamespaceOnDataFormat = QName.valueOf(partNamespaceFromHeader);
         }
-        return new JAXBElement<>(partNamespaceOnDataFormat, (Class<Object>) partClass, graph);
+        return new JAXBElement<>(partNamespaceOnDataFormat, (Class<Object>) effectivePartClass, graph);
     }
 
     private boolean asXmlStreamWriter(Exchange exchange) {
@@ -329,17 +336,19 @@ public class JaxbDataFormat extends ServiceSupport
                     xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, is);
                 }
             }
-            String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
-            if (partClass != null || partClassFromHeader != null) {
-                // partial unmarshalling
-                if (partClassFromHeader != null) {
-                    try {
-                        partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
-                    } catch (ClassNotFoundException e) {
-                        throw new JAXBException(e);
-                    }
+            String partClassFromHeader = allowPartClassFromHeader
+                    ? exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class) : null;
+            Class<?> effectivePartClass = partClass;
+            if (partClassFromHeader != null) {
+                try {
+                    effectivePartClass
+                            = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                } catch (ClassNotFoundException e) {
+                    throw new JAXBException(e);
                 }
-                answer = createUnmarshaller().unmarshal(xmlReader, partClass);
+            }
+            if (effectivePartClass != null) {
+                answer = createUnmarshaller().unmarshal(xmlReader, effectivePartClass);
             } else {
                 answer = createUnmarshaller().unmarshal(xmlReader);
             }
@@ -490,6 +499,18 @@ public class JaxbDataFormat extends ServiceSupport
 
     public void setPartClass(Class<?> partClass) {
         this.partClass = partClass;
+    }
+
+    public boolean isAllowPartClassFromHeader() {
+        return allowPartClassFromHeader;
+    }
+
+    /**
+     * Whether the {@link JaxbConstants#JAXB_PART_CLASS} and {@link JaxbConstants#JAXB_PART_NAMESPACE} headers are used,
+     * when set, instead of the partClass and partNamespace options when marshalling and unmarshalling.
+     */
+    public void setAllowPartClassFromHeader(boolean allowPartClassFromHeader) {
+        this.allowPartClassFromHeader = allowPartClassFromHeader;
     }
 
     public Map<String, String> getNamespacePrefix() {

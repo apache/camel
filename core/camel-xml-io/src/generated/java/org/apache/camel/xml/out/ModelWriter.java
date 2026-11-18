@@ -2739,6 +2739,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("noNamespaceSchemaLocation", def.getNoNamespaceSchemaLocation(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
         doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
+        doWriteAttribute("allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), null);
         doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), null);
