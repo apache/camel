@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 /**
  * Creates GenAI observations. {@code camel-ai-observability} provides the implementation, discovered through the Camel
  * {@code FactoryFinder} under {@link #FACTORY}, or bound in the registry.
+ *
+ * @since 4.24
  */
 public interface GenAiObservationFactory {
 
