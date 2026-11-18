@@ -258,7 +258,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String changeStreamToken;
     @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint. When set, the endpoint creates"
                             + " its client from it, instead of using the client of the component or the connectionBean.",
-              label = "common")
+              label = "common", security = "secret")
     private String connectionUriString;
 
     // tailable cursor consumer by default
