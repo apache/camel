@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -135,6 +136,27 @@ class RouteDiagramToolsTest {
         assertThat(result.message()).doesNotContain("saved to");
         // CAMEL-26932: a temporary file was left for each call
         assertThat(tempDiagrams()).isEqualTo(before);
+    }
+
+    @Test
+    void renderRouteDoesNotWipeSharedWorkDir(@TempDir Path dir) throws Exception {
+        // CAMEL-27156: transient run should not wipe the shared .camel-jbang directory
+        Path workDir = CommandLineHelper.getWorkDir();
+        Files.createDirectories(workDir);
+        Path marker = workDir.resolve("marker-" + ProcessHandle.current().pid() + ".tmp");
+        Files.writeString(marker, "marker");
+        try {
+            Path source = route(dir, "marker-route");
+            RouteDiagramTools tools = new RouteDiagramTools();
+            RouteDiagramTools.RouteDiagramResult result = tools.camel_render_route_diagram(
+                    source.toString(), null, "ascii", null, null, null, null, null, null);
+
+            assertThat(result.success()).as(result.message()).isTrue();
+            assertThat(result.asciiDiagram()).contains("marker-route");
+            assertThat(Files.exists(marker)).as("Shared work directory marker must not be wiped by transient run").isTrue();
+        } finally {
+            Files.deleteIfExists(marker);
+        }
     }
 
     @Test

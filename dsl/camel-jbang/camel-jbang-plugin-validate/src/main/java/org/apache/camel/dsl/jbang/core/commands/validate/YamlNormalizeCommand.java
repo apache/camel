@@ -169,6 +169,7 @@ public class YamlNormalizeCommand extends CamelCommand {
                 });
             }
         };
+        run.setWorkDir(workDir);
         run.mavenResolver = mavenResolver;
         run.files = matched;
         run.executionLimitOptions.maxSeconds = 1;
