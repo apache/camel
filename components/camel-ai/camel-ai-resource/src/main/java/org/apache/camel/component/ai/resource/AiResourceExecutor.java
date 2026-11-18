@@ -61,6 +61,14 @@ public final class AiResourceExecutor {
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
+        // A suspended resource (suspended route, graceful shutdown) refuses new reads, as request/reply consumers do
+        // while suspended; a caller may still hold its spec from before the suspend. Reads in flight are past this point.
+        if (consumer.isSuspendingOrSuspended()) {
+            IllegalStateException cause = new IllegalStateException(
+                    String.format("Resource '%s' is suspended", resourceName));
+            return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
+        }
+
         Processor routeProcessor = consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
