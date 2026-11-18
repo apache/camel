@@ -12,8 +12,20 @@
 The `camel-ai-observability` module provides GenAI observability for Camel AI components following the
 OpenTelemetry semantic conventions for GenAI (stable subset aligned with Spring AI).
 
-AI producers depend on the lightweight `camel-ai-observability-api` module. Add `camel-ai-observability` to your
-application classpath together with a tracing or metrics backend to enable span and metric emission.
+AI producers depend on the lightweight `camel-ai-observability-api` module, which records nothing by itself. GenAI
+observability is opt-in: add `camel-ai-observability` to the application, together with a tracing or metrics backend
+such as `camel-opentelemetry2` or `camel-micrometer`, to enable span and metric emission. It is not part of
+`camel-observability-services`, so add it also when the application uses that module.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-observability</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 When `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath, langchain4j, OpenAI, and Spring AI chat
 producers emit child spans and metrics per LLM call with attributes such as `gen_ai.operation.name`, `gen_ai.system`,
