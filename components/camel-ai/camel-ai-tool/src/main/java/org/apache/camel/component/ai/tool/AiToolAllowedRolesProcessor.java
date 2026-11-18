@@ -20,10 +20,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Enforces the {@code allowedRoles} option of an {@code ai-tool} endpoint before the wrapped processor runs: the call
@@ -42,10 +44,11 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
  * message and fires {@link AiToolAuthorizationDeniedEvent}. The message names the tool, the roles it asks for and the
  * caller, and goes to the log only.
  * <p>
- * It extends {@link DelegateAsyncProcessor} (as the {@link org.apache.camel.spi.Policy} SPI advises), so the processor
- * it guards is started and stopped with it and keeps running on the asynchronous routing engine.
+ * It has no lifecycle on the processor it guards: it neither starts nor stops it, as that processor belongs to the
+ * route (or is the one {@code authorizationPolicy} wrapped, which {@link AiToolConsumer} starts and stops). A call that
+ * passes continues on the asynchronous routing engine.
  */
-final class AiToolAllowedRolesProcessor extends DelegateAsyncProcessor {
+final class AiToolAllowedRolesProcessor extends AsyncProcessorSupport {
 
     /**
      * What {@link CamelAuthorizationException#getPolicyId()} returns for a call this check refused: the name of the
@@ -53,12 +56,13 @@ final class AiToolAllowedRolesProcessor extends DelegateAsyncProcessor {
      */
     static final String POLICY_ID = "allowedRoles";
 
+    private final AsyncProcessor processor;
     private final String toolName;
     private final List<String> allowedRoles;
     private final boolean allRolesRequired;
 
     AiToolAllowedRolesProcessor(Processor processor, String toolName, List<String> allowedRoles, boolean allRolesRequired) {
-        super(processor);
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.toolName = toolName;
         this.allowedRoles = allowedRoles;
         this.allRolesRequired = allRolesRequired;
@@ -73,7 +77,7 @@ final class AiToolAllowedRolesProcessor extends DelegateAsyncProcessor {
             callback.done(true);
             return true;
         }
-        return super.process(exchange, callback);
+        return processor.process(exchange, callback);
     }
 
     private boolean isAllowed(Collection<?> callerRoles) {

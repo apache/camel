@@ -504,18 +504,18 @@ Which runtimes carry the caller identity:
 * Over the xref:others:mcp-server.adoc[MCP server] the authenticated transport caller is carried onto the tool
   exchange as the `CamelMcpSecurityPrincipal` property (the raw transport principal — for the Vert.x streamable HTTP
   server, an `io.vertx.ext.auth.User`). Alongside it the server stamps a runtime-neutral view derived from that
-  principal — `CamelMcpSecurityPrincipalName` (a `String`) and `CamelMcpSecurityPrincipalRoles` (a
+  principal — `CamelAiToolSecurityPrincipalName` (a `String`) and `CamelAiToolSecurityPrincipalRoles` (a
   `Collection<String>`) — so a tool route or a policy can authorize on a stable name and roles without knowing the
   runtime type. Only the Vert.x streamable HTTP server (Camel Main / JBang) populates these today. There the name is
   the user subject (or the `username`/`sub` claim), and the roles come from the first of the authenticated token's
   `roles`, Keycloak `realm_access.roles`, or `groups` claim that is an array (JWT/OIDC); a basic-auth caller
-  (camel-main property-file auth) carries no roles in its principal, so `CamelMcpSecurityPrincipalRoles` is not set
+  (camel-main property-file auth) carries no roles in its principal, so `CamelAiToolSecurityPrincipalRoles` is not set
   for it. Each property is set only when the server could determine it, so treat a missing name or roles as
-  unauthorized. The `allowedRoles` option checks `CamelMcpSecurityPrincipalRoles` (see <<Authorizing by role>>
+  unauthorized. The `allowedRoles` option checks `CamelAiToolSecurityPrincipalRoles` (see <<Authorizing by role>>
   below), so authorizing an MCP caller by role needs no code. Camel's shipped identity/token policies (Keycloak,
   Spring Security, Shiro) do not consume these properties automatically yet, so any other rule over MCP, for example
   on the caller's name or on a claim, still needs a policy (or route guard) that inspects
-  `CamelMcpSecurityPrincipalName`/`CamelMcpSecurityPrincipalRoles` or the raw `CamelMcpSecurityPrincipal`.
+  `CamelAiToolSecurityPrincipalName`/`CamelAiToolSecurityPrincipalRoles` or the raw `CamelMcpSecurityPrincipal`.
 
 === Authorizing by role
 
@@ -554,7 +554,7 @@ YAML::
 ----
 ====
 
-The caller's roles are read only from the exchange property `CamelMcpSecurityPrincipalRoles` (a
+The caller's roles are read only from the exchange property `CamelAiToolSecurityPrincipalRoles` (a
 `Collection<String>`). A role named in a message header or in a tool argument never counts: on a tool route the
 headers carry the tool arguments, which the model controls. A call without that property is refused.
 
@@ -571,13 +571,13 @@ headers carry the tool arguments, which the model controls. A call without that 
 ----
 from("platform-http:/assistant")
     // the roles of the caller this route has authenticated: here a bean reads them from the validated token
-    .setProperty("CamelMcpSecurityPrincipalRoles", method("callerIdentity", "roles"))
+    .setProperty("CamelAiToolSecurityPrincipalRoles", method("callerIdentity", "roles"))
     .to("langchain4j-agent:assistant?agentConfiguration=#myConfig&tags=erp");
 ----
 
 When a call is refused, the model gets the same short refusal as for a denial by an `authorizationPolicy`, and the
 denial is logged and published as described in <<Observing denials>> below. The log entry names the tool, the roles
-it asks for and, when the `CamelMcpSecurityPrincipalName` property is set, the caller. The model is told none of
+it asks for and, when the `CamelAiToolSecurityPrincipalName` property is set, the caller. The model is told none of
 this.
 
 `allowedRoles` and `authorizationPolicy` can be set on the same tool, and then both must pass. The roles are checked

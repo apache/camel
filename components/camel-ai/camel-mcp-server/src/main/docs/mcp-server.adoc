@@ -495,7 +495,7 @@ For an authenticated tool call, the bridge exposes the following exchange proper
 
 * `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes`, and `CamelMcpOAuthClaims` contain the subject,
   scopes, and claims from the validated token.
-* `CamelMcpSecurityPrincipalName` and `CamelMcpSecurityPrincipalRoles` expose the runtime-neutral
+* `CamelAiToolSecurityPrincipalName` and `CamelAiToolSecurityPrincipalRoles` expose the runtime-neutral
   caller name and roles when available. The roles are the first of the `roles`,
   `realm_access.roles` and `groups` claims that is an array: the claims are not merged, and
   client roles (`resource_access`) are not read. With Keycloak, realm roles work as issued, and a

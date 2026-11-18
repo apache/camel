@@ -174,8 +174,8 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        // Use the authorization-guarded processor when the consumer applied an AuthorizationPolicy, so the guard runs
-        // before the route body; falls back to the plain route processor otherwise.
+        // Use the authorization-guarded processor when the consumer applied allowedRoles or an AuthorizationPolicy, so
+        // the guard runs before the route body; falls back to the plain route processor otherwise.
         Processor routeProcessor = consumer instanceof AiToolConsumer atc ? atc.getToolProcessor() : consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
@@ -287,7 +287,7 @@ public final class AiToolExecutor {
         if (denial == null) {
             return null;
         }
-        LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        LOG.warn("Tool '{}' call denied by the authorization check: {}", toolName, denial.getMessage());
         fireAuthorizationDeniedEvent(exchange, toolName, denial);
         return new AiToolResult.AuthorizationDenied(
                 String.format("Access denied: not authorized to call tool '%s'", toolName), denial);

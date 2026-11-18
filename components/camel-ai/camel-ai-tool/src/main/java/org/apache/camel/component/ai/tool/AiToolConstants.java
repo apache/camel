@@ -32,7 +32,7 @@ public final class AiToolConstants {
      *
      * @since 4.24
      */
-    public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelMcpSecurityPrincipalRoles";
+    public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelAiToolSecurityPrincipalRoles";
 
     /**
      * Exchange property carrying the caller's name (a {@code String}), set where
@@ -41,7 +41,7 @@ public final class AiToolConstants {
      *
      * @since 4.24
      */
-    public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = "CamelMcpSecurityPrincipalName";
+    public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = "CamelAiToolSecurityPrincipalName";
 
     @Metadata(label = "consumer", description = "The tool invocation identifier supplied by the calling framework. "
                                                 + "Absent when the framework does not supply one.",

@@ -382,7 +382,7 @@ public interface AiToolComponentBuilderFactory {
          * for example finance,controlling. Any one of them is enough unless
          * allRolesRequired is set. The roles are checked before the route runs,
          * against the caller's roles in the exchange property
-         * CamelMcpSecurityPrincipalRoles: a call without that property is
+         * CamelAiToolSecurityPrincipalRoles: a call without that property is
          * refused. A value that is set but names no role refuses every call.
          * Set it on the component as the default of every tool route, or per
          * endpoint to replace it.

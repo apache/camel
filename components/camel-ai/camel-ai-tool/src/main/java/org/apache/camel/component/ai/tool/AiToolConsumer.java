@@ -43,6 +43,8 @@ public class AiToolConsumer extends DefaultConsumer {
     private String[] registeredTags;
     private boolean registeredInDefaultPool;
     private volatile Processor toolProcessor;
+    // the processor authorizationPolicy.wrap returned, which this consumer starts and stops; null without a policy
+    private Processor policyProcessor;
 
     public AiToolConsumer(AiToolEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -68,11 +70,12 @@ public class AiToolConsumer extends DefaultConsumer {
      * that the tool refuses its calls.
      * <p>
      * The policy is applied via {@code beforeWrap} then {@code wrap} (as the {@code .policy()} DSL does through
-     * {@code PolicyReifier}); the wrapped processor is started and stopped with this consumer. Because
-     * {@code getProcessor()} is the route's <em>outer</em> processor, the guard runs in front of the route (before its
-     * unit of work, tracing and error handling): a denied call is logged and returned to the model as
-     * {@link AiToolResult.AuthorizationDenied}, but it does not produce a route span or metric. There is no
-     * {@code ProcessorDefinition} here (the component owns the guard, not the DSL), so {@code beforeWrap} gets a
+     * {@code PolicyReifier}); the wrapped processor is started and stopped with this consumer. The roles check has no
+     * lifecycle on the processor it guards, so with {@code allowedRoles} alone this consumer starts and stops nothing
+     * more than without it. Because {@code getProcessor()} is the route's <em>outer</em> processor, the guard runs in
+     * front of the route (before its unit of work, tracing and error handling): a denied call is logged and returned to
+     * the model as {@link AiToolResult.AuthorizationDenied}, but it does not produce a route span or metric. There is
+     * no {@code ProcessorDefinition} here (the component owns the guard, not the DSL), so {@code beforeWrap} gets a
      * {@code null} definition, which Camel's {@link AuthorizationPolicy} implementations ignore (they use only the
      * route). Called from {@link #prepare()} before the tool is registered, so the tool is never discoverable
      * unguarded; idempotent (a guard already applied is not wrapped twice).
@@ -94,6 +97,8 @@ public class AiToolConsumer extends DefaultConsumer {
         if (policy != null) {
             policy.beforeWrap(getRoute(), null);
             guarded = policy.wrap(getRoute(), guarded);
+            ServiceHelper.startService(guarded);
+            policyProcessor = guarded;
             LOG.debug("Tool '{}' is guarded by authorization policy {}", toolName, policy.getClass().getName());
         }
         if (allowedRoles != null) {
@@ -106,7 +111,6 @@ public class AiToolConsumer extends DefaultConsumer {
             }
             guarded = new AiToolAllowedRolesProcessor(guarded, toolName, roles, configuration.isAllRolesRequired());
         }
-        ServiceHelper.startService(guarded);
         toolProcessor = guarded;
     }
 
@@ -122,10 +126,10 @@ public class AiToolConsumer extends DefaultConsumer {
             return guarded;
         }
         if (configuration.getAuthorizationPolicy() != null || configuration.getAllowedRoles() != null) {
-            // fail closed: never fall back to the unguarded route processor while a policy is configured
+            // fail closed: never fall back to the unguarded route processor while a guard is configured
             return exchange -> {
                 throw new CamelAuthorizationException(
-                        "Authorization policy for tool '" + toolName + "' is not ready", exchange);
+                        "Authorization for tool '" + toolName + "' is not ready", exchange);
             };
         }
         return getProcessor();
@@ -150,10 +154,11 @@ public class AiToolConsumer extends DefaultConsumer {
         if (registeredSpec != null && !isStarted()) {
             deregister();
             registeredSpec = null;
-            // prepare() may have wrapped and started the guard during early registration; stop it so an undone early
+            // prepare() may have wrapped and started the policy during early registration; stop it so an undone early
             // registration does not leave a started processor behind (matches doStop)
             if (toolProcessor != null) {
-                ServiceHelper.stopService(toolProcessor);
+                ServiceHelper.stopService(policyProcessor);
+                policyProcessor = null;
                 toolProcessor = null;
             }
         }
@@ -239,7 +244,8 @@ public class AiToolConsumer extends DefaultConsumer {
             registeredInDefaultPool = false;
         }
         if (toolProcessor != null) {
-            ServiceHelper.stopService(toolProcessor);
+            ServiceHelper.stopService(policyProcessor);
+            policyProcessor = null;
             toolProcessor = null;
         }
         super.doStop();

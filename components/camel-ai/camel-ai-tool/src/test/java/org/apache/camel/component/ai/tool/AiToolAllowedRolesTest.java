@@ -33,6 +33,8 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The {@code allowedRoles} option of an {@code ai-tool} route: the caller needs one of the named roles, or all of them
- * with {@code allRolesRequired}. The caller's roles are read only from the {@code CamelMcpSecurityPrincipalRoles}
+ * with {@code allRolesRequired}. The caller's roles are read only from the {@code CamelAiToolSecurityPrincipalRoles}
  * exchange property, and a refusal takes the path of an {@code authorizationPolicy} denial: a short refusal to the
  * model, and an {@link AiToolAuthorizationDeniedEvent}.
  */
@@ -371,6 +373,60 @@ class AiToolAllowedRolesTest extends CamelTestSupport {
                 .isInstanceOf(AiToolResult.AuthorizationDenied.class);
         assertThat(AiToolExecutor.execute(findSpec("namesNoRole"), Map.of(), new DefaultExchange(context)))
                 .isInstanceOf(AiToolResult.AuthorizationDenied.class);
+    }
+
+    @Test
+    void theRolesCheckDoesNotStopTheProcessorItGuards() {
+        // the processor it guards belongs to the route, which starts and stops it
+        LifecycleProcessor routeProcessor = new LifecycleProcessor();
+        routeProcessor.start();
+        AiToolAllowedRolesProcessor check
+                = new AiToolAllowedRolesProcessor(routeProcessor, "orderCosts", List.of("finance"), false);
+
+        ServiceHelper.startService(check);
+        ServiceHelper.stopService(check);
+
+        assertThat(routeProcessor.isStarted()).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "&allowedRoles=finance" })
+    void theConsumerStartsAndStopsTheProcessorThePolicyWrapped(String allowedRoles) throws Exception {
+        // with allowedRoles the roles check wraps the policy's processor, and does not start or stop it itself
+        LifecycleProcessor policyProcessor = new LifecycleProcessor();
+        context.getRegistry().bind("lifecyclePolicy", new AuthorizationPolicy() {
+            @Override
+            public void beforeWrap(Route route, NamedNode definition) {
+                // nothing to prepare
+            }
+
+            @Override
+            public Processor wrap(Route route, Processor processor) {
+                return policyProcessor;
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:lifecycle?tags=test&description=A policy with a lifecycle"
+                     + "&authorizationPolicy=#lifecyclePolicy" + allowedRoles)
+                        .routeId("lifecycle")
+                        .setBody(constant("ok"));
+            }
+        });
+        assertThat(policyProcessor.isStarted()).isTrue();
+
+        context.getRouteController().stopRoute("lifecycle");
+
+        assertThat(policyProcessor.isStarted()).isFalse();
+        assertThat(policyProcessor.isStopped()).isTrue();
+    }
+
+    /** A processor whose lifecycle the test reads. */
+    static final class LifecycleProcessor extends ServiceSupport implements Processor {
+        @Override
+        public void process(Exchange exchange) {
+            // the tests only start and stop it
+        }
     }
 
     private Exchange callerWithRoles(String... roles) {
