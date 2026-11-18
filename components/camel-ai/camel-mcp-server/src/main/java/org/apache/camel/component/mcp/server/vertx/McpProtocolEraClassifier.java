@@ -52,11 +52,6 @@ final class McpProtocolEraClassifier {
      */
     static final int HEADER_MISMATCH = -32020;
 
-    /**
-     * The JSON-RPC error of a request of a protocol version the server does not serve (MCP 2026-07-28).
-     */
-    static final int UNSUPPORTED_PROTOCOL_VERSION = -32022;
-
     private McpProtocolEraClassifier() {
     }
 

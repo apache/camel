@@ -573,7 +573,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         if (verdict.era() == McpProtocolEraClassifier.Era.MODERN) {
             if (modernTransport == null) {
                 // the legacy era without sessions: never serve a 2026-07-28 request as a legacy one
-                respondUnsupportedVersion(connection, ctx, tree);
+                respondVersionNotServed(connection, ctx, tree);
                 return;
             }
             if (respondBadRequest(connection, ctx, badRequestErrors)) {
@@ -622,42 +622,22 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     /**
      * Answers a request of a protocol version this endpoint does not serve (2026-07-28 or an unknown one, on an
-     * endpoint that serves only the legacy versions without sessions) with HTTP 400 and an UnsupportedProtocolVersion
-     * error naming the versions it supports, so a client that also speaks a legacy version falls back to
-     * {@code initialize}.
+     * endpoint that serves only the legacy versions without sessions) with HTTP 400 and an Invalid Request error naming
+     * the versions it serves, as the legacy era with sessions answers such a request. It is deliberately not the
+     * UnsupportedProtocolVersion error of 2026-07-28: that error identifies a server of 2026-07-28, so a client would
+     * not fall back to {@code initialize}.
      */
-    private void respondUnsupportedVersion(Context connection, RoutingContext ctx, Object tree) {
-        Object id = tree instanceof Map<?, ?> message ? message.get("id") : null;
+    private void respondVersionNotServed(Context connection, RoutingContext ctx, Object tree) {
         String requested = ctx.request().getHeader(PROTOCOL_VERSION);
         if (tree instanceof Map<?, ?> message && message.get("params") instanceof Map<?, ?> params
                 && params.get("_meta") instanceof Map<?, ?> meta
                 && meta.get(McpProtocolEraClassifier.PROTOCOL_VERSION_META_KEY) instanceof String version) {
             requested = version;
         }
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("supported", McpProtocolEraClassifier.LEGACY_VERSIONS);
-        data.put("requested", requested);
-        Map<String, Object> error = new LinkedHashMap<>();
-        error.put("code", McpProtocolEraClassifier.UNSUPPORTED_PROTOCOL_VERSION);
-        error.put("message", "Unsupported protocol version");
-        error.put("data", data);
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("jsonrpc", McpSchema.JSONRPC_VERSION);
-        if (id != null) {
-            response.put("id", id);
-        }
-        response.put("error", error);
-        String json;
-        try {
-            json = jsonMapper.writeValueAsString(response);
-        } catch (Exception e) {
-            json = errorBody(McpProtocolEraClassifier.UNSUPPORTED_PROTOCOL_VERSION, "Unsupported protocol version");
-        }
-        String answer = json;
-        connection.runOnContext(v -> ctx.response()
-                .setStatusCode(400)
-                .putHeader("Content-Type", APPLICATION_JSON)
-                .end(answer));
+        String served = String.join(", ", statelessTransport.protocolVersions());
+        respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST,
+                "Protocol version " + requested + " is not served: open with initialize, with one of the versions "
+                                                                                 + served);
     }
 
     /**

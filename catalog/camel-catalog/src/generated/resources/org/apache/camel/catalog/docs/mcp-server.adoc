@@ -434,7 +434,13 @@ chooses for each request from the protocol version it carries:
   `MCP-Protocol-Version`, `Mcp-Method` and, for `tools/call`, `resources/read` and
   `prompts/get`, `Mcp-Name` headers; when they disagree with the body, it is
   answered with HTTP 400 and error `-32020`. A gateway in front of several
-  instances may route on these headers.
+  instances may route on these headers, but the server compares them with the
+  body only for protocol version 2026-07-28: the `Mcp-Method` and `Mcp-Name`
+  headers of a request of an older version, or without `MCP-Protocol-Version`,
+  may name another method or tool than its body. A gateway that routes or
+  authorizes on these headers must therefore reject the requests without
+  `MCP-Protocol-Version: 2026-07-28`, or the instances must run with
+  `mcp-protocol-era = modern`.
 
 Which protocol a client uses is up to the client. Many clients still open with
 `initialize`, and some (for example the client of the MCP Python SDK) first try
@@ -496,9 +502,9 @@ camel.server.mcp-stateless = true
 ----
 
 With `mcp-protocol-era = legacy` and `mcp-stateless = true`, a request of
-protocol version 2026-07-28 is answered with HTTP 400 and an `Unsupported
-protocol version` error that lists the supported versions, so a client that also
-speaks an older version falls back to `initialize`.
+protocol version 2026-07-28 is answered with HTTP 400 and an `Invalid Request`
+error (`-32600`) that names the supported versions, as with sessions, so a
+client that also speaks an older version falls back to `initialize`.
 
 Origin, `Host` and OAuth checks apply to every request whatever its protocol
 version. A request without a session, of 2026-07-28 or with `mcp-stateless`, is

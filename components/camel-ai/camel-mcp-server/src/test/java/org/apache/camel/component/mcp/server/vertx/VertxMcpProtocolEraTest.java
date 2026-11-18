@@ -143,13 +143,35 @@ class VertxMcpProtocolEraTest {
         HttpResponse<String> response = post(modernRequest(7, "server/discover", "{}"),
                 modernHeaders("server/discover", null));
 
-        // a client that also speaks a legacy version reads this as a legacy server and falls back to initialize
+        // as the legacy era with sessions: not an error of 2026-07-28, which would identify a server of that version,
+        // so a client that also speaks a legacy version falls back to initialize
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(response.body())
-                .contains("\"id\":7")
-                .contains("\"code\":-32022")
-                .contains("\"supported\":[\"2025-11-25\"")
-                .contains("\"requested\":\"2026-07-28\"");
+                .contains("\"code\":-32600")
+                .contains("Protocol version 2026-07-28 is not served")
+                .contains("2025-03-26, 2025-06-18, 2025-11-25")
+                .doesNotContain("-32022")
+                .doesNotContain("2024-11-05");
+
+        // the transport answers a notification it cannot accept with an HTTP error status, too
+        String notification = modernRequest(0, "notifications/cancelled", "{\"requestId\":1}")
+                .replace("\"id\":0,", "");
+        HttpResponse<String> rejected = post(notification, modernHeaders("notifications/cancelled", null));
+        assertThat(rejected.statusCode()).isEqualTo(400);
+        assertThat(rejected.body()).contains("\"code\":-32600").doesNotContain("\"id\"");
+        assertThat(engine.sessionCount()).isZero();
+    }
+
+    @Test
+    void dualAcceptsANotificationOfTheModernVersion() throws Exception {
+        start(McpProtocolEra.DUAL);
+
+        String notification = modernRequest(0, "notifications/cancelled", "{\"requestId\":1}")
+                .replace("\"id\":0,", "");
+        HttpResponse<String> response = post(notification, modernHeaders("notifications/cancelled", null));
+
+        assertThat(response.statusCode()).isEqualTo(202);
+        assertThat(response.body()).isEmpty();
     }
 
     @Test
