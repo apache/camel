@@ -99,7 +99,9 @@ it does not record its own span and metrics for the calls the framework records,
 * `spring-ai-chat`: the model calls are left to Spring AI, and so are the Camel route tools when the tool calling
 manager of the model traces them (Spring AI gives some models a default manager without a registry).
 * `langchain4j-chat` and `langchain4j-agent`: the model calls are left to the framework. At level `detailed` and above,
-the agent run and the Camel route tools are still recorded by Camel, and the framework's spans nest under the agent run.
+the agent run and the Camel route tools are still recorded by Camel. The framework's spans are children of the span
+that is current when the endpoint is called, which is the route span: they appear next to the agent run, not under it,
+because Camel makes its spans current only while a processor runs.
 * `openai`: the `openai-java` instrumentation of OpenTelemetry (in the OpenTelemetry Java agent) wraps the OpenAI client
 used by `camel-openai` and traces its chat completions and embeddings. When the client is wrapped, those calls are left
 to it, except at level `full`: the instrumentation records the messages as log events, not as span attributes, so Camel

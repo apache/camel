@@ -50,26 +50,4 @@ public interface Span {
 
     void setError(boolean isError);
 
-    /**
-     * Makes this span the current one on the calling thread, so that spans started by libraries during a synchronous
-     * call (an HTTP client, an AI framework) become its children. The returned scope must be closed on the same thread.
-     * The default does nothing.
-     *
-     * @since 4.24
-     */
-    default Scope openScope() {
-        return () -> {
-        };
-    }
-
-    /**
-     * The scope opened by {@link #openScope()}.
-     *
-     * @since 4.24
-     */
-    interface Scope extends AutoCloseable {
-        @Override
-        void close();
-    }
-
 }

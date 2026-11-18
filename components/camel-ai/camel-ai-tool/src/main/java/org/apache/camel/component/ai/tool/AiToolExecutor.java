@@ -133,10 +133,7 @@ public final class AiToolExecutor {
                 .build());
         try {
             observation.recordToolArguments(() -> Jsoner.serialize(arguments != null ? arguments : Map.of()));
-            AiToolResult result;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                result = doExecute(spec, arguments, exchange, toolCallId, conversationId);
-            }
+            AiToolResult result = doExecute(spec, arguments, exchange, toolCallId, conversationId);
             recordResult(observation, result);
             return result;
         } catch (RuntimeException e) {

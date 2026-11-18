@@ -383,9 +383,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .build());
         agentRun.recordInputMessages(() -> OpenAIGenAiMessages.input(params));
         try {
-            try (GenAiObservation.Scope ignored = agentRun.makeCurrent()) {
-                processNonStreamingAgentic(exchange, params, config);
-            }
+            processNonStreamingAgentic(exchange, params, config);
             // the model calls carry the token usage; repeating it on the run would count it twice
             agentRun.recordSuccess(GenAiUsage.of((Long) null, null,
                     exchange.getMessage().getHeader(OpenAIConstants.FINISH_REASON, String.class), null));
@@ -714,10 +712,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         observation.recordInputMessages(() -> OpenAIGenAiMessages.input(params));
         observation.recordToolDefinitions(() -> OpenAIGenAiMessages.toolDefinitions(params));
         try {
-            ChatCompletion response;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                response = getEndpoint().getClient().chat().completions().create(params);
-            }
+            ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
             CompletionUsage usage = response.usage().orElse(null);
             String finishReason = response.choices().isEmpty() ? null : getFinishReasonString(response.choices().get(0));
             observation.recordSuccess(GenAiUsage.of(
