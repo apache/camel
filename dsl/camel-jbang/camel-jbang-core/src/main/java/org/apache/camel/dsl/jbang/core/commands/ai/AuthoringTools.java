@@ -1566,7 +1566,7 @@ public final class AuthoringTools {
      * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
      * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel, a
      * request-reply over JMS whose reply replaces the message that was sent, a to: that appends to a file with nothing
-     * between the messages.
+     * between the messages, an idempotentConsumer that skips duplicates whose steps check CamelDuplicateMessage.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1583,11 +1583,13 @@ public final class AuthoringTools {
             }
         } else if ((name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name)) {
             // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves; a
-            // JMS reply that replaces the message that was sent; a file appended to with nothing between the messages
+            // JMS reply that replaces the message that was sent; a file appended to with nothing between the messages;
+            // a check of CamelDuplicateMessage that a duplicate never reaches
             List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
             notes.addAll(WriteNotes.fileCopyNotes(content));
             notes.addAll(WriteNotes.requestReplyNotes(content));
             notes.addAll(WriteNotes.fileAppendNotes(content));
+            notes.addAll(WriteNotes.duplicateMessageNotes(content));
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1889,6 +1891,7 @@ public final class AuthoringTools {
         boolean copies = false;
         boolean replyReplaces = false;
         boolean appends = false;
+        boolean duplicateNeverSeen = false;
         List<WriteNotes.UnusedProperty> unusedProperties = List.of();
         if (validate && !citrusTest) {
             putFileNotes(result, file, content);
@@ -1899,6 +1902,7 @@ public final class AuthoringTools {
             copies = yaml && !kamelet && !WriteNotes.fileCopyNotes(content).isEmpty();
             replyReplaces = yaml && !kamelet && !WriteNotes.requestReplyNotes(content).isEmpty();
             appends = yaml && !kamelet && !WriteNotes.fileAppendNotes(content).isEmpty();
+            duplicateNeverSeen = yaml && !kamelet && !WriteNotes.duplicateMessageNotes(content).isEmpty();
             // a literal written over a {{key}} that leaves the key of application.properties unused
             unusedProperties = WriteNotes.unusedProperties(dir, file, before, content);
             if (!unusedProperties.isEmpty()) {
@@ -1974,6 +1978,11 @@ public final class AuthoringTools {
             result.put("message", result.getString("message") + " Note: fileExist Append adds the messages to the file"
                                   + " with nothing between them; appendChars on the to: adds a line break after each"
                                   + " (see notes).");
+        }
+        if (duplicateNeverSeen) {
+            result.put("message", result.getString("message") + " Note: an idempotentConsumer skips duplicates, so a"
+                                  + " check of CamelDuplicateMessage in its steps is never true; skipDuplicate: false"
+                                  + " lets a duplicate reach them (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
