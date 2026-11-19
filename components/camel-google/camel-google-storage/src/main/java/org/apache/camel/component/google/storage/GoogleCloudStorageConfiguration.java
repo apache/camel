@@ -58,6 +58,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
     private String storageLocation = "US-EAST1";
 
     @UriParam(label = "common", defaultValue = "STANDARD",
+              enums = "STANDARD,NEARLINE,COLDLINE,ARCHIVE,REGIONAL,MULTI_REGIONAL,DURABLE_REDUCED_AVAILABILITY",
               description = "The Cloud Storage class to use when creating the new buckets")
     private StorageClass storageClass = StorageClass.STANDARD;
 
