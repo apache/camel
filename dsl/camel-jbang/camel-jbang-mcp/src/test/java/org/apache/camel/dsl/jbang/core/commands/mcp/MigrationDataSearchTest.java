@@ -132,7 +132,10 @@ class MigrationDataSearchTest {
 
     @Test
     void snippetShowsTheLinesAroundTheMatch() {
-        List<MigrationData.SearchHit> hits = migrationData.search("camel-mail subject header", null, null, 1);
+        // "constants" is on the MAIL_SUBJECT line, so that line stays the best match when new guide entries change
+        // how common the other terms are: an entry about the "subject alternative name" made "subject" more common
+        // than "camel-mail", and the snippet moved to the line with "camel-mail" and "header"
+        List<MigrationData.SearchHit> hits = migrationData.search("camel-mail subject header constants", null, null, 1);
 
         assertThat(hits).hasSize(1);
         String content = hits.get(0).section().content();

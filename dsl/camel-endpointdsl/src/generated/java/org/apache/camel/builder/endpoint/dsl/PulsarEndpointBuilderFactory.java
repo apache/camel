@@ -801,6 +801,59 @@ public interface PulsarEndpointBuilderFactory {
             doSetProperty("topicsPattern", topicsPattern);
             return this;
         }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the certificates of the certificate
+         * authorities to trust, for a broker on pulsar+ssl:// whose certificate
+         * is not signed by an authority that the JVM trusts. Not used when a
+         * pulsarClient is given.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsTrustCertsFilePath the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder tlsTrustCertsFilePath(String tlsTrustCertsFilePath) {
+            doSetProperty("tlsTrustCertsFilePath", tlsTrustCertsFilePath);
+            return this;
+        }
     }
 
     /**
@@ -1434,6 +1487,59 @@ public interface PulsarEndpointBuilderFactory {
             doSetProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the certificates of the certificate
+         * authorities to trust, for a broker on pulsar+ssl:// whose certificate
+         * is not signed by an authority that the JVM trusts. Not used when a
+         * pulsarClient is given.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsTrustCertsFilePath the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder tlsTrustCertsFilePath(String tlsTrustCertsFilePath) {
+            doSetProperty("tlsTrustCertsFilePath", tlsTrustCertsFilePath);
+            return this;
+        }
     }
 
     /**
@@ -1589,6 +1695,59 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointBuilder serviceUrl(String serviceUrl) {
             doSetProperty("serviceUrl", serviceUrl);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsar+ssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the certificates of the certificate
+         * authorities to trust, for a broker on pulsar+ssl:// whose certificate
+         * is not signed by an authority that the JVM trusts. Not used when a
+         * pulsarClient is given.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsTrustCertsFilePath the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder tlsTrustCertsFilePath(String tlsTrustCertsFilePath) {
+            doSetProperty("tlsTrustCertsFilePath", tlsTrustCertsFilePath);
             return this;
         }
     }

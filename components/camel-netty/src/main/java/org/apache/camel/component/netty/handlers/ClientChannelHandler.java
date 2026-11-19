@@ -76,6 +76,15 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Exchange exchange = null;
 
         NettyCamelState state = getState(ctx, cause);
+        if (state != null && state.isDone()) {
+            // no request on this channel waits for a reply: the channel is idle in the producer pool (the server reset
+            // it, for example), and the exchange of its last request is completed, and may still be routing, so it
+            // must not get this exception
+            LOG.debug("Closing channel: {} as an exception was thrown from Netty while no request was waiting for a reply",
+                    ctx.channel(), cause);
+            NettyHelper.close(ctx.channel());
+            return;
+        }
         if (state != null) {
             state.onExceptionCaught();
             exchange = state.getExchange();
@@ -175,6 +184,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Exchange exchange = state != null ? state.getExchange() : null;
         if (exchange == null) {
             // we just ignore the received message as the channel is closed
+            return;
+        }
+        if (state.isDone()) {
+            // the exchange of the last request on this channel is completed (and may still be routing): a message the
+            // server sends now is not its reply, and must not replace its message
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignoring message received on channel: {} as no request is waiting for a reply", ctx.channel());
+            }
             return;
         }
 

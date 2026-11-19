@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -578,6 +579,34 @@ class ExportDependencyTest extends ExportBaseTestSupport {
         assertThat(model.getDependencies()).extracting(Dependency::getArtifactId)
                 .contains("camel-platform-http-main")
                 .doesNotContain("camel-platform-http", "camel-platform-http-vertx");
+        assertEachArtifactOnce(model);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "camel.main.name=platform-http-demo\n",
+            "camel.main.name=platform-http-demo\ncamel.management.health-check-enabled=true\n" })
+    void shouldAddCamelHealthWhenTheHealthCheckIsOn(String applicationProperties) throws Exception {
+        LOG.info("shouldAddCamelHealthWhenTheHealthCheckIsOn");
+        // platform-http turns on the embedded HTTP server and its health check in the exported application.properties,
+        // and the management server does not start without camel-health, whether the export or the
+        // application.properties turned the health check on
+        Path baseDir = baseDirWithApplicationProperties(applicationProperties);
+
+        Export command = new Export(new CamelJBangMain());
+        command.exportBaseDir = baseDir;
+        CommandLineTestHelper.parse(command,
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--runtime=camel-main",
+                "--dep=camel-platform-http",
+                "src/test/resources/route.yaml");
+        int exit = command.doCall();
+
+        assertThat(exit).isEqualTo(0);
+        Properties props = loadExportedProperties("application.properties");
+        assertThat(exportedProperty(props, "camel.management.health-check-enabled")).isEqualTo("true");
+        Model model = readMavenModel();
+        assertThat(model.getDependencies()).extracting(Dependency::getArtifactId).contains("camel-health");
         assertEachArtifactOnce(model);
     }
 }

@@ -49,6 +49,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": target.getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": target.getConfiguration().setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "jetstreamasync":
         case "jetstreamAsync": target.getConfiguration().setJetstreamAsync(property(camelContext, boolean.class, value)); return true;
         case "jetstreamenabled":
@@ -136,6 +138,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": return int.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "jetstreamasync":
         case "jetstreamAsync": return boolean.class;
         case "jetstreamenabled":
@@ -224,6 +228,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": return target.getConfiguration().getFlushTimeout();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
+        case "hostnameverification":
+        case "hostnameVerification": return target.getConfiguration().isHostnameVerification();
         case "jetstreamasync":
         case "jetstreamAsync": return target.getConfiguration().isJetstreamAsync();
         case "jetstreamenabled":
