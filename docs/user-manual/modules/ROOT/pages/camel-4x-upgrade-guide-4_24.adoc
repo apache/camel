@@ -272,12 +272,22 @@ before the transformer, for example with `setHeader` and a JSONPath expression.
 
 === camel-google-sheets - the OAuth access token is sent only in the Authorization header
 
-The producer and the consumer of `google-sheets` no longer copy the `accessToken` option onto the request as the
+The producer of `google-sheets` no longer copies the `accessToken` option onto the request as the
 `access_token` query parameter of the Google API. The access token is sent in the `Authorization` header by the OAuth
 credential of the client, as before, so the request URL no longer carries it. The other credential options
 (`clientId`, `clientSecret`, `refreshToken`, `serviceAccountKey` and `delegate`) are not set on the request either.
 A `CamelGoogleSheets.accessToken` header is ignored for the same reason; use a separate endpoint with its own
 `accessToken` to call with another token.
+
+=== camel-google-drive, camel-google-mail - the OAuth access token is sent only in the Authorization header
+
+The producers of `google-drive` and `google-mail` no longer copy the `accessToken` option onto the request as the
+`access_token` query parameter of the Google API. The access token is sent in the `Authorization` header by the OAuth
+credential of the client, as before, so the request URL no longer carries it. The other credential options
+(`clientId`, `clientSecret`, `refreshToken`, `serviceAccountKey` and `delegate`) are not set on the request either.
+A `CamelGoogleDrive.accessToken` or `CamelGoogleMail.accessToken` header is ignored for the same reason; use a
+separate endpoint with its own `accessToken` to call with another token. `google-calendar` follows the same rule; its
+requests had no `access_token` parameter.
 
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
