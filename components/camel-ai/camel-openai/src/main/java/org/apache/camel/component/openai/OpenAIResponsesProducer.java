@@ -27,7 +27,6 @@ import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFunctionToolCall;
 import com.openai.models.responses.ResponseInputItem;
-import com.openai.models.responses.ResponseUsage;
 import com.openai.models.responses.Tool;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
