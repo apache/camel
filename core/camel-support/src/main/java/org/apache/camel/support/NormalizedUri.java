@@ -35,9 +35,11 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
 
     // Whether the endpoint uri was computed from the current message at runtime (for example the per-message
     // recipient of toD, enrich, wireTap, pollEnrich, recipientList, routingSlip or dynamicRouter). When true the
-    // query option values are bound as literal text, i.e. without property-placeholder resolution and without
-    // bean/class reference (#class:, #bean:, #type:, ...) resolution, because those segments come from the message
-    // and not from the route. Not part of equals/hashCode: the endpoint registry key stays the uri alone.
+    // query option values are bound more strictly, to stop message content from being turned into routing
+    // configuration: a {{...}} property placeholder, a #class: reference or a #property: reference in such a value is
+    // kept as literal text (no placeholder resolution, no class instantiation, no property lookup), while plain
+    // registry references (#bean:, #type:) are still resolved. Not part of equals/hashCode: the endpoint registry key
+    // stays the uri alone.
     private final boolean literalOptionBinding;
 
     private NormalizedUri(String normalizedValue, String rawUri, boolean literalOptionBinding) {

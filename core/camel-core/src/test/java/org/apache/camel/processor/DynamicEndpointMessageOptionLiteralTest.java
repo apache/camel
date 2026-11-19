@@ -63,6 +63,7 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
         prop.setProperty("secretTarget", "resolved");
         context.getPropertiesComponent().setInitialProperties(prop);
         context.addComponent("sink", new SinkComponent());
+        context.addComponent("selfsink", new SelfBindingSinkComponent());
         context.getRegistry().bind("marker", new Marker());
         return context;
     }
@@ -95,13 +96,51 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
     }
 
     @Test
-    void toDOptionBeanReferenceTokenStaysLiteral() throws Exception {
+    void toDOptionBeanReferenceStillResolves() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:c?option=" + MARKER_BEAN);
 
         assertMockEndpointsSatisfied();
-        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_BEAN);
+        // a #bean: / #type: reference is a plain registry lookup of an already-registered bean, so it is still
+        // resolved: this keeps references a route author wrote in a dynamic uri (such as dataSource=#ds) working.
+        // Only property placeholders, #class: and #property: are kept literal.
+        assertThat(SinkEndpoint.lastOption).isSameAs(context.getRegistry().lookupByName("marker"));
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionPropertyReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:p?option=#property:secretTarget");
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("#property:secretTarget");
+    }
+
+    @Test
+    void toDSelfBindingComponentClassReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        // selfsink binds its options inside its own createEndpoint, like log/aws2-s3/sql/jms and ~329 other
+        // components; literal binding must be enforced there too (CAMEL-27160), so a #class: option value from the
+        // message is not instantiated
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:a?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDSelfBindingComponentPlaceholderStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:b?option={{secretTarget}}");
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("{{secretTarget}}");
     }
 
     @Test
@@ -199,11 +238,26 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
         }
     }
 
+    /**
+     * Like {@link SinkComponent} but binds its options inside its own {@code createEndpoint} (through the two-argument
+     * {@code setProperties}), the pattern used by {@code log}, {@code aws2-s3}, {@code sql}, {@code jms} and ~329 other
+     * components. It proves that literal binding is also enforced for these components (CAMEL-27160).
+     */
+    private static final class SelfBindingSinkComponent extends DefaultComponent {
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
+            SinkEndpoint endpoint = new SinkEndpoint(uri, this);
+            setProperties(endpoint, parameters);
+            return endpoint;
+        }
+    }
+
     private static final class SinkEndpoint extends DefaultEndpoint {
         static volatile Object lastOption;
         private Object option;
 
-        SinkEndpoint(String uri, SinkComponent component) {
+        SinkEndpoint(String uri, DefaultComponent component) {
             super(uri, component);
         }
 
