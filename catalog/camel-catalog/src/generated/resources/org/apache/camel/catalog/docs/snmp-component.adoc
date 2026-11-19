@@ -127,7 +127,22 @@ snmp:127.0.0.1:162?protocol=udp&type=TRAP
 You can get the community of SNMP TRAP with message
 header `securityName`, peer address of the SNMP TRAP with message header `peerAddress`.
 
-Routing example in Java: (converts the SNMP PDU to XML String)
+The trap receiver receives only the traps of its `snmpVersion`:
+
+* With `snmpVersion` 0 (the default) or 1, it receives SNMPv1 and SNMPv2c traps, whatever their community. The route
+can check the community in the `securityName` header.
+* With `snmpVersion` 3, it receives only the SNMPv3 traps of the user set in `securityName`, with at least the
+`securityLevel` of the endpoint (the default is 3, authentication and privacy). The traps are checked and decrypted with
+the `authenticationProtocol`, `authenticationPassphrase`, `privacyProtocol` and `privacyPassphrase` of the endpoint.
+These protocols must be registered in the `org.snmp4j.security.SecurityProtocols` of SNMP4J, for example with
+`SecurityProtocols.getInstance().addAuthenticationProtocol(new AuthSHA())`.
+
+------------------------------------------------------------------------------------------------------------------
+snmp:0.0.0.0:162?protocol=udp&type=TRAP&snmpVersion=3&securityName=camel&securityLevel=3
+    &authenticationProtocol=SHA1&authenticationPassphrase=RAW(...)&privacyProtocol=AES128&privacyPassphrase=RAW(...)
+------------------------------------------------------------------------------------------------------------------
+
+Routing example in Java: (the body of the consumer is the SNMP PDU as XML text)
 
 [tabs]
 ====
