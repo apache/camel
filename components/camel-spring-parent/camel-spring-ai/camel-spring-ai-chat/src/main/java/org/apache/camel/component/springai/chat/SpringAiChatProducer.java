@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import io.micrometer.observation.ObservationRegistry;
@@ -60,6 +61,7 @@ import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.StructuredOutputValidationAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.chat.client.advisor.api.MemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -78,6 +80,9 @@ import org.springframework.ai.converter.MapOutputConverter;
 import org.springframework.ai.converter.StructuredOutputConverter;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
+import org.springframework.ai.session.EventFilter;
+import org.springframework.ai.session.SessionService;
+import org.springframework.ai.session.advisor.SessionAdvisors;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.resolution.ToolCallbackResolver;
@@ -99,7 +104,8 @@ public class SpringAiChatProducer extends DefaultProducer {
     private volatile Boolean observedBySpringAi;
     private volatile Boolean toolCallsObservedBySpringAi;
     private SpringAiChatMcpManager mcpManager;
-    private Advisor chatMemoryAdvisor;
+    private List<Advisor> memoryAdvisors;
+    private boolean sessionMemory;
 
     public SpringAiChatProducer(SpringAiChatEndpoint endpoint) {
         super(endpoint);
@@ -158,22 +164,9 @@ public class SpringAiChatProducer extends DefaultProducer {
             this.chatClient = builder.build();
         }
 
-        // Build chat memory advisor (added per-request only when conversationId is set)
-        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
-        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
-        if (chatMemory != null && chatMemoryVectorStore != null) {
-            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). "
-                     + "Configure only one memory type.");
-        }
-        if (chatMemory != null) {
-            this.chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
-            LOG.debug("MessageChatMemoryAdvisor available (activated per-request via conversationId header)");
-        } else if (chatMemoryVectorStore != null) {
-            this.chatMemoryAdvisor = VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
-                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
-                    .build();
-            LOG.debug("VectorStoreChatMemoryAdvisor available with topK={}", getEndpoint().getConfiguration().getTopK());
-        }
+        // Build the memory advisors (added per-request only when conversationId is set)
+        this.memoryAdvisors = buildMemoryAdvisors();
+        this.sessionMemory = memoryAdvisors != null && getEndpoint().getConfiguration().getSessionService() != null;
 
         // Initialize MCP clients if configured
         Map<String, Object> mcpConfig = getEndpoint().getConfiguration().getMcpServer();
@@ -805,12 +798,19 @@ public class SpringAiChatProducer extends DefaultProducer {
             LOG.debug("Added tool context with {} entries", toolContext.size());
         }
 
-        // Add chat memory advisor per-request only when conversationId header is set
+        // The conversation id goes to every memory advisor, also those of the advisors option or of a configured
+        // chatClient. The memory advisors of the endpoint are added per-request only when it is set.
         String conversationId = exchange.getIn().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
-        if (conversationId != null && chatMemoryAdvisor != null) {
-            final String convId = conversationId;
-            request.advisors(chatMemoryAdvisor);
-            request.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, convId));
+        if (conversationId != null) {
+            // SessionAdvisors.session sets the same key, MemoryAdvisor.CONVERSATION_ID, and rejects a blank id. The
+            // session advisors create the session on first use.
+            Consumer<ChatClient.AdvisorSpec> conversation = sessionMemory
+                    ? SessionAdvisors.session(conversationId)
+                    : a -> a.param(MemoryAdvisor.CONVERSATION_ID, conversationId);
+            if (memoryAdvisors != null) {
+                request.advisors(memoryAdvisors);
+            }
+            request.advisors(conversation);
         }
 
         // Apply SafeGuard advisor overrides if provided via headers
@@ -1553,6 +1553,79 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     /**
+     * Builds the memory advisors, which are added to a request only when it has a conversation id. One memory is used:
+     * sessionService, else chatMemory, else chatMemoryVectorStore. None is used when the advisors option has a memory
+     * advisor of its own.
+     *
+     * @return the memory advisors, or {@code null} when no memory is configured
+     */
+    @SuppressWarnings({ "deprecation", "removal" })
+    private List<Advisor> buildMemoryAdvisors() {
+        SessionService sessionService = getEndpoint().getConfiguration().getSessionService();
+        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
+        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
+        int sessionMessageWindow = getEndpoint().getConfiguration().getSessionMessageWindow();
+        if (sessionMessageWindow < 0) {
+            throw new IllegalArgumentException(
+                    "sessionMessageWindow must be 0 (the whole session) or more, but was " + sessionMessageWindow);
+        }
+        if (hasMemoryAdvisorInAdvisorsOption()) {
+            // the advisors option is set explicitly, while sessionService and chatMemory are autowired in Spring Boot
+            if (sessionService != null || chatMemory != null || chatMemoryVectorStore != null) {
+                LOG.info("The advisors option has a memory advisor. Using it instead of sessionService, chatMemory "
+                         + "and chatMemoryVectorStore.");
+            }
+            return null;
+        }
+        if (sessionService != null) {
+            if (chatMemory != null) {
+                // a ChatMemory bean is autowired in Spring Boot, so this is the common case once a SessionService exists
+                LOG.info("Both sessionService and chatMemory are configured. Using session memory (sessionService).");
+            }
+            if (chatMemoryVectorStore != null) {
+                LOG.warn("Both sessionService and chatMemoryVectorStore are configured. Using session memory "
+                         + "(sessionService). Configure only one memory type.");
+            }
+            LOG.debug("Session memory available with sessionMessageWindow={} (activated per-request via conversationId "
+                      + "header)",
+                    sessionMessageWindow);
+            SessionAdvisors.Builder builder = SessionAdvisors.builder(sessionService);
+            if (sessionMessageWindow > 0) {
+                // the default filter of the memory advisor, EventFilter.all(), with a window that keeps turns whole.
+                // The advisor reads the active view with it, so a compacted session stays compacted
+                EventFilter eventFilter = EventFilter.all().toBuilder().lastN(sessionMessageWindow).build();
+                builder.memory(memory -> memory.eventFilter(eventFilter));
+            }
+            return builder.build();
+        }
+        if (chatMemory != null) {
+            if (chatMemoryVectorStore != null) {
+                LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor "
+                         + "(chatMemory). Configure only one memory type.");
+            }
+            LOG.debug("MessageChatMemoryAdvisor available (activated per-request via conversationId header)");
+            return List.of(MessageChatMemoryAdvisor.builder(chatMemory).build());
+        }
+        if (chatMemoryVectorStore != null) {
+            LOG.debug("VectorStoreChatMemoryAdvisor available with topK={}", getEndpoint().getConfiguration().getTopK());
+            return List.of(VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
+                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
+                    .build());
+        }
+        return null;
+    }
+
+    /**
+     * Whether the advisors option has a memory advisor, such as the session advisors with compaction. The advisors
+     * option is used only when the component builds the ChatClient.
+     */
+    private boolean hasMemoryAdvisorInAdvisorsOption() {
+        List<Advisor> advisors = getEndpoint().getConfiguration().getAdvisors();
+        return getEndpoint().getConfiguration().getChatClient() == null
+                && advisors != null && advisors.stream().anyMatch(MemoryAdvisor.class::isInstance);
+    }
+
+    /**
      * Build the list of default advisors based on endpoint configuration.
      * <p>
      * Advisors are Spring AI components that intercept and modify chat requests and responses. They enable features
@@ -1567,19 +1640,14 @@ public class SpringAiChatProducer extends DefaultProducer {
      * monitoring purposes.</li>
      * <li><strong>SafeGuardAdvisor</strong> - Added if sensitive words are configured. Blocks requests or responses
      * containing configured sensitive words and returns a custom failure response.</li>
-     * <li><strong>MessageChatMemoryAdvisor</strong> - Added if ChatMemory is configured. Maintains conversation history
-     * using an in-memory or persistent chat memory store, enabling contextual multi-turn conversations.</li>
-     * <li><strong>VectorStoreChatMemoryAdvisor</strong> - Added if chatMemoryVectorStore is configured (alternative to
-     * MessageChatMemoryAdvisor). Stores conversation history in a vector store with automatic conversation isolation by
-     * ID.</li>
      * <li><strong>QuestionAnswerAdvisor</strong> - Added if VectorStore is configured. Implements RAG by automatically
      * retrieving relevant context from the vector store and augmenting the user's question with it.</li>
      * <li><strong>Custom Advisors</strong> - Any user-provided advisors from the endpoint configuration are added
      * last.</li>
      * </ol>
      * <p>
-     * <strong>Note:</strong> If both ChatMemory and chatMemoryVectorStore are configured, only ChatMemory will be used
-     * and a warning will be logged.
+     * The memory advisors are not default advisors: {@link #buildMemoryAdvisors()} builds them, and they are added to a
+     * request only when it has a conversation id.
      * </p>
      *
      * @return the list of configured advisors to be applied to the ChatClient

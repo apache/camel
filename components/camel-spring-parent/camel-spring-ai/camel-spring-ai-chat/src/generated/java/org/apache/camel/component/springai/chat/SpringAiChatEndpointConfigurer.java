@@ -59,6 +59,10 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "safeguardOrder": target.getConfiguration().setSafeguardOrder(property(camelContext, java.lang.Integer.class, value)); return true;
         case "safeguardsensitivewords":
         case "safeguardSensitiveWords": target.getConfiguration().setSafeguardSensitiveWords(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionmessagewindow":
+        case "sessionMessageWindow": target.getConfiguration().setSessionMessageWindow(property(camelContext, int.class, value)); return true;
+        case "sessionservice":
+        case "sessionService": target.getConfiguration().setSessionService(property(camelContext, org.springframework.ai.session.SessionService.class, value)); return true;
         case "similaritythreshold":
         case "similarityThreshold": target.getConfiguration().setSimilarityThreshold(property(camelContext, double.class, value)); return true;
         case "structuredoutputconverter":
@@ -105,7 +109,7 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"chatClient", "chatMemory", "chatModel", "structuredOutputConverter", "toolCallbacks", "toolSearchEmbeddingModel", "vectorStore"};
+        return new String[]{"chatClient", "chatMemory", "chatModel", "sessionService", "structuredOutputConverter", "toolCallbacks", "toolSearchEmbeddingModel", "vectorStore"};
     }
 
     @Override
@@ -146,6 +150,10 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "safeguardOrder": return java.lang.Integer.class;
         case "safeguardsensitivewords":
         case "safeguardSensitiveWords": return java.lang.String.class;
+        case "sessionmessagewindow":
+        case "sessionMessageWindow": return int.class;
+        case "sessionservice":
+        case "sessionService": return org.springframework.ai.session.SessionService.class;
         case "similaritythreshold":
         case "similarityThreshold": return double.class;
         case "structuredoutputconverter":
@@ -229,6 +237,10 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "safeguardOrder": return target.getConfiguration().getSafeguardOrder();
         case "safeguardsensitivewords":
         case "safeguardSensitiveWords": return target.getConfiguration().getSafeguardSensitiveWords();
+        case "sessionmessagewindow":
+        case "sessionMessageWindow": return target.getConfiguration().getSessionMessageWindow();
+        case "sessionservice":
+        case "sessionService": return target.getConfiguration().getSessionService();
         case "similaritythreshold":
         case "similarityThreshold": return target.getConfiguration().getSimilarityThreshold();
         case "structuredoutputconverter":
