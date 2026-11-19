@@ -140,14 +140,14 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
             } else if (!mllpBuffer.isEmpty()) {
                 // We have some leading out-of-band data but no START_OF_BLOCK
                 log.info("Ignoring out-of-band data on initial read [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } catch (MllpSocketException socketEx) {
             // TODO:  The socket is invalid for some reason
             if (!mllpBuffer.isEmpty()) {
                 log.warn("Exception encountered receiving complete initial message [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
             }
             mllpBuffer.resetSocket(clientSocket);
         } catch (SocketTimeoutException timeoutEx) {
@@ -156,7 +156,7 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
                 consumer.startConsumer(clientSocket, mllpBuffer);
             } else {
                 log.warn("Timeout receiving complete initial message on read [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } finally {
