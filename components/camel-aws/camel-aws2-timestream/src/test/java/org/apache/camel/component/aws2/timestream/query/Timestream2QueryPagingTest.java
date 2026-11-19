@@ -129,14 +129,18 @@ public class Timestream2QueryPagingTest extends CamelTestSupport {
                 from("direct:query")
                         .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query");
 
+                // the predicate of loopDoWhile is checked before each iteration, also the first, so the loop runs
+                // while there are more pages, which ends after the last page even when the result has no rows
                 from("direct:loop")
                         .setVariable("rows", () -> new ArrayList<String>())
-                        .loopDoWhile(exchange -> rows(exchange).isEmpty()
-                                || exchange.getIn().getHeader(Timestream2Constants.QUERY_NEXT_TOKEN) != null)
+                        .setVariable("morePages", constant(true))
+                        .loopDoWhile(variable("morePages"))
                             .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient"
                                 + "&operation=query")
                             .process(exchange -> rows(exchange)
                                     .addAll(values(exchange.getIn().getBody(QueryResponse.class))))
+                            .process(exchange -> exchange.setVariable("morePages",
+                                    exchange.getIn().getHeader(Timestream2Constants.QUERY_NEXT_TOKEN) != null))
                         .end();
 
                 from("direct:all")

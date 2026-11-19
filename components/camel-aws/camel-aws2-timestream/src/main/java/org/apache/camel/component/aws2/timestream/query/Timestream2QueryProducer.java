@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 import software.amazon.awssdk.services.timestreamquery.model.*;
-import software.amazon.awssdk.services.timestreamquery.model.ColumnInfo;
-import software.amazon.awssdk.services.timestreamquery.model.Row;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Timestream <a href="https://aws.amazon.com/timestream/">AWS
