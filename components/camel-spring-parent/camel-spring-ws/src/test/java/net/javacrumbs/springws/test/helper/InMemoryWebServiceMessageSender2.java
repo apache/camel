@@ -32,7 +32,7 @@ public class InMemoryWebServiceMessageSender2 extends InMemoryWebServiceMessageS
 
     @Override
     public boolean supports(URI uri, WebServiceMessageSender.UriSource uriSource) {
-        return supports(uri);
+        return super.supports(uri, uriSource);
     }
 
     @Override
