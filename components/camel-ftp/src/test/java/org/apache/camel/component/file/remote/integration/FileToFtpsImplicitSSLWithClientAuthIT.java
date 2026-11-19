@@ -31,7 +31,8 @@ public class FileToFtpsImplicitSSLWithClientAuthIT extends FtpsServerImplicitSSL
         return "ftps://admin@localhost:" + service.getPort()
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=TLSv1.2&implicit=true&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
-               + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true";
+               + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true"
+               + TRUST_STORE_OPTIONS;
     }
 
     @Test
