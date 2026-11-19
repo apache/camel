@@ -30,7 +30,8 @@ public class FileToFtpsWithDefaultSettingsIT extends FtpsServerExplicitTLSWithou
 
     private String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true";
+               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
+               + TRUST_STORE_OPTIONS;
     }
 
     @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")

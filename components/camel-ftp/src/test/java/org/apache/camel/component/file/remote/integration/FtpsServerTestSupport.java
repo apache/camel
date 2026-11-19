@@ -24,4 +24,10 @@ import org.apache.camel.component.file.remote.BaseServerTestSupport;
 public abstract class FtpsServerTestSupport extends BaseServerTestSupport {
     protected static final String AUTH_VALUE_SSL = "SSLv3";
     protected static final String AUTH_VALUE_TLS = "TLSv1.3";
+
+    /**
+     * Endpoint options for a trust store with the certificate of the test server, which is self-signed.
+     */
+    protected static final String TRUST_STORE_OPTIONS = "&ftpClient.trustStore.file=./src/test/resources/server.jks"
+                                                        + "&ftpClient.trustStore.type=JKS&ftpClient.trustStore.password=password";
 }
