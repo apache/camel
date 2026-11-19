@@ -10111,6 +10111,19 @@ the option of the Kamelet, or the input header it documents (such as `ce-issueKe
   with `&`, `+` or `=` is sent whole. A value that was URL-encoded to work around this, such as `%2B` for `+`, is now
   sent literally and must be changed back to the plain value.
 
+=== Kamelets - default data types
+
+Some Kamelets now declare a default data type. Camel runs its transformer on every message, so it can change the Java
+type of the body and set the `Content-Type` header:
+
+* `json-serialize-action`, `hoist-field-action`, `jslt-action`, `pdf-action` and `crypto-encrypt-action` give their
+  body as `byte[]`, instead of a stream, a `String` or a `ByteArrayOutputStream`.
+* `jslt-action` sets `Content-Type: application/json`, and `pdf-action` and `crypto-encrypt-action` set
+  `application/octet-stream`. `crypto-decrypt-action` keeps the headers, so after it `Content-Type` is
+  `application/octet-stream`: set it again to the type of the original data when the next step needs it.
+
+A route that reads the body as a `String` or a stream converts it, as Camel does when asked.
+
 === Kamelets - other changes in behaviour
 
 * `extract-field-action` gives a text, a number or a boolean as the plain value with `Content-Type: text/plain`, such
