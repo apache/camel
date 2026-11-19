@@ -4067,6 +4067,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin-version}</version>
+                    <configuration>
+                        <!-- the Maven version users need for the Camel Maven plugins: without it, maven-plugin-plugin
+                             takes the version of maven-plugin-api (maven-version), so upgrading maven-version would
+                             force every user of the plugins onto that Maven. Keep it in line with the requireMavenVersion
+                             rule of the enforcer in the root pom.xml -->
+                        <requiredMavenVersion>3.9.12</requiredMavenVersion>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>default-addPluginArtifactMetadata</id>
