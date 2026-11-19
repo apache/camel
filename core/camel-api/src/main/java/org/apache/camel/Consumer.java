@@ -22,11 +22,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * A service that receives messages from an {@link Endpoint} and routes them as {@link Exchange}s through the Camel
  * processing pipeline.
- * <p/>
+ * <p>
  * Consumers are created by calling {@link Endpoint#createConsumer(Processor)} and participate in the Camel lifecycle as
  * {@link Service}s. For endpoints that require a dedicated polling loop, see {@link PollingConsumer}; for endpoints
  * that deliver messages in batches, see {@link BatchConsumer}.
- * <p/>
+ * <p>
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
@@ -45,11 +45,11 @@ public interface Consumer extends Service, EndpointAware {
 
     /**
      * Creates an {@link Exchange} that was consumed.
-     * <p/>
-     * <b>Important:</b> If the auto release parameter is set to <tt>false</tt> then the consumer is responsible for
+     * <p>
+     * <b>Important:</b> If the auto release parameter is set to <code>false</code> then the consumer is responsible for
      * calling the {@link #releaseExchange(Exchange, boolean)} when the {@link Exchange} is done being routed. This is
      * for advanced consumers that need to have this control in their own hands. For normal use-cases then a consumer
-     * can use autoRelease <tt>true</tt> and then Camel will automatic release the exchange after routing.
+     * can use autoRelease <code>true</code> and then Camel will automatically release the exchange after routing.
      *
      * @param autoRelease whether to auto release the exchange when routing is complete via {@link UnitOfWork}
      */

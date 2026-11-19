@@ -668,6 +668,45 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * An expression producing the complete policy input as a Map, object
+         * JSON node or POJO. Replaces the default input envelope;
+         * includeHeaders, includeProperties and includeBody then do not apply.
+         * In batch mode it sees each element as the body on an exchange copy.
+         * Null, scalar and streaming results fail closed. Reference a
+         * configured expression bean.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param inputExpression the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder inputExpression(org.apache.camel.Expression inputExpression) {
+            doSetProperty("inputExpression", inputExpression);
+            return this;
+        }
+        /**
+         * An expression producing the complete policy input as a Map, object
+         * JSON node or POJO. Replaces the default input envelope;
+         * includeHeaders, includeProperties and includeBody then do not apply.
+         * In batch mode it sees each element as the body on an exchange copy.
+         * Null, scalar and streaming results fail closed. Reference a
+         * configured expression bean.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param inputExpression the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder inputExpression(String inputExpression) {
+            doSetProperty("inputExpression", inputExpression);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
@@ -696,6 +735,42 @@ public interface OpaEndpointBuilderFactory {
          */
         default AdvancedOpaEndpointBuilder opaClient(String opaClient) {
             doSetProperty("opaClient", opaClient);
+            return this;
+        }
+        /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(long policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
+            return this;
+        }
+        /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(String policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
             return this;
         }
         /**

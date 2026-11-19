@@ -137,7 +137,7 @@ Attach from
 https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc[IntelliJ],
 https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code], or
 https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse].
-Port configuration is described in the https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging] guide.
+Port configuration is described in the https://www.jbang.dev/documentation/jbang/latest/debugging.html[JBang Debugging] guide.
 
 The integration runs in a new JVM that waits until a debugger attaches, and `--jvm-args` gives that JVM more options.
 With the Camel launcher (the Camel CLI installed without JBang), it is a JVM of the launcher, listening on

@@ -28,7 +28,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -82,25 +81,10 @@ public class DependencyDownloaderPropertiesComponent extends ServiceSupport impl
         for (String key : properties.stringPropertyNames()) {
             // check both key and values (and combined)
             String value = properties.getProperty(key);
-            MavenGav gav = knownDependenciesResolver.mavenGavForClass(key);
-            if (gav != null) {
-                downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-            }
-            gav = knownDependenciesResolver.mavenGavForClass(value);
-            if (gav != null) {
-                downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-            }
+            KnownDependenciesResolver.download(downloader, knownDependenciesResolver.mavenGavsForClass(key));
+            KnownDependenciesResolver.download(downloader, knownDependenciesResolver.mavenGavsForClass(value));
             String line = key + "=" + value;
-            gav = knownDependenciesResolver.mavenGavForClass(line);
-            if (gav != null) {
-                downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-            }
-        }
-    }
-
-    private void downloadLoader(String groupId, String artifactId, String version) {
-        if (!downloader.alreadyOnClasspath(groupId, artifactId, version)) {
-            downloader.downloadDependency(groupId, artifactId, version);
+            KnownDependenciesResolver.download(downloader, knownDependenciesResolver.mavenGavsForClass(line));
         }
     }
 

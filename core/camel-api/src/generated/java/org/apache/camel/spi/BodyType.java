@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * One side of {@link BodyTypes}: the body a step needs or leaves.
- * <p/>
+ * <p>
  * The carriers are coarse on purpose: a carrier that is right is better than a precise Java type that is wrong. Give
  * the {@link #javaType()} only when the body is always of that type.
  *

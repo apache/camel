@@ -60,7 +60,20 @@ for this component:
 ----
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:dummy?connectionUriString=RAW(mongodb://host:port)&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ----
+
+The endpoint uses the first client it finds in this order:
+
+. the client set with the `mongoConnection` endpoint option
+. a client the endpoint creates from the `connectionUriString` or `hosts` option
+. the `mongoConnection` client of the component, which is autowired when the registry holds exactly one `MongoClient`
+. the `MongoClient` bean named by the endpoint path (`connectionBean`)
+
+A client the endpoint creates from `connectionUriString` or `hosts` belongs to that endpoint: each such endpoint has its
+own client and connection pool, and closes it when it stops (for example when its route is removed or reloaded, or when
+the CamelContext stops). The endpoint never closes a client it did not create. To share one client between endpoints,
+bind a `MongoClient` and have the endpoints use it instead of `connectionUriString` or `hosts`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -951,6 +964,13 @@ There are several types of consumers:
 
 . Tailable Cursor Consumer
 . Change Streams Consumer
+
+Both run in a thread of their own. When a consumer stops, it closes its cursor and waits for that thread to end.
+Closing the cursor does not end a read from MongoDB in progress on the thread, and a read from a connection that
+stopped answering does not return: the consumer waits for such a read up to the `shutdownAwaitTermination` of the
+`ExecutorServiceManager` (10 seconds by default), then logs a WARN, interrupts the thread and leaves it behind. A
+thread that routes an exchange is waited for, and not interrupted, as the graceful shutdown bounds that wait with its
+own timeout.
 
 ==== Tailable Cursor Consumer
 

@@ -28,16 +28,16 @@ import org.slf4j.MarkerFactory;
 
 /**
  * A configurable SLF4J logger wrapper that carries a {@link LoggingLevel} and an optional SLF4J {@link Marker}.
- * <p/>
+ * <p>
  * Camel components and EIPs that need to emit log output accept a {@code CamelLogger} rather than a raw SLF4J
  * {@link Logger} so that the log level and marker can be configured externally (e.g., via endpoint URI or route DSL)
  * without changing the logging code. The {@link #log(String)} method respects the configured level and only writes if
  * the underlying logger has that level enabled; {@link #doLog(String)} skips the level check and always writes, which
  * is useful when the check was already performed by the caller.
- * <p/>
+ * <p>
  * The name {@code CamelLogger} was chosen to avoid a class-name clash with the {@code Logger} class present in many
  * older logging frameworks (Log4j 1.x, Commons Logging, etc.) that may be on the classpath.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/logeip.html">Log EIP</a> in the Camel user manual.
  *
  * @see LoggingLevel
@@ -93,7 +93,7 @@ public class CamelLogger {
     /**
      * Logs the message <b>with</b> checking the {@link #shouldLog()} method first.
      *
-     * @param message the message to log, if {@link #shouldLog()} returned <tt>true</tt>
+     * @param message the message to log, if {@link #shouldLog()} returned <code>true</code>
      */
     public void log(@Nullable String message) {
         if (shouldLog(log, level)) {

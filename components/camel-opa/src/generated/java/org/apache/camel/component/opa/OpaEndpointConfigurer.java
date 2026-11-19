@@ -54,12 +54,16 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "includeHeaders": target.getConfiguration().setIncludeHeaders(property(camelContext, java.lang.String.class, value)); return true;
         case "includeproperties":
         case "includeProperties": target.getConfiguration().setIncludeProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "inputexpression":
+        case "inputExpression": target.getConfiguration().setInputExpression(property(camelContext, org.apache.camel.Expression.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "opaclient":
         case "opaClient": target.getConfiguration().setOpaClient(property(camelContext, com.styra.opa.OPAClient.class, value)); return true;
         case "policybundle":
         case "policyBundle": target.getConfiguration().setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
+        case "policyreloadinterval":
+        case "policyReloadInterval": target.getConfiguration().setPolicyReloadInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "requesttimeout":
@@ -110,12 +114,16 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "includeHeaders": return java.lang.String.class;
         case "includeproperties":
         case "includeProperties": return java.lang.String.class;
+        case "inputexpression":
+        case "inputExpression": return org.apache.camel.Expression.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "opaclient":
         case "opaClient": return com.styra.opa.OPAClient.class;
         case "policybundle":
         case "policyBundle": return java.lang.String.class;
+        case "policyreloadinterval":
+        case "policyReloadInterval": return long.class;
         case "poolsize":
         case "poolSize": return int.class;
         case "requesttimeout":
@@ -162,12 +170,16 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "includeHeaders": return target.getConfiguration().getIncludeHeaders();
         case "includeproperties":
         case "includeProperties": return target.getConfiguration().getIncludeProperties();
+        case "inputexpression":
+        case "inputExpression": return target.getConfiguration().getInputExpression();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "opaclient":
         case "opaClient": return target.getConfiguration().getOpaClient();
         case "policybundle":
         case "policyBundle": return target.getConfiguration().getPolicyBundle();
+        case "policyreloadinterval":
+        case "policyReloadInterval": return target.getConfiguration().getPolicyReloadInterval();
         case "poolsize":
         case "poolSize": return target.getConfiguration().getPoolSize();
         case "requesttimeout":

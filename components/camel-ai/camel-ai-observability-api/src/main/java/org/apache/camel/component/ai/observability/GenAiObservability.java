@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.observability;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -39,6 +40,7 @@ public final class GenAiObservability {
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
     private static final ImplBridge UNAVAILABLE_BRIDGE = new ImplBridge(null);
     private static final ConcurrentMap<CamelContext, ImplBridge> BRIDGES = new ConcurrentHashMap<>();
+    private static final Set<String> INVALID_LEVEL_REPORTED = ConcurrentHashMap.newKeySet();
 
     private GenAiObservability() {
     }
@@ -59,11 +61,90 @@ public final class GenAiObservability {
     }
 
     /**
+     * The GenAI observability level for the given context, from {@link GenAiObservabilityProperties#LEVEL}. Defaults to
+     * {@link GenAiObservabilityLevel#BASIC}; an unknown value logs a warning once and falls back to the default.
+     *
+     * @since 4.24
+     */
+    public static GenAiObservabilityLevel level(CamelContext camelContext) {
+        if (camelContext == null) {
+            return GenAiObservabilityLevel.BASIC;
+        }
+        Optional<String> property
+                = camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.LEVEL);
+        if (property.isEmpty()) {
+            return GenAiObservabilityLevel.BASIC;
+        }
+        try {
+            return GenAiObservabilityLevel.parse(property.get());
+        } catch (IllegalArgumentException e) {
+            if (INVALID_LEVEL_REPORTED.add(property.get())) {
+                LOG.warn("{}; using basic", e.getMessage());
+            }
+            return GenAiObservabilityLevel.BASIC;
+        }
+    }
+
+    /**
+     * Whether the given context records at least the given level.
+     *
+     * @since 4.24
+     */
+    public static boolean isLevel(CamelContext camelContext, GenAiObservabilityLevel level) {
+        return isEnabled(camelContext) && level(camelContext).includes(level);
+    }
+
+    /**
+     * The maximum length of every text recorded at level {@link GenAiObservabilityLevel#FULL}, from
+     * {@link GenAiObservabilityProperties#CONTENT_MAX_LENGTH}.
+     *
+     * @since 4.24
+     */
+    public static int contentMaxLength(CamelContext camelContext) {
+        if (camelContext == null) {
+            return GenAiObservabilityProperties.DEFAULT_CONTENT_MAX_LENGTH;
+        }
+        Optional<String> property = camelContext.getPropertiesComponent()
+                .resolveProperty(GenAiObservabilityProperties.CONTENT_MAX_LENGTH);
+        if (property.isPresent()) {
+            try {
+                int maxLength = Integer.parseInt(property.get().trim());
+                if (maxLength > 0) {
+                    return maxLength;
+                }
+                LOG.debug("{} must be positive, using the default", GenAiObservabilityProperties.CONTENT_MAX_LENGTH);
+            } catch (NumberFormatException e) {
+                LOG.debug("Invalid {}: {}", GenAiObservabilityProperties.CONTENT_MAX_LENGTH, property.get());
+            }
+        }
+        return GenAiObservabilityProperties.DEFAULT_CONTENT_MAX_LENGTH;
+    }
+
+    /**
+     * Whether Camel leaves the model calls and tool calls already traced by the AI framework to that framework, from
+     * {@link GenAiObservabilityProperties#DEFER_TO_FRAMEWORK} (default {@code true}).
+     *
+     * @since 4.24
+     */
+    public static boolean deferToFramework(CamelContext camelContext) {
+        if (camelContext == null) {
+            return true;
+        }
+        return camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.DEFER_TO_FRAMEWORK)
+                .map(value -> Boolean.parseBoolean(value.trim()))
+                .orElse(true);
+    }
+
+    /**
      * Starts a GenAI observation for a single LLM client call. Returns a no-op when disabled, when
      * {@code camel-ai-observability} is absent, or when no backend is available.
      */
     public static GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
         if (exchange == null || context == null || !isEnabled(exchange.getContext())) {
+            return NOOP;
+        }
+        if (context.tracedByFramework() && deferToFramework(exchange.getContext())) {
+            // the AI framework records this call itself; a second span would count it twice
             return NOOP;
         }
         CamelContext camelContext = exchange.getContext();

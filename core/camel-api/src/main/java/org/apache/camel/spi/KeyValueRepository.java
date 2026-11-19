@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A generic key-value repository SPI that provides a unified abstraction over various state stores.
- * <p/>
+ * <p>
  * This interface can be used as the single underlying storage mechanism for multiple Camel patterns, including:
  * <ul>
  * <li><b>Idempotent Consumer</b> -- via {@code KeyValueIdempotentRepository} adapter</li>
@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  * Instead of implementing both {@link IdempotentRepository} and {@link AggregationRepository} separately for each
  * storage technology (Redis, Hazelcast, Infinispan, JDBC, etc.), a single {@code KeyValueRepository} implementation can
  * be wrapped by the appropriate adapter.
- * <p/>
+ * <p>
  * Implementations must be thread-safe. Entries may optionally have a time-to-live (TTL); a {@code null}, zero, or
  * negative TTL means the entry does not expire.
  *
@@ -53,7 +53,7 @@ public interface KeyValueRepository extends Service {
 
     /**
      * Stores a value under the given key with no expiration.
-     * <p/>
+     * <p>
      * Equivalent to {@code put(key, value, null)}.
      *
      * @param  key   the key
@@ -107,7 +107,7 @@ public interface KeyValueRepository extends Service {
 
     /**
      * Stores the value under the given key only if no non-expired mapping already exists, with no expiration.
-     * <p/>
+     * <p>
      * Equivalent to {@code putIfAbsent(key, value, null)}.
      *
      * @param  key   the key
@@ -121,7 +121,7 @@ public interface KeyValueRepository extends Service {
 
     /**
      * Stores the value under the given key only if no non-expired mapping already exists.
-     * <p/>
+     * <p>
      * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-set
      * operations should override this method for better concurrency guarantees.
      *
@@ -143,7 +143,7 @@ public interface KeyValueRepository extends Service {
     /**
      * Atomically replaces the value for the given key only if the current value equals the expected old value
      * (compare-and-swap).
-     * <p/>
+     * <p>
      * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-swap
      * operations (e.g., {@code ConcurrentMap.replace}, Hazelcast {@code IMap.replace}) should override this method for
      * better concurrency guarantees.
@@ -165,7 +165,7 @@ public interface KeyValueRepository extends Service {
 
     /**
      * Removes the entry for the given key only if the current value equals the expected value (compare-and-swap).
-     * <p/>
+     * <p>
      * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-remove
      * operations (e.g., {@code ConcurrentMap.remove(key, value)}, Hazelcast {@code IMap.remove(key, value)}) should
      * override this method for better concurrency guarantees.

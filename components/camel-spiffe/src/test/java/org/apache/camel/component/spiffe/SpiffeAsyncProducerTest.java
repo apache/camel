@@ -20,6 +20,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import io.spiffe.exception.JwtSvidException;
 import io.spiffe.spiffeid.SpiffeId;
@@ -32,9 +33,33 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SpiffeAsyncProducerTest {
+    @Test
+    void asyncJwtFetchUsesTheConfiguredLocalIdentity() throws Exception {
+        WorkloadApiClient client = mock(WorkloadApiClient.class);
+        SpiffeId subject = SpiffeId.parse("spiffe://example.org/local");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(subject);
+        when(svid.getToken()).thenReturn("minted-token");
+        when(client.fetchJwtSvid(subject, "audience")).thenReturn(svid);
+        try (Fixture fixture = new Fixture(client, configuration -> {
+            configuration.setLocalSpiffeId(subject.toString());
+            configuration.setOperation(SpiffeOperation.fetchJwtSvid);
+        })) {
+            Exchange exchange = new DefaultExchange(fixture.context);
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isEqualTo("minted-token");
+            assertThat(exchange.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo(subject.toString());
+            verify(client).fetchJwtSvid(subject, "audience");
+            verify(client, never()).fetchJwtSvid("audience");
+        }
+    }
+
     @Test
     void preserveBodyRetainsPayloadAndClearsPreviousIdentityOnFailedValidation() throws Exception {
         WorkloadApiClient client = mock(WorkloadApiClient.class);
@@ -157,12 +182,18 @@ class SpiffeAsyncProducerTest {
         final SpiffeProducer producer;
 
         Fixture(WorkloadApiClient client) throws Exception {
+            this(client, configuration -> {
+            });
+        }
+
+        Fixture(WorkloadApiClient client, Consumer<SpiffeConfiguration> configure) throws Exception {
             context.start();
             SpiffeConfiguration configuration = new SpiffeConfiguration();
             configuration.setWorkloadApiClient(client);
             configuration.setOperation(SpiffeOperation.validateJwtSvid);
             configuration.setAudience("audience");
             configuration.setAsyncProcessing(true);
+            configure.accept(configuration);
             endpoint = new SpiffeEndpoint("spiffe:validate", new SpiffeComponent(context), configuration);
             endpoint.start();
             producer = new SpiffeProducer(endpoint);

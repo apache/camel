@@ -21,7 +21,9 @@ package org.apache.camel.sanitizer;
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} by the
  * processor of a step of a route (the callback of a step is called exactly once, and {@code process} does not throw).
  * Rule R2: a break of the contract of the commit of a consumer (described on
- * {@link org.apache.camel.spi.Synchronization}: each commit runs exactly once, for the unit of work that owns it).
+ * {@link org.apache.camel.spi.Synchronization}: each commit runs exactly once, for the unit of work that owns it). Rule
+ * R3, its first part: the value {@code process} returns differs from the value its callback is called with, so two
+ * threads can continue the exchange or none (the contract of {@link org.apache.camel.AsyncProcessor}).
  *
  * @since 4.24
  */
@@ -76,7 +78,30 @@ public enum Violation {
      * was neither run, handed over nor taken out; or the CamelContext stopped while it waited in a copy that was never
      * routed (such as a copy in a seda queue that is dropped).
      */
-    COMMIT_NEVER_RUN("commit never ran", "R2", Fixes.NEVER_RUN);
+    COMMIT_NEVER_RUN("commit never ran", "R2", Fixes.NEVER_RUN),
+
+    /**
+     * Rule R3: {@code process(exchange, callback)} returned {@code true} while its callback had been called on another
+     * thread: with {@code false}, the caller and that thread can both continue the exchange; with {@code true}, that
+     * thread continued it while process still ran on the calling thread. A callback with {@code false} on the calling
+     * thread is the reactive executor running it, which the contract allows.
+     */
+    RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD("process returned true, and its callback was called on another thread", "R3",
+                                           Fixes.RETURNED_TRUE),
+
+    /**
+     * Rule R3: {@code process(exchange, callback)} returned {@code true} before its callback was called, and the
+     * callback then came on another thread (or with {@code true}), so the caller went on before the work of the
+     * processor was done.
+     */
+    RETURNED_TRUE_BEFORE_CALLBACK("process returned true before its callback was called", "R3", Fixes.RETURNED_TRUE),
+
+    /**
+     * Rule R3: {@code process(exchange, callback)} returned {@code false} and its callback was called with
+     * {@code true}, so a caller that goes on only for an asynchronous callback leaves the exchange with no thread.
+     */
+    RETURNED_FALSE_CALLBACK_TRUE("process returned false, and its callback was called with true", "R3",
+                                 Fixes.RETURNED_FALSE);
 
     private final String title;
     private final String rule;
@@ -100,7 +125,8 @@ public enum Violation {
     }
 
     /**
-     * The rule it breaks: {@code R1} (the callback of a step) or {@code R2} (the commit of a consumer).
+     * The rule it breaks: {@code R1} (the callback of a step), {@code R2} (the commit of a consumer) or {@code R3} (the
+     * value process returns and the value of its callback).
      */
     public String getRule() {
         return rule;
@@ -114,8 +140,8 @@ public enum Violation {
     }
 
     /**
-     * The usual fixes of the violations of rule R2 (in a class of their own, as the constants of the enum cannot refer
-     * to its own static fields).
+     * The usual fixes of the violations of rules R2 and R3 (in a class of their own, as the constants of the enum
+     * cannot refer to its own static fields).
      */
     private static final class Fixes {
 
@@ -131,6 +157,11 @@ public enum Violation {
         static final String NEVER_RUN = "a commit that is in a unit of work runs when it is done: take it out only"
                                         + " with a handover of the exchange (handoverCompletions), and let the copies"
                                         + " it is handed over to be routed or hand it back";
+        static final String RETURNED_TRUE = "when the work goes on another thread, return false from process and let"
+                                            + " that thread call the callback with false; return true only after the"
+                                            + " callback was called with true on the calling thread";
+        static final String RETURNED_FALSE = "call the callback with the value process returns: with true only when"
+                                             + " process returns true, after the work is done on the calling thread";
 
         private Fixes() {
         }

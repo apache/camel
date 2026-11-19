@@ -39,6 +39,19 @@ class FileInvalidStartingPathTest extends ContextTestSupport {
     }
 
     @Test
+    void testInvalidStartingPathSaysHowToUseADynamicDirectory() {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("file:archive/${header.month}"));
+
+        assertEquals("Invalid directory: archive/${header.month}. Dynamic expressions with ${ } placeholders is not"
+                     + " allowed. Use the fileName option to set the dynamic expression. The directory is fixed when the"
+                     + " endpoint is created, so from, to and pollEnrich with a fixed uri do not evaluate it: use toD to"
+                     + " write to a dynamic directory, or pollEnrich with a simple expression"
+                     + " (pollEnrich().simple(\"...\") in Java) to read from one.",
+                e.getCause().getMessage());
+    }
+
+    @Test
     void testValidStartingPath() {
         Endpoint endpoint = context.getEndpoint(
                 fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));

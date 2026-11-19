@@ -34,8 +34,8 @@ public interface PredicateExceptionFactory {
      * @param  exchange  the current exchange
      * @param  predicate the predicate that returned false
      * @param  nodeId    optional node id from validate EIP using this factory
-     * @return           the exception, or <tt>null</tt> to not use a specific exception but let Camel use a standard
-     *                   exception such as PredicateValidationException.
+     * @return           the exception, or <code>null</code> to not use a specific exception but let Camel use a
+     *                   standard exception such as PredicateValidationException.
      */
     @Nullable
     Exception newPredicateException(Exchange exchange, Predicate predicate, @Nullable String nodeId);

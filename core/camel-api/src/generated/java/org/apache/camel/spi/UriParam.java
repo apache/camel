@@ -79,7 +79,7 @@ public @interface UriParam {
 
     /**
      * Whether the option takes several of its {@link #enums()} values, separated by comma, such as
-     * <tt>CREATED,UPDATED</tt>. Spaces around the commas are allowed.
+     * <code>CREATED,UPDATED</code>. Spaces around the commas are allowed.
      *
      * Tooling can then offer to pick several values, and validation checks each value of the list.
      */

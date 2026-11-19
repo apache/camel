@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Marker for an object whose owning route id can be injected.
- * <p/>
+ * <p>
  * This gives access to the route id at runtime, so a processor or service knows which route it is associated with (for
  * example for logging, management, or tracing).
  *

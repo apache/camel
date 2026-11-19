@@ -35,7 +35,7 @@ import org.apache.camel.CamelContext;
  * <li>Setting up custom type converters</li>
  * </ul>
  *
- * <h3>Example Usage:</h3>
+ * <h2>Example Usage:</h2>
  *
  * <pre>
  * <code>
@@ -52,7 +52,6 @@ import org.apache.camel.CamelContext;
  * </code>
  * </pre>
  *
- * @see   org.apache.camel.impl.engine.DefaultContextServiceLoaderPlugin
  * @since 4.15
  */
 public interface ContextServicePlugin {

@@ -58,6 +58,13 @@ file is sent as its bytes, so binary data is kept. Without a body the function i
 or a POJO does not convert to bytes and fails with an `InvalidPayloadException`, so marshal it first, for example to
 JSON with `marshal().json()`.
 
+=== Endpoint of Function Compute
+
+The `endpoint` option is the endpoint of Function Compute for your Alibaba Cloud account and region. The public
+endpoint has the form `<account ID>.<region ID>.fc.aliyuncs.com`, for example `12345.cn-hangzhou.fc.aliyuncs.com` for
+the account ID 12345 and the region cn-hangzhou. The internal endpoint has the form
+`<account ID>.<region ID>-internal.fc.aliyuncs.com`.
+
 === Producer example
 
 [tabs]
@@ -68,7 +75,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("{\"name\":\"camel\"}"))
-    .to("alibaba-fc:invokeFunction?serviceName=my-service&functionName=my-function&region=cn-hangzhou&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+    .to("alibaba-fc:invokeFunction?serviceName=my-service&functionName=my-function&endpoint=12345.cn-hangzhou.fc.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
 ----
 
 YAML::
@@ -88,7 +95,7 @@ YAML::
             parameters:
               serviceName: my-service
               functionName: my-function
-              region: cn-hangzhou
+              endpoint: 12345.cn-hangzhou.fc.aliyuncs.com
               accessKey: "{{alibaba.access-key}}"
               secretKey: "{{alibaba.secret-key}}"
 ----

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -271,28 +272,30 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint());
         }
-        Exception cause;
+        Exception cause = null;
+        boolean connected = false;
+        boolean autoCreateFailed = false;
         try {
             getOperations().connectIfNecessary();
             loggedIn = true;
+            connected = true;
             if (!autoCreatedDone) {
                 autoCreateIfNecessary();
                 autoCreatedDone = true;
             }
         } catch (Exception e) {
             cause = e;
-            String msg = "Cannot connect/login to: " + remoteServer();
-            if (loggedIn && !autoCreatedDone) {
-                msg = "Cannot auto-create starting directory at: " + remoteServer();
-            }
+            // connected, so the starting directory could not be created
+            autoCreateFailed = connected;
+            String msg = autoCreateFailed ? cannotAutoCreate() : "Cannot connect/login to: " + remoteServer();
             LOG.debug(msg, cause);
             loggedIn = false;
             if (configuration.isThrowExceptionOnConnectFailed()) {
                 throw e;
             }
         }
-        if (loggedIn && !autoCreatedDone) {
-            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+        if (autoCreateFailed) {
+            String message = cannotAutoCreate() + reason(cause) + ". Will skip this poll.";
             if (!autoCreateWarning) {
                 LOG.warn(message);
                 autoCreateWarning = true;
@@ -300,7 +303,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             return false;
         }
         if (!loggedIn) {
-            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            String message = "Cannot connect/login to: " + remoteServer() + reason(cause) + ". Will skip this poll.";
             if (!loggedInWarning) {
                 LOG.warn(message);
                 loggedInWarning = true;
@@ -315,6 +318,24 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         forceConsumerAsReady();
 
         return true;
+    }
+
+    private String cannotAutoCreate() {
+        return "Cannot auto-create starting directory " + configuration.getDirectory() + " at: " + remoteServer();
+    }
+
+    /**
+     * Why the poll is skipped, for the WARN: the message of the cause when there is one, as the smb operations wrap the
+     * error of the SMB client in an exception whose message also names the server. On one line.
+     */
+    private static String reason(Exception cause) {
+        if (cause == null) {
+            return "";
+        }
+        Throwable reason = cause.getCause() != null ? cause.getCause() : cause;
+        String message = reason.getMessage() != null ? reason.getMessage() : reason.getClass().getName();
+        return " due to: "
+               + message.lines().map(String::strip).filter(line -> !line.isEmpty()).collect(Collectors.joining(" "));
     }
 
     protected void autoCreateIfNecessary() throws GenericFileOperationFailedException {

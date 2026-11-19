@@ -231,6 +231,19 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- the versions of parent/pom.xml that camel-thirdparty-known-dependencies.properties must use -->
+                    <systemPropertyVariables>
+                        <confluent-serializer-version>${confluent-serializer-version}</confluent-serializer-version>
+                        <apicurio-registry-sdk-version>${apicurio-registry-sdk-version}</apicurio-registry-sdk-version>
+                        <aws-glue-schema-registry-version>${aws-glue-schema-registry-version}</aws-glue-schema-registry-version>
+                        <azure-schemaregistry-kafka-avro-version>${azure-schemaregistry-kafka-avro-version}</azure-schemaregistry-kafka-avro-version>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
                 <executions>

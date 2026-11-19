@@ -40,6 +40,13 @@
         "type": "string",
         "description": "Why the sanitizer is off (only when it is off)"
       },
+      "checks": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The checks that run, as in camel.sanitizer.checks: callback (R1), commit (R2) and threads (R3) (only when it is on)"
+      },
       "calls": {
         "type": "integer",
         "description": "The calls of the processors of steps checked (only when it is on)"
@@ -57,7 +64,7 @@
         "additionalProperties": {
           "type": "integer"
         },
-        "description": "The violations reported per rule, R1 and R2 (only when it is on)"
+        "description": "The violations reported per rule, R1, R2 and R3 (only when it is on)"
       },
       "kinds": {
         "type": "object",
@@ -73,11 +80,11 @@
           "properties": {
             "rule": {
               "type": "string",
-              "description": "The rule the violation breaks: R1 (the callback of a step) or R2 (the commit of a consumer)"
+              "description": "The rule the violation breaks: R1 (the callback of a step), R2 (the commit of a consumer) or R3 (the value process returns against the value of its callback)"
             },
             "kind": {
               "type": "string",
-              "description": "The kind of violation, such as COMPLETED_TWICE or COMMIT_NEVER_RUN"
+              "description": "The kind of violation, such as COMPLETED_TWICE, COMMIT_NEVER_RUN or RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD"
             },
             "title": {
               "type": "string",

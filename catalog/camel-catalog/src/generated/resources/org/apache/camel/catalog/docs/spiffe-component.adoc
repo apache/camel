@@ -315,6 +315,110 @@ YAML::
 ----
 ====
 
+== Select a local X.509 identity
+
+A workload can receive several X.509-SVIDs from the Workload API. Set `localSpiffeId` to choose an exact local
+identity instead of the default SVID. The producer's `fetchX509Svid` and `fetchJwtSvid` operations and
+`SpiffeSSLContextParameters` all support this option. It is distinct from `acceptedSpiffeIds`, which restricts *remote peers*: selecting a local
+identity does not broaden the TLS peer allow-list.
+
+The selector is route/bean configuration, never a message header or a per-message expression. An invalid SPIFFE ID
+fails before opening the source. An identity that is missing does not fall back to the default or another identity.
+`fetchJwtSvid` mints the JWT-SVID with `localSpiffeId` as its subject, and the Workload API refuses a subject the
+workload is not entitled to, so the option fails closed there too. `validateJwtSvid` has no local identity to choose
+and ignores it.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:identity")
+    .to("spiffe:identity?operation=fetchX509Svid&localSpiffeId=spiffe://example.org/billing&x509Response=id");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:identity"/>
+  <to uri="spiffe:identity?operation=fetchX509Svid&amp;localSpiffeId=spiffe://example.org/billing&amp;x509Response=id"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:identity
+      steps:
+        - to:
+            uri: "spiffe:identity?operation=fetchX509Svid&localSpiffeId=spiffe://example.org/billing&x509Response=id"
+----
+====
+
+The selected identity's normal `x509Response` behavior and identity/expiry headers still apply. A fetch selects from
+the current Workload API context, so a rotated certificate for that same identity is picked up on the next fetch.
+If the identity disappears, the fetch fails and clears its identity/expiry outputs.
+
+For TLS, configure the same option on the SSL parameters bean:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+SpiffeSSLContextParameters ssl = new SpiffeSSLContextParameters();
+ssl.setLocalSpiffeId("spiffe://example.org/billing");
+ssl.setAcceptedSpiffeIds("spiffe://example.org/backend");
+getContext().getRegistry().bind("billingSsl", ssl);
+
+from("direct:callBackend")
+    .to("https://backend.example.org/api?sslContextParameters=#billingSsl");
+----
+XML::
++
+[source,xml]
+----
+<bean id="billingSsl" class="org.apache.camel.component.spiffe.SpiffeSSLContextParameters">
+  <property name="localSpiffeId" value="spiffe://example.org/billing"/>
+  <property name="acceptedSpiffeIds" value="spiffe://example.org/backend"/>
+</bean>
+<route>
+  <from uri="direct:callBackend"/>
+  <to uri="https://backend.example.org/api?sslContextParameters=#billingSsl"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: billingSsl
+      type: org.apache.camel.component.spiffe.SpiffeSSLContextParameters
+      properties:
+        localSpiffeId: spiffe://example.org/billing
+        acceptedSpiffeIds: spiffe://example.org/backend
+- route:
+    from:
+      uri: direct:callBackend
+      steps:
+        - to:
+            uri: "https://backend.example.org/api?sslContextParameters=#billingSsl"
+----
+====
+
+The TLS source reselects on every Workload API update and retains only the configured identity. It refuses to start
+if that identity is initially absent. If a later update removes it, reads of the local TLS identity fail clearly;
+the source does not retain the old selected credential or silently choose another. A subsequent update restoring
+the configured identity makes its new credential available again. Existing established TLS sessions are not
+terminated by changing the source; this selection applies when JSSE asks for the local identity. Configure
+`localSpiffeId` before creating the SSL context; changing the bean afterwards does not replace its cached context.
+Leaving the option unset preserves the SDK's default selection.
+
 == Authorizing a route on the peer SPIFFE ID (SpiffeSecurityPolicy)
 
 `SpiffeSSLContextParameters` decides *which peers may connect*; `org.apache.camel.component.spiffe.SpiffeSecurityPolicy`
@@ -390,14 +494,41 @@ A few things about the server side decide whether, and for which peers, this pol
   accept (or use `acceptAnySpiffeId` and let each policy narrow it), otherwise the handshake turns a peer away
   before its route could have authorized it.
 
-Only camel-netty and camel-netty-http put the `SSLSession` on the message today, as the `CamelNettySSLSession`
-header. Behind platform-http, jetty, undertow or servlet there is no session on the exchange, so the policy has no
-verified peer certificate to read and denies everything.
+The consumer must expose the peer authenticated by its own TLS connection. Supported sources are:
+
+[cols="1,3"]
+|===
+| Consumer | Authenticated peer source
+
+| `netty-http`
+| The channel's `SslHandler` session.
+
+| `servlet`, `jetty`
+| The secure servlet request's container-authenticated `jakarta.servlet.request.X509Certificate` attribute.
+
+| `undertow`
+| The real TLS session supplied by the connection's `SSLSessionInfo`. Forwarded SSL information without a TLS session is rejected.
+
+| `platform-http` with the Vert.x engine
+| The server request's actual `sslSession()`.
+
+| `netty`
+| The existing `CamelNettySSLSession` message header remains supported.
+
+| Other engines and TLS-terminating reverse proxies
+| No automatic peer authentication support. The proxy's connection identity does not prove the original client's identity.
+|===
+
+These adapters publish a `org.apache.camel.spi.TlsPeerCertificateProvider` in the `CamelTlsPeerCertificates`
+exchange property. This typed contract is for trusted consumers integrating actual authenticated server TLS state. It
+is never populated from HTTP identity or certificate headers. A TLS connection without a client certificate is
+recorded as an unverified peer, which fails closed; a plain connection leaves the property absent, and the policy then
+falls back to the session header. Custom consumers must uphold the same provenance contract.
 ====
 
-The peer SPIFFE ID is taken from the *verified* TLS peer certificate the consumer put on the exchange - the
-`CamelNettySSLSession` header for camel-netty-http - and never from a message header a sender could set (see the
-Security notes below). A peer that is not on the `acceptedSpiffeIds` allow-list, or that presents no verified SVID at
+The peer SPIFFE ID is taken from the *verified* TLS peer certificate the consumer put on the exchange through the
+typed TLS peer property (or the legacy Netty session header). Sender-supplied identity and certificate headers are
+never used (see the Security notes below). A peer that is not on the `acceptedSpiffeIds` allow-list, or that presents no verified SVID at
 all, is denied with a `CamelAuthorizationException`, so the route stops and the regular `onException` machinery applies.
 
 Set exactly one of:
@@ -454,8 +585,25 @@ YAML::
 ====
 
 For a TLS consumer that exposes the `SSLSession` under a different header name, set `sslSessionHeader` accordingly. The
-identity is always read from the verified `SSLSession`, never from a certificate object placed on a message header -
-nothing would prove the TLS layer had verified such a certificate.
+legacy session header is used only when the typed TLS peer property is absent. A present but unverified or invalid
+typed property fails closed; a different session header cannot override it. Certificate objects and identity strings
+in message headers are never a substitute for authenticated TLS state.
+
+For OpenFGA composition, bind the user expression to the same verified exchange property. The OpenFGA model must
+define the corresponding `workload` type and tuples for those SPIFFE IDs:
+
+[source,java]
+----
+openFgaPolicy.setUser("workload:${exchangeProperty.CamelSpiffePeerId}");
+from("platform-http:/documents") // Vert.x engine with mutual TLS configured on its server
+    .policy(spiffePolicy)
+    .policy(openFgaPolicy)
+    .to("direct:documents");
+----
+
+`X-Forwarded-Client-Cert`, `X-SPIFFE-ID`, and similar proxy headers are not accepted. Terminate mutually
+authenticated TLS at the Camel consumer to authorize its direct peer. Authenticate an original client through an
+independent validated credential when TLS terminates at a reverse proxy; the proxy's own SVID identifies the proxy.
 
 include::spring-boot:partial$starter.adoc[]
 
@@ -478,70 +626,45 @@ include::spring-boot:partial$starter.adoc[]
   `acceptAnySpiffeId` accepts any SVID that chains to the trust bundle, which authenticates the trust domain but not
   the peer.
 * *The authorization decision is made on the certificate, not a header.* `SpiffeSecurityPolicy` reads the peer SPIFFE
-  ID from the verified TLS peer certificate (the `CamelNettySSLSession` header for camel-netty-http), so a sender
+  ID from the verified TLS peer certificate in trusted consumer state (with the legacy Netty session fallback), so a sender
   cannot assert an identity by setting a header - and it requires mutual TLS, failing closed when the peer presented
   no verified certificate. The verified id it publishes is the `CamelSpiffePeerId` exchange *property*, never a header,
   so it likewise cannot be injected by an inbound message.
 
-== Asynchronous authorization processing
+== Producer readiness and identity observations
 
-Set `asyncProcessing=true` to release the invoking routing thread while the
-component performs authorization or identity work. It defaults to false, preserving
-existing scheduling. Synchronous `ProducerTemplate` calls remain usable and wait
-for the same result and exception contract.
+Enable producer health checks with `camel.health.producersEnabled=true` before starting the route. The component
+also supports `healthCheckProducerEnabled` to disable its checks. The producer registers a check on start and removes
+it on stop. For each enabled check, a dedicated SDK-managed Workload API client maintains one streaming observer;
+stopping the producer closes that client and cancels its observer, even when the endpoint remains cached. Health
+calls read an immutable metadata snapshot and never fetch credentials, contact the API, or start another observer.
+Producer checks remain disabled globally by default, and no observer client is opened while they are disabled.
+If producer checks are enabled dynamically after route startup, restart the route to start its observer.
 
-SPIFFE Workload API calls can block. With asynchronous processing the producer offloads them to bounded Camel-managed workers. The mutual TLS security policy remains inline: its verified-certificate comparison has no remote I/O and already preserves asynchronous downstream processing.
+The observation depends on the endpoint's configured operation:
 
-[source,java]
-----
-.to("spiffe:validate?operation=validateJwtSvid&audience=orders&asyncProcessing=true&asyncPoolSize=4&asyncQueueSize=100&asyncTimeout=30000")
-----
+* `fetchX509Svid` observes the X.509 identity the producer serves: the one named by `localSpiffeId` when that option is
+  set, otherwise the default SVID. Readiness requires an available, unexpired SVID outside
+  `healthCheckExpiryThreshold` (default 60000 milliseconds, a duration such as `5m` is accepted). Set the threshold to
+  zero to require only that it has not expired. Health details include the observed expiry, remaining validity, and whether the identity is approaching expiry.
+* `fetchJwtSvid` and `validateJwtSvid` observe JWT trust bundles. Readiness requires a non-empty bundle update. Bundles
+  have no expiry timestamp, so the check makes no expiry claim and does not mint or validate a token. In particular,
+  it does not prove that a particular audience can be issued or that an incoming token will validate.
 
-`asyncPoolSize` defaults to 4 and `asyncQueueSize` to 100; both must be positive.
-The component also caps queued and running invocations at their sum.
-Saturation rejects immediately
-instead of running authorization on the routing thread. Executors are managed by
-Camel and reused for the lifetime of the producer or wrapped policy processor;
-none is created per exchange.
+Both report the most recent update timestamp and the state of the watch (`not-started`, `starting`, `watching`, `failed`
+or `stopped`). These are SDK callback observations, not an independently measured connection heartbeat; `lastUpdate` is
+the local observation time, not the SPIRE credential's issuance time. The check measures whether the identity the
+Workload API last delivered is valid and not about to expire, not whether the agent is reachable right now. The SDK
+reconnects to an unreachable agent on its own, with unlimited retries and without telling the watch, so an agent outage
+shows up only as an SVID that is no longer refreshed and comes within `healthCheckExpiryThreshold` of its expiry.
+`watch=failed` appears only after an error the SDK does not retry; the SDK then delivers no more updates, readiness
+stays DOWN with the last observation's validity details (`materialValid` keeps saying whether that material is still
+valid), and the route has to be restarted to watch again. Producer operations still contact the Workload API; the watch
+is not a credential cache for those operations. The rotating SSL context has its own source lifecycle and is not measured
+by these producer checks.
 
-The authorization worker limit is enforced even with Camel's virtual-thread pool
-factory. Cancelled blocking calls retain capacity until their SDK invocation
-returns. Routing callbacks use a separate Camel-managed cached executor, independent of
-`asyncPoolSize`, so a callback cannot occupy the deadline scheduler or limit
-subsequent authorization work. Authorization admission is released when the decision
-is committed, before invoking the callback. Downstream route concurrency follows
-the route's own configuration. Each producer or wrapped policy uses one deadline
-scheduler, and idle continuation workers expire through the cached executor.
-
-The continuation executor has no admission limit. With platform threads, a blocking
-downstream continuation can occupy one thread; with virtual threads, each continuation
-uses a virtual thread. `asyncPoolSize` and `asyncQueueSize` bound authorization work,
-not downstream thread or memory use. Configure downstream concurrency through the
-route's consumer or concurrency controls when it needs a separate limit.
-
-`asyncTimeout` defaults to 30000 milliseconds and must be positive. It covers
-queueing, SDK invocation and authorization completion, not downstream route
-processing. Expiry, rejection and shutdown fail the operation rather than
-publishing a successful validation. Stopping cancels admitted work and returns
-one callback per invocation. A late result cannot replace an interrupted or
-cancelled invocation with an allow.
-
-Inputs are captured per invocation before queueing, including Map/List container
-snapshots. Snapshot processing does not complete the original exchange's unit of
-work. Other body objects retain normal Camel object ownership rules. Policy
-wrappers resume their guarded processors through Camel's asynchronous routing
-engine after authorization succeeds.
-
-Cancelling the future returned by a component producer's `processAsync` cancels
-its admitted invocation. Interrupting that producer's synchronous facade also
-cancels it and preserves the interrupt flag. Camel's own `ProducerTemplate` wait
-or future cancellation has its framework lifecycle semantics and may stop waiting
-without immediately cancelling the SDK request; the component deadline and stop
-handling remain in effect. Cancelling an SDK future or interrupting a worker is a
-best-effort transport cancellation: an SDK that ignores cancellation can keep its
-bounded worker occupied until it returns, but cannot commit a late exchange result.
-
-Configured Workload API client transport deadlines continue to apply.
-The validation operation captures its configured audiences and presented token
-before queueing; asynchronous processing does not change which identity or
-operation is trusted.
+No token, private key, certificate contents or exception text is retained or published by the check. A configured
+`workloadApiClient` is not actively probed: it can address a different API from `spiffeSocketPath`, and the SDK offers
+no independent unsubscribe handle for a borrowed client. Supply your own health check for that injected client. If
+`allowOperationHeader=true` is explicitly enabled, changing an individual message's operation does not retarget the
+readiness observer, which always reflects the endpoint's configured operation.

@@ -28,13 +28,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Performs message body transformation between two {@link DataType}s as part of Camel's
  * <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> contract mechanism.
- * <p/>
+ * <p>
  * When a route declares an {@code inputType} or {@code outputType}, Camel's
- * {@link org.apache.camel.processor.ContractAdvice} inspects the current message's {@link DataType} and looks up a
+ * {@code org.apache.camel.processor.ContractAdvice} inspects the current message's {@link DataType} and looks up a
  * matching {@code Transformer} in the {@link TransformerRegistry}. If the current type differs from the declared type,
  * the transformer's {@link #transform(org.apache.camel.Message, DataType, DataType)} method is called automatically,
  * without requiring the route developer to add an explicit conversion step.
- * <p/>
+ * <p>
  * Transformers can be registered by annotating a subclass with {@link DataTypeTransformer} (the annotation drives
  * automatic registration) or manually via {@link org.apache.camel.CamelContext#getTransformerRegistry()}.
  *

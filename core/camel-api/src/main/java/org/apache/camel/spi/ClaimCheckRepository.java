@@ -23,13 +23,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Storage repository for the <a href="https://camel.apache.org/manual/claim-check.html">Claim Check EIP</a>, which
  * temporarily parks a message payload so that a lighter message can travel through an intermediate part of a route.
- * <p/>
+ * <p>
  * The Claim Check pattern solves the problem of passing large payloads through components that have size limits or
  * performance concerns. The producing side stores the payload under a unique key (the "claim check") using
  * {@link #add(String, Exchange)} or {@link #push(Exchange)}, replacing the message body with just the key. The
  * consuming side later retrieves the payload with {@link #get(String)} or {@link #pop()} and restores it to the
  * exchange.
- * <p/>
+ * <p>
  * The interface exposes two access styles:
  * <ul>
  * <li><b>keyed</b> ({@link #add}, {@link #contains}, {@link #get}, {@link #getAndRemove}) — operates like a
@@ -37,8 +37,7 @@ import org.jspecify.annotations.Nullable;
  * <li><b>stack</b> ({@link #push}, {@link #pop}) — operates like a {@link java.util.Deque}; Camel manages the key
  * internally, useful for nested claim checks.</li>
  * </ul>
- *
- * @see org.apache.camel.processor.ClaimCheckProcessor
+ * It is used by the {@code org.apache.camel.processor.ClaimCheckProcessor}.
  */
 public interface ClaimCheckRepository extends Service {
 
@@ -46,15 +45,15 @@ public interface ClaimCheckRepository extends Service {
      * Adds the exchange to the repository.
      *
      * @param  key the claim check key
-     * @return     <tt>true</tt> if this repository did <b>not</b> already contain the specified key
+     * @return     <code>true</code> if this repository did <b>not</b> already contain the specified key
      */
     boolean add(String key, Exchange exchange);
 
     /**
-     * Returns <tt>true</tt> if this repository contains the specified key.
+     * Returns <code>true</code> if this repository contains the specified key.
      *
      * @param  key the claim check key
-     * @return     <tt>true</tt> if this repository contains the specified key
+     * @return     <code>true</code> if this repository contains the specified key
      */
     boolean contains(String key);
 
@@ -70,7 +69,7 @@ public interface ClaimCheckRepository extends Service {
      * Gets and removes the exchange from the repository.
      *
      * @param  key the claim check key
-     * @return     the removed exchange, or <tt>null</tt> if the key did not exists.
+     * @return     the removed exchange, or <code>null</code> if the key did not exist.
      */
     @Nullable
     Exchange getAndRemove(String key);
@@ -81,7 +80,7 @@ public interface ClaimCheckRepository extends Service {
     void push(Exchange exchange);
 
     /**
-     * Pops the repository and returns the latest. Or returns <tt>null</tt> if the stack is empty.
+     * Pops the repository and returns the latest. Or returns <code>null</code> if the stack is empty.
      */
     @Nullable
     Exchange pop();

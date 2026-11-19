@@ -51,6 +51,11 @@ Camel translates the absolute path to relative by trimming all leading slashes f
 There'll be a warning (`WARN` level) message printed in the logs.
 =====
 
+When the server refuses the change to a directory, the `GenericFileOperationFailedException` holds the reply code
+(`getCode()`) and the reply of the server, and for a relative path its message gives the current directory, which the
+path starts from, such as `Cannot change directory to: inbox. The path is relative to the current directory:
+/home/admin`.
+
 The `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
 performed to create the directory configured for endpoint. The default
@@ -267,6 +272,13 @@ wait on that connection again:
 * After a failed poll, the consumer closes the connection without sending `QUIT`.
 * When disconnecting, for example when the consumer or the producer stops, the client sends `QUIT` and waits at most
   2 seconds (`soTimeout` when it is shorter) for its reply.
+
+=== File and directory names with a line break
+
+The FTP control connection sends one command per line, so a remote file or directory name with a carriage return or
+a line feed cannot be sent as the argument of one command. The `ftp` and `ftps` components refuse such a name with a
+`GenericFileOperationFailedException` before they send any command for it, for example when the producer writes a file
+whose `CamelFileName` header has a line break. Remove or replace these characters in the name before the producer.
 
 [[FTP-DefaultWhenConsumingFiles]]
 === Default when consuming files
@@ -667,12 +679,9 @@ YAML::
 
 ==== Filtering using ANT path matcher
 
-The ANT path matcher is a filter shipped out-of-the-box in the
-*camel-spring* jar. So you need to depend on *camel-spring* if you are
-using Maven.
-The reason is that we leverage Spring's
-http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
-to do the actual matching.
+The ANT path matcher is a filter shipped out-of-the-box with the file component: the `antInclude` and `antExclude`
+options need no other dependency. Use them for wildcards such as `+*.txt+`: the `fileName` option is a file name, not
+a pattern, and the `include` and `exclude` options are regular expressions.
 
 The file paths are matched with the following rules:
 

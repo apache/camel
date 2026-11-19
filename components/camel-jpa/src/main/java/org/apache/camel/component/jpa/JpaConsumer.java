@@ -28,11 +28,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.PessimisticLockException;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.EntityType;
 
 import org.apache.camel.Exchange;
@@ -51,6 +55,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
 
+    private static final String LOCK_TIMEOUT = "jakarta.persistence.lock.timeout";
+    // the lock timeout that Hibernate takes as SKIP LOCKED (org.hibernate.Timeouts.SKIP_LOCKED_MILLI): the JPA
+    // specification has no such value, OpenJPA rejects it, and EclipseLink takes it as a wait time
+    private static final int SKIP_LOCKED = -2;
+    private static final String HIBERNATE_SESSION = "org.hibernate.Session";
     private static final Map<String, Object> NOWAIT;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionStrategy transactionStrategy;
@@ -66,11 +75,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private Class<?> resultClass;
     private boolean transacted;
     private boolean skipLockedEntity;
+    private long lockTimeout;
+    private Boolean skipLockedSupported;
     private final AtomicBoolean notEntityWarned = new AtomicBoolean();
 
     static {
         NOWAIT = new HashMap<>();
-        NOWAIT.put("jakarta.persistence.lock.timeout", 0L);
+        // an int of millis, like the hint given with lockTimeout
+        NOWAIT.put(LOCK_TIMEOUT, 0);
     }
 
     private static final class DataHolder {
@@ -351,8 +363,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets whether to use NOWAIT on lock and silently skip the entity. This allows different instances to process
-     * entities at the same time but not processing the same entity.
+     * Sets whether to skip an entity that another transaction has locked, instead of waiting for its lock. This allows
+     * different instances to process entities at the same time but not processing the same entity.
+     * <p/>
+     * With Hibernate and a pessimistic lock mode, the entity is locked with <tt>SKIP LOCKED</tt> (where the database
+     * supports it): an entity that another transaction holds, or that is no longer in the database, is skipped and the
+     * transaction goes on, also on PostgreSQL, where a failed lock aborts the transaction. Otherwise the lock is given
+     * the <tt>jakarta.persistence.lock.timeout</tt> hint 0 (NOWAIT, if the JPA provider applies it), and the entity is
+     * skipped if the lock fails and the transaction can go on.
      */
     public void setSkipLockedEntity(boolean skipLockedEntity) {
         this.skipLockedEntity = skipLockedEntity;
@@ -360,6 +378,19 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     public boolean isSkipLockedEntity() {
         return skipLockedEntity;
+    }
+
+    /**
+     * Sets how long, in millis, to wait for the lock of an entity that another transaction holds. It is given to the
+     * JPA provider as the <tt>jakarta.persistence.lock.timeout</tt> hint. The default <tt>0</tt> sets no timeout. Not
+     * used with skipLockedEntity. Must not be negative.
+     */
+    public void setLockTimeout(long lockTimeout) {
+        this.lockTimeout = lockTimeout;
+    }
+
+    public long getLockTimeout() {
+        return lockTimeout;
     }
 
     // Implementation methods
@@ -385,7 +416,18 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         try {
             LOG.debug("Acquiring exclusive lock on entity: {}", entity);
             if (isSkipLockedEntity()) {
+                if (!lockSkipLocked(entity, entityManager)) {
+                    LOG.debug("Skipping entity locked by another transaction, or no longer in the database: {}", entity);
+                    return false;
+                }
+                // after SKIP LOCKED this transaction holds the row lock, and this applies the lock mode, such as
+                // PESSIMISTIC_FORCE_INCREMENT; otherwise NOWAIT fails the lock of an entity that another transaction
+                // holds
                 entityManager.lock(entity, lockModeType, NOWAIT);
+            } else if (lockTimeout > 0) {
+                // the JPA hint is an int of millis
+                int millis = (int) Math.min(lockTimeout, Integer.MAX_VALUE);
+                entityManager.lock(entity, lockModeType, Map.of(LOCK_TIMEOUT, millis));
             } else {
                 entityManager.lock(entity, lockModeType);
             }
@@ -405,12 +447,107 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      * Whether the query result is an entity, and not a value such as a selected column or an Object array.
      */
     protected boolean isEntity(Object result, EntityManager entityManager) {
+        return findEntityType(result, entityManager) != null;
+    }
+
+    /**
+     * The entity type of the query result, the one of its class if there is one (and not of a super class), or null if
+     * the result is not an entity.
+     */
+    private static EntityType<?> findEntityType(Object result, EntityManager entityManager) {
+        if (result == null) {
+            return null;
+        }
+        EntityType<?> answer = null;
         for (EntityType<?> type : entityManager.getMetamodel().getEntities()) {
-            if (type.getJavaType() != null && type.getJavaType().isInstance(result)) {
-                return true;
+            Class<?> javaType = type.getJavaType();
+            if (javaType == result.getClass()) {
+                return type;
+            } else if (answer == null && javaType != null && javaType.isInstance(result)) {
+                answer = type;
             }
         }
-        return false;
+        return answer;
+    }
+
+    /**
+     * Locks the entity with SKIP LOCKED, if the JPA provider supports it and the lock mode locks the row: a select of
+     * the entity that skips its row if another transaction holds its lock. Unlike a failed lock, a skipped row is no
+     * error, so the transaction goes on, also on a database where a failed lock aborts the transaction (PostgreSQL).
+     *
+     * @return false if the entity is to be skipped: another transaction holds its lock, or it is no longer in the
+     *         database. True if it is now locked, or if SKIP LOCKED is not used.
+     */
+    private boolean lockSkipLocked(Object entity, EntityManager entityManager) {
+        LockModeType rowLock;
+        if (lockModeType == LockModeType.PESSIMISTIC_READ) {
+            rowLock = LockModeType.PESSIMISTIC_READ;
+        } else if (lockModeType == LockModeType.PESSIMISTIC_WRITE
+                || lockModeType == LockModeType.PESSIMISTIC_FORCE_INCREMENT) {
+            // Hibernate always locks the rows of a query with PESSIMISTIC_FORCE_INCREMENT with NOWAIT
+            rowLock = LockModeType.PESSIMISTIC_WRITE;
+        } else {
+            // an optimistic lock mode locks no row
+            return true;
+        }
+        EntityType<?> type = findEntityType(entity, entityManager);
+        if (type == null || !isSkipLockedSupported(entityManager)) {
+            return true;
+        }
+        return !selectSkipLocked(type, entity, entityManager, rowLock).isEmpty();
+    }
+
+    private static <T> List<T> selectSkipLocked(
+            EntityType<T> type, Object entity, EntityManager entityManager, LockModeType rowLock) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> query = builder.createQuery(type.getJavaType());
+        Root<T> root = query.from(type);
+        query.select(root).where(builder.equal(root, entity));
+        return entityManager.createQuery(query)
+                .setLockMode(rowLock)
+                .setHint(LOCK_TIMEOUT, SKIP_LOCKED)
+                // a lock has no side effect: do not flush the changes of the entities routed before
+                .setFlushMode(FlushModeType.COMMIT)
+                .getResultList();
+    }
+
+    /**
+     * Whether the JPA provider locks with SKIP LOCKED: Hibernate does, when given the lock timeout -2.
+     */
+    private boolean isSkipLockedSupported(EntityManager entityManager) {
+        Boolean answer = skipLockedSupported;
+        if (answer == null) {
+            Object delegate;
+            try {
+                delegate = entityManager.getDelegate();
+            } catch (IllegalStateException | PersistenceException e) {
+                LOG.debug("Cannot tell whether the JPA provider is Hibernate, locking with NOWAIT: {}", e.getMessage(), e);
+                delegate = null;
+            }
+            if (delegate == null) {
+                // not known, such as with a closed EntityManager: lock with NOWAIT this time, and check again the next
+                // time, instead of keeping NOWAIT for the life of the consumer
+                return false;
+            }
+            answer = isHibernate(delegate);
+            skipLockedSupported = answer;
+            LOG.debug("skipLockedEntity locks with {}", answer ? "SKIP LOCKED" : "NOWAIT");
+        }
+        return answer;
+    }
+
+    private static boolean isHibernate(Object delegate) {
+        ClassLoader classLoader = delegate.getClass().getClassLoader();
+        if (classLoader == null) {
+            return false;
+        }
+        try {
+            Class<?> session = Class.forName(HIBERNATE_SESSION, false, classLoader);
+            return session.isInstance(delegate);
+        } catch (ClassNotFoundException | LinkageError e) {
+            // no Hibernate: lock with NOWAIT
+            return false;
+        }
     }
 
     protected QueryFactory createQueryFactory() {
@@ -564,6 +701,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        if (lockTimeout < 0) {
+            // there is no hint for a negative value, so the lock would wait for ever
+            throw new IllegalArgumentException("lockTimeout must be >= 0, was: " + lockTimeout);
+        }
 
         // need to setup entity manager first
         if (getEndpoint().isSharedEntityManager()) {

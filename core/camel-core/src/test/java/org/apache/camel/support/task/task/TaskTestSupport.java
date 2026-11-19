@@ -57,7 +57,7 @@ public class TaskTestSupport {
         assertNotNull(stopAtValue);
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(slowPredicateMillis());
         } catch (InterruptedException e) {
             return false;
         }
@@ -68,6 +68,14 @@ public class TaskTestSupport {
         }
 
         return false;
+    }
+
+    /**
+     * How long the slow predicate takes. A test class that runs its task on a shorter interval than a second shortens
+     * it in the same proportion.
+     */
+    protected long slowPredicateMillis() {
+        return 2000;
     }
 
     @BeforeEach

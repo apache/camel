@@ -76,6 +76,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam(label = "producer,security", defaultValue = "chain")
     private SpiffeX509Response x509Response = SpiffeX509Response.chain;
 
+    @UriParam(label = "producer,security")
+    private String localSpiffeId;
+
     @UriParam(label = "security")
     private String spiffeSocketPath;
 
@@ -87,6 +90,9 @@ public class SpiffeConfiguration implements Cloneable {
 
     @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean allowOperationHeader;
+
+    @UriParam(label = "health", defaultValue = "60000", javaType = "java.time.Duration")
+    private long healthCheckExpiryThreshold = 60000;
 
     @UriParam(label = "advanced",
               description = "An existing WorkloadApiClient to use. When set, the component does not"
@@ -119,6 +125,21 @@ public class SpiffeConfiguration implements Cloneable {
      */
     public void setX509Response(SpiffeX509Response x509Response) {
         this.x509Response = x509Response;
+    }
+
+    public String getLocalSpiffeId() {
+        return localSpiffeId;
+    }
+
+    /**
+     * The exact local SPIFFE ID to use when the Workload API supplies several identities: fetchX509Svid selects that
+     * X.509-SVID instead of the SDK's default one, and fetchJwtSvid mints the JWT-SVID with it as the subject. A
+     * configured identity that is absent, or that the workload is not entitled to, fails without selecting a different
+     * identity. This option comes only from endpoint configuration, never from a message header; validateJwtSvid has no
+     * local identity to choose and ignores it.
+     */
+    public void setLocalSpiffeId(String localSpiffeId) {
+        this.localSpiffeId = localSpiffeId;
     }
 
     /**
@@ -173,6 +194,19 @@ public class SpiffeConfiguration implements Cloneable {
      */
     public void setAllowOperationHeader(boolean allowOperationHeader) {
         this.allowOperationHeader = allowOperationHeader;
+    }
+
+    public long getHealthCheckExpiryThreshold() {
+        return healthCheckExpiryThreshold;
+    }
+
+    /**
+     * Minimum remaining X.509-SVID validity, in milliseconds, for the producer readiness check to report UP. A
+     * certificate at or below this threshold reports DOWN before expiry. Zero requires only an unexpired identity. Does
+     * not apply to JWT-bundle readiness because bundles have no expiry timestamp.
+     */
+    public void setHealthCheckExpiryThreshold(long healthCheckExpiryThreshold) {
+        this.healthCheckExpiryThreshold = healthCheckExpiryThreshold;
     }
 
     /**

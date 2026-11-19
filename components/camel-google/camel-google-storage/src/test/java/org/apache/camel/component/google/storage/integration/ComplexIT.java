@@ -61,6 +61,13 @@ class ComplexIT extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         if (service instanceof GoogleStorageLocalContainerInfraService) {
+            // the test ran against a real project when this variable was set, before it ran on Floci GCP: so that a run
+            // on Floci GCP is not taken for one against that project, it asks for -Dgoogle.instance.type=remote
+            if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null) {
+                throw new IllegalStateException(
+                        "GOOGLE_APPLICATION_CREDENTIALS is set: add -Dgoogle.instance.type=remote to run the test against"
+                                                + " the Cloud Storage of that project");
+            }
             // the endpoints take the client of the registry; against Google Cloud, they build their own
             registry.bind("storageClient", createLocalStorageClient());
         }

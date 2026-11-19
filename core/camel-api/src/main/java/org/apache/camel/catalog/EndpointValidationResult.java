@@ -106,7 +106,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
      * A human readable summary of the validation errors.
      *
      * @param  includeHeader whether to include a header
-     * @return               the summary, or <tt>null</tt> if no validation errors
+     * @return               the summary, or <code>null</code> if no validation errors
      */
     public @Nullable String summaryErrorMessage(boolean includeHeader) {
         return summaryErrorMessage(includeHeader, true, false);
@@ -118,7 +118,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
      * @param  includeHeader    whether to include a header
      * @param  ignoreDeprecated whether to ignore deprecated options in use as an error or not
      * @param  includeWarnings  whether to include warnings as an error or not
-     * @return                  the summary, or <tt>null</tt> if no validation errors
+     * @return                  the summary, or <code>null</code> if no validation errors
      */
     public @Nullable String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();

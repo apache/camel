@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Controls how much information {@link CamelContext} logs in its startup (and shutdown) summary.
- * <p/>
+ * <p>
  * Set via {@code CamelContext.setStartupSummaryLevel(StartupSummaryLevel)} or the property
  * {@code camel.main.startup-summary-level} in application configuration. The default is {@link #Default}, which logs a
  * compact route overview. Choose {@link #Verbose} for full endpoint URI details, {@link #Brief} or {@link #Oneline}

@@ -101,7 +101,10 @@ public final class HazelcastConstants {
     @Metadata(label = "consumer", description = "The name of the cache - e.g. \"foo\"", javaType = "String", applicableFor = {
             SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC })
     public static final String CACHE_NAME = "CamelHazelcastCacheName";
-    @Metadata(description = "The type of the cache - here multimap", javaType = "String", applicableFor = SCHEME_MULTIMAP)
+    @Metadata(description = "The type of the cache - here multimap", javaType = "String", applicableFor = SCHEME_MULTIMAP,
+              deprecationNote = "Never set or read by the component: the multimap listener sets the cache name, listener type,"
+                                + " listener action and listener time only")
+    @Deprecated
     public static final String CACHE_TYPE = "CamelHazelcastCacheType";
 
     // actions (PUT, DELETE, GET, GET_ALL, UPDATE, CLEAR)

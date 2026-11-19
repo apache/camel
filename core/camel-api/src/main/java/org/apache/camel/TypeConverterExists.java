@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlEnum;
  * Policy controlling what happens when a {@link org.apache.camel.spi.TypeConverterRegistry} receives a request to
  * register a <a href="https://camel.apache.org/manual/type-converter.html">type converter</a> whose from-to type pair
  * is already registered.
- * <p/>
+ * <p>
  * This policy is set on the registry via
  * {@link org.apache.camel.spi.TypeConverterRegistry#setTypeConverterExists(TypeConverterExists)} and determines whether
  * a duplicate registration replaces the existing converter ({@link #Override}), is silently discarded

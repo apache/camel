@@ -2700,7 +2700,8 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakUserLastName";
         }
         /**
-         * The role ID.
+         * The role ID. Deprecation note: Never read by the component: the role
+         * operations address a role by its name (CamelKeycloakRoleName).
          * 
          * The option is a: {@code String} type.
          * 
@@ -2708,6 +2709,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakRoleId}.
          */
+        @Deprecated
         public String keycloakRoleId() {
             return "CamelKeycloakRoleId";
         }
@@ -2904,7 +2906,9 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakIdpAlias";
         }
         /**
-         * The identity provider ID.
+         * The identity provider ID. Deprecation note: Never read by the
+         * component: the identity provider operations address a provider by its
+         * alias (CamelKeycloakIdpAlias).
          * 
          * The option is a: {@code String} type.
          * 
@@ -2912,6 +2916,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakIdpId}.
          */
+        @Deprecated
         public String keycloakIdpId() {
             return "CamelKeycloakIdpId";
         }
@@ -2928,7 +2933,9 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakResourceId";
         }
         /**
-         * The resource name.
+         * The resource name. Deprecation note: Never read by the component:
+         * createResource and updateResource take a ResourceRepresentation as
+         * the POJO request body.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2936,11 +2943,14 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakResourceName}.
          */
+        @Deprecated
         public String keycloakResourceName() {
             return "CamelKeycloakResourceName";
         }
         /**
-         * The resource type.
+         * The resource type. Deprecation note: Never read by the component:
+         * createResource and updateResource take a ResourceRepresentation as
+         * the POJO request body.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2948,11 +2958,14 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakResourceType}.
          */
+        @Deprecated
         public String keycloakResourceType() {
             return "CamelKeycloakResourceType";
         }
         /**
-         * The resource URI.
+         * The resource URI. Deprecation note: Never read by the component:
+         * createResource and updateResource take a ResourceRepresentation as
+         * the POJO request body.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2960,6 +2973,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakResourceUri}.
          */
+        @Deprecated
         public String keycloakResourceUri() {
             return "CamelKeycloakResourceUri";
         }
@@ -2976,7 +2990,9 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakPolicyId";
         }
         /**
-         * The policy name.
+         * The policy name. Deprecation note: Never read by the component: the
+         * resource policy operations take a PolicyRepresentation as the POJO
+         * request body.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2984,11 +3000,14 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakPolicyName}.
          */
+        @Deprecated
         public String keycloakPolicyName() {
             return "CamelKeycloakPolicyName";
         }
         /**
-         * The policy type.
+         * The policy type. Deprecation note: Never read by the component: the
+         * resource policy operations take a PolicyRepresentation as the POJO
+         * request body.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2996,6 +3015,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakPolicyType}.
          */
+        @Deprecated
         public String keycloakPolicyType() {
             return "CamelKeycloakPolicyType";
         }
@@ -3012,7 +3032,10 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakPermissionId";
         }
         /**
-         * The permission name.
+         * The permission name. Deprecation note: Never read by the component:
+         * createResourcePermission takes a ResourcePermissionRepresentation as
+         * the POJO request body, and the other permission operations identify
+         * the permission with CamelKeycloakPermissionId.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3020,11 +3043,14 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakPermissionName}.
          */
+        @Deprecated
         public String keycloakPermissionName() {
             return "CamelKeycloakPermissionName";
         }
         /**
-         * The scope name.
+         * The scope name. Deprecation note: Never read by the component: there
+         * are no authorization-scope operations, and the client scope
+         * operations use CamelKeycloakClientScopeName.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3032,6 +3058,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakScopeName}.
          */
+        @Deprecated
         public String keycloakScopeName() {
             return "CamelKeycloakScopeName";
         }
@@ -3072,7 +3099,11 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakCredentialId";
         }
         /**
-         * The credential type.
+         * The credential type. Deprecation note: Never read by the component:
+         * no credential operation takes a CredentialRepresentation request
+         * body. deleteUserCredential uses CamelKeycloakCredentialId, and
+         * resetUserPassword builds a password credential from
+         * CamelKeycloakUserPassword.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3080,6 +3111,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakCredentialType}.
          */
+        @Deprecated
         public String keycloakCredentialType() {
             return "CamelKeycloakCredentialType";
         }
@@ -3194,7 +3226,9 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakContinueOnError";
         }
         /**
-         * Batch size for bulk operations.
+         * Batch size for bulk operations. Deprecation note: Never read by the
+         * component: the bulk operations send every element of the list one by
+         * one, with no batching.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -3202,6 +3236,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * @return the name of the header {@code KeycloakBatchSize}.
          */
+        @Deprecated
         public String keycloakBatchSize() {
             return "CamelKeycloakBatchSize";
         }

@@ -55,12 +55,16 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": target.setIncludeHeaders(property(camelContext, java.lang.String.class, value)); return true;
         case "includeproperties":
         case "includeProperties": target.setIncludeProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "inputexpression":
+        case "inputExpression": target.setInputExpression(property(camelContext, org.apache.camel.Expression.class, value)); return true;
         case "opaclient":
         case "opaClient": target.setOpaClient(property(camelContext, com.styra.opa.OPAClient.class, value)); return true;
         case "policybundle":
         case "policyBundle": target.setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
         case "policypath":
         case "policyPath": target.setPolicyPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "policyreloadinterval":
+        case "policyReloadInterval": target.setPolicyReloadInterval(property(camelContext, long.class, value)); return true;
         case "poolsize":
         case "poolSize": target.setPoolSize(property(camelContext, int.class, value)); return true;
         case "requesttimeout":
@@ -109,12 +113,16 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": return java.lang.String.class;
         case "includeproperties":
         case "includeProperties": return java.lang.String.class;
+        case "inputexpression":
+        case "inputExpression": return org.apache.camel.Expression.class;
         case "opaclient":
         case "opaClient": return com.styra.opa.OPAClient.class;
         case "policybundle":
         case "policyBundle": return java.lang.String.class;
         case "policypath":
         case "policyPath": return java.lang.String.class;
+        case "policyreloadinterval":
+        case "policyReloadInterval": return long.class;
         case "poolsize":
         case "poolSize": return int.class;
         case "requesttimeout":
@@ -164,12 +172,16 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": return target.getIncludeHeaders();
         case "includeproperties":
         case "includeProperties": return target.getIncludeProperties();
+        case "inputexpression":
+        case "inputExpression": return target.getInputExpression();
         case "opaclient":
         case "opaClient": return target.getOpaClient();
         case "policybundle":
         case "policyBundle": return target.getPolicyBundle();
         case "policypath":
         case "policyPath": return target.getPolicyPath();
+        case "policyreloadinterval":
+        case "policyReloadInterval": return target.getPolicyReloadInterval();
         case "poolsize":
         case "poolSize": return target.getPoolSize();
         case "requesttimeout":

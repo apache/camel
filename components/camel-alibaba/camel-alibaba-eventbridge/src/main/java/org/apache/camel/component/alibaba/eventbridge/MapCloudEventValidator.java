@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import com.aliyun.eventbridge.EventBridgeClient;
 import com.aliyun.eventbridge.models.CloudEvent;
@@ -101,10 +102,9 @@ final class MapCloudEventValidator {
                 .withType(type)
                 .withAliyunEventBus(eventBusName);
 
+        // the SDK client requires an id and generates none
         String id = resolveString(getMapValue(map, "id", null), null);
-        if (ObjectHelper.isNotEmpty(id)) {
-            builder.withId(id);
-        }
+        builder.withId(ObjectHelper.isNotEmpty(id) ? id : UUID.randomUUID().toString());
 
         String subject = resolveString(getMapValue(map, AlibabaEventBridgeConstants.EVENT_SUBJECT, "subject"),
                 configuration.eventSubject());

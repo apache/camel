@@ -56,6 +56,14 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  */
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
 
+    // why the producer waited for a reply, and what to do, added to the message of the timeout
+    private static final String TIMEOUT_HINT
+            = "The message was sent as a request and the producer waited for a reply, because the exchange pattern is"
+              + " InOut (such as an exchange from an HTTP or REST consumer, from a JMS message with a JMSReplyTo, or from a"
+              + " request method of ProducerTemplate)."
+              + " If a reply is expected, check that a consumer of the request destination sends it, or increase"
+              + " requestTimeout. If no reply is expected, send the message with exchangePattern=InOnly or disableReplyTo=true";
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final CamelContext camelContext;
     protected ScheduledExecutorService scheduledExecutorService;
@@ -211,7 +219,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     ExchangeHelper.logIds(exchange));
         }
         String msg = "reply message with correlationID: " + holder.getCorrelationId()
-                     + " not received on destination: " + replyTo;
+                     + " not received on destination: " + replyTo + ". " + TIMEOUT_HINT;
         exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
     }
 

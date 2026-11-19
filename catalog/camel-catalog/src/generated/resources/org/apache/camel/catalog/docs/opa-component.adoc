@@ -241,6 +241,90 @@ conversion applies at depth.
 The component's own `CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a
 verdict that an inbound message claimed for itself.
 
+=== Custom input expressions
+
+Set `inputExpression=#domainInput` to evaluate a configured Camel `Expression` bean that produces the complete
+policy input. This replaces the default envelope in both REST and WASM modes, and also applies to
+`OpaSecurityPolicy`. The expression result may be a `Map`, an object JSON node, or a POJO supported by the
+component's Jackson JSON mapping. Nested maps, lists and POJOs are normalized to JSON-native values; a top-level
+JSON string is not parsed implicitly. Null, scalar, array and streaming results fail closed before the policy
+engine is called, even when `failOpen=true`.
+
+For example, take the verified identity from an exchange property the route set after authentication, and only
+the domain payload from the body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+context.getRegistry().bind("domainInput", new ExpressionAdapter() {
+    @Override
+    public Object evaluate(Exchange exchange) {
+        return Map.of("subject", exchange.getProperty("verifiedSubject"),
+                      "order", exchange.getMessage().getBody());
+    }
+});
+
+from("direct:orders")
+    .to("opa:authz/orders/allow?inputExpression=#domainInput");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- a small Expression class of the application, with the evaluate(Exchange) method of the Java tab -->
+<bean id="domainInput" class="com.example.orders.DomainInputExpression"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:orders"/>
+        <to uri="opa:authz/orders/allow?inputExpression=#domainInput"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    # a small Expression class of the application, with the evaluate(Exchange) method of the Java tab
+    - name: domainInput
+      type: com.example.orders.DomainInputExpression
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - to:
+            uri: opa:authz/orders/allow
+            parameters:
+              inputExpression: "#domainInput"
+----
+====
+
+WARNING: The body comes from the sender. Do not make it the whole input, and never let it supply the identity or
+role fields the policy reads: a sender who posts `{"subject": "admin"}` would write straight into them. Take the
+identity from an exchange property the route verified, as <<authorizing-an-identity>> describes, and put the
+sender's data under a key of its own.
+
+The `includeHeaders`, `includeProperties` and `includeBody` options configure only the default envelope; they do
+not add or filter fields in a custom input. The expression decides what to include, so select verified identity
+and application data deliberately. The default envelope withholds the headers that carry a credential verbatim
+(`Authorization`, `Proxy-Authorization`, `Cookie` and `Set-Cookie`); a custom expression gets none of that
+protection, so copy headers selectively and leave those out. Decision headers are still cleared before mapping.
+Custom expression beans must support concurrent evaluation. For a single exchange the expression runs on the live
+exchange, so a header or property it sets stays on the exchange; in batch mode it runs on a copy, as described
+below.
+
+In batch mode, the expression is evaluated once per element against an exchange copy whose body is that element.
+Headers and properties remain available to the expression, while the route's original List body is preserved.
+The expression must produce one JSON object per element; a mapping failure stops the batch before calling OPA.
+The component does not consume streams automatically. If an expression explicitly reads a stream, configure
+stream caching or handle its lifetime in the route.
+
 == Reading the verdict
 
 `CamelOpaDecision` holds the decision document exactly as OPA returned it. `CamelOpaDecisionAllow` holds the
@@ -589,6 +673,47 @@ found through `spiffeSocketPath`, or the `SPIFFE_ENDPOINT_SOCKET` environment va
 xref:spiffe-component.adoc[SPIFFE] component page describes the rest of its options.
 
 None of this applies in `wasm` mode, where there is no server to reach.
+
+=== Static data in pooled WASM instances
+
+Each WASM pool instance prepares its fixed entrypoint and bundled data once when created. New inputs reuse that
+instance's static data while the SDK resets transient input allocations for each evaluation. Instances are never
+shared concurrently. An evaluation failure discards the instance, and its replacement loads the same configured
+entrypoint and data before use. Large static data therefore adds initialization work per instance, rather than
+being parsed again for every exchange.
+
+=== Reloading a WASM policy
+
+A WASM endpoint or security policy keeps the policy module and its bundled data together as one immutable
+snapshot. By default it loads the configured resource at startup only. Set `policyReloadInterval` to a
+positive duration in milliseconds to poll that resource using a Camel-managed scheduler, for example:
+
+[source,java]
+----
+.to("opa:authz/allow?evaluationMode=wasm&policyBundle=file:/etc/policies/bundle.tar.gz&policyReloadInterval=5000")
+----
+
+The same `policyReloadInterval` property is available on `OpaSecurityPolicy`. A shared security policy
+polls while at least one guarded route is running and stops polling when the last guarded route stops.
+Reload reads only the operator-configured resource; it does not read or download policy on each exchange.
+Publish resource updates atomically, such as by renaming a completed file over the configured file.
+
+For explicit reload, call `reloadPolicy()` on the started `OpaEndpoint` or `OpaSecurityPolicy`.
+It returns `true` after publishing changed content, `false` for unchanged content, and throws if loading
+or validation fails. The replacement is loaded, initialized with its configured entrypoint and data,
+and warmed before it becomes visible. Exchanges already using the previous snapshot finish with that
+snapshot, which closes after they drain. New exchanges use the replacement without waiting for those
+exchanges to finish. Stopping cancels the watcher and prevents an in-flight reload from publishing.
+
+`getPolicyReloadStatus()` exposes the active SHA-256 revision of the module and data, the time of the last
+successful check (the initial load, a published reload, or a poll that found the content unchanged), and the
+time and exception class name of the last failed reload, which stay visible after later successful checks.
+Failure diagnostics exclude exception messages and resource contents. A failed reload retains the last
+validated snapshot. Content that loads but fails validation or compilation is not built again by a poll until
+it changes, so one broken file logs one warning, while a resource that cannot be read at all is retried on every
+poll; an explicit `reloadPolicy()` always tries. Operators should monitor failures because
+retained policy can become stale. Reload and this option apply only to WASM evaluation; REST policy
+deployment remains managed by the OPA server.
 
 [[failure-handling]]
 == Failure handling

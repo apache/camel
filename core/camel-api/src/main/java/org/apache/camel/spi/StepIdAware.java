@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Marker for an object whose owning step id can be injected.
- * <p/>
+ * <p>
  * This gives access to the step id at runtime, so a processor knows which step (the Step EIP) it is associated with.
  *
  * @see   IdAware

@@ -16,16 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLoadAction;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
-import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HomeHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,42 +39,55 @@ import static org.apache.camel.dsl.jbang.run.common.RuntimeUtil.getPid;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@UsesWorkingDirectory
-class LoadTest {
+class LoadTest extends CamelCommandBaseTestSupport {
 
-    private Path workingDir;
-    private Path previousHome;
+    // the phase of a started integration in the status file
+    private static final int PHASE_STARTED = 5;
+
+    private File workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
-        Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-load");
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
         // the routes run in this JVM, and their CLI connector reads the actions in the user home
-        previousHome = CommandLineHelper.getHomeDir();
-        CommandLineHelper.useHomeDir(HomeHelper.resolveHomeDir());
+        useHomeDir(Path.of(HomeHelper.resolveHomeDir()));
+        workingDir = Files.createTempDirectory("camel-load").toFile();
     }
 
     @AfterEach
     public void end() throws IOException {
-        CommandLineHelper.useHomeDir(previousHome.toString());
-        // force removing, since deleteOnExit is not removing.
-        PathUtils.deleteDirectory(workingDir);
+        FileUtil.removeDir(workingDir);
+    }
+
+    private static boolean integrationStarted() throws Exception {
+        Path status = CommandLineHelper.getCamelDir().resolve(getPid() + "-status.json");
+        if (!Files.exists(status)) {
+            return false;
+        }
+        JsonObject root = (JsonObject) Jsoner.deserialize(Files.readString(status));
+        JsonObject context = root != null ? (JsonObject) root.get("context") : null;
+        return context != null && context.getInteger("phase") == PHASE_STARTED;
     }
 
     @Test
     public void shouldLoad() throws Exception {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new Run(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
-                "--prop=mydir=" + workingDir);
+                "--prop=mydir=" + workingDir.getAbsolutePath());
 
+        AtomicReference<Exception> loadFailure = new AtomicReference<>();
         Runnable r = () -> {
             try {
-                Thread.sleep(2000);
+                // wait until the integration has started: the status file is in the home dir, and it is empty or
+                // incomplete while the integration writes it
+                await().atMost(10, TimeUnit.SECONDS).ignoreExceptions().until(LoadTest::integrationStarted);
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
             } catch (Exception e) {
-                // ignore
+                loadFailure.set(e);
             }
         };
 
@@ -78,9 +95,11 @@ class LoadTest {
         t.start();
 
         int exit = run.doCall();
+        t.join();
+        assertThat(loadFailure.get()).as("the load action is sent").isNull();
         Assertions.assertEquals(0, exit);
 
-        Path outPath = workingDir.resolve("load.txt");
+        Path outPath = workingDir.toPath().resolve("load.txt");
         await("load.txt file is created by the launched routes").untilAsserted(() -> assertThat(outPath).exists());
         String data = Files.readString(outPath);
         Assertions.assertEquals("I was loaded", data);

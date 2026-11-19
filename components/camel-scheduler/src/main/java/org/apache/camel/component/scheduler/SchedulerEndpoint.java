@@ -29,6 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
@@ -125,14 +126,28 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
     }
 
     public void onConsumerStart(SchedulerConsumer consumer) {
-        // if using default scheduler then obtain thread pool from component which manages their lifecycle
-        if (consumer.getScheduler() == null && consumer.getScheduledExecutorService() == null) {
+        // if using default scheduler then obtain thread pool from component which manages their lifecycle. A consumer
+        // that is started again (stopped and started via JMX or a route policy) takes the pool again, as its stop
+        // released it, and the component shut it down if it was the last user
+        boolean usesComponentPool = consumer.getComponentPool() != null;
+        if (usesComponentPool || consumer.getScheduler() == null && consumer.getScheduledExecutorService() == null) {
             ScheduledExecutorService scheduler = getComponent().addConsumer(consumer);
+            consumer.setComponentPool(scheduler);
+            consumer.setComponentPoolTaken(true);
             consumer.setScheduledExecutorService(scheduler);
+            if (consumer.getScheduler() instanceof DefaultScheduledPollConsumerScheduler defaultScheduler) {
+                // the scheduler the consumer created at its first start still has the pool of that start
+                defaultScheduler.setScheduledExecutorService(scheduler);
+            }
         }
     }
 
     public void onConsumerStop(SchedulerConsumer consumer) {
-        getComponent().removeConsumer(consumer);
+        // only a consumer that took a reference to the pool of the component releases one: otherwise the pool could
+        // be shut down while other consumers still use it
+        if (consumer.isComponentPoolTaken()) {
+            consumer.setComponentPoolTaken(false);
+            getComponent().removeConsumer(consumer);
+        }
     }
 }

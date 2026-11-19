@@ -26,9 +26,14 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckItem;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckRequest;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckSingleResponse;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientExpandRequest;
 import dev.openfga.sdk.api.client.model.ClientListObjectsRequest;
@@ -39,21 +44,29 @@ import dev.openfga.sdk.api.client.model.ClientReadRequest;
 import dev.openfga.sdk.api.client.model.ClientRelationshipCondition;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
+import dev.openfga.sdk.api.client.model.ClientWriteRequest;
 import dev.openfga.sdk.api.configuration.ClientBatchCheckClientOptions;
+import dev.openfga.sdk.api.configuration.ClientBatchCheckOptions;
+import dev.openfga.sdk.api.configuration.ClientDeleteTuplesOptions;
 import dev.openfga.sdk.api.configuration.ClientExpandOptions;
 import dev.openfga.sdk.api.configuration.ClientListObjectsOptions;
 import dev.openfga.sdk.api.configuration.ClientListRelationsOptions;
 import dev.openfga.sdk.api.configuration.ClientListUsersOptions;
 import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import dev.openfga.sdk.api.configuration.ClientReadOptions;
+import dev.openfga.sdk.api.configuration.ClientWriteOptions;
+import dev.openfga.sdk.api.configuration.ClientWriteTuplesOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
+import dev.openfga.sdk.api.model.ListObjectsRequest;
 import dev.openfga.sdk.api.model.RelationshipCondition;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.User;
 import dev.openfga.sdk.api.model.UserTypeFilter;
 import dev.openfga.sdk.api.model.UsersetTree;
+import dev.openfga.sdk.api.model.WriteRequestDeletes;
+import dev.openfga.sdk.api.model.WriteRequestWrites;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -73,6 +86,8 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     private static final String DEFAULT_USER_FILTER = "user";
 
+    private final Set<OpenFgaObjectIterator> activeStreams = ConcurrentHashMap.newKeySet();
+    private ScheduledExecutorService streamScheduler;
     private OpenFgaProducerHealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
 
@@ -90,10 +105,14 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         super.doStart();
 
         OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
-        if (configuration.isAsyncProcessing()) {
+        if (configuration.isAsyncProcessing() && getEndpoint().getOperation() != OpenFgaOperation.streamedListObjects) {
             asyncExecutor = new AuthorizationAsyncExecutor(
                     getEndpoint().getCamelContext(), this,
                     configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
+        }
+        if (getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
+            streamScheduler = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "OpenFgaStreamTimeout");
         }
         // an injected client can point anywhere and the endpoint has no way to ask it where, so there is no server
         // this check would know the address of
@@ -120,6 +139,11 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
+        activeStreams.forEach(OpenFgaObjectIterator::close);
+        if (streamScheduler != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(streamScheduler);
+            streamScheduler = null;
+        }
         if (asyncExecutor != null) {
             asyncExecutor.close();
             asyncExecutor = null;
@@ -134,7 +158,8 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (!getEndpoint().getConfiguration().isAsyncProcessing()) {
+        if (!getEndpoint().getConfiguration().isAsyncProcessing()
+                || getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
             processBlocking(exchange);
             return;
         }
@@ -163,7 +188,8 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (!getEndpoint().getConfiguration().isAsyncProcessing()) {
+        if (!getEndpoint().getConfiguration().isAsyncProcessing()
+                || getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
             try {
                 processBlocking(exchange);
             } catch (Exception e) {
@@ -194,6 +220,35 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         });
     }
 
+    int activeStreamCount() {
+        return activeStreams.size();
+    }
+
+    private void streamedListObjects(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        String user = authorizer.resolveUser(exchange);
+        String relation = authorizer.resolveRelation(exchange);
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        ListObjectsRequest request = new ListObjectsRequest().user(user).relation(relation).type(configuration.getType());
+        applyModelAndConsistency(authorizer, request::authorizationModelId, request::consistency);
+        if (contextualTuples != null && !contextualTuples.isEmpty()) {
+            request.contextualTuples(ClientTupleKey.asContextualTupleKeys(contextualTuples));
+        }
+        if (authorizer.getConditionContext() != null) {
+            request.context(authorizer.getConditionContext());
+        }
+        OpenFgaObjectIterator iterator = new OpenFgaObjectIterator(
+                getEndpoint().getStreamingClient(),
+                configuration.getStoreId(), request, streamScheduler, configuration.getReadTimeout(),
+                configuration.getStreamMaxResults(), configuration.getStreamMaxLineLength(), activeStreams::add,
+                activeStreams::remove);
+        if (user == null || relation == null || contextualTuples == null) {
+            iterator.completeEmpty();
+        }
+        exchange.getMessage().setBody(iterator);
+    }
+
     private static void applyPreparedContext(
             Consumer<List<ClientTupleKey>> tuples, Consumer<Object> context,
             List<ClientTupleKey> resolved, OpenFgaAuthorizer authorizer, boolean async) {
@@ -203,7 +258,9 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     private void processBlocking(Exchange exchange) throws Exception {
         OpenFgaAuthorizer authorizer = getEndpoint().getAuthorizer();
-        if (getEndpoint().getOperation() == OpenFgaOperation.check) {
+        if (getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
+            streamedListObjects(exchange, authorizer);
+        } else if (getEndpoint().getOperation() == OpenFgaOperation.check) {
             authorizer.check(exchange);
         } else {
             prepareOperation(exchange, authorizer, false).runSync();
@@ -256,6 +313,9 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             return NOOP;
         }
 
+        if (getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
+            return prepareServerBatchCheck(exchange, authorizer, requests);
+        }
         int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
         ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
                 .maxParallelRequests(maxParallelRequests);
@@ -301,6 +361,65 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     /**
      * Lists the objects of the configured type the subject can reach through the relation.
      */
+    private PreparedOperation prepareServerBatchCheck(
+            Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests)
+            throws Exception {
+        List<ClientBatchCheckItem> checks = new ArrayList<>(requests.size());
+        Set<String> pending = new HashSet<>();
+        for (int i = 0; i < requests.size(); i++) {
+            ClientCheckRequest request = requests.get(i);
+            String correlation = Integer.toString(i);
+            pending.add(correlation);
+            checks.add(new ClientBatchCheckItem().user(request.getUser()).relation(request.getRelation())
+                    ._object(request.getObject()).context(request.getContext()).contextualTuples(request.getContextualTuples())
+                    .correlationId(correlation));
+        }
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        int batchSize = configuration.getMaxBatchSize();
+        ClientBatchCheckOptions options = new ClientBatchCheckOptions()
+                .maxBatchSize(batchSize).maxParallelRequests(configuration.getMaxParallelRequests());
+        applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
+        // The SDK chunks checks into native BatchCheck requests. Budget for waves of chunks, rather than for
+        // either one request or one request per object, retaining the bounded wait used by client-side batches.
+        int chunks = (int) ((requests.size() + (long) batchSize - 1) / batchSize);
+        return invocation(authorizer, exchange, "batch check " + requests.size() + " objects",
+                () -> authorizer.getClient().batchCheck(new ClientBatchCheckRequest().checks(checks), options), response -> {
+                    if (response == null || response.getResult() == null) {
+                        throw new CompletionException(
+                                new OpenFgaEvaluationException("OpenFGA returned no batch check results", exchange, null));
+                    }
+                    Set<String> permitted = new HashSet<>();
+                    for (ClientBatchCheckSingleResponse result : response.getResult()) {
+                        if (result == null || !pending.remove(result.getCorrelationId())) {
+                            throw new CompletionException(
+                                    new OpenFgaEvaluationException(
+                                            "OpenFGA returned an unexpected batch check correlation", exchange, null));
+                        }
+                        if (result.getError() != null) {
+                            throw new CompletionException(
+                                    new OpenFgaEvaluationException(
+                                            "OpenFGA failed to answer part of a batch check", exchange,
+                                            new IllegalStateException(result.getError().getMessage())));
+                        }
+                        if (result.isAllowed()) {
+                            permitted.add(result.getCorrelationId());
+                        }
+                    }
+                    if (!pending.isEmpty()) {
+                        throw new CompletionException(
+                                new OpenFgaEvaluationException("OpenFGA returned an incomplete batch check", exchange, null));
+                    }
+                    List<String> allowed = new ArrayList<>();
+                    for (int i = 0; i < requests.size(); i++) {
+                        if (permitted.contains(Integer.toString(i))) {
+                            allowed.add(requests.get(i).getObject());
+                        }
+                    }
+                    exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
+                    exchange.getMessage().setBody(allowed);
+                }, authorizer.batchAwaitTimeoutMillis(chunks, configuration.getMaxParallelRequests()));
+    }
+
     private PreparedOperation prepareListObjects(Exchange exchange, OpenFgaAuthorizer authorizer, boolean async)
             throws Exception {
 
@@ -587,7 +706,11 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         // the write options carry no authorizationModelId - unlike every query's options - so the model this writes
         // against is the one pinned on the client, which OpenFgaClientFactory already set from the configuration
         return invocation(authorizer, exchange, "write " + tuples.size() + " tuple(s)",
-                () -> authorizer.getClient().writeTuples(tuples), ignored -> {
+                () -> getEndpoint().getConfiguration().getOnDuplicate() == OpenFgaWriteConflictMode.ignore
+                        ? authorizer.getClient().writeTuples(tuples,
+                                new ClientWriteTuplesOptions().onDuplicate(WriteRequestWrites.OnDuplicateEnum.IGNORE))
+                        : authorizer.getClient().writeTuples(tuples),
+                ignored -> {
                     exchange.getMessage().setHeader(OpenFgaConstants.WRITTEN_TUPLES, tuples.size());
                 }, null);
     }
@@ -604,7 +727,11 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                     .user(tuple.user).relation(tuple.relation)._object(tuple.object));
         }
         return invocation(authorizer, exchange, "delete " + tuples.size() + " tuple(s)",
-                () -> authorizer.getClient().deleteTuples(tuples), ignored -> {
+                () -> getEndpoint().getConfiguration().getOnMissing() == OpenFgaWriteConflictMode.ignore
+                        ? authorizer.getClient().deleteTuples(tuples,
+                                new ClientDeleteTuplesOptions().onMissing(WriteRequestDeletes.OnMissingEnum.IGNORE))
+                        : authorizer.getClient().deleteTuples(tuples),
+                ignored -> {
                     exchange.getMessage().setHeader(OpenFgaConstants.DELETED_TUPLES, tuples.size());
                 }, null);
     }
@@ -720,6 +847,91 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         } else {
             exchange.getMessage().removeHeader(OpenFgaConstants.CONTINUATION_TOKEN);
         }
+    }
+
+    /**
+     * Collects the tuples to write or delete, from the body when it carries any and from the endpoint's
+     * {@code user}/{@code relation}/{@code object} otherwise - so a route that just created a resource can grant access
+     * to it without assembling a payload.
+     * <p/>
+     * A typed wildcard is accepted here, unlike on the check path: {@code user:*} is exactly how a resource is shared
+     * with everyone, and writing that tuple is a deliberate act by the route rather than something a caller chose.
+     */
+    private PreparedOperation prepareWrite(Exchange exchange, OpenFgaAuthorizer authorizer, boolean async) throws Exception {
+        List<Tuple> writes;
+        List<Tuple> deletes;
+        if (authorizer.hasConfiguredTuple()) {
+            // The same configured-tuple precedence as writeTuples: a body never adds extra mutations to it.
+            writes = resolveTuples(exchange, authorizer);
+            deletes = List.of();
+        } else {
+            Object body = exchange.getMessage().getBody();
+            if (!(body instanceof Map<?, ?> map) || !Set.of("writes", "deletes").containsAll(map.keySet())) {
+                throw new IllegalArgumentException("write requires a Map containing writes and/or deletes collections");
+            }
+            writes = mutationTuples(map.get("writes"));
+            deletes = mutationTuples(map.get("deletes"));
+        }
+        int count = writes.size() + deletes.size();
+        if (count < 1 || count > 100) {
+            throw new IllegalArgumentException("write requires between 1 and 100 tuples across writes and deletes");
+        }
+        List<ClientTupleKey> writeKeys = new ArrayList<>(writes.size());
+        for (Tuple tuple : writes) {
+            ClientTupleKey key = new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object);
+            if (tuple.condition != null) {
+                key.condition(tuple.condition);
+            }
+            writeKeys.add(key);
+        }
+        List<ClientTupleKeyWithoutCondition> deleteKeys = new ArrayList<>(deletes.size());
+        for (Tuple tuple : deletes) {
+            deleteKeys
+                    .add(new ClientTupleKeyWithoutCondition().user(tuple.user).relation(tuple.relation)._object(tuple.object));
+        }
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        ClientWriteOptions options = new ClientWriteOptions().transactions(true)
+                .onDuplicate(configuration.getOnDuplicate() == OpenFgaWriteConflictMode.ignore
+                        ? WriteRequestWrites.OnDuplicateEnum.IGNORE : WriteRequestWrites.OnDuplicateEnum.ERROR)
+                .onMissing(configuration.getOnMissing() == OpenFgaWriteConflictMode.ignore
+                        ? WriteRequestDeletes.OnMissingEnum.IGNORE : WriteRequestDeletes.OnMissingEnum.ERROR);
+        if (ObjectHelper.isNotEmpty(configuration.getAuthorizationModelId())) {
+            options.authorizationModelId(configuration.getAuthorizationModelId());
+        }
+        ClientWriteRequest request = new ClientWriteRequest().writes(writeKeys).deletes(deleteKeys);
+        return invocation(authorizer, exchange, "write " + writes.size() + " and delete " + deletes.size() + " tuple(s)",
+                () -> authorizer.getClient().write(request, options), ignored -> {
+                    exchange.getMessage().setHeader(OpenFgaConstants.WRITTEN_TUPLES, writes.size());
+                    exchange.getMessage().setHeader(OpenFgaConstants.DELETED_TUPLES, deletes.size());
+                }, null);
+    }
+
+    private static final Set<String> MUTATION_KEYS = Set.of("user", "relation", "object");
+    private static final Set<String> ALLOWED_MUTATION_KEYS
+            = Set.of("user", "relation", "object", "timestamp", "condition");
+
+    private List<Tuple> mutationTuples(Object value) {
+        if (value == null) {
+            return List.of();
+        }
+        if (!(value instanceof Collection<?> collection)) {
+            throw new IllegalArgumentException("write mutation lists must be collections of user, relation and object Maps");
+        }
+        if (collection.size() > 100) {
+            throw new IllegalArgumentException(
+                    "a single write mutation list cannot exceed 100 entries, the limit of one atomic write");
+        }
+        List<Tuple> tuples = new ArrayList<>(collection.size());
+        for (Object element : collection) {
+            // the shape readTuples returns, so a page of tuples can be revoked as it is: its timestamp is ignored
+            if (!(element instanceof Map<?, ?> map) || !map.keySet().containsAll(MUTATION_KEYS)
+                    || !ALLOWED_MUTATION_KEYS.containsAll(map.keySet())) {
+                throw new IllegalArgumentException(
+                        "write entries must be Maps with user, relation and object entries, and at most a condition or timestamp");
+            }
+            tuples.add(toTuple(map));
+        }
+        return tuples;
     }
 
     /**
@@ -1006,6 +1218,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             case readChanges -> prepareReadChanges(exchange, authorizer, async);
             case expand -> prepareExpand(exchange, authorizer, async);
             case writeTuples -> prepareWriteTuples(exchange, authorizer, async);
+            case write -> prepareWrite(exchange, authorizer, async);
             case deleteTuples -> prepareDeleteTuples(exchange, authorizer, async);
             default -> throw new IllegalArgumentException("Unsupported operation " + getEndpoint().getOperation());
         };

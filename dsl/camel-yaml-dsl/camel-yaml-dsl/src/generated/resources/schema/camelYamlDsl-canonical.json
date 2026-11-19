@@ -3485,7 +3485,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of headers to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3."
           },
           "id" : {
             "type" : "string",
@@ -3525,7 +3525,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of properties to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3."
           },
           "id" : {
             "type" : "string",
@@ -6429,7 +6429,7 @@
             "type" : "string",
             "title" : "Library",
             "description" : "Which Avro library to use.",
-            "default" : "avroJackson",
+            "default" : "Jackson",
             "enum" : [ "ApacheAvro", "Jackson" ]
           },
           "moduleClassNames" : {
@@ -12634,7 +12634,7 @@
           "producerApiDoc" : {
             "type" : "string",
             "title" : "Producer Api Doc",
-            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document."
+            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document."
           },
           "producerComponent" : {
             "type" : "string",

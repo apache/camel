@@ -60,7 +60,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * attempted first with id-health-check or id-health-check-repository as the key, and then with id as fallback if
      * not found the first time.
      *
-     * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <tt>null</tt> if none found.
+     * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <code>null</code> if none found.
      */
     @Nullable
     Object resolveById(String id);

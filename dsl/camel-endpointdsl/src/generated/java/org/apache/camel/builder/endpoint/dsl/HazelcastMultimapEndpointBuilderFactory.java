@@ -691,7 +691,9 @@ public interface HazelcastMultimapEndpointBuilderFactory {
             return "CamelHazelcastCacheName";
         }
         /**
-         * The type of the cache - here multimap.
+         * The type of the cache - here multimap. Deprecation note: Never set or
+         * read by the component: the multimap listener sets the cache name,
+         * listener type, listener action and listener time only.
          * 
          * The option is a: {@code String} type.
          * 
@@ -699,6 +701,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * @return the name of the header {@code HazelcastCacheType}.
          */
+        @Deprecated
         public String hazelcastCacheType() {
             return "CamelHazelcastCacheType";
         }

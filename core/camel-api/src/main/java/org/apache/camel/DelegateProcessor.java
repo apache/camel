@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A {@link Processor} that wraps another {@link Processor} and delegates {@link Exchange} processing to it, following
  * the <em>Decorator</em> pattern.
- * <p/>
+ * <p>
  * Implementations use this interface to intercept, modify, or enrich exchanges before and after they are forwarded to
  * the delegate processor.
  *
@@ -32,7 +32,7 @@ public interface DelegateProcessor extends Processor {
     /**
      * Gets the delegated {@link Processor}.
      *
-     * @return the processor we delegate to, or <tt>null</tt> if the delegate has not been initialized yet
+     * @return the processor we delegate to, or <code>null</code> if the delegate has not been initialized yet
      */
     @Nullable
     Processor getProcessor();

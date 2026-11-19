@@ -1,0 +1,14 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "evaluatedpath",
+    "title": "Evaluated Path",
+    "description": "A test component that evaluates its path for each message",
+    "scheme": "evaluatedpath",
+    "syntax": "evaluatedpath:name",
+    "producerOnly": true
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "supportSimpleExpression": true, "description": "A name that is evaluated for each message" }
+  }
+}

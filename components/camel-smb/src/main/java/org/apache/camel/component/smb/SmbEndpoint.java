@@ -184,6 +184,8 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
             LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
+        warnIfIdempotentOptionsUnused();
+        warnIfConsumerOptionsConflict();
 
         if (ObjectHelper.isNotEmpty(getReadLock())) {
             readLockCheck();

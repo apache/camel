@@ -265,6 +265,65 @@ public interface SpiffeComponentBuilderFactory {
     
         
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder healthCheckConsumerEnabled(boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Minimum remaining X.509-SVID validity, in milliseconds, for the
+         * producer readiness check to report UP. A certificate at or below this
+         * threshold reports DOWN before expiry. Zero requires only an unexpired
+         * identity. Does not apply to JWT-bundle readiness because bundles have
+         * no expiry timestamp.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: health
+         * 
+         * @param healthCheckExpiryThreshold the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder healthCheckExpiryThreshold(long healthCheckExpiryThreshold) {
+            doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
+            return this;
+        }
+    
+        
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder healthCheckProducerEnabled(boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Whether the CamelSpiffeOperation header may override the configured
          * operation. Disabled by default: the operation decides whether this
          * endpoint validates a token or mints one, so a message that can set it
@@ -281,6 +340,28 @@ public interface SpiffeComponentBuilderFactory {
          */
         default SpiffeComponentBuilder allowOperationHeader(boolean allowOperationHeader) {
             doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
+    
+        /**
+         * The exact local SPIFFE ID to use when the Workload API supplies
+         * several identities: fetchX509Svid selects that X.509-SVID instead of
+         * the SDK's default one, and fetchJwtSvid mints the JWT-SVID with it as
+         * the subject. A configured identity that is absent, or that the
+         * workload is not entitled to, fails without selecting a different
+         * identity. This option comes only from endpoint configuration, never
+         * from a message header; validateJwtSvid has no local identity to
+         * choose and ignores it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param localSpiffeId the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder localSpiffeId(java.lang.String localSpiffeId) {
+            doSetProperty("localSpiffeId", localSpiffeId);
             return this;
         }
     
@@ -356,7 +437,11 @@ public interface SpiffeComponentBuilderFactory {
             case "asyncTimeout": getOrCreateConfiguration((SpiffeComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((SpiffeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
+            case "healthCheckConsumerEnabled": ((SpiffeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckExpiryThreshold": getOrCreateConfiguration((SpiffeComponent) component).setHealthCheckExpiryThreshold((long) value); return true;
+            case "healthCheckProducerEnabled": ((SpiffeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;
+            case "localSpiffeId": getOrCreateConfiguration((SpiffeComponent) component).setLocalSpiffeId((java.lang.String) value); return true;
             case "spiffeSocketPath": getOrCreateConfiguration((SpiffeComponent) component).setSpiffeSocketPath((java.lang.String) value); return true;
             case "x509Response": getOrCreateConfiguration((SpiffeComponent) component).setX509Response((org.apache.camel.component.spiffe.SpiffeX509Response) value); return true;
             default: return false;

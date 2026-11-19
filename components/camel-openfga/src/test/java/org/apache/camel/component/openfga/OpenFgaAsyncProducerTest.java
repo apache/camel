@@ -18,6 +18,7 @@ package org.apache.camel.component.openfga;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -27,20 +28,77 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckSingleResponse;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientWriteRequest;
+import dev.openfga.sdk.api.client.model.ClientWriteResponse;
+import dev.openfga.sdk.api.configuration.ClientWriteOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class OpenFgaAsyncProducerTest {
+    @Test
+    void asyncNativeBatchCorrelatesDuplicateObjectsRatherThanUsingClientFanout() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.batchCheck(any(), any())).thenReturn(CompletableFuture.completedFuture(
+                new ClientBatchCheckResponse(
+                        List.of(
+                                new ClientBatchCheckSingleResponse(false, null, "1", null),
+                                new ClientBatchCheckSingleResponse(true, null, "0", null)))));
+        try (Fixture fixture = new Fixture(
+                client, c -> c.setBatchCheckMode(OpenFgaBatchCheckMode.server),
+                OpenFgaOperation.batchCheck)) {
+            Exchange exchange = fixture.exchange();
+            exchange.getMessage().setBody(List.of("document:a", "document:a"));
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody(List.class)).containsExactly("document:a");
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+        }
+    }
+
+    @Test
+    void asyncCombinedWritePreservesAtomicRequestAndOriginalBody() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.write(any(), any()))
+                .thenReturn(CompletableFuture.completedFuture(new ClientWriteResponse(List.of(), List.of())));
+        try (Fixture fixture = new Fixture(client, c -> {
+            c.setUser(null);
+            c.setRelation(null);
+            c.setObject(null);
+            c.setOnDuplicate(OpenFgaWriteConflictMode.ignore);
+            c.setOnMissing(OpenFgaWriteConflictMode.ignore);
+        }, OpenFgaOperation.write)) {
+            Exchange exchange = fixture.exchange();
+            Object body = Map.of("writes", List.of(Map.of("user", "user:anne", "relation", "writer", "object", "document:a")),
+                    "deletes", List.of(Map.of("user", "user:anne", "relation", "reader", "object", "document:a")));
+            exchange.getMessage().setBody(body);
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(body);
+            ArgumentCaptor<ClientWriteRequest> request = ArgumentCaptor.captor();
+            ArgumentCaptor<ClientWriteOptions> options = ArgumentCaptor.captor();
+            verify(client).write(request.capture(), options.capture());
+            assertThat(options.getValue().isTransactionsEnabled()).isTrue();
+            assertThat(request.getValue().getWrites()).hasSize(1);
+            assertThat(request.getValue().getDeletes()).hasSize(1);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+        }
+    }
+
     @Test
     void stoppedProducerClearsClaimedDecisionHeadersBeforeRejectingEachDecisionOperation() throws Exception {
         for (OpenFgaOperation operation : List.of(OpenFgaOperation.check, OpenFgaOperation.batchCheck,

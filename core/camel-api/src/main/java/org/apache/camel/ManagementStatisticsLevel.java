@@ -20,11 +20,11 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Controls the granularity of JMX performance statistics collected for a running {@link CamelContext}.
- * <p/>
+ * <p>
  * Statistics are collected by the Camel management layer and exposed via MBeans. Finer granularity (down to individual
  * {@link Processor}s) gives richer observability but uses more memory. {@link #Extended} adds extra counters such as
  * idle-since timestamps.
- * <p/>
+ * <p>
  * Configure via {@code ManagementAgent.setStatisticsLevel(ManagementStatisticsLevel)} or the property
  * {@code camel.main.jmx-management-statistics-level}. The default is {@link #Default}.
  *

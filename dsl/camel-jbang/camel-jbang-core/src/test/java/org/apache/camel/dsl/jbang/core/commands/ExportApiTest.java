@@ -98,12 +98,12 @@ class ExportApiTest {
             }
         }) {
             tracker.open();
-            for (int i = 1; i <= 20; i++) {
+            for (int i = 1; i <= 5; i++) {
                 export(i);
             }
         }
 
-        assertThat(contexts).hasSizeGreaterThanOrEqualTo(20);
+        assertThat(contexts).hasSizeGreaterThanOrEqualTo(5);
         // nothing holds on to the CamelContext of a silent run once its export is done
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             System.gc();

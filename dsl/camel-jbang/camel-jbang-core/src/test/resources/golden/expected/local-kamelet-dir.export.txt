@@ -38,7 +38,6 @@ src/main/java/org/example/golden/localkameletdir/CamelApplication.java
 src/main/resources/application.properties
 src/main/resources/camel/route.camel.yaml
 src/main/resources/kamelets/greeting-source.kamelet.yaml
-src/main/resources/log4j2.component.properties
 src/main/resources/log4j2.properties
 
 # pom.xml

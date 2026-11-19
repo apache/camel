@@ -77,7 +77,8 @@ public class OpaSecurityPolicyWasmTest extends CamelTestSupport {
 
     @Test
     void failsRouteStartWhenNoWasmBundleIsConfigured() {
-        // buildEvaluator forwards to OpaWasmEvaluator.create, so its validation applies through the policy too
+        // buildEvaluator forwards to OpaReloadableWasmEvaluator.create, which validates through
+        // OpaWasmEvaluator.validateWasmOptions, so the same checks apply through the policy too
         OpaSecurityPolicy noBundle = new OpaSecurityPolicy();
         noBundle.setEvaluationMode("wasm");
         noBundle.setPolicyPath("authz/allow");

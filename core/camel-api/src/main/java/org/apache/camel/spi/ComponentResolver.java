@@ -23,13 +23,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Pluggable strategy for autoloading a {@link org.apache.camel.Component} instance from a URI scheme the first time
  * that scheme is encountered by a {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * When a route references an endpoint URI whose scheme is not yet registered in the context, Camel queries the active
  * {@code ComponentResolver} with the scheme name. The default implementation reads the service class name from
  * {@code META-INF/services/org/apache/camel/component/<name>} on the classpath, instantiates it, and adds it to the
  * context. Alternative resolvers (for example Spring, OSGi, or custom container integrations) may satisfy the lookup
  * from their own registries instead.
- * <p/>
+ * <p>
  * Component discovery is lazy: only components that are actually referenced in routes are loaded.
  *
  * @see ComponentNameResolver

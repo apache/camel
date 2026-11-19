@@ -58,14 +58,14 @@ or removes its row.
 | camel-ai-prompt | ai-prompt |  |
 | camel-ai-resource | ai-resource |  |
 | camel-ai-tool | ai-tool |  |
-| camel-alibaba-eventbridge | alibaba-eventbridge |  |
+| camel-alibaba-eventbridge | alibaba-eventbridge | yes |
 | camel-alibaba-fc | alibaba-fc | yes |
-| camel-alibaba-kms | alibaba-kms |  |
+| camel-alibaba-kms | alibaba-kms | yes |
 | camel-alibaba-mns | alibaba-mns |  |
 | camel-alibaba-oss | alibaba-oss |  |
 | camel-alibaba-ots | alibaba-ots | yes |
 | camel-alibaba-sls | alibaba-sls |  |
-| camel-alibaba-sms | alibaba-sms |  |
+| camel-alibaba-sms | alibaba-sms | yes |
 | camel-amqp | amqp |  |
 | camel-apicurio-registry | apicurio-registry |  |
 | camel-arangodb | arangodb |  |

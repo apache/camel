@@ -28,12 +28,12 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 /**
  * Low-level debugger SPI that fires {@link Breakpoint} callbacks as {@link Exchange}s move through each route node, as
  * described in the <a href="https://camel.apache.org/manual/debugger.html">Debugger</a> documentation.
- * <p/>
+ * <p>
  * The {@code Debugger} is integrated into Camel's {@link InternalProcessor} pipeline; when enabled, the internal
  * processor invokes the appropriate {@code before*} and {@code after*} callbacks on each registered {@link Breakpoint}
  * as exchanges enter and leave route nodes. Breakpoints can be conditioned via {@link Condition} predicates (e.g.,
  * match only a specific exchange ID or route ID).
- * <p/>
+ * <p>
  * For a higher-level, JMX-accessible debugger with suspend/resume semantics, see {@link BacklogDebugger}, which builds
  * on top of this SPI. For passive message capture without execution control, see {@link BacklogTracer}.
  *
@@ -62,7 +62,7 @@ public interface Debugger extends Service, CamelContextAware {
 
     /**
      * Add the given breakpoint which will be used in single step mode
-     * <p/>
+     * <p>
      * The debugger will single step the first message arriving.
      *
      * @param breakpoint the breakpoint
@@ -71,7 +71,7 @@ public interface Debugger extends Service, CamelContextAware {
 
     /**
      * Add the given breakpoint which will be used in single step mode
-     * <p/>
+     * <p>
      * The debugger will single step the first message arriving.
      *
      * @param breakpoint the breakpoint
@@ -99,7 +99,7 @@ public interface Debugger extends Service, CamelContextAware {
     /**
      * Gets a list of all the breakpoints
      *
-     * @return the breakpoints wrapped in an unmodifiable list, is never <tt>null</tt>.
+     * @return the breakpoints wrapped in an unmodifiable list, which is never <code>null</code>.
      */
     List<Breakpoint> getBreakpoints();
 
@@ -108,15 +108,15 @@ public interface Debugger extends Service, CamelContextAware {
      *
      * @param  exchangeId the exchange id
      * @param  breakpoint the breakpoint
-     * @return            <tt>true</tt> if the debugger will single step the given exchange, <tt>false</tt> if the
-     *                    debugger is already single stepping another, and thus cannot simultaneously single step
+     * @return            <code>true</code> if the debugger will single step the given exchange, <code>false</code> if
+     *                    the debugger is already single stepping another, and thus cannot simultaneously single step
      *                    another exchange
      */
     boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint);
 
     /**
      * Stops the single step debug mode for the given exchange.
-     * <p/>
+     * <p>
      * <b>Notice:</b> The default implementation of the debugger is capable of auto stopping when the exchange is
      * complete or failed.
      *
@@ -131,7 +131,7 @@ public interface Debugger extends Service, CamelContextAware {
      * @param  exchange   the exchange
      * @param  processor  the {@link Processor} about to be processed
      * @param  definition the definition of the processor
-     * @return            <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @return            <code>true</code> if any breakpoint was hit, <code>false</code> if no breakpoint was hit
      */
     boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
@@ -141,9 +141,9 @@ public interface Debugger extends Service, CamelContextAware {
      * @param  exchange   the exchange
      * @param  processor  the {@link Processor} which was processed
      * @param  definition the definition of the processor
-     * @param  timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks
+     * @param  timeTaken  time in millis it took to process the {@link Exchange} - time spent in breakpoint callbacks
      *                    may affect this time
-     * @return            <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @return            <code>true</code> if any breakpoint was hit, <code>false</code> if no breakpoint was hit
      */
     boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
@@ -151,8 +151,8 @@ public interface Debugger extends Service, CamelContextAware {
      * Callback invoked when an {@link Exchange} is being processed which allows implementers to notify breakpoints.
      *
      * @param  exchange the exchange
-     * @param  event    the event (instance of {@link ExchangeEvent}
-     * @return          <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @param  event    the event (instance of {@link ExchangeEvent})
+     * @return          <code>true</code> if any breakpoint was hit, <code>false</code> if no breakpoint was hit
      */
     boolean onEvent(Exchange exchange, ExchangeEvent event);
 

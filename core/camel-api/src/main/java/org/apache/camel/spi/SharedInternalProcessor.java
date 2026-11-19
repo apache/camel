@@ -23,11 +23,11 @@ import org.apache.camel.Processor;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting
+ * A Shared (thread safe) internal {@link Processor} that the Camel routing engine uses during routing for cross cutting
  * functionality such as:
  * <ul>
  * <li>Execute {@link UnitOfWork}</li>
- * <li>Keeping track which route currently is being routed</li>
+ * <li>Keeping track of which route currently is being routed</li>
  * <li>Execute {@link RoutePolicy}</li>
  * <li>Gather JMX performance statistics</li>
  * <li>Tracing</li>
@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
  * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
- * <p/>
+ * <p>
  *
  * This is intended for internal use only - do not use this.
  *

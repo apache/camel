@@ -32,6 +32,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
 
 /**
@@ -162,6 +164,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             createMessageListenerContainer();
         }
         final AbstractMessageListenerContainer container = listenerContainer;
+        warnIfTopicConsumersDoNotShareSubscription(container);
         getEndpoint().onListenerContainerStarting();
 
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
@@ -188,6 +191,40 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
 
     protected void prepareAndStartListenerContainer() {
         prepareAndStartListenerContainer(listenerContainer);
+    }
+
+    /**
+     * On a topic, each consumer of the listener container is a subscriber of its own, unless the subscription is
+     * shared: with more than one consumer, every message is processed once per consumer.
+     */
+    private void warnIfTopicConsumersDoNotShareSubscription(AbstractMessageListenerContainer container) {
+        if (!container.isPubSubDomain() || container.isSubscriptionShared()) {
+            return;
+        }
+        int min;
+        int max;
+        if (container instanceof DefaultMessageListenerContainer dmlc) {
+            min = dmlc.getConcurrentConsumers();
+            max = dmlc.getMaxConcurrentConsumers();
+        } else if (container instanceof SimpleMessageListenerContainer) {
+            // the simple container does not scale: it uses maxConcurrentConsumers when set
+            JmsConfiguration configuration = getEndpoint().getConfiguration();
+            min = Math.max(configuration.getConcurrentConsumers(), configuration.getMaxConcurrentConsumers());
+            max = min;
+        } else {
+            return;
+        }
+        if (max <= 1) {
+            return;
+        }
+        String consumers = min == max ? String.valueOf(max) : "up to " + max;
+        String effect = container.isSubscriptionDurable()
+                ? "a durable subscription that is not shared accepts only one consumer"
+                : "each consumer has its own subscription, so every message is processed " + consumers + " times";
+        LOG.warn("The consumer on topic {} has {} concurrent consumers without a shared subscription: {}."
+                 + " Set subscriptionShared=true (JMS 2.0) with a subscriptionName to share the messages between the consumers,"
+                 + " or use a single consumer (concurrentConsumers=1 and no maxConcurrentConsumers).",
+                getDestinationName(container), consumers, effect);
     }
 
     private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container) {

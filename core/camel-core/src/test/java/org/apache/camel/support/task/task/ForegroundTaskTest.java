@@ -32,6 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ForegroundTaskTest extends TaskTestSupport {
 
+    // these tests count the iterations of a task and do not measure the elapsed time, so the budgets of one second are
+    // shortened to a fifth of it (and the slow predicate with them) and the test is five times faster
+    @Override
+    protected long slowPredicateMillis() {
+        return 400;
+    }
+
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
     @Timeout(20)
@@ -41,7 +48,7 @@ public class ForegroundTaskTest extends TaskTestSupport {
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -62,8 +69,8 @@ public class ForegroundTaskTest extends TaskTestSupport {
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
-                        .withInitialDelay(Duration.ofSeconds(1))
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInitialDelay(Duration.ofMillis(200))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -80,7 +87,7 @@ public class ForegroundTaskTest extends TaskTestSupport {
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -97,7 +104,7 @@ public class ForegroundTaskTest extends TaskTestSupport {
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -114,7 +121,7 @@ public class ForegroundTaskTest extends TaskTestSupport {
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -130,8 +137,8 @@ public class ForegroundTaskTest extends TaskTestSupport {
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
-                        .withInitialDelay(Duration.ofSeconds(1))
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInitialDelay(Duration.ofMillis(200))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 

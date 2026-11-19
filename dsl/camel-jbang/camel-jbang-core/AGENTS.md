@@ -22,7 +22,10 @@ reused). So a test must not depend on a fresh JVM, nor share anything with the t
   `camel init` writes a file given without a directory there, and a local `camel-cli.properties` is read from it. A
   test that listens on a fixed port, such as `camel infra run` with the default port of a service, is annotated
   `@UsesFixedPort`. These tests run after the others, one class at a time, in a fork of their own (the `serial-test`
-  execution). Prefer a temporary directory (`--dir`) and port 0, so a test does not need them.
+  execution). Prefer a temporary directory (`--dir`, `exportBaseDir` for the `application.properties` of an export,
+  `useTestWorkDir()` for `.camel-jbang`) and port 0, so a test does not need them. Both annotations also go on a single
+  test method: the serial fork is a tail that nothing runs beside, so annotate only the methods that need it, not the
+  whole class, and the other tests of the class run in the parallel forks.
 - Restore what else a test changes in the JVM: system properties (`@SetSystemProperty` of junit-pioneer, or set and
   clear them), static fields, and stop the servers, threads and CamelContexts that it starts.
 - A test that only fails now and then usually shares something with another test: run the module a few times with

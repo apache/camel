@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,68 @@ class AiObservabilityConfigurationPropertiesTest {
 
         try {
             assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isFalse();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldSetLevelAndContentMaxLengthViaMainConfiguration() throws Exception {
+        Main main = new Main();
+        main.configure().aiObservability().withLevel("full").withContentMaxLength(512);
+
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.level(main.getCamelContext())).isEqualTo(GenAiObservabilityLevel.FULL);
+            assertThat(GenAiObservability.contentMaxLength(main.getCamelContext())).isEqualTo(512);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldSetLevelViaProperties() throws Exception {
+        Main main = new Main();
+        main.addInitialProperty("camel.aiObservability.level", "detailed");
+
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.level(main.getCamelContext())).isEqualTo(GenAiObservabilityLevel.DETAILED);
+            assertThat(GenAiObservability.isLevel(main.getCamelContext(), GenAiObservabilityLevel.FULL)).isFalse();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldDeferToFrameworkByDefaultAndAllowTurningItOff() throws Exception {
+        Main main = new Main();
+        main.start();
+        try {
+            assertThat(GenAiObservability.deferToFramework(main.getCamelContext())).isTrue();
+        } finally {
+            main.stop();
+        }
+
+        Main notDeferring = new Main();
+        notDeferring.configure().aiObservability().withDeferToFramework(false);
+        notDeferring.start();
+        try {
+            assertThat(GenAiObservability.deferToFramework(notDeferring.getCamelContext())).isFalse();
+        } finally {
+            notDeferring.stop();
+        }
+    }
+
+    @Test
+    void shouldUseBasicLevelByDefault() throws Exception {
+        Main main = new Main();
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.level(main.getCamelContext())).isEqualTo(GenAiObservabilityLevel.BASIC);
         } finally {
             main.stop();
         }

@@ -19,22 +19,33 @@ package org.apache.camel.component.spiffe;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.WorkloadApiClient;
+import io.spiffe.workloadapi.X509Context;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.apache.camel.util.ObjectHelper;
 
 public class SpiffeProducer extends DefaultAsyncProducer {
     private AuthorizationAsyncExecutor asyncExecutor;
+    private final SpiffeId localSpiffeId;
+    private static final AtomicInteger HEALTH_CHECK_IDS = new AtomicInteger();
+    private WritableHealthCheckRepository healthCheckRepository;
+    private SpiffeProducerHealthCheck producerHealthCheck;
+    private WorkloadApiClient healthClient;
 
     public SpiffeProducer(final SpiffeEndpoint endpoint) {
         super(endpoint);
+        localSpiffeId = SpiffeX509SvidSelector.parse(endpoint.getConfiguration().getLocalSpiffeId());
     }
 
     @Override
@@ -51,6 +62,33 @@ public class SpiffeProducer extends DefaultAsyncProducer {
                     getEndpoint().getCamelContext(), this,
                     configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
         }
+        if (configuration.getWorkloadApiClient() != null) {
+            // A supplied client need not use the configured/default socket, and has no watcher unsubscribe API.
+            return;
+        }
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new SpiffeProducerHealthCheck(
+                    getEndpoint().getId() + "-" + HEALTH_CHECK_IDS.incrementAndGet(), configuration.getOperation(),
+                    configuration.getHealthCheckExpiryThreshold(), localSpiffeId);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+            if (healthCheckRepository.isEnabled() && producerHealthCheck.isEnabled()) {
+                try {
+                    // A separate SDK-managed client makes the subscription cancellable on producer stop, even
+                    // when the endpoint remains cached or has other producers. No client is created by health calls.
+                    healthClient = SpiffeEndpoint.createWorkloadApiClient(configuration.getSpiffeSocketPath());
+                    producerHealthCheck.observe(healthClient);
+                } catch (Exception e) {
+                    producerHealthCheck.unavailable();
+                    if (healthClient != null) {
+                        healthClient.close();
+                        healthClient = null;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -59,7 +97,24 @@ public class SpiffeProducer extends DefaultAsyncProducer {
             asyncExecutor.close();
             asyncExecutor = null;
         }
-        super.doStop();
+        try {
+            try {
+                if (producerHealthCheck != null) {
+                    producerHealthCheck.close();
+                    healthCheckRepository.removeHealthCheck(producerHealthCheck);
+                    producerHealthCheck = null;
+                }
+            } finally {
+                // a repository that throws must not keep the observer client open
+                WorkloadApiClient client = healthClient;
+                healthClient = null;
+                if (client != null) {
+                    client.close();
+                }
+            }
+        } finally {
+            super.doStop();
+        }
     }
 
     @Override
@@ -104,6 +159,9 @@ public class SpiffeProducer extends DefaultAsyncProducer {
         }
         if (determineOperation(exchange) == SpiffeOperation.validateJwtSvid) {
             SpiffeJwtValidator.clearIdentity(exchange);
+        } else {
+            exchange.getMessage().removeHeader(SpiffeConstants.SPIFFE_ID);
+            exchange.getMessage().removeHeader(SpiffeConstants.EXPIRY);
         }
         AuthorizationAsyncExecutor executor = asyncExecutor;
         if (executor == null) {
@@ -161,8 +219,16 @@ public class SpiffeProducer extends DefaultAsyncProducer {
     }
 
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange, SpiffeX509Response response) throws Exception {
-        X509Svid svid = client.fetchX509Context().getDefaultSvid();
         Message message = getMessageForResponse(exchange);
+        // a fetch that fails, with or without a configured identity, must not leave the identity of an earlier
+        // message behind
+        message.removeHeader(SpiffeConstants.SPIFFE_ID);
+        message.removeHeader(SpiffeConstants.EXPIRY);
+        X509Context context = client.fetchX509Context();
+        X509Svid svid = localSpiffeId == null
+                ? context.getDefaultSvid()
+                : SpiffeX509SvidSelector.require(
+                        SpiffeX509SvidSelector.select(context.getX509Svids(), localSpiffeId), localSpiffeId);
         // the identity is always available through the headers, so a route that only needs it can avoid the key
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
         message.setHeader(SpiffeConstants.EXPIRY, svid.getLeaf().getNotAfter());
@@ -179,14 +245,28 @@ public class SpiffeProducer extends DefaultAsyncProducer {
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
+        exchange.getMessage().removeHeader(SpiffeConstants.SPIFFE_ID);
+        exchange.getMessage().removeHeader(SpiffeConstants.EXPIRY);
         fetchJwtSvid(client, exchange, resolveAudiences(exchange));
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange, String[] audiences) throws Exception {
-        JwtSvid svid = audiences.length > 1
-                ? client.fetchJwtSvid(audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
-                : client.fetchJwtSvid(audiences[0]);
         Message message = getMessageForResponse(exchange);
+        // cleared before anything that can fail, the audience resolution included, as on the X.509 path
+        message.removeHeader(SpiffeConstants.SPIFFE_ID);
+        message.removeHeader(SpiffeConstants.EXPIRY);
+        JwtSvid svid;
+        if (localSpiffeId == null) {
+            svid = audiences.length > 1
+                    ? client.fetchJwtSvid(audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
+                    : client.fetchJwtSvid(audiences[0]);
+        } else {
+            // the configured identity is the subject of the token; the Workload API refuses a subject the workload
+            // is not entitled to, so the option fails closed here as it does for X.509
+            svid = audiences.length > 1
+                    ? client.fetchJwtSvid(localSpiffeId, audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
+                    : client.fetchJwtSvid(localSpiffeId, audiences[0]);
+        }
         message.setBody(svid.getToken());
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
         message.setHeader(SpiffeConstants.EXPIRY, svid.getExpiry());

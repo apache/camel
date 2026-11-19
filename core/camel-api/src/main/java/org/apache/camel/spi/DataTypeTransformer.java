@@ -27,12 +27,12 @@ import org.apache.camel.spi.annotations.ServiceFactory;
 /**
  * Marks a {@link Transformer} implementation as a data type transformer, identified by its name and/or its from/to
  * {@link DataType}s.
- * <p/>
+ * <p>
  * Classpath-scanning transformer loaders discover annotated classes and register them in the
  * {@link TransformerRegistry}, so they can be detected and applied when a route declares input/output data types via a
  * {@link Contract}. Provide a unique {@link #name()}, or a {@link #fromType()}/{@link #toType()} pair, so the
  * transformer can be referenced or auto-detected.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
  *
  * @see   Transformer

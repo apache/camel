@@ -127,16 +127,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -561,8 +563,10 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Is used to exclude files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antExclude for wildcards, or excludeExt to
+         * exclude files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -667,6 +671,8 @@ public interface SmbEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -685,6 +691,8 @@ public interface SmbEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -742,7 +750,10 @@ public interface SmbEndpointBuilderFactory {
          * To use a custom idempotent key. By default the absolute path of the
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
+         * idempotentKey=${file:name}-${file:size}. It is used only with
+         * idempotent=true (noop=true turns it on), or by an idempotent read
+         * lock (readLock=idempotent, idempotent-changed or idempotent-rename)
+         * of the file component.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -758,7 +769,10 @@ public interface SmbEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -775,7 +789,10 @@ public interface SmbEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -791,8 +808,10 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Is used to include files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antInclude for wildcards, or includeExt to
+         * include files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -2549,16 +2568,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -3429,16 +3450,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is

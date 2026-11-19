@@ -65,7 +65,7 @@ public interface Cacheable {
     ResumeCache<?> getCache();
 
     /**
-     * Gets the {@Link FillPolicy} for this cache instance
+     * Gets the {@link FillPolicy} for this cache instance
      *
      * @return the fill policy set for this instance FillPolicy.MAXIMIZING
      */

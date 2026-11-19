@@ -25,14 +25,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * SPI that creates the Camel {@link org.apache.camel.Producer} responsible for performing HTTP requests to call a
  * remote REST service.
- * <p/>
+ * <p>
  * Implementations are provided by HTTP-capable Camel components such as {@code camel-http}, {@code camel-netty-http},
  * and {@code camel-vertx-http}. At runtime, {@link org.apache.camel.CamelContext} selects the active implementation
  * from the registry using the producer component name configured in {@link RestConfiguration}. The single
  * {@link #createProducer} method receives the full invocation contract: target host (scheme:host:port), HTTP verb, base
  * path, URI template, query parameters, accepted and produced media types, the shared {@link RestConfiguration}, and
  * any additional component-specific parameters.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
  *
  * @see RestConsumerFactory
@@ -49,9 +49,9 @@ public interface RestProducerFactory {
      * @param  basePath        base path
      * @param  uriTemplate     uri template
      * @param  queryParameters uri query parameters
-     * @param  consumes        media-types for what the REST service consume as input (accept-type), is <tt>null</tt> or
-     *                         <tt>&#42;/&#42;</tt> for anything
-     * @param  produces        media-types for what the REST service produces as output, can be <tt>null</tt>
+     * @param  consumes        media-types for what the REST service consume as input (accept-type), is
+     *                         <code>null</code> or <code>&#42;/&#42;</code> for anything
+     * @param  produces        media-types for what the REST service produces as output, can be <code>null</code>
      * @param  configuration   REST configuration
      * @param  parameters      additional parameters
      * @return                 a newly created REST producer

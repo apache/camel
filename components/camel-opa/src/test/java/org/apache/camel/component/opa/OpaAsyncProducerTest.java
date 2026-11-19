@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import com.styra.opa.OPAClient;
 import com.styra.opa.OPAException;
@@ -32,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,32 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class OpaAsyncProducerTest {
+    @Test
+    void asyncInputExpressionUsesVerifiedPropertiesAndPreservesTheOriginalDomainBody() throws Exception {
+        OPAClient client = mock(OPAClient.class);
+        when(client.evaluate(eq("authz/allow"), anyMap(), eq(Object.class))).thenAnswer(invocation -> {
+            Map<?, ?> input = invocation.getArgument(1);
+            assertThat(input.get("subject")).isEqualTo("verified-subject");
+            assertThat(input.get("order")).isEqualTo(Map.of("subject", "sender-claim"));
+            return true;
+        });
+        try (Fixture fixture = new Fixture(client, configuration -> configuration.setInputExpression(new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return Map.of("subject", exchange.getProperty("verifiedSubject"), "order", exchange.getMessage().getBody());
+            }
+        }))) {
+            Exchange exchange = new DefaultExchange(fixture.context);
+            Object body = Map.of("subject", "sender-claim");
+            exchange.getMessage().setBody(body);
+            exchange.setProperty("verifiedSubject", "verified-subject");
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+            assertThat(exchange.getMessage().getBody()).isSameAs(body);
+        }
+    }
+
     @Test
     void releasesCallerWhileBlockingSdkRunsAndCompletesExactlyOnce() throws Exception {
         OPAClient client = mock(OPAClient.class);
@@ -223,11 +251,17 @@ class OpaAsyncProducerTest {
         final OpaProducer producer;
 
         Fixture(OPAClient client) throws Exception {
+            this(client, configuration -> {
+            });
+        }
+
+        Fixture(OPAClient client, Consumer<OpaConfiguration> configure) throws Exception {
             context.start();
             var configuration = new OpaConfiguration();
             configuration.setOpaClient(client);
             configuration.setAsyncProcessing(true);
             configuration.setFailOpen(true);
+            configure.accept(configuration);
             endpoint = new OpaEndpoint("opa:authz/allow", new OpaComponent(context), configuration);
             endpoint.setPolicyPath("authz/allow");
             endpoint.start();

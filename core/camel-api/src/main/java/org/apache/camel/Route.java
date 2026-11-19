@@ -34,11 +34,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * A <a href="https://camel.apache.org/manual/routes.html">Route</a> defines the processing applied to an inbound
  * {@link Exchange} arriving at a specific {@link Endpoint} within a {@link CamelContext}.
- * <p/>
+ * <p>
  * Each route has a unique id, an input {@link Endpoint}, and a chain of {@link Processor}s that transform or route the
  * exchange. Routes are built using a DSL ({@link RoutesBuilder}, {@code RouteBuilder} in Java DSL, YAML DSL, XML DSL)
  * and are registered in the {@link CamelContext} at startup.
- * <p/>
+ * <p>
  * The lifecycle of a route (start, stop, suspend, resume) is managed through the
  * {@link org.apache.camel.spi.RouteController}. A route can also carry optional
  * {@link org.apache.camel.spi.RoutePolicy} objects that apply governance rules such as throttling or scheduling.
@@ -142,7 +142,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Whether or not the route supports suspension (suspend and resume)
      *
-     * @return <tt>true</tt> if this route supports suspension
+     * @return <code>true</code> if this route supports suspension
      */
     boolean supportsSuspension();
 
@@ -155,31 +155,31 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * Gets the route description (if any has been configured).
-     * <p/>
+     * <p>
      * The description is configured using the {@link #DESCRIPTION_PROPERTY} as key in the {@link #getProperties()}.
      *
-     * @return the description, or <tt>null</tt> if no description has been configured.
+     * @return the description, or <code>null</code> if no description has been configured.
      */
     @Nullable
     String getDescription();
 
     /**
      * Gets the route note (if any has been configured).
-     * <p/>
+     * <p>
      * The note is configured using the {@link #NOTE_PROPERTY} as key in the {@link #getProperties()}.
      *
-     * @return the note, or <tt>null</tt> if no note has been configured.
+     * @return the note, or <code>null</code> if no note has been configured.
      */
     @Nullable
     String getNote();
 
     /**
-     * Gets the route configuration id(s) the route has been applied with. Multiple ids is separated by comma.
-     * <p/>
-     * The configuration ids is configured using the {@link #CONFIGURATION_ID_PROPERTY} as key in the
+     * Gets the route configuration id(s) the route has been applied with. Multiple ids are separated by comma.
+     * <p>
+     * The configuration ids are configured using the {@link #CONFIGURATION_ID_PROPERTY} as key in the
      * {@link #getProperties()}.
      *
-     * @return the configuration, or <tt>null</tt> if no configuration has been configured.
+     * @return the configuration, or <code>null</code> if no configuration has been configured.
      */
     @Nullable
     String getConfigurationId();
@@ -207,7 +207,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Gets the resource that declares the templated route this route was created from. The source resource of the route
      * is the resource with the route template (where its source location is).
-     * <p/>
+     * <p>
      * Tools that load routes again from their resources, such as route reloading in development mode, need both.
      *
      * @return the resource, or null if this route was not created from a templated route loaded from a resource
@@ -310,10 +310,10 @@ public interface Route extends RuntimeConfiguration {
     Navigate<Processor> navigate();
 
     /**
-     * Returns a list of all the {@link Processor}s from this route that has id's matching the pattern
+     * Returns a list of all the {@link Processor}s from this route that have ids matching the pattern
      *
      * @param  pattern the pattern to match by ids
-     * @return         a list of {@link Processor}, is never <tt>null</tt>.
+     * @return         a list of {@link Processor}, is never <code>null</code>.
      */
     List<Processor> filter(String pattern);
 
@@ -325,11 +325,11 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Gets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
      * during starting the route.
-     * <p/>
+     * <p>
      * This is only errors for route lifecycle changes, it is not exceptions thrown during routing exchanges by the
      * Camel routing engine.
      *
-     * @return the error or <tt>null</tt> if no error
+     * @return the error or <code>null</code> if no error
      */
     @Nullable
     RouteError getLastError();
@@ -337,7 +337,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Sets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
      * during starting the route.
-     * <p/>
+     * <p>
      * This is only errors for route lifecycle changes, it is not exceptions thrown during routing exchanges by the
      * Camel routing engine.
      *
@@ -372,8 +372,8 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * Sets whether the route should automatically start when Camel starts.
-     * <p/>
-     * Default is <tt>true</tt> to always start up.
+     * <p>
+     * Default is <code>true</code> to always start up.
      *
      * @param autoStartup whether to start up automatically.
      */
@@ -381,10 +381,10 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * Gets whether the route should automatically start when Camel starts.
-     * <p/>
-     * Default is <tt>true</tt> to always start up.
+     * <p>
+     * Default is <code>true</code> to always start up.
      *
-     * @return <tt>true</tt> if route should automatically start
+     * @return <code>true</code> if route should automatically start
      */
     Boolean isAutoStartup();
 
@@ -442,7 +442,7 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * Sets a special intercept strategy for management.
-     * <p/>
+     * <p>
      * Is by default used to correlate managed performance counters with processors when the runtime route is being
      * constructed
      *
@@ -453,7 +453,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Gets the special managed intercept strategy if any
      *
-     * @return the managed intercept strategy, or <tt>null</tt> if not managed
+     * @return the managed intercept strategy, or <code>null</code> if not managed
      */
     @Nullable
     ManagementInterceptStrategy getManagementInterceptStrategy();

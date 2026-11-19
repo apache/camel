@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 
 /**
  * Factory for resolving OAuth 2.0 bearer tokens using the client_credentials grant.
- * <p/>
+ * <p>
  * This requires camel-oauth on the classpath.
  *
  * @since 4.19
@@ -34,7 +34,7 @@ public interface OAuthClientAuthenticationFactory {
 
     /**
      * Resolves a bearer token using explicit configuration.
-     * <p/>
+     * <p>
      * Acquires a token from the configured token endpoint using the client_credentials grant. Tokens are cached if
      * caching is enabled in the config.
      *
@@ -46,7 +46,7 @@ public interface OAuthClientAuthenticationFactory {
 
     /**
      * Resolves a bearer token using a named profile from Camel properties.
-     * <p/>
+     * <p>
      * Properties are resolved from {@code camel.oauth.<profileName>.*}:
      * <ul>
      * <li>{@code camel.oauth.<profileName>.client-id} (required)</li>
@@ -67,7 +67,7 @@ public interface OAuthClientAuthenticationFactory {
 
     /**
      * Resolves a bearer token using the default (unnamed) profile.
-     * <p/>
+     * <p>
      * Properties are resolved from {@code camel.oauth.*} directly (backward compatible with existing single-IdP
      * configuration).
      *

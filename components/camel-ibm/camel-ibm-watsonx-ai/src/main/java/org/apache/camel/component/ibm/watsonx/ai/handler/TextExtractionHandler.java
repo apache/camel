@@ -81,7 +81,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         // Get file path from body or header
         String filePath = in.getHeader(WatsonxAiConstants.FILE_PATH, String.class);
         if (filePath == null || filePath.isEmpty()) {
-            filePath = in.getBody(String.class);
+            filePath = readAsText(in, "the file path");
         }
 
         if (filePath == null || filePath.isEmpty()) {
@@ -107,7 +107,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         // Get extraction ID from body or header
         String extractionId = in.getHeader(WatsonxAiConstants.EXTRACTION_ID, String.class);
         if (extractionId == null || extractionId.isEmpty()) {
-            extractionId = in.getBody(String.class);
+            extractionId = readAsText(in, "the extraction id");
         }
 
         if (extractionId == null || extractionId.isEmpty()) {
@@ -201,7 +201,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         // Get file name from body or header
         String fileName = in.getHeader(WatsonxAiConstants.FILE_NAME, String.class);
         if (fileName == null || fileName.isEmpty()) {
-            fileName = in.getBody(String.class);
+            fileName = readAsText(in, "the file name");
         }
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException(
@@ -231,7 +231,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         // Get file name from body or header
         String fileName = in.getHeader(WatsonxAiConstants.FILE_NAME, String.class);
         if (fileName == null || fileName.isEmpty()) {
-            fileName = in.getBody(String.class);
+            fileName = readAsText(in, "the file name");
         }
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException(
@@ -253,7 +253,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         // Get extraction ID from body or header
         String extractionId = in.getHeader(WatsonxAiConstants.EXTRACTION_ID, String.class);
         if (extractionId == null || extractionId.isEmpty()) {
-            extractionId = in.getBody(String.class);
+            extractionId = readAsText(in, "the extraction id");
         }
         if (extractionId == null || extractionId.isEmpty()) {
             throw new IllegalArgumentException(

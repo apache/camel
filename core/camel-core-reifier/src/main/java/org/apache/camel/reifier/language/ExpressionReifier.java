@@ -189,7 +189,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
      * Wraps the expression so a result that is a String starting with <code>resource:</code> is loaded and its content
      * is the result (resolveResource=true, CAMEL-24884). Applies to expressions only: a predicate answers true or
      * false, there is no resource to load in its result.
-     * <p/>
+     * <p>
      * The name must have no scheme and is loaded from the classpath (CAMEL-25982): <code>camel run</code> puts the
      * files given on the command line on the classpath, and <code>camel export</code> puts them in
      * <code>src/main/resources</code>, so the same name works in both. A name with a scheme (file:, http:, ref: ...) or

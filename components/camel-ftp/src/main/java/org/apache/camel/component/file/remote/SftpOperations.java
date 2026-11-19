@@ -31,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -105,9 +108,24 @@ public class SftpOperations
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
         private Exception exception;
+        // the server rejected the login, which ends the reconnect attempts
+        private boolean authenticationFailed;
 
         public TaskPayload(RemoteFileConfiguration configuration) {
             this.configuration = configuration;
+        }
+    }
+
+    /**
+     * Ends the session when the server asks for the password again: JSch asks for it again each time the server rejects
+     * it, up to MaxAuthTries times per session, and each rejected password counts towards the lockout policy of the
+     * server.
+     */
+    private static final class PasswordNotAcceptedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        PasswordNotAcceptedException(String username) {
+            super("Auth fail for user '" + username + "': the server did not accept the password");
         }
     }
 
@@ -160,7 +178,7 @@ public class SftpOperations
 
                 TaskPayload payload = new TaskPayload(configuration);
 
-                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
+                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload) || payload.authenticationFailed) {
                     throw new GenericFileOperationFailedException(
                             "Cannot connect to " + configuration.remoteServerInformation(),
                             payload.exception);
@@ -178,6 +196,34 @@ public class SftpOperations
         }
     }
 
+    /**
+     * The authentication methods of the preferredAuthentications option as JSch compares them with the methods that the
+     * server offers, which JSch turns to lower case: in lower case, without the spaces around them. JSch skips a method
+     * written in another case, such as {@code Password}, as one that the server does not offer.
+     */
+    static String normalizePreferredAuthentications(String methods) {
+        return Arrays.stream(methods.split(","))
+                .map(String::trim)
+                .filter(method -> !method.isEmpty())
+                .map(method -> method.toLowerCase(Locale.ROOT))
+                .collect(Collectors.joining(","));
+    }
+
+    /**
+     * The methods of the preferredAuthentications option that JSch has no implementation for, which it skips.
+     */
+    static List<String> unknownAuthenticationMethods(String methods) {
+        return Arrays.stream(normalizePreferredAuthentications(methods).split(","))
+                .filter(method -> !method.isEmpty() && JSch.getConfig("userauth." + method) == null)
+                .toList();
+    }
+
+    /**
+     * One attempt of the reconnect task.
+     *
+     * @return whether the task is done: connected, or the server rejected the login, which is not retried as each
+     *         rejected login counts towards the lockout policy of the server
+     */
     private boolean tryConnect(TaskPayload payload) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
@@ -219,13 +265,21 @@ public class SftpOperations
                     LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
                 }
             }
-        } catch (JSchException e) {
+        } catch (JSchException | PasswordNotAcceptedException e) {
             payload.exception = e;
+            payload.authenticationFailed = isAuthenticationFailure(e);
 
-            return false;
+            return payload.authenticationFailed;
         }
 
         return true;
+    }
+
+    private static boolean isAuthenticationFailure(Exception e) {
+        // JSch fails with "Auth fail for methods ..." or "Auth cancel for methods ..." when no method authenticated
+        String message = e.getMessage();
+        return e instanceof PasswordNotAcceptedException
+                || message != null && (message.startsWith("Auth fail") || message.startsWith("Auth cancel"));
     }
 
     private void configureBulkRequests() {
@@ -383,8 +437,9 @@ public class SftpOperations
 
         // set the PreferredAuthentications
         if (sftpConfig.getPreferredAuthentications() != null) {
-            LOG.debug("Using PreferredAuthentications: {}", sftpConfig.getPreferredAuthentications());
-            session.setConfig("PreferredAuthentications", sftpConfig.getPreferredAuthentications());
+            String preferredAuthentications = normalizePreferredAuthentications(sftpConfig.getPreferredAuthentications());
+            LOG.debug("Using PreferredAuthentications: {}", preferredAuthentications);
+            session.setConfig("PreferredAuthentications", preferredAuthentications);
         }
 
         // set the ServerHostKeys
@@ -427,16 +482,21 @@ public class SftpOperations
 
             private final CamelLogger messageLogger
                     = new CamelLogger(LOG, ((SftpConfiguration) configuration).getServerMessageLoggingLevel());
+            // the password is given once per session, with the password or the keyboard-interactive method
+            private boolean passwordGiven;
 
             public String getPassphrase() {
                 return null;
             }
 
             public String getPassword() {
-                return configuration.getPassword();
+                String password = configuration.getPassword();
+                passwordGiven |= password != null;
+                return password;
             }
 
             public boolean promptPassword(String s) {
+                checkPasswordNotGiven();
                 return true;
             }
 
@@ -464,11 +524,21 @@ public class SftpOperations
 
             public String[] promptKeyboardInteractive(
                     String destination, String name, String instruction, String[] prompt, boolean[] echo) {
-                // must return an empty array if password is null
-                if (configuration.getPassword() == null) {
+                // must return an empty array if password is null, or if the server asks nothing (only an instruction)
+                if (configuration.getPassword() == null || prompt.length == 0) {
                     return new String[0];
                 } else {
+                    checkPasswordNotGiven();
+                    passwordGiven = true;
                     return new String[] { configuration.getPassword() };
+                }
+            }
+
+            private void checkPasswordNotGiven() {
+                if (passwordGiven) {
+                    // asked again: the server did not accept the password, so end the session instead of sending it
+                    // once more (JSch passes the exception on from Session.connect, after it disconnected)
+                    throw new PasswordNotAcceptedException(configuration.getUsername());
                 }
             }
 
@@ -645,7 +715,9 @@ public class SftpOperations
     }
 
     /**
-     * Disconnects when the producer stops. Another thread can still run an operation that holds the lock.
+     * Disconnects when the producer or the consumer stops. Another thread can still run an operation that holds the
+     * lock: an upload of the producer, or the poll of the consumer, which the stop of its scheduler interrupts, but
+     * which then changes back to the directory it started from (stepwise), on a server that may not answer.
      * <p>
      * As long as the shutdown of Camel is not forced, this method waits for that operation, as {@link #disconnect()}
      * does: it can be a healthy but slow upload, when a producer cache evicts the producer, when an application stops a
@@ -704,7 +776,7 @@ public class SftpOperations
         }
         String server = endpoint.getConfiguration().remoteServerInformation();
         LOG.warn("The shutdown is forced: disconnecting from {} while another thread still runs an operation, such as an"
-                 + " upload that hangs. The operation fails.",
+                 + " upload or a download that hangs. The operation fails.",
                 server);
         // JSch sends the close of the channel under the lock of the session that a write to the socket holds: when the
         // operation is blocked writing to a server that no longer reads (a half-open connection), the disconnect waits
@@ -760,7 +832,7 @@ public class SftpOperations
             return true;
         } catch (SftpException e) {
             LOG.debug("Cannot delete file {}: {}", name, e.getMessage(), e);
-            throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
+            throw operationFailed("Cannot delete file: " + name, e);
         } finally {
             lock.unlock();
         }
@@ -779,7 +851,7 @@ public class SftpOperations
             return true;
         } catch (SftpException e) {
             LOG.debug("Cannot rename file from: {} to: {}", from, to, e);
-            throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
+            throw operationFailed("Cannot rename file from: " + from + " to: " + to, e);
         } finally {
             lock.unlock();
         }
@@ -838,7 +910,7 @@ public class SftpOperations
                     changeCurrentDirectory(originalDirectory);
                 }
             } catch (SftpException e) {
-                throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
+                throw operationFailed("Cannot build directory: " + directory, e);
             }
 
             return success;
@@ -894,7 +966,7 @@ public class SftpOperations
             LOG.trace("Current dir: {}", answer);
             return answer;
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot get current directory", e);
+            throw operationFailed("Cannot get current directory", e);
         } finally {
             lock.unlock();
         }
@@ -980,7 +1052,18 @@ public class SftpOperations
         try {
             channel.cd(quotePathForJsch(path));
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot change directory to: " + path, e);
+            String status = sftpStatus(e);
+            String message = "Cannot change directory to: " + path + ": " + status;
+            if (e.getCause() == null && !FileUtil.hasLeadingSeparator(path)) {
+                // the server answered: give the directory that a relative path starts from (the login directory, for
+                // the directory of the endpoint)
+                try {
+                    message += ". The path is relative to the current directory: " + channel.pwd();
+                } catch (SftpException pwdFailure) {
+                    LOG.trace("Cannot get the current directory: {}", pwdFailure.getMessage(), pwdFailure);
+                }
+            }
+            throw new GenericFileOperationFailedException(message, e.id, status, e);
         }
     }
 
@@ -1029,7 +1112,7 @@ public class SftpOperations
                     .map(f -> new SftpRemoteFileJCraft((ChannelSftp.LsEntry) f))
                     .toArray(SftpRemoteFileJCraft[]::new);
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
+            throw operationFailed("Cannot list directory: " + path, e);
         } finally {
             lock.unlock();
         }
@@ -1056,7 +1139,7 @@ public class SftpOperations
                 throw failure[0];
             }
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot list directory: " + dir, e);
+            throw operationFailed("Cannot list directory: " + dir, e);
         } finally {
             lock.unlock();
         }
@@ -1077,7 +1160,7 @@ public class SftpOperations
         try {
             return channel.getHome();
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot get the home directory", e);
+            throw operationFailed("Cannot get the home directory", e);
         } finally {
             lock.unlock();
         }
@@ -1089,7 +1172,7 @@ public class SftpOperations
         try {
             return channel.lstat(quotePathForJsch(path)).isLink();
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot get the attributes of: " + path, e);
+            throw operationFailed("Cannot get the attributes of: " + path, e);
         } finally {
             lock.unlock();
         }
@@ -1101,7 +1184,7 @@ public class SftpOperations
         try {
             return channel.readlink(quotePathForJsch(path));
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot read the symbolic link: " + path, e);
+            throw operationFailed("Cannot read the symbolic link: " + path, e);
         } finally {
             lock.unlock();
         }
@@ -1238,7 +1321,7 @@ public class SftpOperations
             return true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
-            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
+            throw operationFailed("Cannot retrieve file: " + name, e);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
@@ -1336,7 +1419,7 @@ public class SftpOperations
                 LOG.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
                         name, temp);
             }
-            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
+            throw operationFailed("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
             // change back to current directory if we changed directory
@@ -1501,7 +1584,7 @@ public class SftpOperations
 
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
-            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+            throw operationFailed("Cannot store file: " + name, e);
         } catch (IOException | InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
@@ -1517,7 +1600,7 @@ public class SftpOperations
             channel.put(bis, quotePathForJsch(name));
             return true;
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+            throw operationFailed("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(bis);
             lock.unlock();
@@ -1560,7 +1643,7 @@ public class SftpOperations
                 attrs = lstat(name);
             } catch (SftpException e) {
                 if (!isLstatUnanswered(e)) {
-                    throw new GenericFileOperationFailedException(e.getMessage(), e);
+                    throw operationFailed("Cannot get the attributes of: " + name, e);
                 }
                 LOG.debug("Cannot get the attributes of: {} due to: {}. Listing its directory instead.", name,
                         e.getMessage());
@@ -1658,7 +1741,7 @@ public class SftpOperations
                 return null;
             }
             // otherwise its a more serious error so rethrow
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
+            throw operationFailed("Cannot list directory: " + directory, e);
         }
     }
 
@@ -1748,6 +1831,49 @@ public class SftpOperations
     }
 
     /**
+     * The failure of an SFTP request, with the status of the server after the given message, and as the code and reason
+     * of the exception, as {@link FtpOperations} does with the reply code and reply text of an FTP server.
+     */
+    private static GenericFileOperationFailedException operationFailed(String message, SftpException e) {
+        String status = sftpStatus(e);
+        return new GenericFileOperationFailedException(message + ": " + status, e.id, status, e);
+    }
+
+    /**
+     * The status of a failed SFTP request, such as {@code SSH_FX_NO_SUCH_FILE: No such file}.
+     */
+    static String sftpStatus(SftpException e) {
+        String text = e.getMessage();
+        if (ObjectHelper.isEmpty(text) && e.getCause() != null) {
+            // JSch reports an I/O or session failure as SSH_FX_FAILURE, with that failure as its cause
+            text = e.getCause().toString();
+        }
+        String name = sftpStatusName(e.id);
+        if (ObjectHelper.isEmpty(text)) {
+            return name;
+        }
+        // JSch starts the text of a status sent by the server with the name of the status, but not the text of a
+        // failure it detects itself, such as "Can't change directory: <path>" for a path that is not a directory
+        return text.startsWith(name) ? text : name + ": " + text;
+    }
+
+    private static String sftpStatusName(int id) {
+        return switch (id) {
+            case ChannelSftp.SSH_FX_OK -> "SSH_FX_OK";
+            case ChannelSftp.SSH_FX_EOF -> "SSH_FX_EOF";
+            case ChannelSftp.SSH_FX_NO_SUCH_FILE -> "SSH_FX_NO_SUCH_FILE";
+            case ChannelSftp.SSH_FX_PERMISSION_DENIED -> "SSH_FX_PERMISSION_DENIED";
+            case ChannelSftp.SSH_FX_FAILURE -> "SSH_FX_FAILURE";
+            case ChannelSftp.SSH_FX_BAD_MESSAGE -> "SSH_FX_BAD_MESSAGE";
+            case ChannelSftp.SSH_FX_NO_CONNECTION -> "SSH_FX_NO_CONNECTION";
+            case ChannelSftp.SSH_FX_CONNECTION_LOST -> "SSH_FX_CONNECTION_LOST";
+            case ChannelSftp.SSH_FX_OP_UNSUPPORTED -> "SSH_FX_OP_UNSUPPORTED";
+            // as JSch names a status of a later version of the protocol
+            default -> "Unknown code: (" + id + ")";
+        };
+    }
+
+    /**
      * Helper method which gets result code and message from sftpException and puts it into header. In case that
      * exception is null, it sets successfully response.
      */
@@ -1775,7 +1901,7 @@ public class SftpOperations
             try {
                 channel.chmod(permissions, quotePathForJsch(directory));
             } catch (SftpException e) {
-                throw new GenericFileOperationFailedException("Cannot set permission on directory: " + directory, e);
+                throw operationFailed("Cannot set permission on directory: " + directory, e);
             }
         }
     }

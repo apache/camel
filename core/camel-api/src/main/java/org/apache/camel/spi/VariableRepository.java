@@ -36,7 +36,7 @@ public interface VariableRepository extends StaticService, VariableAware {
      * Removes the given variable
      *
      * @param  name of the variable
-     * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
+     * @return      the old value of the variable, or <code>null</code> if there was no variable for the given name
      */
     @Nullable
     Object removeVariable(String name);

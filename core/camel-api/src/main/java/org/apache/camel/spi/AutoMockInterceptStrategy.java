@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * Strategy for intercepting messages sent to endpoints in order to auto-mock them during testing.
- * <p/>
+ * <p>
  * Matching by uri or uri pattern, the strategy can redirect sends to a mock and optionally skip sending to the original
  * endpoint. This powers the camel-test auto-mocking feature (such as {@code @MockEndpoint}); see
  * {@code org.apache.camel.processor.AutoMockInterceptProducer}.

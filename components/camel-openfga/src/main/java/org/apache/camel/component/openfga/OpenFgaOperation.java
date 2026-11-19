@@ -42,6 +42,9 @@ public enum OpenFgaOperation {
      */
     listObjects,
 
+    /** Incrementally enumerate objects through a closeable iterator. */
+    streamedListObjects,
+
     /**
      * List which of the configured relations the subject holds on the object.
      */
@@ -76,5 +79,10 @@ public enum OpenFgaOperation {
     /**
      * Revoke access by deleting relationship tuples.
      */
-    deleteTuples
+    deleteTuples,
+
+    /**
+     * Write and delete relationship tuples together in a single atomic request, up to 100 tuples in total.
+     */
+    write
 }

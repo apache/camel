@@ -21,10 +21,16 @@ import org.apache.camel.spi.Metadata;
 public final class WhatsAppConstants {
 
     @Metadata(label = "producer", description = "Phone Number ID taken from WhatsApp Meta for Developers Dashboard",
-              javaType = "Object")
+              javaType = "Object",
+              deprecationNote = "Never read by the component: the phone number ID comes from the endpoint URI, as the"
+                                + " phoneNumberId path parameter")
+    @Deprecated
     public static final String WHATSAPP_PHONE_NUMBER_ID = "CamelWhatsAppPhoneNumberId";
 
-    @Metadata(label = "producer", description = "Recipient phone number associated with Phone Number ID", javaType = "Object")
+    @Metadata(label = "producer", description = "Recipient phone number associated with Phone Number ID", javaType = "Object",
+              deprecationNote = "Never read by the component: the recipient comes from the to field of the BaseMessage the body"
+                                + " is converted to")
+    @Deprecated
     public static final String WHATSAPP_RECIPIENT_PHONE_NUMBER_ID = "CamelWhatsAppRecipientPhoneNumberId";
 
     private WhatsAppConstants() {

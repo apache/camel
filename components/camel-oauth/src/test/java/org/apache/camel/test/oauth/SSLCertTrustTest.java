@@ -49,6 +49,11 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     private static Thread serverThread;
     private static int localHttpsPort;
 
+    @Override
+    protected int getPort() {
+        return localHttpsPort;
+    }
+
     @BeforeAll
     static void startLocalHttpsServer() throws Exception {
         // Load the self-signed keystore from test resources
@@ -101,8 +106,9 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
 
     @Test
     void testCheckKeycloakCertificateTrust() {
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
         Assertions.assertDoesNotThrow(() -> connectToUrl(KEYCLOAK_BASE_URL), "Certificate should be trusted");
     }
 

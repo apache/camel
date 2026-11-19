@@ -29,12 +29,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Pluggable strategy for converting message bodies to and from a serialised byte-stream format, as described in the
  * <a href="https://camel.apache.org/manual/data-format.html">Data Format</a> documentation.
- * <p/>
+ * <p>
  * A {@code DataFormat} is the core abstraction behind the Camel {@code .marshal()} and {@code .unmarshal()} DSL calls.
  * Camel ships more than 50 data format implementations covering JSON (Jackson, Gson, Fastjson), XML (JAXB, XStream),
  * CSV, Avro, Protobuf, CBOR, and many others. Each data format is a {@link org.apache.camel.Service}; Camel starts and
  * stops it together with the route it is used in, making it safe to hold state (thread-local codec contexts, etc.).
- * <p/>
+ * <p>
  * Implementations must be thread-safe unless the enclosing route guarantees single-threaded execution. The
  * {@link #unmarshal(Exchange, Object)} default method converts the body to an {@link java.io.InputStream} before
  * delegating to {@link #unmarshal(Exchange, java.io.InputStream)}; override it when a more direct conversion is
@@ -49,8 +49,8 @@ public interface DataFormat extends Service {
      * Marshals the object to the given Stream.
      *
      * @param  exchange  the current exchange
-     * @param  graph     the object to be marshalled, can be <tt>null</tt> if the message body is null (for example on
-     *                   an error route) or if the implementation marshals from the exchange rather than from this
+     * @param  graph     the object to be marshalled, can be <code>null</code> if the message body is null (for example
+     *                   on an error route) or if the implementation marshals from the exchange rather than from this
      *                   parameter
      * @param  stream    the output stream to write the marshalled result to
      * @throws Exception can be thrown
@@ -59,12 +59,12 @@ public interface DataFormat extends Service {
 
     /**
      * Unmarshals the given stream into an object.
-     * <p/>
+     * <p>
      * <b>Notice:</b> The result is set as body on the exchange message. It is possible to mutate the message provided
      * in the given exchange parameter. For instance adding headers to the message will be preserved.
-     * <p/>
-     * It's also legal to return the <b>same</b> passed <tt>exchange</tt> as is but also a {@link Message} object as
-     * well which will be used as the message of <tt>exchange</tt>.
+     * <p>
+     * It's also legal to return the <b>same</b> passed <code>exchange</code> as is but also a {@link Message} object as
+     * well which will be used as the message of <code>exchange</code>.
      *
      * @param  exchange  the current exchange
      * @param  stream    the input stream with the object to be unmarshalled
@@ -76,13 +76,13 @@ public interface DataFormat extends Service {
 
     /**
      * Unmarshals the given body into an object.
-     * <p/>
+     * <p>
      * <b>Notice:</b> The result is set as body on the exchange message. It is possible to mutate the message provided
      * in the given exchange parameter. For instance adding headers to the message will be preserved.
-     * <p/>
-     * It's also legal to return the <b>same</b> passed <tt>exchange</tt> as is but also a {@link Message} object as
-     * well which will be used as the message of <tt>exchange</tt>.
-     * <p/>
+     * <p>
+     * It's also legal to return the <b>same</b> passed <code>exchange</code> as is but also a {@link Message} object as
+     * well which will be used as the message of <code>exchange</code>.
+     * <p>
      * This method can be used when a dataformat is optimized to handle any kind of message body as-is. For example
      * camel-jaxb has been optimized to do this. The regular {@link #unmarshal(Exchange, InputStream)} method requires
      * Camel to convert the message body into an {@link InputStream} prior to calling the unmarshal method. This can be

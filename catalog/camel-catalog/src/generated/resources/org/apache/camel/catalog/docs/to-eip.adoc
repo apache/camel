@@ -145,6 +145,15 @@ is capable of computing a dynamic URI using
 an xref:manual::expression.adoc[Expression], such as
 the xref:components:eips:toD-eip.adoc[toD] or xref:components:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
 
+The route still starts: the `to` sends every message to one endpoint, named by the text of the expression.
+Camel logs a WARN for such a `to` when it creates the route, and the WARN says to use `toD`.
+Only the endpoint path is checked, not the options after the `?`. Left alone are the
+xref:ROOT:language-component.adoc[Language] component, whose path is a script, the `:#${...}` parameters of the
+xref:ROOT:sql-component.adoc[SQL] component, and the components that evaluate their path for each message: they mark
+their path option with `@Metadata(supportSimpleExpression = true)`, as
+xref:ROOT:sql-stored-component.adoc[SQL Stored Procedure], xref:ROOT:aws2-s3-component.adoc[AWS S3] and
+xref:ROOT:micrometer-component.adoc[Micrometer] do.
+
 [TIP]
 ====
 *This is valid code*

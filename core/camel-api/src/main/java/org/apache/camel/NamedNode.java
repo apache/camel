@@ -23,12 +23,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an identifiable node in the Camel route model.
- * <p/>
+ * <p>
  * The route model (in the {@code org.apache.camel.model} package) is the abstract syntax tree built by the DSL before
  * routes are started. Every model element — from the route itself down to individual EIP steps such as
  * {@code .filter()}, {@code .choice()}, and {@code .to()} — implements {@code NamedNode} so that it can be located by
  * id, referenced in logs and management output, and traversed by tooling (debuggers, tracers, visualizers).
- * <p/>
+ * <p>
  * The {@link #getId()} is auto-generated when not explicitly set, and the optional {@link #getNodePrefixId()} is used
  * when routes share a common id prefix to avoid collisions in composite applications.
  *
@@ -109,7 +109,7 @@ public interface NamedNode extends LineNumberAware {
      * Returns the direct children of this node in the route model tree.
      *
      * This provides a uniform API for tree walkers to traverse the full model structure without needing to special-case
-     * EIPs like Choice (whose when/otherwise children are not {@link org.apache.camel.model.ProcessorDefinition}s and
+     * EIPs like Choice (whose when/otherwise children are not {@code org.apache.camel.model.ProcessorDefinition}s and
      * therefore invisible to {@code getOutputs()}).
      */
     default List<NamedNode> getChildren() {

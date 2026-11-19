@@ -51,6 +51,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": getOrCreateConfiguration(target).setAuthorizationModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchcheckmode":
+        case "batchCheckMode": getOrCreateConfiguration(target).setBatchCheckMode(property(camelContext, org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -73,11 +75,17 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxbatchsize":
+        case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxparallelrequests":
         case "maxParallelRequests": getOrCreateConfiguration(target).setMaxParallelRequests(property(camelContext, int.class, value)); return true;
         case "maxretries":
         case "maxRetries": getOrCreateConfiguration(target).setMaxRetries(property(camelContext, int.class, value)); return true;
         case "object": getOrCreateConfiguration(target).setObject(property(camelContext, java.lang.String.class, value)); return true;
+        case "onduplicate":
+        case "onDuplicate": getOrCreateConfiguration(target).setOnDuplicate(property(camelContext, org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class, value)); return true;
+        case "onmissing":
+        case "onMissing": getOrCreateConfiguration(target).setOnMissing(property(camelContext, org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class, value)); return true;
         case "openfgaclient":
         case "openFgaClient": getOrCreateConfiguration(target).setOpenFgaClient(property(camelContext, dev.openfga.sdk.api.client.OpenFgaClient.class, value)); return true;
         case "pagesize":
@@ -93,6 +101,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": getOrCreateConfiguration(target).setStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "storeid":
         case "storeId": getOrCreateConfiguration(target).setStoreId(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": getOrCreateConfiguration(target).setStreamMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "streammaxresults":
+        case "streamMaxResults": getOrCreateConfiguration(target).setStreamMaxResults(property(camelContext, int.class, value)); return true;
+        case "streamingclient":
+        case "streamingClient": getOrCreateConfiguration(target).setStreamingClient(property(camelContext, org.apache.camel.component.openfga.OpenFgaStreamingClient.class, value)); return true;
         case "type": getOrCreateConfiguration(target).setType(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
@@ -105,7 +119,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"openFgaClient"};
+        return new String[]{"openFgaClient", "streamingClient"};
     }
 
     @Override
@@ -131,6 +145,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchcheckmode":
+        case "batchCheckMode": return org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -153,11 +169,17 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
         case "maxparallelrequests":
         case "maxParallelRequests": return int.class;
         case "maxretries":
         case "maxRetries": return int.class;
         case "object": return java.lang.String.class;
+        case "onduplicate":
+        case "onDuplicate": return org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class;
+        case "onmissing":
+        case "onMissing": return org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class;
         case "openfgaclient":
         case "openFgaClient": return dev.openfga.sdk.api.client.OpenFgaClient.class;
         case "pagesize":
@@ -173,6 +195,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": return java.lang.String.class;
         case "storeid":
         case "storeId": return java.lang.String.class;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return int.class;
+        case "streammaxresults":
+        case "streamMaxResults": return int.class;
+        case "streamingclient":
+        case "streamingClient": return org.apache.camel.component.openfga.OpenFgaStreamingClient.class;
         case "type": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
@@ -207,6 +235,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": return getOrCreateConfiguration(target).getAuthorizationModelId();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchcheckmode":
+        case "batchCheckMode": return getOrCreateConfiguration(target).getBatchCheckMode();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
@@ -229,11 +259,17 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxbatchsize":
+        case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxparallelrequests":
         case "maxParallelRequests": return getOrCreateConfiguration(target).getMaxParallelRequests();
         case "maxretries":
         case "maxRetries": return getOrCreateConfiguration(target).getMaxRetries();
         case "object": return getOrCreateConfiguration(target).getObject();
+        case "onduplicate":
+        case "onDuplicate": return getOrCreateConfiguration(target).getOnDuplicate();
+        case "onmissing":
+        case "onMissing": return getOrCreateConfiguration(target).getOnMissing();
         case "openfgaclient":
         case "openFgaClient": return getOrCreateConfiguration(target).getOpenFgaClient();
         case "pagesize":
@@ -249,6 +285,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": return getOrCreateConfiguration(target).getStartTime();
         case "storeid":
         case "storeId": return getOrCreateConfiguration(target).getStoreId();
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return getOrCreateConfiguration(target).getStreamMaxLineLength();
+        case "streammaxresults":
+        case "streamMaxResults": return getOrCreateConfiguration(target).getStreamMaxResults();
+        case "streamingclient":
+        case "streamingClient": return getOrCreateConfiguration(target).getStreamingClient();
         case "type": return getOrCreateConfiguration(target).getType();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();

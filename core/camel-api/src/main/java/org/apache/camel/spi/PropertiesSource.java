@@ -21,13 +21,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A source of property values for the Camel {@link PropertiesComponent} when resolving property placeholders.
- * <p/>
+ * <p>
  * The properties component consults all registered sources (system properties, environment variables, .properties
  * files, beans, vaults, and so on) to resolve a placeholder. A source can implement {@link Ordered} to control its
  * precedence; the source with the highest precedence (the lowest number) is consulted first. Sources whose properties
  * can be loaded eagerly in bulk implement {@link LoadablePropertiesSource}, and the built-in sources are created via
  * {@link PropertiesSourceFactory}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
  * Camel user manual.
  *
@@ -49,7 +49,7 @@ public interface PropertiesSource {
      * Gets the property with the name
      *
      * @param  name name of property
-     * @return      the property value, or <tt>null</tt> if no property exists
+     * @return      the property value, or <code>null</code> if no property exists
      */
     @Nullable
     String getProperty(String name);
@@ -59,7 +59,7 @@ public interface PropertiesSource {
      *
      * @param  name         name of property
      * @param  defaultValue default value to use as fallback
-     * @return              the property value, or <tt>null</tt> if no property exists
+     * @return              the property value, or <code>null</code> if no property exists
      */
     default @Nullable String getProperty(String name, @Nullable String defaultValue) {
         return getProperty(name);

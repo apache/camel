@@ -259,7 +259,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional explicitly configured cipher suites for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setCipherSuitesFilter(FilterParameters)}
      */
     public @Nullable CipherSuitesParameters getCipherSuites() {
@@ -270,7 +270,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional explicitly configured cipher suites for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setCipherSuitesFilter(FilterParameters)}
      *
      * @param cipherSuites the suite configuration
@@ -296,7 +296,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional cipher suite filter for this configuration. These options are used in the configuration of
      * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
      * they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setCipherSuites(CipherSuitesParameters)} is called with a non {@code null}
      * argument.
      */
@@ -308,7 +308,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional cipher suite filter for this JSSE configuration. These options are used in the configuration of
      * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
      * they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setCipherSuites(CipherSuitesParameters)} is called with a non {@code null}
      * argument.
      *
@@ -322,7 +322,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the explicitly configured secure socket protocol names for this configuration. These options are used in
      * the configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on
      * the context in which they are applied.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setSecureSocketProtocolsFilter(FilterParameters)}
      */
     public @Nullable SecureSocketProtocolsParameters getSecureSocketProtocols() {
@@ -333,7 +333,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the explicitly configured secure socket protocol names for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setSecureSocketProtocolsFilter(FilterParameters)}
      */
     public void setSecureSocketProtocols(@Nullable SecureSocketProtocolsParameters secureSocketProtocols) {
@@ -344,7 +344,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional secure socket protocol filter for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setSecureSocketProtocols(SecureSocketProtocolsParameters)} is called with a
      * non-{@code null} argument.
      */
@@ -356,7 +356,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional secure socket protocol filter for this JSSE configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setSecureSocketProtocols(SecureSocketProtocolsParameters)} is called with a
      * non-{@code null} argument.
      *
@@ -370,10 +370,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional explicitly configured named groups for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
      * hybrid groups such as {@code X25519MLKEM768}.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setNamedGroupsFilter(FilterParameters)}
      */
     public @Nullable NamedGroupsParameters getNamedGroups() {
@@ -384,10 +384,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional explicitly configured named groups for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
      * hybrid groups such as {@code X25519MLKEM768}.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setNamedGroupsFilter(FilterParameters)}
      *
      * @param namedGroups the named groups configuration
@@ -400,7 +400,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional named groups filter for this configuration. These options are used in the configuration of
      * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
      * they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setNamedGroups(NamedGroupsParameters)} is called with a non {@code null}
      * argument.
      */
@@ -412,7 +412,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional named groups filter for this JSSE configuration. These options are used in the configuration of
      * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
      * they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setNamedGroups(NamedGroupsParameters)} is called with a non {@code null}
      * argument.
      *
@@ -426,10 +426,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional explicitly configured signature schemes for this configuration. These options are used in
      * the configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on
      * the context in which they are applied.
-     * <p/>
+     * <p>
      * Signature schemes control which signature algorithms are available during the TLS handshake, including
      * post-quantum signature algorithms such as ML-DSA.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setSignatureSchemesFilter(FilterParameters)}
      */
     public @Nullable SignatureSchemesParameters getSignatureSchemes() {
@@ -440,10 +440,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional explicitly configured signature schemes for this configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * Signature schemes control which signature algorithms are available during the TLS handshake, including
      * post-quantum signature algorithms such as ML-DSA.
-     * <p/>
+     * <p>
      * These values override any filters supplied in {@link #setSignatureSchemesFilter(FilterParameters)}
      *
      * @param signatureSchemes the signature schemes configuration
@@ -456,7 +456,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the optional signature schemes filter for this configuration. These options are used in the configuration
      * of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in
      * which they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setSignatureSchemes(SignatureSchemesParameters)} is called with a non
      * {@code null} argument.
      */
@@ -468,7 +468,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Sets the optional signature schemes filter for this JSSE configuration. These options are used in the
      * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
      * context in which they are applied.
-     * <p/>
+     * <p>
      * These values are ignored if {@link #setSignatureSchemes(SignatureSchemesParameters)} is called with a non
      * {@code null} argument.
      *
@@ -704,7 +704,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the list of configurers to apply to an {@link SSLSocketFactory} in order to fully configure it in
      * compliance with the provided configuration options. The configurers are to be applied in the order in which they
      * appear in the list.
-     * <p/>
+     * <p>
      * It is preferred to use {@link #getSSLSocketFactorySSLSocketConfigurers(SSLContext)} instead of this method as
      * {@code SSLSocketFactory} does not contain any configuration options that are non-proprietary.
      *
@@ -739,7 +739,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Returns the list of configurers to apply to an {@link SSLServerSocketFactory} in order to fully configure it in
      * compliance with the provided configuration options. The configurers are to be applied in the order in which they
      * appear in the list.
-     * <p/>
+     * <p>
      * It is preferred to use {@link #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)} instead of this
      * method as {@code SSLServerSocketFactory} does not contain any configuration options that are non-proprietary.
      *
