@@ -371,6 +371,25 @@ public interface GoogleStorageComponentBuilderFactory {
         }
     
         /**
+         * The Cloud Storage class of the objects that the producer uploads.
+         * When not set, an object gets the default storage class of its bucket.
+         * The CamelGoogleCloudStorageStorageClass header overrides it per
+         * message.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param objectStorageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder objectStorageClass(com.google.cloud.storage.StorageClass objectStorageClass) {
+            doSetProperty("objectStorageClass", objectStorageClass);
+            return this;
+        }
+    
+        /**
          * Set the operation for the producer.
          * 
          * The option is a:
@@ -543,6 +562,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setPrefix((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleCloudStorageComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "objectStorageClass": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectStorageClass((com.google.cloud.storage.StorageClass) value); return true;
             case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageOperations) value); return true;
             case "autowiredEnabled": ((GoogleCloudStorageComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
