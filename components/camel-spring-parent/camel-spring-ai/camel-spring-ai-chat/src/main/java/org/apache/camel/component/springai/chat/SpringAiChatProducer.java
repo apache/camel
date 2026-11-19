@@ -65,6 +65,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMem
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
@@ -888,6 +889,14 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     private void populateResponseMetadata(ChatResponse response, Exchange exchange) {
+        // The reasoning of this reply only, so a header of an earlier call does not stay
+        String reasoning = reasoningText(response);
+        if (reasoning != null) {
+            exchange.getMessage().setHeader(SpringAiChatConstants.REASONING, reasoning);
+        } else {
+            exchange.getMessage().removeHeader(SpringAiChatConstants.REASONING);
+        }
+
         // Add response metadata if available
         if (response.getMetadata() != null) {
             var responseMetadata = response.getMetadata();
@@ -904,12 +913,16 @@ public class SpringAiChatProducer extends DefaultProducer {
                         responseMetadata.getId());
             }
 
-            // Finish reason is on the Generation metadata, not the Response metadata
+            // Finish reason is on the Generation metadata, not the Response metadata. Its category is the same for every
+            // provider, unlike the finish reason
             if (response.getResult() != null && response.getResult().getMetadata() != null) {
-                String finishReason = response.getResult().getMetadata().getFinishReason();
+                ChatGenerationMetadata generationMetadata = response.getResult().getMetadata();
+                String finishReason = generationMetadata.getFinishReason();
                 if (finishReason != null) {
                     exchange.getMessage().setHeader(SpringAiChatConstants.FINISH_REASON, finishReason);
                 }
+                exchange.getMessage().setHeader(SpringAiChatConstants.FINISH_REASON_CATEGORY,
+                        generationMetadata.getFinishReasonCategory().name());
             }
 
             // Full metadata map for advanced users
@@ -921,12 +934,17 @@ public class SpringAiChatProducer extends DefaultProducer {
             if (responseMetadata.getModel() != null) {
                 metadataMap.put("model", responseMetadata.getModel());
             }
-            // Add finish reason from generation metadata
+            // Add finish reason and its category from generation metadata
             if (response.getResult() != null && response.getResult().getMetadata() != null) {
                 String finishReason = response.getResult().getMetadata().getFinishReason();
                 if (finishReason != null) {
                     metadataMap.put("finishReason", finishReason);
                 }
+                metadataMap.put("finishReasonCategory",
+                        response.getResult().getMetadata().getFinishReasonCategory().name());
+            }
+            if (reasoning != null) {
+                metadataMap.put("reasoning", reasoning);
             }
             if (responseMetadata.getUsage() != null) {
                 metadataMap.put("usage", responseMetadata.getUsage());
@@ -944,6 +962,23 @@ public class SpringAiChatProducer extends DefaultProducer {
                 exchange.getMessage().setHeader(SpringAiChatConstants.RESPONSE_METADATA, metadataMap);
             }
         }
+    }
+
+    /**
+     * The reasoning of the reply as text: the text of each reasoning part, or its summary when the provider returns
+     * only a summary. A redacted part has neither and is left out.
+     *
+     * @return the reasoning, or {@code null} when the reply has none
+     */
+    private static String reasoningText(ChatResponse response) {
+        if (response.getResult() == null) {
+            return null;
+        }
+        String reasoning = response.getResult().getOutput().getReasoning().stream()
+                .map(part -> part.text() != null ? part.text() : part.summary())
+                .filter(text -> text != null && !text.isBlank())
+                .collect(Collectors.joining("\n\n"));
+        return reasoning.isEmpty() ? null : reasoning;
     }
 
     @SuppressWarnings("unchecked")

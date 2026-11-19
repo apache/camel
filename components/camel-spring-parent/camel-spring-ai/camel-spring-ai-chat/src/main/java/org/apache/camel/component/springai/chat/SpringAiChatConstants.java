@@ -109,6 +109,17 @@ public final class SpringAiChatConstants {
               javaType = "String")
     public static final String FINISH_REASON = "CamelSpringAiChatFinishReason";
 
+    @Metadata(description = "The category of the finish reason, the same for every provider: COMPLETED, TRUNCATED (a token "
+                            + "or length limit), TOOL_CALL, FILTERED (a content filter, or a refusal of the SafeGuard "
+                            + "advisor), OTHER or UNSPECIFIED",
+              javaType = "String")
+    public static final String FINISH_REASON_CATEGORY = "CamelSpringAiChatFinishReasonCategory";
+
+    @Metadata(description = "The reasoning of the model for its reply (thinking, thoughts or reasoning content), when the "
+                            + "model returns it as text",
+              javaType = "String")
+    public static final String REASONING = "CamelSpringAiChatReasoning";
+
     @Metadata(description = "The name of the AI model used to generate the response", javaType = "String")
     public static final String MODEL_NAME = "CamelSpringAiChatModelName";
 
