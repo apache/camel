@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -76,10 +78,15 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     /**
      * The options that make up the credential of the client. The client sends the credential in the Authorization
-     * header, so they are not set on the request, where accessToken would become the access_token query parameter.
+     * header, so they are not set on the request, where accessToken would become the access_token query parameter. The
+     * names are matched ignoring case, as a header such as CamelGoogleSheets.AccessToken sets the same property.
      */
-    private static final Set<String> CREDENTIAL_OPTIONS
-            = Set.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate");
+    private static final Set<String> CREDENTIAL_OPTIONS = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+    static {
+        CREDENTIAL_OPTIONS.addAll(
+                List.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate"));
+    }
 
     @UriParam
     private GoogleSheetsConfiguration configuration;

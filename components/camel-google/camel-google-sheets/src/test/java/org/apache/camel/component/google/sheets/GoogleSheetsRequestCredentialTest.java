@@ -54,6 +54,21 @@ class GoogleSheetsRequestCredentialTest {
     }
 
     @Test
+    void shouldNotSendAnAccessTokenHeaderOnTheRequestWhateverItsCase() throws Exception {
+        for (String header : List.of("CamelGoogleSheets.accessToken", "CamelGoogleSheets.AccessToken")) {
+            transport.requests.clear();
+            try (CamelContext context = createContext()) {
+                context.createProducerTemplate().requestBodyAndHeader(
+                        "google-sheets://data/get?spreadsheetId=abc&range=A1:B1&" + OAUTH, null, header, "htoken");
+
+                String url = transport.requests.get(0).getUrl();
+                assertFalse(url.contains("access_token"), header + " -> " + url);
+                assertFalse(url.contains("htoken"), header + " -> " + url);
+            }
+        }
+    }
+
+    @Test
     void shouldSendTheAccessTokenOfTheConsumerOnlyInTheAuthorizationHeader() throws Exception {
         try (CamelContext context = createContext()) {
             MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
