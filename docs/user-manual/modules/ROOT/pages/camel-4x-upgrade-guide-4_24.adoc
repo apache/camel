@@ -133,6 +133,49 @@ the WARN says to use `toD`. The route works as before. Only the endpoint path is
 of `sql`, and the components whose path option is marked `supportSimpleExpression` in their metadata, which now
 includes the template of `sql-stored` and the bucket name of `aws2-s3`.
 
+=== camel-core - option values of a dynamic endpoint are bound as literal text
+
+The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
+`dynamicRouter` -- compute their target endpoint from the current message at runtime. The option values of that
+endpoint are now bound as literal text: a property placeholder (`+{{...}}+`), a `#class:` value or a `#property:` value
+is not resolved. This extends to the options the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave
+the endpoint path. It applies however the component binds its options, including components that bind them in their
+own `createEndpoint` or look up a reference option with `resolveAndRemoveReferenceParameter`.
+
+This applies to every option of that uri, not only to the parts that come from the message: a `#class:` or
+`#property:` value written in the text of a `toD`, or in a uri that a bean of the route builds for `recipientList`,
+`routingSlip` or `dynamicRouter`, is not resolved either. For an option of type `String` the text is bound as is. For
+an option of another type, a `#class:` value fails the creation of the endpoint with a `ResolveEndpointFailedException`.
+Register the bean instead and refer to it with `#bean:`, for example:
+
+[source,java]
+----
+// before: the class was created for every new endpoint
+toD("log:audit?exchangeFormatter=#class:com.foo.MyFormatter&marker=${header.customer}")
+
+// after: create the bean once (e.g. camel.beans.myFormatter = #class:com.foo.MyFormatter) and refer to it
+toD("log:audit?exchangeFormatter=#bean:myFormatter&marker=${header.customer}")
+----
+
+What still works as before:
+
+* Registry references (`#bean:name`, `#type:`, `#name`) are still resolved, so `+toD("sql:${header.query}?dataSource=#ds")+` keeps working.
+* Property placeholders written in the text of a `toD` are resolved once when the route is built, so
+  `+toD("mock:foo?delay={{myDelay}}")+` is unchanged. `recipientList`, `routingSlip` and `dynamicRouter` still resolve
+  property placeholders in the computed uri string.
+* An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
+  before.
+
+=== camel-core - RAW() option values of a dynamic endpoint computed from the message are literal text
+
+A `RAW(...)` option value of an endpoint whose uri is computed from the current message at runtime (`toD`, `enrich`,
+`wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and `dynamicRouter`) is still unwrapped, but its content is now
+taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endpoints written in the route, such as
+`+to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})")+`, are unchanged. As the whole uri of `toD`
+is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
+use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
+is resolved once when the route is created.
+
 === camel-core - Rest DSL binding mode json fails at startup without a JSON data format
 
 A Rest DSL service with `bindingMode` `json` or `json_xml` whose JSON data format (`jackson` unless `jsonDataFormat`

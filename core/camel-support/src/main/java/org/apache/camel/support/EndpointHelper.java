@@ -361,6 +361,9 @@ public final class EndpointHelper {
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
+        // while an endpoint whose uri is computed from the current message is created, its option values are bound as
+        // literal text: a placeholder, #class: or #property: value is not resolved (#bean: and #type: still are)
+        PropertyBindingSupport.checkLiteralOptionReference(value);
         Object answer;
         if (value.startsWith("#class:")) {
             try {
