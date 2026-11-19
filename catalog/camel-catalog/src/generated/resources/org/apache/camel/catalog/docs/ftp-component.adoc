@@ -272,6 +272,13 @@ It is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
+=== File and directory names with a line break
+
+The FTP control connection sends one command per line, so a remote file or directory name with a carriage return or
+a line feed cannot be sent as the argument of one command. The `ftp` and `ftps` components refuse such a name with a
+`GenericFileOperationFailedException` before they send any command for it, for example when the producer writes a file
+whose `CamelFileName` header has a line break. Remove or replace these characters in the name before the producer.
+
 [[FTP-DefaultWhenConsumingFiles]]
 === Default when consuming files
 
