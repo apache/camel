@@ -18,17 +18,20 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated("Does not play well with parallel unit test execution")
@@ -41,6 +44,12 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     public void setUp() throws Exception {
         testDirectory("in", true);
         super.setUp();
+    }
+
+    @AfterEach
+    void waitForTheFileCommit() {
+        // the mock is satisfied before the file consumer commits the exchange, which the shutdown would wait for
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
     }
 
     @Test
