@@ -874,6 +874,22 @@ is now sent with the first request; before, the request failed with `IllegalStat
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
+=== camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
+
+When Camel checks the credential of an incoming request, the `Authorization` header of the request is now removed from
+the message before the route gets it, as the OAuth bearer token validation of these components already does since
+Camel 4.21. This applies to:
+
+* camel-platform-http-main: the requests under `camel.server.authenticationPath` when
+  `camel.server.authenticationEnabled=true`, with basic (`basicPropertiesFile`) or JWT authentication.
+* camel-netty-http: the requests that are checked with basic authentication (`securityConfiguration`).
+* camel-undertow: the requests that a security provider (`UndertowSecurityProvider`) has authenticated.
+
+Before, the header was passed on to the route, and from there to the steps that use the message headers, such as a
+log of the headers or a producer that sends them on. A request that Camel does not check, for example to a path outside
+`authenticationPath` or to a resource that the netty-http security constraint does not restrict, keeps the header as
+sent. A route that has to call a backend with credentials sets them on that producer.
+
 === camel-mdc - camel.routeId is the route being run
 
 The `camel.routeId` MDC value is now the id of the route that runs the step, as with the deprecated
