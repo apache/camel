@@ -954,7 +954,8 @@ public abstract class AbstractCamelContext extends BaseService
                     // Have the component create the endpoint if it can.
                     String createUri = component.useRawUri() ? rawUri : uri;
                     // when the uri was computed from the current message at runtime its query option values must be
-                    // bound as literal text (no property-placeholder and no bean/class reference resolution)
+                    // bound as literal text (no property-placeholder, #class: or #property: resolution; a #bean: or
+                    // #type: registry reference still resolves)
                     if (literalOptionBinding && component instanceof DefaultComponent dc) {
                         answer = dc.createEndpoint(createUri, parameters, true);
                     } else {

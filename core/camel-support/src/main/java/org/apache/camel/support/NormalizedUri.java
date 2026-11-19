@@ -65,8 +65,9 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * @param  uri                  the uri
      * @param  normalized           whether its already normalized
      * @param  literalOptionBinding whether the query option values were computed from the current message and must be
-     *                              bound as literal text (no property-placeholder and no bean/class reference
-     *                              resolution)
+     *                              bound as literal text (no property-placeholder, {@code #class:} or
+     *                              {@code #property:} resolution; a {@code #bean:} or {@code #type:} registry reference
+     *                              is still resolved)
      * @return                      the created normalized uri
      * @since                       4.24
      */
@@ -95,8 +96,8 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
 
     /**
      * Whether the query option values of this uri were computed from the current message at runtime and must therefore
-     * be bound as literal text, that is without property-placeholder resolution and without bean/class reference
-     * ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution.
+     * be bound as literal text, that is without property-placeholder, {@code #class:} or {@code #property:} resolution
+     * (a {@code #bean:} or {@code #type:} registry reference is still resolved).
      *
      * @since 4.24
      */

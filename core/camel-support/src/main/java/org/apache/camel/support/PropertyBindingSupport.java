@@ -290,11 +290,11 @@ public final class PropertyBindingSupport {
      *                            value
      * @param  reference          whether reference parameter (syntax starts with #) is in use
      * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @param  literal            whether values must be bound as literal text, that is without property-placeholder
-     *                            resolution and without bean/class reference (#class:, #bean:, #type:, ...) resolution.
-     *                            Used when the values were computed from message content at runtime (for example the
-     *                            per-message option values of a dynamic endpoint) and so must not be resolved as if
-     *                            they came from the route.
+     * @param  literal            whether values must be bound as literal text, that is without property-placeholder,
+     *                            #class: or #property: resolution (a #bean: or #type: registry reference is still
+     *                            resolved). Used when the values were computed from message content at runtime (for
+     *                            example the per-message option values of a dynamic endpoint) and so must not be
+     *                            resolved as if they came from the route.
      * @param  reflection         whether to allow using reflection (when there is no configurer available).
      * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the properties
      * @param  listener           optional listener
@@ -2318,10 +2318,10 @@ public final class PropertyBindingSupport {
         }
 
         /**
-         * Whether values must be bound as literal text, that is without property-placeholder resolution and without
-         * bean/class reference ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution. Use this when the
-         * values were computed from message content at runtime (for example the per-message option values of a dynamic
-         * endpoint) so that message content is never resolved as if it had been authored in the route.
+         * Whether values must be bound as literal text, that is without property-placeholder, {@code #class:} or
+         * {@code #property:} resolution (a {@code #bean:} or {@code #type:} registry reference is still resolved). Use
+         * this when the values were computed from message content at runtime (for example the per-message option values
+         * of a dynamic endpoint) so that message content is never resolved as if it had been authored in the route.
          *
          * @since 4.24
          */

@@ -98,8 +98,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Literal binding is used when the uri was computed from the current message at runtime (for example the
      * per-message recipient of a dynamic endpoint such as {@code toD}, {@code enrich}, {@code wireTap},
      * {@code pollEnrich}, {@code recipientList}, {@code routingSlip} or {@code dynamicRouter}): the option values then
-     * come from the message and not from the route, so they are bound without property-placeholder resolution and
-     * without bean/class reference ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution.
+     * come from the message and not from the route, so they are bound without property-placeholder, {@code #class:} or
+     * {@code #property:} resolution (a {@code #bean:} or {@code #type:} registry reference is still resolved).
      *
      * @param  uri                  the full URI of the endpoint
      * @param  properties           the optional parameters passed in

@@ -417,8 +417,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param bean                 the bean
      * @param parameters           properties to set
      * @param literalOptionBinding whether the values were computed from the current message at runtime and so must be
-     *                             bound as literal text (without property-placeholder and without bean/class reference
-     *                             resolution), see {@link PropertyBindingSupport.Builder#withLiteral(boolean)}
+     *                             bound as literal text (without property-placeholder, {@code #class:} or
+     *                             {@code #property:} resolution; a {@code #bean:} or {@code #type:} registry reference
+     *                             is still resolved), see {@link PropertyBindingSupport.Builder#withLiteral(boolean)}
      * @since                      4.24
      */
     public void setProperties(Object bean, Map<String, Object> parameters, boolean literalOptionBinding) {
