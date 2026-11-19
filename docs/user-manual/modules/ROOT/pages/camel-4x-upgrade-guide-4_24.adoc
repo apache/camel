@@ -7108,6 +7108,17 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
 
+=== camel-google-mail - the stream consumer marks as read the mail it consumed
+
+With `markAsRead` (the default), the `google-mail-stream` consumer now marks as read the mail it consumed, and marks it
+as unread again when its exchange failed. Before, it took the id of the mail from the `CamelGoogleMailId` header as the
+route left it. A route that removed the headers, or replaced the message, marked nothing as read, so the mail was
+consumed again by every poll (with the default query `is:unread`). A route that set the header marked that other mail.
+
+The consumer now calls `processCommit(Exchange, String, String)` and `processRollback(Exchange, String, String)` with
+the id of the mail. A subclass of `GoogleMailStreamConsumer` that overrides `processCommit(Exchange, String)` or
+`processRollback(Exchange, String)` must override the new methods instead. The former methods are deprecated.
+
 === camel-google-storage, camel-minio, camel-alibaba-mns - the consumer deletes or moves what it consumed
 
 With `deleteAfterRead` or `moveAfterRead`, the `google-storage` and `minio` consumers now delete or move the object

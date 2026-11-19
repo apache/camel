@@ -66,7 +66,8 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 
 The consumer polls the mailbox for the messages that match `query`, and marks them as read.
-`is:unread` and `markAsRead` are the defaults. The headers carry the sender, the subject and the other fields:
+`is:unread` and `markAsRead` are the defaults. The consumer marks as read the message it consumed, whatever the route
+does with the `CamelGoogleMailId` header. The headers carry the sender, the subject and the other fields:
 
 [source,yaml]
 ----
