@@ -24,10 +24,11 @@ public class SpringAiVectorStoreEndpointUriFactory extends org.apache.camel.supp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(8);
         props.add("filterExpression");
         props.add("lazyStartProducer");
         props.add("operation");
+        props.add("searchByVector");
         props.add("similarityThreshold");
         props.add("storeId");
         props.add("topK");

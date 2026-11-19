@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.EmbeddedDocument;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 
@@ -63,6 +64,9 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 break;
             case SIMILARITY_SEARCH:
                 processSimilaritySearch(exchange, vectorStore);
+                break;
+            case UPSERT:
+                processUpsert(exchange, vectorStore);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
@@ -136,6 +140,114 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 .map(Document::getId)
                 .toList();
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, documentIds);
+    }
+
+    /**
+     * Writes the vectors of the body as they are, so the embedding model of the vector store is not called. A document
+     * with the same id is replaced.
+     */
+    private void processUpsert(Exchange exchange, VectorStore vectorStore) {
+        final Message message = exchange.getMessage();
+        List<EmbeddedDocument> entries = embeddedDocuments(message);
+
+        // An empty list writes nothing, as VectorStore.upsert does
+        if (!entries.isEmpty()) {
+            try {
+                vectorStore.upsert(entries);
+            } catch (UnsupportedOperationException e) {
+                throw new UnsupportedOperationException(
+                        "The vector store " + vectorStore.getName() + " does not support UPSERT (" + e.getMessage()
+                                                        + "). Use ADD, where the vector store embeds the text with its own"
+                                                        + " embedding model",
+                        e);
+            }
+        }
+
+        message.setHeader(SpringAiVectorStoreHeaders.DOCUMENTS_ADDED, entries.size());
+        message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS,
+                entries.stream().map(entry -> entry.document().getId()).toList());
+    }
+
+    /**
+     * The documents and their vectors in the body: the float[] or List of float[] of spring-ai-embeddings, with their
+     * texts in the input text headers, or EmbeddedDocuments.
+     */
+    private static List<EmbeddedDocument> embeddedDocuments(Message message) {
+        Object body = message.getBody();
+        if (body instanceof float[] vector) {
+            String inputText = message.getHeader(INPUT_TEXT, String.class);
+            if (inputText == null) {
+                throw new IllegalArgumentException(
+                        "UPSERT of a float[] body needs the " + INPUT_TEXT + " header with the text of the embedding");
+            }
+            String id = message.getHeader(SpringAiVectorStoreHeaders.UPSERT_DOCUMENT_ID, String.class);
+            return List.of(new EmbeddedDocument(createDocument(id, inputText), vector));
+        }
+        if (body instanceof EmbeddedDocument entry) {
+            return List.of(entry);
+        }
+        if (body instanceof List<?> list) {
+            if (!list.isEmpty() && list.get(0) instanceof float[]) {
+                return embeddedDocumentsOfVectors(message, list);
+            }
+            List<EmbeddedDocument> entries = new ArrayList<>(list.size());
+            for (int i = 0; i < list.size(); i++) {
+                if (!(list.get(i) instanceof EmbeddedDocument entry)) {
+                    throw new IllegalArgumentException(
+                            "UPSERT of a List body takes a List of float[] or of EmbeddedDocument, not an element of type "
+                                                       + typeName(list.get(i)) + " at index " + i);
+                }
+                entries.add(entry);
+            }
+            return entries;
+        }
+        throw new IllegalArgumentException(
+                "UPSERT takes a float[] or a List of float[] body (the output of spring-ai-embeddings), an EmbeddedDocument"
+                                           + " or a List of EmbeddedDocument, not " + typeName(body));
+    }
+
+    private static List<EmbeddedDocument> embeddedDocumentsOfVectors(Message message, List<?> vectors) {
+        List<String> inputTexts = message.getHeader(INPUT_TEXTS, List.class);
+        if (inputTexts == null || inputTexts.size() != vectors.size()) {
+            throw new IllegalArgumentException(
+                    "UPSERT of a List of float[] body needs the " + INPUT_TEXTS
+                                               + " header with one text per embedding, got "
+                                               + (inputTexts == null ? "no header" : inputTexts.size() + " texts")
+                                               + " for " + vectors.size() + " embeddings");
+        }
+        List<?> ids = message.getHeader(SpringAiVectorStoreHeaders.UPSERT_DOCUMENT_IDS, List.class);
+        if (ids != null && ids.size() != vectors.size()) {
+            throw new IllegalArgumentException(
+                    "UPSERT of a List of float[] body needs one id per embedding in the "
+                                               + SpringAiVectorStoreHeaders.UPSERT_DOCUMENT_IDS + " header, got "
+                                               + ids.size() + " ids for " + vectors.size() + " embeddings");
+        }
+
+        List<EmbeddedDocument> entries = new ArrayList<>(vectors.size());
+        for (int i = 0; i < vectors.size(); i++) {
+            if (!(vectors.get(i) instanceof float[] vector)) {
+                throw new IllegalArgumentException(
+                        "UPSERT of a List of float[] body has an element of type " + typeName(vectors.get(i))
+                                                   + " at index " + i);
+            }
+            String id = null;
+            if (ids != null) {
+                if (ids.get(i) == null) {
+                    throw new IllegalArgumentException(
+                            "The " + SpringAiVectorStoreHeaders.UPSERT_DOCUMENT_IDS + " header has no id at index " + i);
+                }
+                id = ids.get(i).toString();
+            }
+            entries.add(new EmbeddedDocument(createDocument(id, inputTexts.get(i)), vector));
+        }
+        return entries;
+    }
+
+    /**
+     * A document of the text, without metadata. Without an id, the document gets a random UUID.
+     */
+    private static Document createDocument(String id, String text) {
+        return id == null ? new Document(text) : new Document(id, text, Map.of());
     }
 
     private static String typeName(Object value) {
@@ -222,18 +334,26 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
     private void processSimilaritySearch(Exchange exchange, VectorStore vectorStore) {
         final Message message = exchange.getMessage();
 
-        // Get search parameters. After spring-ai-embeddings the body is the vector of the text, so search for its text
-        String query;
-        if (message.getBody() instanceof float[]) {
-            query = message.getHeader(INPUT_TEXT, String.class);
-            if (query == null) {
-                throw new IllegalArgumentException(
-                        "SIMILARITY_SEARCH of a float[] body needs the " + INPUT_TEXT + " header with the query text");
+        // Get search parameters. After spring-ai-embeddings the body is the vector of the text, so search with the
+        // vector itself (searchByVector), or for its text
+        float[] queryVector = null;
+        String query = null;
+        if (message.getBody() instanceof float[] vector) {
+            if (getEndpoint().getConfiguration().isSearchByVector()) {
+                queryVector = vector;
+            } else {
+                query = message.getHeader(INPUT_TEXT, String.class);
+                if (query == null) {
+                    throw new IllegalArgumentException(
+                            "SIMILARITY_SEARCH of a float[] body needs the " + INPUT_TEXT
+                                                       + " header with the query text, or the searchByVector option to"
+                                                       + " search with the vector");
+                }
             }
         } else {
             query = message.getBody(String.class);
         }
-        if (query == null || query.isEmpty()) {
+        if (queryVector == null && (query == null || query.isEmpty())) {
             throw new IllegalArgumentException("Query text is required for SIMILARITY_SEARCH operation");
         }
 
@@ -252,11 +372,13 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 getEndpoint().getConfiguration().getFilterExpression(),
                 String.class);
 
-        // Build search request
+        // Build search request. The search with a vector has no query text
         SearchRequest.Builder builder = SearchRequest.builder()
-                .query(query)
                 .topK(topK)
                 .similarityThreshold(similarityThreshold);
+        if (query != null) {
+            builder.query(query);
+        }
 
         if (filterExpression != null && !filterExpression.isEmpty()) {
             builder.filterExpression(filterExpression);
@@ -265,7 +387,9 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         SearchRequest searchRequest = builder.build();
 
         // Perform similarity search
-        List<Document> similarDocuments = vectorStore.similaritySearch(searchRequest);
+        List<Document> similarDocuments = queryVector != null
+                ? similaritySearchByVector(vectorStore, queryVector, searchRequest)
+                : vectorStore.similaritySearch(searchRequest);
 
         // Set results in headers
         message.setHeader(SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS, similarDocuments);
@@ -277,5 +401,19 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, documentIds);
 
         message.setBody(similarDocuments);
+    }
+
+    private static List<Document> similaritySearchByVector(
+            VectorStore vectorStore, float[] queryVector, SearchRequest searchRequest) {
+        try {
+            return vectorStore.similaritySearch(queryVector, searchRequest);
+        } catch (UnsupportedOperationException e) {
+            throw new UnsupportedOperationException(
+                    "The vector store " + vectorStore.getName() + " does not support SIMILARITY_SEARCH with a vector ("
+                                                    + e.getMessage() + "). Turn off searchByVector to search for the text"
+                                                    + " of the " + INPUT_TEXT + " header, which the vector store embeds"
+                                                    + " with its own embedding model",
+                    e);
+        }
     }
 }

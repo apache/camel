@@ -20,7 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public class SpringAiVectorStoreHeaders {
     // Operation control
-    @Metadata(description = "The operation to perform (ADD, DELETE, SIMILARITY_SEARCH)",
+    @Metadata(description = "The operation to perform (ADD, DELETE, SIMILARITY_SEARCH, UPSERT)",
               javaType = "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation")
     public static final String OPERATION = "CamelSpringAiVectorStoreOperation";
 
@@ -34,9 +34,20 @@ public class SpringAiVectorStoreHeaders {
     @Metadata(description = "Filter expression for metadata-based filtering", javaType = "String")
     public static final String FILTER_EXPRESSION = "CamelSpringAiVectorStoreFilterExpression";
 
+    // Upsert parameters: not the DocumentIds header, which ADD, UPSERT and SIMILARITY_SEARCH set to their output ids
+    @Metadata(description = "The id of the document that UPSERT writes from a float[] body: the document with this id is"
+                            + " replaced. Without it, the document gets a random UUID",
+              javaType = "String")
+    public static final String UPSERT_DOCUMENT_ID = "CamelSpringAiVectorStoreUpsertDocumentId";
+
+    @Metadata(description = "The ids of the documents that UPSERT writes from a List of float[] body, one per vector: the"
+                            + " documents with these ids are replaced. Without it, each document gets a random UUID",
+              javaType = "java.util.List<String>")
+    public static final String UPSERT_DOCUMENT_IDS = "CamelSpringAiVectorStoreUpsertDocumentIds";
+
     // Delete parameters / Results
-    @Metadata(description = "List of document IDs (output of ADD and SIMILARITY_SEARCH, and input of DELETE when the message has no"
-                            + " body)",
+    @Metadata(description = "List of document IDs (output of ADD, UPSERT and SIMILARITY_SEARCH, and input of DELETE when the"
+                            + " message has no body)",
               javaType = "java.util.List<String>")
     public static final String DOCUMENT_IDS = "CamelSpringAiVectorStoreDocumentIds";
 
@@ -45,7 +56,7 @@ public class SpringAiVectorStoreHeaders {
               javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String SIMILAR_DOCUMENTS = "CamelSpringAiVectorStoreSimilarDocuments";
 
-    @Metadata(description = "Number of documents added", javaType = "Integer")
+    @Metadata(description = "Number of documents added by ADD, or written by UPSERT", javaType = "Integer")
     public static final String DOCUMENTS_ADDED = "CamelSpringAiVectorStoreDocumentsAdded";
 
     @Metadata(description = "Number of document IDs that DELETE gave to the vector store, as the vector store does not tell how many"
