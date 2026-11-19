@@ -440,9 +440,8 @@ public class MongoDbProducer extends DefaultProducer {
             // is it batch or single insert
             boolean singleInsert = true;
             Object insert = exchange.getIn().getBody();
-            boolean array = insert != null && insert.getClass().isArray();
-            if (array) {
-                Object[] arr = (Object[]) insert;
+            // an array of objects is a batch; a byte[] is a payload, such as JSON text, converted to a Document below
+            if (insert instanceof Object[] arr) {
                 insert = Arrays.asList(arr);
             }
             if (insert instanceof Collection) {

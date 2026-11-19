@@ -180,8 +180,8 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <!-- required maven >= 3.9.6 -->
-                                    <version>[3.9.6,)</version>
+                                    <!-- required maven >= 3.9.12, the same as the requiredMavenVersion of the Camel Maven plugins (parent/pom.xml) -->
+                                    <version>[3.9.12,)</version>
                                 </requireMavenVersion>
                                 <externalRules>
                                     <location>${maven.multiModuleProjectDirectory}/tooling/enforcer-rules/src/main/resources/camel-banned-dependencies.xml</location>

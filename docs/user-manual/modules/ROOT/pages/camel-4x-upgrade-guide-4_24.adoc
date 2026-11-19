@@ -207,6 +207,27 @@ This is what `xml` binding already did without its XML data format. Add the JSON
 (or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
 neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
+=== camel-kamelet - the output data type of a source Kamelet is applied before the consuming route
+
+A source Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
+when it hands it on with `kamelet:sink`, so the route that consumes from the Kamelet gets it. Before, the type was
+applied only when the route of the Kamelet completed, after the consuming route had run: the consuming route never saw
+it, and an exchange failed at the end when the consuming route left a body that could not be converted to the type, such
+as a `Map` for `binary`. This applies to Kamelets labelled `camel.apache.org/kamelet.type: source`, such as
+`aws-sqs-source` (`text`), `slack-source` (`json`) or `azure-eventhubs-source` (`binary`) of the Kamelet catalog: the
+first step of the consuming route now gets a `String`, JSON or a `byte[]` with the matching `Content-Type` header, where
+it used to get the body of the component.
+When no transformer for the type is on the classpath, such as `json` with neither `camel-jackson` nor `camel-jackson3`,
+the message is handed on unchanged, as before, and a WARN is logged once.
+
+=== camel-core - the binary data type keeps a stream cache body
+
+The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache as it is, and only
+sets the `Content-Type` header to `application/octet-stream`. Before, it read the stream into a `byte[]`. A stream cache
+is binary already and can be read again, and a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source`
+declares `binary` and gives the object as a stream, which may be large. Any other body, including an `InputStream` that is
+not a stream cache (stream caching turned off), is still converted to a `byte[]`.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
@@ -2890,6 +2911,33 @@ Bedrock Converse a reply of several text blocks gave only the first one. The bod
 is now `null` and the `CamelSpringAiChatFinishReason` header is `guardrailRefusal`. A response that the provider
 filtered and that cannot be converted gives a `null` body too. Check the finish reason header where the route handled
 the exception.
+
+=== camel-spring-ai-chat - the chatMemory option is deprecated, use sessionService
+
+Spring AI 2.1 deprecates `ChatMemory`, `MessageWindowChatMemory` and `MessageChatMemoryAdvisor` for removal in Spring AI
+3.0, in favour of session memory. The `chatMemory` option of `spring-ai-chat` is deprecated, and works as before. Use
+the new `sessionService` option, which takes a Spring AI `SessionService`. The `CamelSpringAiChatConversationId` header
+selects the session, as it selected the chat memory conversation.
+
+Nothing changes at runtime unless the application has a `SessionService` bean. The new option is autowired, and when
+both options are set, `sessionService` is used. In Spring Boot, the Spring AI model starters create a `ChatMemory` bean,
+and `spring-ai-starter-model-session-jdbc` creates a `SessionService` bean, so with that starter the endpoints use
+session memory. The conversations stored in a `ChatMemory` are not moved to a session. The new `sessionMessageWindow`
+option sends the newest 20 messages of the session to the model by default, as a `MessageWindowChatMemory` keeps the last
+20 messages by default. `0` sends the whole session.
+
+The `CamelSpringAiChatConversationId` header is now passed as the conversation id (`MemoryAdvisor.CONVERSATION_ID`) also
+when the endpoint has no memory, so the memory advisors of the `advisors` option and of a configured `chatClient` get it,
+and the Spring AI `ChatClient` observation records it. When the `advisors` option has a memory advisor, such as session
+advisors with compaction, the endpoint adds no memory advisor of its own. Before, an autowired `chatMemory` added a second
+memory advisor to the request. This check covers the `advisors` option only: a configured `chatClient` whose default
+advisors include a memory advisor still gets the memory advisor of the endpoint on top, as with an autowired
+`chatMemory` before, and now also when a `SessionService` bean appears, for example with
+`spring-ai-starter-model-session-jdbc`. Pass the memory advisor with the `advisors` option instead, or set
+`autowiredEnabled=false` on the component.
+
+A session keeps every event of the conversation, while a `MessageWindowChatMemory` kept the last 20 messages. Expired
+sessions (60 days by default) are only removed when `SessionService.deleteExpiredSessions` is called.
 
 === camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 
