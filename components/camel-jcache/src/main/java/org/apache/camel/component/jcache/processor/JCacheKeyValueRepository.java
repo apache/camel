@@ -271,6 +271,13 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     protected void doStop() throws Exception {
         if (cacheManager != null) {
             cacheManager.close();
+            if (cacheManager.getConfiguration() != null) {
+                // the cache was opened from the configuration, and closing the manager released it (and closed it,
+                // when nothing else uses it): it is opened again on the next start, as a repository that is stopped
+                // can be started again (such as when its route is removed and added again)
+                cache = null;
+            }
+            cacheManager = null;
         }
     }
 }
