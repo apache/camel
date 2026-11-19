@@ -471,6 +471,18 @@ call to the suspended tool or read of the suspended resource is refused, and res
 resource again. When an `ai-tool` or `ai-resource` route is stopped, or Camel shuts down gracefully, tool calls and
 resource reads in flight now complete instead of failing.
 
+=== camel-ai-tool - a configuration bean combines with the options set at the same level
+
+An `AiToolConfiguration` bean given as the `configuration` option no longer replaces the options set beside it:
+
+- On the component, the options set on the component (such as `camel.component.ai-tool.authorization-policy`) are
+  kept when `camel.component.ai-tool.configuration` is also set, and win over the values of the bean, in whatever
+  order they are bound. Previously the bean could replace an option, depending on the order of binding.
+- On an endpoint, `configuration=#myBean` gives the values that the bean sets. The other options of the endpoint win
+  over them, and the values that the bean does not set come from the component, such as its `authorizationPolicy` and
+  `allowedRoles`. Previously the bean replaced the options of the endpoint and the values of the component. The bean
+  itself is no longer changed by the options of the endpoints that use it.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
