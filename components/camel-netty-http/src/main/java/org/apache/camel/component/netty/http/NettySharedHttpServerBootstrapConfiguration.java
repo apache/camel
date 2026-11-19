@@ -18,6 +18,14 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 
+/**
+ * The bootstrap configuration of a {@link NettySharedHttpServer}.
+ *
+ * @deprecated the shared Netty HTTP server was added for OSGi/Karaf, so that several applications in one JVM could use
+ *             the same port. Use a netty-http consumer per port, where several routes can use the same port, or the
+ *             platform-http component.
+ */
+@Deprecated
 public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBootstrapConfiguration {
 
     private int chunkedMaxContentLength = 1024 * 1024;

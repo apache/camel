@@ -691,6 +691,24 @@ YAML::
 ----
 ====
 
+=== Using a shared Netty HTTP server (deprecated)
+
+[WARNING]
+====
+The shared Netty HTTP server is deprecated, and will be removed in a future release. This covers the
+`nettySharedHttpServer` option and the `NettySharedHttpServer`, `DefaultNettySharedHttpServer`,
+`NettySharedHttpServerBootstrapConfiguration` and `HttpServerSharedInitializerFactory` classes.
+
+It was added for OSGi/Karaf, so that several applications (bundles) in one JVM could use the same port.
+Camel Main, Spring Boot and Quarkus applications run one application per JVM: use a `netty-http` consumer
+per port, where several routes can use the same port (see <<_using_multiple_routes_with_same_port,Using multiple routes with same port>>),
+or the xref:platform-http-component.adoc[Platform HTTP] component, which uses the HTTP server of the runtime.
+====
+
+A `DefaultNettySharedHttpServer` is a Netty HTTP server that is configured with a
+`NettySharedHttpServerBootstrapConfiguration` and started on its own. The consumers that refer to it with the
+`nettySharedHttpServer` option use its port and its pipeline, instead of the server that the component creates.
+
 === Implementing a reverse proxy
 
 Netty HTTP component can act as a reverse proxy, in that case

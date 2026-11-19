@@ -6533,6 +6533,16 @@ checked at all. A consumer with `needClientAuth=true` and the option set now acc
 instead of rejecting all of them. Consumers that share a server through `nettySharedHttpServer` never applied the
 option, and are unchanged. The option still verifies the host on a `netty-http` producer.
 
+=== camel-netty-http - the shared HTTP server is deprecated
+
+The shared HTTP server of `camel-netty-http` is deprecated: the `nettySharedHttpServer` endpoint option, and the
+`NettySharedHttpServer`, `DefaultNettySharedHttpServer`, `NettySharedHttpServerBootstrapConfiguration` and
+`HttpServerSharedInitializerFactory` classes. It works as before, and will be removed in a future release.
+
+It was added for OSGi/Karaf, so that several applications (bundles) in one JVM could use the same port. Camel Main,
+Spring Boot and Quarkus applications run one application per JVM: use a `netty-http` consumer per port, where several
+routes can use the same port, or the `platform-http` component.
+
 === camel-alibaba-eventbridge - endpoint is marked as required instead of region
 
 The `endpoint` option of `alibaba-eventbridge` is now marked as required, and the `region` option no longer is. The
