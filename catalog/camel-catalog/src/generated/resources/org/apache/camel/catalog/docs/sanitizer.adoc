@@ -302,7 +302,7 @@ a pool, `copyResults` after a circuit breaker timed out, and a thread of the app
 rule finds overlaps at the points of the routing engine, not every overlap.
 
 The sample is taken by a counter, not at random: `camel.sanitizer.overlapSampling=100` opens a window at every 100th
-point of the context. When one thread routes the exchanges, a rerun samples the same points; when several threads do,
+point of the context. When one thread routes the exchanges, a rerun samples the same points. When several threads do,
 they share the counter, and it falls on other points from run to run. A window pauses its thread for
 `camel.sanitizer.overlapWindow` (`1ms` by default). The pause uses the system clock, not the `TimeSource` of the
 context, so a virtual clock of camel-test-dst does not stretch it.

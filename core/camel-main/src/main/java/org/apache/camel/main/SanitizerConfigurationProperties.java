@@ -106,7 +106,7 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
      * exchange (a step is called, the callback of a step continues the exchange, an on completion runs), and its thread
      * pauses in it; another thread that uses the same exchange at such a point during the window is reported with it.
      * The points are counted, not drawn at random: when one thread routes the exchanges, a rerun samples the same
-     * points; when several threads do, they share the counter and it falls on other points from run to run. 0 is off,
+     * points. When several threads do, they share the counter and it falls on other points from run to run. 0 is off,
      * the default, as a paused thread changes the timing of the application; for a CamelContext built on a thread the
      * JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is 100, and a test class
      * turns it off for itself with CamelSanitizer(overlapSampling = 0).
@@ -192,7 +192,7 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
      * exchange (a step is called, the callback of a step continues the exchange, an on completion runs), and its thread
      * pauses in it; another thread that uses the same exchange at such a point during the window is reported with it.
      * The points are counted, not drawn at random: when one thread routes the exchanges, a rerun samples the same
-     * points; when several threads do, they share the counter and it falls on other points from run to run. 0 is off,
+     * points. When several threads do, they share the counter and it falls on other points from run to run. 0 is off,
      * the default, as a paused thread changes the timing of the application; for a CamelContext built on a thread the
      * JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is 100, and a test class
      * turns it off for itself with CamelSanitizer(overlapSampling = 0).
