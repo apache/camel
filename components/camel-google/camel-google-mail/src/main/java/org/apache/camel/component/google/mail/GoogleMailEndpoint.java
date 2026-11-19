@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,9 +33,11 @@ import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -49,6 +55,20 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration>
         implements EndpointServiceLocation {
+
+    /**
+     * The options that make up the credential of the client. The client sends the credential in the Authorization
+     * header, so they are not set on the request, where accessToken would become the access_token query parameter. The
+     * names are matched ignoring case, as a header such as CamelGoogleMail.AccessToken sets the same property as
+     * accessToken.
+     */
+    private static final Set<String> CREDENTIAL_OPTIONS;
+
+    static {
+        Set<String> options = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        options.addAll(List.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate"));
+        CREDENTIAL_OPTIONS = Collections.unmodifiableSet(options);
+    }
 
     private Object apiProxy;
 
@@ -138,6 +158,20 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
             }
         }
         return answer;
+    }
+
+    /**
+     * Sets the options and headers on the request of the method, such as the optional parameters of the method and the
+     * standard parameters of the Google API, except the options of the credential, which the client already sends in
+     * the Authorization header.
+     */
+    void configureRequest(Object request, Map<String, Object> properties) throws Exception {
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
+        for (Map.Entry<String, Object> p : properties.entrySet()) {
+            if (!CREDENTIAL_OPTIONS.contains(p.getKey())) {
+                beanIntrospection.setProperty(getCamelContext(), request, p.getKey(), p.getValue());
+            }
+        }
     }
 
     @Override

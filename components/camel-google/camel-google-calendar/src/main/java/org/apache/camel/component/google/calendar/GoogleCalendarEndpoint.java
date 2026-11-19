@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,9 +33,11 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiColl
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarConstants;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -45,6 +51,21 @@ import org.apache.camel.util.ObjectHelper;
              consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration>
         implements EndpointServiceLocation {
+
+    /**
+     * The options that make up the credential of the client. The client sends the credential in the Authorization
+     * header, so they are not set on the request, where accessToken would become the access_token query parameter.
+     * p12FileName is the key file of a service account. The names are matched ignoring case, as a header such as
+     * CamelGoogleCalendar.AccessToken sets the same property as accessToken.
+     */
+    private static final Set<String> CREDENTIAL_OPTIONS;
+
+    static {
+        Set<String> options = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        options.addAll(List.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate",
+                "p12FileName"));
+        CREDENTIAL_OPTIONS = Collections.unmodifiableSet(options);
+    }
 
     @UriParam
     private GoogleCalendarConfiguration configuration;
@@ -138,6 +159,20 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
             }
         }
         return answer;
+    }
+
+    /**
+     * Sets the options and headers on the request of the method, such as the optional parameters of the method and the
+     * standard parameters of the Google API, except the options of the credential, which the client already sends in
+     * the Authorization header.
+     */
+    void configureRequest(Object request, Map<String, Object> properties) throws Exception {
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
+        for (Map.Entry<String, Object> p : properties.entrySet()) {
+            if (!CREDENTIAL_OPTIONS.contains(p.getKey())) {
+                beanIntrospection.setProperty(getCamelContext(), request, p.getKey(), p.getValue());
+            }
+        }
     }
 
     @Override

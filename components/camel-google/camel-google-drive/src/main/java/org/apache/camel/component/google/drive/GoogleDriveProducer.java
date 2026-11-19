@@ -17,15 +17,12 @@
 package org.apache.camel.component.google.drive;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiProducer;
 import org.apache.camel.support.component.ApiMethod;
 
@@ -43,11 +40,7 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
             throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection
-                    = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
-            for (Entry<String, Object> p : properties.entrySet()) {
-                beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
-            }
+            ((GoogleDriveEndpoint) getEndpoint()).configureRequest(request, properties);
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
