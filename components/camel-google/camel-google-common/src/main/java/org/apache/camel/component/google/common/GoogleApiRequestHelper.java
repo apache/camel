@@ -32,9 +32,11 @@ public final class GoogleApiRequestHelper {
     /**
      * The options that make up the credential of the client. The client sends the credential in the Authorization
      * header, so they are not set on the request, where accessToken would become the access_token query parameter.
+     * p12FileName is the key file of a service account (Calendar).
      */
     public static final Set<String> CREDENTIAL_OPTIONS
-            = Set.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate");
+            = Set.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate",
+                    "p12FileName");
 
     private GoogleApiRequestHelper() {
     }
