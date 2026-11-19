@@ -570,13 +570,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        // in case path has property placeholders then try to let property component resolve those
-        try {
-            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-
+        // NOTE: property placeholders in the dynamic-uri expression are resolved once when the route is built. The
+        // per-message evaluated recipient must not be re-resolved here: message content that happens to contain {{...}}
+        // is taken as a literal endpoint uri, as in SendDynamicProcessor#resolveUri
         return uri;
     }
 
