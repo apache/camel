@@ -690,7 +690,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The ACL.
          * 
-         * The option is a: {@code List<ACL>} type.
+         * The option is a: {@code List<org.apache.zookeeper.data.ACL>} type.
          * 
          * Default: Ids.OPEN_ACL_UNSAFE
          * Group: common

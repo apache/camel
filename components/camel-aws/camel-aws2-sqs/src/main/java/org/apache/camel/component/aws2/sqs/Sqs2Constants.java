@@ -25,10 +25,10 @@ public interface Sqs2Constants {
 
     @Metadata(label = "consumer",
               description = "A map of the attributes requested in ReceiveMessage to their respective values.",
-              javaType = "Map<MessageSystemAttributeName, String>")
+              javaType = "Map<software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName, String>")
     String ATTRIBUTES = "CamelAwsSqsAttributes";
     @Metadata(label = "consumer", description = "The Amazon SQS message attributes.",
-              javaType = "Map<String, MessageAttributeValue>")
+              javaType = "Map<String, software.amazon.awssdk.services.sqs.model.MessageAttributeValue>")
     String MESSAGE_ATTRIBUTES = "CamelAwsSqsMessageAttributes";
     @Metadata(description = "The MD5 checksum of the Amazon SQS message.", javaType = "String")
     String MD5_OF_BODY = "CamelAwsSqsMD5OfBody";
