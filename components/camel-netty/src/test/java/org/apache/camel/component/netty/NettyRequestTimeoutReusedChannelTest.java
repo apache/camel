@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -62,8 +61,7 @@ class NettyRequestTimeoutReusedChannelTest extends BaseNettyTest {
 
     private static void assertTimeout(Runnable request) {
         CamelExecutionException e = assertThrows(CamelExecutionException.class, request::run);
-        ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
-        assertNotNull(cause);
+        assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
     }
 
     @Override
