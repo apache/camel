@@ -112,7 +112,7 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The category of the finish reason, the same for every provider: COMPLETED, TRUNCATED (a token "
                             + "or length limit), TOOL_CALL, FILTERED (a content filter, or a refusal of the SafeGuard "
                             + "advisor), OTHER or UNSPECIFIED",
-              javaType = "String")
+              javaType = "String", enums = "COMPLETED,TRUNCATED,TOOL_CALL,FILTERED,OTHER,UNSPECIFIED")
     public static final String FINISH_REASON_CATEGORY = "CamelSpringAiChatFinishReasonCategory";
 
     @Metadata(description = "The reasoning of the model for its reply (thinking, thoughts or reasoning content), when the "

@@ -95,9 +95,36 @@ class SpringAiChatFinishReasonReasoningTest extends CamelTestSupport {
     }
 
     @Test
+    void replyWithoutFinishReasonRemovesAnEarlierFinishReasonHeader() {
+        model.finishReason = null;
+        model.reasoning = List.of();
+
+        Exchange out = template.request("direct:chat", e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(SpringAiChatConstants.FINISH_REASON, "finish reason of an earlier call");
+        });
+
+        assertThat(out.getMessage().getHeaders()).doesNotContainKey(SpringAiChatConstants.FINISH_REASON);
+        assertThat(out.getMessage().getHeader(SpringAiChatConstants.FINISH_REASON_CATEGORY)).isEqualTo("UNSPECIFIED");
+        assertThat(out.getMessage().getHeader(SpringAiChatConstants.RESPONSE_METADATA, Map.class))
+                .doesNotContainKey("finishReason")
+                .containsEntry("finishReasonCategory", "UNSPECIFIED");
+    }
+
+    @Test
     void usesTheSummaryOfAReasoningPartWithoutText() {
         model.finishReason = "stop";
         model.reasoning = List.of(new ReasoningPart(null, "Summary of the reasoning", null, Map.of()));
+
+        Exchange out = template.request("direct:chat", e -> e.getIn().setBody("Hello"));
+
+        assertThat(out.getMessage().getHeader(SpringAiChatConstants.REASONING)).isEqualTo("Summary of the reasoning");
+    }
+
+    @Test
+    void usesTheSummaryOfAReasoningPartWithBlankText() {
+        model.finishReason = "stop";
+        model.reasoning = List.of(new ReasoningPart(" ", "Summary of the reasoning", null, Map.of()));
 
         Exchange out = template.request("direct:chat", e -> e.getIn().setBody("Hello"));
 

@@ -914,15 +914,21 @@ public class SpringAiChatProducer extends DefaultProducer {
             }
 
             // Finish reason is on the Generation metadata, not the Response metadata. Its category is the same for every
-            // provider, unlike the finish reason
-            if (response.getResult() != null && response.getResult().getMetadata() != null) {
-                ChatGenerationMetadata generationMetadata = response.getResult().getMetadata();
-                String finishReason = generationMetadata.getFinishReason();
+            // provider, unlike the finish reason. A finish reason of an earlier call does not stay next to the category
+            // of this one
+            ChatGenerationMetadata generationMetadata
+                    = response.getResult() != null ? response.getResult().getMetadata() : null;
+            String finishReason = null;
+            String finishReasonCategory = null;
+            if (generationMetadata != null) {
+                finishReason = generationMetadata.getFinishReason();
+                finishReasonCategory = generationMetadata.getFinishReasonCategory().name();
                 if (finishReason != null) {
                     exchange.getMessage().setHeader(SpringAiChatConstants.FINISH_REASON, finishReason);
+                } else {
+                    exchange.getMessage().removeHeader(SpringAiChatConstants.FINISH_REASON);
                 }
-                exchange.getMessage().setHeader(SpringAiChatConstants.FINISH_REASON_CATEGORY,
-                        generationMetadata.getFinishReasonCategory().name());
+                exchange.getMessage().setHeader(SpringAiChatConstants.FINISH_REASON_CATEGORY, finishReasonCategory);
             }
 
             // Full metadata map for advanced users
@@ -935,13 +941,11 @@ public class SpringAiChatProducer extends DefaultProducer {
                 metadataMap.put("model", responseMetadata.getModel());
             }
             // Add finish reason and its category from generation metadata
-            if (response.getResult() != null && response.getResult().getMetadata() != null) {
-                String finishReason = response.getResult().getMetadata().getFinishReason();
-                if (finishReason != null) {
-                    metadataMap.put("finishReason", finishReason);
-                }
-                metadataMap.put("finishReasonCategory",
-                        response.getResult().getMetadata().getFinishReasonCategory().name());
+            if (finishReason != null) {
+                metadataMap.put("finishReason", finishReason);
+            }
+            if (finishReasonCategory != null) {
+                metadataMap.put("finishReasonCategory", finishReasonCategory);
             }
             if (reasoning != null) {
                 metadataMap.put("reasoning", reasoning);
@@ -975,7 +979,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             return null;
         }
         String reasoning = response.getResult().getOutput().getReasoning().stream()
-                .map(part -> part.text() != null ? part.text() : part.summary())
+                .map(part -> part.text() != null && !part.text().isBlank() ? part.text() : part.summary())
                 .filter(text -> text != null && !text.isBlank())
                 .collect(Collectors.joining("\n\n"));
         return reasoning.isEmpty() ? null : reasoning;
