@@ -139,8 +139,12 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.",
               defaultValue = "true")
     private boolean batchingEnabled = true;
-    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT",
-              enums = "DEFAULT,KEY_BASED")
+    @UriParam(label = "producer",
+              description = "Control batching method used by the producer. DEFAULT batches the messages together"
+                            + " regardless of their key. KEY_BASED batches the messages of each key separately, so that a"
+                            + " Key_Shared subscription spreads the keys over its consumers. A custom BatcherBuilder can be"
+                            + " given as a bean reference.",
+              defaultValue = "DEFAULT", enums = "DEFAULT,KEY_BASED")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
     @UriParam(label = "producer",
               description = "The first message published will have a sequence Id of initialSequenceId plus one. The"

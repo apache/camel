@@ -45,6 +45,44 @@ public interface Lambda2EndpointBuilderFactory {
         }
 
         /**
+         * How invokeFunction invokes the function. RequestResponse waits until
+         * the function has finished and gives its result. Event queues the
+         * event for an asynchronous invocation and answers at once with status
+         * code 202 and an empty body. DryRun only checks that the function can
+         * be invoked (status code 204). The CamelAwsLambdaInvocationType header
+         * overrides it per message. Not used with pojoRequest.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: RequestResponse
+         * Group: producer
+         * 
+         * @param invocationType the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder invocationType(String invocationType) {
+            doSetProperty("invocationType", invocationType);
+            return this;
+        }
+        /**
+         * Set to Tail to get the last 4 KB of the execution log of a
+         * RequestResponse invocation in the CamelAwsLambdaLogResult header
+         * (base64-encoded). The CamelAwsLambdaLogType header overrides it per
+         * message. Not used with pojoRequest.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: None
+         * Group: producer
+         * 
+         * @param logType the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder logType(String logType) {
+            doSetProperty("logType", logType);
+            return this;
+        }
+        /**
          * The operation to perform. See the list of available operations in the
          * component documentation.
          * 
@@ -1036,7 +1074,8 @@ public interface Lambda2EndpointBuilderFactory {
             return "CamelAwsLambdaFunctionArn";
         }
         /**
-         * The HTTP status code of the function invocation.
+         * The HTTP status code of the function invocation: 200 for
+         * RequestResponse, 202 for Event and 204 for DryRun.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1062,7 +1101,9 @@ public interface Lambda2EndpointBuilderFactory {
             return "CamelAwsLambdaFunctionError";
         }
         /**
-         * The last 4 KB of the execution log.
+         * The last 4 KB of the execution log, base64-encoded. Lambda returns it
+         * only when the log type is Tail (the logType option or the
+         * CamelAwsLambdaLogType header).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1072,6 +1113,33 @@ public interface Lambda2EndpointBuilderFactory {
          */
         public String awsLambdaLogResult() {
             return "CamelAwsLambdaLogResult";
+        }
+        /**
+         * How to invoke the function: RequestResponse, Event or DryRun.
+         * Overrides the invocationType option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaInvocationType}.
+         */
+        public String awsLambdaInvocationType() {
+            return "CamelAwsLambdaInvocationType";
+        }
+        /**
+         * Set to Tail to get the last 4 KB of the execution log in the
+         * CamelAwsLambdaLogResult header, or None. Overrides the logType
+         * option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaLogType}.
+         */
+        public String awsLambdaLogType() {
+            return "CamelAwsLambdaLogType";
         }
         /**
          * The type of authentication that the function URL uses. Set to AWS_IAM

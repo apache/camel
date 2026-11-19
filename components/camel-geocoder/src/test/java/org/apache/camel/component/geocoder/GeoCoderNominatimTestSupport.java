@@ -34,13 +34,17 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 public abstract class GeoCoderNominatimTestSupport extends CamelTestSupport {
 
     private final Map<String, String> answers = new ConcurrentHashMap<>();
+    private final Map<String, String> queries = new ConcurrentHashMap<>();
     private HttpServer server;
 
     @Override
     protected void setupResources() throws Exception {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/", exchange -> {
-            String answer = answers.get(exchange.getRequestURI().getPath());
+            String path = exchange.getRequestURI().getPath();
+            String query = exchange.getRequestURI().getRawQuery();
+            queries.put(path, query != null ? query : "");
+            String answer = answers.get(path);
             byte[] bytes = answer != null ? answer.getBytes(StandardCharsets.UTF_8) : new byte[0];
             exchange.getResponseHeaders().add("Content-Type", "application/json; charset=utf-8");
             exchange.sendResponseHeaders(answer != null ? 200 : 404, bytes.length > 0 ? bytes.length : -1);
@@ -70,6 +74,13 @@ public abstract class GeoCoderNominatimTestSupport extends CamelTestSupport {
      */
     protected void answer(String operation, String json) {
         answers.put("/" + operation, json);
+    }
+
+    /**
+     * The raw query string of the last request of the given operation (search or reverse), or null when there was none.
+     */
+    protected String lastQuery(String operation) {
+        return queries.get("/" + operation);
     }
 
     /**
