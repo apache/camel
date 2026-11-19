@@ -22,6 +22,7 @@ camel status [options]
 | `--errors` | How many of the last errors to show | 5 | int
 | `--json` | Output in JSON Format: one document, with the routes as camel get route has them, and the log records newest first |  | boolean
 | `--log-lines` | How many of the last log records to show | 20 | int
+| `--mask` | Whether to mask the endpoint URIs of the routes to avoid printing sensitive information such as password or access keys | true | boolean
 | `-h,--help` | Display this help and exit |  | boolean
 |===
 
