@@ -253,6 +253,17 @@ Before, its lock failed with an `OptimisticLockException`, and the poll was roll
 
 Other JPA providers, and the optimistic lock modes, are not affected.
 
+=== camel-vertx-http - an https:// address always uses TLS
+
+A `vertx-http` endpoint with an `https://` address now always calls it with TLS, also when no `sslContextParameters`
+is configured. The server certificate is then checked with the default trust store of the JVM, and the host name is
+verified. Before, the request was sent without TLS unless TLS was turned on by `sslContextParameters`, global SSL
+settings or custom `WebClientOptions`. This applied to `https://` addresses with an explicit port, and since 4.21 to
+all `https://` addresses.
+
+A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
+for such a server. An `http://` address with `sslContextParameters` is not changed.
+
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
 `writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with
