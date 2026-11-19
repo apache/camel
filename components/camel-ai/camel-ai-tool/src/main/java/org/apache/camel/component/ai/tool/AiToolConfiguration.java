@@ -290,7 +290,8 @@ public class AiToolConfiguration implements Cloneable {
     /**
      * Copies onto this configuration every value that is set on the other one, and keeps the values of this
      * configuration that the other one does not set. A value is set when it is not null, or, for a boolean option whose
-     * default is false, when it is true.
+     * default is false, when it is true. A new option must be added here too; AiToolConfigurationOverrideWithTest fails
+     * when one is missing.
      */
     void overrideWith(AiToolConfiguration other) {
         if (other.tags != null) {
