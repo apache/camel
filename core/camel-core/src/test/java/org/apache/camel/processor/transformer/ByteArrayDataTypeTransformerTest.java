@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultTransformerRegistry;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ByteArrayDataTypeTransformerTest {
@@ -80,15 +83,31 @@ public class ByteArrayDataTypeTransformerTest {
     }
 
     @Test
-    void shouldTransformFromInputStreamToBytesModel() throws Exception {
+    void shouldKeepStreamCache() throws Exception {
+        // a stream cache is binary already and can be read again: it is kept, so a large body is not read into memory
         Exchange exchange = new DefaultExchange(camelContext);
 
+        StreamCache stream = new ByteArrayInputStreamCache(new ByteArrayInputStream("Test3".getBytes(StandardCharsets.UTF_8)));
         exchange.getMessage().setHeader("file", "test3.txt");
-        exchange.getMessage().setBody(new ByteArrayInputStream("Test3".getBytes(StandardCharsets.UTF_8)));
+        exchange.getMessage().setBody(stream);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertTrue(exchange.getMessage().hasHeaders());
-        assertBinaryBody(exchange, "test3.txt", "Test3");
+        assertSame(stream, exchange.getMessage().getBody());
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("test3.txt", exchange.getMessage().getHeader("file"));
+    }
+
+    @Test
+    void shouldReadOtherInputStreamToBytes() throws Exception {
+        // a stream that is not a stream cache may be read only once: it becomes a byte array every later step can read
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setHeader("file", "test4.txt");
+        exchange.getMessage().setBody(new ByteArrayInputStream("Test4".getBytes(StandardCharsets.UTF_8)));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertBinaryBody(exchange, "test4.txt", "Test4");
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Test
@@ -110,15 +129,18 @@ public class ByteArrayDataTypeTransformerTest {
         BodyTypes bodyTypes = ByteArrayDataTypeTransformer.class.getAnnotation(BodyTypes.class);
         assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE),
                 List.of(bodyTypes.transformerIn().value()));
-        assertEquals(Carrier.BYTES, bodyTypes.transformerOut().value()[0]);
-        assertEquals(byte[].class.getCanonicalName(), bodyTypes.transformerOut().javaType());
-        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
-                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)))) {
+        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM), List.of(bodyTypes.transformerOut().value()));
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.getMessage().setBody(body);
             transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
             assertInstanceOf(byte[].class, exchange.getMessage().getBody(), body.getClass().getName());
         }
+        Exchange stream = new DefaultExchange(camelContext);
+        stream.getMessage()
+                .setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8))));
+        transformer.transform(stream.getMessage(), DataType.ANY, DataType.ANY);
+        assertInstanceOf(ByteArrayInputStreamCache.class, stream.getMessage().getBody());
         // a number is not a payload
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setBody(5);
