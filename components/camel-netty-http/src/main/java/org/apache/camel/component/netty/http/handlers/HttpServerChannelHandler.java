@@ -37,6 +37,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.LoggingLevel;
@@ -70,6 +71,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpServerChannelHandler extends ServerChannelHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerChannelHandler.class);
+
+    // whether the basic auth credential of the request being read has been checked by Camel, so that beforeProcess
+    // (called by channelRead0 of the super class on the same thread) removes the Authorization header from the message
+    private static final AttributeKey<Boolean> BASIC_AUTH_CHECKED
+            = AttributeKey.valueOf(HttpServerChannelHandler.class.getName() + ".basicAuthChecked");
     private final NettyHttpConsumer consumer;
 
     public HttpServerChannelHandler(NettyHttpConsumer consumer) {
@@ -149,6 +155,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // is basic auth configured
+        boolean basicAuthChecked = false;
         NettyHttpSecurityConfiguration security = consumer.getEndpoint().getSecurityConfiguration();
         if (security != null && security.isAuthenticate() && "Basic".equalsIgnoreCase(security.getConstraint())) {
             String url = request.uri();
@@ -206,11 +213,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     return;
                 } else {
                     LOG.debug("Http Basic Auth authorized for username: {}", principal.getUsername());
+                    basicAuthChecked = true;
                 }
             }
         }
 
         // let Camel process this message
+        ctx.channel().attr(BASIC_AUTH_CHECKED).set(basicAuthChecked);
         super.channelRead0(ctx, msg);
     }
 
@@ -335,6 +344,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         final Message in = exchange.getIn();
+        if (Boolean.TRUE.equals(ctx.channel().attr(BASIC_AUTH_CHECKED).getAndSet(null))) {
+            // the credential has been checked by Camel, so it is not passed on to the route
+            in.removeHeader("Authorization");
+        }
+
         if (configuration.isHttpProxy()) {
             in.removeHeader("Proxy-Connection");
         }

@@ -362,8 +362,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
         Message in = getEndpoint().getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
 
-        //securityProvider could add its own header into result exchange
         if (getEndpoint().getSecurityProvider() != null) {
+            // the request has been authenticated by the securityProvider (see handleRequest), so the credential is not
+            // passed on to the route
+            in.removeHeader("Authorization");
+            //securityProvider could add its own header into result exchange
             getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
         }
 

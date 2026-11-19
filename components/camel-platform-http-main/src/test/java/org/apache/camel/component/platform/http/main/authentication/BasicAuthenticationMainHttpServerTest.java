@@ -66,6 +66,17 @@ public class BasicAuthenticationMainHttpServerTest {
                 .body(equalTo("main-http-auth-basic-test-response"));
     }
 
+    @Test
+    public void testAuthorizationHeaderNotPassedOnToRoute() {
+        given()
+                .auth().preemptive().basic("camel", "propertiesPass")
+                .when()
+                .get("/main-http-authorization")
+                .then()
+                .statusCode(200)
+                .body(equalTo("authorization="));
+    }
+
     private static class PlatformHttpRouteBuilder extends RouteBuilder {
 
         @Override
@@ -73,6 +84,9 @@ public class BasicAuthenticationMainHttpServerTest {
             from("platform-http:/main-http-test")
                     .log("Received request with headers: ${headers}\nWith body: ${body}")
                     .setBody(simple("main-http-auth-basic-test-response"));
+
+            from("platform-http:/main-http-authorization")
+                    .setBody(simple("authorization=${header.Authorization}"));
         }
     }
 }

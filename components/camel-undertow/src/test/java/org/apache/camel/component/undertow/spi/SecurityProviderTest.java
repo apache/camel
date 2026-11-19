@@ -46,6 +46,22 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
     }
 
     @Test
+    public void testSecuredAllowedRemovesAuthorizationHeader() throws Exception {
+        securityConfiguration.setRoleToAssign("user");
+
+        getMockEndpoint("mock:input").expectedMessageCount(1);
+        // the credential checked by Camel is not passed on to the route
+        getMockEndpoint("mock:input").message(0).header("Authorization").isNull();
+
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, "Authorization",
+                "Basic c2NvdHQ6c2VjcmV0", String.class);
+
+        assertEquals("user", out);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     public void testSecuredNotAllowed() {
         securityConfiguration.setRoleToAssign("admin");
 
