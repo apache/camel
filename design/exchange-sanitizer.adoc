@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-17
+last-updated: 2026-11-19
 status: implementable
 see-also:
   - "CAMEL-26630"
@@ -45,11 +45,11 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1, 2, 3, 5 and 6 of the order of work are built, and most of step 4: the step listener SPI, the module
-with R1, the JUnit extension and the CI switch, the on completion listener SPI with R2, the `AsyncProcessor` contract of
-R3 and its sampled overlaps, the dev console with `camel get sanitizer` and `camel run --sanitizer`, and R1 "still
-pending". The runs of R3 on the test suites of the async components, the TLA+ model and the JMH run of R3, and R4, are
-still to do.
+Steps 1 to 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension and the
+CI switch, the on completion listener SPI with R2, the `AsyncProcessor` contract of R3 and its sampled overlaps (with
+the runs on the test suites of the async components, the TLA+ model of the windows and a short JMH run), the dev
+console with `camel get sanitizer` and `camel run --sanitizer`, and R1 "still pending". Two things are left: the
+full-length JMH run of R3 with the benchmark in camel-performance-tests, a separate decision after the merge, and R4.
 
 == Motivation
 
