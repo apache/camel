@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
@@ -433,16 +435,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private MongoClient resolveMongoConnection() {
         MongoClient mongoClient;
         if (this.hosts != null) {
-            String credentials = username == null ? "" : username;
-            if (!credentials.isEmpty()) {
-                credentials += this.password == null ? "@" : ":" + password + "@";
-            }
-            String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
-            if (connectionUriString != null) {
-                mongoClient = MongoClients.create(connectionUriString);
-            } else {
-                mongoClient = MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
-            }
+            mongoClient = MongoClients.create(createMongoClientSettings());
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = getComponent().getMongoConnection();
@@ -454,6 +447,41 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
         }
 
         return mongoClient;
+    }
+
+    /**
+     * The settings of the client this endpoint creates when hosts is set, from connectionUriString when set, otherwise
+     * from hosts. The TLS options of the endpoint (tls and tlsAllowInvalidHostnames) are applied on top of the
+     * connection string, so they are used the same way whether the connection string comes from hosts or from
+     * connectionUriString. When none of them is set, the TLS settings of the connection string are kept.
+     */
+    MongoClientSettings createMongoClientSettings() {
+        String connectionUri;
+        if (connectionUriString != null) {
+            connectionUri = connectionUriString;
+        } else {
+            String credentials = username == null ? "" : username;
+            if (!credentials.isEmpty()) {
+                credentials += this.password == null ? "@" : ":" + password + "@";
+            }
+            String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
+            connectionUri = String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions);
+        }
+
+        MongoClientSettings.Builder builder = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connectionUri));
+
+        if (tls || tlsAllowInvalidHostnames) {
+            builder.applyToSslSettings(ssl -> {
+                if (tls) {
+                    ssl.enabled(true);
+                }
+                if (tlsAllowInvalidHostnames) {
+                    ssl.invalidHostNameAllowed(true);
+                }
+            });
+        }
+        return builder.build();
     }
 
     public String getConnectionBean() {
@@ -882,7 +910,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * Specifies that all communication with MongoDB instances should use TLS. Supersedes the ssl option. Default: false
+     * Specifies that all communication with MongoDB instances should use TLS. Supersedes the ssl option. Applies to the
+     * client the endpoint creates when hosts is set. Default: false
      */
     public void setTls(boolean tls) {
         this.tls = tls;
