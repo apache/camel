@@ -120,12 +120,14 @@ public final class Sanitizer {
     private final Commits commits;
     // whether rule R3 is checked (the value process returns and the value of its callback)
     private final boolean threads;
+    // the sampled watch windows of rule R3 (null when the sampling is off)
+    private final Overlaps overlaps;
     // the innermost step whose process runs on this thread, for the reports of R2 (only when R2 is on)
     private final ThreadLocal<SanitizerStepListener.StepCall> currentStep;
     private final AtomicBoolean droppedLogged = new AtomicBoolean();
 
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session) {
-        this(camelContext, stackDepth, session, true, false, false, 0, null);
+        this(camelContext, stackDepth, session, true, false, false, 0, null, 0, 0);
     }
 
     /**
@@ -135,14 +137,14 @@ public final class Sanitizer {
      *                       call is reported as still pending; 0 for never
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, long pendingTimeout) {
-        this(camelContext, stackDepth, session, true, false, false, pendingTimeout, null);
+        this(camelContext, stackDepth, session, true, false, false, pendingTimeout, null, 0, 0);
     }
 
     /**
      * Rule R1 only, with this table of the pending calls.
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, PendingCalls pending) {
-        this(camelContext, stackDepth, session, true, false, false, 0, pending);
+        this(camelContext, stackDepth, session, true, false, false, 0, pending, 0, 0);
     }
 
     /**
@@ -151,7 +153,7 @@ public final class Sanitizer {
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
               boolean commits) {
-        this(camelContext, stackDepth, session, callbacks, commits, false, 0, null);
+        this(camelContext, stackDepth, session, callbacks, commits, false, 0, null, 0, 0);
     }
 
     /**
@@ -163,7 +165,7 @@ public final class Sanitizer {
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
               boolean commits, long pendingTimeout) {
-        this(camelContext, stackDepth, session, callbacks, commits, false, pendingTimeout, null);
+        this(camelContext, stackDepth, session, callbacks, commits, false, pendingTimeout, null, 0, 0);
     }
 
     /**
@@ -175,16 +177,34 @@ public final class Sanitizer {
      */
     Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
               boolean commits, boolean threads, long pendingTimeout) {
-        this(camelContext, stackDepth, session, callbacks, commits, threads, pendingTimeout, null);
+        this(camelContext, stackDepth, session, callbacks, commits, threads, pendingTimeout, 0, 0);
+    }
+
+    /**
+     * @param callbacks          whether rule R1 is checked
+     * @param commits            whether rule R2 is checked
+     * @param threads            whether rule R3 is checked
+     * @param pendingTimeout     after how many milliseconds without anything happening in an exchange its innermost
+     *                           pending call is reported as still pending; 0 for never. Only with R1
+     * @param overlapSampling    the watch windows of rule R3: every how many points one is opened; 0 for none. Only
+     *                           with R3
+     * @param overlapWindowNanos how long a thread pauses in a watch window
+     */
+    Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
+              boolean commits, boolean threads, long pendingTimeout, int overlapSampling, long overlapWindowNanos) {
+        this(camelContext, stackDepth, session, callbacks, commits, threads, pendingTimeout, null, overlapSampling,
+             overlapWindowNanos);
     }
 
     private Sanitizer(CamelContext camelContext, int stackDepth, SanitizerTestSession session, boolean callbacks,
-                      boolean commits, boolean threads, long pendingTimeout, PendingCalls pending) {
+                      boolean commits, boolean threads, long pendingTimeout, PendingCalls pending, int overlapSampling,
+                      long overlapWindowNanos) {
         this.camelContext = camelContext;
         this.stackDepth = stackDepth;
         this.session = session;
         this.callbacks = callbacks;
         this.threads = threads;
+        this.overlaps = threads && overlapSampling > 0 ? new Overlaps(this, overlapSampling, overlapWindowNanos) : null;
         this.commits = commits ? new Commits() : null;
         this.currentStep = commits ? new ThreadLocal<>() : null;
         if (pending != null) {
@@ -251,6 +271,13 @@ public final class Sanitizer {
      */
     boolean isCheckingThreads() {
         return threads;
+    }
+
+    /**
+     * The sampled watch windows of rule R3, or null when the sampling is off.
+     */
+    Overlaps getOverlaps() {
+        return overlaps;
     }
 
     /**
@@ -352,6 +379,8 @@ public final class Sanitizer {
         return className.equals(Sanitizer.class.getName())
                 || className.startsWith(SanitizerStepListener.class.getName())
                 || className.startsWith(SanitizerDoneSyncListener.class.getName())
+                || className.startsWith(SanitizerOverlapListener.class.getName())
+                || className.startsWith(Overlaps.class.getName())
                 || className.startsWith(SanitizerOnCompletionListener.class.getName())
                 || className.startsWith(Commits.class.getName())
                 || className.equals(OnCompletionListenerHelper.class.getName())
@@ -380,6 +409,10 @@ public final class Sanitizer {
      */
     void record(
             Violation violation, String exchangeId, String routeId, String stepId, String details) {
+        if (overlaps != null) {
+            // two threads that use the exchange because of this violation are not reported again as an overlap
+            overlaps.violated(exchangeId);
+        }
         report(violation, () -> violationOf(violation, exchangeId, routeId, stepId, details));
     }
 
@@ -387,6 +420,10 @@ public final class Sanitizer {
      * Reports a violation of rule R2 found in the commits.
      */
     void recordCommit(Commits.Finding f) {
+        if (overlaps != null) {
+            overlaps.violated(f.exchangeId);
+            overlaps.violated(f.with);
+        }
         report(f.kind, () -> commitViolationOf(f));
     }
 
@@ -429,10 +466,16 @@ public final class Sanitizer {
         sb.append("Exchange sanitizer: ").append(violation.getTitle()).append(" (").append(violation.getRule()).append(")\n");
         appendWhere(sb, exchangeId, routeId, stepId, processor);
         sb.append(details);
-        sb.append("R3".equals(violation.getRule())
-                ? "  process(exchange, callback) must return the value its callback is called with (see AsyncProcessor).\n"
-                : "  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
-                  + " (see AsyncProcessor).\n");
+        if (violation == Violation.USED_BY_TWO_THREADS) {
+            sb.append("  An exchange can move between threads, but it must never be used by two threads at the same time"
+                      + " (see AsyncProcessor).\n");
+        } else if ("R3".equals(violation.getRule())) {
+            sb.append("  process(exchange, callback) must return the value its callback is called with (see"
+                      + " AsyncProcessor).\n");
+        } else {
+            sb.append("  The callback of process(exchange, callback) must be called exactly once, and process must not"
+                      + " throw (see AsyncProcessor).\n");
+        }
         sb.append("  Usual fix: ").append(violation.getFix()).append('.');
         return new SanitizerViolation(
                 violation, camelContext.getName(), exchangeId, routeId, stepId, processor, sb.toString());
@@ -696,6 +739,9 @@ public final class Sanitizer {
      * {@link org.apache.camel.Service}). It is looked up when a violation is reported, so a step costs nothing for it.
      */
     String processorOf(String routeId, String stepId) {
+        if (routeId == null || stepId == null) {
+            return null;
+        }
         String user = userProcessors.get(routeId + "|" + stepId);
         if (user != null) {
             return user;
@@ -709,6 +755,9 @@ public final class Sanitizer {
      * producer that breaks the rule is behind it.
      */
     String endpointOf(String routeId, String stepId) {
+        if (routeId == null || stepId == null) {
+            return null;
+        }
         Processor p = camelProcessorOf(routeId, stepId);
         if (p instanceof EndpointAware aware && aware.getEndpoint() != null) {
             Endpoint endpoint = aware.getEndpoint();
@@ -936,7 +985,13 @@ public final class Sanitizer {
     }
 
     private void appendWhere(StringBuilder sb, String exchangeId, String routeId, String stepId, String processor) {
-        sb.append("  exchange ").append(exchangeId).append(", route ").append(routeId).append(", step ").append(stepId);
+        sb.append("  exchange ").append(exchangeId).append(", route ").append(routeId);
+        if (stepId == null) {
+            // an overlap of two on completions (rule R3) is at no step
+            sb.append('\n');
+            return;
+        }
+        sb.append(", step ").append(stepId);
         sb.append(", processor ").append(processor != null ? processor : "(not found)");
         String endpoint = endpointOf(routeId, stepId);
         if (endpoint != null) {
@@ -967,7 +1022,9 @@ public final class Sanitizer {
             if (v.getStepId() != null) {
                 sb.append(", step ").append(v.getStepId());
             }
-            sb.append("R2".equals(v.getKind().getRule()) ? ", commit " : ", processor ").append(v.getProcessor());
+            if (v.getProcessor() != null) {
+                sb.append("R2".equals(v.getKind().getRule()) ? ", commit " : ", processor ").append(v.getProcessor());
+            }
         }
         return sb.toString();
     }
@@ -976,6 +1033,11 @@ public final class Sanitizer {
         StringBuilder sb = new StringBuilder(256);
         sb.append("Exchange sanitizer report of CamelContext ").append(camelContext.getName()).append(": ");
         sb.append(getCallCount()).append(" calls of steps checked");
+        if (overlaps != null) {
+            long windows = overlaps.getWindowCount();
+            sb.append(", ").append(windows).append(windows == 1 ? " watch window" : " watch windows")
+                    .append(" opened (R3, at 1 in ").append(overlaps.getSampling()).append(" points)");
+        }
         if (commits != null) {
             sb.append(", ").append(commits.getCommitCount()).append(" commits followed");
             long droppedCommits = commits.getDropped();
