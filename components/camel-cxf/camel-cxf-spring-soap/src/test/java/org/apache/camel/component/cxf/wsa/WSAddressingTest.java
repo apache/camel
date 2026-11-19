@@ -50,10 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
-// Prevents Spring from reusing a stale ApplicationContext (and its already-bound CXF listener) across a
-// Surefire rerun: the ContextCache key doesn't include the ports @BeforeAll republishes each run. Declaring
-// this on the base class is enough - Spring resolves @DirtiesContext per concrete test class, so the
-// WSAddressingPAYLOADTest/WSAddressingCXFMSGTest subclasses inherit it.
+// Prevents Spring from reusing a stale ApplicationContext (and its bound CXF listener) across a rerun.
+// Resolved per concrete test class, so WSAddressingPAYLOADTest/CXFMSGTest inherit it without redeclaring it.
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class WSAddressingTest {
 
