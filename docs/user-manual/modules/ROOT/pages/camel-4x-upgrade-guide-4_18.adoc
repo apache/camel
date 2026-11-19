@@ -1098,6 +1098,31 @@ To have a placeholder resolved, keep it in the uri written in the route rather t
 `recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is computed entirely at runtime and may
 carry a placeholder that comes from configuration, so they continue to resolve `+{{...}}+` in the computed recipient.
 
+=== camel-ftp - ftps checks the server certificate against the JVM trust store when no trust store is configured
+
+An `ftps` endpoint configured with neither `sslContextParameters` nor the `ftpClient.trustStore.` options now checks the
+certificate of the server against the default trust store of the JVM (the `cacerts` file of the JDK, or the trust
+store set with the `javax.net.ssl.trustStore` system property). Before, such an endpoint accepted any server
+certificate within its validity dates, without checking who signed it.
+
+A server certificate signed by a public certificate authority works as before. For an FTPS server with a self-signed
+certificate, or a certificate signed by your own certificate authority, the connection now fails in the TLS handshake:
+put that certificate (or the certificate of the authority) in a trust store, and configure it with the
+`ftpClient.trustStore.file`, `ftpClient.trustStore.password` and `ftpClient.trustStore.type` options, or with
+`sslContextParameters`. A custom `ftpClient` keeps the trust manager it was created with. See
+xref:components::ftp-component.adoc#_ftps_component_default_trust_store[FTPS component default trust store].
+
+=== camel-vertx-http - an https:// address with a port always uses TLS
+
+A `vertx-http` endpoint with an `https://` address that has an explicit port (such as `https://host:8443/path`) now
+always calls it with TLS, also when no `sslContextParameters` is configured, and also through a proxy. The server
+certificate is then checked with the default trust store of the JVM, and the host name is verified. Before, such a
+request was sent without TLS unless TLS was turned on by `sslContextParameters`, global SSL settings or custom
+`WebClientOptions`. `https://` addresses without a port already used TLS.
+
+A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
+for such a server. An `http://` address with `sslContextParameters` is not changed.
+
 === camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
 
 `RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
