@@ -92,6 +92,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 int port = "https".equals(uri.getScheme()) ? 443 : 80;
                 request = webClient.request(method, port, uri.getHost(), pathAndQuery);
             }
+            // request() does not take TLS from the scheme, as requestAbs() does, so an https address
+            // turns on TLS for this request also when the WebClientOptions do not (no sslContextParameters)
+            if ("https".equalsIgnoreCase(uri.getScheme())) {
+                request.ssl(Boolean.TRUE);
+            }
         }
 
         // Configure basic authentication
