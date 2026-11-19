@@ -144,7 +144,12 @@ public class GooglePubsubProducer extends DefaultProducer {
             if (orderingKey != null && endpoint.isMessageOrderingEnabled()) {
                 // the publisher pauses an ordering key after a failed publish, so a redelivery and the later messages
                 // with that key would fail at once
-                publisher.resumePublish(orderingKey);
+                try {
+                    publisher.resumePublish(orderingKey);
+                } catch (RuntimeException resumeException) {
+                    // keep the failure of the publish as the cause
+                    e.addSuppressed(resumeException);
+                }
             }
             throw e;
         }
