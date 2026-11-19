@@ -30,7 +30,8 @@ public class FileToFtpsExplicitSSLWithClientAuthIT extends FtpsServerExplicitSSL
         return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=SSLv3&implicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
-               + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true" + TRUST_STORE_OPTIONS;
+               + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true"
+               + TRUST_STORE_OPTIONS;
     }
 
     @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
