@@ -18,12 +18,30 @@ and the value is the exchange (its body, headers, exchange properties and variab
 The codec configured on a `RedissonClient` given with the `redisson` option is not used for these hashes, unless it is
 also given with the `codec` option.
 
-When it reads an exchange back, the repository only accepts the classes allowed by the `deserializationFilter` option,
-a pattern in the syntax of the `jdk.serialFilter` system property. When the option is not set, the JVM-wide
-`jdk.serialFilter` applies if it is set, otherwise a default filter that allows the `java`, `javax` and
-`org.apache.camel` packages (except `java.net`) and rejects the other classes. Set the option when the message bodies or
-headers of the aggregated exchanges are instances of your own classes, for example
-`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;!*`.
+When it reads an exchange back, the repository only accepts what the `deserializationFilter` option allows, a pattern
+in the syntax of the `jdk.serialFilter` system property. When the option is not set, the JVM-wide `jdk.serialFilter`
+applies if it is set, otherwise the default filter:
+
+----
+!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*
+----
+
+It allows the classes of the `java`, `javax` and `org.apache.camel` packages (except `java.net`) and rejects the other
+classes. It also limits the size of a stored exchange: `maxdepth=20` (the depth of the object graph), `maxrefs=10000`
+(the number of objects in it) and `maxbytes=10485760` (10 MB). An exchange over a limit cannot be read back, so its
+aggregation does not complete. This happens, for example, with a `List` body that collects more than 10000 strings, or
+with a body of more than 10 MB.
+
+Set the `deserializationFilter` option when the message bodies or headers of the aggregated exchanges are instances of
+your own classes, or when the exchanges are larger. The option replaces the whole default pattern, so keep its other
+parts. For example, to allow the classes of `com.foo.model` and raise the limits:
+
+----
+!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;maxdepth=50;maxrefs=1000000;maxbytes=104857600;!*
+----
+
+or leave out the `maxdepth`, `maxrefs` and `maxbytes` parts to have no limits. The `codec` option below is the other
+way, without the filter.
 
 The `codec` option sets a Redisson `Codec` for the hashes of the repository, in place of the Java serialization. The
 codec then encodes and decodes the exchanges, and the `deserializationFilter` option does not apply: the codec reads
