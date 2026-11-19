@@ -38,16 +38,32 @@ import org.aesh.command.metadata.MetadataRegistry;
  * own gets the metadata of the command it extends, which misses its own options. A command that a plugin extends with
  * options of its own (Export, by KubernetesExport) is therefore excluded: aesh reads the annotations of both at run
  * time. CommandTree fails when a command would get the metadata of its super class while it has options of its own.
- *
- * @param classLoader the class loader of the commands
- * @param packages    the packages of the commands
- * @param excluded    the classes to read the annotations of at run time (and their super classes without metadata)
+ * <p>
+ * Not a record: the equals of a record (which aesh calls when the registry is set) starts the method handles of the JDK
+ * (about 200 classes), which costs more than the metadata saves on a short command.
  */
-public record CommandMetadataRegistry(ClassLoader classLoader, Set<String> packages, Set<String> excluded)
-        implements
-            MetadataRegistry {
+public final class CommandMetadataRegistry implements MetadataRegistry {
 
     private static final String SUFFIX = "_AeshMetadata";
+
+    private final ClassLoader classLoader;
+    private final Set<String> packages;
+    private final Set<String> excluded;
+
+    /**
+     * @param classLoader the class loader of the commands
+     * @param packages    the packages of the commands
+     * @param excluded    the classes to read the annotations of at run time (and their super classes without metadata)
+     */
+    public CommandMetadataRegistry(ClassLoader classLoader, Set<String> packages, Set<String> excluded) {
+        this.classLoader = classLoader;
+        this.packages = packages;
+        this.excluded = excluded;
+    }
+
+    public Set<String> excluded() {
+        return excluded;
+    }
 
     @Override
     public CommandMetadataProvider<?> get(String commandClassName) {
@@ -61,7 +77,9 @@ public record CommandMetadataRegistry(ClassLoader classLoader, Set<String> packa
             // an anonymous or local class has no metadata of its own (aesh uses the one of its super class)
             return null;
         }
-        String name = commandClassName.substring(0, dot + 1) + simpleName.replace('$', '_') + SUFFIX;
+        // String.concat, not +: the first string concatenation with + starts the method handles of the JDK (about 200
+        // classes), which costs more than the metadata saves on a short command
+        String name = commandClassName.substring(0, dot + 1).concat(simpleName.replace('$', '_')).concat(SUFFIX);
         try {
             Class<?> type = Class.forName(name, true, classLoader);
             return (CommandMetadataProvider<?>) type.getDeclaredConstructor().newInstance();

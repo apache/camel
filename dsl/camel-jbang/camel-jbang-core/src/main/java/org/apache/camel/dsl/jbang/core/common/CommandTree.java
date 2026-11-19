@@ -431,9 +431,7 @@ public final class CommandTree {
         }
         for (Class<?> c = command.getClass(); c != null && c != provider.commandType(); c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
-                if (field.isAnnotationPresent(Option.class) || field.isAnnotationPresent(OptionList.class)
-                        || field.isAnnotationPresent(OptionGroup.class) || field.isAnnotationPresent(Argument.class)
-                        || field.isAnnotationPresent(Arguments.class) || field.isAnnotationPresent(Mixin.class)) {
+                if (isOption(field)) {
                     throw new IllegalStateException(
                             "The command " + command.getClass().getName() + " has options of its own (" + field.getName()
                                                     + "), but no generated aesh metadata, so aesh would use the metadata of "
@@ -443,6 +441,16 @@ public final class CommandTree {
                 }
             }
         }
+    }
+
+    private static boolean isOption(Field field) {
+        // a field without annotations first: the aesh annotation classes are then not loaded for it
+        if (field.getDeclaredAnnotations().length == 0) {
+            return false;
+        }
+        return field.isAnnotationPresent(Option.class) || field.isAnnotationPresent(OptionList.class)
+                || field.isAnnotationPresent(OptionGroup.class) || field.isAnnotationPresent(Argument.class)
+                || field.isAnnotationPresent(Arguments.class) || field.isAnnotationPresent(Mixin.class);
     }
 
     /**
