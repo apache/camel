@@ -17,6 +17,8 @@
 package org.apache.camel.component.chaos;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -60,10 +62,11 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
     private static final Pattern WINDOWS = Pattern.compile("(\\d+) watch windows? opened \\(R3, at 1 in 1 points\\)");
 
     private final AtomicInteger work = new AtomicInteger();
-    // the threads that made the sends to direct:receiver and direct:pooledReceiver (a direct consumer runs on the
-    // thread of the send), in order
+    // the threads that made the sends to direct:receiver (a direct consumer runs on the thread of the send), in order
     private final List<Thread> receiverSenders = new CopyOnWriteArrayList<>();
-    private final List<Thread> pooledSenders = new CopyOnWriteArrayList<>();
+    // the threads that made the sends to direct:pooledReceiver, in order, per exchange: the two threads of the pool
+    // can route two exchanges at once, so the sends of different exchanges can interleave
+    private final Map<String, List<Thread>> pooledSenders = new ConcurrentHashMap<>();
     private BacklogDebugger debugger;
 
     @Override
@@ -106,7 +109,9 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
                 // the send that chaos duplicates runs on a thread of the pool, not on the thread of the caller
                 from("direct:pooled").routeId("pooled").threads(2).id("pool").to("direct:pooledReceiver").id("toPooled");
                 from("direct:pooledReceiver").routeId("pooledReceiver")
-                        .process(e -> pooledSenders.add(Thread.currentThread())).id("pooledSender")
+                        .process(e -> pooledSenders.computeIfAbsent(e.getExchangeId(), k -> new CopyOnWriteArrayList<>())
+                                .add(Thread.currentThread()))
+                        .id("pooledSender")
                         .to("mock:pooled").id("toPooledMock");
             }
         };
@@ -222,12 +227,12 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         assertThat(fired(id, "send")).isEqualTo(10);
         // pooledReceiver completes synchronously, so the thread of the pool made both sends of each exchange
-        assertThat(pooledSenders).hasSize(20);
-        for (int i = 0; i < 10; i++) {
-            Thread first = pooledSenders.get(2 * i);
-            assertThat(first).isNotSameAs(Thread.currentThread());
-            assertThat(pooledSenders.get(2 * i + 1)).isSameAs(first);
-        }
+        assertThat(pooledSenders).hasSize(10);
+        pooledSenders.forEach((exchangeId, senders) -> {
+            assertThat(senders).as("the sends of exchange %s", exchangeId).hasSize(2);
+            assertThat(senders.get(0)).as("the first send of exchange %s", exchangeId).isNotSameAs(Thread.currentThread());
+            assertThat(senders.get(1)).as("the second send of exchange %s", exchangeId).isSameAs(senders.get(0));
+        });
         assertWatchedAndQuiet();
     }
 }
