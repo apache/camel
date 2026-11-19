@@ -690,6 +690,14 @@ public interface CamelCatalog {
     String chaosModelJSon();
 
     /**
+     * The curated integration-pattern recipes for AI-assisted development, as JSON.
+     *
+     * @return the recipes document, or {@code null} when the catalog has none
+     * @since  4.24
+     */
+    String patternRecipesJSon();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();

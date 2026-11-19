@@ -141,6 +141,22 @@ public class AuthoringTools {
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Curated integration-pattern recipes from the Camel catalog: complete route compositions, "
+                        + "transport alternatives, component requirements, recommended options, pitfalls and example "
+                        + "links. Use term to filter by recipe content; use camel_catalog_sample for an individual "
+                        + "EIP or component YAML example.")
+    @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
+    public JsonObject camel_catalog_pattern_recipes(
+            McpConnection connection,
+            @ToolArg(description = "Optional phrase to match in recipe names, problems, routes, options, requirements or pitfalls",
+                     required = false) String term,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return callDeterministic(connection, "camel_catalog_pattern_recipes",
+                args("term", term, "camelVersion", camelVersion));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans), "
                         + "a component (kafka, file), a data format (csv) or a language (jq) from the docs, with where "
                         + "it goes (a top-level entry, a step, an endpoint uri, a marshal step, an expression). Use "

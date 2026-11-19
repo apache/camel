@@ -77,7 +77,8 @@ class AuthoringToolsTest {
     void theSharedSetHasNeutralNamesAndFlags() {
         List<ToolDescriptor> shared = ToolRegistry.authoringTools();
         List<String> names = shared.stream().map(ToolDescriptor::name).toList();
-        assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_validate_source",
+        assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_catalog_pattern_recipes",
+                "camel_validate_source",
                 "camel_get_files",
                 "camel_write_file", "camel_edit_file", "camel_run", "camel_control", "camel_get_log", "camel_get_errors",
                 "camel_eval_expression", "camel_dependency_for_class", "camel_project_overview",

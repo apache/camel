@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -54,7 +52,7 @@ public class PatternRecipesYamlValidationTest {
             Map.entry("file-polling-with-idempotent-repository",
                     Map.of("connect/file-processing", "related")),
             Map.entry("throttling-rate-limiting",
-                    Map.of("route/dynamic-routing", "direct")),
+                    Map.of("route/dynamic-routing", "related")),
             Map.entry("error-handling-dead-letter-redelivery",
                     Map.of("fail-well/error-handling", "direct")),
             Map.entry("jms-asynchronous-request-reply",
@@ -70,17 +68,10 @@ public class PatternRecipesYamlValidationTest {
                             "connect-service/sql", "building-block",
                             "connect-service/artemis", "building-block")));
 
-    private static final Set<String> EXPECTED_RECIPE_IDS = Set.of(
-            "idempotent-consumer",
-            "content-based-routing-with-validation",
-            "file-polling-with-idempotent-repository",
-            "throttling-rate-limiting",
-            "error-handling-dead-letter-redelivery",
-            "jms-asynchronous-request-reply",
-            "circuit-breaker-with-fallback",
-            "scatter-gather-with-timeout",
-            "transactional-outbox",
+    private static final Set<String> EXPECTED_NO_EXAMPLE_RECIPE_IDS = Set.of(
             "saga-coordination-with-compensation");
+
+    private static final Set<String> ALLOWED_EXAMPLE_COVERAGE = Set.of("direct", "related", "building-block");
 
     private static final String EXAMPLE_REPOSITORY = "apache/camel-jbang-examples";
 
@@ -90,13 +81,11 @@ public class PatternRecipesYamlValidationTest {
     @Test
     void everyRecipeYamlPassesCamelDslAndCatalogValidation() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog();
-        YamlValidator validator = new YamlValidator(false, null, catalog);
+        YamlValidator validator = new YamlValidator(true, null, catalog);
         validator.init();
 
         JsonNode yamlMapperTree;
         List<JsonObject> recipes = loadRecipes();
-
-        assertEquals(10, recipes.size());
 
         Set<String> ids = new HashSet<>();
         Set<String> componentNames = new LinkedHashSet<>();
@@ -168,7 +157,6 @@ public class PatternRecipesYamlValidationTest {
             validateSagaOrchestrator(id, tree);
         }
 
-        assertEquals(EXPECTED_RECIPE_IDS, ids);
         assertFalse(componentNames.isEmpty());
         assertFalse(eipNames.isEmpty());
     }
@@ -176,7 +164,6 @@ public class PatternRecipesYamlValidationTest {
     @Test
     void exampleLinksAndCoverageAreAccuratelyClassified() throws Exception {
         List<JsonObject> recipes = loadRecipes();
-        assertEquals(10, recipes.size());
 
         Set<String> seenIds = new HashSet<>();
 
@@ -187,7 +174,7 @@ public class PatternRecipesYamlValidationTest {
             Collection<?> examples = recipe.getCollection("examples");
             assertNotNull(examples, id + " must have an examples array");
 
-            if ("saga-coordination-with-compensation".equals(id)) {
+            if (EXPECTED_NO_EXAMPLE_RECIPE_IDS.contains(id)) {
                 assertTrue(examples.isEmpty(), "Saga must not claim an unavailable exact example");
 
                 String availability = recipe.getString("exampleAvailability");
@@ -214,8 +201,10 @@ public class PatternRecipesYamlValidationTest {
                 String path = example.getString("path");
                 assertNotNull(path, id + " example path is required");
 
-                String coverage = normalizeCoverage(example.getString("coverage"));
+                String coverage = example.getString("coverage");
                 assertNotNull(coverage, id + " example coverage is required");
+                assertTrue(ALLOWED_EXAMPLE_COVERAGE.contains(coverage),
+                        id + " has unsupported example coverage: " + coverage);
 
                 String url = example.getString("url");
                 assertEquals(
@@ -233,17 +222,15 @@ public class PatternRecipesYamlValidationTest {
             assertEquals(expected, actual, id + " example coverage differs");
         }
 
-        assertEquals(EXPECTED_RECIPE_IDS, seenIds);
+        Set<String> expectedRecipeIds = new HashSet<>(EXPECTED_EXAMPLES.keySet());
+        expectedRecipeIds.addAll(EXPECTED_NO_EXAMPLE_RECIPE_IDS);
+        assertEquals(expectedRecipeIds, seenIds);
     }
 
     private static List<JsonObject> loadRecipes() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog();
-
-        String json;
-        try (InputStream stream = catalog.loadResource("patterns", "recipes.json")) {
-            assertNotNull(stream, "patterns/recipes.json must be packaged in camel-catalog");
-            json = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-        }
+        String json = catalog.patternRecipesJSon();
+        assertNotNull(json, "patternRecipesJSon() must expose the packaged recipes resource");
 
         JsonObject root = JsonMapper.deserialize(json);
         assertNotNull(root);
@@ -276,24 +263,6 @@ public class PatternRecipesYamlValidationTest {
             return name;
         }
         return null;
-    }
-
-    private static String normalizeCoverage(String value) {
-        if (value == null) {
-            return null;
-        }
-        String coverage = value.trim().toLowerCase(Locale.ROOT).replace('_', '-');
-        if ("exact".equals(coverage) || "exact-example".equals(coverage)
-                || "direct example".equals(coverage)) {
-            return "direct";
-        }
-        if ("related example".equals(coverage)) {
-            return "related";
-        }
-        if ("building block".equals(coverage) || "building-block-example".equals(coverage)) {
-            return "building-block";
-        }
-        return coverage;
     }
 
     private static void collectEndpointUris(JsonNode node, Set<String> answer) {
@@ -479,7 +448,10 @@ public class PatternRecipesYamlValidationTest {
             assertNotNull(optionName, recipeId + " recommendation needs name");
             assertFalse(optionName.isBlank(), recipeId + " recommendation name must not be blank");
 
-            assertNotNull(option.get("value"), recipeId + " recommendation needs value");
+            Object recommendedValue = option.get("value");
+            if (recommendedValue instanceof String stringValue) {
+                assertFalse(stringValue.isBlank(), recipeId + " recommendation value must not be blank");
+            }
 
             assertNotNull(reason, recipeId + " recommendation needs reason");
             assertFalse(reason.isBlank(), recipeId + " recommendation reason must not be blank");

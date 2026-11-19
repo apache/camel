@@ -108,7 +108,8 @@ questions that no tool answers and that agents otherwise go hunting for:
   set yourself before an http or mail producer; `xslt` gets the headers and variables as stylesheet parameters; a
   source that passes the schema can still fail at runtime, so run it and read the log.
 * Which tool answers which question, by tool name: `camel_catalog_doc`, `camel_catalog_find`,
-  `camel_catalog_sample`, `camel_catalog_examples`, `camel_dependency_for_class`, `camel_validate_source`,
+  `camel_catalog_sample`, `camel_catalog_pattern_recipes`, `camel_catalog_examples`,
+  `camel_dependency_for_class`, `camel_validate_source`,
   `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`; that the `optionsFilter` of
   `camel_catalog_doc` checks several options in one call; and that a Citrus test runs with `camel test run` in the
   project directory, not with `camel_run`.
@@ -209,6 +210,7 @@ Here are example prompts you can give your AI assistant. The assistant automatic
 * _"Show me all AWS source kamelets"_ — uses `camel_catalog_kamelets`
 * _"What options does aws-s3-source accept?"_ — uses `camel_catalog_kamelet_doc`
 * _"Show me the quick-start examples"_ — uses `camel_catalog_examples`
+* _"Show me Camel integration-pattern recipes for idempotent processing"_ — uses `camel_catalog_pattern_recipes`
 
 === Building routes
 
@@ -386,6 +388,13 @@ passed as the file name, is answered with the argument the source goes in.
   the build validates (`generate-doc-samples` in xref:camel-yaml-dsl-validator-maven-plugin.adoc[]).
   `limit` is 2 by default, at most 5. Use it before writing one the first time, or after a
   `not defined in the schema` validation error.
+
+| `camel_catalog_pattern_recipes`
+| Curated integration-pattern recipes for the Camel version in use: complete route compositions, transport
+  alternatives, component requirements, recommended options, operational pitfalls and links to related
+  examples. The optional `term` filters the recipes by their content. These are higher-level patterns, not
+  individual EIP samples; use `camel_catalog_sample` for a validated YAML building block and
+  `camel_catalog_doc` to check the selected version's component and EIP options.
 
 | `camel_validate_source`
 | Validates Camel YAML, Java or XML DSL or `.properties` source without writing: the YAML DSL schema (a

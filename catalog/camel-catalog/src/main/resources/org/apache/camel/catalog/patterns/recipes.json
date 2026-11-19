@@ -52,7 +52,7 @@
       ],
       "exampleRoute": {
         "dsl": "yaml",
-        "source": "- beans:\n    - name: processedOrderIds\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- route:\n    id: deduplicate-orders\n    from:\n      uri: file\n      parameters:\n        directoryName: orders\n        noop: true\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - idempotentConsumer:\n            expression:\n              simple:\n                expression: \"${body[orderId]}\"\n            idempotentRepository: processedOrderIds\n            eager: true\n            removeOnFailure: true\n            skipDuplicate: true\n            steps:\n              - log:\n                  message: \"Processing order ${body[orderId]}\"\n"
+        "source": "- beans:\n    - name: processedOrderIds\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- route:\n    id: deduplicate-orders\n    from:\n      uri: file\n      parameters:\n        directoryName: orders\n        noop: true\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - idempotentConsumer:\n            expression:\n              simple:\n                expression: \"${body[orderId]}\"\n            idempotentRepository: \"#processedOrderIds\"\n            eager: true\n            removeOnFailure: true\n            skipDuplicate: true\n            steps:\n              - log:\n                  message: \"Processing order ${body[orderId]}\"\n"
       },
       "examples": [
         {
@@ -104,14 +104,12 @@
         {
           "target": "validate",
           "name": "expression",
-          "value": "Validate required fields before evaluating routing conditions.",
-          "reason": "Reject malformed messages before they reach business routing logic."
+          "reason": "Validate required fields before evaluating routing conditions. Reject malformed messages before they reach business routing logic."
         },
         {
           "target": "choice",
           "name": "otherwise",
-          "value": "Provide a fallback branch.",
-          "reason": "Handle values that do not match an explicit routing condition."
+          "reason": "Provide a fallback branch for values that do not match an explicit routing condition."
         }
       ],
       "pitfalls": [
@@ -191,7 +189,7 @@
       ],
       "exampleRoute": {
         "dsl": "yaml",
-        "source": "- beans:\n    - name: processedFiles\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- onException:\n    exception:\n      - org.apache.camel.support.processor.PredicateValidationException\n    steps:\n      - log:\n          loggingLevel: WARN\n          message: \"Rejected ${header.CamelFileName}: ${exception.message}\"\n\n- route:\n    id: invoice-inbox\n    from:\n      uri: file\n      parameters:\n        directoryName: inbox\n        include: \".*[.]json\"\n        idempotent: true\n        idempotentKey: \"${file:name}-${file:size}\"\n        idempotentRepository: \"#processedFiles\"\n        move: done\n        moveFailed: failed\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - validate:\n            expression:\n              simple:\n                expression: \"${body[amount]} > 0\"\n        - to:\n            uri: direct:process-invoice\n"
+        "source": "- beans:\n    - name: processedFiles\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- onException:\n    exception:\n      - org.apache.camel.support.processor.PredicateValidationException\n    steps:\n      - log:\n          loggingLevel: WARN\n          message: \"Rejected ${header.CamelFileName}: ${exception.message}\"\n\n- route:\n    id: invoice-inbox\n    from:\n      uri: file\n      parameters:\n        directoryName: inbox\n        include: \".*[.]json\"\n        idempotent: true\n        idempotentKey: \"${file:name}-${file:size}\"\n        idempotentRepository: \"#processedFiles\"\n        move: done\n        moveFailed: failed\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - validate:\n            expression:\n              simple:\n                expression: \"${body[amount]} > 0\"\n        - to:\n            uri: direct:process-invoice\n\n- route:\n    id: process-invoice\n    from:\n      uri: direct\n      parameters:\n        name: process-invoice\n      steps:\n        - log:\n            message: \"Processed invoice ${header.CamelFileName}\"\n"
       },
       "examples": [
         {
@@ -249,7 +247,7 @@
           "repository": "apache/camel-jbang-examples",
           "path": "route/dynamic-routing",
           "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/dynamic-routing",
-          "coverage": "direct",
+          "coverage": "related",
           "note": "Demonstrates a throttle limiting the US warehouse route to one message per second."
         }
       ]
@@ -271,7 +269,6 @@
         "errorHandler",
         "deadLetterChannel",
         "redeliveryPolicy",
-        "onException",
         "throwException"
       ],
       "recommendedOptions": [
@@ -530,8 +527,8 @@
         }
       ],
       "referenceDocs": [
-        "https://camel.apache.org/components/next/eips/multicast-eip.html",
-        "https://camel.apache.org/components/next/eips/aggregate-eip.html"
+        "https://camel.apache.org/components/4.24.x/eips/multicast-eip.html",
+        "https://camel.apache.org/components/4.24.x/eips/aggregate-eip.html"
       ]
     },
     {
@@ -606,8 +603,8 @@
         }
       ],
       "referenceDocs": [
-        "https://camel.apache.org/components/next/eips/transactional-client.html",
-        "https://camel.apache.org/components/next/sql-component.html"
+        "https://camel.apache.org/components/4.24.x/eips/transactional-client.html",
+        "https://camel.apache.org/components/4.24.x/sql-component.html"
       ]
     },
     {
@@ -643,8 +640,7 @@
         {
           "target": "saga",
           "name": "compensation",
-          "value": "direct:cancel-order or direct:refund-credit",
-          "reason": "Register the business operation that compensates for each participant's action."
+          "reason": "Register the business operation that compensates for each participant's action. This example uses direct:cancel-order and direct:refund-credit in the participant routes."
         },
         {
           "target": "saga",
@@ -672,8 +668,8 @@
       "examples": [],
       "exampleAvailability": "No runnable Saga EIP example was found in the inspected camel-jbang-examples catalog. This minimal YAML route follows the official Camel Saga EIP documentation. It requires the application-provided Saga service and order/credit service beans.",
       "referenceDocs": [
-        "https://camel.apache.org/components/next/eips/saga-eip.html",
-        "https://camel.apache.org/components/next/others/lra.html"
+        "https://camel.apache.org/components/4.24.x/eips/saga-eip.html",
+        "https://camel.apache.org/components/4.24.x/others/lra.html"
       ]
     }
   ]

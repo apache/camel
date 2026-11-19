@@ -198,6 +198,54 @@ public final class AuthoringTools {
                             integer(args, "limit", CatalogSamples.DEFAULT_LIMIT));
                 }));
 
+        registry.accept(tool("camel_catalog_pattern_recipes",
+                "Curated integration-pattern recipes from the Camel catalog: complete route compositions, transport "
+                                                              + "alternatives, component requirements, recommended options, pitfalls and example links. "
+                                                              + "Use term to filter by recipe content; use camel_catalog_sample for an individual EIP or "
+                                                              + "component YAML example, and camel_catalog_doc to check the selected version's options.")
+                .param("term", "string",
+                        "Optional phrase to match in recipe names, problems, routes, options, requirements or pitfalls", false)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .core(true)
+                .deterministic(true)
+                .repeatHint("Use the matching recipe as a starting point, then check its component and EIP options with "
+                            + "camel_catalog_doc and validate the resulting route with camel_validate_source.")
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    String json = ctx.catalog().patternRecipesJSon();
+                    if (json == null) {
+                        throw new ToolExecutionException(
+                                "Pattern recipes are not available in Camel catalog version "
+                                                         + ctx.catalog().getLoadedVersion());
+                    }
+                    String term = args.get("term");
+                    if (term == null || term.isBlank()) {
+                        return json;
+                    }
+                    try {
+                        Object parsed = Jsoner.deserialize(json);
+                        if (!(parsed instanceof JsonObject answer)) {
+                            throw new IllegalStateException("The pattern recipes document is not a JSON object");
+                        }
+                        Collection<?> entries = answer.getCollection("recipes");
+                        if (entries == null) {
+                            throw new IllegalStateException("The pattern recipes document has no recipes array");
+                        }
+                        String query = term.toLowerCase(Locale.ROOT);
+                        JsonArray matches = new JsonArray();
+                        for (Object entry : entries) {
+                            if (entry instanceof JsonObject recipe
+                                    && recipe.toJson().toLowerCase(Locale.ROOT).contains(query)) {
+                                matches.add(recipe);
+                            }
+                        }
+                        answer.put("recipes", matches);
+                        return answer.toJson();
+                    } catch (Exception e) {
+                        throw new ToolExecutionException("The Camel pattern recipes resource could not be read as JSON");
+                    }
+                }));
+
         registry.accept(tool("camel_validate_source",
                 "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options such as "
                                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, "

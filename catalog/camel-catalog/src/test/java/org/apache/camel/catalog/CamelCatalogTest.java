@@ -20,10 +20,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -2271,23 +2274,19 @@ public class CamelCatalogTest {
 
     @Test
     public void patternRecipesResource() throws Exception {
-        String json;
-        try (InputStream is = catalog.loadResource("patterns", "recipes.json")) {
-            assertNotNull(is);
-            json = loadText(is);
-        }
+        String json = catalog.patternRecipesJSon();
+        assertNotNull(json, "Pattern recipes must be available through CamelCatalog");
 
         JsonObject patternRecipes = JsonMapper.deserialize(json);
         assertNotNull(patternRecipes);
         assertEquals("1", String.valueOf(patternRecipes.get("schemaVersion")));
         assertNotNull(patternRecipes.getString("description"));
 
-        java.util.Collection<?> recipes = patternRecipes.getCollection("recipes");
+        Collection<?> recipes = patternRecipes.getCollection("recipes");
         assertNotNull(recipes);
-        assertEquals(10, recipes.size());
+        assertFalse(recipes.isEmpty(), "The recipes catalog must not be empty");
 
-        java.util.Set<String> ids = new java.util.HashSet<>();
-
+        Set<String> ids = new HashSet<>();
         for (Object value : recipes) {
             assertTrue(value instanceof JsonObject, "Each recipe must be a JSON object");
 
@@ -2311,22 +2310,16 @@ public class CamelCatalogTest {
 
             String source = route.getString("source");
             assertNotNull(source, id + " needs YAML source");
-            assertTrue(!source.isBlank(), id + " YAML source must not be empty");
+            assertFalse(source.isBlank(), id + " YAML source must not be empty");
+            Collection<?> referenceDocs = recipe.getCollection("referenceDocs");
+            if (referenceDocs != null) {
+                for (Object reference : referenceDocs) {
+                    assertTrue(reference instanceof String, id + " reference docs must be strings");
+                    assertFalse(((String) reference).contains("/components/next/"),
+                            id + " must not use unversioned component documentation links");
+                }
+            }
         }
-
-        assertEquals(
-                java.util.Set.of(
-                        "idempotent-consumer",
-                        "content-based-routing-with-validation",
-                        "file-polling-with-idempotent-repository",
-                        "throttling-rate-limiting",
-                        "error-handling-dead-letter-redelivery",
-                        "jms-asynchronous-request-reply",
-                        "circuit-breaker-with-fallback",
-                        "scatter-gather-with-timeout",
-                        "transactional-outbox",
-                        "saga-coordination-with-compensation"),
-                ids);
     }
 
     @Test
