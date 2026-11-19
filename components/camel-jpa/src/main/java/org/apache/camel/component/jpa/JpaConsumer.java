@@ -36,6 +36,7 @@ import jakarta.persistence.PessimisticLockException;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaSelect;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.EntityType;
 
@@ -503,7 +504,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         CriteriaQuery<T> query = builder.createQuery(type.getJavaType());
         Root<T> root = query.from(type);
         query.select(root).where(builder.equal(root, entity));
-        return entityManager.createQuery(query)
+        // the CriteriaSelect overload exists in Jakarta Persistence 3.2 and 4.0, the CriteriaQuery one only in 3.2
+        return entityManager.createQuery((CriteriaSelect<T>) query)
                 .setLockMode(rowLock)
                 .setHint(LOCK_TIMEOUT, SKIP_LOCKED)
                 // a lock has no side effect: do not flush the changes of the entities routed before
