@@ -231,9 +231,17 @@ public interface SmppConstants {
                                                 "as follows: YYMMDDhhmm.",
               javaType = "Date")
     String SUBMIT_DATE = "CamelSmppSubmitDate";
-    @Metadata(label = "producer", description = "The system id.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The system id to connect to the SMSC with. Used only by the first exchange of a producer with"
+                            + " `lazySessionCreation=true` and `allowSystemIdAndPasswordFromHeaders=true`, together with"
+                            + " the `CamelSmppPassword` header; otherwise ignored.",
+              javaType = "String")
     String SYSTEM_ID = "CamelSmppSystemId";
-    @Metadata(label = "producer", description = "The password.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The password to connect to the SMSC with. Used only by the first exchange of a producer with"
+                            + " `lazySessionCreation=true` and `allowSystemIdAndPasswordFromHeaders=true`, together with"
+                            + " the `CamelSmppSystemId` header; otherwise ignored.",
+              javaType = "String", secret = true)
     String PASSWORD = "CamelSmppPassword";
     @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti and ReplaceSm* The validity period\n" +
                             "parameter indicates the SMSC expiration time, after which the message\n" +
