@@ -154,9 +154,9 @@ public class SpringAiChatConfiguration implements Cloneable {
 
     @UriParam(prefix = "mcpServer.", multiValue = true, label = "advanced",
               description = "MCP server configurations. Define servers using prefix notation: "
-                            + "mcpServer.<name>.transportType=stdio|sse, "
+                            + "mcpServer.<name>.transportType=streamableHttp|stdio|sse (sse is deprecated), "
                             + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
-                            + "mcpServer.<name>.url=<url> (sse), "
+                            + "mcpServer.<name>.url=<url> (streamableHttp/sse), "
                             + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
     private Map<String, Object> mcpServer;
 
@@ -549,8 +549,9 @@ public class SpringAiChatConfiguration implements Cloneable {
 
     /**
      * MCP server configurations for Model Context Protocol integration. Define servers using prefix notation:
-     * mcpServer.&lt;name&gt;.transportType=stdio|sse, mcpServer.&lt;name&gt;.command=&lt;cmd&gt; (stdio),
-     * mcpServer.&lt;name&gt;.args=&lt;comma-separated&gt; (stdio), mcpServer.&lt;name&gt;.url=&lt;url&gt; (sse).
+     * mcpServer.&lt;name&gt;.transportType=streamableHttp|stdio|sse (sse is deprecated),
+     * mcpServer.&lt;name&gt;.command=&lt;cmd&gt; (stdio), mcpServer.&lt;name&gt;.args=&lt;comma-separated&gt; (stdio),
+     * mcpServer.&lt;name&gt;.url=&lt;url&gt; (streamableHttp/sse).
      * <p>
      * <strong>Note:</strong> Using this component with MCP alongside the camel-openai component with MCP may lead to
      * MCP SDK version conflicts. The spring-ai-chat component uses MCP SDK version managed by Spring AI BOM while
