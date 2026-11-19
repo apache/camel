@@ -2115,10 +2115,11 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfAwsAiServices() {
-        // translate, comprehend and the speech of polly are text; the invoke operations of aws-bedrock marshal a Map to
-        // the JSON of the request, and aws-bedrock-agent-runtime sends it as the JSON text of the question; the
-        // translation is text and a cloudtrail event is JSON in bytes. converse, rekognition, textract and timestream
-        // take their input from headers, and polly without an operation is not known, as the component may set it
+        // translate, comprehend, the speech of polly and the prompt of converse in aws-bedrock are text; the invoke
+        // operations of aws-bedrock marshal a Map to the JSON of the request, and aws-bedrock-agent-runtime sends it as
+        // the JSON text of the question; the translation is text and a cloudtrail event is JSON in bytes. rekognition,
+        // textract and timestream take their input from headers, and polly without an operation is not known, as the
+        // component may set it
         String yaml = """
                 - route:
                     id: translate
@@ -2222,10 +2223,11 @@ public class TextBodyFlowTest {
                             json: {}
                         - to: aws2-polly:p?voiceId=Joanna
                 """;
-        assertThat(lines(yaml)).hasSize(5)
+        assertThat(lines(yaml)).hasSize(6)
                 .anySatisfy(m -> assertThat(m).contains("route translate: to: aws2-translate needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route analyze: to: aws2-comprehend needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route speak: to: aws2-polly needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route converse: to: aws-bedrock needs the body as text"))
                 .noneSatisfy(m -> assertThat(m).contains("route prompt:"))
                 .noneSatisfy(m -> assertThat(m).contains("route ask:"))
                 .anySatisfy(m -> assertThat(m).contains("route translated: simple reads a field of the body (${body[text]})"))
