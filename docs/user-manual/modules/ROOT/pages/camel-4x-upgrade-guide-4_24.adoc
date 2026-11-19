@@ -207,6 +207,15 @@ This is what `xml` binding already did without its XML data format. Add the JSON
 (or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
 neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
+=== camel-kamelet - each Kamelet EIP has a Kamelet route of its own
+
+Kamelet EIPs (`kamelet` with nested steps) with the same name and options used to share one Kamelet route, and with it
+the steps to continue with: the messages of one route ran the nested steps of the last such EIP that was created, and a
+`to("kamelet:...")` with the same name and options also ran them. Each Kamelet EIP now creates a Kamelet route of its own
+and continues with its own steps. An application with several Kamelet EIPs with the same name and options therefore has
+one Kamelet route per EIP (for example `my-action-1`, `my-action-2`) where it had one before. When a route with a Kamelet
+EIP is removed while the context runs, its Kamelet route is removed with it.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
