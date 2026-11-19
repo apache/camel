@@ -515,6 +515,17 @@ An `AiToolConfiguration` bean given as the `configuration` option no longer repl
   `allowedRoles`. Previously the bean replaced the options of the endpoint and the values of the component. The bean
   itself is no longer changed by the options of the endpoints that use it.
 
+=== camel-docling - the CamelDoclingOutputFilePath header is a relative path unless outputBaseDirectory is set
+
+When the `outputBaseDirectory` option is not set, the `CamelDoclingOutputFilePath` header must now be a relative
+path that does not start with `../` once normalized, the same rule as for the custom arguments. An absolute path,
+or a path that leaves the working directory, fails the exchange with an `IOException`. Previously the header was
+only normalized and could name any directory.
+
+With `outputBaseDirectory` set, nothing changes: the header must resolve inside that directory, and an absolute
+path inside it is accepted. A route that sets an absolute output directory in the header sets `outputBaseDirectory`
+to a directory that contains the output directories it uses.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
