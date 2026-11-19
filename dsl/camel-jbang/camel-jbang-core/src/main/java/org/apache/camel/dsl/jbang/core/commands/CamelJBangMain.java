@@ -27,7 +27,9 @@ import org.aesh.command.Command;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandResult;
 import org.aesh.command.impl.parser.ArgfileExpander;
+import org.aesh.command.internal.InternalCommandMetadataRegistry;
 import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.metadata.MetadataProviderRegistry;
 import org.aesh.command.option.Option;
 import org.aesh.command.parser.CommandLineParserException;
 import org.aesh.command.validator.OptionValidatorException;
@@ -131,6 +133,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         } catch (Exception e) {
             // ignore
         }
+
+        // the commands of the CLI have no generated aesh metadata, so aesh does not need to look through every JAR on
+        // the class path for registries of it (a plugin with generated metadata registers its own registry)
+        MetadataProviderRegistry.useOnly(new InternalCommandMetadataRegistry());
 
         args = expandArgumentFiles(args);
         if (args == null) {

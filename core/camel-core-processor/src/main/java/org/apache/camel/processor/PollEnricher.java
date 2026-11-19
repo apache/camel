@@ -539,7 +539,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             // optimize and normalize endpoint without re-resolving property placeholders on the
             // per-message evaluated recipient, matching toD and enrich (CAMEL-24282 / CAMEL-24414).
             // pollEnrich resolves its static uri at build time, so the placeholder belongs there.
-            return NormalizedUri.newNormalizedUri(uri, false);
+            // The per-message recipient comes from the message, so its option values are bound as literal text
+            // as well: no property placeholders, #class: or #property: (#bean: and #type: still resolve) - CAMEL-27160
+            return NormalizedUri.newNormalizedUri(uri, false, true);
         }
         return null;
     }
@@ -593,13 +595,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        // in case path has property placeholders then try to let property component resolve those
-        try {
-            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-
+        // NOTE: property placeholders in the dynamic-uri expression are resolved once when the route is built. The
+        // per-message evaluated recipient must not be re-resolved here: message content that happens to contain {{...}}
+        // is taken as a literal endpoint uri, as in SendDynamicProcessor#resolveUri
         return uri;
     }
 

@@ -230,6 +230,7 @@ public class SmppConfigurationTest {
                           + "reconnectDelay=5000, "
                           + "maxReconnect=2147483647, "
                           + "lazySessionCreation=false, "
+                          + "allowSystemIdAndPasswordFromHeaders=false, "
                           + "messageReceiverRouteId=null, "
                           + "httpProxyHost=null, "
                           + "httpProxyPort=3128, "

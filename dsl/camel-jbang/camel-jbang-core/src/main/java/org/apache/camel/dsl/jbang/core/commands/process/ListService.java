@@ -31,6 +31,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -64,6 +65,10 @@ public class ListService extends ProcessWatchCommand {
 
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
+
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
 
     public ListService(CamelJBangMain main) {
         super(main);
@@ -99,8 +104,8 @@ public class ListService extends ProcessWatchCommand {
                         row.direction = jo.getString("direction");
                         row.hosted = jo.getBooleanOrDefault("hosted", false);
                         row.protocol = jo.getString("protocol");
-                        row.serviceUrl = jo.getString("serviceUrl");
-                        row.endpointUri = jo.getString("endpointUri");
+                        row.serviceUrl = ListingFormat.masked(jo.getString("serviceUrl"), mask);
+                        row.endpointUri = ListingFormat.masked(jo.getString("endpointUri"), mask);
                         row.hits = jo.getLongOrDefault("hits", 0);
                         row.routeId = jo.getString("routeId");
                         row.metadata = jo.getMap("metadata");

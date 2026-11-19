@@ -37,6 +37,14 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
         this(channelFactory, true);
     }
 
+    /**
+     * Creates a bootstrap factory, which only checks that the bootstrap configuration of the consumers are compatible
+     * when {@code compatibleCheck} is {@code true}. Only the shared Netty HTTP server turns the check off.
+     *
+     * @deprecated used only by the shared Netty HTTP server, which is deprecated. Use
+     *             {@link #HttpServerBootstrapFactory(HttpServerConsumerChannelFactory)}.
+     */
+    @Deprecated
     public HttpServerBootstrapFactory(HttpServerConsumerChannelFactory channelFactory, boolean compatibleCheck) {
         this.channelFactory = channelFactory;
         this.compatibleCheck = compatibleCheck;

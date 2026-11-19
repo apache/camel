@@ -18,24 +18,23 @@ package org.apache.camel.language.jq;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import net.thisptr.jackson.jq.Expression;
-import net.thisptr.jackson.jq.Function;
-import net.thisptr.jackson.jq.PathOutput;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Version;
-import net.thisptr.jackson.jq.exception.JsonQueryException;
-import net.thisptr.jackson.jq.path.Path;
+import net.thisptr.jackson.jq.v2.core.Environment;
+import net.thisptr.jackson.jq.v2.json.JsonProvider;
+import net.thisptr.jackson.jq.v2.spi.BindContext;
+import net.thisptr.jackson.jq.v2.spi.Expression;
+import net.thisptr.jackson.jq.v2.spi.Function;
+import net.thisptr.jackson.jq.v2.spi.FunctionSignature;
+import net.thisptr.jackson.jq.v2.spi.RuntimeContext;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
-public class JqCustomScopeTest extends JqTestSupport {
+public class JqCustomEnvironmentTest extends JqTestSupport {
 
     @Test
-    public void testCustomScopeFunction() throws Exception {
+    public void testCustomEnvironmentFunction() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "camel bar"));
 
         template.sendBody("direct:containsCamel", MAPPER.createObjectNode().put("foo", "baz"));
@@ -45,17 +44,7 @@ public class JqCustomScopeTest extends JqTestSupport {
     }
 
     @Test
-    public void testCustomScopeFunctionFromRegistry() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "beer"));
-
-        template.sendBody("direct:containsBeer", MAPPER.createObjectNode().put("foo", "baz"));
-        template.sendBody("direct:containsBeer", MAPPER.createObjectNode().put("foo", "beer"));
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testCustomScopeBuiltInFunction() throws Exception {
+    public void testCustomEnvironmentBuiltInFunction() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "123456"));
 
         template.sendBody("direct:builtInFunction", MAPPER.createObjectNode().put("foo", "12345"));
@@ -65,32 +54,28 @@ public class JqCustomScopeTest extends JqTestSupport {
     }
 
     @BindToRegistry
-    public Scope customScope() {
-        Scope scope = Scope.newEmptyScope();
-        JqFunctions.load(context, scope);
-        scope.addFunction("containsCamel", new Function() {
-            @Override
-            public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
-                    throws JsonQueryException {
-                args.get(0).apply(scope, in, (value) -> {
-                    output.emit(BooleanNode.valueOf(value.asText().contains("camel")), null);
-                });
-            }
-        });
-        return scope;
+    public Environment<JsonNode> customEnvironment() {
+        return JqFunctions.newEnvironmentBuilder(context)
+                .defineFunction(FunctionSignature.of("containsCamel", 1), new ContainsFunction("camel"))
+                .build();
     }
 
-    @BindToRegistry
-    public Function containsBeer() {
-        return new Function() {
-            @Override
-            public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
-                    throws JsonQueryException {
-                args.get(0).apply(scope, in, (value) -> {
-                    output.emit(BooleanNode.valueOf(value.asText().contains("beer")), null);
-                });
-            }
-        };
+    /**
+     * A jq function that tells whether its argument contains the given text.
+     */
+    public static class ContainsFunction implements Function {
+        private final String text;
+
+        public ContainsFunction(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public <C extends RuntimeContext, J> Expression<C, J> bind(BindContext<J> bindCtx, List<Expression<C, J>> args) {
+            JsonProvider<J> provider = bindCtx.getJsonProvider();
+            return (ctx, in, ipath, output) -> args.get(0).apply(ctx, in, ipath,
+                    (value, path) -> output.emit(provider.createBoolean(provider.getString(value).contains(text)), null));
+        }
     }
 
     @Override
@@ -100,10 +85,6 @@ public class JqCustomScopeTest extends JqTestSupport {
             public void configure() {
                 from("direct:containsCamel")
                         .filter().jq("containsCamel(.foo)")
-                        .to("mock:result");
-
-                from("direct:containsBeer")
-                        .filter().jq("containsBeer(.foo)")
                         .to("mock:result");
 
                 from("direct:builtInFunction")

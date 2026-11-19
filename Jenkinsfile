@@ -209,6 +209,9 @@ pipeline {
                                 if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
                                     withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                         echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
+                                        // One coverage report per module, built from the merged execution data of all the modules
+                                        sh "./mvnw -B -N -Pcoverage org.jacoco:jacoco-maven-plugin:merge@merge-all"
+                                        sh "./mvnw $MAVEN_PARAMS -Pcoverage org.jacoco:jacoco-maven-plugin:report@report-module"
                                         sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.coverage.exclusions=test-infra/**,tooling/**"
                                     }
                                 } else {

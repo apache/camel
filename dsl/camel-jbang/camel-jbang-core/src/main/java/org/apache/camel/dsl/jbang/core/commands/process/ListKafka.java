@@ -72,6 +72,10 @@ public class ListKafka extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     public ListKafka(CamelJBangMain main) {
         super(main);
     }
@@ -126,7 +130,7 @@ public class ListKafka extends ProcessWatchCommand {
                         Row row = copy.copy();
                         jo = (JsonObject) arr.get(i);
                         row.routeId = jo.getString("routeId");
-                        row.uri = jo.getString("uri");
+                        row.uri = ListingFormat.masked(jo.getString("uri"), mask);
                         row.state = jo.getString("state");
 
                         JsonArray wa = (JsonArray) jo.get("workers");

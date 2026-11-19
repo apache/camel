@@ -24,6 +24,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -214,6 +215,39 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
                     .hasMessage("No running Camel integrations")
                     .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
         }
+    }
+
+    @Test
+    void theFromOfTheRoutesIsMasked() throws Exception {
+        writeStatusFile(TEST_PID,
+                json("""
+                        {"context":{"name":"orders","state":"Started"},
+                         "routes":[{"routeId":"orders","from":"mongodb:db?database=test&password=RAW(s3cret)",
+                           "state":"Started","uptime":"1m0s",
+                           "statistics":{"exchangesTotal":1,"exchangesFailed":0,"exchangesInflight":0}}]}
+                        """));
+        IntegrationStatus command = command();
+        command.jsonOutput = true;
+
+        assertThat(call(command)).isEqualTo(CliExitCode.OK);
+        JsonArray routes = json(printer.getStdout()).getCollection("routes");
+        JsonObject route = (JsonObject) routes.get(0);
+        assertThat(route.getString("from")).isEqualTo("mongodb:db?database=test&password=xxxxxx");
+
+        printer = new StringPrinter();
+        command = command();
+        assertThat(call(command)).isEqualTo(CliExitCode.OK);
+        assertThat(printer.getStdout()).contains("mongodb:db?database=test&password=xxxxxx").doesNotContain("s3cret");
+
+        // as configured when asked for
+        printer = new StringPrinter();
+        command = command();
+        command.jsonOutput = true;
+        command.mask = false;
+        assertThat(call(command)).isEqualTo(CliExitCode.OK);
+        routes = json(printer.getStdout()).getCollection("routes");
+        route = (JsonObject) routes.get(0);
+        assertThat(route.getString("from")).isEqualTo("mongodb:db?database=test&password=RAW(s3cret)");
     }
 
     private IntegrationStatus command() {

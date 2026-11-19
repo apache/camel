@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -24,14 +26,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponder;
 import org.snmp4j.CommandResponderEvent;
+import org.snmp4j.MessageDispatcherImpl;
 import org.snmp4j.MessageException;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
 import org.snmp4j.TransportMapping;
+import org.snmp4j.mp.MPv1;
+import org.snmp4j.mp.MPv2c;
+import org.snmp4j.mp.MPv3;
+import org.snmp4j.mp.MessageProcessingModel;
+import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.mp.StateReference;
 import org.snmp4j.mp.StatusInformation;
+import org.snmp4j.security.USM;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
+import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.TcpAddress;
 import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
@@ -71,7 +81,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         }
 
         // NOTE: the object is going to be closed by stop() lifecycle.
-        this.snmp = new Snmp(transport); // NOSONAR
+        this.snmp = new Snmp(createMessageDispatcher(), transport); // NOSONAR
         snmp.addCommandResponder(this);
 
         // listen to the transport
@@ -82,6 +92,57 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (LOG.isInfoEnabled()) {
             LOG.info("Started trap consumer on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
         }
+    }
+
+    /**
+     * Creates a message dispatcher with only the message processing models of the configured snmpVersion: SNMPv1 and
+     * SNMPv2c for the versions 0 and 1, and SNMPv3 with a USM of its own that holds only the user of the endpoint for
+     * the version 3.
+     */
+    private MessageDispatcherImpl createMessageDispatcher() {
+        MessageDispatcherImpl dispatcher = new MessageDispatcherImpl();
+        int version = endpoint.getSnmpVersion();
+        if (version == SnmpConstants.version1 || version == SnmpConstants.version2c) {
+            dispatcher.addMessageProcessingModel(new MPv1());
+            dispatcher.addMessageProcessingModel(new MPv2c());
+        } else if (version == SnmpConstants.version3) {
+            USM usm = SnmpHelper.createUSM(endpoint);
+            dispatcher.addMessageProcessingModel(new MPv3(usm));
+        } else {
+            throw new IllegalArgumentException("Unknown snmpVersion: " + version);
+        }
+        return dispatcher;
+    }
+
+    /**
+     * Whether the event matches the configured snmpVersion and, for SNMPv3, the security name and the minimum security
+     * level of the endpoint.
+     */
+    private boolean isAccepted(CommandResponderEvent event) {
+        int version = endpoint.getSnmpVersion();
+        int model = event.getMessageProcessingModel();
+        if (version == SnmpConstants.version3) {
+            if (model != MessageProcessingModel.MPv3) {
+                LOG.debug("Dropping trap from {}: message processing model {} is not SNMPv3", event.getPeerAddress(), model);
+                return false;
+            }
+            if (!Arrays.equals(new OctetString(endpoint.getSecurityName()).getValue(), event.getSecurityName())) {
+                LOG.debug("Dropping trap from {}: security name is not the one of the endpoint", event.getPeerAddress());
+                return false;
+            }
+            if (event.getSecurityLevel() < endpoint.getSecurityLevel()) {
+                LOG.debug("Dropping trap from {}: security level {} is below the security level {} of the endpoint",
+                        event.getPeerAddress(), event.getSecurityLevel(), endpoint.getSecurityLevel());
+                return false;
+            }
+            return true;
+        }
+        if (model != MessageProcessingModel.MPv1 && model != MessageProcessingModel.MPv2c) {
+            LOG.debug("Dropping trap from {}: message processing model {} is not SNMPv1 or SNMPv2c", event.getPeerAddress(),
+                    model);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -101,6 +162,9 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
 
     @Override
     public void processPdu(CommandResponderEvent event) {
+        if (!isAccepted(event)) {
+            return;
+        }
         PDU pdu = event.getPDU();
         // check PDU not null
         if (pdu != null) {
