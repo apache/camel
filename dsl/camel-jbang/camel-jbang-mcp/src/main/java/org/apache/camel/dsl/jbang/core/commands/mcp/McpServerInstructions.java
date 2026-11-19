@@ -46,7 +46,7 @@ public class McpServerInstructions implements InitialResponseInfo {
     /** The tool names the text maps questions to; a test checks that each one is an {@code @Tool} method. */
     static final List<String> MAPPED_TOOLS = List.of(
             "camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample",
-            "camel_catalog_pattern_recipes", "camel_catalog_examples",
+            "camel_catalog_examples",
             "camel_dependency_for_class", "camel_validate_source", "camel_run", "camel_get_log", "camel_get_errors",
             "camel_project_overview");
 
@@ -78,7 +78,6 @@ public class McpServerInstructions implements InitialResponseInfo {
             (optionsFilter checks several options in one call: a,b,c)
             - which component for a protocol or product: camel_catalog_find
             - a validated YAML sample and where it goes: camel_catalog_sample
-            - integration-pattern recipes, transport alternatives, requirements and pitfalls: camel_catalog_pattern_recipes
             - complete example projects: camel_catalog_examples
             - a sample Citrus test (test/<name>.citrus.it.yaml, run with camel test run): the test/ file of an \
             example, camel_catalog_examples with filter citrus

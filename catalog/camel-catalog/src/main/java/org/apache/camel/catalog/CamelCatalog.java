@@ -693,9 +693,11 @@ public interface CamelCatalog {
      * The curated integration-pattern recipes for AI-assisted development, as JSON.
      *
      * @return the recipes document, or {@code null} when the catalog has none
-     * @since  4.24
+     * @since  4.25
      */
-    String patternRecipesJSon();
+    default String patternRecipesJSon() {
+        return null;
+    }
 
     /**
      * Lists all the models (EIPs) summary details in JSon

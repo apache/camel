@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +24,6 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -253,24 +251,6 @@ public class CatalogSamplesTest {
                 .filter(t -> t.name().equals("camel_catalog_sample")).findFirst().orElseThrow();
         assertThat(td.params()).anyMatch(p -> p.name().equals("name") && p.required());
         assertThat(td.params()).anyMatch(p -> p.name().equals("limit") && !p.required());
-    }
-
-    @Test
-    void patternRecipesToolIsRegisteredAndFiltersTheCatalogResource() throws Exception {
-        ToolDescriptor descriptor = ToolRegistry.findTool("camel_catalog_pattern_recipes");
-        assertThat(descriptor).isNotNull();
-        assertThat(descriptor.params()).anyMatch(p -> p.name().equals("term") && !p.required());
-        assertThat(descriptor.params()).anyMatch(p -> p.name().equals("camelVersion") && !p.required());
-
-        ToolContext context = new ToolContext();
-        context.setCatalog(new DefaultCamelCatalog());
-        String json = (String) ToolRegistry.execute(
-                "camel_catalog_pattern_recipes", context, Map.of("term", "saga"));
-        JsonObject answer = (JsonObject) Jsoner.deserialize(json);
-        JsonArray recipes = (JsonArray) answer.get("recipes");
-        assertThat(recipes).hasSize(1);
-        assertThat(((JsonObject) recipes.get(0)).getString("id"))
-                .isEqualTo("saga-coordination-with-compensation");
     }
 
     @Test

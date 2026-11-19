@@ -527,8 +527,8 @@
         }
       ],
       "referenceDocs": [
-        "https://camel.apache.org/components/4.24.x/eips/multicast-eip.html",
-        "https://camel.apache.org/components/4.24.x/eips/aggregate-eip.html"
+        "multicast",
+        "aggregate"
       ]
     },
     {
@@ -603,8 +603,8 @@
         }
       ],
       "referenceDocs": [
-        "https://camel.apache.org/components/4.24.x/eips/transactional-client.html",
-        "https://camel.apache.org/components/4.24.x/sql-component.html"
+        "transacted",
+        "sql"
       ]
     },
     {
@@ -668,8 +668,7 @@
       "examples": [],
       "exampleAvailability": "No runnable Saga EIP example was found in the inspected camel-jbang-examples catalog. This minimal YAML route follows the official Camel Saga EIP documentation. It requires the application-provided Saga service and order/credit service beans.",
       "referenceDocs": [
-        "https://camel.apache.org/components/4.24.x/eips/saga-eip.html",
-        "https://camel.apache.org/components/4.24.x/others/lra.html"
+        "saga"
       ]
     }
   ]

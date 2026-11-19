@@ -117,14 +117,16 @@ String recipesJson = catalog.patternRecipesJSon();
 generating code for a different Camel release, call `loadVersion(version)` first and check its return
 value. Do not combine recipes from one release with component or EIP metadata from another release.
 
-The Camel CLI AI authoring tools and MCP server also expose this same resource through
-`camel_catalog_pattern_recipes`; its optional `term` argument filters the recipes by their content.
+These recipes describe problem-level compositions, rather than replacing the individual EIP and
+component samples. Consumers can use the catalog accessor to retrieve recipes matching the
+same Camel version as the component, EIP, and YAML DSL metadata.
 
 The top-level JSON document contains `schemaVersion`, `description`, and a `recipes` array.
 Each recipe describes:
 
 - `id`, `name`, and `problem`: stable identity and the integration problem being addressed
-- `components` and `eips`: the Camel components and EIPs involved
+- `components` and `eips`: the Camel components and canonical EIP models involved; top-level YAML
+  declarations such as `onException` remain in `exampleRoute` and are not listed as EIPs
 - `recommendedOptions`: structured objects with `target`, `name`, and `reason`, plus an optional literal `value`; omit `value` when the recommendation has no single literal setting and explain the guidance in `reason`. `target` identifies a Camel component or model, and `name` identifies an option checked against that catalog model
 - `componentRequirements`: dependencies and runtime capabilities required by the recipe
 - `exampleRoute`: the primary route snippet, including its DSL and source
@@ -132,7 +134,8 @@ Each recipe describes:
 - `pitfalls`: limitations and operational considerations
 - `examples`: links to JBang examples, with repository, path, URL, coverage, and explanatory note
 - `exampleAvailability`: an explanation used when no suitable JBang example is available
-- `referenceDocs` (optional): links to relevant Camel documentation pages
+- `referenceDocs` (optional): version-neutral component or EIP names that can be resolved with
+  `camel_catalog_doc` against the selected catalog version
 
 AI tooling should use the recipe as a starting point, not as proof that a complete application
 can be deployed without further configuration. In particular:

@@ -2314,9 +2314,12 @@ public class CamelCatalogTest {
             Collection<?> referenceDocs = recipe.getCollection("referenceDocs");
             if (referenceDocs != null) {
                 for (Object reference : referenceDocs) {
-                    assertTrue(reference instanceof String, id + " reference docs must be strings");
-                    assertFalse(((String) reference).contains("/components/next/"),
-                            id + " must not use unversioned component documentation links");
+                    assertTrue(reference instanceof String, id + " reference docs must be catalog names");
+                    String name = (String) reference;
+                    assertFalse(name.startsWith("http"),
+                            id + " reference docs must be version-neutral catalog names");
+                    assertTrue(catalog.eipModel(name) != null || catalog.componentModel(name) != null,
+                            id + " reference doc must resolve through camel_catalog_doc: " + name);
                 }
             }
         }

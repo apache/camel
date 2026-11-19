@@ -72,14 +72,6 @@ class AuthoringToolsTest {
     }
 
     @Test
-    void patternRecipesAreExposedThroughTheMcpAuthoringTool() {
-        JsonObject answer = tools.camel_catalog_pattern_recipes(null, "saga", null);
-        assertThat(answer.get("recipes")).as(answer.toJson()).isInstanceOf(org.apache.camel.util.json.JsonArray.class);
-        assertThat(answer.toJson()).contains("saga-coordination-with-compensation");
-        assertThat(answer.toJson()).doesNotContain("idempotent-consumer");
-    }
-
-    @Test
     void catalogDocAnswersWithOptionsAndUriRules() {
         JsonObject timer = tools.camel_catalog_doc(null, "timer", null, "component", null, null, null, null, null, null, null);
         assertThat(timer.getString("kind")).isEqualTo("component");
