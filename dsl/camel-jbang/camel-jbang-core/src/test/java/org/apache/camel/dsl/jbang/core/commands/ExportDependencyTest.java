@@ -593,7 +593,7 @@ class ExportDependencyTest extends ExportBaseTestSupport {
         // application.properties turned the health check on
         Path baseDir = baseDirWithApplicationProperties(applicationProperties);
 
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir;
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
