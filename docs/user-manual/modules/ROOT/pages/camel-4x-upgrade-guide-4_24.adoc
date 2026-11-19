@@ -10424,3 +10424,11 @@ component or the endpoint is used as it is.
 
 The new `tlsTrustCertsFilePath` option sets a PEM file with the certificates of the certificate authorities to trust,
 for a broker whose certificate is not signed by an authority that the JVM trusts.
+
+=== camel-geocoder - the language option is used
+
+The `language` option (default `en`) is now sent with each request: as the `accept-language` parameter to Nominatim
+and as the `language` parameter to Google. Before, the option was ignored, so Nominatim answered in the local language
+of the place (for example `Deutschland` for Germany) and Google in its own default language. The address, country,
+city and region headers and the body now come in English unless `language` is set to another language code. Set
+`language` to an empty value to get the previous answers.

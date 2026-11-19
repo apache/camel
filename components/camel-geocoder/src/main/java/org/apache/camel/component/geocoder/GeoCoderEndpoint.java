@@ -59,7 +59,10 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     private String address;
     @UriPath
     private String latlng;
-    @UriParam(defaultValue = "en")
+    @UriParam(defaultValue = "en",
+              description = "The language of the answer (such as the address, the country and the city), as a language code"
+                            + " such as en, de or fr. It is sent as the accept-language parameter to Nominatim and as the language"
+                            + " parameter to Google.")
     private String language = "en";
     @UriParam(label = "security", security = "secret", description = "Client ID to access Google GeoCoding server.")
     private String clientId;
@@ -128,7 +131,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     /**
-     * The language to use.
+     * The language of the answer, as a language code such as en, de or fr.
      */
     public void setLanguage(String language) {
         this.language = language;
