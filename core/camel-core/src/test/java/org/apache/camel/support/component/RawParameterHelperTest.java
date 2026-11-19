@@ -45,6 +45,15 @@ public class RawParameterHelperTest extends ContextTestSupport {
         Assertions.assertEquals("abc", map.get("username"));
         Assertions.assertEquals(context.getName(), map.get("password"));
 
+        // literal: the RAW token is removed, but the simple expression is not evaluated
+        map.put("password", "RAW($simple{camelId})");
+        RawParameterHelper.resolveRawParameterValues(context, map, true);
+        Assertions.assertEquals("$simple{camelId}", map.get("password"));
+
+        map.put("password", "RAW(sec*ret)");
+        RawParameterHelper.resolveRawParameterValues(context, map, true);
+        Assertions.assertEquals("sec*ret", map.get("password"));
+
         String usr = System.getenv("USER");
         if (usr != null) {
             map.put("password", "RAW($simple{env:USER})");

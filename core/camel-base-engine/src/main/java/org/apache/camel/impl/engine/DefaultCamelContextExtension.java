@@ -263,7 +263,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint getEndpoint(NormalizedEndpointUri uri) {
-        return camelContext.doGetEndpoint(uri.getUri(), null, true, false);
+        return camelContext.doGetEndpoint(uri.getUri(), null, true, false, isLiteralOptionBinding(uri));
     }
 
     @Override
@@ -273,12 +273,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
-        return camelContext.doGetEndpoint(uri.getUri(), null, true, true);
+        return camelContext.doGetEndpoint(uri.getUri(), null, true, true, isLiteralOptionBinding(uri));
     }
 
     @Override
     public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
-        return camelContext.doGetEndpoint(uri.getUri(), parameters, true, false);
+        return camelContext.doGetEndpoint(uri.getUri(), parameters, true, false, isLiteralOptionBinding(uri));
+    }
+
+    private static boolean isLiteralOptionBinding(NormalizedEndpointUri uri) {
+        return uri instanceof NormalizedUri nu && nu.isLiteralOptionBinding();
     }
 
     @Override

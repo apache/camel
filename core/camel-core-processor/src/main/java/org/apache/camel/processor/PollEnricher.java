@@ -34,12 +34,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -49,6 +49,7 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -466,7 +467,29 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        return ProcessorHelper.prepareRecipient(exchange, recipient);
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String string) {
+            // trim strings as end users might have added spaces between separators
+            recipient = string.trim();
+        }
+        if (recipient != null) {
+            CamelContext ecc = exchange.getContext();
+            String uri;
+            if (recipient instanceof String string) {
+                uri = string;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint without re-resolving property placeholders on the
+            // per-message evaluated recipient, matching toD and enrich (CAMEL-24282 / CAMEL-24414).
+            // pollEnrich resolves its static uri at build time, so the placeholder belongs there.
+            // The per-message recipient comes from the message, so its option values are bound as literal text
+            // as well: no property placeholders, #class: or #property: (#bean: and #type: still resolve) - CAMEL-27160
+            return NormalizedUri.newNormalizedUri(uri, false, true);
+        }
+        return null;
     }
 
     protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
@@ -518,13 +541,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        // in case path has property placeholders then try to let property component resolve those
-        try {
-            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-
+        // NOTE: property placeholders in the dynamic-uri expression are resolved once when the route is built. The
+        // per-message evaluated recipient must not be re-resolved here: message content that happens to contain {{...}}
+        // is taken as a literal endpoint uri, as in SendDynamicProcessor#resolveUri
         return uri;
     }
 

@@ -276,7 +276,9 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
-            if (camelContext != null && !name.equals("properties")) {
+            // A name is not resolved either while an endpoint whose uri is computed from the message is created,
+            // as the name may come from an option value of that uri.
+            if (camelContext != null && !name.equals("properties") && !PropertyBindingSupport.isLiteralOptionBinding()) {
                 name = camelContext.resolvePropertyPlaceholders(name);
             }
         } catch (Exception e) {
@@ -317,7 +319,9 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
-            if (camelContext != null && !name.equals("properties")) {
+            // A name is not resolved either while an endpoint whose uri is computed from the message is created,
+            // as the name may come from an option value of that uri.
+            if (camelContext != null && !name.equals("properties") && !PropertyBindingSupport.isLiteralOptionBinding()) {
                 name = camelContext.resolvePropertyPlaceholders(name);
             }
         } catch (Exception e) {
