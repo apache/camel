@@ -607,7 +607,11 @@ public interface PulsarComponentBuilderFactory {
     
         
         /**
-         * Control batching method used by the producer.
+         * Control batching method used by the producer. DEFAULT batches the
+         * messages together regardless of their key. KEY_BASED batches the
+         * messages of each key separately, so that a Key_Shared subscription
+         * spreads the keys over its consumers. A custom BatcherBuilder can be
+         * given as a bean reference.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
