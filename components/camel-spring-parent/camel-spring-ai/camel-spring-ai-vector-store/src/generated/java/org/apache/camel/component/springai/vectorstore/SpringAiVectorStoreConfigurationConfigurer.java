@@ -27,6 +27,8 @@ public class SpringAiVectorStoreConfigurationConfigurer extends org.apache.camel
         case "filterexpression":
         case "filterExpression": target.setFilterExpression(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation.class, value)); return true;
+        case "searchbyvector":
+        case "searchByVector": target.setSearchByVector(property(camelContext, boolean.class, value)); return true;
         case "similaritythreshold":
         case "similarityThreshold": target.setSimilarityThreshold(property(camelContext, double.class, value)); return true;
         case "topk":
@@ -43,6 +45,8 @@ public class SpringAiVectorStoreConfigurationConfigurer extends org.apache.camel
         case "filterexpression":
         case "filterExpression": return java.lang.String.class;
         case "operation": return org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation.class;
+        case "searchbyvector":
+        case "searchByVector": return boolean.class;
         case "similaritythreshold":
         case "similarityThreshold": return double.class;
         case "topk":
@@ -60,6 +64,8 @@ public class SpringAiVectorStoreConfigurationConfigurer extends org.apache.camel
         case "filterexpression":
         case "filterExpression": return target.getFilterExpression();
         case "operation": return target.getOperation();
+        case "searchbyvector":
+        case "searchByVector": return target.isSearchByVector();
         case "similaritythreshold":
         case "similarityThreshold": return target.getSimilarityThreshold();
         case "topk":
