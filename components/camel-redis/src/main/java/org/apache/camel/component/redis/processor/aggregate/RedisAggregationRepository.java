@@ -587,7 +587,7 @@ public class RedisAggregationRepository extends ServiceSupport
                         name, count);
             }
         } catch (Exception e) {
-            LOG.debug("Cannot check the entries of the Redis hash {}", name, e);
+            LOG.warn("Cannot check the entries of the Redis hash {}", name, e);
         }
     }
 
