@@ -10099,6 +10099,10 @@ the option of the Kamelet, or the input header it documents (such as `ce-issueKe
   parameter, and removes the header after the call. The key is no longer in the address of the request, nor in the
   logs of a proxy. Azure Functions accepts the key in either place, so the function needs no change, but a gateway in
   front of it must pass the header on.
+* `rest-openapi-sink`, `ogcapi-features-action` and `azure-functions-sink` no longer send an `Authorization` or
+  `Proxy-Authorization` header that is on the message, and `azure-functions-sink` no longer sends an incoming
+  `x-functions-key`. `rest-openapi-sink` has new `authUsername`, `authPassword` and `authBearerToken` options, and
+  `ogcapi-features-action` the login options of `http-sink`; log in with these instead.
 * The passwords, keys and tokens that a Kamelet puts into the address of an endpoint are passed in `RAW()`, so a value
   with `&`, `+` or `=` is sent whole. A value that was URL-encoded to work around this, such as `%2B` for `+`, is now
   sent literally and must be changed back to the plain value.
