@@ -124,6 +124,8 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    [`payload-mode.adoc`](design/payload-mode.adoc) (proposed `payloadMode`, the `PayloadMode` SPI),
    [`kamelets-in-camel.adoc`](design/kamelets-in-camel.adoc) (proposed move of `camel-kamelets` into Camel, released
    with Camel),
+   [`langchain4j-service.adoc`](design/langchain4j-service.adoc) (`camel-langchain4j-service`, invoking a
+   user-built LangChain4j AI Service, ownership split with `camel-langchain4j-agent`),
    [`good-to-know.adoc`](design/good-to-know.adoc) (proposed hint rules in the catalog, facts per component),
    [`cli-short-commands.adoc`](design/cli-short-commands.adoc) (proposed resident daemon for the short commands of
    the Camel CLI, and why not a native front),

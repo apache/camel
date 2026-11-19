@@ -292,6 +292,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("langchain4j-embeddings", "camel-langchain4j-embeddings"),
             Map.<String, String> entry("langchain4j-embeddingstore", "camel-langchain4j-embeddingstore"),
             Map.<String, String> entry("langchain4j-ingest", "camel-langchain4j-ingest"),
+            Map.<String, String> entry("langchain4j-service", "camel-langchain4j-service"),
             Map.<String, String> entry("langchain4j-web-search", "camel-langchain4j-web-search"),
             Map.<String, String> entry("language", "camel-language"),
             Map.<String, String> entry("ldap", "camel-ldap"),

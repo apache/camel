@@ -48,7 +48,7 @@ public final class MojoHelper {
                         dir.resolve("camel-typesafe-ai"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
-                        dir.resolve("camel-langchain4j-ingest"),
+                        dir.resolve("camel-langchain4j-ingest"), dir.resolve("camel-langchain4j-service"),
                         dir.resolve("camel-langchain4j-tokenizer"), dir.resolve("camel-langchain4j-tools"),
                         dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-mcp-server"),

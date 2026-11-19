@@ -1,0 +1,280 @@
+= LangChain4j Service Component
+:doctitle: LangChain4j Service
+:shortname: langchain4j-service
+:artifactid: camel-langchain4j-service
+:description: Invoke LangChain4j AI Services and agents from Camel routes.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j Service component invokes user-defined https://docs.langchain4j.dev/tutorials/ai-services[LangChain4j AI Services] from Camel routes. You define the AI Service interface, build it with the LangChain4j `AiServices` builder, and register it in the Camel registry. The component looks it up and invokes it. LangChain4j owns all AI behavior: prompts, memory, tools, guardrails, and agentic loops.
+
+The component does not create or configure AI Services. It performs registry lookup and method invocation only.
+
+Streaming responses, such as AI Service methods returning `TokenStream`, are not supported in this version. Methods must return a synchronous result.
+
+== Why not the bean component?
+
+The xref:bean-component.adoc[Bean] component can also invoke a registered object. This component adds AI-specific behavior on top:
+
+* Parameter binding follows LangChain4j annotations. The body binds to the `@UserMessage` parameter. Headers bind to `@V` template variables and the `@MemoryId` parameter.
+* Fail-fast validation at route startup. Missing services, ambiguous methods, and invalid method names fail before the first message flows.
+* A stable, component-scoped header namespace for AI concerns such as memory IDs and template variables.
+
+== URI format
+
+[source]
+----
+langchain4j-service:serviceName[?method=methodName]
+----
+
+Where *serviceName* is the name of the AI Service bean in the Camel registry.
+
+A `default` method counts as a method: it is callable, and a service built by a framework implements it as a concrete method, so there is no way to tell it apart. A `static` method is never a candidate.
+
+The `method` parameter is optional when the registered instance exposes a single method. It is required as soon as there are several, which is the normal case when a framework builds the service: the framework's own methods sit next to the AI Service ones. Method overloading is not supported: method names must be unique.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Parameter binding
+
+The producer binds AI Service method parameters from the exchange:
+
+[width="100%",cols="30%,70%",options="header"]
+|===
+| Parameter annotation | Bound from
+
+| `@UserMessage` | The message body, converted to the parameter type.
+| `@V("variableName")` | The `"variableName"` key of the `CamelLangChain4jServiceVariables` header, a `Map<String, Object>` of template variable name to value.
+| `@MemoryId` | The header `CamelLangChain4jServiceMemoryId`.
+| _none (single parameter)_ | The message body.
+|===
+
+Rules:
+
+* A method with multiple parameters must annotate every parameter with `@UserMessage`, `@V`, or `@MemoryId`.
+  This is stricter than LangChain4j on its own, which binds an un-annotated parameter as a template variable named
+  after the parameter. The component rejects that shape at route startup instead, because an unbound parameter in a
+  route is nearly always a mistake, and the parameter name is only available when the class was compiled with
+  `-parameters`.
+* At most one parameter can be annotated with `@UserMessage`.
+* Two parameters with the same `@V` variable name are rejected at route startup: they would silently feed from the same map key.
+* An empty `@V("")` template variable name is rejected at route startup.
+* At most one parameter can be annotated with `@MemoryId`.
+* The `CamelLangChain4jServiceVariables` and `CamelLangChain4jServiceMemoryId` headers are required at runtime when the method has `@V` or `@MemoryId` parameters. A missing header fails the exchange with an exception caused by `NoSuchHeaderException`, so `onException(NoSuchHeaderException.class)` matches it. A variables map that lacks a `@V` variable's key fails the exchange with an `IllegalArgumentException` naming the variable.
+* Zero-parameter methods are supported. Use a method-level `@UserMessage("...")` template. The message body is ignored.
+* A non-void method's return value becomes the new message body; a `null` return sets the body to `null`. A void method leaves the body unchanged.
+
+== Usage
+
+=== Single-method AI Service
+
+Define the interface, build the service, and register it:
+
+[source,java]
+----
+interface Assistant {
+    String chat(@UserMessage String text);
+}
+
+Assistant assistant = AiServices.builder(Assistant.class)
+        .chatModel(model)
+        .build();
+
+camelContext.getRegistry().bind("assistant", assistant);
+----
+
+Invoke it from a route:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-service:assistant");
+----
+
+The body is passed as the user message. The AI response becomes the new body.
+
+=== Multi-method AI Service
+
+When the interface has more than one method, select one with the `method` parameter:
+
+[source,java]
+----
+interface Assistant {
+    String chat(@UserMessage String text);
+    String summarize(@UserMessage String text);
+}
+
+from("direct:summarize")
+    .to("langchain4j-service:assistant?method=summarize");
+----
+
+Omitting `method` on a multi-method interface fails at route startup.
+
+=== Template variables
+
+LangChain4j prompt templates use `@V` variables. They bind from the `CamelLangChain4jServiceVariables` header, a map of variable name to value:
+
+[source,java]
+----
+interface Assistant {
+    @SystemMessage("Use the following context when answering: {{context}}")
+    String analyze(@UserMessage String text, @V("context") String context);
+}
+
+from("direct:analyze")
+    .setHeader(LangChain4jServiceHeaders.VARIABLES, constant(Map.of("context", "background info")))
+    .to("langchain4j-service:assistant");
+----
+
+=== Memory ID for stateful AI Services
+
+AI Services with chat memory take a `@MemoryId` parameter. It binds from the `CamelLangChain4jServiceMemoryId` header:
+
+[source,java]
+----
+interface Assistant {
+    String chat(@UserMessage String text, @MemoryId String memoryId);
+}
+
+Assistant assistant = AiServices.builder(Assistant.class)
+        .chatModel(model)
+        .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+        .build();
+
+from("direct:chat")
+    .setHeader("CamelLangChain4jServiceMemoryId", header("sessionId"))
+    .to("langchain4j-service:assistant");
+----
+
+Each distinct memory ID keeps its own conversation history.
+
+[IMPORTANT]
+====
+The memory ID comes from a header. A sender that controls headers therefore selects which conversation
+history the AI Service reads and appends to. When a consumer maps untrusted input into headers, strip the
+component headers before the `to`, for example with `removeHeaders("CamelLangChain4jService*")`, and set the
+memory ID from a value the route trusts.
+====
+
+=== Tool-enabled AI Services
+
+A tool-enabled interface is invoked like any other. LangChain4j runs the tool-calling loop inside the invocation, and the final result is returned to the route:
+
+[source,java]
+----
+Assistant assistant = AiServices.builder(Assistant.class)
+        .chatModel(model)
+        .tools(new WeatherTools())
+        .build();
+
+from("direct:assistant")
+    .to("langchain4j-service:assistant");
+----
+
+=== Agents and agentic workflows
+
+WARNING: Agent support is experimental. LangChain4j publishes its agentic module as a `-betaNN` artifact whose API still changes between releases, so how agents bind to routes may change with it.
+
+A LangChain4j agent is an interface with one method annotated `@Agent`, built with `AgenticServices`. The component invokes it like any other AI Service. Agent method parameters are annotated `@V`, so they bind from the `CamelLangChain4jServiceVariables` map header.
+
+Agents live in the LangChain4j agentic module, which this component does not bring in. Add it to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-agentic</artifactId>
+    <version>${langchain4j-beta-version}</version>
+</dependency>
+----
+
+The agentic module is still published under a `-betaNN` suffix, so its version is not the plain LangChain4j version. Camel builds against it under the `langchain4j-beta-version` property. Pick the suffixed version matching the LangChain4j version this Camel release builds against.
+
+[source,java]
+----
+public interface StoryWriterAgent {
+    @Agent(value = "Writes a one-sentence story about a topic", outputKey = "story")
+    @UserMessage("Write a one-sentence story about {{topic}}.")
+    String writeStory(@V("topic") String topic);
+}
+
+StoryWriterAgent agent = AgenticServices.agentBuilder(StoryWriterAgent.class)
+        .chatModel(model)
+        .build();
+
+camelContext.getRegistry().bind("storyWriter", agent);
+
+from("direct:story")
+    .setHeader(LangChain4jServiceHeaders.VARIABLES, constant(Map.of("topic", "a camel crossing the desert")))
+    .to("langchain4j-service:storyWriter?method=writeStory");
+----
+
+An agentic workflow, such as a sequence, a parallel, a loop, a conditional, a supervisor or a planner, is itself an agent, so it is invoked the same way. Every workflow kind is built the same way, so they all behave alike here. The whole workflow runs inside the single invocation, and the value of its output key becomes the message body:
+
+[source,java]
+----
+public interface StoryFlowAgent {
+    @Agent
+    String writeLoudStory(@V("topic") String topic);
+}
+
+StoryFlowAgent flow = AgenticServices.sequenceBuilder(StoryFlowAgent.class)
+        .subAgents(writer, rewriter)
+        .outputKey("loudStory")
+        .build();
+
+camelContext.getRegistry().bind("storyFlow", flow);
+
+from("direct:story")
+    .setHeader(LangChain4jServiceHeaders.VARIABLES, constant(Map.of("topic", "a camel crossing the desert")))
+    .to("langchain4j-service:storyFlow?method=writeLoudStory");
+----
+
+`AgenticServices` builds its services over the agent interface plus its own framework interfaces, such as `InternalAgent` and `AgenticScopeOwner`. Their methods sit next to the agent method, so set `method` to the name of the agent method.
+
+Untyped agents are not supported in this version. The no-argument builders return a LangChain4j interface instead of a user interface: `UntypedAgent` for `agentBuilder()`, `sequenceBuilder()` and the other workflow builders, `SupervisorAgent` for `supervisorBuilder()`. Those carry no LangChain4j parameter annotations, so there is nothing to bind the body and headers to. Use the typed builders, which take the agent interface as an argument.
+
+== Error handling
+
+Startup failures. These fail route startup, before any message flows:
+
+* The service name is not found in the registry.
+* The service exposes no method to invoke.
+* The service exposes several methods and no `method` parameter is set.
+* The `method` parameter names a method that does not exist.
+* The method name is overloaded.
+* The method returns `TokenStream`. Streaming is not supported, and nothing would ever subscribe to the stream.
+* Parameter binding is ambiguous or invalid, such as conflicting annotations on one parameter, multiple `@UserMessage` or `@MemoryId` parameters, un-annotated parameters on a multi-parameter method, or an empty, colliding, or duplicated `@V` template variable name.
+
+The service lookup and these validations run when the producer starts. With `lazyStartProducer=true` the route starts anyway and the validations run on the first message instead, so the failure routes to the Camel error handler like any other exchange failure.
+
+Exchange failures. These fail the exchange and route to the Camel error handler:
+
+* The body is null but a user message parameter is expected.
+* A required `@V` or `@MemoryId` header is missing.
+* The AI Service method throws. The original exception is unwrapped from the reflection layer and propagated as the exchange exception, so `onException` clauses match the real type:
+
+[source,java]
+----
+onException(dev.langchain4j.exception.ModelNotFoundException.class)
+    .handled(true)
+    .setBody(constant("The model is not available"));
+----
+
+== Observability
+
+The component relies on default Camel endpoint spans. The span of the `to` step carries the endpoint URI, which includes the service name and the method. The component adds no custom tracing in this version.
+
+Model-level GenAI telemetry, such as token usage and model latency, is the responsibility of LangChain4j and its observability integrations.

@@ -11499,6 +11499,46 @@ public class StaticEndpointBuilders {
         return LangChain4jIngestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Service (camel-langchain4j-service)
+     * Invoke LangChain4j AI Services and agents from Camel routes.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-langchain4j-service
+     * 
+     * Syntax: <code>langchain4j-service:serviceName</code>
+     * 
+     * Path parameter: serviceName (required)
+     * The AI Service name to look up in the Camel registry
+     * 
+     * @param path serviceName
+     * @return the dsl builder
+     */
+    public static LangChain4jServiceEndpointBuilderFactory.LangChain4jServiceEndpointBuilder langchain4jService(String path) {
+        return langchain4jService("langchain4j-service", path);
+    }
+    /**
+     * LangChain4j Service (camel-langchain4j-service)
+     * Invoke LangChain4j AI Services and agents from Camel routes.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-langchain4j-service
+     * 
+     * Syntax: <code>langchain4j-service:serviceName</code>
+     * 
+     * Path parameter: serviceName (required)
+     * The AI Service name to look up in the Camel registry
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path serviceName
+     * @return the dsl builder
+     */
+    public static LangChain4jServiceEndpointBuilderFactory.LangChain4jServiceEndpointBuilder langchain4jService(String componentName, String path) {
+        return LangChain4jServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
      * 
