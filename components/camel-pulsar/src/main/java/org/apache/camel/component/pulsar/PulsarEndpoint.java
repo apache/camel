@@ -187,6 +187,11 @@ public class PulsarEndpoint extends DefaultEndpoint implements EndpointServiceLo
                 builder = builder.authentication(pulsarConfiguration.getAuthenticationClass(),
                         pulsarConfiguration.getAuthenticationParams());
             }
+            if (ObjectHelper.isNotEmpty(pulsarConfiguration.getTlsTrustCertsFilePath())) {
+                builder = builder.tlsTrustCertsFilePath(pulsarConfiguration.getTlsTrustCertsFilePath());
+            }
+            // the Pulsar client does not check the host name in the certificate of the broker by default
+            builder = builder.enableTlsHostnameVerification(pulsarConfiguration.isHostnameVerification());
             pulsarClient = builder.build();
         }
     }

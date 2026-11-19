@@ -30,7 +30,7 @@ public class FileToFtpsExplicitSSLWithoutClientAuthIT extends FtpsServerExplicit
     protected String getFtpUrl() {
         return "ftps://admin@localhost:" + service.getPort()
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
-               + "&securityProtocol=TLSv1.2&implicit=false";
+               + "&securityProtocol=TLSv1.2&implicit=false" + TRUST_STORE_OPTIONS;
     }
 
     @Test
