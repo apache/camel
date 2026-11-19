@@ -60,6 +60,21 @@ class GoogleDriveRequestCredentialTest {
     }
 
     @Test
+    void shouldNotSendAnAccessTokenHeaderOnTheRequestWhateverItsCase() throws Exception {
+        for (String header : List.of("CamelGoogleDrive.accessToken", "CamelGoogleDrive.AccessToken")) {
+            transport.requests.clear();
+            try (CamelContext context = createContext()) {
+                context.createProducerTemplate().requestBodyAndHeader(
+                        "google-drive://drive-files/list?" + OAUTH, null, header, "htoken");
+
+                String url = transport.requests.get(0).getUrl();
+                assertFalse(url.contains("access_token"), header + " -> " + url);
+                assertFalse(url.contains("htoken"), header + " -> " + url);
+            }
+        }
+    }
+
+    @Test
     void shouldSendTheAccessTokenOfTheConsumerOnlyInTheAuthorizationHeader() throws Exception {
         try (CamelContext context = createContext()) {
             MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);

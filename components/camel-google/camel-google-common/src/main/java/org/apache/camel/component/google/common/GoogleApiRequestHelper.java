@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.google.common;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
@@ -32,11 +35,17 @@ public final class GoogleApiRequestHelper {
     /**
      * The options that make up the credential of the client. The client sends the credential in the Authorization
      * header, so they are not set on the request, where accessToken would become the access_token query parameter.
-     * p12FileName is the key file of a service account (Calendar).
+     * p12FileName is the key file of a service account (Calendar). The names are matched ignoring case, as a header
+     * such as CamelGoogleDrive.AccessToken sets the same property as accessToken.
      */
-    public static final Set<String> CREDENTIAL_OPTIONS
-            = Set.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate",
-                    "p12FileName");
+    public static final Set<String> CREDENTIAL_OPTIONS;
+
+    static {
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        names.addAll(List.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate",
+                "p12FileName"));
+        CREDENTIAL_OPTIONS = Collections.unmodifiableSet(names);
+    }
 
     private GoogleApiRequestHelper() {
     }

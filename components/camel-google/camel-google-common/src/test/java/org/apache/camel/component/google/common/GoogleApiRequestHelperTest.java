@@ -34,7 +34,7 @@ class GoogleApiRequestHelperTest {
             Request request = new Request();
 
             GoogleApiRequestHelper.configureRequest(context, request,
-                    Map.of("accessToken", "atoken", "clientSecret", "secret", "fields", "id,name"));
+                    Map.of("AccessToken", "atoken", "clientSecret", "secret", "fields", "id,name"));
 
             assertEquals("id,name", request.getFields());
             assertNull(request.getAccessToken());
