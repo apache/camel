@@ -111,6 +111,8 @@ public class NatsConfiguration implements Cloneable {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean hostnameVerification = true;
     @UriParam(label = "security")
     String credentialsFilePath;
     @UriParam(label = "advanced")
@@ -403,6 +405,21 @@ public class NatsConfiguration implements Cloneable {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the NATS server matches the host Camel connects to, when TLS is used.
+     * The client then keeps the host name of a server for TLS, and connects to the fastest of its IP addresses. A
+     * server that is given, or that the cluster announces, by its IP address needs a certificate that names that
+     * address. When disabled, any certificate trusted by the JVM, or by the sslContextParameters, is accepted, whatever
+     * host it was issued for.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
     }
 
     /**
