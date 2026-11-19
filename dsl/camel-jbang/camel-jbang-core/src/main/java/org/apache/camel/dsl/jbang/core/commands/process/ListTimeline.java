@@ -35,6 +35,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
@@ -109,6 +110,10 @@ public class ListTimeline extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<RouteRow> routeRows = new ArrayList<>();
@@ -176,7 +181,7 @@ public class ListTimeline extends ProcessWatchCommand {
         }
     }
 
-    private static void addRoutes(Row base, JsonObject timeline, List<RouteRow> rows) {
+    private void addRoutes(Row base, JsonObject timeline, List<RouteRow> rows) {
         JsonArray routes = (JsonArray) timeline.get("routes");
         if (routes == null) {
             return;
@@ -196,7 +201,7 @@ public class ListTimeline extends ProcessWatchCommand {
             RouteRow row = new RouteRow();
             row.copy(base);
             row.routeId = r.getString("routeId");
-            row.from = r.getString("from");
+            row.from = ListingFormat.masked(r.getString("from"), mask);
             long[] completed = values(r, "completed");
             long[] recovered = values(r, "recovered");
             long[] handled = values(r, "handled");
@@ -230,7 +235,7 @@ public class ListTimeline extends ProcessWatchCommand {
         }
     }
 
-    private static void addExchanges(Row base, JsonObject timeline, List<ExchangeRow> rows) {
+    private void addExchanges(Row base, JsonObject timeline, List<ExchangeRow> rows) {
         JsonArray kept = (JsonArray) timeline.get("exchanges");
         if (kept == null) {
             return;
@@ -251,7 +256,7 @@ public class ListTimeline extends ProcessWatchCommand {
             JsonArray sends = (JsonArray) e.get("endpointSends");
             row.sends = sends != null ? sends.size() : 0;
             row.chaosRule = e.getString("chaosRule");
-            row.endpointUri = e.getString("fromEndpointUri");
+            row.endpointUri = ListingFormat.masked(e.getString("fromEndpointUri"), mask);
             rows.add(row);
         }
     }

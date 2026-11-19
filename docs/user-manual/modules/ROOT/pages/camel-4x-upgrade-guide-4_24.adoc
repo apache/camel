@@ -257,6 +257,28 @@ option from the JAXB data format configured on the CamelContext (such as `camel.
 
 The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
 
+=== camel-google-sheets - the x-struct transformer writes to the configured spreadsheet
+
+When the `google-sheets:application-x-struct` data type transformer turns JSON rows into a `ValueRange`, a
+`spreadsheetId` field in a row no longer chooses the spreadsheet. The spreadsheet is the one of the
+`CamelGoogleSheets.spreadsheetId` header, or else the `spreadsheetId` option of the endpoint. The field is still left
+out of the row values. Before, the field of the last row replaced the spreadsheet id, also when the header was set.
+
+Without the `CamelGoogleSheets.spreadsheetId` header, the transformer no longer sets the spreadsheet id headers
+(before it set them to an empty value), so the `spreadsheetId` option of the endpoint applies.
+
+Routes that take the spreadsheet from the message body must set the `CamelGoogleSheets.spreadsheetId` header from it
+before the transformer, for example with `setHeader` and a JSONPath expression.
+
+=== camel-google-sheets - the OAuth access token is sent only in the Authorization header
+
+The producer and the consumer of `google-sheets` no longer copy the `accessToken` option onto the request as the
+`access_token` query parameter of the Google API. The access token is sent in the `Authorization` header by the OAuth
+credential of the client, as before, so the request URL no longer carries it. The other credential options
+(`clientId`, `clientSecret`, `refreshToken`, `serviceAccountKey` and `delegate`) are not set on the request either.
+A `CamelGoogleSheets.accessToken` header is ignored for the same reason; use a separate endpoint with its own
+`accessToken` to call with another token.
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
@@ -2232,6 +2254,15 @@ a route id) waited for the timeout. Now both go to the integration that runs. Wi
 command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
 an error, rather than reported as sent.
 
+=== camel-jbang - camel get endpoint and the other listings mask the passwords in endpoint URIs
+
+`camel get endpoint`, `camel get consumer`, `camel get producer`, `camel get route`, `camel get processor`,
+`camel get service`, `camel get kafka`, `camel get timeline`, `camel get sql-trace`, `camel top route`,
+`camel top processor` and `camel status` now show the endpoint URIs the way Camel logs them: the values of options
+such as `password`, `secretKey`, `authenticationToken` or `keyStorePassword`, and the password in the user info, are
+shown as `xxxxxx`. This applies to the table and to the `--json` output. To see the URIs as configured, use
+`--mask=false`.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
@@ -2405,6 +2436,15 @@ with `defaultFrom`.
 
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
+
+=== camel-smpp - the system id and password headers need the allowSystemIdAndPasswordFromHeaders option
+
+A producer with `lazySessionCreation=true` took the system id and the password, with which it connects to the SMSC,
+from the `CamelSmppSystemId` and `CamelSmppPassword` headers of the first message when both were set, over the
+`systemId` and `password` options of the endpoint. It now connects with the `systemId` and `password` of the endpoint,
+and ignores these headers, unless the endpoint sets the new `allowSystemIdAndPasswordFromHeaders=true` option (disabled
+by default), or the component sets `camel.component.smpp.allowSystemIdAndPasswordFromHeaders=true`. A route that
+relies on these headers must set this option.
 
 === camel-coap - a body that does not convert to a byte array fails
 
@@ -7085,6 +7125,15 @@ The endpoint now closes the client it created when it stops, for example when it
 the `CamelContext` stops, and creates a new one when it is started again. Before, a client created from `hosts` stayed
 open. A client the endpoint did not create (the `mongoConnection` option, the client of the component, or the bean
 named by the endpoint path) is not closed.
+
+=== camel-mongodb - the tls and tlsAllowInvalidHostnames options are applied
+
+The `tls` and `tlsAllowInvalidHostnames` endpoint options are now applied to the client the endpoint creates from
+`hosts` or `connectionUriString`, as `sslContextParameters` already was. Before, they were not used: an endpoint with
+`tls=true` and no `sslContextParameters` connected without TLS. Such an endpoint now connects with TLS, so the MongoDB
+server must accept TLS connections, and its certificate must be trusted by the JVM (or set `sslContextParameters`).
+When none of these options is set, the TLS settings of `connectionUriString` (for example `?tls=true`) are used as
+before.
 
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 

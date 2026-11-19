@@ -23,6 +23,7 @@ camel get consumer [options]
 | `--filter` | Filter consumers by URI |  | String
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter consumers by limiting to the given number of rows |  | int
+| `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys | true | boolean
 | `--scheduled` | Filter consumer to only show scheduled based consumers |  | boolean
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String

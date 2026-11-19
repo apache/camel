@@ -3976,7 +3976,7 @@ Examples:
 Get status of Camel consumers
 Usage: camel get consumer [-h] [--sort=<sort>] [--limit=<limit>]
                            [--filter=<filter>] [--scheduled] [--short-uri]
-                           [--wide-uri] [--watch] [--json]
+                           [--wide-uri] [--mask] [--watch] [--json]
                            [--duration=<duration>] [<name>]
 
 Options:
@@ -3990,6 +3990,10 @@ Options:
                             consumers
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4076,8 +4080,8 @@ Usage: camel get endpoint [-h] [--sort=<sort>] [--limit=<limit>]
                            [--filter=<filter>]
                            [--filter-direction=<filter-direction>]
                            [--filter-total=<filter-total>] [--verbose]
-                           [--short-uri] [--wide-uri] [--watch] [--json]
-                           [--duration=<duration>] [<name>]
+                           [--short-uri] [--wide-uri] [--mask] [--watch]
+                           [--json] [--duration=<duration>] [<name>]
 
 Options:
   -h, --help                Display this help and exit
@@ -4095,6 +4099,10 @@ Options:
                             headers)
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4360,8 +4368,8 @@ Examples:
 == camel get kafka --help
 List Kafka consumers of Camel integrations
 Usage: camel get kafka [-h] [--sort=<sort>] [--committed] [--short-uri]
-                        [--wide-uri] [--watch] [--json] [--duration=<duration>]
-                        [<name>]
+                        [--wide-uri] [--mask] [--watch] [--json]
+                        [--duration=<duration>] [<name>]
 
 Options:
   -h, --help                Display this help and exit
@@ -4371,6 +4379,10 @@ Options:
                             Kafka brokers)
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4439,7 +4451,7 @@ Examples:
 
 == camel get processor --help
 Get status of Camel processors
-Usage: camel get processor [-h] [--sort=<sort>] [--remote] [--source]
+Usage: camel get processor [-h] [--sort=<sort>] [--remote] [--source] [--mask]
                             [--limit=<limit>] [--filter-mean=<filter-mean>]
                             [--running] [--filter=<filter>] [--group=<group>]
                             [--description] [--note] [--show-group] [--watch]
@@ -4452,6 +4464,10 @@ Options:
       --remote              Break down counters into remote/total pairs
       --source              Prefer to display source filename/code instead of
                             IDs
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --limit=<limit>       Filter routes by limiting to the given number of
                             rows
       --filter-mean=<filter-mean>
@@ -4480,7 +4496,8 @@ Examples:
 Get status of Camel producers
 Usage: camel get producer [-h] [--sort=<sort>] [--limit=<limit>]
                            [--filter=<filter>] [--short-uri] [--wide-uri]
-                           [--watch] [--json] [--duration=<duration>] [<name>]
+                           [--mask] [--watch] [--json] [--duration=<duration>]
+                           [<name>]
 
 Options:
   -h, --help                Display this help and exit
@@ -4491,6 +4508,10 @@ Options:
       --filter=<filter>     Filter producers by URI
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4557,7 +4578,7 @@ Examples:
 == camel get route --help
 Get status of Camel routes
 Usage: camel get route [-h] [--sort=<sort>] [--source] [--remote] [--short-uri]
-                        [--wide-uri] [--limit=<limit>]
+                        [--wide-uri] [--mask] [--limit=<limit>]
                         [--filter-mean=<filter-mean>] [--running]
                         [--filter=<filter>] [--group=<group>] [--error]
                         [--description] [--note] [--show-group] [--checksum]
@@ -4572,6 +4593,10 @@ Options:
       --remote              Break down counters into remote/total pairs
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --limit=<limit>       Filter routes by limiting to the given number of
                             rows
       --filter-mean=<filter-mean>
@@ -4670,7 +4695,7 @@ Examples:
 == camel get service --help
 Get services of Camel integrations
 Usage: camel get service [-h] [--sort=<sort>] [--metadata] [--short-uri]
-                          [--wide-uri] [--watch] [--json]
+                          [--wide-uri] [--mask] [--watch] [--json]
                           [--duration=<duration>] [<name>]
 
 Options:
@@ -4681,6 +4706,10 @@ Options:
                             services)
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4717,13 +4746,17 @@ Examples:
 
 == camel get sql-trace --help
 Get SQL query trace data
-Usage: camel get sql-trace [-h] [--sort=<sort>] [--watch] [--json]
+Usage: camel get sql-trace [-h] [--sort=<sort>] [--mask] [--watch] [--json]
                             [--duration=<duration>] [<name>]
 
 Options:
   -h, --help                Display this help and exit
       --sort=<sort>         Sort by pid, name or age
                             Default: pid
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -4765,7 +4798,7 @@ Get what the routes did per second, the errors, and the failed and slowest
 exchanges
 Usage: camel get timeline [-h] [--seconds=<seconds>] [--filter=<filter>]
                            [--exchanges] [--errors] [--sort=<sort>]
-                           [--limit=<limit>] [--short-uri] [--wide-uri]
+                           [--limit=<limit>] [--short-uri] [--wide-uri] [--mask]
                            [--watch] [--json] [--duration=<duration>] [<name>]
 
 Options:
@@ -4786,6 +4819,10 @@ Options:
                             of rows
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --watch               Execute periodically and showing output fullscreen
       --json                Output in JSON Format
       --duration=<duration>
@@ -6184,7 +6221,7 @@ The state of a running Camel integration in one call: where it runs and its
 files, its routes, health, last errors and last reload, its JVM, and the end of
 its log
 Usage: camel status [-h] [--json] [--log-lines=<log-lines>] [--errors=<errors>]
-                     [<name>]
+                     [--mask] [<name>]
 
 Options:
   -h, --help                Display this help and exit
@@ -6196,6 +6233,10 @@ Options:
                             Default: 20
       --errors=<errors>     How many of the last errors to show
                             Default: 5
+      --mask                Whether to mask the endpoint URIs of the routes to
+                            avoid printing sensitive information such as
+                            password or access keys
+                            Default: true
   <name>                    Name or pid of the running Camel integration
                             (default: the only one running)
 
@@ -6301,7 +6342,7 @@ Examples:
 
 == camel top processor --help
 Top performing processors
-Usage: camel top processor [-h] [--sort=<sort>] [--remote] [--source]
+Usage: camel top processor [-h] [--sort=<sort>] [--remote] [--source] [--mask]
                             [--limit=<limit>] [--filter-mean=<filter-mean>]
                             [--running] [--filter=<filter>] [--group=<group>]
                             [--description] [--note] [--show-group] [--watch]
@@ -6314,6 +6355,10 @@ Options:
       --remote              Break down counters into remote/total pairs
       --source              Prefer to display source filename/code instead of
                             IDs
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --limit=<limit>       Filter routes by limiting to the given number of
                             rows
       --filter-mean=<filter-mean>
@@ -6340,7 +6385,7 @@ Examples:
 == camel top route --help
 Top performing routes
 Usage: camel top route [-h] [--sort=<sort>] [--source] [--remote] [--short-uri]
-                        [--wide-uri] [--limit=<limit>]
+                        [--wide-uri] [--mask] [--limit=<limit>]
                         [--filter-mean=<filter-mean>] [--running]
                         [--filter=<filter>] [--group=<group>] [--error]
                         [--description] [--note] [--show-group] [--checksum]
@@ -6355,6 +6400,10 @@ Options:
       --remote              Break down counters into remote/total pairs
       --short-uri           List endpoint URI without query parameters (short)
       --wide-uri            List endpoint URI in full details
+      --mask                Whether to mask endpoint URIs to avoid printing
+                            sensitive information such as password or access
+                            keys
+                            Default: true
       --limit=<limit>       Filter routes by limiting to the given number of
                             rows
       --filter-mean=<filter-mean>
@@ -6945,7 +6994,7 @@ exit: 2
 stderr:
   ERROR: Option --sort was specified, but no value was given.
   Usage: camel get route [-h] [--sort=<sort>] [--source] [--remote] [--short-uri]
-                          [--wide-uri] [--limit=<limit>]
+                          [--wide-uri] [--mask] [--limit=<limit>]
                           [--filter-mean=<filter-mean>] [--running]
                           [--filter=<filter>] [--group=<group>] [--error]
                           [--description] [--note] [--show-group] [--checksum]

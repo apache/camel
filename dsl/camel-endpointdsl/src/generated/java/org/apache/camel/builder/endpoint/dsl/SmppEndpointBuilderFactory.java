@@ -1122,10 +1122,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
-         * not available when the Camel producer is started. Camel will check
-         * the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of
-         * the first exchange. If they are present, Camel will use these data to
-         * connect to the SMSC.
+         * not available when the Camel producer is started. The session is then
+         * created when the first exchange is sent, with the systemId and
+         * password of the endpoint. See the allowSystemIdAndPasswordFromHeaders
+         * option to take them from the message headers instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1141,10 +1141,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
-         * not available when the Camel producer is started. Camel will check
-         * the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of
-         * the first exchange. If they are present, Camel will use these data to
-         * connect to the SMSC.
+         * not available when the Camel producer is started. The session is then
+         * created when the first exchange is sent, with the systemId and
+         * password of the endpoint. See the allowSystemIdAndPasswordFromHeaders
+         * option to take them from the message headers instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1679,6 +1679,50 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
+            return this;
+        }
+        /**
+         * Whether a producer with lazySessionCreation=true may take the system
+         * id and the password, with which it connects to the SMSC, from the
+         * 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first
+         * exchange. When both headers are present, the producer connects with
+         * them in place of the systemId and password of the endpoint, and keeps
+         * using them when it reconnects. This is disabled by default, and the
+         * headers are then ignored. Enable this only when the route sets these
+         * headers itself.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSystemIdAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder allowSystemIdAndPasswordFromHeaders(boolean allowSystemIdAndPasswordFromHeaders) {
+            doSetProperty("allowSystemIdAndPasswordFromHeaders", allowSystemIdAndPasswordFromHeaders);
+            return this;
+        }
+        /**
+         * Whether a producer with lazySessionCreation=true may take the system
+         * id and the password, with which it connects to the SMSC, from the
+         * 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first
+         * exchange. When both headers are present, the producer connects with
+         * them in place of the systemId and password of the endpoint, and keeps
+         * using them when it reconnects. This is disabled by default, and the
+         * headers are then ignored. Enable this only when the route sets these
+         * headers itself.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSystemIdAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder allowSystemIdAndPasswordFromHeaders(String allowSystemIdAndPasswordFromHeaders) {
+            doSetProperty("allowSystemIdAndPasswordFromHeaders", allowSystemIdAndPasswordFromHeaders);
             return this;
         }
         /**
@@ -3395,7 +3439,10 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppSubmitDate";
         }
         /**
-         * The system id.
+         * The system id to connect to the SMSC with. Used only by the first
+         * exchange of a producer with lazySessionCreation=true and
+         * allowSystemIdAndPasswordFromHeaders=true, together with the
+         * CamelSmppPassword header; otherwise ignored.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3407,7 +3454,10 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppSystemId";
         }
         /**
-         * The password.
+         * The password to connect to the SMSC with. Used only by the first
+         * exchange of a producer with lazySessionCreation=true and
+         * allowSystemIdAndPasswordFromHeaders=true, together with the
+         * CamelSmppSystemId header; otherwise ignored.
          * 
          * The option is a: {@code String} type.
          * 

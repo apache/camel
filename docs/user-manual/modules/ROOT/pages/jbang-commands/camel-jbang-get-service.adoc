@@ -21,6 +21,7 @@ camel get service [options]
 | Option | Description | Default | Type
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--json` | Output in JSON Format |  | boolean
+| `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys | true | boolean
 | `--metadata` | Show service metadata (only available for some services) |  | boolean
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String

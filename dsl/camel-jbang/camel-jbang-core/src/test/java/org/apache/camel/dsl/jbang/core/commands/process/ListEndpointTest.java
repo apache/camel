@@ -217,6 +217,79 @@ class ListEndpointTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testMasksSecretOptionsOfUri() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("mongodb:db?database=test&password=RAW(se&cret)", "out", "1"),
+                endpoint("kafka:orders?configurationProperties[trust_store_password]=changeit", "in", "1"));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
+        command.sort = "pid";
+        command.wideUri = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            // the table wraps the long URIs
+            assertTrue(output.replaceAll("\\s", "").contains("mongodb:db?database=test&password=xxxxxx"), output);
+            assertTrue(output.replaceAll("\\s", "").contains("configurationProperties[trust_store_password]=xxxxxx"),
+                    output);
+            assertFalse(output.contains("se&cret"), output);
+            assertFalse(output.contains("changeit"), output);
+        }
+    }
+
+    @Test
+    void testJsonOutputMasksSecretOptionsOfUri() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("aws2-s3:bucket?accessKey=RAW(ak)&secretKey=RAW(sk)", "out", "1"));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            JsonArray rows = (JsonArray) Jsoner.deserialize(printer.getOutput().trim());
+            assertEquals("aws2-s3:bucket?accessKey=xxxxxx&secretKey=xxxxxx", ((JsonObject) rows.get(0)).getString("uri"));
+        }
+    }
+
+    @Test
+    void testNoMaskShowsUriAsConfigured() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("aws2-s3:bucket?accessKey=RAW(ak)&secretKey=RAW(sk)", "out", "1"));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
+        command.sort = "pid";
+        command.jsonOutput = true;
+        command.mask = false;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            JsonArray rows = (JsonArray) Jsoner.deserialize(printer.getOutput().trim());
+            assertEquals("aws2-s3:bucket?accessKey=RAW(ak)&secretKey=RAW(sk)", ((JsonObject) rows.get(0)).getString("uri"));
+        }
+    }
+
     private static String lineOf(String output, String uri) {
         return output.lines().filter(l -> l.contains(uri)).findFirst().orElse("");
     }

@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ReloadOutcome;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.run.common.LogFileReader;
@@ -71,6 +72,10 @@ public class IntegrationStatus extends ProcessBaseCommand {
     @Option(name = "errors", description = "How many of the last errors to show", defaultValue = "5")
     int errors = 5;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask the endpoint URIs of the routes to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     @Override
     public Integer doCall() throws Exception {
         // no name (as ActionBaseCommand.findProcesses has it) is the only integration that runs
@@ -83,7 +88,7 @@ public class IntegrationStatus extends ProcessBaseCommand {
         CamelProcess process = found.size() == 1 ? found.get(0) : ProcessFinder.requireOne(query);
         JsonObject log = LogFileReader.read(process.pid(), process.name(), Math.max(logLines, RELOAD_RECORDS), null,
                 null, false);
-        JsonObject status = status(process, loadErrorFile(process.pid()), log, logLines, errors);
+        JsonObject status = status(process, loadErrorFile(process.pid()), log, logLines, errors, mask);
         if (jsonOutput) {
             JsonOutput.print(printer(), status);
         } else {
@@ -100,13 +105,15 @@ public class IntegrationStatus extends ProcessBaseCommand {
      * @param log       its log as {@link LogFileReader} reads it, newest first
      * @param logLines  how many log records to keep
      * @param errors    how many errors to keep
+     * @param mask      whether to mask the secrets in the endpoint URIs of the routes
      */
-    static JsonObject status(CamelProcess process, JsonObject errorFile, JsonObject log, int logLines, int errors) {
+    static JsonObject status(
+            CamelProcess process, JsonObject errorFile, JsonObject log, int logLines, int errors, boolean mask) {
         JsonObject root = process.status();
         JsonObject context = root.get("context") instanceof JsonObject jo ? jo : new JsonObject();
         JsonObject runtime = root.get("runtime") instanceof JsonObject jo ? jo : new JsonObject();
         JsonObject stats = context.get("statistics") instanceof JsonObject jo ? jo : null;
-        JsonArray routes = routes(root);
+        JsonArray routes = routes(root, mask);
         JsonObject health = health(root);
         JsonArray lastErrors = errors(errorFile, errors);
         List<JsonObject> records = records(log);
@@ -291,7 +298,7 @@ public class IntegrationStatus extends ProcessBaseCommand {
         return answer;
     }
 
-    private static JsonArray routes(JsonObject root) {
+    private static JsonArray routes(JsonObject root, boolean mask) {
         JsonArray answer = new JsonArray();
         if (!(root.get("routes") instanceof JsonArray routes)) {
             return answer;
@@ -302,7 +309,7 @@ public class IntegrationStatus extends ProcessBaseCommand {
             }
             JsonObject jo = new JsonObject();
             jo.put("routeId", route.getString("routeId"));
-            jo.put("from", route.getString("from"));
+            jo.put("from", ListingFormat.masked(route.getString("from"), mask));
             // where the route is: orders.camel.yaml:4, relative to the directory it was started from
             String source = route.getString("source");
             jo.put("source", source != null && source.startsWith("file:") ? source.substring(5) : source);

@@ -198,6 +198,31 @@ class ListProducerTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testMasksSecretOptionsOfUri() throws Exception {
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("producers", producerContainer(producer("route1", "pqc:sign?keyStorePassword=changeit&signer=dilithium")));
+        writeStatusFile(TEST_PID, root);
+
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
+        command.sort = "pid";
+        command.wideUri = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            // the table wraps the long URIs
+            assertTrue(output.replaceAll("\\s", "").contains("pqc:sign?keyStorePassword=xxxxxx&signer=dilithium"), output);
+            assertFalse(output.contains("changeit"), output);
+        }
+    }
+
     private static JsonObject contextObj() {
         JsonObject ctx = new JsonObject();
         ctx.put("name", "myApp");
