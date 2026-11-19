@@ -25,7 +25,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginCompatibility;
@@ -80,10 +79,6 @@ public class PluginAdd extends PluginBaseCommand {
 
     @Option(name = "gav", description = "Maven group and artifact coordinates.")
     String gav;
-
-    public PluginAdd(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -48,7 +48,7 @@ public class JqNullBodyHintTest extends JqTestSupport {
         String message = rootCauseMessage(assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:body", null)));
 
-        assertTrue(message.contains("No body available of type: com.fasterxml.jackson.databind.JsonNode"),
+        assertTrue(message.contains("No body available of type: tools.jackson.databind.JsonNode"),
                 "should keep the original message, but was: " + message);
         assertTrue(message.contains("the jq expression got no message body to evaluate: the body is null"),
                 "should say the body is null, but was: " + message);

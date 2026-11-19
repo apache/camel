@@ -47,14 +47,41 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
     // ------------------------------------------------------- no outputBaseDirectory
 
     @Test
-    void outputPathWithoutBaseDirectoryIsAllowed() {
-        // no restriction is configured: the header is normalized only and passes through, so the run fails later on the
-        // absent docling binary rather than on a containment check
+    void relativeOutputPathWithoutBaseDirectoryIsAllowed() {
+        // a relative header value passes the check, so the run fails later on the absent docling binary
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:default", CONTENT,
+                DoclingHeaders.OUTPUT_FILE_PATH, "out/sub"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .hasMessageNotContaining("outputBaseDirectory");
+    }
+
+    @Test
+    void absoluteOutputPathWithoutBaseDirectoryIsRejected() {
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:default", CONTENT,
                 DoclingHeaders.OUTPUT_FILE_PATH, tempDir.resolve("out").toString()))
                 .isInstanceOf(CamelExecutionException.class)
                 .cause()
-                .hasMessageNotContaining("outputBaseDirectory");
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("must be a relative path when outputBaseDirectory is not set");
+    }
+
+    @Test
+    void traversalWithoutBaseDirectoryIsRejected() {
+        // out/../../x normalizes to ../x, which leaves the working directory
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:default", CONTENT,
+                DoclingHeaders.OUTPUT_FILE_PATH, "out/../../x"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("must not leave the working directory when outputBaseDirectory is not set");
+    }
+
+    @Test
+    void absoluteOutputPathWithoutBaseDirectoryIsRejectedInTheBuiltCommand() {
+        assertThatThrownBy(() -> buildDoclingCommandFor("/var/www/html/uploads"))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("must be a relative path");
     }
 
     @Test

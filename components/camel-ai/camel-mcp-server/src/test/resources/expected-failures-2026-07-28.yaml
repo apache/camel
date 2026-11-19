@@ -1,0 +1,72 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# MCP conformance baseline for protocol version 2026-07-28 (--requirements 2026-07-28) — known failures of the
+# Camel Main HTTP MCP server with camel.server.mcp-protocol-era=modern. See expected-failures.yaml for the exit-code
+# semantics. Every transport, header and version check that the suite can run passes; the entries below are features
+# Camel does not offer on any protocol version, or scenarios whose fixtures OfficialMcpConformanceIT does not register.
+
+server:
+  # --- server-stateless: its 24 transport checks pass; 4 are untestable because they need diagnostic tools that
+  #     require a client capability, log, or ask for input (test_missing_capability, test_logging_tool,
+  #     test_streaming_elicitation), which Camel tools do not do ---
+  - server-stateless
+
+  # --- the same gaps as expected-failures.yaml (completion, rich tool content, progress, templates and prompts
+  #     not registered by the test) ---
+  - completion-complete
+  - tools-call-image
+  - tools-call-audio
+  - tools-call-embedded-resource
+  - tools-call-mixed-content
+  - tools-call-with-progress
+  - resources-templates-read
+  - prompts-get-simple
+  - prompts-get-with-args
+  - prompts-get-embedded-resource
+  - prompts-get-with-image
+
+  # --- multi round-trip requests (InputRequiredResult): Camel tools never ask the client for input ---
+  - input-required-result-basic-elicitation
+  - input-required-result-basic-sampling
+  - input-required-result-basic-list-roots
+  - input-required-result-request-state
+  - input-required-result-multiple-input-requests
+  - input-required-result-multi-round
+  - input-required-result-non-tool-request
+  - input-required-result-result-type
+  - input-required-result-tampered-state
+  - input-required-result-capability-check
+  # these two pass with a warning about re-requesting input, and the suite counts a warning as a failure when a
+  # baseline is given
+  - input-required-result-missing-input-response
+  - input-required-result-ignore-extra-params
+
+  # --- the tasks extension is not offered ---
+  - tasks-lifecycle
+  - tasks-capability-negotiation
+  - tasks-wire-fields
+  - tasks-request-state-removal
+  - tasks-mrtr-input
+  - tasks-request-headers
+  - tasks-dispatch-and-envelope
+  - tasks-required-task-error
+  - tasks-mrtr-composition
+
+  # --- tools the test does not register (JSON Schema 2020-12 tool, x-mcp-header tool) ---
+  - json-schema-2020-12
+  - http-custom-header-server-validation

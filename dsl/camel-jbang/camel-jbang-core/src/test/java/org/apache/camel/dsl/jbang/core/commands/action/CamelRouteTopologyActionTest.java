@@ -39,7 +39,8 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
     void testRequestsTopologyAndRendersNodes() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.files = List.of("myApp");
 
         int exit = callWithResponse(command, singleNodeResponse());
@@ -60,7 +61,8 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
     @Test
     void testReturnsErrorWhenNoRunningIntegrationAndNoFilesGiven() throws Exception {
         // no status file written, so the mocked process does not match "*" and files stays empty (the default)
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
@@ -72,7 +74,8 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatchAndIsNotASourceFile() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         // "doesNotExist" matches no running process, so it is tried as a source file next
         command.files = List.of("doesNotExist");
 
@@ -89,7 +92,8 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         // here at all -- that absence of interaction is exactly what this test proves
         writeStatusFile(TEST_PID, "route1");
 
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.files = List.of("route1", "route2");
 
         CliException e = assertThrows(CliException.class, command::doCall);

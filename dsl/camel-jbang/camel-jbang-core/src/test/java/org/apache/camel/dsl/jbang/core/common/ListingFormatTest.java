@@ -38,6 +38,25 @@ class ListingFormatTest {
     }
 
     @Test
+    void maskedUri() {
+        assertThat(ListingFormat.masked("mongodb:db?database=test&password=RAW(se&cret)&collection=orders", true))
+                .isEqualTo("mongodb:db?database=test&password=xxxxxx&collection=orders");
+        assertThat(ListingFormat.masked("aws2-s3:bucket?accessKey=RAW(ak)&secretKey=RAW(sk)", true))
+                .isEqualTo("aws2-s3:bucket?accessKey=xxxxxx&secretKey=xxxxxx");
+        assertThat(ListingFormat.masked("docling:convert?authenticationToken=tok", true))
+                .isEqualTo("docling:convert?authenticationToken=xxxxxx");
+        assertThat(ListingFormat.masked("pqc:sign?keyStorePassword=changeit", true))
+                .isEqualTo("pqc:sign?keyStorePassword=xxxxxx");
+        assertThat(ListingFormat.masked("kafka:orders?configurationProperties[trust_store_password]=changeit", true))
+                .isEqualTo("kafka:orders?configurationProperties[trust_store_password]=xxxxxx");
+        assertThat(ListingFormat.masked("ftp://scott:tiger@localhost/inbox", true))
+                .isEqualTo("ftp://scott:xxxxxx@localhost/inbox");
+        assertThat(ListingFormat.masked("mongodb:db?password=secret", false)).isEqualTo("mongodb:db?password=secret");
+        assertThat(ListingFormat.masked("timer:tick", true)).isEqualTo("timer:tick");
+        assertThat(ListingFormat.masked(null, true)).isNull();
+    }
+
+    @Test
     void sinceLast() {
         assertThat(ListingFormat.sinceLast("1s", "2s", null)).isEqualTo("1s/2s/-");
     }

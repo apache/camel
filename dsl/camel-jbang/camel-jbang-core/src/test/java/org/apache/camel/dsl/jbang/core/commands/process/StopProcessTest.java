@@ -57,7 +57,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
         Path log = BackgroundLog.of(TEST_PID);
         Files.writeString(log, "started");
 
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -78,7 +78,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
     void testStopWithKillCallsDestroyForcibly() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
 
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.kill = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -103,7 +103,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
         Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(TEST_PID));
         Files.writeString(pidFile, "");
 
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.timeout = 300;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -132,7 +132,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
         Path log = BackgroundLog.of(TEST_PID);
         Files.writeString(log, "started");
 
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.noWait = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -153,7 +153,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
     void testStopWithoutPidFileSendsSigterm() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
 
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -173,7 +173,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testStopWithNoMatchingProcessDoesNothing() throws Exception {
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.name = "nonExistentApp";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -194,7 +194,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
         // CAMEL-26929: a bare camel stop stopped every integration, also those of the user and of other agents
         Path orders = running(TEST_PID, "orders");
         Path billing = running(TEST_PID + 1, "billing");
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             mockRunning(mocked);
@@ -214,7 +214,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
     void testStopAll() throws Exception {
         Path orders = running(TEST_PID, "orders");
         Path billing = running(TEST_PID + 1, "billing");
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.all = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -229,7 +229,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testStopAllWithANameIsAUsageError() {
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.all = true;
         command.name = "orders";
 
@@ -244,7 +244,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
         long launcherPid = TEST_PID;
         long integrationPid = TEST_PID + 1;
         Path pidFile = running(integrationPid, "orders");
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.name = Long.toString(launcherPid);
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -271,7 +271,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testStopByThePidOfAProcessThatLaunchedNoIntegrationFails() throws Exception {
-        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        StopProcess command = new CamelJBangMain().withPrinter(printer).command(new StopProcess());
         command.name = Long.toString(TEST_PID);
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

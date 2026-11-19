@@ -105,7 +105,14 @@ final class RouteGraph {
         }
         for (String key : new String[] { "name", "destinationName", "topic", "queue", "path", "address" }) {
             if (parameters.has(key) && parameters.get(key).isValueNode()) {
-                return uri + ":" + parameters.get(key).asString("");
+                String path = parameters.get(key).asString("");
+                // jms, sjms and amqp: the path is destinationType:destinationName, as the YAML DSL builds the uri, and
+                // as a running app names the endpoint (jms:queue:stock)
+                JsonNode type = parameters.get("destinationType");
+                if ("destinationName".equals(key) && type != null && type.isValueNode()) {
+                    path = type.asString("") + ":" + path;
+                }
+                return uri + ":" + path;
             }
         }
         return uri;

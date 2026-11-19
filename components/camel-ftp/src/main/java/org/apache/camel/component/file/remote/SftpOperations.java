@@ -1550,7 +1550,7 @@ public class SftpOperations
                     is = GenericFileHelper.toInputStream(exchange, charset);
                     LOG.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
-                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                    is = GenericFileHelper.mandatoryBodyStream(exchange, exchange.getIn(), FileUtil.stripPath(name));
                 }
             }
 
@@ -1585,7 +1585,10 @@ public class SftpOperations
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             throw operationFailed("Cannot store file: " + name, e);
-        } catch (IOException | InvalidPayloadException e) {
+        } catch (InvalidPayloadException e) {
+            // say why: the body cannot be written as it is (CAMEL-27151)
+            throw new GenericFileOperationFailedException("Cannot store file: " + name + ": " + e.getMessage(), e);
+        } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, LOG);

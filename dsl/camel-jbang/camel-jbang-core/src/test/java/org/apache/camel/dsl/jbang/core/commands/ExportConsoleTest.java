@@ -45,7 +45,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
 
     @Test
     public void shouldExportGenAiRouteWithObservability() throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command,
                 "--gav=examples:genai:1.0.0",
                 "--dir=" + workingDir,
@@ -130,7 +130,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
 
     @Test
     public void shouldAppendConsoleToExistingDevProfile() throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
@@ -150,7 +150,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
 
     @Test
     public void shouldNotExportConsoleByDefault() throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
@@ -174,7 +174,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldExportObserve(RuntimeType rt) throws Exception {
         LOG.info("shouldExportObserve {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()), "--observe=true"));
@@ -209,7 +209,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldExportHawtio(RuntimeType rt) throws Exception {
         LOG.info("shouldExportHawtio {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()), "--hawtio=true"));
@@ -261,7 +261,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
     @Test
     public void shouldExportHawtioWithSpringBoot3() throws Exception {
         LOG.info("shouldExportHawtioWithSpringBoot3");
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
                 "--spring-boot-version=3.5.14", "--hawtio=true", "target/test-classes/route.yaml");
@@ -279,7 +279,7 @@ class ExportConsoleTest extends ExportBaseTestSupport {
         LOG.info("shouldNotDuplicateMetricsDependency {}", metricsOption);
         Path baseDir = baseDirWithApplicationProperties(metricsOption + "=true\n");
 
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir;
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",

@@ -242,12 +242,13 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);
-        KubernetesRun command = new KubernetesRun(jbangMain, files) {
+        KubernetesRun command = new KubernetesRun(files) {
             @Override
             String getRunPlatformDir() {
                 return runPlatformDir;
             }
         };
+        command.setCamelMain(jbangMain);
         // the files on the command line too: aesh empties a list option that is not given
         argsLst.addAll(files);
         CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));

@@ -25,8 +25,8 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 
 /**
  * Jackson based {@link RestBindingJacksonXmlDataFormatFactory}.
@@ -41,8 +41,8 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
             DataFormat xml, DataFormat outXml)
             throws Exception {
         // lookup configurer
-        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer("jacksonXml-dataformat-configurer", camelContext);
+        PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext,
+                "jacksonXml-dataformat-configurer", xml);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jacksonXml");
         }

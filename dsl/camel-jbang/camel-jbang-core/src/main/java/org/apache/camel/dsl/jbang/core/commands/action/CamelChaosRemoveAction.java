@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
 
@@ -43,10 +42,6 @@ public class CamelChaosRemoveAction extends CamelChaosAction {
 
     @Option(name = "id", description = "The id of the rule, such as r1", required = true)
     String id;
-
-    public CamelChaosRemoveAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

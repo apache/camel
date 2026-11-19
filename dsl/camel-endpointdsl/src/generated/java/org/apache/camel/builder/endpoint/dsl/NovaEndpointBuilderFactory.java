@@ -249,6 +249,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default NovaHeaderNameBuilder openstackNova() {
             return NovaHeaderNameBuilder.INSTANCE;
         }
@@ -268,6 +269,7 @@ public interface NovaEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default NovaEndpointBuilder openstackNova(String path) {
             return NovaEndpointBuilderFactory.endpointBuilder("openstack-nova", path);
         }
@@ -289,6 +291,7 @@ public interface NovaEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default NovaEndpointBuilder openstackNova(String componentName, String path) {
             return NovaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

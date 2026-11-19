@@ -37,7 +37,7 @@ class CamelStubActionTest extends ActionCommandTestSupport {
     void testRequestsStubAndRendersQueues() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelStubAction command = new CamelStubAction(new CamelJBangMain().withPrinter(printer));
+        CamelStubAction command = new CamelJBangMain().withPrinter(printer).command(new CamelStubAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
@@ -59,7 +59,7 @@ class CamelStubActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelStubAction command = new CamelStubAction(new CamelJBangMain().withPrinter(printer));
+        CamelStubAction command = new CamelJBangMain().withPrinter(printer).command(new CamelStubAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

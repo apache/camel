@@ -100,7 +100,7 @@ class MonitorTabTextInputTest {
         when(registry.selectedTabIndex()).thenReturn(TabRegistry.TAB_MORE);
         when(registry.getActiveMoreTab()).thenReturn(active);
         when(registry.activeTab()).thenReturn(active);
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         field("tabRegistry").set(monitor, registry);
         field("ctx").set(monitor, ctx);
         tabs(monitor).select(TabRegistry.TAB_MORE);

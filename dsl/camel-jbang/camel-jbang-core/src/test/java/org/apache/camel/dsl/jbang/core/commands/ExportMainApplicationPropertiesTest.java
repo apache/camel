@@ -100,7 +100,7 @@ class ExportMainApplicationPropertiesTest extends CamelCommandBaseTestSupport {
     }
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),

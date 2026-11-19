@@ -2398,19 +2398,29 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     /**
-     * Normalizes the given output directory and, when {@code outputBaseDirectory} is configured, verifies that it stays
-     * inside that directory. Mirrors {@link #resolveWithinInputBaseDirectory(String)} so that the output directory
-     * carried by the {@link DoclingHeaders#OUTPUT_FILE_PATH} header receives the same treatment as input paths. The
-     * containment check is lexical: symbolic links are not resolved, so - like
+     * Normalizes the given output directory and verifies where it may point. When {@code outputBaseDirectory} is
+     * configured, the directory must stay inside it, as {@link #resolveWithinInputBaseDirectory(String)} does for input
+     * paths. Without it, the directory must be a relative path that does not leave the CLI working directory, the same
+     * rule as for the custom arguments. The checks are lexical: symbolic links are not resolved, so - like
      * {@link #resolveWithinInputBaseDirectory(String)} - a symlink inside the base directory that points outside it is
      * not detected.
      */
     private Path resolveWithinOutputBaseDirectory(String outputPath) throws IOException {
         String base = configuration.getOutputBaseDirectory();
         if (base == null || base.isEmpty()) {
-            // no directory restriction: normalize lexically only, and leave relative paths relative so that they keep
-            // resolving the way they did before - against the CLI working directory, when one is set
-            return Paths.get(outputPath).normalize();
+            // no base directory: only a relative path that stays relative after normalizing, so that it keeps resolving
+            // against the CLI working directory, when one is set
+            Path path = Paths.get(outputPath).normalize();
+            if (path.isAbsolute() || path.getRoot() != null) {
+                throw new IOException(
+                        "Output path must be a relative path when outputBaseDirectory is not set: " + outputPath);
+            }
+            if (path.getNameCount() > 0 && "..".equals(path.getName(0).toString())) {
+                throw new IOException(
+                        "Output path must not leave the working directory when outputBaseDirectory is not set: "
+                                      + outputPath);
+            }
+            return path;
         }
         Path baseDir = Paths.get(base).toAbsolutePath().normalize();
         // resolve relative paths against the base directory itself, so that the path checked here is exactly the path

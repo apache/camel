@@ -88,7 +88,7 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
         root.put("logger", logger);
         writeStatusFile(TEST_PID, root);
 
-        LoggerAction command = new LoggerAction(new CamelJBangMain().withPrinter(printer));
+        LoggerAction command = new CamelJBangMain().withPrinter(printer).command(new LoggerAction());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -111,7 +111,7 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
     @Test
     void anUnknownLoggingLevelIsAUsageError() {
         // it was set as ERROR, with exit code 0 (CAMEL-26929)
-        LoggerAction command = new LoggerAction(new CamelJBangMain().withPrinter(printer));
+        LoggerAction command = new CamelJBangMain().withPrinter(printer).command(new LoggerAction());
         command.loggingLevel = "BOGUS";
 
         CliException e = assertThrows(CliException.class, command::doCall);
@@ -130,7 +130,7 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
         // No logger section
         writeStatusFile(TEST_PID, root);
 
-        LoggerAction command = new LoggerAction(new CamelJBangMain().withPrinter(printer));
+        LoggerAction command = new CamelJBangMain().withPrinter(printer).command(new LoggerAction());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -168,7 +168,7 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
         rootAaa.put("logger", logger);
         writeStatusFile(pidAaa, rootAaa);
 
-        LoggerAction command = new LoggerAction(new CamelJBangMain().withPrinter(printer));
+        LoggerAction command = new CamelJBangMain().withPrinter(printer).command(new LoggerAction());
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

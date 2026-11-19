@@ -87,7 +87,7 @@ class YamlNormalizePerFileTest {
 
     private int normalize(String... args) throws Exception {
         printer = new StringPrinter();
-        YamlNormalizeCommand cmd = new YamlNormalizeCommand(new CamelJBangMain().withPrinter(printer));
+        YamlNormalizeCommand cmd = new CamelJBangMain().withPrinter(printer).command(new YamlNormalizeCommand());
         CommandLineTestHelper.parse(cmd, args);
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         cmd.stderr = new PrintStream(err, true, StandardCharsets.UTF_8);
@@ -116,7 +116,7 @@ class YamlNormalizePerFileTest {
 
     private static String validate(Path... files) throws Exception {
         StringPrinter out = new StringPrinter();
-        YamlValidateCommand cmd = new YamlValidateCommand(new CamelJBangMain().withPrinter(out));
+        YamlValidateCommand cmd = new CamelJBangMain().withPrinter(out).command(new YamlValidateCommand());
         String[] args = new String[files.length];
         for (int i = 0; i < files.length; i++) {
             args[i] = files[i].toString();

@@ -44,7 +44,6 @@ import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -77,10 +76,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
      * files without the command pruning them as stale.
      */
     protected LongPredicate aliveCheck = pid -> ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
-
-    protected InfraBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     protected static Map<Long, Path> findPids(String name) throws Exception {
         Map<Long, Path> pids = new HashMap<>();

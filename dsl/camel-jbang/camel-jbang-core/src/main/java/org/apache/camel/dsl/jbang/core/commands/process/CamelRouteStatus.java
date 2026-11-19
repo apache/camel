@@ -32,7 +32,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -77,6 +76,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     @Option(name = "limit", description = "Filter routes by limiting to the given number of rows")
     int limit;
 
@@ -108,10 +111,6 @@ public class CamelRouteStatus extends ProcessWatchCommand {
             description = "Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it")
     boolean checksum;
 
-    public CamelRouteStatus(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
@@ -135,7 +134,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 row.group = o.getString("group");
                 row.description = o.getString("description");
                 row.note = o.getString("note");
-                row.from = o.getString("from");
+                row.from = ListingFormat.masked(o.getString("from"), mask);
                 Boolean bool = o.getBoolean("remote");
                 if (bool != null) {
                     // older camel versions does not include this information

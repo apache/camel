@@ -181,7 +181,7 @@ class RunExportGoldenTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("exportCases")
     void export(Case c, @TempDir Path out) throws Exception {
-        export(c, out, new Export(new CamelJBangMain()));
+        export(c, out, new CamelJBangMain().command(new Export()));
     }
 
     private void export(Case c, Path out, Export command) throws Exception {
@@ -200,9 +200,11 @@ class RunExportGoldenTest {
         Files.writeString(props, Files.readString(props).replaceAll("(?m)^camel\\.jbang\\.(background|jvmDebug)=.*\\R", ""));
 
         String withOutput = exportOutput(new Case("run-settings", files(with.toString()), List.of(), true, false),
-                dir.resolve("with-out"), new Export(new CamelJBangMain())).replace(with.toString(), "${fixture}");
+                dir.resolve("with-out"), new CamelJBangMain().command(new Export()))
+                .replace(with.toString(), "${fixture}");
         String withoutOutput = exportOutput(new Case("run-settings", files(without.toString()), List.of(), true, false),
-                dir.resolve("without-out"), new Export(new CamelJBangMain())).replace(without.toString(), "${fixture}");
+                dir.resolve("without-out"), new CamelJBangMain().command(new Export()))
+                .replace(without.toString(), "${fixture}");
 
         assertThat(Files.readString(props)).doesNotContain("camel.jbang.background", "camel.jbang.jvmDebug");
         assertThat(withOutput).isEqualTo(withoutOutput);
@@ -285,7 +287,7 @@ class RunExportGoldenTest {
         KameletMain main;
 
         CapturingRun() {
-            super(new CamelJBangMain());
+            setCamelMain(new CamelJBangMain());
         }
 
         @Override
@@ -395,7 +397,7 @@ class RunExportGoldenTest {
         final List<ProcessBuilder> started = new ArrayList<>();
 
         MavenRun() {
-            super(new CamelJBangMain());
+            setCamelMain(new CamelJBangMain());
         }
 
         @Override

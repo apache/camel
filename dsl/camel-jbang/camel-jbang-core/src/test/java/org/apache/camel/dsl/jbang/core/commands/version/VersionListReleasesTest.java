@@ -178,7 +178,7 @@ class VersionListReleasesTest extends CamelCommandBaseTestSupport {
 
     // the 4.10 to 4.12 releases, without downloading the releases since the catalog
     private VersionList command(String... args) {
-        VersionList command = new VersionList(new CamelJBangMain().withPrinter(printer));
+        VersionList command = new CamelJBangMain().withPrinter(printer).command(new VersionList());
         // the defaults of the test, unless the arguments give the option (an option given twice is a usage error)
         Stream<String> defaults = Stream.of("--download=false", "--from-version=4.10", "--to-version=4.13")
                 .filter(d -> Arrays.stream(args).noneMatch(a -> a.startsWith(d.substring(0, d.indexOf('=') + 1))));

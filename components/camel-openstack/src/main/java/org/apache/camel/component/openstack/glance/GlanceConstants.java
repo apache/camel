@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.glance;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.24")
 public final class GlanceConstants extends OpenstackConstants {
 
     @Metadata(description = "The number of flavor VCPU.", javaType = "org.openstack4j.model.image.DiskFormat")

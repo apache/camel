@@ -18,6 +18,7 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 import javax.net.ssl.SSLContext;
@@ -26,6 +27,7 @@ import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
+import io.nats.client.Options.HostnameResolveMode;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
@@ -133,7 +135,22 @@ public class NatsEndpoint extends DefaultEndpoint
                             .getInputStream().readAllBytes()));
         }
         Options options = builder.build();
+        if (getConfiguration().isHostnameVerification() && options.getSslContext() != null && !isTrustAll()) {
+            // jnats checks the certificate of the server, but not that it was issued for the host. By default it also
+            // replaces a host name by its IP addresses, so TLS would only see an IP address. Happy eyeballs connects to
+            // the addresses of the host name itself and keeps the name for TLS.
+            options = new Builder(options)
+                    .sslContext(HostnameVerifyingSSLContext.wrap(options.getSslContext()))
+                    .hostnameResolveMode(HostnameResolveMode.HappyEyeballs)
+                    .build();
+        }
         return Nats.connect(options);
+    }
+
+    private boolean isTrustAll() {
+        // opentls:// asks jnats to trust every server certificate
+        String servers = getConfiguration().getServers();
+        return servers != null && servers.toLowerCase(Locale.ROOT).contains("opentls://");
     }
 
     @Override

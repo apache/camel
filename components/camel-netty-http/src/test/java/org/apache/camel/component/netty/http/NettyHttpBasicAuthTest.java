@@ -62,6 +62,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTestSupport {
     public void testBasicAuthSuccessed() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyHttpConstants.HTTP_AUTHENTICATION, "Basic");
+        // the credential checked by Camel is not passed on to the route
+        getMockEndpoint("mock:input").message(0).header("Authorization").isNull();
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";

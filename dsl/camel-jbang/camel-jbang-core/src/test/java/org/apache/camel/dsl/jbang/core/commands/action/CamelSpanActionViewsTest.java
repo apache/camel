@@ -150,7 +150,7 @@ class CamelSpanActionViewsTest extends ActionCommandTestSupport {
     }
 
     private CamelSpanAction command(String... args) {
-        CamelSpanAction command = new CamelSpanAction(new CamelJBangMain().withPrinter(printer));
+        CamelSpanAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSpanAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("myApp", "--logging-color=false"), Arrays.stream(args)).toArray(String[]::new));
         return command;

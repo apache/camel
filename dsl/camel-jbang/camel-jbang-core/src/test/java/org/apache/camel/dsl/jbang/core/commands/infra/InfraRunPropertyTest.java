@@ -97,7 +97,7 @@ public class InfraRunPropertyTest extends CamelCommandBaseTestSupport {
     }
 
     private InfraRun infraRun(String... properties) {
-        InfraRun infraRun = new InfraRun(new CamelJBangMain().withPrinter(printer));
+        InfraRun infraRun = new CamelJBangMain().withPrinter(printer).command(new InfraRun());
         infraRun.serviceProperties = List.of(properties);
         return infraRun;
     }

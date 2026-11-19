@@ -129,7 +129,7 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
     }
 
     private VersionGet createCommand() {
-        return new VersionGet(new CamelJBangMain().withPrinter(printer));
+        return new CamelJBangMain().withPrinter(printer).command(new VersionGet());
     }
 
 }

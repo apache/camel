@@ -72,7 +72,7 @@ class BackgroundWaitTest {
     }
 
     private static Run parse(String... args) {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, args);
         return run;
     }

@@ -109,6 +109,10 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
     @UriParam(label = "consumer,advanced")
+    @Metadata(deprecationNote = "The shared Netty HTTP server was added for OSGi/Karaf, so that several applications"
+                                + " in one JVM could use the same port. Use a netty-http consumer per port, where several routes"
+                                + " can use the same port, or the platform-http component.")
+    @Deprecated
     private NettySharedHttpServer nettySharedHttpServer;
     @UriParam(label = "consumer,advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration")
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
@@ -257,13 +261,22 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.httpMethodRestrict = httpMethodRestrict;
     }
 
+    /**
+     * @deprecated the shared Netty HTTP server was added for OSGi/Karaf. Use one netty-http consumer per port, or the
+     *             platform-http component.
+     */
+    @Deprecated
     public NettySharedHttpServer getNettySharedHttpServer() {
         return nettySharedHttpServer;
     }
 
     /**
-     * To use a shared Netty HTTP server. See Netty HTTP Server Example for more details.
+     * To use a shared Netty HTTP server, so that several applications in one JVM can use the same port.
+     *
+     * @deprecated the shared Netty HTTP server was added for OSGi/Karaf. Use one netty-http consumer per port, or the
+     *             platform-http component.
      */
+    @Deprecated
     public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
         this.nettySharedHttpServer = nettySharedHttpServer;
     }

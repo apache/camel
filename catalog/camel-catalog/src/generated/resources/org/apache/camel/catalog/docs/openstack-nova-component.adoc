@@ -1,10 +1,11 @@
-= OpenStack Nova Component
+= OpenStack Nova Component (deprecated)
 :doctitle: OpenStack Nova
 :shortname: openstack-nova
 :artifactid: camel-openstack
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

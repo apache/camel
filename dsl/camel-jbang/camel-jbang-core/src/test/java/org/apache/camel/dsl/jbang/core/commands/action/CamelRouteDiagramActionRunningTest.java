@@ -200,7 +200,8 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
     }
 
     private CamelRouteDiagramAction command(String... args) {
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
         CommandLineTestHelper.parse(command, args);
         command.files = List.of("myApp");
         return command;

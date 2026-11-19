@@ -38,7 +38,6 @@ import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
@@ -83,8 +82,8 @@ public class SelfUpdateCommand extends CamelCommand {
     // Visible for testing: set to a short duration to avoid a 5-minute wait in tests
     public long processWaitTimeoutSeconds = 5 * 60;
 
-    public SelfUpdateCommand(CamelJBangMain main) {
-        this(main, null, null, null);
+    public SelfUpdateCommand() {
+        this(null, null, null);
     }
 
     // Visible for testing: SelfUpdateIntegrationTest (Task 8) points these at a local fixture instead of the real
@@ -92,9 +91,8 @@ public class SelfUpdateCommand extends CamelCommand {
     // (CAMEL_INSTALL_*, HOME/LOCALAPPDATA) to an isolated test HOME rather than the real machine's. Production
     // callers (SelfUpdatePlugin) only ever use the public one-arg constructor, which passes null for all three -
     // fromEnvironment() and the real process environment are used unmodified.
-    public SelfUpdateCommand(CamelJBangMain main, ManifestFetcher fetcherOverride, InstallScriptFetcher scriptFetcherOverride,
+    public SelfUpdateCommand(ManifestFetcher fetcherOverride, InstallScriptFetcher scriptFetcherOverride,
                              Map<String, String> installerEnvironmentOverride) {
-        super(main);
         this.fetcherOverride = fetcherOverride;
         this.scriptFetcherOverride = scriptFetcherOverride;
         this.installerEnvironmentOverride = installerEnvironmentOverride;

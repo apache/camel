@@ -102,28 +102,6 @@ public interface GenAiObservation extends AutoCloseable {
         // noop
     }
 
-    /**
-     * Makes the observation current on the calling thread for a synchronous call, so that spans started inside it (by
-     * the HTTP client or the AI framework) nest under it. Close the scope on the same thread, before {@link #close()}.
-     *
-     * @since 4.24
-     */
-    default Scope makeCurrent() {
-        return () -> {
-            // noop
-        };
-    }
-
     @Override
     void close();
-
-    /**
-     * A scope opened by {@link #makeCurrent()}.
-     *
-     * @since 4.24
-     */
-    interface Scope extends AutoCloseable {
-        @Override
-        void close();
-    }
 }

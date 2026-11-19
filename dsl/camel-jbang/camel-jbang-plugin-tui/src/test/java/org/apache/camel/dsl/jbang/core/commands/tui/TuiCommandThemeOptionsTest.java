@@ -81,13 +81,13 @@ class TuiCommandThemeOptionsTest {
     }
 
     private CamelMonitor monitor(String... args) {
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         CommandLineTestHelper.parse(monitor, args);
         return monitor;
     }
 
     private List<String> buildArgs(String... args) {
-        TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
+        TuiCommand command = new CamelJBangMain().command(new TuiCommand(getClass().getClassLoader()));
         CommandLineTestHelper.parse(command, args);
         return command.buildArgs();
     }

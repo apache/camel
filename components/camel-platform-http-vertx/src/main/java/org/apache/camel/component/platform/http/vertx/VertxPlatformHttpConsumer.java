@@ -543,7 +543,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             String httpPath = (String) message.getHeader(Exchange.HTTP_PATH);
             message.setHeader(Exchange.HTTP_PATH, HttpHelper.stripUriPrefix(httpPath, getEndpoint().getPath()));
         }
-        if (securityHandler != null) {
+        if (securityHandler != null || Boolean.TRUE.equals(ctx.get(VertxPlatformHttpServer.AUTHENTICATED_BY_SERVER))) {
+            // the credential has been checked by Camel (the security handler of the endpoint, or the authentication
+            // configured on the server), so it is not passed on to the route
             message.removeHeader(AUTHORIZATION);
         }
         return httpRequestBodyHandler.handle(ctx, message);

@@ -46,7 +46,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.apache.camel.CamelContext;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
@@ -282,12 +281,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private Printer quietPrinter;
     private Traits computedTraits;
 
-    public KubernetesRun(CamelJBangMain main) {
-        this(main, null);
+    public KubernetesRun() {
+        this(null);
     }
 
-    public KubernetesRun(CamelJBangMain main, List<String> files) {
-        super(main);
+    public KubernetesRun(List<String> files) {
         if (files != null) {
             this.files.addAll(files);
         }
@@ -468,7 +466,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 quarkusPlatformBoms.quarkusCamelBom().getGroupId(),
                 quarkusPlatformBoms.quarkusCamelBom().getArtifactId(),
                 quarkusPlatformBoms.quarkusCamelBom().getVersion());
-        KubernetesExport export = new KubernetesExport(getMain(), configurer);
+        KubernetesExport export = getMain().command(new KubernetesExport(configurer));
 
         export.image = image;
         export.imageRegistry = imageRegistry;
@@ -534,7 +532,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
                     // Undeploy/Delete current project
                     //
-                    KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
+                    KubernetesDelete deleteCommand = getMain().command(new KubernetesDelete());
                     deleteCommand.name = projectName;
                     deleteCommand.namespace = namespace;
                     deleteCommand.doCall();
@@ -576,7 +574,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private void startPodLogging(String projectName) throws Exception {
         try {
-            reusablePodLogs = new KubernetesPodLogs(getMain());
+            reusablePodLogs = getMain().command(new KubernetesPodLogs());
             if (!ObjectHelper.isEmpty(namespace)) {
                 reusablePodLogs.namespace = namespace;
             }
@@ -609,7 +607,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private void installShutdownHook(String projectName, String workingDir) {
         devModeShutdownTask = new Thread(() -> {
-            KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
+            KubernetesDelete deleteCommand = getMain().command(new KubernetesDelete());
             deleteCommand.name = projectName;
             deleteCommand.namespace = namespace;
             // the client does not close a Vertx instance that is passed to it

@@ -133,10 +133,6 @@ public class Ask extends CamelCommand {
     // the chat's reader, or one made on the terminal for the first call to confirm
     private LineReader confirmReader;
 
-    public Ask(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (question == null || question.isEmpty()) {

@@ -30,7 +30,7 @@ class ConfigListTest extends BaseConfigTestSupport {
     public void shouldHandleEmptyConfig() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        ConfigList command = new CamelJBangMain().withPrinter(printer).command(new ConfigList());
         command.doCall();
 
         Assertions.assertEquals("", printer.getOutput());
@@ -44,7 +44,7 @@ class ConfigListTest extends BaseConfigTestSupport {
                 foo=bar
                 """);
 
-        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        ConfigList command = new CamelJBangMain().withPrinter(printer).command(new ConfigList());
         command.doCall();
 
         List<String> lines = printer.getLines();
@@ -62,7 +62,7 @@ class ConfigListTest extends BaseConfigTestSupport {
                 kamelets-version=local
                 """, true);
 
-        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        ConfigList command = new CamelJBangMain().withPrinter(printer).command(new ConfigList());
         command.global = false;
         command.doCall();
 
@@ -82,7 +82,7 @@ class ConfigListTest extends BaseConfigTestSupport {
                 kamelets-version=global
                 """);
 
-        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        ConfigList command = new CamelJBangMain().withPrinter(printer).command(new ConfigList());
         command.doCall();
 
         List<String> lines = printer.getLines();

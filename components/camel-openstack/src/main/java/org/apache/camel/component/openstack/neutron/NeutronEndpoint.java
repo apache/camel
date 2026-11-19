@@ -56,6 +56,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                                    description = "The Network, Subnet, Port or Router of openstack4j created, read or updated (null when get "
                                                  + "finds none), a List of them for getAll, the RouterInterface for attachInterface and "
                                                  + "detachInterface; delete keeps the body"))
+@Deprecated(since = "4.24")
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")

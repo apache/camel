@@ -23,14 +23,10 @@ import org.aesh.command.CommandDefinition;
                    generateHelp = true, sortOptions = true)
 public class DependencyCommand extends CamelCommand {
 
-    public DependencyCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // default to list
-        return runDefault(new DependencyList(getMain()));
+        return runDefault(getMain().command(new DependencyList()));
     }
 
 }

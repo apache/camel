@@ -28,7 +28,7 @@
 
     <artifactId>camel-openstack</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: OpenStack</name>
+    <name>Camel :: OpenStack (deprecated)</name>
     <description>Camel OpenStack support</description>
 
     <dependencies>

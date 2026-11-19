@@ -168,7 +168,7 @@ class InfraRunBackgroundTest extends InfraCommandTestSupport {
         writePidFile("kafka", 1234, "{}");
         Files.writeString(BackgroundLog.of(1234), "Starting service kafka");
 
-        InfraStop command = new InfraStop(new CamelJBangMain().withPrinter(printer));
+        InfraStop command = new CamelJBangMain().withPrinter(printer).command(new InfraStop());
         command.aliveCheck = pid -> false;
         command.findRunningServices("kafka");
 
@@ -176,7 +176,7 @@ class InfraRunBackgroundTest extends InfraCommandTestSupport {
     }
 
     private InfraRun infraRun() {
-        return new InfraRun(new CamelJBangMain().withPrinter(printer));
+        return new CamelJBangMain().withPrinter(printer).command(new InfraRun());
     }
 
     // the pid file of the shell that stands in for the service, named after its pid ($$)

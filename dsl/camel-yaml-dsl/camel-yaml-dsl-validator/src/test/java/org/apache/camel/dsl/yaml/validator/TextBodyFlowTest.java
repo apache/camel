@@ -826,6 +826,139 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadOnTheBytesAJmsConsumerGave() {
+        // r32 to r35 (connect-service-jms-request-reply step 3): the stock service gets the order as a byte[] from JMS,
+        // and a script read body.lines: "No such property: lines for class: [B". lines is a property of text, so the
+        // walk let it through while it took bytes for text (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: stock
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "def orderLines = body.lines; orderLines ? 'reserved' : 'empty'"
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts bytes
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("byte[]"), List.of("payload"));
+        assertThat(lines(yaml, bytes)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - in the running app, from: jms:queue:stock gave a byte[]");
+            assertThat(m).contains("unmarshal it first with the data format of the payload");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        ProjectFacts text
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("java.lang.String"), List.of("payload"));
+        assertThat(lines(yaml, text)).isEmpty();
+        assertThat(lines(yaml.replace("body.lines", "body.length"), bytes)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadAfterConvertBodyToBytes() {
+        // convertBodyTo byte[] makes bytes, not text: lines is not a property of a byte[] (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: bytes
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: hello
+                        - convertBodyTo:
+                            type: byte[]
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - convertBodyTo byte[] makes it bytes");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        assertThat(lines(yaml.replace("type: byte[]", "type: String"))).isEmpty();
+        assertThat(lines(yaml.replace("body.lines.size()", "body.length"))).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadOnTheBytesAPollEnrichGave() {
+        // the pollEnrich replaced parsed data with an event, which the azure-eventhubs consumer gives as a byte[]: the
+        // bytes stay bytes, with the data they replaced (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: restock
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: "{\\"sku\\": \\"A1\\"}"
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              constant:
+                                expression: azure-eventhubs:shop/stock
+                            timeout: 5000
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - pollEnrich: azure-eventhubs:shop/stock");
+        });
+
+        // a file as it was read has lines, and the length of the bytes is not a field
+        assertThat(lines(yaml.replace("azure-eventhubs:shop/stock", "file:stock"))).isEmpty();
+        assertThat(lines(yaml.replace("body.lines.size()", "body.length"))).isEmpty();
+    }
+
+    @Test
+    public void testTheCalledRouteReturnsBytes() {
+        // a direct: route that ends with convertBodyTo byte[] returns bytes, not text (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            constant: hello
+                        - convertBodyTo:
+                            type: byte[]
+                - route:
+                    id: caller
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route caller: groovy reads fields of the body (body.lines), but the body here is"
+                                   + " still bytes (a byte[]), not parsed data - to: direct:lookup returns it as bytes"
+                                   + " (convertBodyTo byte[] makes it bytes)");
+        });
+
+        // text has lines
+        assertThat(lines(yaml.replace("type: byte[]", "type: String"))).isEmpty();
+    }
+
+    @Test
     public void testTheBodyAProducerReturnedInTheRunningApp() {
         // a sql call returns a List of rows, which a file write cannot write as it is
         String yaml = """

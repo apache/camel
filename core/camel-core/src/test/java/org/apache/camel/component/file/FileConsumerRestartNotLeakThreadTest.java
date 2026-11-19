@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
@@ -34,6 +37,8 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
+        // the mock is satisfied before the file consumer commits the exchange, which stopping the route would wait for
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
 
         for (int i = 0; i < 50; i++) {
             context.getRouteController().stopRoute("foo");

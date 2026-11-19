@@ -38,10 +38,29 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     //Supplier cannot be used because of thrown exception (Callback used instead)
     private final Callable<SubscriberStub> subscriberStubSupplier;
     private final String subscriptionName;
+    // the ack id of the message this acknowledges, or null to take the ack ids from the exchange given
+    private final String ackId;
 
+    /**
+     * Acknowledges the messages whose ack ids the exchange given to {@link #ack(Exchange)} or {@link #nack(Exchange)}
+     * carries in its {@link GooglePubsubConstants#ACK_ID} header, and the grouped exchanges of its body.
+     */
     public AcknowledgeSync(Callable<SubscriberStub> subscriberStubSupplier, String subscriptionName) {
+        this(subscriberStubSupplier, subscriptionName, null);
+    }
+
+    /**
+     * Acknowledges the message with the given ack id, whatever the exchange given to {@link #ack(Exchange)} or
+     * {@link #nack(Exchange)} carries: the route may have changed or removed the {@link GooglePubsubConstants#ACK_ID}
+     * header, or replaced the message.
+     *
+     * @param ackId the ack id the message was received with, or {@code null} to take the ack ids from the exchange
+     *              given, as {@link #AcknowledgeSync(Callable, String)} does
+     */
+    public AcknowledgeSync(Callable<SubscriberStub> subscriberStubSupplier, String subscriptionName, String ackId) {
         this.subscriberStubSupplier = subscriberStubSupplier;
         this.subscriptionName = subscriptionName;
+        this.ackId = ackId;
     }
 
     @Override
@@ -88,6 +107,9 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     }
 
     private List<String> getAckIdList(Exchange exchange) {
+        if (ackId != null) {
+            return List.of(ackId);
+        }
         // an aggregated exchange (e.g. from GroupedExchangeAggregationStrategy) carries the grouped exchanges as its
         // body: each one holds the ack id of its own message, and the aggregated exchange may be one of them
         Set<String> ackIds = new LinkedHashSet<>();

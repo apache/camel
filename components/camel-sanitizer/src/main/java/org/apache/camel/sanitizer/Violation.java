@@ -22,8 +22,9 @@ package org.apache.camel.sanitizer;
  * processor of a step of a route (the callback of a step is called exactly once, and {@code process} does not throw).
  * Rule R2: a break of the contract of the commit of a consumer (described on
  * {@link org.apache.camel.spi.Synchronization}: each commit runs exactly once, for the unit of work that owns it). Rule
- * R3, its first part: the value {@code process} returns differs from the value its callback is called with, so two
- * threads can continue the exchange or none (the contract of {@link org.apache.camel.AsyncProcessor}).
+ * R3, one thread at a time: the value {@code process} returns differs from the value its callback is called with, so
+ * two threads can continue the exchange or none (the contract of {@link org.apache.camel.AsyncProcessor}); and, at
+ * sampled watch windows, two threads used the same exchange at the same time.
  *
  * @since 4.24
  */
@@ -101,7 +102,15 @@ public enum Violation {
      * {@code true}, so a caller that goes on only for an asynchronous callback leaves the exchange with no thread.
      */
     RETURNED_FALSE_CALLBACK_TRUE("process returned false, and its callback was called with true", "R3",
-                                 Fixes.RETURNED_FALSE);
+                                 Fixes.RETURNED_FALSE),
+
+    /**
+     * Rule R3, its second part: two threads used the same exchange at the same time. A thread paused in a sampled watch
+     * window at a point where the routing engine uses the exchange (a step is called, the callback of a step continues
+     * the exchange, an on completion runs), and another thread used the same exchange at such a point during the
+     * window.
+     */
+    USED_BY_TWO_THREADS("exchange used by two threads at the same time", "R3", Fixes.TWO_THREADS);
 
     private final String title;
     private final String rule;
@@ -125,8 +134,9 @@ public enum Violation {
     }
 
     /**
-     * The rule it breaks: {@code R1} (the callback of a step), {@code R2} (the commit of a consumer) or {@code R3} (the
-     * value process returns and the value of its callback).
+     * The rule it breaks: {@code R1} (the callback of a step), {@code R2} (the commit of a consumer) or {@code R3} (one
+     * thread at a time: the value process returns and the value of its callback, and two threads that use an exchange
+     * at the same time).
      */
     public String getRule() {
         return rule;
@@ -162,6 +172,10 @@ public enum Violation {
                                             + " callback was called with true on the calling thread";
         static final String RETURNED_FALSE = "call the callback with the value process returns: with true only when"
                                              + " process returns true, after the work is done on the calling thread";
+        static final String TWO_THREADS = "let one thread at a time use the exchange: a processor that hands it to"
+                                          + " another thread returns false from process and leaves it to that thread"
+                                          + " (only that thread calls the callback); work that must run beside the"
+                                          + " route gets a copy of the exchange (as the wire tap does)";
 
         private Fixes() {
         }

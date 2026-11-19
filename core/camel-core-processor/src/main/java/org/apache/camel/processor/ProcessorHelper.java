@@ -28,7 +28,9 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.MDC;
 
@@ -84,8 +86,18 @@ final class ProcessorHelper {
                 // convert to a string type we can work with
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
-            // optimize and normalize endpoint
-            return ecc.getCamelContextExtension().normalizeUri(uri);
+            // optimize and normalize endpoint. Property placeholders in the computed uri string are still resolved
+            // here (documented recipientList/routingSlip/dynamicRouter behaviour), but the uri was computed from the
+            // message, so its option values are bound as literal text: no #class: or #property: resolution on the
+            // option values; registry references (#bean:, #type:) are still resolved (CAMEL-27160).
+            try {
+                String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(ecc, uri);
+                return NormalizedUri.newNormalizedUri(resolved, false, true);
+            } catch (ResolveEndpointFailedException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
         }
         return null;
     }

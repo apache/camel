@@ -21,7 +21,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.aesh.command.option.Mixin;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -39,10 +38,6 @@ abstract class CamelChaosAction extends ActionBaseCommand {
 
     @Mixin
     ActionTimeoutMixin timeoutOption;
-
-    protected CamelChaosAction(CamelJBangMain main) {
-        super(main);
-    }
 
     /**
      * Sends the chaos command to one integration, and returns its answer. When the integration refuses it (such as a

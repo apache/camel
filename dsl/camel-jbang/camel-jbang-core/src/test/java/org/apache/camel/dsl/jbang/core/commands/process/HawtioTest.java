@@ -63,7 +63,7 @@ class HawtioTest {
         boolean opened;
 
         TestHawtio() {
-            super(new CamelJBangMain().withPrinter(new StringPrinter()));
+            setCamelMain(new CamelJBangMain().withPrinter(new StringPrinter()));
         }
 
         @Override

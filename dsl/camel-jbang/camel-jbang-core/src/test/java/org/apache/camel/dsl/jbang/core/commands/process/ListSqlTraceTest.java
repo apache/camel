@@ -44,7 +44,7 @@ class ListSqlTraceTest extends ProcessCommandTestSupport {
                 statement("UPDATE orders SET done = true", 3, true)));
         writeStatusFile(TEST_PID, root);
 
-        ListSqlTrace command = new ListSqlTrace(new CamelJBangMain().withPrinter(printer));
+        ListSqlTrace command = new CamelJBangMain().withPrinter(printer).command(new ListSqlTrace());
         command.jsonOutput = true;
         command.sort = "pid";
 
@@ -69,7 +69,7 @@ class ListSqlTraceTest extends ProcessCommandTestSupport {
         root.put("sqlTrace", statements(statement("SELECT * FROM orders", 12, false)));
         writeStatusFile(TEST_PID, root);
 
-        ListSqlTrace command = new ListSqlTrace(new CamelJBangMain().withPrinter(printer));
+        ListSqlTrace command = new CamelJBangMain().withPrinter(printer).command(new ListSqlTrace());
         command.sort = "pid";
 
         assertThat(call(command)).isZero();
@@ -82,7 +82,7 @@ class ListSqlTraceTest extends ProcessCommandTestSupport {
     void withoutSqlTracingListsNothing() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("orders", 5));
 
-        ListSqlTrace command = new ListSqlTrace(new CamelJBangMain().withPrinter(printer));
+        ListSqlTrace command = new CamelJBangMain().withPrinter(printer).command(new ListSqlTrace());
         command.jsonOutput = true;
         command.sort = "pid";
 

@@ -25,14 +25,14 @@ class RunMcpOptionTest {
 
     @Test
     void parseMcpFlag() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "hello.yaml", "--mcp");
         assertThat(run.serverOptions.mcp).isTrue();
     }
 
     @Test
     void mcpDefaultsToFalse() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "hello.yaml");
         assertThat(run.serverOptions.mcp).isFalse();
     }

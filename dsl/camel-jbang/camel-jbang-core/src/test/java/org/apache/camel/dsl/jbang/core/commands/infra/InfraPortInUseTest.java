@@ -89,7 +89,7 @@ class InfraPortInUseTest extends InfraCommandTestSupport {
     }
 
     private InfraRun command() {
-        InfraRun command = new InfraRun(new CamelJBangMain().withPrinter(printer));
+        InfraRun command = new CamelJBangMain().withPrinter(printer).command(new InfraRun());
         // the pid files carry synthetic pids, so treat every pid as a live process
         command.aliveCheck = pid -> true;
         return command;

@@ -112,7 +112,7 @@ public class RouteDiagramTools {
         CapturingPrinter capturingPrinter = new CapturingPrinter();
         CamelJBangMain main = new CamelJBangMain()
                 .withPrinter(capturingPrinter);
-        CamelRouteDiagramAction action = new CamelRouteDiagramAction(main);
+        CamelRouteDiagramAction action = main.command(new CamelRouteDiagramAction());
 
         try {
             int exit = action.renderSourceToFile(

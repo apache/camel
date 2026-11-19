@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "stop-group", description = "Stop Camel route groups", generateHelp = true,
@@ -26,10 +25,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd stop-group --id=myGroup",
                            "  camel cmd stop-group myApp --id=myGroup" })
 public class CamelRouteGroupStopAction extends CamelRouteAction {
-
-    public CamelRouteGroupStopAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void onAction(JsonObject root) {

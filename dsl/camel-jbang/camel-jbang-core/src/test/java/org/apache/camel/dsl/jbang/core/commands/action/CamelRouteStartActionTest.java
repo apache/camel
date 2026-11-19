@@ -36,7 +36,7 @@ class CamelRouteStartActionTest extends ActionCommandTestSupport {
     void testWritesStartActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStartAction command = new CamelRouteStartAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStartAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStartAction());
         command.name = "myApp";
         command.id = "myRoute";
 
@@ -55,7 +55,7 @@ class CamelRouteStartActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "myApp");
 
         // default id is "*" (all routes)
-        CamelRouteStartAction command = new CamelRouteStartAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStartAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStartAction());
         command.name = "myApp";
 
         int exit = callWithSingleProcess(command);
@@ -70,7 +70,7 @@ class CamelRouteStartActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStartAction command = new CamelRouteStartAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStartAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStartAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

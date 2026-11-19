@@ -95,6 +95,10 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
+
+        // the throttler holds the 3 other messages until the time period has elapsed: stop the route without waiting
+        // for them, or the shutdown of the CamelContext would wait for them
+        context.getRouteController().stopRoute("ga", 100, TimeUnit.MILLISECONDS);
     }
 
     private void assertThrottlerTiming(
@@ -218,7 +222,8 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
                 from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
 
-                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(5000).to("log:gresult", "mock:gresult");
+                from("seda:ga").routeId("ga").throttle(constant(3), header("key")).timePeriodMillis(5000).to("log:gresult",
+                        "mock:gresult");
 
                 from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult",
                         "mock:gresult");

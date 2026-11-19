@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.util.FileUtil;
@@ -32,10 +31,6 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 abstract class ProcessBaseCommand extends CamelCommand {
-
-    protected ProcessBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     List<Long> findPids(String name) {
         // the running integrations that match the name or pid (see ProcessFinder)

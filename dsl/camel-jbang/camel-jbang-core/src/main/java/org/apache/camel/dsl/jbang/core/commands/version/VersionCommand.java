@@ -18,19 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.version;
 
 import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "version", description = "Manage Camel versions (use version --help to see sub commands)",
                    generateHelp = true, sortOptions = true)
 public class VersionCommand extends CamelCommand {
 
-    public VersionCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // defaults to get
-        return runDefault(new VersionGet(getMain()));
+        return runDefault(getMain().command(new VersionGet()));
     }
 }

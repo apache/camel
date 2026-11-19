@@ -19,6 +19,7 @@ package org.apache.camel.sanitizer;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -43,9 +44,9 @@ import org.slf4j.LoggerFactory;
  * {@code camel.sanitizer.enabled=true}, or for a context built on a thread that the JUnit extension marked
  * ({@link SanitizerTestSession}), and never with profile {@code prod} (checked first). Otherwise nothing is installed
  * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1, the step listener
- * of rule R3, for rule R2 the on completion listener, and for rule R2 and the still pending warning of R1 one event
- * notifier of the exchanges that are done; it looks for still pending calls while the context runs, and logs a WARN
- * that the sanitizer is on.
+ * of rule R3, for rule R2 the on completion listener, for the sampled watch windows of rule R3 a listener of both
+ * kinds, and for rule R2 and the still pending warning of R1 one event notifier of the exchanges that are done; it
+ * looks for still pending calls while the context runs, and logs a WARN that the sanitizer is on.
  *
  * @since 4.24
  */
@@ -56,10 +57,19 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
     static final String STACK_DEPTH = "camel.sanitizer.stackDepth";
     static final String REPORT_ON_SHUTDOWN = "camel.sanitizer.reportOnShutdown";
     static final String PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
+    static final String OVERLAP_SAMPLING = "camel.sanitizer.overlapSampling";
+    static final String OVERLAP_WINDOW = "camel.sanitizer.overlapWindow";
+
+    /**
+     * The sampling of the watch windows of rule R3 in a test: a context built on a thread the JUnit extension marked
+     * (outside a test it is 0, off, as a paused thread changes the timing of the application).
+     */
+    static final int DEFAULT_OVERLAP_SAMPLING_IN_TESTS = 100;
 
     /**
      * The checks of this version: {@code callback} is rule R1, {@code commit} is rule R2, {@code threads} is rule R3
-     * (its first part: the value process returns and the value of its callback).
+     * (the value process returns and the value of its callback, and the sampled watch windows when
+     * {@code camel.sanitizer.overlapSampling} is more than 0).
      */
     static final String CHECK_CALLBACK = "callback";
     static final String CHECK_COMMIT = "commit";
@@ -125,6 +135,8 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             boolean callback;
             boolean commit;
             boolean threads;
+            int overlapSampling;
+            long overlapWindow;
             try {
                 String text = property(pc, ENABLED);
                 enabled = text != null ? parseBoolean(ENABLED, text) : null;
@@ -143,6 +155,8 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 stackDepth = parseStackDepth(orElse(property(pc, STACK_DEPTH), "32"));
                 pendingTimeout = parsePendingTimeout(orElse(property(pc, PENDING_TIMEOUT), "60s"));
                 reportOnShutdown = parseBoolean(REPORT_ON_SHUTDOWN, orElse(property(pc, REPORT_ON_SHUTDOWN), "true"));
+                overlapSampling = overlapSampling(session, property(pc, OVERLAP_SAMPLING));
+                overlapWindow = parseOverlapWindow(orElse(property(pc, OVERLAP_WINDOW), "1ms"));
             } catch (IllegalArgumentException e) {
                 throw new VetoCamelContextStartException("camel-sanitizer: " + e.getMessage(), e, context);
             }
@@ -160,7 +174,9 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 turnedOff(session);
                 return;
             }
-            Sanitizer s = new Sanitizer(context, stackDepth, session, callback, commit, threads, pendingTimeout);
+            Sanitizer s = new Sanitizer(
+                    context, stackDepth, session, callback, commit, threads, pendingTimeout, overlapSampling,
+                    TimeUnit.MILLISECONDS.toNanos(overlapWindow));
             if (session != null) {
                 session.installed();
             }
@@ -177,6 +193,13 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 SanitizerOnCompletionListener listener = new SanitizerOnCompletionListener(s);
                 context.getCamelContextExtension().addOnCompletionListener(listener);
             }
+            if (s.getOverlaps() != null) {
+                // after the listeners above, so at a callback or an on completion they report a violation of the call
+                // before this thread comes to its point
+                SanitizerOverlapListener listener = new SanitizerOverlapListener(s.getOverlaps());
+                context.getCamelContextExtension().addStepListener(listener);
+                context.getCamelContextExtension().addOnCompletionListener(listener);
+            }
             if (s.needsExchangeDone()) {
                 // one notifier for both: for R2 a commit still in the unit of work of an exchange that is done never
                 // runs; for the still pending warning an exchange that is done no longer waits for a call that is
@@ -185,7 +208,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             }
             sanitizer = s;
             String why = enabled != null ? ENABLED + "=true" : session != null ? "@CamelSanitizer" : "profile dev";
-            String rules = rules(callback, commit, threads);
+            String rules = rules(callback, commit, threads, s.getOverlaps() != null ? overlapSampling : 0, overlapWindow);
             String message = "The exchange sanitizer is switched on ({}): it checks {}, which costs time at each step."
                              + " Do not use in production.";
             if (session == null || WARNED_IN_TESTS.compareAndSet(false, true)) {
@@ -244,7 +267,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         /**
          * What the sanitizer checks, in words, for the WARN that it is on.
          */
-        static String rules(boolean callback, boolean commit, boolean threads) {
+        static String rules(boolean callback, boolean commit, boolean threads, int overlapSampling, long overlapWindow) {
             StringJoiner sj = new StringJoiner(", ");
             if (callback) {
                 sj.add("the callback of each call of the steps of the routes (rule R1)");
@@ -254,6 +277,10 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             }
             if (threads) {
                 sj.add("the value each call of a step returns against the value of its callback (rule R3)");
+            }
+            if (overlapSampling > 0) {
+                sj.add("two threads that use the same exchange at the same time, in a watch window at 1 in " + overlapSampling
+                       + " points where the thread pauses for " + overlapWindow + " ms (rule R3)");
             }
             return sj.toString();
         }
@@ -317,6 +344,46 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 found |= wanted.equals(check);
             }
             return found;
+        }
+
+        /**
+         * The sampling of the watch windows of rule R3: what the test class sets ({@code @CamelSanitizer}), or else
+         * {@code camel.sanitizer.overlapSampling}, or else 100 in a test and 0 outside one.
+         */
+        static int overlapSampling(SanitizerTestSession session, String text) {
+            if (session != null && session.getOverlapSampling() >= 0) {
+                return session.getOverlapSampling();
+            }
+            if (text == null) {
+                return session != null ? DEFAULT_OVERLAP_SAMPLING_IN_TESTS : 0;
+            }
+            int sampling;
+            try {
+                sampling = Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(OVERLAP_SAMPLING + "=" + text + " is not a whole number", e);
+            }
+            if (sampling < 0) {
+                throw new IllegalArgumentException(OVERLAP_SAMPLING + "=" + text + " must be 0 or more");
+            }
+            return sampling;
+        }
+
+        /**
+         * How long a thread pauses in a watch window of rule R3, in milliseconds, such as {@code 1ms} or {@code 5}
+         * (ms); more than 0.
+         */
+        static long parseOverlapWindow(String text) {
+            long millis;
+            try {
+                millis = TimeUtils.toMilliSeconds(text);
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(OVERLAP_WINDOW + "=" + text + " is not a duration", e);
+            }
+            if (millis <= 0) {
+                throw new IllegalArgumentException(OVERLAP_WINDOW + "=" + text + " must be more than 0");
+            }
+            return millis;
         }
 
         /**

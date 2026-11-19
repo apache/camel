@@ -30,7 +30,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -77,10 +76,6 @@ public class CatalogKamelet extends CamelCommand {
 
     @Mixin
     MavenResolverMixin mavenResolver = new MavenResolverMixin();
-
-    public CatalogKamelet(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

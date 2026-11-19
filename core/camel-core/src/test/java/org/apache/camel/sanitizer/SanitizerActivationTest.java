@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @ClearSystemProperty(key = "camel.sanitizer.enabled")
 @ClearSystemProperty(key = "camel.sanitizer.pendingTimeout")
+@ClearSystemProperty(key = "camel.sanitizer.overlapSampling")
 // the JVM-wide property is cleared while the class runs: alone, so a class of the CI switch that starts meanwhile still
 // sees it
 @Isolated
@@ -85,6 +86,8 @@ class SanitizerActivationTest {
         assertTrue(Sanitizer.get(context).isCheckingCallbacks());
         assertTrue(Sanitizer.get(context).isCheckingThreads());
         assertNull(Sanitizer.get(context).getCommits());
+        // the watch windows of R3 are off outside a test
+        assertNull(Sanitizer.get(context).getOverlaps());
         assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
         // and the still pending warning of R1, told by the notifier of the exchanges that are done
         assertNotNull(Sanitizer.get(context).getPendingCalls());
@@ -101,7 +104,14 @@ class SanitizerActivationTest {
             assertNotNull(Sanitizer.get(context).getCommits());
             assertTrue(Sanitizer.get(context).isCheckingThreads());
             assertEquals(List.of("callback", "commit", "threads"), Sanitizer.get(context).getChecks());
-            assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+            // R2, and the watch windows of R3 at 1 in 100 points in a test (a listener of steps and of on completions)
+            assertEquals(100, Sanitizer.get(context).getOverlaps().getSampling());
+            assertEquals(TimeUnit.MILLISECONDS.toNanos(1), Sanitizer.get(context).getOverlaps().getWindowNanos());
+            assertEquals(3, context.getCamelContextExtension().getStepListeners().size());
+            assertInstanceOf(SanitizerOverlapListener.class, context.getCamelContextExtension().getStepListeners().get(2));
+            assertEquals(2, context.getCamelContextExtension().getOnCompletionListeners().size());
+            assertInstanceOf(SanitizerOverlapListener.class,
+                    context.getCamelContextExtension().getOnCompletionListeners().get(1));
             // R2 and the still pending warning of R1 are told by one notifier of the exchanges that are done
             assertNotNull(Sanitizer.get(context).getPendingCalls());
             assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
@@ -199,9 +209,11 @@ class SanitizerActivationTest {
             assertFalse(s.isCheckingCallbacks());
             assertNull(s.getCommits());
             assertNull(s.getPendingCalls());
-            assertEquals(1, context.getCamelContextExtension().getStepListeners().size());
+            // the listener of R3 and, for its watch windows in a test, the listener of the points
+            assertEquals(2, context.getCamelContextExtension().getStepListeners().size());
             assertInstanceOf(SanitizerDoneSyncListener.class, context.getCamelContextExtension().getStepListeners().get(0));
-            assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
+            assertInstanceOf(SanitizerOverlapListener.class, context.getCamelContextExtension().getStepListeners().get(1));
+            assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
             assertTrue(context.getManagementStrategy().getEventNotifiers().stream()
                     .noneMatch(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance));
             // the processor that throws breaks R1, which is not checked; its call is still counted
@@ -278,6 +290,73 @@ class SanitizerActivationTest {
         e = assertThrows(Exception.class,
                 () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.pendingTimeout", "abc"), null, null));
         assertTrue(messages(e).contains("camel.sanitizer.pendingTimeout=abc is not a duration"), messages(e));
+        e = assertThrows(Exception.class,
+                () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.overlapSampling", "-1"), null, null));
+        assertTrue(messages(e).contains("camel.sanitizer.overlapSampling=-1 must be 0 or more"), messages(e));
+        e = assertThrows(Exception.class,
+                () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.overlapSampling", "often"), null,
+                        null));
+        assertTrue(messages(e).contains("camel.sanitizer.overlapSampling=often is not a whole number"), messages(e));
+        e = assertThrows(Exception.class,
+                () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.overlapWindow", "0"), null, null));
+        assertTrue(messages(e).contains("camel.sanitizer.overlapWindow=0 must be more than 0"), messages(e));
+    }
+
+    @Test
+    void overlapSamplingOutsideATest() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.overlapSampling", "7",
+                "camel.sanitizer.overlapWindow", "5ms"), null, null);
+        Overlaps overlaps = Sanitizer.get(context).getOverlaps();
+        assertEquals(7, overlaps.getSampling());
+        assertEquals(TimeUnit.MILLISECONDS.toNanos(5), overlaps.getWindowNanos());
+        assertEquals(3, context.getCamelContextExtension().getStepListeners().size());
+        assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+    }
+
+    @Test
+    void overlapSamplingZeroInATestInstallsNothingForIt() throws Exception {
+        SanitizerTestSession session = SanitizerTestSession.open("samplingOff");
+        try {
+            start(Map.of("camel.sanitizer.overlapSampling", "0"), null, session);
+            Sanitizer s = Sanitizer.get(context);
+            assertNull(s.getOverlaps());
+            // the listeners of R1 and R3, and of R2: nothing for the watch windows
+            assertEquals(2, context.getCamelContextExtension().getStepListeners().size());
+            assertTrue(context.getCamelContextExtension().getStepListeners().stream()
+                    .noneMatch(SanitizerOverlapListener.class::isInstance));
+            assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+            assertFalse(s.report().contains("watch window"), s.report());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    void theSamplingOfTheTestClassWinsOverTheOption() throws Exception {
+        // as @CamelSanitizer(overlapSampling = 0) sets it for its class
+        SanitizerTestSession session = SanitizerTestSession.open("classSamplingOff", 0);
+        try {
+            start(Map.of("camel.sanitizer.overlapSampling", "1"), null, session);
+            assertNull(Sanitizer.get(context).getOverlaps());
+        } finally {
+            session.close();
+        }
+        context.stop();
+        session = SanitizerTestSession.open("classSampling", 3);
+        try {
+            start(Map.of("camel.sanitizer.overlapSampling", "1"), null, session);
+            assertEquals(3, Sanitizer.get(context).getOverlaps().getSampling());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    void noWatchWindowsWithoutTheCheckThreads() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback",
+                "camel.sanitizer.overlapSampling", "1"), null, null);
+        assertNull(Sanitizer.get(context).getOverlaps());
+        assertEquals(1, context.getCamelContextExtension().getStepListeners().size());
     }
 
     @Test
@@ -348,8 +427,8 @@ class SanitizerActivationTest {
             context.stop();
             context.start();
             assertSame(sanitizer, Sanitizer.get(context));
-            // the listeners of R1 and R3, not added again
-            assertEquals(2, context.getCamelContextExtension().getStepListeners().size());
+            // the listeners of R1, R3 and its watch windows, not added again
+            assertEquals(3, context.getCamelContextExtension().getStepListeners().size());
             sendToBrokenRoute();
             assertEquals(1, session.drain().size());
         } finally {

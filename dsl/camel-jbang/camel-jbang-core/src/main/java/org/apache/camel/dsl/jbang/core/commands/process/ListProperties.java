@@ -29,7 +29,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -85,10 +84,6 @@ public class ListProperties extends ProcessWatchCommand {
             description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
             defaultValue = "true")
     boolean mask = true;
-
-    public ListProperties(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

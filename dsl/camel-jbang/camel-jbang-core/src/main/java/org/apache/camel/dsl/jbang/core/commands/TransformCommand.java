@@ -23,10 +23,6 @@ import org.aesh.command.CommandDefinition;
                    generateHelp = true)
 public class TransformCommand extends CamelCommand {
 
-    public TransformCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         return printHelp();

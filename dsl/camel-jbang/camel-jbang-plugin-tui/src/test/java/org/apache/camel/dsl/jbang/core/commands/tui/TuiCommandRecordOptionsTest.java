@@ -56,7 +56,7 @@ class TuiCommandRecordOptionsTest {
     void everyRecordingOptionIsAcceptedByTheDelegate() {
         // The forwarded command line is only useful if CamelMonitor understands it — the bug this guards against
         // was TuiCommand accepting --record-size and CamelMonitor never seeing it.
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         String[] args = buildArgs("--record=demo.tape", "--record-size=160x44", "--record-fps=15",
                 "--record-duration=30000").toArray(String[]::new);
 
@@ -69,7 +69,7 @@ class TuiCommandRecordOptionsTest {
     }
 
     private List<String> buildArgs(String... args) {
-        TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
+        TuiCommand command = new CamelJBangMain().command(new TuiCommand(getClass().getClassLoader()));
         CommandLineTestHelper.parse(command, args);
         return command.buildArgs();
     }

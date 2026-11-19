@@ -40,7 +40,7 @@ class ListInflightTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListInflight command = new ListInflight(new CamelJBangMain().withPrinter(printer));
+        ListInflight command = new CamelJBangMain().withPrinter(printer).command(new ListInflight());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -63,7 +63,7 @@ class ListInflightTest extends ProcessCommandTestSupport {
         root.put("inflight", exchangeContainer(inflightExchange("exchange-1", true)));
         writeStatusFile(TEST_PID, root);
 
-        ListInflight command = new ListInflight(new CamelJBangMain().withPrinter(printer));
+        ListInflight command = new CamelJBangMain().withPrinter(printer).command(new ListInflight());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListInflightTest extends ProcessCommandTestSupport {
         root.put("inflight", exchangeContainer(inflightExchange("exchange-2", false)));
         writeStatusFile(TEST_PID, root);
 
-        ListInflight command = new ListInflight(new CamelJBangMain().withPrinter(printer));
+        ListInflight command = new CamelJBangMain().withPrinter(printer).command(new ListInflight());
         command.sort = "pid";
         command.jsonOutput = true;
 

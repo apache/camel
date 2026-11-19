@@ -152,7 +152,7 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
         // Use a bounded shutdown timeout so that stopRoute force-stops the route (stopping its
         // error handlers) after the timeout, since the inflight exchange will not complete on its own.
         // Using direct: (not seda:) ensures the route stop does not interrupt the processing thread.
-        context.getShutdownStrategy().setTimeout(5);
+        context.getShutdownStrategy().setTimeout(1);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
 
         CompletableFuture<Exchange> future = template.asyncSend("direct:start", exchange -> {
@@ -184,7 +184,7 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
     @Test
     public void processedCutOffIsNotInTheErrorRegistry() throws Exception {
         context.getErrorRegistry().setEnabled(true);
-        context.getShutdownStrategy().setTimeout(5);
+        context.getShutdownStrategy().setTimeout(1);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
 
         template.asyncSend("direct:start", exchange -> exchange.getIn().setBody(List.of("A")));
@@ -202,7 +202,7 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
     public void processedCutOffIsInTheErrorRegistryWhenIncluded() throws Exception {
         context.getErrorRegistry().setEnabled(true);
         context.getErrorRegistry().setIncludeRouteStopping(true);
-        context.getShutdownStrategy().setTimeout(5);
+        context.getShutdownStrategy().setTimeout(1);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
 
         template.asyncSend("direct:start", exchange -> exchange.getIn().setBody(List.of("A")));

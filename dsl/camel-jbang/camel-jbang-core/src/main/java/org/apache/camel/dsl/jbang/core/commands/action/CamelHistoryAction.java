@@ -51,7 +51,6 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -152,10 +151,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     private MessageTableHelper tableHelper;
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
-
-    public CamelHistoryAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

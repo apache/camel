@@ -62,10 +62,6 @@ public class Script extends CamelCommand {
                 description = "Additional properties (override existing)")
     String[] property;
 
-    public Script(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public boolean disarrangeLogging() {
         return false;
@@ -78,7 +74,7 @@ public class Script extends CamelCommand {
             file = file.substring(2);
         }
 
-        Run run = new Run(getMain());
+        Run run = getMain().command(new Run());
         run.loggingOptions.logging = logging;
         run.loggingOptions.loggingLevel = loggingLevel;
         run.loggingOptions.loggingColor = false;

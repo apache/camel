@@ -55,7 +55,7 @@ public class RestBindingAdviceFactory {
     // type comes from the type and outType of the verb, not from a header or the options of the data format
     private static final Set<String> NOT_INHERITED_OPTIONS
             = Set.of("objectmapper", "xmlmapper", "allowunmarshalltype", "allowjmstype", "unmarshaltype", "uselist",
-                    "collectiontype", "partclass");
+                    "collectiontype", "partclass", "allowpartclassfromheader");
 
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration
@@ -198,8 +198,8 @@ public class RestBindingAdviceFactory {
     }
 
     private static void copyOptions(CamelContext camelContext, String name, DataFormat source, DataFormat target) {
-        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer(name + "-dataformat", camelContext);
+        PropertyConfigurer configurer
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext, name + "-dataformat", source);
         if (configurer == null) {
             configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, source);
         }

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -41,10 +40,6 @@ public class CamelChaosExploreFinishAction extends CamelChaosAction {
     @Argument(description = "Name or pid of the running Camel integration (must match one); without it,"
                             + " the only one running, or the only one with chaos switched on")
     String name;
-
-    public CamelChaosExploreFinishAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

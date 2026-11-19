@@ -1,10 +1,11 @@
-= OpenStack Keystone Component
+= OpenStack Keystone Component (deprecated)
 :doctitle: OpenStack Keystone
 :shortname: openstack-keystone
 :artifactid: camel-openstack
 :description: Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

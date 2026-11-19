@@ -168,7 +168,7 @@ class ListMetricTest extends ProcessCommandTestSupport {
     }
 
     private ListMetric command(String... args) {
-        ListMetric command = new ListMetric(new CamelJBangMain().withPrinter(printer));
+        ListMetric command = new CamelJBangMain().withPrinter(printer).command(new ListMetric());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

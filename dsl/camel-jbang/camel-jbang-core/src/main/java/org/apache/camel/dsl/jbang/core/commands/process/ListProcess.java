@@ -28,7 +28,6 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -59,10 +58,6 @@ public class ListProcess extends ProcessWatchCommand {
 
     @Option(name = "pid", hasValue = false, description = "List only pid in the output")
     boolean pid;
-
-    public ListProcess(CamelJBangMain main) {
-        super(main);
-    }
 
     protected Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();

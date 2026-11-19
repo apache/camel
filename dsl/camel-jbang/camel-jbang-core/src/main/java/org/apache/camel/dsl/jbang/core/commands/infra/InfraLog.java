@@ -32,7 +32,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -53,7 +52,7 @@ public class InfraLog extends InfraBaseCommand {
 
     @Option(name = "lines", description = "The number of lines from the end of the log to use as starting offset",
             defaultValue = "50")
-    private int logLines = 50;
+    int logLines = 50;
 
     @Option(name = "follow", hasValue = false,
             description = "Keep following and outputting new log lines (press enter to exit)."
@@ -66,9 +65,7 @@ public class InfraLog extends InfraBaseCommand {
 
     private ExecutorService executorService;
 
-    public InfraLog(CamelJBangMain main) {
-        super(main);
-
+    public InfraLog() {
         executorService = Executors.newFixedThreadPool(10);
     }
 

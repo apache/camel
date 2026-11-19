@@ -24,7 +24,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
@@ -52,10 +51,6 @@ public class ListAbout extends ProcessWatchCommand {
     String name = "*";
 
     private CamelCatalog catalog;
-
-    public ListAbout(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

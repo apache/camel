@@ -1347,9 +1347,10 @@ public interface DoclingEndpointBuilderFactory {
          * When set, the output directory passed to the docling CLI must resolve
          * inside this directory once normalized. Applies to the
          * CamelDoclingOutputFilePath header. The check is lexical and does not
-         * resolve symbolic links, matching inputBaseDirectory. When empty, no
-         * directory restriction is applied and the header value is only
-         * normalized.
+         * resolve symbolic links, matching inputBaseDirectory. When empty, the
+         * header value must be a relative path that does not leave the working
+         * directory once normalized; set this option to use absolute output
+         * directories.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2925,9 +2926,10 @@ public interface DoclingEndpointBuilderFactory {
          * When set, the output directory passed to the docling CLI must resolve
          * inside this directory once normalized. Applies to the
          * CamelDoclingOutputFilePath header. The check is lexical and does not
-         * resolve symbolic links, matching inputBaseDirectory. When empty, no
-         * directory restriction is applied and the header value is only
-         * normalized.
+         * resolve symbolic links, matching inputBaseDirectory. When empty, the
+         * header value must be a relative path that does not leave the working
+         * directory once normalized; set this option to use absolute output
+         * directories.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4396,9 +4398,10 @@ public interface DoclingEndpointBuilderFactory {
          * When set, the output directory passed to the docling CLI must resolve
          * inside this directory once normalized. Applies to the
          * CamelDoclingOutputFilePath header. The check is lexical and does not
-         * resolve symbolic links, matching inputBaseDirectory. When empty, no
-         * directory restriction is applied and the header value is only
-         * normalized.
+         * resolve symbolic links, matching inputBaseDirectory. When empty, the
+         * header value must be a relative path that does not leave the working
+         * directory once normalized; set this option to use absolute output
+         * directories.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

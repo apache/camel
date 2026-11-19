@@ -267,12 +267,13 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
     @Test
     void anIntegrationBeforeCamel424IsNotAsked() throws Exception {
         printer = new StringPrinter();
-        ListSanitizer command = new ListSanitizer(new CamelJBangMain().withPrinter(printer)) {
+        ListSanitizer command = new ListSanitizer() {
             @Override
             JsonObject loadSanitizer(long pid) {
                 throw new AssertionError("an integration before Camel 4.24 cannot have camel-sanitizer");
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         JsonObject root = new JsonObject();
         root.put("context", new JsonObject(Map.of("name", "orders", "version", "4.23.0")));
 
@@ -286,13 +287,13 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
 
     @Test
     void theTableAsksWithoutTheReports() throws Exception {
-        ListSanitizer command = new ListSanitizer(new CamelJBangMain().withPrinter(new StringPrinter()));
+        ListSanitizer command = new CamelJBangMain().withPrinter(new StringPrinter()).command(new ListSanitizer());
         CommandLineTestHelper.parse(command);
         assertThat(command.sanitizerRequest().getString("action")).isEqualTo("sanitizer");
         // the table and its JSON do not show the reports of the violations or the still pending warnings
         assertThat(command.sanitizerRequest().getString("report")).isEqualTo("false");
 
-        command = new ListSanitizer(new CamelJBangMain().withPrinter(new StringPrinter()));
+        command = new CamelJBangMain().withPrinter(new StringPrinter()).command(new ListSanitizer());
         CommandLineTestHelper.parse(command, "--report");
         assertThat(command.sanitizerRequest()).doesNotContainKey("report");
     }
@@ -302,12 +303,13 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         printer = new StringPrinter();
         // as the action reply carries it: JSON text, so the numbers are BigDecimal
         JsonObject reply = answer != null ? (JsonObject) Jsoner.deserialize(answer.toJson()) : null;
-        ListSanitizer command = new ListSanitizer(new CamelJBangMain().withPrinter(printer)) {
+        ListSanitizer command = new ListSanitizer() {
             @Override
             JsonObject loadSanitizer(long pid) {
                 return reply;
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, args);
         JsonObject root = new JsonObject();
         root.put("context", new JsonObject(Map.of("name", "orders")));

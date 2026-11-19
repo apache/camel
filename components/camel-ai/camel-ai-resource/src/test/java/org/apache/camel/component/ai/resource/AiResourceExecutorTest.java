@@ -80,6 +80,18 @@ public class AiResourceExecutorTest extends CamelTestSupport {
                      + "?resourceUri=camel:///exchange-failure"
                      + "&tags=test")
                         .process(exchange -> exchange.setException(new IllegalStateException("exchange failure")));
+
+                from("ai-resource:suspendable"
+                     + "?resourceUri=camel:///suspendable"
+                     + "&tags=test")
+                        .routeId("suspendable-route")
+                        .setBody(constant("suspendable content"));
+
+                from("ai-resource:suspendable_template"
+                     + "?uriTemplate=camel:///suspendable-items/{id}"
+                     + "&tags=test")
+                        .routeId("suspendable-template-route")
+                        .setBody(constant("suspendable item"));
             }
         };
     }
@@ -172,12 +184,65 @@ public class AiResourceExecutorTest extends CamelTestSupport {
                 .doesNotContain("camel:///orphan");
     }
 
+    @Test
+    public void testSuspendedResourceRefusesReadsUntilItsRouteResumes() throws Exception {
+        // a caller can hold a spec it obtained before the route was suspended
+        AiResourceSpec spec = findSpec("camel:///suspendable");
+        context.getRouteController().suspendRoute("suspendable-route");
+
+        AiResourceResult refused = AiResourceExecutor.execute(spec, new DefaultExchange(context));
+
+        assertThat(refused).isInstanceOf(AiResourceResult.ExecutionError.class);
+        AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) refused;
+        assertThat(error.message()).isEqualTo("Resource 'suspendable' is suspended");
+        assertThat(error.cause()).isInstanceOf(IllegalStateException.class);
+
+        context.getRouteController().resumeRoute("suspendable-route");
+
+        assertThat(findSpec("camel:///suspendable")).isSameAs(spec);
+        AiResourceResult result = AiResourceExecutor.execute(spec, new DefaultExchange(context));
+        assertThat(result).isInstanceOf(AiResourceResult.Text.class);
+        assertThat(((AiResourceResult.Text) result).value()).isEqualTo("suspendable content");
+    }
+
+    @Test
+    public void testSuspendedResourceTemplateRefusesReadsUntilItsRouteResumes() throws Exception {
+        AiResourceTemplateSpec template = findTemplate("camel:///suspendable-items/{id}");
+        context.getRouteController().suspendRoute("suspendable-template-route");
+
+        assertThat(AiResourceRegistry.getOrCreate(context).getResourceTemplatesByTag("test")).doesNotContain(template);
+        AiResourceResult refused = AiResourceExecutor.execute(
+                template.asResourceSpec("camel:///suspendable-items/42"), new DefaultExchange(context));
+
+        assertThat(refused).isInstanceOf(AiResourceResult.ExecutionError.class);
+        assertThat(((AiResourceResult.ExecutionError) refused).message())
+                .isEqualTo("Resource 'suspendable_template' is suspended");
+
+        context.getRouteController().resumeRoute("suspendable-template-route");
+
+        assertThat(findTemplate("camel:///suspendable-items/{id}")).isSameAs(template);
+        AiResourceResult result = AiResourceExecutor.execute(
+                template.asResourceSpec("camel:///suspendable-items/42"), new DefaultExchange(context));
+        assertThat(result).isInstanceOf(AiResourceResult.Text.class);
+        assertThat(((AiResourceResult.Text) result).value()).isEqualTo("suspendable item");
+    }
+
     private AiResourceResult read(String resourceUri) {
-        AiResourceSpec spec = AiResourceRegistry.getOrCreate(context).getResourcesByTag("test").stream()
+        Exchange exchange = new DefaultExchange(context);
+        return AiResourceExecutor.execute(findSpec(resourceUri), exchange);
+    }
+
+    private AiResourceSpec findSpec(String resourceUri) {
+        return AiResourceRegistry.getOrCreate(context).getResourcesByTag("test").stream()
                 .filter(s -> resourceUri.equals(s.getUri()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Resource not found: " + resourceUri));
-        Exchange exchange = new DefaultExchange(context);
-        return AiResourceExecutor.execute(spec, exchange);
+    }
+
+    private AiResourceTemplateSpec findTemplate(String uriTemplate) {
+        return AiResourceRegistry.getOrCreate(context).getResourceTemplatesByTag("test").stream()
+                .filter(s -> uriTemplate.equals(s.getUriTemplate()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Resource template not found: " + uriTemplate));
     }
 }

@@ -48,7 +48,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         String rule = "endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m";
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders", "--rule=" + rule),
+        assertThat(callWithResponse(command(main().command(new CamelChaosAddAction()), "orders", "--rule=" + rule),
                 new JsonObject(Map.of("id", "r1", "version", 1)))).isZero();
 
         JsonObject action = readActionFile(TEST_PID);
@@ -65,7 +65,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         String rule = "endpoint=kafka:orders* error message=\"broker down; retry\" rate=0.3";
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders", "--rule", rule),
+        assertThat(callWithResponse(command(main().command(new CamelChaosAddAction()), "orders", "--rule", rule),
                 new JsonObject(Map.of("id", "r2", "version", 1)))).isZero();
 
         assertThat(readActionFile(TEST_PID).getString("rule")).isEqualTo(rule);
@@ -79,7 +79,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "Invalid chaos rule [endpoint=kafka:orders* error rate=2]: rate=2 is not a probability above 0 and at most 1"));
 
         assertThatThrownBy(() -> callWithResponse(
-                command(new CamelChaosAddAction(main()), "orders", "--rule=endpoint=kafka:orders* error rate=2"), answer))
+                command(main().command(new CamelChaosAddAction()), "orders",
+                        "--rule=endpoint=kafka:orders* error rate=2"),
+                answer))
                 .isInstanceOf(CliException.class)
                 .hasMessageContaining("rate=2 is not a probability above 0 and at most 1")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FAILURE);
@@ -95,7 +97,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                                                     + " or with camel.chaos.enabled=true, and never with profile prod"));
 
         assertThatThrownBy(() -> callWithResponse(
-                command(new CamelChaosAddAction(main()), "orders", "--rule=endpoint=* drop"), answer))
+                command(main().command(new CamelChaosAddAction()), "orders", "--rule=endpoint=* drop"), answer))
                 .isInstanceOf(CliException.class)
                 .hasMessageStartingWith("Chaos is off in this integration");
     }
@@ -111,7 +113,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                                + " service answers 503?"));
         JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(suggestion))));
 
-        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+        assertThat(callWithResponse(command(main().command(new CamelChaosSuggestAction()), "orders"), answer)).isZero();
 
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("suggest");
         assertThat(printer.getLines()).contains("Chaos rules to try, the most worth trying first:",
@@ -131,7 +133,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "rule", "endpoint=seda:dlq error at=dlq", "why", "routes orders and billing send what fails"));
         JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(tried, shared))));
 
-        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+        assertThat(callWithResponse(command(main().command(new CamelChaosSuggestAction()), "orders"), answer)).isZero();
 
         assertThat(printer.getLines()).contains(
                 "1. route orders: Returns an error (HTTP status) (errors) - tried",
@@ -159,7 +161,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         new JsonObject(Map.of("kind", "self", "hint", "the route feeds itself (timer)"))));
         JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(stub, real, self))));
 
-        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+        assertThat(callWithResponse(command(main().command(new CamelChaosSuggestAction()), "orders"), answer)).isZero();
 
         String out = printer.getOutput();
         assertThat(printer.getLines()).contains(
@@ -183,7 +185,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "why", "route orders sends what fails to the dead letter channel seda:dlq"));
         JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(pair))));
 
-        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+        assertThat(callWithResponse(command(main().command(new CamelChaosSuggestAction()), "orders"), answer)).isZero();
 
         assertThat(printer.getLines()).contains(
                 "1. route orders: An outage while the dead letter channel fails (combined)",
@@ -194,7 +196,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     @Test
     void suggestSaysWhenThereIsNothingToTry() throws Exception {
         writeStatusFile(TEST_PID, "orders");
-        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),
+        assertThat(callWithResponse(command(main().command(new CamelChaosSuggestAction()), "orders"),
                 new JsonObject(Map.of("suggestions", new JsonArray())))).isZero();
         assertThat(printer.getOutput()).startsWith("Nothing to suggest");
     }
@@ -208,7 +210,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                 Map.of("ids", new JsonArray(List.of("r1")), "reset", true, "descriptions",
                         new JsonArray(List.of("fail every send to http:stock* with HTTP status 503, for 1 minute"))));
 
-        assertThat(callWithResponse(command(new CamelChaosLoadAction(main()), file.toString(), "orders"), answer)).isZero();
+        assertThat(
+                callWithResponse(command(main().command(new CamelChaosLoadAction()), file.toString(), "orders"), answer))
+                .isZero();
 
         JsonObject action = readActionFile(TEST_PID);
         assertThat(action.getString("command")).isEqualTo("load");
@@ -222,20 +226,22 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
 
     @Test
     void loadAScenarioThatIsMissing(@TempDir Path dir) {
-        assertThatThrownBy(() -> command(new CamelChaosLoadAction(main()), dir.resolve("none.chaos").toString()).doCall())
+        assertThatThrownBy(
+                () -> command(main().command(new CamelChaosLoadAction()), dir.resolve("none.chaos").toString()).doCall())
                 .isInstanceOf(CliException.class).hasMessageStartingWith("The chaos scenario does not exist: ")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
     }
 
     @Test
     void addAndChangeNeedTheirOptions() {
-        assertThatThrownBy(() -> command(new CamelChaosAddAction(main()), "orders"))
+        assertThatThrownBy(() -> command(main().command(new CamelChaosAddAction()), "orders"))
                 .isInstanceOf(CliException.class);
-        assertThatThrownBy(() -> command(new CamelChaosAddAction(main())))
+        assertThatThrownBy(() -> command(main().command(new CamelChaosAddAction())))
                 .isInstanceOf(CliException.class);
-        assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "orders", "--rule=endpoint=* drop"))
+        assertThatThrownBy(
+                () -> command(main().command(new CamelChaosChangeAction()), "orders", "--rule=endpoint=* drop"))
                 .isInstanceOf(CliException.class);
-        assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "--id=r1"))
+        assertThatThrownBy(() -> command(main().command(new CamelChaosChangeAction()), "--id=r1"))
                 .isInstanceOf(CliException.class);
     }
 
@@ -246,7 +252,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                 Map.of("id", "r1", "ids", new JsonArray(List.of("r1")), "version", 1,
                         "description", "fail half of the sends to http:stock* with HTTP status 503, for 5 minutes"));
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders",
+        assertThat(callWithResponse(command(main().command(new CamelChaosAddAction()), "orders",
                 "--rule=endpoint=http:stock* error status=503 rate=0.5 until=5m"), answer)).isZero();
 
         assertThat(printer.getLines()).containsExactly(
@@ -273,7 +279,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "warnings", new JsonArray(List.of("step=tpyo matches no step of the context now"))));
         JsonObject answer = new JsonObject(Map.of("rules", new JsonArray(List.of(rule, nothing))));
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders", "--dry-run",
+        assertThat(callWithResponse(command(main().command(new CamelChaosAddAction()), "orders", "--dry-run",
                 "--rule=endpoint=http:stock* error status=503", "--rule=step=tpyo error"), answer)).isZero();
 
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("check");
@@ -298,7 +304,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                                 List.of("fail every dead letter send to seda:dlq",
                                         "fail every send to http:stock*"))));
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders",
+        assertThat(callWithResponse(command(main().command(new CamelChaosAddAction()), "orders",
                 "--rule=endpoint=seda:dlq error at=dlq", "--rule=endpoint=http:stock* error"), answer)).isZero();
 
         assertThat(printer.getStdout()).startsWith("Added chaos rules r1, r2\n"
@@ -311,8 +317,10 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         // chaos is off by its status, but it is the only one: it answers for itself
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=kafka:orders* drop"),
-                new JsonObject(Map.of("id", "r1", "version", 1)))).isZero();
+        assertThat(
+                callWithResponse(command(main().command(new CamelChaosAddAction()), "--rule=endpoint=kafka:orders* drop"),
+                        new JsonObject(Map.of("id", "r1", "version", 1))))
+                .isZero();
 
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("add");
         assertThat(printer.getLines()).containsExactly("Added chaos rule r1");
@@ -325,7 +333,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         // an integration without camel-chaos
         writeStatusFile(2002, "shop");
 
-        assertThat(callWithResponse(command(new CamelChaosChangeAction(main()), "--id=r1",
+        assertThat(callWithResponse(command(main().command(new CamelChaosChangeAction()), "--id=r1",
                 "--rule=endpoint=kafka:orders* delay duration=5s"),
                 new JsonObject(
                         Map.of("id", "r1", "version", 2, "description",
@@ -335,7 +343,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         assertThat(printer.getLines())
                 .containsExactly("Changed chaos rule r1 (version 2): delay every send to kafka:orders* by 5 seconds");
 
-        assertThat(callWithResponse(command(new CamelChaosRemoveAction(main()), "--id=r1"),
+        assertThat(callWithResponse(command(main().command(new CamelChaosRemoveAction()), "--id=r1"),
                 new JsonObject(Map.of("id", "r1", "removed", 1)), 2001, 2002)).isZero();
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("remove");
     }
@@ -346,8 +354,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         writeChaosStatus(2001, "billing", true);
         writeChaosStatus(2002, "shop", false);
 
-        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=* drop"),
-                new JsonObject(Map.of("id", "r1")), 2001, 2002))
+        assertThatThrownBy(
+                () -> callWithResponse(command(main().command(new CamelChaosAddAction()), "--rule=endpoint=* drop"),
+                        new JsonObject(Map.of("id", "r1")), 2001, 2002))
                 .isInstanceOf(CliException.class)
                 .hasMessage("3 Camel integrations are running and 2 have chaos switched on: billing (pid 2001, chaos on),"
                             + " shop (pid 2002, chaos off), orders (pid 12345, chaos on). Give the name or pid of one.")
@@ -361,7 +370,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         writeChaosStatus(TEST_PID, "orders", false);
         writeStatusFile(2001, "billing");
 
-        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosRemoveAction(main()), "--id=r1"),
+        assertThatThrownBy(() -> callWithResponse(command(main().command(new CamelChaosRemoveAction()), "--id=r1"),
                 new JsonObject(Map.of("id", "r1")), 2001))
                 .isInstanceOf(CliException.class)
                 .hasMessageStartingWith("2 Camel integrations are running and none has chaos switched on: ")
@@ -373,8 +382,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     @Test
     void withoutANameAndNoIntegrationIsAUsageError() {
         // no status file: nothing runs
-        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=* drop"),
-                new JsonObject(Map.of("id", "r1"))))
+        assertThatThrownBy(
+                () -> callWithResponse(command(main().command(new CamelChaosAddAction()), "--rule=endpoint=* drop"),
+                        new JsonObject(Map.of("id", "r1"))))
                 .isInstanceOf(CliException.class)
                 .hasMessageStartingWith("No running Camel integrations")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -385,7 +395,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
 
         assertThatThrownBy(() -> callWithResponse(
-                command(new CamelChaosAddAction(main()), "billing", "--rule=endpoint=* drop"),
+                command(main().command(new CamelChaosAddAction()), "billing", "--rule=endpoint=* drop"),
                 new JsonObject(Map.of("id", "r1"))))
                 .isInstanceOf(CliException.class)
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
@@ -396,7 +406,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     void change() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(command(new CamelChaosChangeAction(main()), "orders", "--id=r1",
+        assertThat(callWithResponse(command(main().command(new CamelChaosChangeAction()), "orders", "--id=r1",
                 "--rule=endpoint=kafka:orders* delay duration=5s"), new JsonObject(Map.of("id", "r1", "version", 2))))
                 .isZero();
 
@@ -411,7 +421,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     void remove() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(command(new CamelChaosRemoveAction(main()), "orders", "--id=r1"),
+        assertThat(callWithResponse(command(main().command(new CamelChaosRemoveAction()), "orders", "--id=r1"),
                 new JsonObject(Map.of("id", "r1", "removed", 1)))).isZero();
 
         JsonObject action = readActionFile(TEST_PID);
@@ -424,7 +434,8 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     void withoutANameIntegrationsWithChaosOffAreNotAsked() throws Exception {
         writeChaosStatus(false);
 
-        assertThat(callWithResponse(command(new CamelChaosClearAction(main())), new JsonObject(Map.of("removed", 0))))
+        assertThat(callWithResponse(command(main().command(new CamelChaosClearAction())),
+                new JsonObject(Map.of("removed", 0))))
                 .isZero();
 
         assertThat(readActionFile(TEST_PID)).isNull();
@@ -440,7 +451,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "Chaos is off in this integration: it is switched on with profile dev (unless camel.chaos.enabled=false)"
                                                     + " or with camel.chaos.enabled=true, and never with profile prod"));
 
-        assertThat(callWithResponse(command(new CamelChaosClearAction(main()), "orders"), answer))
+        assertThat(callWithResponse(command(main().command(new CamelChaosClearAction()), "orders"), answer))
                 .isEqualTo(CliExitCode.FAILURE);
 
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("clear");
@@ -453,8 +464,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         JsonObject answer = new JsonObject(
                 Map.of("status", "failed", "reason", "not-found", "error", "There is no chaos rule r9"));
 
-        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosRemoveAction(main()), "orders", "--id=r9"),
-                answer))
+        assertThatThrownBy(
+                () -> callWithResponse(command(main().command(new CamelChaosRemoveAction()), "orders", "--id=r9"),
+                        answer))
                 .isInstanceOf(CliException.class)
                 .hasMessageContaining("There is no chaos rule r9")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
@@ -463,9 +475,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
 
     @Test
     void removeNeedsTheId() {
-        assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main()), "orders"))
+        assertThatThrownBy(() -> command(main().command(new CamelChaosRemoveAction()), "orders"))
                 .isInstanceOf(CliException.class);
-        assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main())))
+        assertThatThrownBy(() -> command(main().command(new CamelChaosRemoveAction())))
                 .isInstanceOf(CliException.class);
     }
 
@@ -473,7 +485,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     void clear() throws Exception {
         writeChaosStatus(true, "r1", "r2", "r3");
 
-        assertThat(callWithResponse(command(new CamelChaosClearAction(main())),
+        assertThat(callWithResponse(command(main().command(new CamelChaosClearAction())),
                 new JsonObject(Map.of("removed", 3)))).isZero();
 
         JsonObject action = readActionFile(TEST_PID);
@@ -486,7 +498,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     void exploreStart() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(command(new CamelChaosExploreStartAction(main()), "orders", "--budget=30m",
+        assertThat(callWithResponse(command(main().command(new CamelChaosExploreStartAction()), "orders", "--budget=30m",
                 "--focus=orders"), new JsonObject(Map.of("running", true, "budget", 1_800_000L, "focus", "orders"))))
                 .isZero();
 
@@ -507,7 +519,8 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                                 List.of(new JsonObject(Map.of("number", 1, "verdict", "FAIL")),
                                         new JsonObject(Map.of("number", 2, "verdict", "PASS"))))));
 
-        assertThat(callWithResponse(command(new CamelChaosExploreFinishAction(main()), "orders"), answer)).isZero();
+        assertThat(callWithResponse(command(main().command(new CamelChaosExploreFinishAction()), "orders"), answer))
+                .isZero();
 
         assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("explore-finish");
         assertThat(printer.getLines()).containsExactly(
@@ -526,7 +539,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                         "note", "stopped by hand"));
 
         // a FAIL verdict is exit code 1, as camel run --chaos has it
-        assertThat(callWithResponse(command(new CamelChaosExperimentAction(main()), "orders", "--end",
+        assertThat(callWithResponse(command(main().command(new CamelChaosExperimentAction()), "orders", "--end",
                 "--note=stopped by hand"), answer)).isEqualTo(CliExitCode.FAILURE);
 
         JsonObject action = readActionFile(TEST_PID);
@@ -539,16 +552,16 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
 
     @Test
     void experimentNeedsItsRulesAndAFeedForItsMessages() {
-        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders").doCall())
+        assertThatThrownBy(() -> command(main().command(new CamelChaosExperimentAction()), "orders").doCall())
                 .isInstanceOf(CliException.class).hasMessageStartingWith("--rule is required")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
-        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+        assertThatThrownBy(() -> command(main().command(new CamelChaosExperimentAction()), "orders",
                 "--rule=route=orders error expect=orders:failed<=0", "--repeat=20").doCall())
                 .isInstanceOf(CliException.class).hasMessageContaining("go with --feed");
-        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+        assertThatThrownBy(() -> command(main().command(new CamelChaosExperimentAction()), "orders",
                 "--rule=route=orders error expect=orders:failed<=0", "--wait=1h").doCall())
                 .isInstanceOf(CliException.class).hasMessage("--wait must be at most 10m, was: 1h");
-        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+        assertThatThrownBy(() -> command(main().command(new CamelChaosExperimentAction()), "orders",
                 "--rule=route=orders error expect=orders:failed<=0", "--feed=orders", "--interval=500..100").doCall())
                 .isInstanceOf(CliException.class).hasMessageContaining("--interval must go from the shortest");
     }

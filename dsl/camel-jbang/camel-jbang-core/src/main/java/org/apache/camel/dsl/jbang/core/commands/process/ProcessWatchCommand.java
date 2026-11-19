@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -40,10 +39,6 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
     @Mixin
     DurationMixin durationOption = new DurationMixin();
-
-    protected ProcessWatchCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -52,7 +52,7 @@ class CatalogLanguageTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogLanguage createCommand() {
-        CatalogLanguage command = new CatalogLanguage(new CamelJBangMain().withPrinter(printer));
+        CatalogLanguage command = new CamelJBangMain().withPrinter(printer).command(new CatalogLanguage());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

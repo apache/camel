@@ -53,7 +53,8 @@ class CamelRouteDiagramActionMultiFileTest {
         Files.writeString(existing, "- from:\n    uri: timer:tick\n");
 
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
 
         // the missing file ends the command (exit code 66) before Camel is booted
         CliException e = assertThrows(CliException.class,
@@ -77,7 +78,7 @@ class CamelRouteDiagramActionMultiFileTest {
                 {"nodes":[],"edges":[],"routes":[{"routeId":"bogus","code":[]}]}
                 """);
 
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        CamelRouteDiagramAction command = new CamelJBangMain().command(new CamelRouteDiagramAction());
         List<RouteInfo> routes = command.readRoutesFromFolder(tempDir, Instant.now().minusSeconds(60));
 
         assertEquals(2, routes.size(), "should merge routes from both structure files, but not route-topology.json");
@@ -100,7 +101,7 @@ class CamelRouteDiagramActionMultiFileTest {
                 """);
 
         // CAMEL-25466: with --errors the frame of each route says where its failures go
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        CamelRouteDiagramAction command = new CamelJBangMain().command(new CamelRouteDiagramAction());
         command.errors = true;
         command.readRoutesFromFolder(tempDir, Instant.now().minusSeconds(60));
 
@@ -117,7 +118,7 @@ class CamelRouteDiagramActionMultiFileTest {
                 {"routes":[{"routeId":"route1","code":[{"type":"from","code":"timer:tick","level":0}]}]}
                 """);
 
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        CamelRouteDiagramAction command = new CamelJBangMain().command(new CamelRouteDiagramAction());
 
         // route2.json and the route-topology.json completion marker (always written last by
         // DefaultDumpRoutesStrategy) land shortly after; if readRoutesFromFolder returned as soon as any file
@@ -158,7 +159,7 @@ class CamelRouteDiagramActionMultiFileTest {
         Files.setLastModifiedTime(topologyMarker, FileTime.from(Instant.now().minusSeconds(30)));
 
         Instant bootStart = Instant.now();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        CamelRouteDiagramAction command = new CamelJBangMain().command(new CamelRouteDiagramAction());
 
         // this iteration's own dump lands shortly after, rewriting the marker with a fresh timestamp
         Thread writer = new Thread(() -> {
@@ -195,7 +196,8 @@ class CamelRouteDiagramActionMultiFileTest {
                 """);
 
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
 
         // use a short wait so the test doesn't have to sit through the real 10 second production timeout
         List<RouteInfo> routes = command.readRoutesFromFolder(tempDir, Instant.now(), 200);

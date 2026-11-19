@@ -24,6 +24,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AiToolEndpoint target = (AiToolEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": target.getConfiguration().setAllRolesRequired(property(camelContext, boolean.class, value)); return true;
+        case "allowedroles":
+        case "allowedRoles": target.getConfiguration().setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
         case "argschema":
         case "argSchema": target.getConfiguration().setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "argumentsasbody":
@@ -62,6 +66,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": return boolean.class;
+        case "allowedroles":
+        case "allowedRoles": return java.lang.String.class;
         case "argschema":
         case "argSchema": return java.lang.String.class;
         case "argumentsasbody":
@@ -101,6 +109,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AiToolEndpoint target = (AiToolEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": return target.getConfiguration().isAllRolesRequired();
+        case "allowedroles":
+        case "allowedRoles": return target.getConfiguration().getAllowedRoles();
         case "argschema":
         case "argSchema": return target.getConfiguration().getArgSchema();
         case "argumentsasbody":

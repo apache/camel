@@ -52,7 +52,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testReturnsErrorWhenNoMatchingProcess() throws Exception {
-        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        RestartProcess command = new CamelJBangMain().withPrinter(printer).command(new RestartProcess());
         command.name = "nonExistentApp";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -73,7 +73,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
         writeStatusFile(pid2, buildContextStatus("myApp", 5));
 
-        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        RestartProcess command = new CamelJBangMain().withPrinter(printer).command(new RestartProcess());
         command.name = "myApp";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -94,7 +94,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
     void testCommandLineNotAvailableIsAFailure() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
 
-        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        RestartProcess command = new CamelJBangMain().withPrinter(printer).command(new RestartProcess());
         command.name = "myApp";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -182,7 +182,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
         // no /proc/<pid>/cmdline
         ProcessHelper.useProcRoot(proc);
 
-        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        RestartProcess command = new CamelJBangMain().withPrinter(printer).command(new RestartProcess());
         command.name = "myApp";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -241,7 +241,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
     // restarts myApp, whose command line the JDK gives as stubbed
     private int restart(Consumer<ProcessHandle> commandLine) throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
-        RestartProcess restart = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        RestartProcess restart = new CamelJBangMain().withPrinter(printer).command(new RestartProcess());
         restart.name = "myApp";
         restart.timeout = 10000;
 

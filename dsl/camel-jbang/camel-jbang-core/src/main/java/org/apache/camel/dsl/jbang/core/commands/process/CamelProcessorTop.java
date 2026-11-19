@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.Comparator;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 
 @CommandDefinition(name = "processor", description = "Top performing processors", generateHelp = true,
@@ -28,10 +27,6 @@ import org.apache.camel.dsl.jbang.core.common.ListingFormat;
                            "  camel top processor",
                            "  camel top processor --watch" })
 public class CamelProcessorTop extends CamelProcessorStatus {
-
-    public CamelProcessorTop(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected Comparator<Row> order() {
