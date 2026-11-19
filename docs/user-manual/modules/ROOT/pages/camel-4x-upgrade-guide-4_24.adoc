@@ -10043,3 +10043,18 @@ the cluster announces (the `connect_urls` in the `INFO` of the servers, set with
 Use certificates that match the hosts, or set the new `hostnameVerification` option to `false` to keep the previous
 behaviour. An `opentls://` server address still trusts
 any certificate and is not checked.
+
+=== camel-pulsar - the host name of the broker is verified with pulsar+ssl
+
+When the endpoint creates its own Pulsar client, a `pulsar+ssl://` connection now checks that the certificate of the
+broker matches the host it connects to, with the same rules as an HTTPS client. Before, the client kept the default of
+the Pulsar client, which accepts any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; this also
+applies to the brokers that a lookup returns (their advertised listeners). Use certificates that match the hosts, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour. A `pulsarClient` that is given to the
+component or the endpoint is used as it is.
+
+The new `tlsTrustCertsFilePath` option sets a PEM file with the certificates of the certificate authorities to trust,
+for a broker whose certificate is not signed by an authority that the JVM trusts.
