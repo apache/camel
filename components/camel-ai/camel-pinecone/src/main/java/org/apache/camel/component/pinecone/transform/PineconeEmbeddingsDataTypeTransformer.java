@@ -66,10 +66,6 @@ public class PineconeEmbeddingsDataTypeTransformer extends Transformer {
         // the index name is left unset when the route does not set it, so that the producer uses the indexName
         // of its endpoint; a default here would override the endpoint option, as the producer takes the
         // header over the option
-        String indexName = message.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class);
-        if (indexName != null) {
-            message.setHeader(PineconeVectorDbHeaders.INDEX_NAME, indexName);
-        }
 
         message.setHeader(PineconeVectorDbHeaders.INDEX_ID, indexId);
         if (text != null) {
