@@ -446,20 +446,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private MongoClient resolveMongoConnection() {
         MongoClient mongoClient;
         if (this.hosts != null) {
-            String credentials = username == null ? "" : username;
-            if (!credentials.isEmpty()) {
-                credentials += this.password == null ? "@" : ":" + password + "@";
-            }
-            String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
-            String connectionUri = connectionUriString != null
-                    ? connectionUriString
-                    : String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions);
-
-            if (sslContextParameters != null) {
-                mongoClient = createMongoClientWithSslContext(connectionUri);
-            } else {
-                mongoClient = MongoClients.create(connectionUri);
-            }
+            mongoClient = MongoClients.create(createMongoClientSettings());
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = getComponent().getMongoConnection();
@@ -473,20 +460,51 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
         return mongoClient;
     }
 
-    private MongoClient createMongoClientWithSslContext(String connectionUri) {
+    /**
+     * The settings of the client this endpoint creates when hosts is set, from connectionUriString when set, otherwise
+     * from hosts. The TLS options of the endpoint (tls, tlsAllowInvalidHostnames and sslContextParameters) are applied
+     * on top of the connection string, so they are used the same way whether the connection string comes from hosts or
+     * from connectionUriString. When none of them is set, the TLS settings of the connection string are kept.
+     */
+    MongoClientSettings createMongoClientSettings() {
+        String connectionUri;
+        if (connectionUriString != null) {
+            connectionUri = connectionUriString;
+        } else {
+            String credentials = username == null ? "" : username;
+            if (!credentials.isEmpty()) {
+                credentials += this.password == null ? "@" : ":" + password + "@";
+            }
+            String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
+            connectionUri = String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions);
+        }
+
+        MongoClientSettings.Builder builder = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connectionUri));
+
+        SSLContext sslContext = createSslContext();
+        if (tls || sslContext != null || tlsAllowInvalidHostnames) {
+            builder.applyToSslSettings(ssl -> {
+                if (tls || sslContext != null) {
+                    ssl.enabled(true);
+                }
+                if (sslContext != null) {
+                    ssl.context(sslContext);
+                }
+                if (tlsAllowInvalidHostnames) {
+                    ssl.invalidHostNameAllowed(true);
+                }
+            });
+        }
+        return builder.build();
+    }
+
+    private SSLContext createSslContext() {
+        if (sslContextParameters == null) {
+            return null;
+        }
         try {
-            SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
-            MongoClientSettings settings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString(connectionUri))
-                    .applyToSslSettings(builder -> {
-                        builder.enabled(true);
-                        builder.context(sslContext);
-                        if (tlsAllowInvalidHostnames) {
-                            builder.invalidHostNameAllowed(true);
-                        }
-                    })
-                    .build();
-            return MongoClients.create(settings);
+            return sslContextParameters.createSSLContext(getCamelContext());
         } catch (GeneralSecurityException | IOException e) {
             throw new CamelMongoDbException("Error creating SSLContext from SSLContextParameters", e);
         }
@@ -918,7 +936,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * Specifies that all communication with MongoDB instances should use TLS. Supersedes the ssl option. Default: false
+     * Specifies that all communication with MongoDB instances should use TLS. Supersedes the ssl option. Applies to the
+     * client the endpoint creates when hosts is set. Default: false
      */
     public void setTls(boolean tls) {
         this.tls = tls;
