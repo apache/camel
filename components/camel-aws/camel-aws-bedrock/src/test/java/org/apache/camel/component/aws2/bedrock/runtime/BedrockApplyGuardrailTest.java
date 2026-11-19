@@ -43,6 +43,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
@@ -160,6 +161,39 @@ public class BedrockApplyGuardrailTest {
         assertInstanceOf(IllegalArgumentException.class, cause);
         assertTrue(cause.getMessage().contains("guardrailIdentifier"),
                 "Error message should mention guardrailIdentifier — was: " + cause.getMessage());
+    }
+
+    @Test
+    public void applyGuardrailChecksTheTextBodyWhenNoContentHeader() {
+        Exchange exchange = template.send("direct:apply-guardrail-config",
+                ex -> ex.getMessage().setBody("Is this allowed?"));
+
+        assertNull(exchange.getException());
+        ApplyGuardrailRequest request = capturedRequest.get();
+        assertNotNull(request);
+        assertEquals(1, request.content().size());
+        assertEquals("Is this allowed?", request.content().get(0).text().text());
+    }
+
+    @Test
+    public void applyGuardrailContentHeaderWinsOverTheBody() {
+        template.send("direct:apply-guardrail-config", ex -> {
+            ex.getMessage().setHeader(BedrockConstants.GUARDRAIL_CONTENT, sampleContent());
+            ex.getMessage().setBody("not used");
+        });
+
+        ApplyGuardrailRequest request = capturedRequest.get();
+        assertNotNull(request);
+        assertEquals("test", request.content().get(0).text().text());
+    }
+
+    @Test
+    public void applyGuardrailFailsWithoutContentHeaderOrBody() {
+        Exchange exchange = template.send("direct:apply-guardrail-config", ex -> ex.getMessage().setBody(null));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(exchange.getException().getMessage().contains("or a text body"),
+                exchange.getException().getMessage());
     }
 
     private static List<GuardrailContentBlock> sampleContent() {
