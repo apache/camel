@@ -2157,6 +2157,103 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+        /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
          * SASL_SSL and SSL are supported.
          * 
@@ -4654,6 +4751,103 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+        /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
          * SASL_SSL and SSL are supported.
          * 
@@ -6088,6 +6282,103 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder saslUsername(String saslUsername) {
             doSetProperty("saslUsername", saslUsername);
+            return this;
+        }
+        /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
             return this;
         }
         /**

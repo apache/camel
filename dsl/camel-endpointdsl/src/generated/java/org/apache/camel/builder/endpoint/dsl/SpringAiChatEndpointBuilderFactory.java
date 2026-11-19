@@ -758,10 +758,11 @@ public interface SpringAiChatEndpointBuilderFactory {
         }
         /**
          * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
-         * mcpServer..args= (stdio), mcpServer..url= (sse),
-         * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
-         * camel-oauth). This is a multi-value option with prefix: mcpServer.
+         * mcpServer..transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (streamableHttp/sse), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -781,10 +782,11 @@ public interface SpringAiChatEndpointBuilderFactory {
         }
         /**
          * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
-         * mcpServer..args= (stdio), mcpServer..url= (sse),
-         * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
-         * camel-oauth). This is a multi-value option with prefix: mcpServer.
+         * mcpServer..transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (streamableHttp/sse), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1638,6 +1640,35 @@ public interface SpringAiChatEndpointBuilderFactory {
          */
         public String springAiChatFinishReason() {
             return "CamelSpringAiChatFinishReason";
+        }
+        /**
+         * The category of the finish reason, the same for every provider:
+         * COMPLETED, TRUNCATED (a token or length limit), TOOL_CALL, FILTERED
+         * (a content filter, or a refusal of the SafeGuard advisor), OTHER or
+         * UNSPECIFIED.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringAiChatFinishReasonCategory}.
+         */
+        public String springAiChatFinishReasonCategory() {
+            return "CamelSpringAiChatFinishReasonCategory";
+        }
+        /**
+         * The reasoning of the model for its reply (thinking, thoughts or
+         * reasoning content), when the model returns it as text.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringAiChatReasoning}.
+         */
+        public String springAiChatReasoning() {
+            return "CamelSpringAiChatReasoning";
         }
         /**
          * The name of the AI model used to generate the response.

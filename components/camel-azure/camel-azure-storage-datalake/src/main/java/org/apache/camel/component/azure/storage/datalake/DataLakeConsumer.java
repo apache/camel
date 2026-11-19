@@ -185,10 +185,13 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - i - 1;
 
+            // the file the exchange was created from, as the route may change the header
+            final String fileName = exchange.getIn().getHeader(DataLakeConstants.FILE_NAME, String.class);
+
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    LOG.trace("Processing all exchanges completed");
+                    processCommit(exchange, fileName);
                 }
 
                 @Override
@@ -202,6 +205,37 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return total;
+    }
+
+    /**
+     * Deletes the file the exchange was created from, when deleteAfterRead is enabled.
+     *
+     * @param exchange the completed exchange
+     * @param fileName the name of the file in the file system, the exchange was created from
+     */
+    protected void processCommit(Exchange exchange, String fileName) {
+        if (!getEndpoint().getConfiguration().isDeleteAfterRead() || fileName == null) {
+            return;
+        }
+        final String fileSystemName = getEndpoint().getConfiguration().getFileSystemName();
+        try {
+            LOG.trace("Deleting file {} from file system {}...", fileName, fileSystemName);
+            final DataLakeFileClientWrapper clientWrapper = new DataLakeFileClientWrapper(
+                    getEndpoint().getDataLakeServiceClient().getFileSystemClient(fileSystemName).getFileClient(fileName));
+            clientWrapper.delete(null, null);
+            LOG.trace("Deleted file {} from file system {}", fileName, fileSystemName);
+        } catch (DataLakeStorageException e) {
+            if (NOT_FOUND == e.getStatusCode()) {
+                // already deleted, for example by another consumer
+                LOG.debug("File {} to delete no longer exists in file system {}", fileName, fileSystemName);
+            } else {
+                getExceptionHandler().handleException(
+                        "Error deleting file " + fileName + " from file system " + fileSystemName, exchange, e);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException(
+                    "Error deleting file " + fileName + " from file system " + fileSystemName, exchange, e);
+        }
     }
 
     protected void processRollback(Exchange exchange) {

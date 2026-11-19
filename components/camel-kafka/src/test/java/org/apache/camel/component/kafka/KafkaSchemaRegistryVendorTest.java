@@ -293,6 +293,121 @@ class KafkaSchemaRegistryVendorTest {
     }
 
     @Test
+    void confluentBasicAuthLogin() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSchemaRegistryVendor("confluent");
+        config.setSchemaRegistryURL(URL);
+        config.setSchemaRegistryUsername("my-key");
+        config.setSchemaRegistryPassword("my-secret");
+
+        for (Properties props : List.of(config.createProducerProperties(), config.createConsumerProperties())) {
+            assertEquals("USER_INFO", props.get("basic.auth.credentials.source"));
+            assertEquals("my-key:my-secret", props.get("basic.auth.user.info"));
+            assertNull(props.get("bearer.auth.credentials.source"));
+        }
+    }
+
+    @Test
+    void confluentOauthLogin() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSchemaRegistryVendor("confluent");
+        config.setSchemaRegistryURL(URL);
+        config.setSchemaRegistryOauthTokenEndpoint("https://idp/oauth2/token");
+        config.setSchemaRegistryOauthClientId("my-client");
+        config.setSchemaRegistryOauthClientSecret("my-client-secret");
+        config.setSchemaRegistryOauthScope("schema_registry");
+
+        for (Properties props : List.of(config.createProducerProperties(), config.createConsumerProperties())) {
+            assertEquals("OAUTHBEARER", props.get("bearer.auth.credentials.source"));
+            assertEquals("https://idp/oauth2/token", props.get("bearer.auth.issuer.endpoint.url"));
+            assertEquals("my-client", props.get("bearer.auth.client.id"));
+            assertEquals("my-client-secret", props.get("bearer.auth.client.secret"));
+            assertEquals("schema_registry", props.get("bearer.auth.scope"));
+            assertNull(props.get("basic.auth.credentials.source"));
+        }
+    }
+
+    @Test
+    void apicurioBasicAuthAndOauthLogin() {
+        KafkaConfiguration basic = new KafkaConfiguration();
+        basic.setSchemaRegistryVendor("apicurio");
+        basic.setSchemaRegistryURL(URL);
+        basic.setSchemaRegistryUsername("registry-user");
+        basic.setSchemaRegistryPassword("registry-password");
+        for (Properties props : List.of(basic.createProducerProperties(), basic.createConsumerProperties())) {
+            assertEquals("registry-user", props.get("apicurio.registry.auth.username"));
+            assertEquals("registry-password", props.get("apicurio.registry.auth.password"));
+            assertNull(props.get("apicurio.registry.auth.client.id"));
+        }
+
+        KafkaConfiguration oauth = new KafkaConfiguration();
+        oauth.setSchemaRegistryVendor("apicurio");
+        oauth.setSchemaRegistryURL(URL);
+        oauth.setSchemaRegistryOauthTokenEndpoint("http://keycloak:8080/realms/registry/protocol/openid-connect/token");
+        oauth.setSchemaRegistryOauthClientId("registry-client");
+        oauth.setSchemaRegistryOauthClientSecret("registry-client-secret");
+        for (Properties props : List.of(oauth.createProducerProperties(), oauth.createConsumerProperties())) {
+            assertEquals("http://keycloak:8080/realms/registry/protocol/openid-connect/token",
+                    props.get("apicurio.registry.auth.service.token.endpoint"));
+            assertEquals("registry-client", props.get("apicurio.registry.auth.client.id"));
+            assertEquals("registry-client-secret", props.get("apicurio.registry.auth.client.secret"));
+            assertNull(props.get("apicurio.registry.auth.client.scope"));
+            assertNull(props.get("apicurio.registry.auth.username"));
+        }
+    }
+
+    @Test
+    void loginOptionsOnTheEndpointUri() {
+        // a secret with characters that a URI gives a meaning to, passed whole in RAW()
+        KafkaEndpoint endpoint = context.getEndpoint(
+                "kafka:mytopic?schemaRegistryVendor=confluent&schemaRegistryURL=" + URL
+                                                     + "&schemaRegistryUsername=my-key&schemaRegistryPassword=RAW(s3c&r+t=/x)",
+                KafkaEndpoint.class);
+
+        assertEquals("my-key:s3c&r+t=/x", endpoint.getConfiguration().createProducerProperties().get("basic.auth.user.info"));
+    }
+
+    @Test
+    void additionalPropertiesWinOverTheLogin() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSchemaRegistryVendor("confluent");
+        config.setSchemaRegistryURL(URL);
+        config.setSchemaRegistryUsername("my-key");
+        config.setSchemaRegistryPassword("my-secret");
+        config.getAdditionalProperties().put("basic.auth.credentials.source", "SASL_INHERIT");
+
+        Properties producer = config.createProducerProperties();
+        assertEquals("SASL_INHERIT", producer.get("basic.auth.credentials.source"));
+        assertEquals("my-key:my-secret", producer.get("basic.auth.user.info"));
+    }
+
+    @Test
+    void withoutVendorTheLoginOptionsSetNothing() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSchemaRegistryURL(URL);
+        config.setSchemaRegistryUsername("my-key");
+        config.setSchemaRegistryPassword("my-secret");
+
+        Properties producer = config.createProducerProperties();
+        assertNull(producer.get("basic.auth.credentials.source"));
+        assertNull(producer.get("basic.auth.user.info"));
+    }
+
+    @Test
+    void loginOptionsFailForTheVendorsThatUseTheEnvironment() {
+        for (String vendor : List.of("azure", "aws-glue")) {
+            KafkaConfiguration config = new KafkaConfiguration();
+            config.setSchemaRegistryVendor(vendor);
+            config.setSchemaRegistryURL(URL);
+            config.setSchemaRegistryUsername("my-key");
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, config::createProducerProperties);
+            assertTrue(e.getMessage().contains("credentials of the environment"), e.getMessage());
+            assertThrows(IllegalArgumentException.class, config::createConsumerProperties);
+        }
+    }
+
+    @Test
     void azureCredentialAndSchemaGroupFromAdditionalProperties() {
         Object credential = new Object();
         context.getRegistry().bind("myCredential", credential);

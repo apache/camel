@@ -1276,6 +1276,109 @@ public interface KafkaShareComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryOauthClientId(java.lang.String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+    
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryOauthClientSecret(java.lang.String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+    
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryOauthScope(java.lang.String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+    
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryOauthTokenEndpoint(java.lang.String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+    
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryPassword(java.lang.String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+    
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder schemaRegistryUsername(java.lang.String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+    
         
         /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
@@ -1670,6 +1773,12 @@ public interface KafkaShareComponentBuilderFactory {
             case "saslMechanism": getOrCreateConfiguration((KafkaShareComponent) component).setSaslMechanism((java.lang.String) value); return true;
             case "saslPassword": getOrCreateConfiguration((KafkaShareComponent) component).setSaslPassword((java.lang.String) value); return true;
             case "saslUsername": getOrCreateConfiguration((KafkaShareComponent) component).setSaslUsername((java.lang.String) value); return true;
+            case "schemaRegistryOauthClientId": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryOauthClientId((java.lang.String) value); return true;
+            case "schemaRegistryOauthClientSecret": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryOauthClientSecret((java.lang.String) value); return true;
+            case "schemaRegistryOauthScope": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryOauthScope((java.lang.String) value); return true;
+            case "schemaRegistryOauthTokenEndpoint": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryOauthTokenEndpoint((java.lang.String) value); return true;
+            case "schemaRegistryPassword": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryPassword((java.lang.String) value); return true;
+            case "schemaRegistryUsername": getOrCreateConfiguration((KafkaShareComponent) component).setSchemaRegistryUsername((java.lang.String) value); return true;
             case "securityProtocol": getOrCreateConfiguration((KafkaShareComponent) component).setSecurityProtocol((java.lang.String) value); return true;
             case "sslCipherSuites": getOrCreateConfiguration((KafkaShareComponent) component).setSslCipherSuites((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((KafkaShareComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

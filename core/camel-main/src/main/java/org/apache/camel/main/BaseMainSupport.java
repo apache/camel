@@ -65,7 +65,9 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.saga.CamelSagaService;
@@ -1155,6 +1157,13 @@ public abstract class BaseMainSupport extends BaseService {
         // new classes defined, so main implementations may have to reconfigure the registry using newly
         // available bean definitions
         postProcessCamelRegistry(camelContext, mainConfigurationProperties);
+
+        if (standalone) {
+            // the beans that the routes define (such as the beans section of a YAML or XML DSL file) are not
+            // configured from camel.* properties, so their properties are checked once the routes are loaded and
+            // the registry is post-processed (which adds the delayed Spring XML and Blueprint XML beans)
+            enforceSecurityPoliciesOnBeans(camelContext);
+        }
 
         // allow doing custom configuration before camel is started
         if (!listeners.isEmpty()) {
@@ -3506,28 +3515,86 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private void enforceSecurityPolicies(CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
-        SecurityConfigurationProperties securityConfig = mainConfigurationProperties.securityConfig();
-
         // build a properties map for the shared detection utility
         Map<String, Object> propsMap = new LinkedHashMap<>();
         for (var entry : autoConfiguredProperties.entrySet()) {
             propsMap.put(entry.getKey().toString(), entry.getValue());
         }
 
-        // build the allowed keys set
-        Set<String> allowedKeys = securityConfig.getAllowedPropertySet();
-
-        // detect all violations using the shared utility
-        List<SecurityViolation> violations = SecurityUtils.detectViolations(
-                propsMap,
-                (k, v) -> MainHelper.containsSensitive(camelContext, k, v),
-                securityConfig::resolvePolicy,
-                allowedKeys);
+        List<SecurityViolation> violations = detectSecurityViolations(camelContext, propsMap);
 
         // store violations for health check access
         camelContext.getCamelContextExtension()
                 .addContextPlugin(SecurityPolicyResult.class, new SecurityPolicyResult(violations));
 
+        applySecurityPolicies(violations);
+    }
+
+    /**
+     * Enforces the security policies on the properties of the beans that the routes define, such as the beans section
+     * of a YAML or XML DSL file. A property is checked under the key of a bean configured from properties
+     * (camel.beans.&lt;name&gt;.&lt;property&gt;), so the option matching and camel.security.allowedProperties work the
+     * same way.
+     */
+    private void enforceSecurityPoliciesOnBeans(CamelContext camelContext) {
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        if (model == null) {
+            return;
+        }
+        Map<String, Object> propsMap = new LinkedHashMap<>();
+        for (BeanFactoryDefinition<?> def : model.getCustomBeans()) {
+            if (def.getName() != null && def.getProperties() != null) {
+                collectBeanProperties(propsMap, "camel.beans." + def.getName() + ".", def.getProperties());
+            }
+        }
+        if (propsMap.isEmpty()) {
+            return;
+        }
+
+        List<SecurityViolation> violations = detectSecurityViolations(camelContext, propsMap);
+        if (!violations.isEmpty()) {
+            // add them to the violations of the configuration properties, for health check access
+            SecurityPolicyResult result
+                    = camelContext.getCamelContextExtension().getContextPlugin(SecurityPolicyResult.class);
+            List<SecurityViolation> all = new ArrayList<>();
+            if (result != null) {
+                all.addAll(result.getViolations());
+            }
+            all.addAll(violations);
+            camelContext.getCamelContextExtension()
+                    .addContextPlugin(SecurityPolicyResult.class, new SecurityPolicyResult(all));
+        }
+
+        applySecurityPolicies(violations);
+    }
+
+    private static void collectBeanProperties(Map<String, Object> answer, String prefix, Map<?, ?> properties) {
+        for (Map.Entry<?, ?> entry : properties.entrySet()) {
+            String key = prefix + entry.getKey();
+            if (entry.getValue() instanceof Map<?, ?> nested) {
+                // nested properties are bound as key.nestedKey
+                collectBeanProperties(answer, key + ".", nested);
+            } else {
+                answer.put(key, entry.getValue());
+            }
+        }
+    }
+
+    private List<SecurityViolation> detectSecurityViolations(CamelContext camelContext, Map<String, Object> properties) {
+        SecurityConfigurationProperties securityConfig = mainConfigurationProperties.securityConfig();
+
+        // build the allowed keys set
+        Set<String> allowedKeys = securityConfig.getAllowedPropertySet();
+
+        // detect all violations using the shared utility
+        return SecurityUtils.detectViolations(
+                properties,
+                (k, v) -> MainHelper.containsSensitive(camelContext, k, v),
+                securityConfig::resolvePolicy,
+                allowedKeys);
+    }
+
+    private static void applySecurityPolicies(List<SecurityViolation> violations) {
         // apply policy: warn or fail (policy is carried in each violation from detection)
         List<String> failures = new ArrayList<>();
         for (SecurityViolation v : violations) {

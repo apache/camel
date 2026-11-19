@@ -109,7 +109,7 @@ public interface SpringAiVectorStoreComponentBuilderFactory {
         
         /**
          * The operation to perform on the vector store (ADD, DELETE,
-         * SIMILARITY_SEARCH).
+         * SIMILARITY_SEARCH, UPSERT).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation&lt;/code&gt; type.
@@ -122,6 +122,28 @@ public interface SpringAiVectorStoreComponentBuilderFactory {
          */
         default SpringAiVectorStoreComponentBuilder operation(org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+    
+        
+        /**
+         * Whether SIMILARITY_SEARCH of a float[] body, such as the vector of
+         * spring-ai-embeddings, searches with this vector. By default it
+         * searches for the text of the CamelSpringAiEmbeddingInputText header,
+         * which the vector store embeds again. The vector store must support
+         * the search with a vector, and the vector must come from the same
+         * embedding model as the stored vectors.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param searchByVector the value to set
+         * @return the dsl builder
+         */
+        default SpringAiVectorStoreComponentBuilder searchByVector(boolean searchByVector) {
+            doSetProperty("searchByVector", searchByVector);
             return this;
         }
     
@@ -220,6 +242,7 @@ public interface SpringAiVectorStoreComponentBuilderFactory {
             case "filterExpression": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setFilterExpression((java.lang.String) value); return true;
             case "lazyStartProducer": ((SpringAiVectorStoreComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setOperation((org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation) value); return true;
+            case "searchByVector": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setSearchByVector((boolean) value); return true;
             case "similarityThreshold": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setSimilarityThreshold((double) value); return true;
             case "topK": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setTopK((int) value); return true;
             case "vectorStore": getOrCreateConfiguration((SpringAiVectorStoreComponent) component).setVectorStore((org.springframework.ai.vectorstore.VectorStore) value); return true;

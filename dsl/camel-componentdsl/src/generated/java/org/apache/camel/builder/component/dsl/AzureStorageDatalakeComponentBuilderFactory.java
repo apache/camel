@@ -505,6 +505,25 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
     
         
         /**
+         * Delete a file from the file system once its exchange has completed.
+         * When the exchange fails, the file is not deleted, so it is consumed
+         * again at the next poll.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder deleteAfterRead(boolean deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -733,6 +752,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             case "umask": getOrCreateConfiguration((DataLakeComponent) component).setUmask((java.lang.String) value); return true;
             case "userPrincipalNameReturned": getOrCreateConfiguration((DataLakeComponent) component).setUserPrincipalNameReturned((java.lang.Boolean) value); return true;
             case "bridgeErrorHandler": ((DataLakeComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "deleteAfterRead": getOrCreateConfiguration((DataLakeComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "lazyStartProducer": ((DataLakeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((DataLakeComponent) component).setOperation((org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition) value); return true;
             case "autowiredEnabled": ((DataLakeComponent) component).setAutowiredEnabled((boolean) value); return true;

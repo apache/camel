@@ -28,8 +28,12 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "awslambdaclient":
         case "awsLambdaClient": target.getConfiguration().setAwsLambdaClient(property(camelContext, software.amazon.awssdk.services.lambda.LambdaClient.class, value)); return true;
+        case "invocationtype":
+        case "invocationType": target.getConfiguration().setInvocationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "logtype":
+        case "logType": target.getConfiguration().setLogType(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Operations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -74,8 +78,12 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return java.lang.String.class;
         case "awslambdaclient":
         case "awsLambdaClient": return software.amazon.awssdk.services.lambda.LambdaClient.class;
+        case "invocationtype":
+        case "invocationType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "logtype":
+        case "logType": return java.lang.String.class;
         case "operation": return org.apache.camel.component.aws2.lambda.Lambda2Operations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -116,8 +124,12 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "awslambdaclient":
         case "awsLambdaClient": return target.getConfiguration().getAwsLambdaClient();
+        case "invocationtype":
+        case "invocationType": return target.getConfiguration().getInvocationType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "logtype":
+        case "logType": return target.getConfiguration().getLogType();
         case "operation": return target.getConfiguration().getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();

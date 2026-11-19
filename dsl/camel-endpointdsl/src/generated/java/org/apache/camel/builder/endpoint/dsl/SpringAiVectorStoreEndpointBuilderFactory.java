@@ -60,7 +60,7 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
         }
         /**
          * The operation to perform on the vector store (ADD, DELETE,
-         * SIMILARITY_SEARCH).
+         * SIMILARITY_SEARCH, UPSERT).
          * 
          * The option is a:
          * <code>org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation</code> type.
@@ -77,7 +77,7 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
         }
         /**
          * The operation to perform on the vector store (ADD, DELETE,
-         * SIMILARITY_SEARCH).
+         * SIMILARITY_SEARCH, UPSERT).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation</code> type.
@@ -90,6 +90,46 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
          */
         default SpringAiVectorStoreEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Whether SIMILARITY_SEARCH of a float[] body, such as the vector of
+         * spring-ai-embeddings, searches with this vector. By default it
+         * searches for the text of the CamelSpringAiEmbeddingInputText header,
+         * which the vector store embeds again. The vector store must support
+         * the search with a vector, and the vector must come from the same
+         * embedding model as the stored vectors.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param searchByVector the value to set
+         * @return the dsl builder
+         */
+        default SpringAiVectorStoreEndpointBuilder searchByVector(boolean searchByVector) {
+            doSetProperty("searchByVector", searchByVector);
+            return this;
+        }
+        /**
+         * Whether SIMILARITY_SEARCH of a float[] body, such as the vector of
+         * spring-ai-embeddings, searches with this vector. By default it
+         * searches for the text of the CamelSpringAiEmbeddingInputText header,
+         * which the vector store embeds again. The vector store must support
+         * the search with a vector, and the vector must come from the same
+         * embedding model as the stored vectors.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param searchByVector the value to set
+         * @return the dsl builder
+         */
+        default SpringAiVectorStoreEndpointBuilder searchByVector(String searchByVector) {
+            doSetProperty("searchByVector", searchByVector);
             return this;
         }
         /**
@@ -313,7 +353,7 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
         public static final SpringAiVectorStoreHeaderNameBuilder INSTANCE = new SpringAiVectorStoreHeaderNameBuilder();
 
         /**
-         * The operation to perform (ADD, DELETE, SIMILARITY_SEARCH).
+         * The operation to perform (ADD, DELETE, SIMILARITY_SEARCH, UPSERT).
          * 
          * The option is a: {@code
          * org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation} type.
@@ -364,8 +404,38 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
             return "CamelSpringAiVectorStoreFilterExpression";
         }
         /**
-         * List of document IDs (output of ADD and SIMILARITY_SEARCH, and input
-         * of DELETE when the message has no body).
+         * The id of the document that UPSERT writes from a float[] body: the
+         * document with this id is replaced. Without it, the document gets a
+         * random UUID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringAiVectorStoreUpsertDocumentId}.
+         */
+        public String springAiVectorStoreUpsertDocumentId() {
+            return "CamelSpringAiVectorStoreUpsertDocumentId";
+        }
+        /**
+         * The ids of the documents that UPSERT writes from a List of float[]
+         * body, one per vector: the documents with these ids are replaced.
+         * Without it, each document gets a random UUID.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringAiVectorStoreUpsertDocumentIds}.
+         */
+        public String springAiVectorStoreUpsertDocumentIds() {
+            return "CamelSpringAiVectorStoreUpsertDocumentIds";
+        }
+        /**
+         * List of document IDs (output of ADD, UPSERT and SIMILARITY_SEARCH,
+         * and input of DELETE when the message has no body).
          * 
          * The option is a: {@code java.util.List<String>} type.
          * 
@@ -392,7 +462,7 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
             return "CamelSpringAiVectorStoreSimilarDocuments";
         }
         /**
-         * Number of documents added.
+         * Number of documents added by ADD, or written by UPSERT.
          * 
          * The option is a: {@code Integer} type.
          * 

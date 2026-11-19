@@ -21,7 +21,7 @@ Vector stores enable:
 * Storage of documents with embeddings
 * Similarity search based on vector distance
 * Metadata-based filtering
-* Document management (add, delete)
+* Document management (add, upsert, delete)
 
 == URI format
 
@@ -40,7 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Operations
 
-The component supports three main operations:
+The component supports four operations:
 
 === ADD Operation
 
@@ -56,9 +56,38 @@ a `float[]` body with the `CamelSpringAiEmbeddingInputText` header, or a List of
 The `CamelSpringAiEmbeddingInputText(s)` headers are only used together with a vector body, so a header left over from
 an earlier spring-ai-embeddings call does not replace a Document or text body.
 
+ADD of a vector stores its text, and the vector store embeds the text again with its own embedding model. The vector
+only goes in the `embedding` metadata of the document. To store the vector itself, use UPSERT.
+
 After documents are added, the component sets the `CamelSpringAiVectorStoreDocumentIds` header containing a list of the IDs of the added documents. This allows you to reference or track the stored documents in subsequent processing steps.
 
 NOTE: *Best Practice:* Use the ADD operation directly with the vector store component when working with text. The component will automatically handle embedding generation internally if the vector store is configured with an embedding model. This is the recommended approach as it simplifies your routes and reduces the number of steps.
+
+=== UPSERT Operation
+
+Writes vectors that are already computed, such as the output of the spring-ai-embeddings component, as they are. The
+embedding model of the vector store is not called. A document with the same ID is replaced, otherwise a new document is
+added. UPSERT takes:
+
+* A `float[]` body with the `CamelSpringAiEmbeddingInputText` header, the text of the vector. The
+`CamelSpringAiVectorStoreUpsertDocumentId` header is the ID of the document. Without it, the document gets a random UUID.
+* A List of `float[]` body with the `CamelSpringAiEmbeddingInputTexts` header, with one text per vector. The
+`CamelSpringAiVectorStoreUpsertDocumentIds` header is the List of IDs, with one ID per vector. Without it, each document
+gets a random UUID.
+* A Spring AI `EmbeddedDocument` (a Document with its vector), or a List of `EmbeddedDocument`. The ID and the metadata
+are the ones of the Document, and the ID headers are not used.
+
+A vector without its text fails, and so does a List of texts or of IDs with another size than the List of vectors.
+UPSERT does not write the `embedding` and `precomputed_embedding` metadata of ADD.
+
+Like ADD, UPSERT sets the `CamelSpringAiVectorStoreDocumentsAdded` header to the number of documents written, and the
+`CamelSpringAiVectorStoreDocumentIds` header to their IDs. UPSERT does not read the IDs from
+`CamelSpringAiVectorStoreDocumentIds`, as ADD, UPSERT and SIMILARITY_SEARCH set this header to their own output IDs.
+
+The vector store must support UPSERT. In Spring AI 2.1, the Chroma, Couchbase, Elasticsearch, MariaDB, MongoDB Atlas,
+Neo4j, OpenSearch, PgVector, Qdrant, Redis and Typesense vector stores do. With another vector store, such as
+`SimpleVectorStore`, UPSERT fails with an `UnsupportedOperationException` and nothing is written: use ADD instead.
+Some vector stores only accept IDs in a given format, for example Qdrant needs UUIDs.
 
 === DELETE Operation
 
@@ -76,10 +105,29 @@ Searches for documents similar to a query text. After the spring-ai-embeddings c
 `float[]` vector of the text, the query is the text in the `CamelSpringAiEmbeddingInputText` header (the vector store
 embeds the query itself).
 
+With the `searchByVector` option, the `float[]` body is the query: the vector store searches with this vector, and does
+not embed a text. The `CamelSpringAiEmbeddingInputText` header is then not needed. A text body is still searched as a
+text. The vector store must support the search with a vector, as for UPSERT, otherwise the search fails with an
+`UnsupportedOperationException`. The `topK`, `similarityThreshold` and `filterExpression` options and headers apply as
+for a text.
+
 The component returns matching documents in the message body and sets the following headers:
 
 * `CamelSpringAiVectorStoreSimilarDocuments` - List of Document objects found
 * `CamelSpringAiVectorStoreDocumentIds` - List of IDs of the found documents
+
+=== ADD or UPSERT
+
+* With ADD and a text query, the vector store embeds the texts with its own embedding model, when it writes and when it
+searches. This is the simplest way.
+* With UPSERT and `searchByVector`, the route computes the vectors, for example with the spring-ai-embeddings
+component, and the vector store writes and searches with these vectors as they are. Use it to choose the embedding
+model in the route, or to embed each text only once.
+
+IMPORTANT: Use the same embedding model, with the same settings, to write and to search. A vector of another model gives
+meaningless results, and no error is raised. This also applies when you mix the operations: documents written with
+UPSERT and searched with a text use the embedding model of the vector store for the query, and documents written with
+ADD and searched with `searchByVector` use the model of the route for the query.
 
 == Usage Examples
 
@@ -176,6 +224,81 @@ YAML::
 ====
 
 NOTE: This approach is only necessary when you need to access or modify the embeddings between generation and storage. For most use cases, the direct ADD operation (shown above) is preferred.
+With ADD, the vector store embeds the text again: to store the vectors of the embeddings component, use UPSERT (shown below).
+
+=== Store and Search with the Vectors of the Embeddings Component
+
+UPSERT stores the vectors that the spring-ai-embeddings component computes, and `searchByVector` searches with the
+vector of the query. The vector store does not embed any text, so it must support UPSERT and the search with a vector.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("spring-ai-embeddings:embed?embeddingModel=#embeddingModel")
+    .to("spring-ai-vector-store:myStore?operation=UPSERT&vectorStore=#vectorStore");
+
+from("direct:search")
+    .to("spring-ai-embeddings:embed?embeddingModel=#embeddingModel")
+    .to("spring-ai-vector-store:myStore?operation=SIMILARITY_SEARCH&searchByVector=true&topK=5&vectorStore=#vectorStore");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:store"/>
+  <to uri="spring-ai-embeddings:embed?embeddingModel=#embeddingModel"/>
+  <to uri="spring-ai-vector-store:myStore?operation=UPSERT&amp;vectorStore=#vectorStore"/>
+</route>
+<route>
+  <from uri="direct:search"/>
+  <to uri="spring-ai-embeddings:embed?embeddingModel=#embeddingModel"/>
+  <to uri="spring-ai-vector-store:myStore?operation=SIMILARITY_SEARCH&amp;searchByVector=true&amp;topK=5&amp;vectorStore=#vectorStore"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:store
+      steps:
+        - to:
+            uri: spring-ai-embeddings:embed
+            parameters:
+              embeddingModel: "#embeddingModel"
+        - to:
+            uri: spring-ai-vector-store:myStore
+            parameters:
+              operation: UPSERT
+              vectorStore: "#vectorStore"
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - to:
+            uri: spring-ai-embeddings:embed
+            parameters:
+              embeddingModel: "#embeddingModel"
+        - to:
+            uri: spring-ai-vector-store:myStore
+            parameters:
+              operation: SIMILARITY_SEARCH
+              searchByVector: true
+              topK: 5
+              vectorStore: "#vectorStore"
+----
+====
+
+To replace a document, for example when its text changes, set its ID in the `CamelSpringAiVectorStoreUpsertDocumentId`
+header (or the IDs in `CamelSpringAiVectorStoreUpsertDocumentIds` for a List of texts) before UPSERT.
 
 === Similarity Search
 
@@ -305,4 +428,5 @@ IMPORTANT: Make sure your vector store is configured with an embedding model to 
 * `topK` - Maximum number of results (default: 5)
 * `similarityThreshold` - Minimum similarity score 0-1 (default: 0.0)
 * `filterExpression` - Metadata-based filter expression
+* `searchByVector` - Search with the `float[]` body instead of the text of the `CamelSpringAiEmbeddingInputText` header (default: false)
 

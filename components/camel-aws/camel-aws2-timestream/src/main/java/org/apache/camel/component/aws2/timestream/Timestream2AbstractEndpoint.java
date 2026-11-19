@@ -39,8 +39,8 @@ import org.apache.camel.support.DefaultEndpoint;
            producerOut = @BodyType(value = Carrier.POJO,
                                    description = "The response of the AWS SDK for the operation, such as the"
                                                  + " WriteRecordsResponse of writeRecords, or the QueryResponse of query with"
-                                                 + " one page of rows: the next page needs a QueryRequest with its nextToken"
-                                                 + " and pojoRequest=true"))
+                                                 + " one page of rows: the CamelAwsTimestreamQueryNextToken header gives the"
+                                                 + " next page, and queryAllPages=true gives the rows of all the pages"))
 public abstract class Timestream2AbstractEndpoint extends DefaultEndpoint {
 
     @UriParam

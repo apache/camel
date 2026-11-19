@@ -24,11 +24,13 @@ public class Lambda2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(21);
         props.add("accessKey");
         props.add("awsLambdaClient");
         props.add("function");
+        props.add("invocationType");
         props.add("lazyStartProducer");
+        props.add("logType");
         props.add("operation");
         props.add("overrideEndpoint");
         props.add("pojoRequest");

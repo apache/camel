@@ -86,8 +86,13 @@ public interface Timestream2Constants {
     String QUERY_ID = "CamelAwsTimestreamQueryId";
     @Metadata(description = "Validates the prepared query, but does not store for later execution", javaType = "Boolean")
     String QUERY_VALIDATE_ONLY = "CamelAwsTimestreamQueryValidateOnly";
-    @Metadata(description = "The total number of rows to be returned in the Query output.", javaType = "Integer")
+    @Metadata(description = "The maximum number of rows in a page of the Query output.", javaType = "Integer")
     String QUERY_MAX_ROWS = "CamelAwsTimestreamQueryMaxRows";
+    @Metadata(description = "The token of a page of a query result. As input, the query operation reads the page of"
+                            + " this token; as output, it is the token of the next page, and it is removed after the last"
+                            + " page. Set the same query string to read the next page.",
+              javaType = "String")
+    String QUERY_NEXT_TOKEN = "CamelAwsTimestreamQueryNextToken";
     @Metadata(description = "Max Results to be returned in output", javaType = "Integer")
     String MAX_RESULTS = "CamelAwsTimestreamMaxResults";
     @Metadata(description = "The schedule expression for the query.", javaType = "String")

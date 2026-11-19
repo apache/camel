@@ -317,12 +317,36 @@ The following headers are set after each chat operation:
 
 **Response Metadata Headers:**
 
-* `CamelSpringAiChatFinishReason` - Why the generation stopped (e.g., "STOP", "LENGTH", "TOOL_CALLS")
+* `CamelSpringAiChatFinishReason` - Why the generation stopped, as the provider names it (e.g., "STOP", "end_turn", "LENGTH", "TOOL_CALLS")
+* `CamelSpringAiChatFinishReasonCategory` - The category of the finish reason, the same for every provider: `COMPLETED`, `TRUNCATED`, `TOOL_CALL`, `FILTERED`, `OTHER` or `UNSPECIFIED`
+* `CamelSpringAiChatReasoning` - The reasoning of the model for its reply (thinking, thoughts or reasoning content), when the model returns it as text
 * `CamelSpringAiChatModelName` - The name of the AI model used for the response
 * `CamelSpringAiChatResponseId` - Unique identifier for the response
 * `CamelSpringAiChatResponseMetadata` - Full metadata Map containing all available fields
 
 NOTE: Not all AI models provide all metadata fields. The availability of specific metadata depends on the underlying model and provider. Most models provide at least finish reason and token counts.
+
+The finish reason is named differently by each provider: `stop`, `end_turn` and `STOP` all mean that the model finished
+its answer. Check `CamelSpringAiChatFinishReasonCategory` instead, so that a route works with any model. For example, an
+answer cut by the token limit is `TRUNCATED`, and a reply blocked by a content filter, or refused by the SafeGuard
+advisor (`safeguardSensitiveWords`), is `FILTERED`:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel")
+    .choice()
+        .when(header("CamelSpringAiChatFinishReasonCategory").isEqualTo("TRUNCATED"))
+            .log("The answer was cut by the token limit")
+        .when(header("CamelSpringAiChatFinishReasonCategory").isEqualTo("FILTERED"))
+            .log("The reply was filtered or refused")
+    .end();
+----
+
+`CamelSpringAiChatReasoning` holds the text of the reasoning parts of the reply, such as the thinking of Anthropic and
+Bedrock models, the thoughts of Gemini models, or the `reasoning_content` of DeepSeek and OpenAI-compatible servers. A
+part with only a summary gives its summary, and a redacted part is left out. The header is not set, and is removed if an
+earlier call set it, when the reply has no reasoning.
 
 === Message Metadata
 
@@ -1198,7 +1222,61 @@ The component supports connecting to MCP servers, enabling the LLM to use tools 
 external MCP-compatible services. This follows the same pattern as the
 xref:openai-component.adoc[OpenAI component]'s MCP support.
 
-Configure MCP servers using the `mcpServer.<name>.<property>` prefix notation:
+Configure MCP servers using the `mcpServer.<name>.<property>` prefix notation. The `transportType`
+property selects how the component connects to the server:
+
+* `streamableHttp`: the Streamable HTTP transport of the MCP specification, for remote servers such as
+  the ones served by xref:others:mcp-server.adoc[Camel MCP Server]. Requires `url`.
+* `stdio`: starts the server as a local process and talks to it over standard input and output.
+  Requires `command`, and optionally `args`.
+* `sse` (deprecated): the HTTP+SSE transport, for servers that do not support Streamable HTTP yet.
+  Requires `url`.
+
+==== Streamable HTTP Transport
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Connect to an MCP server via Streamable HTTP
+from("direct:chat")
+    .to("spring-ai-chat:chat?chatModel=#chatModel"
+        + "&mcpServer.api.transportType=streamableHttp"
+        + "&mcpServer.api.url=http://mcp-server:8080/mcp");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="spring-ai-chat:chat?chatModel=#chatModel&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://mcp-server:8080/mcp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: spring-ai-chat:chat
+            parameters:
+              chatModel: "#chatModel"
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: "http://mcp-server:8080/mcp"
+----
+====
+
+The `url` is the URL of the MCP endpoint of the server, path included, for example
+`http://mcp-server:8080/mcp` or `https://example.com/api/mcp`. When the URL has no path, such as
+`http://mcp-server:8080`, the component uses `/mcp`.
 
 ==== Stdio Transport
 
@@ -1244,7 +1322,10 @@ YAML::
 ----
 ====
 
-==== SSE Transport
+==== SSE Transport (Deprecated)
+
+NOTE: The HTTP+SSE transport is deprecated: the MCP specification 2025-03-26 replaced it by Streamable HTTP.
+Prefer `transportType=streamableHttp` when the server supports it.
 
 [tabs]
 ====
@@ -1299,8 +1380,8 @@ from("direct:chat")
         + "&mcpServer.fs.transportType=stdio"
         + "&mcpServer.fs.command=npx"
         + "&mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp"
-        + "&mcpServer.weather.transportType=sse"
-        + "&mcpServer.weather.url=http://weather-mcp:3001/sse");
+        + "&mcpServer.weather.transportType=streamableHttp"
+        + "&mcpServer.weather.url=http://weather-mcp:8080/mcp");
 ----
 
 XML::
@@ -1309,7 +1390,7 @@ XML::
 ----
 <route>
   <from uri="direct:chat"/>
-  <to uri="spring-ai-chat:chat?chatModel=#chatModel&amp;mcpServer.fs.transportType=stdio&amp;mcpServer.fs.command=npx&amp;mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp&amp;mcpServer.weather.transportType=sse&amp;mcpServer.weather.url=http://weather-mcp:3001/sse"/>
+  <to uri="spring-ai-chat:chat?chatModel=#chatModel&amp;mcpServer.fs.transportType=stdio&amp;mcpServer.fs.command=npx&amp;mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp&amp;mcpServer.weather.transportType=streamableHttp&amp;mcpServer.weather.url=http://weather-mcp:8080/mcp"/>
 </route>
 ----
 
@@ -1328,14 +1409,15 @@ YAML::
               mcpServer.fs.transportType: stdio
               mcpServer.fs.command: npx
               mcpServer.fs.args: "-y,@modelcontextprotocol/server-filesystem,/tmp"
-              mcpServer.weather.transportType: sse
-              mcpServer.weather.url: "http://weather-mcp:3001/sse"
+              mcpServer.weather.transportType: streamableHttp
+              mcpServer.weather.url: "http://weather-mcp:8080/mcp"
 ----
 ====
 
 ==== OAuth Authentication for MCP Servers
 
-For MCP servers requiring authentication, configure an OAuth profile per server.
+For MCP servers requiring authentication, configure an OAuth profile per server. The component sends
+the token in the `Authorization` header of the `streamableHttp` and `sse` transports.
 This requires `camel-oauth` on the classpath:
 
 [tabs]
@@ -1346,8 +1428,8 @@ Java::
 ----
 from("direct:chat")
     .to("spring-ai-chat:chat?chatModel=#chatModel"
-        + "&mcpServer.api.transportType=sse"
-        + "&mcpServer.api.url=http://secure-mcp:3001/sse"
+        + "&mcpServer.api.transportType=streamableHttp"
+        + "&mcpServer.api.url=https://secure-mcp/mcp"
         + "&mcpServer.api.oauthProfile=keycloak");
 ----
 
@@ -1357,7 +1439,7 @@ XML::
 ----
 <route>
   <from uri="direct:chat"/>
-  <to uri="spring-ai-chat:chat?chatModel=#chatModel&amp;mcpServer.api.transportType=sse&amp;mcpServer.api.url=http://secure-mcp:3001/sse&amp;mcpServer.api.oauthProfile=keycloak"/>
+  <to uri="spring-ai-chat:chat?chatModel=#chatModel&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=https://secure-mcp/mcp&amp;mcpServer.api.oauthProfile=keycloak"/>
 </route>
 ----
 
@@ -1373,8 +1455,8 @@ YAML::
             uri: spring-ai-chat:chat
             parameters:
               chatModel: "#chatModel"
-              mcpServer.api.transportType: sse
-              mcpServer.api.url: "http://secure-mcp:3001/sse"
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: "https://secure-mcp/mcp"
               mcpServer.api.oauthProfile: keycloak
 ----
 ====

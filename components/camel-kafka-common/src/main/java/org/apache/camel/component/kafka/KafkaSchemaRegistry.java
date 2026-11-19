@@ -49,8 +49,22 @@ final class KafkaSchemaRegistry {
     // Confluent (and Azure, which uses the same key names)
     static final String CONFLUENT_URL = "schema.registry.url";
     static final String CONFLUENT_SPECIFIC_AVRO_READER = "specific.avro.reader";
+    // Confluent registry login (SchemaRegistryClientConfig of kafka-schema-registry-client 8.x)
+    static final String CONFLUENT_BASIC_AUTH_SOURCE = "basic.auth.credentials.source";
+    static final String CONFLUENT_BASIC_AUTH_USER_INFO = "basic.auth.user.info";
+    static final String CONFLUENT_BEARER_AUTH_SOURCE = "bearer.auth.credentials.source";
+    static final String CONFLUENT_BEARER_AUTH_ISSUER_ENDPOINT = "bearer.auth.issuer.endpoint.url";
+    static final String CONFLUENT_BEARER_AUTH_CLIENT_ID = "bearer.auth.client.id";
+    static final String CONFLUENT_BEARER_AUTH_CLIENT_SECRET = "bearer.auth.client.secret";
+    static final String CONFLUENT_BEARER_AUTH_SCOPE = "bearer.auth.scope";
     // Apicurio Registry 3.x (SchemaResolverConfig and AvroSerdeConfig)
     static final String APICURIO_URL = "apicurio.registry.url";
+    static final String APICURIO_AUTH_USERNAME = "apicurio.registry.auth.username";
+    static final String APICURIO_AUTH_PASSWORD = "apicurio.registry.auth.password";
+    static final String APICURIO_AUTH_TOKEN_ENDPOINT = "apicurio.registry.auth.service.token.endpoint";
+    static final String APICURIO_AUTH_CLIENT_ID = "apicurio.registry.auth.client.id";
+    static final String APICURIO_AUTH_CLIENT_SECRET = "apicurio.registry.auth.client.secret";
+    static final String APICURIO_AUTH_CLIENT_SCOPE = "apicurio.registry.auth.client.scope";
     static final String APICURIO_AUTO_REGISTER = "apicurio.registry.auto-register";
     static final String APICURIO_SPECIFIC_AVRO_READER = "apicurio.registry.use-specific-avro-reader";
     // AWS Glue (AWSSchemaRegistryConstants)
@@ -217,6 +231,69 @@ final class KafkaSchemaRegistry {
             // Glue is addressed by region and registry name, the URL is an optional endpoint override
             case AWS_GLUE -> props.put(GLUE_ENDPOINT, url);
             default -> props.put(CONFLUENT_URL, url);
+        }
+    }
+
+    /**
+     * Adds the login to the registry under the keys of the vendor: basic auth with a username and password, or OAuth2
+     * client credentials with a client id. Only confluent and apicurio take a login from options: azure and aws-glue
+     * log in with the credentials of the environment, so a login option set for them fails. Without a vendor, nothing
+     * is set.
+     *
+     * @throws IllegalArgumentException if a login option is set for azure or aws-glue
+     */
+    static void applyLogin(
+            Properties props, String vendor, String username, String password,
+            String oauthTokenEndpoint, String oauthClientId, String oauthClientSecret, String oauthScope) {
+        if (vendor == null) {
+            return;
+        }
+        boolean basic = ObjectHelper.isNotEmpty(username);
+        boolean oauth = ObjectHelper.isNotEmpty(oauthClientId);
+        boolean any = basic || oauth || ObjectHelper.isNotEmpty(password) || ObjectHelper.isNotEmpty(oauthTokenEndpoint)
+                || ObjectHelper.isNotEmpty(oauthClientSecret) || ObjectHelper.isNotEmpty(oauthScope);
+        if (!any) {
+            return;
+        }
+        switch (vendor) {
+            case CONFLUENT -> {
+                if (basic) {
+                    props.put(CONFLUENT_BASIC_AUTH_SOURCE, "USER_INFO");
+                    props.put(CONFLUENT_BASIC_AUTH_USER_INFO, username + ":" + (password != null ? password : ""));
+                }
+                if (oauth) {
+                    props.put(CONFLUENT_BEARER_AUTH_SOURCE, "OAUTHBEARER");
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_ISSUER_ENDPOINT, oauthTokenEndpoint);
+                    props.put(CONFLUENT_BEARER_AUTH_CLIENT_ID, oauthClientId);
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_CLIENT_SECRET, oauthClientSecret);
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_SCOPE, oauthScope);
+                }
+            }
+            case APICURIO -> {
+                if (basic) {
+                    props.put(APICURIO_AUTH_USERNAME, username);
+                    putIfNotEmpty(props, APICURIO_AUTH_PASSWORD, password);
+                }
+                if (oauth) {
+                    putIfNotEmpty(props, APICURIO_AUTH_TOKEN_ENDPOINT, oauthTokenEndpoint);
+                    props.put(APICURIO_AUTH_CLIENT_ID, oauthClientId);
+                    putIfNotEmpty(props, APICURIO_AUTH_CLIENT_SECRET, oauthClientSecret);
+                    putIfNotEmpty(props, APICURIO_AUTH_CLIENT_SCOPE, oauthScope);
+                }
+            }
+            default -> throw new IllegalArgumentException(
+                    "The schema registry login options are not used with schemaRegistryVendor " + vendor
+                                                          + ", which logs in with the credentials of the environment"
+                                                          + (AZURE.equals(vendor)
+                                                                  ? " (the Azure DefaultAzureCredential)"
+                                                                  : " (the AWS default credentials chain)")
+                                                          + ": remove them.");
+        }
+    }
+
+    private static void putIfNotEmpty(Properties props, String key, String value) {
+        if (ObjectHelper.isNotEmpty(value)) {
+            props.put(key, value);
         }
     }
 

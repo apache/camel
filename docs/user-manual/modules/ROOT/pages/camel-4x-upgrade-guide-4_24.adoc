@@ -75,6 +75,27 @@ including a value set through an environment variable: a warning by default, and
 A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
 behind a property placeholder too.
 
+=== camel-main - the security policy checks the beans that route files define
+
+With camel-main and the Camel CLI, the security policy now also checks the properties of the beans that route files
+define (the `beans` section of a YAML or XML DSL file, and the beans of a Spring XML or Blueprint XML file), as it
+checks a bean configured from `camel.beans.*` properties. A property is reported under the key
+`camel.beans.<name>.<property>`, such as `camel.beans.opaPolicy.failOpen`.
+
+A bean in a route file that sets an insecure option or a plain-text secret is now reported: a warning by default, and
+the startup fails with `camel.main.profile=prod`. Configure a secret with a property placeholder or a vault reference
+instead, or add the key to `camel.security.allowedProperties` to allow it.
+
+The secrets include the user name: `user` and `username` are secret keys, like `password`. So a `DataSource` bean in a
+route file with `username: sa` now logs a warning with `camel run`, and fails the startup with
+`camel.main.profile=prod`, as `camel.beans.myDataSource.username=sa` in `application.properties` already does. Use a
+property placeholder instead, such as `username: "{{db.username}}"`.
+
+The options are matched by their name, as for `camel.beans.*` properties. So a bean option named `ssl` or `tls` that is
+set to `false`, such as the `ssl` option of a `DataSource`, is reported as an insecure SSL setting, as
+`camel.beans.myDataSource.ssl=false` already is. To keep such a connection without TLS, add the key to
+`camel.security.allowedProperties`.
+
 === camel-main - more options are reported by the insecure:dev security policy
 
 These camel-main options are flagged `insecure:dev`, and the `camel.security.insecureDevPolicy` check now reports them
@@ -2851,6 +2872,24 @@ stream failed after part of the request had already been sent.
 
 The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
 body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
+
+=== camel-spring-ai - Spring AI 2.1.0
+
+The Spring AI components use Spring AI 2.1.0, which is built on Spring Boot 4.2 and Spring Framework 7.1. See the
+https://docs.spring.io/spring-ai/reference/2.1/upgrade-notes.html[Spring AI upgrade notes]. The changes that show
+through Camel are:
+
+* The Anthropic chat model ignores the `temperature`, `topP` and `topKSampling` options of `spring-ai-chat`, and their
+headers, and logs a warning (Anthropic Java SDK 3.x). It sends the API key in the `Authorization: Bearer` header
+instead of `X-Api-Key`, which matters for a proxy that filters headers.
+* The chat models return one generation, whose message holds the reply in ordered parts. The body of `spring-ai-chat`
+is the text of the first generation, so with Google GenAI and `includeThoughts` it was the first thought, and with
+Bedrock Converse a reply of several text blocks gave only the first one. The body is now the whole answer.
+* With an `entityClass` (option or `CamelSpringAiChatEntityClass` header), a request that the SafeGuard advisor
+(`safeguardSensitiveWords`) refuses no longer fails the exchange with a JSON parsing error of the refusal text. The body
+is now `null` and the `CamelSpringAiChatFinishReason` header is `guardrailRefusal`. A response that the provider
+filtered and that cannot be converted gives a `null` body too. Check the finish reason header where the route handled
+the exception.
 
 === camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 
@@ -10424,6 +10463,25 @@ component or the endpoint is used as it is.
 
 The new `tlsTrustCertsFilePath` option sets a PEM file with the certificates of the certificate authorities to trust,
 for a broker whose certificate is not signed by an authority that the JVM trusts.
+
+=== camel-geocoder - the language option is used
+
+The `language` option (default `en`) is now sent with each request: as the `accept-language` parameter to Nominatim
+and as the `language` parameter to Google. Before, the option was ignored, so Nominatim answered in the local language
+of the place (for example `Deutschland` for Germany) and Google in its own default language. The address, country,
+city and region headers and the body now come in English unless `language` is set to another language code. Set
+`language` to an empty value to get the previous answers.
+
+=== camel-google-storage - uploaded objects get the storage class of the CamelGoogleCloudStorageStorageClass header
+
+When the producer uploads an object, it now sets the storage class of the object from the
+`CamelGoogleCloudStorageStorageClass` header, or else from the new `objectStorageClass` option. Before, the header was
+not used for an upload, and every object got the default storage class of its bucket.
+
+The consumer and the `getObject` operation set this header to the storage class of the object they read. So a route
+that reads objects from one bucket and uploads them to another now keeps the storage class of each object, where
+before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
+the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
 
 === Kamelets - removed Kamelets
 

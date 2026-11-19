@@ -178,7 +178,9 @@ aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-2
 
 Converse API uses message headers for configuration:
 
-- `CamelAwsBedrockConverseMessages` (required): List of Message objects representing the conversation
+- `CamelAwsBedrockConverseMessages`: List of Message objects representing the conversation. When the header is not
+  set, the message body as text is sent as one user message, so a route in YAML or XML (or a Kamelet) can call
+  `converse` with a text prompt. Without the header and without a body, the exchange fails.
 - `CamelAwsBedrockConverseSystem`: List of SystemContentBlock for system-level instructions
 - `CamelAwsBedrockConverseInferenceConfig`: InferenceConfiguration for temperature, maxTokens, etc.
 - `CamelAwsBedrockConverseToolConfig`: ToolConfiguration for function calling support
@@ -186,6 +188,20 @@ Converse API uses message headers for configuration:
 
 For streaming operations, you can also use:
 - `CamelAwsBedrockStreamOutputMode`: Set to "complete" (default) or "chunks"
+
+For example, the same prompt for every model, with a guardrail, from a text body:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:t?repeatCount=1
+      steps:
+        - setBody:
+            constant: "What is Apache Camel?"
+        - to: aws-bedrock:label?operation=converse&modelId=anthropic.claude-3-haiku-20240307-v1:0&region=us-east-1&guardrailIdentifier=abc123&guardrailVersion=1
+        - log: "${body}"
+----
 
 ==== Converse Response Headers
 
@@ -254,7 +270,8 @@ aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-2
     &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT
 ----
 
-*applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model
+*applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model. The content
+is the `CamelAwsBedrockGuardrailContent` header, or else the message body as text.
 
 [source]
 ----
