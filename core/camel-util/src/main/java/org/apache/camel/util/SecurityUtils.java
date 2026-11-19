@@ -185,8 +185,10 @@ public final class SecurityUtils {
                 "component:ftps",
                 "component:mina",
                 "component:mllp",
+                "component:nats",
                 "component:netty",
                 "component:nettyhttp",
+                "component:pulsar",
                 "component:smpp",
                 "component:smpps"));
         owners.put("httpshostnameverificationenabled", Set.of(
