@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -208,7 +209,18 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownExecutorService) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            List<Runnable> dropped = camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            if (dropped != null) {
+                // the exchanges still queued in the thread pool are never processed: reject them so their callers
+                // do not wait for ever. A thread pool factory that wraps the tasks (such as the instrumented thread
+                // pools of camel-opentelemetry or camel-micrometer) hands back its own wrappers here, which are not
+                // Rejectable, so those exchanges are not failed here
+                for (Runnable task : dropped) {
+                    if (task instanceof Rejectable rejectable) {
+                        rejectable.reject();
+                    }
+                }
+            }
         }
         super.doShutdown();
     }

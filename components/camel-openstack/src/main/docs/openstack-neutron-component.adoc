@@ -1,10 +1,11 @@
-= OpenStack Neutron Component
+= OpenStack Neutron Component (deprecated)
 :doctitle: OpenStack Neutron
 :shortname: openstack-neutron
 :artifactid: camel-openstack
 :description: Access OpenStack Neutron for network services.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

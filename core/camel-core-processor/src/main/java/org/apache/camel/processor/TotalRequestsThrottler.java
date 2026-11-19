@@ -191,6 +191,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
      */
     protected boolean processAsynchronously(
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
+        AsyncCall call = newAsyncCall(exchange, callback);
         try {
             if (LOG.isTraceEnabled()) {
                 exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, TimeSource.currentTimeMillis());
@@ -201,9 +202,14 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             // exchanges and not yet returned, so try again after one period
             long delay = next != null
                     ? next.getDelay(TimeUnit.NANOSECONDS) : TimeUnit.MILLISECONDS.toNanos(getTimePeriodMillis());
-            asyncExecutor.schedule(() -> process(exchange, callback), delay, TimeUnit.NANOSECONDS);
-            return false;
+            asyncExecutor.schedule(call, delay, TimeUnit.NANOSECONDS);
+            // a thread pool that is shut down drops the task without an exception (CallerRuns)
+            return failIfShutdown(call);
         } catch (final RejectedExecutionException e) {
+            if (!call.rejected()) {
+                // doShutdown has already failed the exchange and called the callback
+                return false;
+            }
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
@@ -227,6 +233,9 @@ public class TotalRequestsThrottler extends AbstractThrottler {
     protected void doShutdown() throws Exception {
         if (shutdownAsyncExecutor && asyncExecutor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(asyncExecutor);
+            // the tasks still queued in the thread pool that was shut down never run (a thread pool of the user
+            // is not shut down here, and still runs them)
+            failAsyncCalls();
         }
         states.clear();
         super.doShutdown();

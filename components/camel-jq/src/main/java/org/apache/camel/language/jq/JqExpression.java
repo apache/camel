@@ -21,12 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import net.thisptr.jackson.jq.JsonQuery;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Versions;
-import net.thisptr.jackson.jq.exception.JsonQueryException;
+import net.thisptr.jackson.jq.v2.core.Environment;
+import net.thisptr.jackson.jq.v2.core.JsonQuery;
+import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -39,15 +36,21 @@ import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.NullNode;
 
 public class JqExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
 
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.node.";
+    private static final String JACKSON2_DATABIND_PACKAGE = "com.fasterxml.jackson.databind.";
+
     private final String expression;
 
-    private Scope scope;
+    private Environment<JsonNode> environment;
     private String resultTypeName;
     private Class<?> resultType;
-    private JsonQuery query;
+    private JsonQuery<JsonNode> query;
     private TypeConverter typeConverter;
     private Expression source;
 
@@ -55,8 +58,8 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         this(null, expression);
     }
 
-    public JqExpression(Scope scope, String expression) {
-        this.scope = scope;
+    public JqExpression(Environment<JsonNode> environment, String expression) {
+        this.environment = environment;
         this.expression = expression;
     }
 
@@ -66,14 +69,14 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         if (this.query == null) {
             super.init(camelContext);
 
-            if (this.scope == null) {
+            if (this.environment == null) {
                 JqLanguage lan = (JqLanguage) camelContext.resolveLanguage("jq");
-                this.scope = Scope.newChildScope(lan.getRootScope());
+                this.environment = lan.getEnvironment();
             }
 
             this.typeConverter = camelContext.getTypeConverter();
             try {
-                this.query = JsonQuery.compile(this.expression, Versions.JQ_1_7);
+                this.query = this.environment.compile(this.expression);
             } catch (JsonQueryException e) {
                 throw new ExpressionIllegalSyntaxException(this.expression, e);
             }
@@ -90,12 +93,12 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         }
     }
 
-    public Scope getScope() {
-        return scope;
+    public Environment<JsonNode> getEnvironment() {
+        return environment;
     }
 
-    public void setScope(Scope scope) {
-        this.scope = scope;
+    public void setEnvironment(Environment<JsonNode> environment) {
+        this.environment = environment;
     }
 
     @Override
@@ -154,7 +157,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
             final List<JsonNode> outputs = new ArrayList<>(1);
             final JsonNode payload = getPayload(exchange);
 
-            this.query.apply(scope, payload, outputs::add);
+            this.query.apply(payload, outputs::add);
 
             if (outputs.size() == 1) {
                 JsonNode out = outputs.get(0);
@@ -167,7 +170,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
                 if (resultType == JsonNode.class) {
                     return out;
                 }
-                return this.typeConverter.convertTo(resultType, exchange, outputs.get(0));
+                return convertResult(exchange, out);
             } else if (outputs.size() > 1) {
                 // no need to convert outputs
                 if (resultType == JsonNode.class) {
@@ -176,7 +179,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
 
                 return outputs.stream()
                         .filter(o -> !o.isNull()) // skip null
-                        .map(item -> this.typeConverter.convertTo(resultType, exchange, item))
+                        .map(item -> convertResult(exchange, item))
                         .collect(Collectors.toList());
             }
         } catch (Exception e) {
@@ -195,17 +198,34 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
      * @return          the {@link JsonNode} to be processed by the expression
      */
     private JsonNode getPayload(Exchange exchange) throws Exception {
-        JsonNode payload = source.evaluate(exchange, JsonNode.class);
+        Object value = source.evaluate(exchange, Object.class);
+        // Jackson 3 cannot convert a Jackson 2 node; the text of a node of either line is its JSON
+        JsonNode payload = typeConverter.convertTo(JsonNode.class, exchange,
+                isJackson2Node(value) ? value.toString() : value);
         // if body is stream cached then reset, so we can re-read it again
         MessageHelper.resetStreamCache(exchange.getMessage());
+        if (payload != null && payload.isMissingNode()) {
+            // an empty or blank source holds no JSON value: read it as null, as jackson-jq 1 did
+            payload = NullNode.getInstance();
+        }
         if (payload == null) {
             // tell apart a source that is null from one that is set but holds no JSON
-            if (source.evaluate(exchange, Object.class) == null) {
+            if (value == null) {
                 throw new InvalidPayloadException(exchange, JsonNode.class, exchange.getIn(), nullSourceHint(exchange));
             }
             throw new InvalidPayloadException(exchange, JsonNode.class);
         }
         return payload;
+    }
+
+    private Object convertResult(Exchange exchange, JsonNode node) {
+        // Jackson 3 cannot convert to a Jackson 2 node: go through its JSON text, as for the input
+        Object value = resultType.getName().startsWith(JACKSON2_DATABIND_PACKAGE) ? node.toString() : node;
+        return this.typeConverter.convertTo(resultType, exchange, value);
+    }
+
+    private static boolean isJackson2Node(Object value) {
+        return value != null && value.getClass().getName().startsWith(JACKSON2_NODE_PACKAGE);
     }
 
     private String nullSourceHint(Exchange exchange) {

@@ -12,8 +12,20 @@
 The `camel-ai-observability` module provides GenAI observability for Camel AI components following the
 OpenTelemetry semantic conventions for GenAI (stable subset aligned with Spring AI).
 
-AI producers depend on the lightweight `camel-ai-observability-api` module. Add `camel-ai-observability` to your
-application classpath together with a tracing or metrics backend to enable span and metric emission.
+AI producers depend on the lightweight `camel-ai-observability-api` module, which records nothing by itself. GenAI
+observability is opt-in: add `camel-ai-observability` to the application, together with a tracing or metrics backend
+such as `camel-opentelemetry2` or `camel-micrometer`, to enable span and metric emission. It is not part of
+`camel-observability-services`, so add it also when the application uses that module.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-observability</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 When `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath, langchain4j, OpenAI, and Spring AI chat
 producers emit child spans and metrics per LLM call with attributes such as `gen_ai.operation.name`, `gen_ai.system`,
@@ -99,7 +111,9 @@ it does not record its own span and metrics for the calls the framework records,
 * `spring-ai-chat`: the model calls are left to Spring AI, and so are the Camel route tools when the tool calling
 manager of the model traces them (Spring AI gives some models a default manager without a registry).
 * `langchain4j-chat` and `langchain4j-agent`: the model calls are left to the framework. At level `detailed` and above,
-the agent run and the Camel route tools are still recorded by Camel, and the framework's spans nest under the agent run.
+the agent run and the Camel route tools are still recorded by Camel. The framework's spans are children of the span
+that is current when the endpoint is called, which is the route span: they appear next to the agent run, not under it,
+because Camel makes its spans current only while a processor runs.
 * `openai`: the `openai-java` instrumentation of OpenTelemetry (in the OpenTelemetry Java agent) wraps the OpenAI client
 used by `camel-openai` and traces its chat completions and embeddings. When the client is wrapped, those calls are left
 to it, except at level `full`: the instrumentation records the messages as log events, not as span attributes, so Camel

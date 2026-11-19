@@ -25,8 +25,9 @@ import io.vertx.ext.auth.User;
 
 /**
  * Derives a runtime-neutral view — a caller name and role names — from a Vert.x {@link User}, so the MCP bridge can
- * stamp a stable caller identity ({@code CamelMcpSecurityPrincipalName} / {@code CamelMcpSecurityPrincipalRoles}) that
- * a tool route or its {@link org.apache.camel.spi.AuthorizationPolicy} can authorize on without depending on Vert.x.
+ * stamp a stable caller identity ({@code CamelAiToolSecurityPrincipalName} / {@code CamelAiToolSecurityPrincipalRoles})
+ * that a tool route or its {@link org.apache.camel.spi.AuthorizationPolicy} can authorize on without depending on
+ * Vert.x.
  */
 final class VertxMcpPrincipal {
 

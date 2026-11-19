@@ -21,6 +21,7 @@ import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
@@ -28,6 +29,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  */
 public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
+    // @Order(0) keeps the server alive until after the CamelContext (@Order(1) in CamelTestSupport) shuts down,
+    // which prevents in-flight polls from logging spurious "Connection refused" WARNs during teardown.
+    @Order(0)
     @RegisterExtension
     public FtpEmbeddedService service = FtpServiceFactory.createEmbeddedService();
 

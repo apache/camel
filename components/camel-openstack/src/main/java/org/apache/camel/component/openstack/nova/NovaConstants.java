@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.nova;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.24")
 public final class NovaConstants extends OpenstackConstants {
     public static final String NOVA_SUBSYSTEM_FLAVORS = "flavors";
     public static final String NOVA_SUBSYSTEM_SERVERS = "servers";

@@ -33,7 +33,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A default {@link NettySharedHttpServer} to make sharing Netty server in Camel applications easier.
+ *
+ * @deprecated the shared Netty HTTP server was added for OSGi/Karaf, so that several applications in one JVM could use
+ *             the same port. Use a netty-http consumer per port, where several routes can use the same port, or the
+ *             platform-http component.
  */
+@Deprecated
 public class DefaultNettySharedHttpServer extends ServiceSupport implements NettySharedHttpServer {
 
     // TODO: option to enlist in JMX

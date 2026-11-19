@@ -344,6 +344,9 @@ If there is an object passed to the component as parameter `securityConfiguratio
 Provider will be used
 for authentication of all requests.
 
+Once the security provider has authenticated a request, the `Authorization` header is removed from the message, so it
+is not passed on to the route. The headers that the provider adds with `addHeader` are set after that.
+
 Property `requireServletContext` of security providers forces the Undertow server to run
 with servlet context, as soon as an endpoint that uses such a provider, configured on the endpoint
 or on the component, is started. There will be no servlet actually handled. This feature is meant only

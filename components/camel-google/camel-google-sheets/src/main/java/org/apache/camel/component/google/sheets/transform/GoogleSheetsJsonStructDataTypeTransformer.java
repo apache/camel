@@ -53,7 +53,9 @@ import org.apache.camel.util.json.Jsoner;
  * result of a get values operation) the transformer will transform into generic Json struct. When generic Json struct
  * is given as a message body transformer will transform into a proper ValueRange object that is ready to be used in an
  * update/append values operation. The Implementation also supports splitResults setting where a set of values is split
- * into its individual items.
+ * into its individual items. The Json struct of a row or column read from a spreadsheet has the id of the spreadsheet
+ * in its spreadsheetId field; when Json struct is transformed into a ValueRange this field is ignored, and the
+ * spreadsheet to write to is the one of the CamelGoogleSheets.spreadsheetId header or of the endpoint.
  */
 @DataTypeTransformer(name = "google-sheets:application-x-struct",
                      description = "Transforms to/from JSon data and Google Sheets ValueRange object")
@@ -95,7 +97,9 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
     }
 
     /**
-     * Constructs proper ValueRange object from given generic Json struct.
+     * Constructs proper ValueRange object from given generic Json struct. The spreadsheet is the one of the
+     * CamelGoogleSheets.spreadsheetId header, or else the one of the endpoint; a spreadsheetId field of a row is left
+     * out of the values.
      */
     private ValueRange transformToValueRangeModel(
             Message message, String spreadsheetId, String range, String majorDimension, String valueInputOption,
@@ -110,13 +114,9 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                 final ArrayList<String> properties = createCoordinateNameSpec(range, majorDimension, columnNames);
 
                 for (String json : jsonBeans) {
+                    // a spreadsheetId field, which the rows read by this transformer have, is not a value, and does not
+                    // choose the spreadsheet: that is the CamelGoogleSheets.spreadsheetId header or the endpoint option
                     Map<String, Object> dataShape = readJsonObject(json);
-
-                    if (dataShape.containsKey("spreadsheetId")) {
-                        spreadsheetId = Optional.ofNullable(dataShape.remove("spreadsheetId"))
-                                .map(Object::toString)
-                                .orElse(spreadsheetId);
-                    }
 
                     List<Object> rangeValues = new ArrayList<>();
                     properties
@@ -131,8 +131,10 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
             valueRange.setMajorDimension(majorDimension);
             valueRange.setValues(values);
 
-            message.setHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID, spreadsheetId);
-            message.setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+            if (ObjectHelper.isNotEmpty(spreadsheetId)) {
+                message.setHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID, spreadsheetId);
+                message.setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+            }
             message.setHeader(GoogleSheetsStreamConstants.RANGE, range);
             message.setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", range);
             message.setHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION, majorDimension);

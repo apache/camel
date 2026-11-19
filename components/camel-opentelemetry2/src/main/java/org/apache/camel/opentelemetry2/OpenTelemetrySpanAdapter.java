@@ -23,7 +23,6 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.context.Context;
 import org.apache.camel.telemetry.TagConstants;
 
 public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span {
@@ -78,17 +77,6 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     @Override
     public void setTag(String key, double value) {
         this.otelSpan.setAttribute(key, value);
-    }
-
-    @Override
-    public org.apache.camel.telemetry.Span.Scope openScope() {
-        Context context = Context.current().with(otelSpan);
-        if (baggage != null) {
-            context = context.with(baggage);
-        }
-        // qualified: the Scope inherited from the Camel Span interface shadows an import of the OpenTelemetry one
-        io.opentelemetry.context.Scope scope = context.makeCurrent();
-        return scope::close;
     }
 
     @Override

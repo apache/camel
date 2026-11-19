@@ -40,6 +40,7 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.FileUtil;
@@ -374,8 +375,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (json != null) {
             // lookup configurer
-            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                    .resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
+            PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext,
+                    name + "-dataformat-configurer", json);
             if (configurer == null) {
                 throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
             }

@@ -618,12 +618,19 @@ final class BeanRefChecks {
     /** A quoted resource:... literal inside a script: the script returns that text. */
     private static final Pattern QUOTED_RESOURCE_LITERAL
             = Pattern.compile("['\"](resource:(?:classpath:|file:|ref:|bean:)?[^'\"\\\\\\s]+)['\"]");
+    /** The expression: entry of a flow mapping, groovy: {expression: "...", resolveResource: true}. */
+    private static final Pattern FLOW_EXPRESSION
+            = Pattern.compile("[{,]\\s*expression\\s*:\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^']|'')*'|[^,}]*)");
+    private static final Pattern FLOW_RESOLVE_RESOURCE = Pattern.compile("[{,]\\s*resolveResource\\s*:\\s*true\\b");
 
     /**
      * A script (groovy, jq, ...) that returns 'resource:file:x' returns that text: the resource: prefix is resolved on
      * the expression text, never on a returned value, so the next step gets 24 characters instead of the file
      * (CAMEL-24882). Says to add resolveResource: true (CAMEL-24884) and return the name without a scheme, or to use
      * constant/simple. With resolveResource: true, a returned name with a scheme fails (CAMEL-25982): says to drop it.
+     * Only the script is read: the value of the language key, or of its expression: key. A resource: value under
+     * another key, such as the wrong key resource:, is not a script that returns it: the schema check names that key
+     * (CAMEL-27146).
      */
     static List<String> validateReturnedResourceLiterals(String content) {
         List<String> errors = new ArrayList<>();
@@ -645,23 +652,47 @@ final class BeanRefChecks {
                 continue;
             }
             int indent = YamlLines.countLeadingSpaces(lines[i]);
-            // the expression block: the inline value, and the lines indented under the language key
-            StringBuilder block = new StringBuilder(stripYamlQuotes(trimmed.substring(colon + 1).trim())).append('\n');
+            String inline = trimmed.substring(colon + 1).trim();
+            // the script: the inline value (a block scalar goes on in the lines under the key), a flow mapping's
+            // expression: entry, or, when the key has no value, the expression: option under it
+            StringBuilder block = new StringBuilder();
             boolean resolves = false;
+            boolean options = inline.isEmpty() || inline.startsWith("#");
+            if (inline.startsWith("{")) {
+                Matcher e = FLOW_EXPRESSION.matcher(inline);
+                if (e.find()) {
+                    block.append(stripYamlQuotes(e.group(1).trim())).append('\n');
+                }
+                resolves = FLOW_RESOLVE_RESOURCE.matcher(inline).find();
+            } else if (!options) {
+                block.append(stripYamlQuotes(inline)).append('\n');
+            }
+            boolean inScript = !options && !inline.startsWith("{");
+            int optionIndent = -1;
             int end = i;
             for (int j = i + 1; j < lines.length; j++) {
                 if (lines[j].isBlank()) {
                     continue;
                 }
-                if (YamlLines.countLeadingSpaces(lines[j]) <= indent) {
+                int lineIndent = YamlLines.countLeadingSpaces(lines[j]);
+                if (lineIndent <= indent) {
                     break;
                 }
                 end = j;
                 String t = lines[j].trim();
-                if (t.startsWith("resolveResource:") && t.substring(16).trim().startsWith("true")) {
-                    resolves = true;
+                if (options && (optionIndent < 0 || lineIndent <= optionIndent)) {
+                    // an option of the language: only expression: holds the script, its block scalar goes on below
+                    optionIndent = lineIndent;
+                    if (t.startsWith("resolveResource:") && t.substring(16).trim().startsWith("true")) {
+                        resolves = true;
+                    }
+                    inScript = t.startsWith("expression:");
+                    if (inScript) {
+                        block.append(stripYamlQuotes(t.substring(11).trim())).append('\n');
+                    }
+                } else if (inScript) {
+                    block.append(t).append('\n');
                 }
-                block.append(t.startsWith("expression:") ? stripYamlQuotes(t.substring(11).trim()) : t).append('\n');
             }
             Matcher m = QUOTED_RESOURCE_LITERAL.matcher(block);
             if (resolves) {

@@ -32,7 +32,6 @@ import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.util.ArtifactUtils;
@@ -295,8 +294,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (dataFormatName != null && camelContext.getDataFormatNames().contains(dataFormatName)) {
             DataFormat df = camelContext.resolveDataFormat(dataFormatName);
             if (df != null) {
-                PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                        .resolvePropertyConfigurer(dataFormatName + "-dataformat", camelContext);
+                PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext,
+                        dataFormatName + "-dataformat", df);
                 if (configurer == null) {
                     configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, df);
                 }
@@ -341,8 +340,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             String configurerName = name + "-dataformat-configurer";
-            configurer = PluginHelper.getConfigurerResolver(camelContext)
-                    .resolvePropertyConfigurer(configurerName, camelContext);
+            configurer = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext, configurerName, dataFormat);
         }
         return configurer;
     }

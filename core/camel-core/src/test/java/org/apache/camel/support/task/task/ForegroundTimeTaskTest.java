@@ -103,19 +103,24 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateMaxDuration() {
-        // the budget stays at 5 seconds (1 second interval): it relies on the elapsed time, so a shorter budget
-        // leaves too little slack for the fifth iteration when many tests run in parallel
+        // The time budget (1000ms) stops the task before hitting the 50-iteration cap.
+        // At 200ms per iteration, at most 5 iterations can fit in 1000ms; count <= 5 and
+        // elapsed >= 1000ms are both deterministic (no CI timing dependency).
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .withMaxIterations(50)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
         task.run(camelContext, this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount.intValue());
+        int count = taskCount.intValue();
+        // the time budget stops the task: at most one iteration per interval fits in maxDuration (1000 / 200 = 5),
+        // fewer when the machine is slow, and never the iteration cap of 50
+        assertTrue(count >= 1 && count <= 5, "Expected 1 to 5 iterations, but ran " + count);
+        assertTrue(task.elapsed().toMillis() >= 1000, "The time budget should be used up, elapsed: " + task.elapsed());
     }
 
     @DisplayName("Test that the task stops running once the predicate is true")

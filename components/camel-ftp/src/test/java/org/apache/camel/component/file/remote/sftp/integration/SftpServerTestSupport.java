@@ -20,9 +20,13 @@ import java.nio.file.Path;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SftpServerTestSupport extends BaseServerTestSupport {
+    // @Order(0) keeps the server alive until after the CamelContext (@Order(1) in CamelTestSupport) shuts down,
+    // which prevents in-flight polls from logging spurious "Connection refused" WARNs during teardown.
+    @Order(0)
     @RegisterExtension
     protected SftpEmbeddedService service = new SftpEmbeddedService();
 

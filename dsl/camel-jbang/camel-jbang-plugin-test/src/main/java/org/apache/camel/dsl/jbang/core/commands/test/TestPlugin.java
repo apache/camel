@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.aesh.command.CommandException;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.metadata.MetadataProviderRegistry;
 import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
@@ -31,6 +32,7 @@ import org.apache.camel.dsl.jbang.run.common.PluginExporter;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.cli.CitrusJBangMain;
+import org.citrusframework.jbang.cli._AeshMetadataRegistry;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0", appliesTo = { "export" })
 public class TestPlugin implements Plugin {
@@ -39,6 +41,10 @@ public class TestPlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
+        // the CLI tells aesh to use only its own metadata registry (no class path scan), so register the generated
+        // aesh metadata of the Citrus commands, which the commands of this plugin extend (see TestInit)
+        MetadataProviderRegistry.register(new _AeshMetadataRegistry());
+
         CitrusJBangMain citrus = new CitrusJBangMain();
         citrus.withPrinter(new PipedPrinter(main.getOut()));
 

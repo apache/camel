@@ -23,6 +23,7 @@ import java.util.Map;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures;
 import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 
@@ -38,6 +39,22 @@ public final class McpPromptSdkSupport {
 
     public static McpServerFeatures.SyncPromptSpecification buildSpecification(
             McpServerPrompt prompt, McpJsonMapper jsonMapper) {
+        return new McpServerFeatures.SyncPromptSpecification(
+                buildPrompt(prompt), (exchange, request) -> getPrompt(prompt, request, jsonMapper));
+    }
+
+    /**
+     * Builds the specification for the MCP SDK stateless server, which serves each request without a session.
+     *
+     * @since 4.24
+     */
+    public static McpStatelessServerFeatures.SyncPromptSpecification buildStatelessSpecification(
+            McpServerPrompt prompt, McpJsonMapper jsonMapper) {
+        return new McpStatelessServerFeatures.SyncPromptSpecification(
+                buildPrompt(prompt), (transportContext, request) -> getPrompt(prompt, request, jsonMapper));
+    }
+
+    private static McpSchema.Prompt buildPrompt(McpServerPrompt prompt) {
         McpSchema.Prompt.Builder builder = McpSchema.Prompt.builder(prompt.name())
                 .description(prompt.description())
                 .arguments(prompt.arguments().stream()
@@ -49,35 +66,37 @@ public final class McpPromptSdkSupport {
         if (prompt.title() != null && !prompt.title().isBlank()) {
             builder.title(prompt.title());
         }
+        return builder.build();
+    }
 
-        return new McpServerFeatures.SyncPromptSpecification(builder.build(), (exchange, request) -> {
-            Map<String, String> arguments = new LinkedHashMap<>();
-            if (request.arguments() != null) {
-                request.arguments().forEach((name, value) -> {
-                    if (!(value instanceof String stringValue)) {
-                        throw McpError.builder(McpSchema.ErrorCodes.INVALID_PARAMS)
-                                .message("Prompt arguments must be strings")
-                                .build();
-                    }
-                    arguments.put(name, stringValue);
-                });
-            }
-            McpPromptResult result = prompt.handler().get(arguments);
-            if (result == null) {
-                throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-                        .message("Prompt execution failed")
-                        .build();
-            }
-            if (result.isError()) {
-                int code = result.argumentError()
-                        ? McpSchema.ErrorCodes.INVALID_PARAMS : McpSchema.ErrorCodes.INTERNAL_ERROR;
-                throw McpError.builder(code).message(result.errorMessage()).build();
-            }
-            List<McpSchema.PromptMessage> messages = result.messages().stream()
-                    .map(message -> toPromptMessage(message, jsonMapper))
-                    .toList();
-            return McpSchema.GetPromptResult.builder(messages).description(result.description()).build();
-        });
+    private static McpSchema.GetPromptResult getPrompt(
+            McpServerPrompt prompt, McpSchema.GetPromptRequest request, McpJsonMapper jsonMapper) {
+        Map<String, String> arguments = new LinkedHashMap<>();
+        if (request.arguments() != null) {
+            request.arguments().forEach((name, value) -> {
+                if (!(value instanceof String stringValue)) {
+                    throw McpError.builder(McpSchema.ErrorCodes.INVALID_PARAMS)
+                            .message("Prompt arguments must be strings")
+                            .build();
+                }
+                arguments.put(name, stringValue);
+            });
+        }
+        McpPromptResult result = prompt.handler().get(arguments);
+        if (result == null) {
+            throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                    .message("Prompt execution failed")
+                    .build();
+        }
+        if (result.isError()) {
+            int code = result.argumentError()
+                    ? McpSchema.ErrorCodes.INVALID_PARAMS : McpSchema.ErrorCodes.INTERNAL_ERROR;
+            throw McpError.builder(code).message(result.errorMessage()).build();
+        }
+        List<McpSchema.PromptMessage> messages = result.messages().stream()
+                .map(message -> toPromptMessage(message, jsonMapper))
+                .toList();
+        return McpSchema.GetPromptResult.builder(messages).description(result.description()).build();
     }
 
     private static McpSchema.PromptMessage toPromptMessage(McpPromptMessage message, McpJsonMapper jsonMapper) {

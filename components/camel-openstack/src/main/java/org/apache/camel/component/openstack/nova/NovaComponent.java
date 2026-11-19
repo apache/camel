@@ -23,6 +23,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("openstack-nova")
+@Deprecated(since = "4.24")
 public class NovaComponent extends DefaultComponent {
 
     @Override

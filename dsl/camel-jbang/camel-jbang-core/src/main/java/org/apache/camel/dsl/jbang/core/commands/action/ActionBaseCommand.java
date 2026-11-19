@@ -308,6 +308,7 @@ abstract class ActionBaseCommand extends CamelCommand {
             }
         };
         run.files = sourceFiles;
+        run.setWorkDir(workDir);
         // the routes are dumped while Camel starts, and a transform run stops once Camel has started
         // (camel.main.durationMaxSeconds=-1): a run of a fixed second only made each diagram a second slower
         int exit = run.runTransform(ignoreLoadingError);

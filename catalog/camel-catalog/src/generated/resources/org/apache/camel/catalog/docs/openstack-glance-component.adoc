@@ -1,10 +1,11 @@
-= OpenStack Glance Component
+= OpenStack Glance Component (deprecated)
 :doctitle: OpenStack Glance
 :shortname: openstack-glance
 :artifactid: camel-openstack
 :description: Manage VM images and metadata definitions in OpenStack Glance.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

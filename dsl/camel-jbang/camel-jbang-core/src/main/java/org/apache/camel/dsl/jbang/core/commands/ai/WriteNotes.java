@@ -41,7 +41,8 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  * What a written route does that works but is probably not what was asked, said as a note of the write: the route can
  * be right, so the write is not refused. A to: that copies each file its file consumer then moves to .camel, a to: that
  * appends to a file with nothing between the messages, a request-reply over JMS whose reply replaces the message that
- * was sent, and a literal written over a {{key}} placeholder that leaves the key in application.properties unused.
+ * was sent, an idempotentConsumer that skips duplicates whose steps check CamelDuplicateMessage, and a literal written
+ * over a {{key}} placeholder that leaves the key in application.properties unused.
  */
 final class WriteNotes {
 
@@ -94,6 +95,9 @@ final class WriteNotes {
 
     /** The appendChars option in a uri, with its value up to the next option. */
     private static final Pattern APPEND_CHARS = Pattern.compile("(?i)([?&]appendChars=)[^&]*");
+
+    /** A check of CamelDuplicateMessage with == false, which a new message, with no such property, never matches. */
+    private static final Pattern DUPLICATE_EQUALS_FALSE = Pattern.compile("CamelDuplicateMessage}?\\s*==\\s*false");
 
     private WriteNotes() {
     }
@@ -436,6 +440,79 @@ final class WriteNotes {
             }
         }
         return null;
+    }
+
+    /**
+     * An idempotentConsumer that skips a duplicate (skipDuplicate is true by default) whose steps check the exchange
+     * property CamelDuplicateMessage: a duplicate never reaches its steps (it goes on to the steps after it, with the
+     * property set), and a new message has no such property, so the check there is never true. r30 to r35 of the
+     * local-model benchmark, route-enrich-and-dedupe step 1 ("log ... accepted for a new order id, and ... is a
+     * duplicate, skipped for one seen before"): the 8 step runs that checked the property without skipDuplicate: false
+     * all failed (2 of them checked == false, so every new order was logged as a duplicate), and the 27 that set it all
+     * passed. A skipDuplicate that is not plainly true, such as a placeholder, gets no note. Each note is "Line N: ..."
+     * for the line of the idempotentConsumer.
+     */
+    static List<String> duplicateMessageNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !content.contains("CamelDuplicateMessage")) {
+            return notes;
+        }
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (RuntimeException e) {
+            return notes;
+        }
+        try {
+            // the pointer of each such idempotentConsumer, and whether its steps check the property with == false
+            Map<String, Boolean> skipping = new LinkedHashMap<>();
+            idempotentConsumers(doc, "", skipping);
+            Node root = skipping.isEmpty() ? null : YamlPointerLines.root(content);
+            for (Map.Entry<String, Boolean> e : skipping.entrySet()) {
+                int line = YamlPointerLines.line(root, e.getKey(), null);
+                notes.add((line > 0 ? "Line " + line + ": " : "") + "this idempotentConsumer skips a duplicate"
+                          + " (skipDuplicate is true by default): a duplicate never reaches the steps under it, so"
+                          + " the check of the exchange property CamelDuplicateMessage there is never true. Add"
+                          + " skipDuplicate: false, and a duplicate goes on to these steps with CamelDuplicateMessage"
+                          + " set to true."
+                          + (e.getValue()
+                                  ? " Check == true for a duplicate (and otherwise: for a new message), not == false:"
+                                    + " a new message has no such property."
+                                  : ""));
+            }
+        } catch (RuntimeException e) {
+            // a shape the walk does not know: a note must never fail the write
+        }
+        return notes;
+    }
+
+    /**
+     * Adds the pointer of each idempotentConsumer step under the node that skips duplicates and whose steps check
+     * CamelDuplicateMessage, with whether they check it with == false. Any list or map is walked: an idempotentConsumer
+     * can be the step of a route, or of a split or a when: of a choice.
+     */
+    private static void idempotentConsumers(Object node, String at, Map<String, Boolean> skipping) {
+        if (node instanceof List<?> list) {
+            for (int i = 0; i < list.size(); i++) {
+                idempotentConsumers(list.get(i), at + "/" + i, skipping);
+            }
+        } else if (node instanceof Map<?, ?> map) {
+            if (map.size() == 1 && map.get("idempotentConsumer") instanceof Map<?, ?> eip && skipsDuplicates(eip)) {
+                String steps = String.valueOf(eip.get("steps"));
+                if (steps.contains("CamelDuplicateMessage")) {
+                    skipping.put(at, DUPLICATE_EQUALS_FALSE.matcher(steps).find());
+                }
+            }
+            for (Map.Entry<?, ?> e : map.entrySet()) {
+                idempotentConsumers(e.getValue(), at + "/" + e.getKey(), skipping);
+            }
+        }
+    }
+
+    /** Whether an idempotentConsumer skips duplicates: skipDuplicate left out, or plainly true. */
+    private static boolean skipsDuplicates(Map<?, ?> eip) {
+        Object skip = eip.get("skipDuplicate");
+        return skip == null || Boolean.TRUE.equals(skip) || "true".equalsIgnoreCase(String.valueOf(skip).trim());
     }
 
     /**

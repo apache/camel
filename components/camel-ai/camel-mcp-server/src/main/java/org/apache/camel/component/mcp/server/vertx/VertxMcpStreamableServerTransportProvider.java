@@ -50,6 +50,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SecurityPolicyHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mcp.server.McpProtocolEra;
 import org.apache.camel.component.mcp.server.McpServerHosts;
 import org.apache.camel.component.mcp.server.McpServerOrigins;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
@@ -93,6 +94,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final String TEXT_EVENT_STREAM = "text/event-stream";
     private static final String ORIGIN = "Origin";
     private static final String HOST = "Host";
+    private static final String PROTOCOL_VERSION = "MCP-Protocol-Version";
     // the status the MCP SDK validator answers a Host that is not allowed with
     private static final int MISDIRECTED_REQUEST = 421;
 
@@ -121,6 +123,11 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private final List<Route> routes = new ArrayList<>();
 
     private McpStreamableServerSession.Factory sessionFactory;
+    // which protocol versions are served, and how; without serveProtocols, only the legacy versions, with sessions
+    private McpProtocolEra protocolEra = McpProtocolEra.LEGACY;
+    private boolean sessionsEnabled = true;
+    private VertxMcpStatelessServerTransport statelessTransport;
+    private VertxMcpModernTransport modernTransport;
     private volatile boolean closing;
     private Vertx vertx;
     private Long keepAliveTimerId;
@@ -233,6 +240,32 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     @Override
     public void setSessionFactory(McpStreamableServerSession.Factory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * Sets the protocol versions served on the endpoint; must be called before {@link #registerRoutes}. Without this
+     * call, only the protocol versions that open with an {@code initialize} handshake are served, with sessions.
+     *
+     * @param protocolEra        the protocol versions served
+     * @param sessionsEnabled    whether a client that opens with {@code initialize} gets a session (the MCP server over
+     *                           this provider then sets the session factory)
+     * @param statelessTransport serves a client that opens with {@code initialize} without a session; required when the
+     *                           era serves those clients and sessions are disabled
+     * @param modernTransport    serves protocol version 2026-07-28; required when the era serves it
+     */
+    void serveProtocols(
+            McpProtocolEra protocolEra, boolean sessionsEnabled,
+            VertxMcpStatelessServerTransport statelessTransport, VertxMcpModernTransport modernTransport) {
+        if (protocolEra.servesModern() && modernTransport == null) {
+            throw new IllegalArgumentException("Protocol era " + protocolEra.value() + " requires a modern transport");
+        }
+        if (protocolEra.servesLegacy() && !sessionsEnabled && statelessTransport == null) {
+            throw new IllegalArgumentException("Stateless serving requires a stateless transport");
+        }
+        this.protocolEra = protocolEra;
+        this.sessionsEnabled = sessionsEnabled && protocolEra.servesLegacy();
+        this.statelessTransport = statelessTransport;
+        this.modernTransport = modernTransport;
     }
 
     @Override
@@ -499,9 +532,122 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             badRequestErrors.add("application/json required in Accept header");
         }
 
+        String body = ctx.body().asString();
+        if (!sessionsEnabled || protocolEra != McpProtocolEra.LEGACY) {
+            routePost(ctx, connection, body, badRequestErrors);
+            return;
+        }
+        handleSessionPost(ctx, connection, body, badRequestErrors);
+    }
+
+    /**
+     * Serves a POST when the endpoint does more than the legacy protocol versions with sessions: protocol version
+     * 2026-07-28, or the legacy versions without sessions. The body decides which protocol version a request belongs to
+     * (see {@link McpProtocolEraClassifier}).
+     */
+    private void routePost(RoutingContext ctx, Context connection, String body, List<String> badRequestErrors)
+            throws Exception {
+        if (protocolEra == McpProtocolEra.MODERN) {
+            if (respondBadRequest(connection, ctx, badRequestErrors)) {
+                return;
+            }
+            // a legacy initialize is answered by the modern server with the versions it supports
+            modernTransport.handle(body, new VertxHeaderAccessor(ctx), toTransportContext(ctx), ctx.response(),
+                    connection);
+            return;
+        }
+        Object tree;
+        try {
+            tree = jsonMapper.readValue(body, Object.class);
+        } catch (Exception e) {
+            LOG.debug("Invalid MCP message: {}", e.getMessage());
+            respondError(connection, ctx, 400, McpSchema.ErrorCodes.PARSE_ERROR, "Invalid message format");
+            return;
+        }
+        McpProtocolEraClassifier.Verdict verdict
+                = McpProtocolEraClassifier.classify(ctx.request().getHeader(PROTOCOL_VERSION), tree);
+        if (verdict.rejected()) {
+            respondError(connection, ctx, 400, McpProtocolEraClassifier.HEADER_MISMATCH, verdict.message());
+            return;
+        }
+        if (verdict.era() == McpProtocolEraClassifier.Era.MODERN) {
+            if (modernTransport == null) {
+                // the legacy era without sessions: never serve a 2026-07-28 request as a legacy one
+                respondVersionNotServed(connection, ctx, tree);
+                return;
+            }
+            if (respondBadRequest(connection, ctx, badRequestErrors)) {
+                return;
+            }
+            modernTransport.handle(body, new VertxHeaderAccessor(ctx), toTransportContext(ctx), ctx.response(),
+                    connection);
+            return;
+        }
+        if (sessionsEnabled) {
+            // exactly as with the legacy era, including which messages need the Accept header
+            handleSessionPost(ctx, connection, body, badRequestErrors);
+            return;
+        }
+        if (respondBadRequest(connection, ctx, badRequestErrors)) {
+            return;
+        }
+        handleStatelessPost(ctx, connection, body);
+    }
+
+    /**
+     * Serves a client of a legacy protocol version without a session.
+     */
+    private void handleStatelessPost(RoutingContext ctx, Context connection, String body) throws Exception {
         McpSchema.JSONRPCMessage message;
         try {
-            message = McpSchema.deserializeJsonRpcMessage(jsonMapper, ctx.body().asString());
+            message = McpSchema.deserializeJsonRpcMessage(jsonMapper, body);
+        } catch (Exception e) {
+            LOG.debug("Invalid MCP message: {}", e.getMessage());
+            respondError(connection, ctx, 400, McpSchema.ErrorCodes.PARSE_ERROR, "Invalid message format");
+            return;
+        }
+        VertxMcpStatelessServerTransport.Answer answer = statelessTransport.handle(toTransportContext(ctx), message);
+        if (answer == null) {
+            respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST,
+                    "The server accepts either requests or notifications");
+        } else if (answer.body() == null) {
+            endWithStatus(connection, ctx, answer.status());
+        } else {
+            connection.runOnContext(v -> ctx.response()
+                    .setStatusCode(answer.status())
+                    .putHeader("Content-Type", APPLICATION_JSON)
+                    .end(answer.body()));
+        }
+    }
+
+    /**
+     * Answers a request of a protocol version this endpoint does not serve (2026-07-28 or an unknown one, on an
+     * endpoint that serves only the legacy versions without sessions) with HTTP 400 and an Invalid Request error naming
+     * the versions it serves, as the legacy era with sessions answers such a request. It is deliberately not the
+     * UnsupportedProtocolVersion error of 2026-07-28: that error identifies a server of 2026-07-28, so a client would
+     * not fall back to {@code initialize}.
+     */
+    private void respondVersionNotServed(Context connection, RoutingContext ctx, Object tree) {
+        String requested = ctx.request().getHeader(PROTOCOL_VERSION);
+        if (tree instanceof Map<?, ?> message && message.get("params") instanceof Map<?, ?> params
+                && params.get("_meta") instanceof Map<?, ?> meta
+                && meta.get(McpProtocolEraClassifier.PROTOCOL_VERSION_META_KEY) instanceof String version) {
+            requested = version;
+        }
+        String served = String.join(", ", statelessTransport.protocolVersions());
+        respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST,
+                "Protocol version " + requested + " is not served: open with initialize, with one of the versions "
+                                                                                 + served);
+    }
+
+    /**
+     * Serves a client of a legacy protocol version, with a session.
+     */
+    private void handleSessionPost(RoutingContext ctx, Context connection, String body, List<String> badRequestErrors)
+            throws Exception {
+        McpSchema.JSONRPCMessage message;
+        try {
+            message = McpSchema.deserializeJsonRpcMessage(jsonMapper, body);
         } catch (Exception e) {
             LOG.debug("Invalid MCP message: {}", e.getMessage());
             respondError(connection, ctx, 400, McpSchema.ErrorCodes.PARSE_ERROR, "Invalid message format");
@@ -614,6 +760,11 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             endWithStatus(connection, ctx, 503);
             return;
         }
+        if (!sessionsEnabled) {
+            // no session, so no stream for server-initiated messages
+            methodNotAllowed(connection, ctx);
+            return;
+        }
         List<String> badRequestErrors = new ArrayList<>();
         String accept = ctx.request().getHeader(ACCEPT);
         if (accept == null || !accept.contains(TEXT_EVENT_STREAM)) {
@@ -654,6 +805,10 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             endWithStatus(connection, ctx, 503);
             return;
         }
+        if (!sessionsEnabled) {
+            methodNotAllowed(connection, ctx);
+            return;
+        }
         String sessionId = ctx.request().getHeader(HttpHeaders.MCP_SESSION_ID);
         if (sessionId == null || sessionId.isBlank()) {
             respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST,
@@ -671,7 +826,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     }
 
     private void startSessionMaintenance() {
-        if (vertx == null) {
+        if (vertx == null || !sessionsEnabled) {
             return;
         }
         if (sessionKeepAliveIntervalMs > 0) {
@@ -840,6 +995,10 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION + "\",\"error\":{\"code\":" + code
                    + ",\"message\":\"" + message.replace("\\", "\\\\").replace("\"", "\\\"") + "\"}}";
         }
+    }
+
+    private void methodNotAllowed(Context connection, RoutingContext ctx) {
+        connection.runOnContext(v -> ctx.response().setStatusCode(405).putHeader("Allow", "POST").end());
     }
 
     private void endWithStatus(Context connection, RoutingContext ctx, int status) {

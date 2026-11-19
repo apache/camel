@@ -45,6 +45,10 @@ public class PulsarConfiguration implements Cloneable {
     private String authenticationClass;
     @UriParam(label = "common")
     private String authenticationParams;
+    @UriParam(label = "security")
+    private String tlsTrustCertsFilePath;
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean hostnameVerification = true;
     @UriParam(label = "consumer")
     private boolean topicsPattern;
     @UriParam(label = "consumer", defaultValue = "PersistentOnly", enums = "PersistentOnly,NonPersistentOnly,AllTopics")
@@ -663,6 +667,32 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setAuthenticationParams(String authenticationParams) {
         this.authenticationParams = authenticationParams;
+    }
+
+    public String getTlsTrustCertsFilePath() {
+        return tlsTrustCertsFilePath;
+    }
+
+    /**
+     * The path of a PEM file with the certificates of the certificate authorities to trust, for a broker on
+     * pulsar+ssl:// whose certificate is not signed by an authority that the JVM trusts. Not used when a pulsarClient
+     * is given.
+     */
+    public void setTlsTrustCertsFilePath(String tlsTrustCertsFilePath) {
+        this.tlsTrustCertsFilePath = tlsTrustCertsFilePath;
+    }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the broker matches the host Camel connects to, with pulsar+ssl://. When
+     * disabled, any certificate trusted by the client is accepted, whatever host it was issued for. Not used when a
+     * pulsarClient is given.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
     }
 
     public String getHashingScheme() {

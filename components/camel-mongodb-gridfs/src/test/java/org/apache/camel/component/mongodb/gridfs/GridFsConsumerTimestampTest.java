@@ -48,6 +48,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
@@ -337,6 +339,28 @@ class GridFsConsumerTimestampTest {
         assertFalse(pollThread.get().isAlive(), "the failed poll did not return");
 
         assertEquals(List.of(), reported, "no poll follows, the failure must not be reported as one that is retried");
+    }
+
+    @Test
+    void stopCancelsThePolls() throws Exception {
+        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(context.getCamelContextExtension());
+        int tasksBefore = registry.getSize();
+        AtomicInteger pollCount = new AtomicInteger();
+        onPoll = pollCount::incrementAndGet;
+        // polls far apart, so that the stop comes between two polls
+        startConsumer(QueryStrategy.TimeStamp, 500);
+        awaitFullPolls(1);
+        assertEquals(tasksBefore + 1, registry.getSize(), "the polls run as a task of the registry");
+
+        consumer.stop();
+
+        // a task that is not cancelled stays in the registry, as only one of its runs takes it out
+        assertEquals(tasksBefore, registry.getSize(), "the stopped consumer left its task in the registry");
+        int pollsAtStop = pollCount.get();
+        CountDownLatch nextPoll = new CountDownLatch(1);
+        polls = nextPoll;
+        assertFalse(nextPoll.await(2, TimeUnit.SECONDS), "the stopped consumer polled again");
+        assertEquals(pollsAtStop, pollCount.get(), "the stopped consumer polled again");
     }
 
     @ParameterizedTest

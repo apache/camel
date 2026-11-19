@@ -133,10 +133,7 @@ public final class AiToolExecutor {
                 .build());
         try {
             observation.recordToolArguments(() -> Jsoner.serialize(arguments != null ? arguments : Map.of()));
-            AiToolResult result;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                result = doExecute(spec, arguments, exchange, toolCallId, conversationId);
-            }
+            AiToolResult result = doExecute(spec, arguments, exchange, toolCallId, conversationId);
             recordResult(observation, result);
             return result;
         } catch (RuntimeException e) {
@@ -174,8 +171,16 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        // Use the authorization-guarded processor when the consumer applied an AuthorizationPolicy, so the guard runs
-        // before the route body; falls back to the plain route processor otherwise.
+        // A suspended tool (suspended route, graceful shutdown) refuses new calls, as request/reply consumers do while
+        // suspended; a caller may still hold its spec from before the suspend. Calls in flight are past this point.
+        if (consumer.isSuspendingOrSuspended()) {
+            IllegalStateException cause = new IllegalStateException(
+                    String.format("Tool '%s' is suspended", toolName));
+            return new AiToolResult.ExecutionError(cause.getMessage(), cause);
+        }
+
+        // Use the authorization-guarded processor when the consumer applied allowedRoles or an AuthorizationPolicy, so
+        // the guard runs before the route body; falls back to the plain route processor otherwise.
         Processor routeProcessor = consumer instanceof AiToolConsumer atc ? atc.getToolProcessor() : consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
@@ -287,7 +292,7 @@ public final class AiToolExecutor {
         if (denial == null) {
             return null;
         }
-        LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        LOG.warn("Tool '{}' call denied by the authorization check: {}", toolName, denial.getMessage());
         fireAuthorizationDeniedEvent(exchange, toolName, denial);
         return new AiToolResult.AuthorizationDenied(
                 String.format("Access denied: not authorized to call tool '%s'", toolName), denial);

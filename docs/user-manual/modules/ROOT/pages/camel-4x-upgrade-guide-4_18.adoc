@@ -191,6 +191,25 @@ logs a warning the first time. Before, the consumer restored the headers and exc
 Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
 exchange properties.
 
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+With `allowPartClassFromHeader=true`, the headers now apply to their own message only. Before, a header also changed
+the `partClass` and `partNamespace` of the data format, so later messages without the header used the class or
+namespace of an earlier message.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
@@ -1016,6 +1035,40 @@ that header, and says when `operationName` is set, in place of `Cannot find meth
 `CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
 no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
 response header.
+
+=== camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
+
+`RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
+key (or the exchange id) as a plain string field, and reads them back through an `ObjectInputFilter`. Before, the
+fields and values were encoded with the codec of the Redisson client, by default the Redisson `Kryo5Codec`. The codec
+of a `RedissonClient` given with the `redisson` option is no longer used for these hashes.
+
+The new option `deserializationFilter` sets the filter pattern, in the syntax of the `jdk.serialFilter` system
+property. When it is not set, the JVM-wide `jdk.serialFilter` applies if it is set, otherwise the default filter
+`!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`. It allows the
+`java`, `javax` and `org.apache.camel` packages, except `java.net`, and rejects the other classes. It also limits the
+size of a stored exchange: `maxdepth=20` (the depth of the object graph), `maxrefs=10000` (the number of objects in it)
+and `maxbytes=10485760` (10 MB). Before, there was no such limit. An exchange over a limit cannot be read back, and its
+aggregation does not complete, for example a `List` body that collects more than 10000 strings, or a body of more than
+10 MB. If the bodies or headers are instances of your own classes, or are larger, set `deserializationFilter`. It
+replaces the whole default pattern, so keep its other parts, for example
+`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;maxdepth=50;maxrefs=1000000;maxbytes=104857600;!*`,
+or leave out the `maxdepth`, `maxrefs` and `maxbytes` parts to have no limits. The objects that a body or header value
+refers to must be `java.io.Serializable`.
+
+A completed exchange that cannot be read back is skipped by the recovery, with a WARN that gives its exchange id, so
+the recovery of the other completed exchanges goes on.
+
+The exchanges stored by Camel 4.18.5 and older are not read: they stay in Redis, but these aggregations do not complete
+and these completed exchanges are not recovered. When the repository starts, it checks the first 100 entries of each
+of its hashes and logs a WARN with the number of such entries among them. Complete the aggregations in progress, and
+let the recovery of the completed exchanges finish, before upgrading. Otherwise, remove the hashes of the repository
+(`mapName` and the persistence map, by default `mapName` with the suffix `-completed`) from Redis.
+
+To upgrade without draining, set the new `codec` option to `new org.redisson.codec.Kryo5Codec()`. The repository
+then reads and writes the entries in the same format as the older versions, and the `deserializationFilter` option and
+the WARN at startup do not apply. Once the old aggregations have completed and been recovered, remove the `codec` option
+to switch to the Java serialization read through the filter.
 
 == Upgrading from 4.18.4 to 4.18.5
 

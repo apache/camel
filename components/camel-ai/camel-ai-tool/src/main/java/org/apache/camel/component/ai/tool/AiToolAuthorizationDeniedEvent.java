@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ai.AiEvent;
 
 /**
- * Fired when an {@code ai-tool} route's {@code authorizationPolicy} denies a tool call.
+ * Fired when an {@code ai-tool} route's {@code allowedRoles} check or {@code authorizationPolicy} denies a tool call.
  * <p>
- * The policy guards the route's <em>outer</em> processor, so a denial is caught in front of the route: it never enters
- * the route's unit of work and therefore produces no exchange-lifecycle event or route span. This event is the
+ * The guard is in front of the route's <em>outer</em> processor, so a denial is caught in front of the route: it never
+ * enters the route's unit of work and therefore produces no exchange-lifecycle event or route span. This event is the
  * observable signal operators can subscribe to (with an {@code EventNotifier}, JMX, or a micrometer counter) to see and
  * alert on authorization denials, without changing what the model sees — the call is still relayed back to the model as
  * a short refusal.

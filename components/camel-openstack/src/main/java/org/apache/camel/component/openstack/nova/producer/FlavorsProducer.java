@@ -32,6 +32,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
 
+@Deprecated(since = "4.24")
 public class FlavorsProducer extends AbstractOpenstackProducer {
 
     public FlavorsProducer(NovaEndpoint endpoint, OSClient client) {

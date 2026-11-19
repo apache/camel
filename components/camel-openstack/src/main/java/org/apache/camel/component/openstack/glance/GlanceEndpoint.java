@@ -54,6 +54,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                    @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED) },
                                    description = "The Image of openstack4j reserved, created, uploaded, updated or read (null when get finds "
                                                  + "none), a List of them for getAll; delete keeps the body"))
+@Deprecated(since = "4.24")
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

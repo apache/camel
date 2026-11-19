@@ -177,8 +177,10 @@ public final class EndpointConsumerChecks {
     }
 
     /**
-     * Whether the directory is inside a Maven or Gradle project without being its root, as the directory of
-     * src/main/resources/camel is: the RouteBuilders under src/main/java are not under it.
+     * Whether the directory is inside the sources of a Maven or Gradle project, as the directory of
+     * src/main/resources/camel is: the RouteBuilders under src/main/java are not under it. A directory elsewhere in the
+     * nearest project, such as the folder of an example in a repository with a pom.xml at its root, is a project of its
+     * own for camel run, and is checked.
      */
     private static boolean isPartOfAProject(Path root) {
         if (BUILD_FILES.stream().anyMatch(f -> Files.isRegularFile(root.resolve(f)))) {
@@ -187,7 +189,7 @@ public final class EndpointConsumerChecks {
         for (Path p = root.getParent(); p != null; p = p.getParent()) {
             Path dir = p;
             if (BUILD_FILES.stream().anyMatch(f -> Files.isRegularFile(dir.resolve(f)))) {
-                return true;
+                return root.startsWith(dir.resolve("src"));
             }
         }
         return false;

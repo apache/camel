@@ -49,6 +49,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                    @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED) },
                                    description = "The Volume or VolumeSnapshot of openstack4j created or read (null when get finds none), a List "
                                                  + "of them for getAll and of VolumeType for getAllTypes; update and delete keep the body"))
+@Deprecated(since = "4.24")
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots,volumes")

@@ -33,6 +33,7 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.builder.NetworkBuilder;
 
+@Deprecated(since = "4.24")
 public class NetworkProducer extends AbstractOpenstackProducer {
 
     public NetworkProducer(NeutronEndpoint endpoint, OSClient client) {

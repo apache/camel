@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +56,10 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
     protected boolean asyncDelayed;
     protected boolean callerRunsWhenRejected = true;
     protected volatile Expression maxRequestsExpression;
+    // the asynchronous tasks (asyncDelayed) that are queued in the thread pool and not yet started: a task and
+    // doShutdown each claim a task by removing it, so an exchange is processed, or failed when the thread pool is shut
+    // down, but never both
+    private final Set<AsyncCall> asyncCalls = ConcurrentHashMap.newKeySet();
 
     AbstractThrottler(final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
                       final CamelContext camelContext, final boolean rejectExecution, Expression correlation,
@@ -80,6 +87,89 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
         if (prev != null) {
             prev.cancel(false);
         }
+    }
+
+    /**
+     * A task that processes the exchange again on the thread pool, unless doShutdown failed the exchange before.
+     */
+    final class AsyncCall implements Callable<Boolean> {
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+
+        private AsyncCall(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+
+        // a Callable, as the task was before, so the thread pool is called with the same submit and schedule methods
+        @Override
+        public Boolean call() {
+            if (asyncCalls.remove(this)) {
+                return process(exchange, callback);
+            }
+            return false;
+        }
+
+        /**
+         * The thread pool did not take the task (rejected), so it is no longer queued.
+         *
+         * @return true if the caller still owns the exchange, false if doShutdown has already failed the exchange and
+         *         called the callback (the caller must then leave the exchange alone)
+         */
+        boolean rejected() {
+            return asyncCalls.remove(this);
+        }
+
+        private void fail() {
+            // the exchange is no longer queued (a later throttler must process it synchronously)
+            exchange.removeProperty(PROPERTY_EXCHANGE_STATE);
+            exchange.setException(
+                    new RouteStoppingException("Throttled exchange is not processed as the throttler is shut down"));
+        }
+    }
+
+    /**
+     * Creates the task to process the exchange again on the thread pool, and remembers it until it starts.
+     */
+    AsyncCall newAsyncCall(Exchange exchange, AsyncCallback callback) {
+        AsyncCall call = new AsyncCall(exchange, callback);
+        asyncCalls.add(call);
+        return call;
+    }
+
+    /**
+     * Fails the exchanges whose asynchronous task has not started yet. They would never be processed once the thread
+     * pool is shut down (such as when the route is removed after the shutdown timeout ran out), and their callers would
+     * wait for ever. Only called once doShutdown shut down the thread pool of this EIP: a thread pool of the user still
+     * runs the tasks.
+     */
+    void failAsyncCalls() {
+        for (AsyncCall call : asyncCalls) {
+            if (asyncCalls.remove(call)) {
+                LOG.debug("Throttled exchange is not processed as the throttler is shut down, exchangeId: {}",
+                        call.exchange.getExchangeId());
+                call.fail();
+                call.callback.done(false);
+            }
+        }
+    }
+
+    /**
+     * Fails the exchange in the calling thread when the thread pool of this EIP was shut down while the task was handed
+     * to it. With the CallerRuns rejected policy (the default) a thread pool that is shut down drops the task without
+     * an exception, and doShutdown may have failed the queued tasks before this one was added.
+     *
+     * @return true if the exchange was failed here and the callback was called synchronously
+     */
+    boolean failIfShutdown(AsyncCall call) {
+        if (shutdownAsyncExecutor && asyncExecutor.isShutdown() && asyncCalls.remove(call)) {
+            LOG.debug("Throttled exchange is not processed as the throttler is shut down, exchangeId: {}",
+                    call.exchange.getExchangeId());
+            call.fail();
+            call.callback.done(true);
+            return true;
+        }
+        return false;
     }
 
     protected static boolean handleInterrupt(

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -239,10 +240,10 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             throw CliException.fileNotFound("File does not exist: " + name);
         }
 
-        // a file of its own, as several commands may run at the same time
-        Path output = CommandLineHelper.getWorkDir().resolve(
-                "structure-output-" + ProcessHandle.current().pid() + ".json");
-        PathUtils.deleteFile(output);
+        Path parent = CommandLineHelper.getWorkDir();
+        Files.createDirectories(parent);
+        Path workDir = Files.createTempDirectory(parent, "route-structure-source-" + ProcessHandle.current().pid() + "-");
+        Path output = workDir.resolve("structure-output.json");
         final String target = output.toString();
         try {
             if (!compile && TransformJavaRoutes.applies(List.of(name))) {
@@ -267,6 +268,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     }
                 };
                 run.files = List.of(name);
+                run.setWorkDir(workDir);
                 run.executionLimitOptions.maxSeconds = 1;
                 int exit = run.runTransform(ignoreLoadingError);
                 if (exit != 0) {
@@ -279,7 +281,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             }
             return jo;
         } finally {
-            PathUtils.deleteFile(output);
+            PathUtils.deleteDirectory(workDir);
         }
     }
 

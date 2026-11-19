@@ -34,6 +34,7 @@ import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
 import org.openstack4j.model.image.builder.ImageBuilder;
 
+@Deprecated(since = "4.24")
 public class GlanceProducer extends AbstractOpenstackProducer {
 
     public GlanceProducer(GlanceEndpoint endpoint, OSClient client) {

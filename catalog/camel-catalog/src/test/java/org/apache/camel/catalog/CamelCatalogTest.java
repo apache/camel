@@ -1540,7 +1540,7 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "jq", ". ^^+ [{\"array\": body()}]");
         assertFalse(result.isSuccess());
         assertEquals(". ^^+ [{\"array\": body()}]", result.getText());
-        assertEquals("Cannot compile query: . ^^+ [{\"array\": body()}]", result.getError());
+        assertTrue(result.getError().startsWith("Lexical error at line 1, column 3."), result.getError());
     }
 
     @Test

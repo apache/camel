@@ -127,7 +127,9 @@ public class CyberArkVaultConfiguration extends VaultConfiguration {
     }
 
     /**
-     * Path to the SSL certificate for verification
+     * Path of a file with the SSL certificate to trust when connecting to CyberArk Conjur, in PEM or DER format: a path
+     * of the file system, or a resource with the file: or classpath: prefix. Other prefixes, such as http:, are not
+     * supported.
      */
     public void setCertificatePath(@Nullable String certificatePath) {
         this.certificatePath = certificatePath;

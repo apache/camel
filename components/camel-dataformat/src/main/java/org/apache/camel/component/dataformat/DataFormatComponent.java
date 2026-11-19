@@ -26,7 +26,6 @@ import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.util.StringHelper;
@@ -61,8 +60,8 @@ public class DataFormatComponent extends DefaultComponent {
         }
 
         // find configurer if any
-        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(getCamelContext())
-                .resolvePropertyConfigurer(name + "-dataformat", getCamelContext());
+        PropertyConfigurer configurer
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(getCamelContext(), name + "-dataformat", df);
 
         // when a brand-new instance was created, first copy any global camel.dataformat.<name>.*
         // configuration from the auto-configured data format onto it, so the dataformat: component

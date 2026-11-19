@@ -45,6 +45,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpOauthProfile", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
         map.put("McpPromptTimeout", long.class);
+        map.put("McpProtocolEra", java.lang.String.class);
         map.put("McpRequiredScopes", java.lang.String.class);
         map.put("McpResourceTimeout", long.class);
         map.put("McpResourceUri", java.lang.String.class);
@@ -55,6 +56,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpServerWebsiteUrl", java.lang.String.class);
         map.put("McpSessionIdleTtl", long.class);
         map.put("McpSessionKeepAliveInterval", long.class);
+        map.put("McpStateless", boolean.class);
         map.put("McpTags", java.lang.String.class);
         map.put("McpToolTimeout", long.class);
         map.put("McpTransport", java.lang.String.class);
@@ -113,6 +115,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpprompttimeout":
         case "mcpPromptTimeout": target.setMcpPromptTimeout(property(camelContext, long.class, value)); return true;
+        case "mcpprotocolera":
+        case "mcpProtocolEra": target.setMcpProtocolEra(property(camelContext, java.lang.String.class, value)); return true;
         case "mcprequiredscopes":
         case "mcpRequiredScopes": target.setMcpRequiredScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpresourcetimeout":
@@ -133,6 +137,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpSessionIdleTtl": target.setMcpSessionIdleTtl(property(camelContext, long.class, value)); return true;
         case "mcpsessionkeepaliveinterval":
         case "mcpSessionKeepAliveInterval": target.setMcpSessionKeepAliveInterval(property(camelContext, long.class, value)); return true;
+        case "mcpstateless":
+        case "mcpStateless": target.setMcpStateless(property(camelContext, boolean.class, value)); return true;
         case "mcptags":
         case "mcpTags": target.setMcpTags(property(camelContext, java.lang.String.class, value)); return true;
         case "mcptooltimeout":
@@ -203,6 +209,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": return java.lang.String.class;
         case "mcpprompttimeout":
         case "mcpPromptTimeout": return long.class;
+        case "mcpprotocolera":
+        case "mcpProtocolEra": return java.lang.String.class;
         case "mcprequiredscopes":
         case "mcpRequiredScopes": return java.lang.String.class;
         case "mcpresourcetimeout":
@@ -223,6 +231,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpSessionIdleTtl": return long.class;
         case "mcpsessionkeepaliveinterval":
         case "mcpSessionKeepAliveInterval": return long.class;
+        case "mcpstateless":
+        case "mcpStateless": return boolean.class;
         case "mcptags":
         case "mcpTags": return java.lang.String.class;
         case "mcptooltimeout":
@@ -289,6 +299,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": return target.getMcpPath();
         case "mcpprompttimeout":
         case "mcpPromptTimeout": return target.getMcpPromptTimeout();
+        case "mcpprotocolera":
+        case "mcpProtocolEra": return target.getMcpProtocolEra();
         case "mcprequiredscopes":
         case "mcpRequiredScopes": return target.getMcpRequiredScopes();
         case "mcpresourcetimeout":
@@ -309,6 +321,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpSessionIdleTtl": return target.getMcpSessionIdleTtl();
         case "mcpsessionkeepaliveinterval":
         case "mcpSessionKeepAliveInterval": return target.getMcpSessionKeepAliveInterval();
+        case "mcpstateless":
+        case "mcpStateless": return target.isMcpStateless();
         case "mcptags":
         case "mcpTags": return target.getMcpTags();
         case "mcptooltimeout":

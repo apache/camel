@@ -4,7 +4,7 @@
     "name": "openstack-nova",
     "title": "OpenStack Nova",
     "description": "Access OpenStack to manage compute resources.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.nova.NovaComponent",

@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import jakarta.xml.ws.soap.SOAPFaultException;
 
@@ -28,6 +29,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.jaxb.JaxbConstants;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +60,19 @@ public class SoapUnMarshalTest extends CamelTestSupport {
         assertEquals(GetCustomersByName.class, body.getClass());
         GetCustomersByName request = (GetCustomersByName) body;
         assertEquals("Smith", request.getName());
+    }
+
+    @Test
+    public void testUnMarshalSoapIgnoresPartClassHeaders() throws IOException, InterruptedException {
+        resultEndpoint.expectedMessageCount(1);
+        InputStream in = this.getClass().getResourceAsStream("request.xml");
+        producer.sendBodyAndHeaders(in, Map.of(
+                JaxbConstants.JAXB_PART_CLASS, GetCustomersByName.class.getName(),
+                JaxbConstants.JAXB_PART_NAMESPACE, "{http://customerservice.example.com/}getCustomersByName"));
+        resultEndpoint.assertIsSatisfied();
+        Object body = resultEndpoint.getExchanges().get(0).getIn().getBody();
+        assertEquals(GetCustomersByName.class, body.getClass());
+        assertEquals("Smith", ((GetCustomersByName) body).getName());
     }
 
     @Test
