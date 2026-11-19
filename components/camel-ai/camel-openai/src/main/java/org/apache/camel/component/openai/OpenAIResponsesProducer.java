@@ -237,7 +237,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                             ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
                 }
             } else {
-                Response response = createResponse(exchange, model, params);
+                Response response = createResponse(exchange, model, params,
+                        ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
                 List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
                 // with autoToolExecution=false the route handles the function calls requested by the model
                 Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
@@ -274,10 +275,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 .build());
         agentRun.recordInputMessages(() -> OpenAIResponsesGenAiMessages.input(params));
         try {
-            try (GenAiObservation.Scope ignored = agentRun.makeCurrent()) {
-                processToolLoop(exchange, config, params, input, model,
-                        ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
-            }
+            processToolLoop(exchange, config, params, input, model,
+                    ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
             // the model calls carry the token usage; repeating it on the agent run would double-count
             agentRun.recordSuccess(GenAiUsage.of((Long) null, null,
                     exchange.getMessage().getHeader(OpenAIConstants.FINISH_REASON, String.class), null));
@@ -347,7 +346,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 }
 
                 ResponseCreateParams params = paramsBuilder.build();
-                Response response = createResponse(exchange, model, params);
+                Response response = createResponse(exchange, model, params, conversationId);
                 tokenTracker.addUsage(response);
                 tokenTracker.setHeaders(exchange.getMessage());
                 long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
@@ -436,19 +435,22 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
     }
 
-    private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
-        return observedCall(exchange, model, params, () -> getEndpoint().getClient().responses().create(params));
+    private Response createResponse(Exchange exchange, String model, ResponseCreateParams params, String conversationId)
+            throws Exception {
+        return observedCall(exchange, model, params, conversationId,
+                () -> getEndpoint().getClient().responses().create(params));
     }
 
     private Response observedCall(
-            Exchange exchange, String model, ResponseCreateParams params, ThrowingSupplier<Response, Exception> call)
+            Exchange exchange, String model, ResponseCreateParams params, String conversationId,
+            ThrowingSupplier<Response, Exception> call)
             throws Exception {
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
                 .system("openai")
                 .requestModel(model)
                 .componentScheme("openai")
-                .conversationId(params.conversation().map(Object::toString).orElse(null))
+                .conversationId(conversationId)
                 .requestParameter("temperature", params.temperature().orElse(null))
                 .requestParameter("top_p", params.topP().orElse(null))
                 .requestParameter("max_tokens", params.maxOutputTokens().orElse(null))
@@ -459,10 +461,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         observation.recordSystemInstructions(() -> params.instructions().orElse(null));
         observation.recordToolDefinitions(() -> OpenAIResponsesGenAiMessages.toolDefinitions(params));
         try {
-            Response response;
-            try (GenAiObservation.Scope ignored = observation.makeCurrent()) {
-                response = call.get();
-            }
+            Response response = call.get();
             String finishReason = OpenAIResponsesSupport.extractFinishStatus(response)
                     .map(OpenAIResponsesProducer::mapFinishReason)
                     .orElse(null);
@@ -475,7 +474,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                                 OpenAIResponsesSupport.modelName(response.model())));
                         observation.recordCachedInputTokens(
                                 usage._inputTokensDetails().asKnown()
-                                        .map(ResponseUsage.InputTokensDetails::cachedTokens).orElse(null));
+                                        .flatMap(d -> d._cachedTokens().asKnown()).orElse(null));
                     },
                     () -> observation.recordSuccess(
                             GenAiUsage.of((Long) null, null, finishReason,
