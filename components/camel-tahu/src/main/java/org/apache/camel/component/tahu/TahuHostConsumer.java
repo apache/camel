@@ -18,8 +18,6 @@ package org.apache.camel.component.tahu;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -44,8 +42,6 @@ public class TahuHostConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TahuHostConsumer.class);
 
-    private static final ConcurrentMap<String, TahuHostApplication> hostHandlers = new ConcurrentHashMap<>();
-
     @SuppressWarnings("unused")
     private final TahuDefaultEndpoint endpoint;
 
@@ -62,19 +58,25 @@ public class TahuHostConsumer extends DefaultConsumer {
 
         TahuConfiguration configuration = endpoint.getConfiguration();
 
-        tahuHostApplication = hostHandlers.computeIfAbsent(hostId, hId -> {
-            List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
+        // the host application of this consumer: it gives the messages to this consumer, and connects with the servers
+        // and credentials of this endpoint. It is not shared with another consumer of the same host id (such as the
+        // consumer of a route that is reloaded or added again, or of another CamelContext in the same JVM), as it would
+        // keep giving the messages to the consumer that created it, which is stopped by then
+        List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
+        tahuHostApplication = new TahuHostApplication.HostApplicationBuilder()
+                .hostId(hostId)
+                .serverDefinitions(serverDefinitions)
+                .onMessageConsumer(this::onMessageConsumer)
+                .onMetricConsumer(this::onMetricConsumer)
+                .build();
 
-            TahuHostApplication thah = new TahuHostApplication.HostApplicationBuilder()
-                    .hostId(hId)
-                    .serverDefinitions(serverDefinitions)
-                    .onMessageConsumer(this::onMessageConsumer)
-                    .onMetricConsumer(this::onMetricConsumer)
-                    .build();
+    }
 
-            return thah;
-        });
-
+    /**
+     * The host application of this consumer (for tests).
+     */
+    TahuHostApplication getTahuHostApplication() {
+        return tahuHostApplication;
     }
 
     @Override

@@ -33,10 +33,20 @@ import org.eclipse.tahu.mqtt.RandomStartupDelay;
 
 public class TahuHostApplication extends HostApplication {
 
+    private final MultiHostApplicationEventHandler eventHandler;
+
     TahuHostApplication(MultiHostApplicationEventHandler eventHandler, String hostId, List<String> sparkplugSubscriptions,
                         List<MqttServerDefinition> serverDefinitions, RandomStartupDelay randomStartupDelay,
                         PayloadDecoder<SparkplugBPayload> payloadDecoder, boolean onlineState) {
         super(eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder, onlineState);
+        this.eventHandler = eventHandler;
+    }
+
+    /**
+     * The handler that Tahu gives the Sparkplug messages and metrics this host application receives to.
+     */
+    public MultiHostApplicationEventHandler getEventHandler() {
+        return eventHandler;
     }
 
     public void startup() {
