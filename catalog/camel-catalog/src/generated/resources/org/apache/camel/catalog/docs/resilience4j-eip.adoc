@@ -234,6 +234,9 @@ NOTE: When using asynchronous mode with timeout, the `timeoutExecutorService` mu
 a `ScheduledExecutorService`. If not provided, Camel will automatically create one.
 If a custom executor is provided that is not a `ScheduledExecutorService`, the route will
 fail to start with an `IllegalArgumentException`.
+The calls run on this thread pool, and the timeouts on threads of their own, so a timeout
+fires also when every thread of the pool is blocked in a call. The fallback, and the rest of the
+route after the Circuit Breaker, then run on the thread of the timeout.
 
 === Camel's Error Handler and Circuit Breaker EIP
 
