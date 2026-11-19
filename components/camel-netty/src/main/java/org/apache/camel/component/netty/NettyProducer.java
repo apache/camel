@@ -406,8 +406,9 @@ public class NettyProducer extends DefaultAsyncProducer {
                             NettyHelper.close(channel);
                         }
                     } finally {
-                        // signal callback to continue routing
-                        producerCallback.done(false);
+                        // signal callback to continue routing (marks the state done, so a later error or message on this
+                        // idle channel does not touch this exchange)
+                        state.callbackDoneOnce(false);
                     }
                 }
             }
