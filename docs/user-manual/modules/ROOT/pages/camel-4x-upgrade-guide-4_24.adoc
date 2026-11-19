@@ -10684,8 +10684,32 @@ type of the body and set the `Content-Type` header:
 
 A route that reads the body as a `String` or a stream converts it, as Camel does when asked.
 
+More Kamelets declare a default data type where their body is fixed:
+
+* `pulsar-sink` and `mqtt5-sink` (`binary` in) turn the body into `byte[]` before sending, and set
+  `Content-Type: application/octet-stream`. The broker gets the same bytes as before.
+* `value-to-key-action` and `message-timestamp-router-action` (`json` out) give `byte[]` instead of a stream, with
+  `Content-Type: application/json`, also for a message that came without that `Content-Type`.
+* `mariadb-sink`, `mysql-sink`, `sqlserver-sink`, `oracle-database-sink`, `postgresql-sink`, `solr-sink`,
+  `elasticsearch-index-sink` and `opensearch-index-sink` (`json` in) turn their input into JSON bytes and set
+  `Content-Type: application/json`, so they now also accept a `Map` or a `List`. After the SQL, Elasticsearch and
+  OpenSearch sinks, `Content-Type` is `application/json`.
+* `dns-dig-action` and `dns-ip-action` (`text` out) set `Content-Type: text/plain`. `dns-lookup-action` and
+  `nominatim-geocode-action` (`json` out) give the JSON as `byte[]` instead of a stream. `ssh-sink` (`text` in) reads
+  the command as text, and `Content-Type: text/plain` stays on the message after the sink.
+
+The source Kamelets that declare a default output data type now give it to the route that consumes from them (see
+_camel-kamelet - the output data type of a source Kamelet is applied before the consuming route_ above):
+`aws-cloudtrail-source`, `aws-sqs-source` and `azure-storage-queue-source` (`text`); `aws-ddb-streams-source`,
+`azure-cosmosdb-source`, `google-mail-source`, `google-calendar-source`, `google-sheets-source` and `slack-source`
+(`json`); and `azure-eventhubs-source`, `aws-s3-source`, `azure-storage-blob-source`, `azure-storage-files-source`,
+`azure-storage-datalake-source`, `google-storage-source` and `ibm-cos-source` (`binary`, which keeps a stream cache as
+it is).
+
 === Kamelets - other changes in behaviour
 
+* `ssh-source` passes `pollCommand` as it is written: a command with `+`, `&` or `=` runs unchanged. Before, `+`
+  became a space and `&` broke the startup.
 * `extract-field-action` gives a text, a number or a boolean as the plain value with `Content-Type: text/plain`, such
   as `ORD-1` instead of `"ORD-1"`, and an object or an array as JSON text with `Content-Type: application/json`,
   whatever the `Content-Type` of the incoming message. A missing or `null` field gives an empty body and removes
