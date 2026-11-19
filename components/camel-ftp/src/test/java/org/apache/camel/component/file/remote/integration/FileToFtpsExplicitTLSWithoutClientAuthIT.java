@@ -31,7 +31,7 @@ public class FileToFtpsExplicitTLSWithoutClientAuthIT extends FtpsServerExplicit
     protected String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-               + "&securityProtocol=TLSv1.3&implicit=false&delete=true";
+               + "&securityProtocol=TLSv1.3&implicit=false&delete=true" + TRUST_STORE_OPTIONS;
     }
 
     @Disabled("Embedded Apache FtpServer does not support TLS 1.3")

@@ -102,14 +102,27 @@ earlier versions, use `ftpClient.endpointCheckingEnabled=true` as shown above.
 
 === FTPS component default trust store
 
-When using the `ftpClient.` properties related to SSL with the FTPS
-component, the trust store accepts all certificates. If you only want
-trust selective certificates, you have to configure the trust store with
-the `ftpClient.trustStore.xxx` options or by configuring a custom
-`ftpClient`.
+Without trust settings, an `ftps` endpoint checks the certificate of the server against the default trust store of the
+JVM: the `cacerts` file of the JDK, or the trust store set with the `javax.net.ssl.trustStore` system property. A server
+certificate signed by a public certificate authority needs no configuration.
 
-When using `sslContextParameters`, the trust store is managed by the
-configuration of the provided SSLContextParameters instance.
+For a server with a self-signed certificate, or a certificate signed by your own certificate authority, put that
+certificate (or the certificate of the authority) in a trust store and configure the endpoint with one of:
+
+* the `ftpClient.trustStore.` options: `ftpClient.trustStore.file`, `ftpClient.trustStore.password`, and optionally
+`ftpClient.trustStore.type` (the default key store type of the JVM by default) and `ftpClient.trustStore.algorithm`
+(the default trust manager algorithm of the JVM by default).
+* `sslContextParameters`: the trust store is then the one of the provided SSLContextParameters instance, and the
+`ftpClient.keyStore.` and `ftpClient.trustStore.` options are not used.
+
+[source,text]
+----
+ftps://admin@myserver/inbox?password=RAW(secret)&ftpClient.trustStore.file=/etc/camel/ftps-truststore.p12&ftpClient.trustStore.type=PKCS12&ftpClient.trustStore.password=RAW(changeit)
+----
+
+A custom `ftpClient` (an `FTPSClient` instance) keeps the trust manager it was created with: Camel does not change it.
+To check the server certificate in another way, configure the trust manager yourself, on a custom `ftpClient` with
+`setTrustManager`, or with the trust managers of `sslContextParameters`.
 
 You can configure additional options on the `ftpClient` and
 `ftpClientConfig` from the URI directly by using the `ftpClient.` or
