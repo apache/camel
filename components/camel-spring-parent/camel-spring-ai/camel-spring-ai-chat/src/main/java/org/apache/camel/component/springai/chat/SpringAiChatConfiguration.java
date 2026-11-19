@@ -30,6 +30,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.converter.StructuredOutputConverter;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.session.SessionService;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 
@@ -45,8 +46,24 @@ public class SpringAiChatConfiguration implements Cloneable {
     private ChatModel chatModel;
 
     @UriParam(label = "advanced")
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              deprecationNote = "Spring AI 2.1 deprecates ChatMemory for removal in Spring AI 3.0. Use sessionService.")
+    @Deprecated
     private ChatMemory chatMemory;
+
+    @UriParam(label = "advanced",
+              description = "Spring AI SessionService for keeping the conversation history across requests, in a session."
+                            + " The CamelSpringAiChatConversationId header selects the session, which is created on"
+                            + " first use. Without the header, no memory is used. When it is set, sessionService is"
+                            + " used instead of chatMemory and chatMemoryVectorStore.")
+    @Metadata(autowired = true)
+    private SessionService sessionService;
+
+    @UriParam(label = "advanced", defaultValue = "20",
+              description = "The number of the newest messages of the session that sessionService sends to the model,"
+                            + " extended back to the start of their turn, so that a tool call is never sent without its"
+                            + " result. The session keeps every message. 0 sends the whole session.")
+    private int sessionMessageWindow = 20;
 
     @UriParam(label = "advanced")
     private VectorStore chatMemoryVectorStore;
@@ -213,6 +230,11 @@ public class SpringAiChatConfiguration implements Cloneable {
         this.chatModel = chatModel;
     }
 
+    /**
+     * @deprecated Spring AI 2.1 deprecates {@link ChatMemory} for removal in Spring AI 3.0. Use
+     *             {@link #getSessionService()}.
+     */
+    @Deprecated
     public ChatMemory getChatMemory() {
         return chatMemory;
     }
@@ -220,9 +242,39 @@ public class SpringAiChatConfiguration implements Cloneable {
     /**
      * ChatMemory instance for maintaining conversation history across requests. When provided, conversation context
      * will be automatically managed using MessageChatMemoryAdvisor.
+     *
+     * @deprecated Spring AI 2.1 deprecates {@link ChatMemory} for removal in Spring AI 3.0. Use
+     *             {@link #setSessionService(SessionService)}.
      */
+    @Deprecated
     public void setChatMemory(ChatMemory chatMemory) {
         this.chatMemory = chatMemory;
+    }
+
+    public SessionService getSessionService() {
+        return sessionService;
+    }
+
+    /**
+     * Spring AI SessionService for keeping the conversation history across requests, in a session. The
+     * CamelSpringAiChatConversationId header selects the session, which is created on first use. Without the header, no
+     * memory is used. When it is set, sessionService is used instead of chatMemory and chatMemoryVectorStore.
+     */
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
+
+    public int getSessionMessageWindow() {
+        return sessionMessageWindow;
+    }
+
+    /**
+     * The number of the newest messages of the session that sessionService sends to the model, extended back to the
+     * start of their turn, so that a tool call is never sent without its result. The session keeps every message. 0
+     * sends the whole session.
+     */
+    public void setSessionMessageWindow(int sessionMessageWindow) {
+        this.sessionMessageWindow = sessionMessageWindow;
     }
 
     public VectorStore getChatMemoryVectorStore() {
@@ -231,8 +283,9 @@ public class SpringAiChatConfiguration implements Cloneable {
 
     /**
      * VectorStore instance for maintaining conversation history using semantic search. When provided, conversation
-     * context will be automatically managed using VectorStoreChatMemoryAdvisor. This is an alternative to chatMemory
-     * that uses vector embeddings for long-term memory with semantic retrieval.
+     * context will be automatically managed using VectorStoreChatMemoryAdvisor. This is an alternative to
+     * sessionService and chatMemory that uses vector embeddings for long-term memory with semantic retrieval. When
+     * sessionService or chatMemory is set, it is used instead.
      */
     public void setChatMemoryVectorStore(VectorStore chatMemoryVectorStore) {
         this.chatMemoryVectorStore = chatMemoryVectorStore;

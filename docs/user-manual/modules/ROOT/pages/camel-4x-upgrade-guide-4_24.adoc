@@ -2891,6 +2891,26 @@ is now `null` and the `CamelSpringAiChatFinishReason` header is `guardrailRefusa
 filtered and that cannot be converted gives a `null` body too. Check the finish reason header where the route handled
 the exception.
 
+=== camel-spring-ai-chat - the chatMemory option is deprecated, use sessionService
+
+Spring AI 2.1 deprecates `ChatMemory`, `MessageWindowChatMemory` and `MessageChatMemoryAdvisor` for removal in Spring AI
+3.0, in favour of session memory. The `chatMemory` option of `spring-ai-chat` is deprecated, and works as before. Use
+the new `sessionService` option, which takes a Spring AI `SessionService`. The `CamelSpringAiChatConversationId` header
+selects the session, as it selected the chat memory conversation.
+
+Nothing changes at runtime unless the application has a `SessionService` bean. The new option is autowired, and when
+both options are set, `sessionService` is used. In Spring Boot, the Spring AI model starters create a `ChatMemory` bean,
+and `spring-ai-starter-model-session-jdbc` creates a `SessionService` bean, so with that starter the endpoints use
+session memory. The conversations stored in a `ChatMemory` are not moved to a session. The new `sessionMessageWindow`
+option sends the newest 20 messages of the session to the model by default, as a `MessageWindowChatMemory` keeps the last
+20 messages by default. `0` sends the whole session.
+
+The `CamelSpringAiChatConversationId` header is now passed as the conversation id (`MemoryAdvisor.CONVERSATION_ID`) also
+when the endpoint has no memory, so the memory advisors of the `advisors` option and of a configured `chatClient` get it,
+and the Spring AI `ChatClient` observation records it. When the `advisors` option has a memory advisor, such as session
+advisors with compaction, the endpoint adds no memory advisor of its own. Before, an autowired `chatMemory` added a second
+memory advisor to the request.
+
 === camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 
 A `List` body with one text now gives a `List<float[]>` with one vector, as a `List` of more texts does, and sets the

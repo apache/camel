@@ -48,7 +48,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 The component requires a Spring AI `ChatModel` to be configured. The component automatically creates a `ChatClient` internally and handles all the advanced features for you, including:
 
-- **ChatMemory**: Automatic conversation history management via MessageChatMemoryAdvisor or VectorStoreChatMemoryAdvisor
+- **Memory**: Automatic conversation history management via session memory (SessionAdvisors), VectorStoreChatMemoryAdvisor, or the deprecated MessageChatMemoryAdvisor
 - **VectorStore RAG**: Automatic context retrieval from vector databases via QuestionAnswerAdvisor
 - **SafeGuard**: Content filtering based on sensitive words
 - **Custom Advisors**: Any additional advisors you configure
@@ -422,16 +422,70 @@ YAML::
 
 === Conversation Memory
 
-The component provides automatic conversation memory management via Spring AI's ChatClient and ChatMemory. Two memory strategies are supported:
+The component provides automatic conversation memory management via Spring AI's ChatClient and its memory advisors. Three memory strategies are supported:
 
-* **MessageChatMemoryAdvisor** - Traditional message-based memory using ChatMemory implementations
-* **VectorStoreChatMemoryAdvisor** - Vector-based semantic memory using VectorStore for long-term retrieval
+* **Session memory** (`sessionService`) - The conversation is a Spring AI session, kept by `SessionAdvisors`
+* **VectorStoreChatMemoryAdvisor** (`chatMemoryVectorStore`) - Vector-based semantic memory using VectorStore for long-term retrieval
+* **MessageChatMemoryAdvisor** (`chatMemory`, deprecated) - Message-based memory using ChatMemory implementations
 
-IMPORTANT: Do not configure both `chatMemory` and `chatMemoryVectorStore` on the same endpoint. If both are provided, `chatMemory` (MessageChatMemoryAdvisor) will take precedence.
+One memory is used per endpoint: `sessionService`, else `chatMemory`, else `chatMemoryVectorStore`. When `chatMemoryVectorStore` is set with one of the others, it is not used, and a warning is logged. When the `advisors` option has a memory advisor of its own, none of the three is used.
 
-NOTE: Chat memory is only activated when the `CamelSpringAiChatConversationId` header is set on the exchange. Without this header, the memory advisor is not applied, even if `chatMemory` or `chatMemoryVectorStore` is configured. This allows you to selectively enable memory on a per-request basis.
+NOTE: Memory is only activated when the `CamelSpringAiChatConversationId` header is set on the exchange. Without this header, the memory advisor is not applied, even if `sessionService`, `chatMemory` or `chatMemoryVectorStore` is configured. This allows you to selectively enable memory on a per-request basis.
 
-==== Message-based Memory (ChatMemory)
+==== Session Memory (SessionService)
+
+Spring AI 2.1 replaces `ChatMemory` with session memory. A session keeps the conversation as a log of events, and the prompt is built from it. Configure a Spring AI `SessionService` with the `sessionService` option. The `CamelSpringAiChatConversationId` header is the session id. A session is created on first use.
+
+._Java-only: programmatic Spring AI `SessionService` setup and ProducerTemplate usage_
+[source,java]
+----
+// Create the session service on an in-memory repository
+SessionService sessionService = DefaultSessionService.builder()
+    .sessionRepository(InMemorySessionRepository.builder().build())
+    .build();
+
+context.getRegistry().bind("sessionService", sessionService);
+
+// Configure endpoint with session memory
+from("direct:chat")
+    .to("spring-ai-chat:memory?chatModel=#chatModel&sessionService=#sessionService");
+
+// Conversation ID for isolation: it is the session id
+template.requestBodyAndHeader("direct:chat", "My name is Alice",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class);
+
+template.requestBodyAndHeader("direct:chat", "What's my name?",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class); // Will remember: "Alice"
+----
+
+`InMemorySessionRepository` is for tests and demos. Its sessions are lost on restart.
+
+In Spring Boot, add `spring-ai-starter-model-session-jdbc`. With a `DataSource`, it creates a `SessionService` on a `JdbcSessionRepository`, and the component autowires it. The `sessionService` option is then used instead of the `ChatMemory` bean that the Spring AI model starters create.
+
+The `sessionMessageWindow` option sets how many of the newest messages of the session go into the prompt. It is 20 by default, as for a `MessageWindowChatMemory`. The window is extended back to the start of its turn, so a tool result is never sent without its tool call. The session keeps every message, only the prompt is windowed. `0` sends the whole session.
+
+The component does not compact the session. To compact it, build the session advisors yourself and pass them with the `advisors` option. The component then adds no memory advisor of its own, and `sessionService` is not used.
+
+._Java-only: session advisors with compaction_
+[source,java]
+----
+List<Advisor> sessionAdvisors = SessionAdvisors.builder(sessionService)
+    .compaction(new TurnCountTrigger(20), WindowCompactionStrategy.builder().lastTurns(10).build())
+    .build();
+
+context.getRegistry().bind("sessionAdvisors", sessionAdvisors);
+
+from("direct:chat")
+    .to("spring-ai-chat:memory?chatModel=#chatModel&advisors=#sessionAdvisors");
+----
+
+The `CamelSpringAiChatConversationId` header is passed to every memory advisor as the conversation id (`MemoryAdvisor.CONVERSATION_ID`, the key that `SessionAdvisors.session` sets). This includes the advisors of the `advisors` option and of a `chatClient` you configure.
+
+See the https://docs.spring.io/spring-ai/reference/2.1/api/session.html[Spring AI Session Memory] documentation.
+
+==== Message-based Memory (ChatMemory, deprecated)
+
+Spring AI 2.1 deprecates `ChatMemory`, `MessageWindowChatMemory` and `MessageChatMemoryAdvisor` for removal in Spring AI 3.0. The `chatMemory` option is deprecated, and works until then. Use `sessionService` instead. The conversations stored in a `ChatMemory` are not moved to a session: a session starts empty.
 
 Configure a `ChatMemory` on the endpoint for automatic conversation tracking using traditional message window approach. This strategy keeps a configurable number of recent messages in memory.
 
@@ -930,7 +984,7 @@ For maximum control, you can provide a pre-configured `ChatClient` instead of a 
 [source,java]
 ----
 ChatClient chatClient = ChatClient.builder(chatModel)
-    .defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory))
+    .defaultAdvisors(new SimpleLoggerAdvisor())
     .defaultSystem("You are a helpful assistant")
     .build();
 
