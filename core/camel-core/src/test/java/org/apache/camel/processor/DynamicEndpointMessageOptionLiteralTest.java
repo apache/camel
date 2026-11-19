@@ -28,6 +28,7 @@ import org.apache.camel.Header;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
@@ -41,15 +42,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Companion to {@link DynamicEndpointMessagePlaceholderTest}: the per-message recipient of the dynamic-uri EIPs is
- * computed from the message, so its query option values are also treated as literal text. A property-placeholder token
- * ({@code {{...}}}) or a bean/class reference token ({@code #class:}, {@code #bean:}, {@code #type:}) that appears in a
- * runtime-computed option value is kept verbatim: it is neither resolved, nor is any class instantiated or bean looked
- * up. See CAMEL-27160, which extends the CAMEL-24282 / CAMEL-24414 treatment from the uri path to the option binding.
+ * computed from the message, so its option values are bound as literal text. A property placeholder ({@code {{...}}}),
+ * a {@code #class:} value or a {@code #property:} value in a runtime-computed option value is kept verbatim: it is not
+ * resolved and no class is created. Registry references ({@code #bean:}, {@code #type:}) are still resolved. See
+ * CAMEL-27160, which extends the CAMEL-24282 / CAMEL-24414 treatment from the uri path to the option binding.
  * <p/>
  * For {@code recipientList}, {@code routingSlip} and {@code dynamicRouter} the documented resolution of property
  * placeholders in the computed uri string is preserved (see {@link DynamicEndpointMessagePlaceholderTest}); only the
- * bean/class reference resolution of their runtime option values is brought in line, which is why those EIPs are
- * exercised here with reference tokens rather than placeholder tokens.
+ * {@code #class:} and {@code #property:} resolution of their runtime option values is brought in line, which is why
+ * those EIPs are exercised here with {@code #class:} values rather than placeholders.
+ * <p/>
+ * {@link DynamicEndpointMessageOptionLiteralLogTest} covers a real component with a generated configurer and typed
+ * options.
  */
 class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
 
@@ -61,9 +65,11 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
         Properties prop = new Properties();
         prop.setProperty("secretTarget", "resolved");
+        prop.setProperty("optionName", "option");
         context.getPropertiesComponent().setInitialProperties(prop);
         context.addComponent("sink", new SinkComponent());
         context.addComponent("selfsink", new SelfBindingSinkComponent());
+        context.addComponent("singletonsink", new SingletonSinkComponent());
         context.getRegistry().bind("marker", new Marker());
         return context;
     }
@@ -107,6 +113,41 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
         // Only property placeholders, #class: and #property: are kept literal.
         assertThat(SinkEndpoint.lastOption).isSameAs(context.getRegistry().lookupByName("marker"));
         assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionTypeReferenceStillResolves() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:t?option=#type:" + Marker.class.getName());
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isSameAs(context.getRegistry().lookupByName("marker"));
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionNamePlaceholderIsNotResolved() {
+        // the option names of the uri were resolved when the route was built, a name computed from the message is not
+        Exchange out = template.send("direct:tod",
+                e -> e.getMessage().setHeader("target", "sink:n?{{optionName}}=hello"));
+
+        assertThat(out.getException()).isInstanceOf(ResolveEndpointFailedException.class);
+        assertThat(SinkEndpoint.lastOption).isNull();
+    }
+
+    @Test
+    void toDSingletonEndpointClassReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(2);
+
+        // a singleton endpoint is created once and then taken from the endpoint registry
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "singletonsink:a?option=" + MARKER_CLASS);
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "singletonsink:a?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+        assertThat(context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("singletonsink:"))).hasSize(1);
     }
 
     @Test
@@ -253,12 +294,28 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
         }
     }
 
+    /**
+     * Like {@link SinkComponent} but its endpoints are singletons, so they are kept in the endpoint registry.
+     */
+    private static final class SingletonSinkComponent extends DefaultComponent {
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new SinkEndpoint(uri, this, true);
+        }
+    }
+
     private static final class SinkEndpoint extends DefaultEndpoint {
         static volatile Object lastOption;
+        private final boolean singleton;
         private Object option;
 
         SinkEndpoint(String uri, DefaultComponent component) {
+            this(uri, component, false);
+        }
+
+        SinkEndpoint(String uri, DefaultComponent component, boolean singleton) {
             super(uri, component);
+            this.singleton = singleton;
         }
 
         public Object getOption() {
@@ -292,7 +349,7 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
 
         @Override
         public boolean isSingleton() {
-            return false;
+            return singleton;
         }
     }
 

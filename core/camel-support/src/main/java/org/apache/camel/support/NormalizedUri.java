@@ -64,9 +64,10 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      *
      * @param  uri                  the uri
      * @param  normalized           whether its already normalized
-     * @param  literalOptionBinding whether the query option values were computed from the current message and must be
-     *                              bound as literal text (no property-placeholder and no bean/class reference
-     *                              resolution)
+     * @param  literalOptionBinding whether the uri was computed from the current message, so its option values are
+     *                              bound as literal text: no property placeholders, {@code #class:} or
+     *                              {@code #property:}; registry references ({@code #bean:}, {@code #type:}) are still
+     *                              resolved
      * @return                      the created normalized uri
      * @since                       4.24
      */
@@ -94,9 +95,10 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
     }
 
     /**
-     * Whether the query option values of this uri were computed from the current message at runtime and must therefore
-     * be bound as literal text, that is without property-placeholder resolution and without bean/class reference
-     * ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution.
+     * Whether this uri was computed from the current message at runtime, so the option values of the endpoint created
+     * from it are bound as literal text: a property placeholder ({@code {{...}}}), a {@code #class:} value or a
+     * {@code #property:} value is not resolved. Registry references ({@code #bean:}, {@code #type:}) are still
+     * resolved.
      *
      * @since 4.24
      */

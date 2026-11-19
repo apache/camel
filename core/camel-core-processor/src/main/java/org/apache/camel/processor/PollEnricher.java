@@ -539,8 +539,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             // optimize and normalize endpoint without re-resolving property placeholders on the
             // per-message evaluated recipient, matching toD and enrich (CAMEL-24282 / CAMEL-24414).
             // pollEnrich resolves its static uri at build time, so the placeholder belongs there.
-            // The per-message recipient comes from the message, so its query option values are bound as
-            // literal text as well (no property-placeholder and no bean/class reference resolution) - CAMEL-27160
+            // The per-message recipient comes from the message, so its option values are bound as literal text
+            // as well: no property placeholders, #class: or #property: (#bean: and #type: still resolve) - CAMEL-27160
             return NormalizedUri.newNormalizedUri(uri, false, true);
         }
         return null;

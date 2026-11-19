@@ -88,8 +88,8 @@ final class ProcessorHelper {
             }
             // optimize and normalize endpoint. Property placeholders in the computed uri string are still resolved
             // here (documented recipientList/routingSlip/dynamicRouter behaviour), but the uri was computed from the
-            // message, so its query option values are bound as literal text: no property-placeholder and no
-            // bean/class reference (#class:, #bean:, #type:, ...) resolution on the option values (CAMEL-27160).
+            // message, so its option values are bound as literal text: no #class: or #property: resolution on the
+            // option values; registry references (#bean:, #type:) are still resolved (CAMEL-27160).
             try {
                 String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(ecc, uri);
                 return NormalizedUri.newNormalizedUri(resolved, false, true);

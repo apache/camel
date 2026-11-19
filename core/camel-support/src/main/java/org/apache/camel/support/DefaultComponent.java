@@ -88,44 +88,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     @Override
     public Endpoint createEndpoint(String uri, Map<String, Object> properties) throws Exception {
-        return createEndpoint(uri, properties, false);
-    }
-
-    /**
-     * Creates an endpoint, binding the query option values as literal text when {@code literalOptionBinding} is
-     * {@code true}.
-     * <p>
-     * Literal binding is used when the uri was computed from the current message at runtime (for example the
-     * per-message recipient of a dynamic endpoint such as {@code toD}, {@code enrich}, {@code wireTap},
-     * {@code pollEnrich}, {@code recipientList}, {@code routingSlip} or {@code dynamicRouter}): the option values then
-     * come from the message and not from the route, so they are bound without property-placeholder resolution and
-     * without bean/class reference ({@code #class:}, {@code #bean:}, {@code #type:}, ...) resolution.
-     *
-     * @param  uri                  the full URI of the endpoint
-     * @param  properties           the optional parameters passed in
-     * @param  literalOptionBinding whether the query option values must be bound as literal text
-     * @return                      a newly created endpoint or null if the endpoint cannot be created based on the
-     *                              inputs
-     * @throws Exception            is thrown if error creating the endpoint
-     * @since                       4.24
-     */
-    public Endpoint createEndpoint(String uri, Map<String, Object> properties, boolean literalOptionBinding)
-            throws Exception {
-        if (!literalOptionBinding) {
-            return doCreateEndpoint(uri, properties, false);
-        }
-        // mark the whole endpoint creation as literal so that components that bind their options inside their own
-        // createEndpoint (through the two-argument setProperties) also bind the message-derived values literally
-        boolean prev = PropertyBindingSupport.setLiteralOptionBinding(true);
-        try {
-            return doCreateEndpoint(uri, properties, true);
-        } finally {
-            PropertyBindingSupport.setLiteralOptionBinding(prev);
-        }
-    }
-
-    private Endpoint doCreateEndpoint(String uri, Map<String, Object> properties, boolean literalOptionBinding)
-            throws Exception {
         // need to encode before its safe to parse with java.net.Uri
         String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         URI u = new URI(encodedUri);
@@ -215,7 +177,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // configure remainder of the parameters
-        setProperties(endpoint, parameters, literalOptionBinding);
+        setProperties(endpoint, parameters);
 
         // if endpoint is strict (not lenient) and we have unknown parameters configured then
         // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
@@ -440,33 +402,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         endpoint.configureProperties(parameters);
-    }
-
-    /**
-     * Configure an endpoint using the given parameters, binding the option values as literal text when
-     * {@code literalOptionBinding} is {@code true} (for a uri computed from the current message at runtime), see
-     * {@link #createEndpoint(String, Map, boolean)}.
-     *
-     * @param endpoint             the endpoint
-     * @param parameters           properties to set
-     * @param literalOptionBinding whether the option values must be bound as literal text
-     * @since                      4.24
-     */
-    protected void setProperties(Endpoint endpoint, Map<String, Object> parameters, boolean literalOptionBinding)
-            throws Exception {
-        if (literalOptionBinding && endpoint instanceof DefaultEndpoint de) {
-            de.setProperties(endpoint, parameters, true);
-        } else {
-            if (literalOptionBinding && LOG.isWarnEnabled()) {
-                // literal binding of message-derived option values is enforced through DefaultEndpoint; a custom
-                // endpoint that does not extend it falls back to the standard resolution path, which may resolve
-                // property placeholders or #class: / #property: references against the message-derived values
-                LOG.warn("Endpoint {} does not extend DefaultEndpoint; option values computed from the message cannot"
-                         + " be bound as literal text and will use the standard property resolution",
-                        endpoint.getEndpointUri());
-            }
-            endpoint.configureProperties(parameters);
-        }
     }
 
     /**
