@@ -49,6 +49,7 @@ org.example.golden:openapi:1.0.0
 properties: [java.version, project.build.outputTimestamp]
 dependency org.apache.camel:camel-main
 dependency org.apache.camel:camel-direct
+dependency org.apache.camel:camel-health
 dependency org.apache.camel:camel-http
 dependency org.apache.camel:camel-jackson3
 dependency org.apache.camel:camel-openapi-java
