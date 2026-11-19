@@ -27,12 +27,13 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * Rule R3 of the exchange sanitizer, its second part: accesses that overlap in time, as KCSAN does in the Linux kernel.
  * The routing engine uses an exchange at known points: a step is called, the callback of a step continues the exchange,
- * an on completion runs. At every Nth point (a counter of the context, not random, so a rerun samples the same points
- * of the same run) the thread opens a short watch window on the exchange and pauses in it. A thread that comes to a
- * point of the same exchange during the window is reported with the thread that watches, each with its stack. A thread
- * that only waits (such as a caller that waits for its task) is at no point, so it is not reported. The return of
- * {@code process} is not a point: after an asynchronous processor handed the exchange on, its caller only unwinds,
- * while the thread that got the exchange may already call the callback.
+ * an on completion runs. At every Nth point (a counter of the context, not random: when one thread routes the exchanges
+ * a rerun samples the same points, when several threads share the counter it falls on other points from run to run) the
+ * thread opens a short watch window on the exchange and pauses in it. A thread that comes to a point of the same
+ * exchange during the window is reported with the thread that watches, each with its stack. A thread that only waits
+ * (such as a caller that waits for its task) is at no point, so it is not reported. The return of {@code process} is
+ * not a point: after an asynchronous processor handed the exchange on, its caller only unwinds, while the thread that
+ * got the exchange may already call the callback.
  * <p/>
  * The windows are keyed by the id of the exchange and hold no exchange: the id and the identity hash of the exchange
  * are read at the call of a step and at an on completion, on the thread that uses the exchange then. A window holds
