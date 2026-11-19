@@ -18,6 +18,7 @@ package org.apache.camel.component.opa;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -266,6 +267,52 @@ class OpaReloadableWasmEvaluatorTest {
             assertThatThrownBy(evaluator::reload).isInstanceOf(IOException.class);
             assertThat(creations).hasValue(2);
             evaluator.stopWatching();
+        }
+    }
+
+    @Test
+    void pollingSkipsUnchangedMalformedDataButExplicitReloadRetriesAndChangedContentRecovers() throws Exception {
+        for (String invalidData : List.of("{", "{} {}")) {
+            var content = new AtomicReference<>(bundle(1));
+            var loads = new AtomicInteger();
+            var creations = new AtomicInteger();
+            var old = mock(OpaWasmEvaluator.class);
+            var replacement = mock(OpaWasmEvaluator.class);
+            try (var context = new DefaultCamelContext();
+                 var evaluator = new OpaReloadableWasmEvaluator(
+                         context, 10, () -> {
+                             loads.incrementAndGet();
+                             return content.get();
+                         }, b -> {
+                             creations.incrementAndGet();
+                             return b.wasm()[0] == 1 ? old : replacement;
+                         }, "authz/allow", "allow", "*", "", false, false)) {
+                String original = evaluator.getReloadStatus().getActiveRevision();
+                content.set(new OpaWasmEvaluator.Bundle(new byte[] { 2 }, invalidData));
+                evaluator.startWatching();
+                await().atMost(5, TimeUnit.SECONDS)
+                        .until(() -> evaluator.getReloadStatus().getLastFailedReload() != null);
+                var failedAt = evaluator.getReloadStatus().getLastFailedReload();
+                int loadsAtFailure = loads.get();
+                await().atMost(5, TimeUnit.SECONDS).until(() -> loads.get() >= loadsAtFailure + 3);
+                assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(failedAt);
+                assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+                assertThat(creations).hasValue(1);
+
+                assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+                var retriedAt = evaluator.getReloadStatus().getLastFailedReload();
+                assertThat(retriedAt).isAfter(failedAt);
+                assertThat(creations).hasValue(1);
+
+                content.set(bundle(2));
+                await().atMost(5, TimeUnit.SECONDS)
+                        .until(() -> !evaluator.getReloadStatus().getActiveRevision().equals(original));
+                assertThat(creations).hasValue(2);
+                assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(retriedAt);
+                evaluator.stopWatching();
+                verify(old).close();
+            }
+            verify(replacement).close();
         }
     }
 
