@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springai.chat.mcp;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.Map;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
+import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import io.modelcontextprotocol.json.McpJsonDefaults;
@@ -42,12 +45,17 @@ import org.springframework.ai.tool.ToolCallbackProvider;
  * Manages MCP (Model Context Protocol) client lifecycle for the Spring AI Chat component.
  * <p>
  * Handles initialization, tool discovery via {@link SyncMcpToolCallbackProvider}, and graceful shutdown of MCP clients.
- * Supports stdio, sse, and sse transport types.
+ * Supports the streamableHttp, stdio and sse (deprecated) transport types.
  * </p>
  */
 public class SpringAiChatMcpManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiChatMcpManager.class);
+
+    /**
+     * The endpoint path of a Streamable HTTP server whose URL has no path, as in the MCP SDK.
+     */
+    private static final String DEFAULT_STREAMABLE_HTTP_ENDPOINT = "/mcp";
 
     private final List<McpSyncClient> mcpClients = new ArrayList<>();
     private SyncMcpToolCallbackProvider toolCallbackProvider;
@@ -57,12 +65,12 @@ public class SpringAiChatMcpManager {
      * <p>
      * Configuration keys follow the pattern: {@code <serverName>.<property>}. Supported properties:
      * <ul>
-     * <li>{@code transportType} - Required. One of: stdio, sse</li>
+     * <li>{@code transportType} - Required. One of: streamableHttp, stdio, sse (deprecated)</li>
      * <li>{@code command} - Required for stdio. The command to execute</li>
      * <li>{@code args} - Optional for stdio. Comma-separated arguments</li>
-     * <li>{@code url} - Required for sse. The server URL</li>
-     * <li>{@code oauthProfile} - Optional for sse. OAuth profile name for obtaining a Bearer token (requires
-     * camel-oauth)</li>
+     * <li>{@code url} - Required for streamableHttp and sse. The server URL</li>
+     * <li>{@code oauthProfile} - Optional for streamableHttp and sse. OAuth profile name for obtaining a Bearer token
+     * (requires camel-oauth)</li>
      * </ul>
      *
      * @param  mcpServerConfig flat configuration map with dotted keys
@@ -166,11 +174,22 @@ public class SpringAiChatMcpManager {
                 }
                 yield new StdioClientTransport(paramsBuilder.build(), McpJsonDefaults.getMapper());
             }
+            case "streamableHttp" -> {
+                String url = props.get("url");
+                if (url == null) {
+                    throw new IllegalArgumentException(
+                            "mcpServer." + serverName + ".url is required for streamableHttp transport");
+                }
+                yield createStreamableHttpTransport(serverName, url, authRequestBuilder);
+            }
             case "sse" -> {
                 String url = props.get("url");
                 if (url == null) {
                     throw new IllegalArgumentException("mcpServer." + serverName + ".url is required for sse transport");
                 }
+                LOG.info("MCP server '{}' uses the sse transport, which the MCP specification has replaced by Streamable HTTP."
+                         + " Use transportType=streamableHttp if the server supports it.",
+                        serverName);
                 HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(url);
                 if (authRequestBuilder != null) {
                     sseBuilder.requestBuilder(authRequestBuilder);
@@ -179,7 +198,45 @@ public class SpringAiChatMcpManager {
             }
             default -> throw new IllegalArgumentException(
                     "Unknown transport type '" + transportType + "' for mcpServer." + serverName
-                                                          + ". Supported: stdio, sse");
+                                                          + ". Supported: streamableHttp, stdio, sse");
         };
+    }
+
+    /**
+     * Creates the Streamable HTTP transport for the MCP endpoint at the given URL.
+     * <p>
+     * The MCP SDK resolves its endpoint path, {@code /mcp} by default, against the base URL it is given, which replaces
+     * the path of that URL. The URL is therefore split into its base (scheme and authority) and the endpoint path, so a
+     * server served under another path, for example {@code http://host:8080/api/mcp}, is reached. A URL without a path,
+     * such as {@code http://host:8080}, uses {@code /mcp}.
+     */
+    private static McpClientTransport createStreamableHttpTransport(
+            String serverName, String url, HttpRequest.Builder authRequestBuilder) {
+        URI uri;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(
+                    "mcpServer." + serverName + ".url is not a valid URL: " + e.getReason(), e);
+        }
+        if (uri.getScheme() == null || uri.getRawAuthority() == null) {
+            throw new IllegalArgumentException(
+                    "mcpServer." + serverName + ".url must be an absolute URL, such as http://localhost:8080/mcp");
+        }
+
+        String endpoint = uri.getRawPath();
+        if (endpoint == null || endpoint.isEmpty() || "/".equals(endpoint)) {
+            endpoint = DEFAULT_STREAMABLE_HTTP_ENDPOINT;
+        }
+        if (uri.getRawQuery() != null) {
+            endpoint = endpoint + "?" + uri.getRawQuery();
+        }
+        HttpClientStreamableHttpTransport.Builder builder
+                = HttpClientStreamableHttpTransport.builder(uri.getScheme() + "://" + uri.getRawAuthority())
+                        .endpoint(endpoint);
+        if (authRequestBuilder != null) {
+            builder.requestBuilder(authRequestBuilder);
+        }
+        return builder.build();
     }
 }
