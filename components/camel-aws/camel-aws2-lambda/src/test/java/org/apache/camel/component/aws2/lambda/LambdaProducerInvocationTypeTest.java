@@ -51,6 +51,10 @@ public class LambdaProducerInvocationTypeTest extends CamelTestSupport {
                 // Lambda queues the event and answers at once without a payload
                 return response.statusCode(202).payload(SdkBytes.fromUtf8String("")).build();
             }
+            if (invokeRequest.invocationType() == InvocationType.DRY_RUN) {
+                // Lambda only checks that the function can be invoked
+                return response.statusCode(204).payload(SdkBytes.fromUtf8String("")).build();
+            }
             response.statusCode(200).payload(SdkBytes.fromUtf8String("{\"Hello\":\"Camel\"}"));
             if (invokeRequest.logType() == LogType.TAIL) {
                 response.logResult(LOG);
@@ -81,10 +85,14 @@ public class LambdaProducerInvocationTypeTest extends CamelTestSupport {
 
     @Test
     public void headerOverridesTheOption() {
-        template.sendBodyAndHeader("direct:event", "{\"name\":\"Camel\"}", Lambda2Constants.INVOCATION_TYPE,
-                "DryRun");
+        Exchange exchange = template.request("direct:event", e -> {
+            e.getIn().setBody("{\"name\":\"Camel\"}");
+            e.getIn().setHeader(Lambda2Constants.INVOCATION_TYPE, "DryRun");
+        });
 
         assertEquals(InvocationType.DRY_RUN, clientMock.invokeRequest.invocationType());
+        assertEquals(204, exchange.getMessage().getHeader(Lambda2Constants.STATUS_CODE));
+        assertEquals("", exchange.getMessage().getBody(String.class));
     }
 
     @Test
