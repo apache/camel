@@ -125,12 +125,15 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - index - 1;
 
+            // the object to delete once the exchange is done. It is taken now, as the route may change or remove the
+            // bucket and key headers before it ends (the producer takes the bucket to write to from the bucket header)
+            final String bucketName = exchange.getIn().getHeader(OSSHeaders.BUCKET_NAME, String.class);
             final String objectKey = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     try {
-                        processComplete(exchange);
+                        processComplete(bucketName, objectKey);
                     } finally {
                         inProgress.remove(objectKey);
                     }
@@ -287,10 +290,14 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
         exchanges.clear();
     }
 
-    private void processComplete(Exchange exchange) {
+    /**
+     * Deletes the consumed object, with {@code deleteAfterRead}.
+     *
+     * @param bucketName the bucket the object was consumed from
+     * @param objectKey  the key of the consumed object
+     */
+    private void processComplete(String bucketName, String objectKey) {
         if (endpoint.isDeleteAfterRead()) {
-            String bucketName = exchange.getIn().getHeader(OSSHeaders.BUCKET_NAME, String.class);
-            String objectKey = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
             if (ObjectHelper.isNotEmpty(bucketName) && ObjectHelper.isNotEmpty(objectKey)) {
                 ossClient.deleteObject(DeleteObjectRequest.newBuilder()
                         .bucket(bucketName)
