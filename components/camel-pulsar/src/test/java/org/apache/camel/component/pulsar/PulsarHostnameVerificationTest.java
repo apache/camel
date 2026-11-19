@@ -51,9 +51,14 @@ public class PulsarHostnameVerificationTest extends CamelTestSupport {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private SSLServerSocket server;
+    private PulsarEndpoint endpoint;
 
     @AfterEach
     void stopServer() throws IOException {
+        // the endpoint does not close a client it built, and the client may still try to connect
+        if (endpoint != null && endpoint.getPulsarClient() != null) {
+            endpoint.getPulsarClient().close();
+        }
         if (server != null) {
             server.close();
         }
@@ -91,7 +96,7 @@ public class PulsarHostnameVerificationTest extends CamelTestSupport {
 
     private void connect(String options) throws Exception {
         URL ca = getClass().getClassLoader().getResource(RESOURCES + "ca.pem");
-        PulsarEndpoint endpoint = context.getEndpoint("pulsar:persistent://public/default/hostname?serviceUrl=RAW(pulsar+ssl://"
+        endpoint = context.getEndpoint("pulsar:persistent://public/default/hostname?serviceUrl=RAW(pulsar+ssl://"
                                                       + "localhost:" + server.getLocalPort() + ")"
                                                       + "&tlsTrustCertsFilePath=" + Path.of(ca.toURI())
                                                       + options,
