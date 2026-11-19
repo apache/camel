@@ -234,6 +234,25 @@ YAML::
 ----
 ====
 
+=== Paging the query results
+
+Timestream returns the result of a query in pages. The body of the `query` operation is one page (a `QueryResponse`),
+and when more pages follow, the `CamelAwsTimestreamQueryNextToken` header holds the token of the next page. Send the same
+query again with this header to read the next page; after the last page, the header is removed. A page can be empty
+while the query still runs, so loop on the header, not on the number of rows. `CamelAwsTimestreamQueryMaxRows` sets the
+maximum number of rows of a page.
+
+With `queryAllPages=true`, the producer reads all the pages and the body is one `QueryResponse` with the rows of all the
+pages. Use it only for results that fit in memory.
+
+[source,java]
+----
+from("direct:query")
+    .setHeader(Timestream2Constants.QUERY_STRING, constant("SELECT * FROM testDb.testTable"))
+    .to("aws2-timestream://query:test?operation=query&queryAllPages=true")
+    .log("${body.rows.size} rows");
+----
+
 === Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.

@@ -24,7 +24,7 @@ public class Timestream2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("accessKey");
         props.add("awsTimestreamQueryClient");
         props.add("awsTimestreamWriteClient");
@@ -38,6 +38,7 @@ public class Timestream2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
+        props.add("queryAllPages");
         props.add("region");
         props.add("secretKey");
         props.add("sessionToken");
