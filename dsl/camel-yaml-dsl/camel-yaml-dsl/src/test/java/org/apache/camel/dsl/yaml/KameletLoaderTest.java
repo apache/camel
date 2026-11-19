@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.model.BeanFactoryDefinition;
@@ -399,6 +400,90 @@ class KameletLoaderTest extends YamlTestSupport {
         assertThat(rtd.getId()).isEqualTo("my-source");
         assertThat(rtd.getRoute().getInputType()).isNull();
         assertThat(rtd.getRoute().getOutputType().getUrn()).isEqualTo("application-octet-stream");
+    }
+
+    @Test
+    void sourceKameletOutputTypeIsNotAnOutputTypeOfTheRoute() throws Exception {
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-labelled-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: binary
+                      types:
+                        binary:
+                          format: application-octet-stream
+                  template:
+                    from:
+                      uri: "direct:feed"
+                      steps:
+                        - to: "kamelet:sink"
+                """);
+
+        RouteTemplateDefinition rtd = context.getRouteTemplateDefinitions().get(0);
+        assertThat(rtd.getRoute().getOutputType()).isNull();
+        assertThat(rtd.getRoute().getRouteProperties())
+                .anyMatch(p -> KameletRoutesBuilderLoader.SOURCE_OUTPUT_TYPE_PROPERTY.equals(p.getKey())
+                        && "application-octet-stream".equals(p.getValue()));
+    }
+
+    @Test
+    void sourceKameletOutputTypeIsAppliedBeforeTheConsumingRoute() throws Exception {
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-binary-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: binary
+                      types:
+                        binary:
+                          format: application-octet-stream
+                  template:
+                    from:
+                      uri: "direct:feed"
+                      steps:
+                        - to: "kamelet:sink"
+                """);
+
+        // the consuming route gets the output type, then leaves a body the type could not be converted to
+        loadRoutes("""
+                - from:
+                    uri: "kamelet:my-binary-source"
+                    steps:
+                      - to: "mock:first"
+                      - setBody:
+                          groovy: "[a: 1]"
+                      - to: "mock:last"
+                """);
+
+        withMock("mock:first", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived("Content-Type", "application/octet-stream");
+            mock.message(0).body().isInstanceOf(byte[].class);
+        });
+        withMock("mock:last", mock -> mock.expectedMessageCount(1));
+
+        context.start();
+
+        // the output type is no longer applied when the route of the Kamelet completes, so the Map does not fail
+        Exchange out = context.createProducerTemplate().send("direct:feed", e -> e.getMessage().setBody("hello"));
+        assertThat(out.getException()).isNull();
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

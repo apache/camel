@@ -21,9 +21,10 @@
     },
     "transformerOut": {
       "carriers": [
-        "bytes"
+        "bytes",
+        "stream"
       ],
-      "javaType": "byte[]"
+      "description": "A stream body is kept as it is; any other body becomes a byte array"
     }
   }
 }

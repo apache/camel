@@ -22,10 +22,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.processor.transformer.DataTypeProcessor;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,9 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     private final boolean sink;
     private String routeId;
     boolean registerKamelets;
+    // the output data type of the source Kamelet whose route sends to this kamelet:sink, looked up on the first message
+    private volatile DataTypeProcessor sourceOutputType;
+    private volatile boolean sourceOutputTypeResolved;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -81,6 +86,16 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                 // with producer and consumers linked together via the component
 
                 if (sink) {
+                    // a source Kamelet gives the message its output data type when it hands it on, so the consuming
+                    // route gets it (as an output type of the route, it would be applied only after the consuming route)
+                    DataTypeProcessor outputType = sourceOutputType(exchange);
+                    if (outputType != null) {
+                        outputType.process(exchange);
+                        if (exchange.getException() != null) {
+                            callback.done(true);
+                            return true;
+                        }
+                    }
                     // when calling a kamelet:sink then lookup any waiting processor
                     // from the Kamelet EIP to continue routing
                     AsyncProcessor eip = (AsyncProcessor) component.getKameletEip(key);
@@ -124,6 +139,37 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
             callback.done(true);
             return true;
         }
+    }
+
+    /**
+     * The output data type of the source Kamelet whose route the exchange is in, from the route property that the
+     * Kamelet YAML loader sets, or null when it has none.
+     */
+    private DataTypeProcessor sourceOutputType(Exchange exchange) throws Exception {
+        if (!sourceOutputTypeResolved) {
+            synchronized (this) {
+                if (!sourceOutputTypeResolved) {
+                    Route route = ExchangeHelper.getRoute(exchange);
+                    Object type = route != null ? route.getProperties().get(Kamelet.SOURCE_OUTPUT_TYPE_PROPERTY) : null;
+                    if (type != null) {
+                        DataTypeProcessor processor = new DataTypeProcessor(null, type.toString());
+                        processor.setCamelContext(getEndpoint().getCamelContext());
+                        ServiceHelper.startService(processor);
+                        sourceOutputType = processor;
+                    }
+                    sourceOutputTypeResolved = true;
+                }
+            }
+        }
+        return sourceOutputType;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(sourceOutputType);
+        sourceOutputType = null;
+        sourceOutputTypeResolved = false;
+        super.doStop();
     }
 
     @Override

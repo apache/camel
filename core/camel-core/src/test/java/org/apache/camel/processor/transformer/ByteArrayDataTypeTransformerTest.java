@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ByteArrayDataTypeTransformerTest {
@@ -80,15 +81,18 @@ public class ByteArrayDataTypeTransformerTest {
     }
 
     @Test
-    void shouldTransformFromInputStreamToBytesModel() throws Exception {
+    void shouldKeepInputStream() throws Exception {
+        // a stream is binary already: it is kept, so a large body is not read into memory
         Exchange exchange = new DefaultExchange(camelContext);
 
+        ByteArrayInputStream stream = new ByteArrayInputStream("Test3".getBytes(StandardCharsets.UTF_8));
         exchange.getMessage().setHeader("file", "test3.txt");
-        exchange.getMessage().setBody(new ByteArrayInputStream("Test3".getBytes(StandardCharsets.UTF_8)));
+        exchange.getMessage().setBody(stream);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertTrue(exchange.getMessage().hasHeaders());
-        assertBinaryBody(exchange, "test3.txt", "Test3");
+        assertSame(stream, exchange.getMessage().getBody());
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("test3.txt", exchange.getMessage().getHeader("file"));
     }
 
     @Test
@@ -110,15 +114,17 @@ public class ByteArrayDataTypeTransformerTest {
         BodyTypes bodyTypes = ByteArrayDataTypeTransformer.class.getAnnotation(BodyTypes.class);
         assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE),
                 List.of(bodyTypes.transformerIn().value()));
-        assertEquals(Carrier.BYTES, bodyTypes.transformerOut().value()[0]);
-        assertEquals(byte[].class.getCanonicalName(), bodyTypes.transformerOut().javaType());
-        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
-                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)))) {
+        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM), List.of(bodyTypes.transformerOut().value()));
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.getMessage().setBody(body);
             transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
             assertInstanceOf(byte[].class, exchange.getMessage().getBody(), body.getClass().getName());
         }
+        Exchange stream = new DefaultExchange(camelContext);
+        stream.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));
+        transformer.transform(stream.getMessage(), DataType.ANY, DataType.ANY);
+        assertInstanceOf(ByteArrayInputStream.class, stream.getMessage().getBody());
         // a number is not a payload
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setBody(5);
