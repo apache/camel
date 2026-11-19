@@ -129,7 +129,7 @@ public final class PropertyBindingSupport {
      * uri was computed from the current message at runtime, see {@link Builder#withLiteral(boolean)}.
      *
      * @return true if literal option binding is active on the current thread
-     * @since  4.24
+     * @since  4.22.3
      */
     public static boolean isLiteralOptionBinding() {
         return Boolean.TRUE.equals(LITERAL_OPTION_BINDING.get());
@@ -143,7 +143,7 @@ public final class PropertyBindingSupport {
      *
      * @param  literalOptionBinding whether literal option binding is active
      * @return                      the previous value, to be restored by the caller
-     * @since                       4.24
+     * @since                       4.22.3
      */
     public static boolean setLiteralOptionBinding(boolean literalOptionBinding) {
         boolean prev = isLiteralOptionBinding();
@@ -1975,7 +1975,7 @@ public final class PropertyBindingSupport {
          * Literal mode is also on, whatever this option says, while a literal option binding scope is active on the
          * current thread, see {@link PropertyBindingSupport#isLiteralOptionBinding()}.
          *
-         * @since 4.24
+         * @since 4.22.3
          */
         public Builder withLiteral(boolean literal) {
             this.literal = literal;
