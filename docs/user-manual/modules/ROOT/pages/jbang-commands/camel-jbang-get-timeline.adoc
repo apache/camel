@@ -25,6 +25,7 @@ camel get timeline [options]
 | `--filter` | Filter by route ID (pattern) |  | String
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter the exchanges by limiting to the given number of rows |  | int
+| `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys | true | boolean
 | `--seconds` | The number of seconds to show, up to the seconds the integration records | 60 | int
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort the exchanges by pid, name, age, elapsed (the slowest first), or since (the newest first) | since | String

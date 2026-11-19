@@ -2119,6 +2119,15 @@ a route id) waited for the timeout. Now both go to the integration that runs. Wi
 command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
 an error, rather than reported as sent.
 
+=== camel-jbang - camel get endpoint and the other listings mask the passwords in endpoint URIs
+
+`camel get endpoint`, `camel get consumer`, `camel get producer`, `camel get route`, `camel get processor`,
+`camel get service`, `camel get kafka`, `camel get timeline`, `camel get sql-trace`, `camel top route`,
+`camel top processor` and `camel status` now show the endpoint URIs the way Camel logs them: the values of options
+such as `password`, `secretKey`, `authenticationToken` or `keyStorePassword`, and the password in the user info, are
+shown as `xxxxxx`. This applies to the table and to the `--json` output. To see the URIs as configured, use
+`--mask=false`.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,

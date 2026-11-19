@@ -140,6 +140,34 @@ class ListServiceTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testJsonOutputMasksSecretOptionsOfUri() throws Exception {
+        JsonObject entry = service("mongodb", "out", "mongodb", "mongodb://admin:s3cret@localhost:27017");
+        entry.put("endpointUri", "mongodb:db?database=test&password=RAW(s3cret)");
+
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("services", serviceContainer(entry));
+        writeStatusFile(TEST_PID, root);
+
+        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            assertTrue(output.contains("admin:xxxxxx@localhost:27017"), output);
+            assertTrue(output.contains("mongodb:db?database=test&password=xxxxxx"), output);
+            assertFalse(output.contains("s3cret"), output);
+        }
+    }
+
     private static JsonObject contextObj() {
         JsonObject ctx = new JsonObject();
         ctx.put("name", "myApp");
