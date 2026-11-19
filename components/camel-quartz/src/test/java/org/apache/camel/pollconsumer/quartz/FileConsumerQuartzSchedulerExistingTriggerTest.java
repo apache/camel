@@ -20,6 +20,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.component.quartz.QuartzHelper;
@@ -36,6 +37,8 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -106,10 +109,39 @@ class FileConsumerQuartzSchedulerExistingTriggerTest extends CamelTestSupport {
         while (cause.getCause() != null && !(cause instanceof IllegalArgumentException)) {
             cause = cause.getCause();
         }
-        assertTrue(cause instanceof IllegalArgumentException, "Unexpected exception: " + e);
+        assertInstanceOf(IllegalArgumentException.class, cause, "Unexpected exception: " + e);
         assertTrue(cause.getMessage().contains("is already used by route: foo"), cause.getMessage());
         // the failed start of route bar did not unschedule the trigger of route foo
         assertNotNull(scheduler().getTrigger(TRIGGER_KEY));
+    }
+
+    @Test
+    void testTriggerRemovedBeforeSchedulerStartsWithDurableJob() throws Exception {
+        // the trigger and durable job of route baz, as left in a persistent job store by an earlier run
+        TriggerKey triggerKey = new TriggerKey("durableId", "myGroup");
+        JobDetail job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class)
+                .usingJobData("routeId", "baz").storeDurably().build();
+        QuartzHelper.updateJobDataMap(context, job, null);
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey)
+                .withSchedule(CronScheduleBuilder.cronSchedule(CRON)).build();
+        scheduler().scheduleJob(job, trigger);
+
+        // route baz finds the trigger when it starts, and starts its scheduler later (startScheduler=false)
+        context.getRouteController().startRoute("baz");
+        // the trigger is removed in between: Quartz keeps a durable job that has no trigger left
+        scheduler().unscheduleJob(triggerKey);
+        assertNull(scheduler().getTrigger(triggerKey));
+        assertTrue(scheduler().checkExists(job.getKey()));
+
+        getMockEndpoint("mock:baz").expectedMessageCount(1);
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "baz"), "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
+        FileConsumer consumer = (FileConsumer) context.getRoute("baz").getConsumer();
+        assertFalse(consumer.isSchedulerStarted());
+        consumer.startScheduler();
+        MockEndpoint.assertIsSatisfied(context);
+        assertTrue(consumer.isSchedulerStarted());
+        assertEquals(job.getKey(), scheduler().getTrigger(triggerKey).getJobKey());
     }
 
     private Scheduler scheduler() {
@@ -129,6 +161,12 @@ class FileConsumerQuartzSchedulerExistingTriggerTest extends CamelTestSupport {
                 from(TestSupport.fileUri(testDirectory, "other" + options + "&scheduler.deleteJob=true"))
                         .routeId("bar").autoStartup(false)
                         .to("mock:other");
+                from(TestSupport.fileUri(testDirectory,
+                        "baz?scheduler=quartz&scheduler.cron=" + CRON.replace(' ', '+')
+                                                        + "&scheduler.triggerGroup=myGroup&scheduler.triggerId=durableId"
+                                                        + "&scheduler.deleteJob=false&startScheduler=false"))
+                        .routeId("baz").autoStartup(false)
+                        .to("mock:baz");
             }
         };
     }

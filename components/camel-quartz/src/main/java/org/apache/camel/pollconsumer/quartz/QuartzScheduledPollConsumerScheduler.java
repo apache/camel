@@ -125,9 +125,15 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                     TriggerKey triggerKey = trigger.getKey();
                     CronTrigger existing = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
                     if (existing == null) {
-                        // removed from the scheduler since this scheduler started
+                        // removed from the scheduler since this scheduler started. Quartz deletes the job together
+                        // with its last trigger only when the job is not durable: a durable job is still there, and
+                        // scheduling it again with the trigger would fail with ObjectAlreadyExistsException
                         LOG.debug("Scheduling job: {} with trigger: {}", job, triggerKey);
-                        quartzScheduler.scheduleJob(job, trigger);
+                        if (quartzScheduler.checkExists(job.getKey())) {
+                            quartzScheduler.scheduleJob(trigger);
+                        } else {
+                            quartzScheduler.scheduleJob(job, trigger);
+                        }
                     } else {
                         LOG.debug("Job: {} with trigger: {} is already scheduled", job, triggerKey);
                         trigger = existing;
@@ -347,6 +353,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         }
         scheduled = false;
         rescheduleKey = null;
+        triggerExists = false;
     }
 
     private void checkTriggerIsNonConflicting(Trigger trigger, JobDetail jobDetail) {
