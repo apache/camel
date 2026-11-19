@@ -140,22 +140,17 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientKeyStoreParameters != null) {
                 String type = (ftpClientKeyStoreParameters.containsKey("type"))
                         ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
-                String file = (String) ftpClientKeyStoreParameters.get("file");
+                String file = storeFile(ftpClientKeyStoreParameters, "ftpClient.keyStore.");
                 String password = (String) ftpClientKeyStoreParameters.get("password");
                 String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
                         ? (String) ftpClientKeyStoreParameters.get("algorithm") : KeyManagerFactory.getDefaultAlgorithm();
-                String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
+                // the key is often protected with the password of the key store
+                String keyPassword = (String) ftpClientKeyStoreParameters.getOrDefault("keyPassword", password);
 
-                KeyStore keyStore = KeyStore.getInstance(type);
-                FileInputStream keyStoreFileInputStream = new FileInputStream(new File(file));
-                try {
-                    keyStore.load(keyStoreFileInputStream, password.toCharArray());
-                } finally {
-                    IOHelper.close(keyStoreFileInputStream, "keyStore", LOG);
-                }
+                KeyStore keyStore = loadStore(type, file, password, "keyStore");
 
                 KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
-                keyMgrFactory.init(keyStore, keyPassword.toCharArray());
+                keyMgrFactory.init(keyStore, toChars(keyPassword));
                 client.setNeedClientAuth(true);
                 client.setKeyManager(keyMgrFactory.getKeyManagers()[0]);
             }
@@ -163,17 +158,21 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientTrustStoreParameters != null) {
                 String type = (ftpClientTrustStoreParameters.containsKey("type"))
                         ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
-                String file = (String) ftpClientTrustStoreParameters.get("file");
+                String file = storeFile(ftpClientTrustStoreParameters, "ftpClient.trustStore.");
                 String password = (String) ftpClientTrustStoreParameters.get("password");
                 String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
                         ? (String) ftpClientTrustStoreParameters.get("algorithm") : TrustManagerFactory.getDefaultAlgorithm();
 
-                KeyStore trustStore = KeyStore.getInstance(type);
-                FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
-                try {
-                    trustStore.load(trustStoreFileInputStream, password.toCharArray());
-                } finally {
-                    IOHelper.close(trustStoreFileInputStream, "trustStore", LOG);
+                KeyStore trustStore = loadStore(type, file, password, "trustStore");
+                if (trustStore.size() == 0) {
+                    // without the password, the certificates of a store that protects them (such as a PKCS12 file
+                    // made by keytool) cannot be read, and the client would trust no server at all
+                    throw new IllegalArgumentException(
+                            "The trust store " + file + " has no certificates"
+                                                       + (password == null
+                                                               ? ": set ftpClient.trustStore.password if the store needs"
+                                                                 + " a password to read them"
+                                                               : ""));
                 }
 
                 TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);
@@ -189,6 +188,37 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         client.setEndpointCheckingEnabled(getFtpsConfiguration().isHostnameVerification());
 
         return client;
+    }
+
+    /**
+     * The file option of the key store or trust store options, which the other options need.
+     */
+    private static String storeFile(Map<String, Object> parameters, String prefix) {
+        Object file = parameters.get("file");
+        if (file == null) {
+            throw new IllegalArgumentException(
+                    prefix + "file must be set when other " + prefix + "* options are set: " + parameters.keySet());
+        }
+        return file.toString();
+    }
+
+    /**
+     * Loads a key store or trust store file. Without a password the store is loaded without one, as a store without a
+     * password, or a JKS trust store, can be read.
+     */
+    private static KeyStore loadStore(String type, String file, String password, String name) throws Exception {
+        KeyStore store = KeyStore.getInstance(type);
+        FileInputStream is = new FileInputStream(new File(file));
+        try {
+            store.load(is, toChars(password));
+        } finally {
+            IOHelper.close(is, name, LOG);
+        }
+        return store;
+    }
+
+    private static char[] toChars(String password) {
+        return password != null ? password.toCharArray() : null;
     }
 
     @Override
