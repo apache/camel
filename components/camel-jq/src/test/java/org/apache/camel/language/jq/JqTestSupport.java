@@ -16,9 +16,9 @@
  */
 package org.apache.camel.language.jq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 public abstract class JqTestSupport extends CamelTestSupport {
     public static final ObjectMapper MAPPER = new ObjectMapper();

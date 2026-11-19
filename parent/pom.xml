@@ -275,7 +275,8 @@
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-annotations-version>2.23</jackson-annotations-version>
-        <jackson-jq-version>1.6.5</jackson-jq-version>
+        <!-- jackson-jq 2.x is still in alpha: check the upstream API and operator precedence changes when bumping -->
+        <jackson-jq-version>2.0.0-alpha2</jackson-jq-version>
         <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
