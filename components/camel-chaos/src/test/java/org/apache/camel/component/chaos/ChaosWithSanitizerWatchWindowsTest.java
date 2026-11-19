@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,8 +31,11 @@ import org.apache.camel.sanitizer.Sanitizer;
 import org.apache.camel.sanitizer.Violation;
 import org.apache.camel.sanitizer.junit.CamelSanitizer;
 import org.apache.camel.spi.BacklogDebugger;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,15 +43,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Chaos and the watch windows of rule R3 of the exchange sanitizer together, with the tracer, the backlog tracer and
  * the backlog debugger on as well: a watch window is opened at every point where the routing engine uses an exchange
  * ({@code overlapSampling = 1}), and the chaos rules that fail, delay and duplicate steps and sends cause no report.
- * The duplicate rule is the interesting case: the producer is called twice within one call of the step, also when the
- * first send completes on another thread.
+ * The duplicate rule is the interesting case: the producer is called twice within one call of the step. The tests cover
+ * the three ways the two sends run:
+ * <ul>
+ * <li>the endpoint completes synchronously: the thread of the caller makes both sends;</li>
+ * <li>the duplicated send comes after a {@code threads} EIP: a thread of the pool makes both sends;</li>
+ * <li>the endpoint completes asynchronously: the thread that completed the first send makes the second send while the
+ * thread of the caller unwinds.</li>
+ * </ul>
+ * The tests record the thread that makes each send, so they check which case ran.
  */
 @CamelSanitizer(overlapSampling = 1)
 class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ChaosWithSanitizerWatchWindowsTest.class);
     private static final Pattern WINDOWS = Pattern.compile("(\\d+) watch windows? opened \\(R3, at 1 in 1 points\\)");
 
     private final AtomicInteger work = new AtomicInteger();
+    // the threads that made the sends to direct:receiver and direct:pooledReceiver (a direct consumer runs on the
+    // thread of the send), in order
+    private final List<Thread> receiverSenders = new CopyOnWriteArrayList<>();
+    private final List<Thread> pooledSenders = new CopyOnWriteArrayList<>();
     private BacklogDebugger debugger;
 
     @Override
@@ -77,13 +94,20 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
                         .process(e -> work.incrementAndGet()).id("work")
                         .to("mock:retry").id("toRetry");
 
+                // the receiver completes asynchronously: threads(1) hands the exchange to its thread, so the first
+                // send returns false, and that thread completes it and makes the second send
                 from("direct:twice").routeId("twice").to("direct:receiver").id("toReceiver");
-                from("direct:receiver").routeId("receiver").to("mock:received").id("toReceived");
+                from("direct:receiver").routeId("receiver")
+                        .process(e -> receiverSenders.add(Thread.currentThread())).id("receiverSender")
+                        .threads(1).id("receiverPool")
+                        .to("mock:received").id("toReceived");
                 from("direct:twiceToMock").routeId("twiceToMock").to("mock:duplicated").id("toMock");
 
                 // the send that chaos duplicates runs on a thread of the pool, not on the thread of the caller
                 from("direct:pooled").routeId("pooled").threads(2).id("pool").to("direct:pooledReceiver").id("toPooled");
-                from("direct:pooledReceiver").routeId("pooledReceiver").to("mock:pooled").id("toPooledMock");
+                from("direct:pooledReceiver").routeId("pooledReceiver")
+                        .process(e -> pooledSenders.add(Thread.currentThread())).id("pooledSender")
+                        .to("mock:pooled").id("toPooledMock");
             }
         };
     }
@@ -99,12 +123,20 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
         assertThat(context.isBacklogTracing()).isTrue();
         assertThat(context.isDebugging()).isTrue();
         assertThat(debugger.isEnabled()).isTrue();
+        // the tracer and the backlog tracer recorded the routing, so they work with the watch windows on
+        assertThat(context.getTracer().getTraceCounter()).as("events of the tracer").isPositive();
+        BacklogTracer backlogTracer = context.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+        assertThat(backlogTracer).as("the backlog tracer").isNotNull();
+        assertThat(backlogTracer.isEnabled()).isTrue();
+        assertThat(backlogTracer.getTraceCounter()).as("events of the backlog tracer").isPositive();
         String report = sanitizer().report();
         Matcher m = WINDOWS.matcher(report);
         assertThat(m.find()).as(report).isTrue();
         assertThat(Long.parseLong(m.group(1))).as(report).isPositive();
         assertThat(sanitizer().getViolationCount(Violation.USED_BY_TWO_THREADS)).as(report).isZero();
         assertThat(sanitizer().getViolations()).as(report).isEmpty();
+        LOG.info("{} watch windows opened, no overlap reported, {} events of the tracer, {} of the backlog tracer",
+                m.group(1), context.getTracer().getTraceCounter(), backlogTracer.getTraceCounter());
     }
 
     @Test
@@ -138,13 +170,29 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
     @Test
     void aDuplicatedSendThatCompletesAsynchronously() throws Exception {
         String id = chaos().addRule("endpoint=direct:receiver duplicate");
-        getMockEndpoint("mock:received").expectedBodiesReceived("x", "x");
+        int sends = 20;
+        getMockEndpoint("mock:received").expectedMessageCount(2 * sends);
 
-        Exchange out = template.send("direct:twice", e -> e.getMessage().setBody("x"));
+        for (int i = 0; i < sends; i++) {
+            Exchange out = template.send("direct:twice", e -> e.getMessage().setBody("x"));
+            assertThat(out.getException()).isNull();
+        }
 
-        assertThat(out.getException()).isNull();
         MockEndpoint.assertIsSatisfied(context);
-        assertThat(fired(id, "send")).isEqualTo(1);
+        assertThat(fired(id, "send")).isEqualTo(sends);
+        // the caller made each first send, and the thread of threads(1), which completed it, made the second
+        Thread caller = Thread.currentThread();
+        assertThat(receiverSenders).hasSize(2 * sends);
+        for (int i = 0; i < sends; i++) {
+            Thread first = receiverSenders.get(2 * i);
+            Thread second = receiverSenders.get(2 * i + 1);
+            assertThat(first).as("the first send of exchange %d", i).isSameAs(caller);
+            assertThat(second).as("the second send of exchange %d", i).isNotSameAs(first);
+            assertThat(second.getName()).as("the second send of exchange %d", i).contains("Threads");
+        }
+        LOG.info("The first sends were made on {}, the second sends on {}",
+                receiverSenders.stream().filter(t -> t == caller).map(Thread::getName).distinct().toList(),
+                receiverSenders.stream().filter(t -> t != caller).map(Thread::getName).distinct().toList());
         assertWatchedAndQuiet();
     }
 
@@ -173,6 +221,13 @@ class ChaosWithSanitizerWatchWindowsTest extends ChaosTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertThat(fired(id, "send")).isEqualTo(10);
+        // pooledReceiver completes synchronously, so the thread of the pool made both sends of each exchange
+        assertThat(pooledSenders).hasSize(20);
+        for (int i = 0; i < 10; i++) {
+            Thread first = pooledSenders.get(2 * i);
+            assertThat(first).isNotSameAs(Thread.currentThread());
+            assertThat(pooledSenders.get(2 * i + 1)).isSameAs(first);
+        }
         assertWatchedAndQuiet();
     }
 }
