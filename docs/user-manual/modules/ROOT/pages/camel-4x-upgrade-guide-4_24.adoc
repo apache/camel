@@ -91,6 +91,11 @@ route file with `username: sa` now logs a warning with `camel run`, and fails th
 `camel.main.profile=prod`, as `camel.beans.myDataSource.username=sa` in `application.properties` already does. Use a
 property placeholder instead, such as `username: "{{db.username}}"`.
 
+The options are matched by their name, as for `camel.beans.*` properties. So a bean option named `ssl` or `tls` that is
+set to `false`, such as the `ssl` option of a `DataSource`, is reported as an insecure SSL setting, as
+`camel.beans.myDataSource.ssl=false` already is. To keep such a connection without TLS, add the key to
+`camel.security.allowedProperties`.
+
 === camel-main - more options are reported by the insecure:dev security policy
 
 These camel-main options are flagged `insecure:dev`, and the `camel.security.insecureDevPolicy` check now reports them
