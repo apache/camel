@@ -1209,7 +1209,7 @@ A registry that requires a login is reached with the login of its vendor:
 
 `schemaRegistryPassword` and `schemaRegistryOauthClientSecret` are secret options, which Camel masks in logs. In an endpoint URI, give a secret that has characters such as `&` or `+` in `RAW()`, or set it from a property placeholder or a vault.
 What you set in `additionalProperties`, such as `basic.auth.credentials.source=SASL_INHERIT` to use the SASL login of the Kafka connection, takes precedence.
-With OAuth2 and `confluent`, the Confluent client checks `schemaRegistryOauthTokenEndpoint` against the JVM system property `org.apache.kafka.sasl.oauthbearer.allowed.urls`, as the Kafka client does for the SASL OAuth login: list the token endpoint in it, or the producer or consumer fails to start with `The URL cannot be accessed due to restrictions`.
+With OAuth2 and `confluent`, the Confluent client checks `schemaRegistryOauthTokenEndpoint` against the JVM system property `org.apache.kafka.sasl.oauthbearer.allowed.urls`, just as the Kafka client does for the SASL OAuth login. List the token endpoint in this property, or the producer or consumer fails to start with `The URL cannot be accessed due to restrictions`.
 
 For example, Confluent Cloud with the API key of its Schema Registry:
 
