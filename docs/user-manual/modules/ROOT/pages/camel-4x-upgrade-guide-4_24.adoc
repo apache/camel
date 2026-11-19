@@ -207,6 +207,27 @@ This is what `xml` binding already did without its XML data format. Add the JSON
 (or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
 neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
+=== camel-kamelet - the output data type of a source Kamelet is applied before the consuming route
+
+A source Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
+when it hands it on with `kamelet:sink`, so the route that consumes from the Kamelet gets it. Before, the type was
+applied only when the route of the Kamelet completed, after the consuming route had run: the consuming route never saw
+it, and an exchange failed at the end when the consuming route left a body that could not be converted to the type, such
+as a `Map` for `binary`. This applies to Kamelets labelled `camel.apache.org/kamelet.type: source`, such as
+`aws-sqs-source` (`text`), `slack-source` (`json`) or `azure-eventhubs-source` (`binary`) of the Kamelet catalog: the
+first step of the consuming route now gets a `String`, JSON or a `byte[]` with the matching `Content-Type` header, where
+it used to get the body of the component.
+When no transformer for the type is on the classpath, such as `json` with neither `camel-jackson` nor `camel-jackson3`,
+the message is handed on unchanged, as before, and a WARN is logged once.
+
+=== camel-core - the binary data type keeps a stream cache body
+
+The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache as it is, and only
+sets the `Content-Type` header to `application/octet-stream`. Before, it read the stream into a `byte[]`. A stream cache
+is binary already and can be read again, and a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source`
+declares `binary` and gives the object as a stream, which may be large. Any other body, including an `InputStream` that is
+not a stream cache (stream caching turned off), is still converted to a `byte[]`.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
