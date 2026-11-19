@@ -403,7 +403,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param parameters properties to set
      */
     public void setProperties(Object bean, Map<String, Object> parameters) {
-        setProperties(bean, parameters, false);
+        // honor a literal-option-binding scope opened while a dynamic endpoint is being created, so that options
+        // bound by a component inside its own createEndpoint are also kept literal (see
+        // PropertyBindingSupport#isLiteralOptionBinding and DefaultComponent#createEndpoint(String, Map, boolean))
+        setProperties(bean, parameters, PropertyBindingSupport.isLiteralOptionBinding());
     }
 
     /**

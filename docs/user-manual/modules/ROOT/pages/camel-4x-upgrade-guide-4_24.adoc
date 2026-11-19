@@ -137,17 +137,20 @@ includes the template of `sql-stored` and the bucket name of `aws2-s3`.
 
 The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
 `dynamicRouter` -- compute their target endpoint from the current message at runtime. The query option values of that
-per-message endpoint are now bound as literal text: a property-placeholder token (`{{...}}`) or a bean or class
-reference token (`#class:`, `#bean:`, `#type:`) that appears in a runtime-computed option value is kept verbatim, so it
-is neither resolved as a property nor used to look up a bean or instantiate a class. This extends to the option binding
-the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave the endpoint path, where property
-placeholders in the computed path are not resolved. `recipientList`, `routingSlip` and `dynamicRouter` still resolve
-property placeholders in the computed uri string, only their option values change.
+per-message endpoint are now bound more strictly: a property-placeholder token (`+{{...}}+`), a `#class:` reference
+(which would instantiate a class and can invoke a public static or factory method) or a `#property:` reference that
+appears in a runtime-computed option value is kept verbatim, so it is neither resolved as a property nor used to
+instantiate a class. This extends to the option binding the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich`
+already gave the endpoint path, where property placeholders in the computed path are not resolved. `recipientList`,
+`routingSlip` and `dynamicRouter` still resolve property placeholders in the computed uri string; only this subset of
+their option values changes.
 
-Property placeholders written in the static route template are still resolved once when the route starts, so
-`toD("mock:foo?delay={{myDelay}}")` is unchanged. A `#bean:`, `#class:` or `#type:` reference, however, was resolved
-when the endpoint was created, so such a reference in the option of a dynamic endpoint is now kept literal as well:
-configure that option on the component, or use a static `to(...)` endpoint, if it must be resolved.
+Plain registry references (`#bean:`, `#type:`) are still resolved, so a reference a route author wrote in a dynamic
+uri, such as `+toD("sql:${header.query}?dataSource=#ds")+`, keeps working. Property placeholders written in the static
+route template are also still resolved once when the route starts, so `+toD("mock:foo?delay={{myDelay}}")+` is
+unchanged. Only a value that is itself computed from the message and is a `+{{...}}+` placeholder, a `#class:`
+reference or a `#property:` reference is kept literal; configure such an option on the component, or use a static
+`to(...)` endpoint, if it must be resolved.
 
 === camel-core - Rest DSL binding mode json fails at startup without a JSON data format
 

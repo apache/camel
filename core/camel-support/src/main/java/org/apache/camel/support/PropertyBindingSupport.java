@@ -118,8 +118,46 @@ public final class PropertyBindingSupport {
     private PropertyBindingSupport() {
     }
 
+    // a thread-scoped signal that the endpoint currently being created was computed from the current message at
+    // runtime (a dynamic endpoint such as toD/enrich/wireTap/pollEnrich/recipientList/routingSlip/dynamicRouter),
+    // so its option values must be bound as literal text. It is set (in a try/finally) around the whole endpoint
+    // creation by DefaultComponent.createEndpoint(uri, properties, true) and read by DefaultComponent and
+    // DefaultEndpoint when they bind the options, so components that bind inside their own createEndpoint still honor
+    // literal binding.
+    private static final ThreadLocal<Boolean> LITERAL_OPTION_BINDING = new ThreadLocal<>();
+
     public static Builder build() {
         return new Builder();
+    }
+
+    /**
+     * Whether the endpoint currently being created on this thread must bind its query option values as literal text,
+     * because its uri was computed from the current message at runtime, see {@link Builder#withLiteral(boolean)}.
+     *
+     * @return true if literal option binding is active on the current thread
+     * @since  4.24
+     */
+    public static boolean isLiteralOptionBinding() {
+        return Boolean.TRUE.equals(LITERAL_OPTION_BINDING.get());
+    }
+
+    /**
+     * Marks (or clears) the current thread as creating an endpoint whose query option values must be bound as literal
+     * text. The caller MUST restore the returned previous value in a {@code finally} block, as
+     * {@link DefaultComponent#createEndpoint(String, java.util.Map, boolean)} does.
+     *
+     * @param  literalOptionBinding whether literal option binding is active
+     * @return                      the previous value, to be restored by the caller
+     * @since                       4.24
+     */
+    public static boolean setLiteralOptionBinding(boolean literalOptionBinding) {
+        boolean prev = isLiteralOptionBinding();
+        if (literalOptionBinding) {
+            LITERAL_OPTION_BINDING.set(Boolean.TRUE);
+        } else {
+            LITERAL_OPTION_BINDING.remove();
+        }
+        return prev;
     }
 
     /**
@@ -528,7 +566,16 @@ public final class PropertyBindingSupport {
         String key = name;
         Object text = value;
 
-        if (placeholder && !literal) {
+        // a value computed from the current message at runtime (literal mode) is kept verbatim only when resolving it
+        // would be unsafe: a {{...}} property placeholder (which reads env vars, system or application properties or
+        // vault secrets), a #class: reference (which instantiates a class and can invoke a public static or factory
+        // method), or a #property: lookup. Benign registry references (#bean:, #type:, ...) are still resolved, so a
+        // reference a route author wrote in the dynamic uri, such as dataSource=#ds, keeps working.
+        boolean literalValue = literal && text instanceof String lit
+                && (lit.contains(PropertiesComponent.PREFIX_TOKEN)
+                        || lit.startsWith("#class:") || lit.startsWith("#property:"));
+
+        if (placeholder && !literalValue) {
             // resolve property placeholders
             key = camelContext.resolvePropertyPlaceholders(key);
             if (text instanceof String s) {
@@ -541,10 +588,9 @@ public final class PropertyBindingSupport {
             }
         }
 
-        // prepare the value before it is bound. In literal mode the value was computed from message content at
-        // runtime, so it is kept verbatim: neither property placeholders nor bean/class references (#class:, #bean:,
-        // #type:, ...) are resolved, because that resolution is reserved for values authored in the route.
-        if (literal) {
+        // prepare the value before it is bound
+        if (literalValue) {
+            // the message-derived value is kept verbatim: no property-placeholder, #class: or #property: resolution
             value = text;
         } else {
             try {
@@ -566,11 +612,11 @@ public final class PropertyBindingSupport {
             }
         }
 
-        // in literal mode reference resolution must be disabled on every binding path, and a value that still looks
-        // like a reference (#...) must not be handed to the configurer either (the configurer resolves references for
-        // non-String options on its own), so it is bound via reflection as plain text instead
-        boolean effReference = reference && !literal;
-        boolean skipConfigurer = literal && value instanceof String refStr && isReferenceParameter(refStr);
+        // when the value was kept literal, reference resolution must be disabled on every binding path, and a value
+        // that still looks like a reference (#...) must not be handed to the configurer either (the configurer resolves
+        // references for non-String options on its own), so it is bound via reflection as plain text instead
+        boolean effReference = reference && !literalValue;
+        boolean skipConfigurer = literalValue && value instanceof String refStr && isReferenceParameter(refStr);
 
         // okay we are ready to set the value, but the property key
         // can still be complex such as a map/list/array so we need to handle them specially than a regular key
@@ -594,7 +640,7 @@ public final class PropertyBindingSupport {
                 if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
-                            !literal && reflection, ignoreCase);
+                            !literalValue && reflection, ignoreCase);
                 }
                 // if the target value is a map type, then we can skip reflection
                 // and set the entry
