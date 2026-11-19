@@ -4674,7 +4674,7 @@
                             <!-- Generates the coverage report of one module from the execution data of all the modules
                                  merged by the "coverage" profile of the root pom (some modules are covered by the tests of other modules).
                                  Not bound to the build: run it with "mvn -Pcoverage jacoco:report@report-module"
-                                 after the merge of the execution data, see the Jenkinsfile. -->
+                                 after the merge of the execution data, see the Jenkinsfile and sonar-build.yml. -->
                             <execution>
                                 <id>report-module</id>
                                 <phase>none</phase>
