@@ -19,12 +19,14 @@ package org.apache.camel.component.redis.processor.aggregate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.buffer.ByteBuf;
@@ -81,13 +83,17 @@ public class RedisAggregationRepository extends ServiceSupport
             = new CompositeCodec(StringCodec.INSTANCE, ByteArrayCodec.INSTANCE, ByteArrayCodec.INSTANCE);
 
     /**
-     * The number of entries read per HSCAN call when checking the stored entries at startup.
+     * The number of entries checked in each hash at startup, which is also the number read per HSCAN call.
      */
     private static final int SCAN_COUNT = 100;
 
     private RMap<String, Object> cache;
     private RMap<String, Object> persistedCache;
     private Codec mapCodec;
+    /**
+     * The ids of the completed exchanges that could not be read, to log the WARN once per exchange.
+     */
+    private final Set<String> unreadableExchangeIds = ConcurrentHashMap.newKeySet();
     private boolean shutdownRedisson;
 
     /**
@@ -265,8 +271,31 @@ public class RedisAggregationRepository extends ServiceSupport
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
-        return useRecovery
-                ? unmarshallExchange(camelContext, persistenceMapName, exchangeId, persistedCache.get(exchangeId)) : null;
+        if (!useRecovery) {
+            return null;
+        }
+        try {
+            return unmarshallExchange(camelContext, persistenceMapName, exchangeId, persistedCache.get(exchangeId));
+        } catch (RuntimeException e) {
+            // skip this exchange, so the recovery of the other exchanges goes on
+            String reason;
+            if (e.getCause() instanceof InvalidClassException) {
+                reason = "rejected by the deserialization filter, see the deserializationFilter option";
+            } else if (e instanceof RuntimeCamelException) {
+                // the messages of this repository do not include the value
+                reason = e.getMessage();
+            } else {
+                reason = e.getClass().getName();
+            }
+            if (unreadableExchangeIds.add(exchangeId)) {
+                LOG.warn("Cannot read the completed exchange {} in the Redis hash {}, so it is not recovered: {}",
+                        exchangeId, persistenceMapName, reason);
+            } else {
+                LOG.debug("Cannot read the completed exchange {} in the Redis hash {}, so it is not recovered: {}",
+                        exchangeId, persistenceMapName, reason);
+            }
+            return null;
+        }
     }
 
     public boolean isOptimistic() {
@@ -498,6 +527,7 @@ public class RedisAggregationRepository extends ServiceSupport
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
         if (useRecovery) {
             persistedCache.remove(exchangeId);
+            unreadableExchangeIds.remove(exchangeId);
         }
     }
 
@@ -553,6 +583,7 @@ public class RedisAggregationRepository extends ServiceSupport
             }
         }
 
+        unreadableExchangeIds.clear();
         mapCodec = codec != null ? codec : CODEC;
         cache = redisson.getMap(mapName, mapCodec);
         if (codec == null) {
@@ -569,22 +600,29 @@ public class RedisAggregationRepository extends ServiceSupport
 
     /**
      * Logs a WARN when the hash has entries that are not serialized exchanges, such as the entries stored by an older
-     * version of this repository, which are not read. Only the first bytes of each value are checked.
+     * version of this repository, which are not read. Only the first entries of the hash, and the first bytes of their
+     * values, are checked.
      */
     private void warnUnreadableEntries(RMap<String, Object> map, String name) {
         try {
-            long count = 0;
+            // only the first entries are checked, which is enough to spot a hash written by an older version
+            int checked = 0;
+            int count = 0;
             for (Map.Entry<String, Object> entry : map.entrySet(SCAN_COUNT)) {
                 if (!isSerializedObject(entry.getValue())) {
                     count++;
                 }
+                if (++checked >= SCAN_COUNT) {
+                    break;
+                }
             }
             if (count > 0) {
+                boolean partial = checked >= SCAN_COUNT && map.size() > checked;
                 LOG.warn("The Redis hash {} has entries that are not exchanges serialized by this version of"
-                         + " RedisAggregationRepository (count: {}). These entries are ignored: entries stored by an"
+                         + " RedisAggregationRepository (count: {}{}). These entries are ignored: entries stored by an"
                          + " older Camel version are not read. See the camel-redis section of the Camel 4.24 upgrade"
                          + " guide.",
-                        name, count);
+                        name, partial ? "at least " : "", count);
             }
         } catch (Exception e) {
             LOG.warn("Cannot check the entries of the Redis hash {}", name, e);

@@ -21,11 +21,15 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 import java.net.URI;
+import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -50,6 +54,7 @@ import org.redisson.client.codec.Codec;
 import org.redisson.client.codec.StringCodec;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -70,14 +75,15 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
 
     private final Map<String, Object> active = new HashMap<>();
     private final Map<String, Object> completed = new HashMap<>();
+    private final AtomicInteger readEntries = new AtomicInteger();
     private RedissonClient redisson;
     private RedisAggregationRepository repository;
 
     @BeforeEach
     void createRepository() {
         redisson = mock(RedissonClient.class);
-        RMap<String, Object> activeMap = inMemoryMap(active);
-        RMap<String, Object> completedMap = inMemoryMap(completed);
+        RMap<String, Object> activeMap = inMemoryMap(active, readEntries);
+        RMap<String, Object> completedMap = inMemoryMap(completed, readEntries);
         when(redisson.<String, Object> getMap(eq("orders"), any(Codec.class))).thenReturn(activeMap);
         when(redisson.<String, Object> getMap(eq("orders-completed"), any(Codec.class))).thenReturn(completedMap);
         when(redisson.getLock(anyString())).thenReturn(mock(RLock.class));
@@ -149,16 +155,46 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
     }
 
     @Test
-    void testRecoverAppliesTheFilter() {
+    void testRecoverSkipsTheExchangeThatCannotBeRead() {
         repository.start();
 
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(URI.create("http://localhost/orders"));
-        completed.put(exchange.getExchangeId(), serialize(DefaultExchangeHolder.marshal(exchange, true, false)));
+        // three completed exchanges, the middle one with a body of a class outside the default filter
+        List<String> ids = new ArrayList<>();
+        for (Object body : List.of("first", URI.create("http://localhost/orders"), "third")) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody(body);
+            completed.put(exchange.getExchangeId(), serialize(DefaultExchangeHolder.marshal(exchange, true, false)));
+            ids.add(exchange.getExchangeId());
+        }
 
-        String id = exchange.getExchangeId();
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> repository.recover(context, id));
-        assertInstanceOf(InvalidClassException.class, e.getCause());
+        Logger logger = (Logger) LogManager.getLogger(RedisAggregationRepository.class);
+        LogEventCaptor captor = new LogEventCaptor();
+        logger.addAppender(captor);
+        List<Object> bodies = new ArrayList<>();
+        try {
+            // as the recovery task of the aggregator, twice
+            for (int run = 0; run < 2; run++) {
+                for (String id : ids) {
+                    Exchange recovered = repository.recover(context, id);
+                    if (recovered != null) {
+                        bodies.add(recovered.getIn().getBody());
+                    }
+                }
+            }
+        } finally {
+            logger.removeAppender(captor);
+        }
+
+        assertEquals(List.of("first", "third", "first", "third"), bodies);
+        List<String> warnings = captor.events.stream()
+                .filter(event -> event.getLevel() == Level.WARN)
+                .map(event -> event.getMessage().getFormattedMessage())
+                .toList();
+        // once per exchange, with its id and not its value
+        assertEquals(1, warnings.size(), warnings.toString());
+        assertTrue(warnings.get(0).contains(ids.get(1)), warnings.get(0));
+        assertTrue(warnings.get(0).contains("deserialization filter"), warnings.get(0));
+        assertFalse(warnings.get(0).contains("localhost"), warnings.get(0));
     }
 
     @Test
@@ -214,6 +250,31 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
                 && warnings.get(1).contains("(count: 1)"), warnings.get(1));
         // the fields and values are not logged
         assertTrue(warnings.stream().noneMatch(w -> w.contains("key1") || w.contains("\uFFFD")), warnings.toString());
+    }
+
+    @Test
+    void testWarnAtStartChecksOnlyTheFirstEntries() {
+        for (int i = 0; i < 250; i++) {
+            active.put("\u0003key" + i + "\uFFFD", new byte[] { 1, 0, 'o', 'r', 'g' });
+        }
+
+        Logger logger = (Logger) LogManager.getLogger(RedisAggregationRepository.class);
+        LogEventCaptor captor = new LogEventCaptor();
+        logger.addAppender(captor);
+        try {
+            repository.start();
+        } finally {
+            logger.removeAppender(captor);
+        }
+
+        assertEquals(100, readEntries.get());
+        List<String> warnings = captor.events.stream()
+                .filter(event -> event.getLevel() == Level.WARN)
+                .map(event -> event.getMessage().getFormattedMessage())
+                .toList();
+        assertEquals(1, warnings.size(), warnings.toString());
+        assertTrue(warnings.get(0).contains("The Redis hash orders has entries")
+                && warnings.get(0).contains("(count: at least 100)"), warnings.get(0));
     }
 
     @Test
@@ -302,12 +363,36 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
     }
 
     @SuppressWarnings("unchecked")
-    private static RMap<String, Object> inMemoryMap(Map<String, Object> store) {
+    private static RMap<String, Object> inMemoryMap(Map<String, Object> store, AtomicInteger readEntries) {
         RMap<String, Object> map = mock(RMap.class);
         when(map.get(any())).thenAnswer(i -> store.get(i.<String> getArgument(0)));
         when(map.put(anyString(), any())).thenAnswer(i -> store.put(i.getArgument(0), i.getArgument(1)));
         when(map.keySet()).thenAnswer(i -> Set.copyOf(store.keySet()));
-        when(map.entrySet(anyInt())).thenAnswer(i -> Set.copyOf(store.entrySet()));
+        when(map.size()).thenAnswer(i -> store.size());
+        // counts the entries read, as HSCAN reads them from Redis
+        when(map.entrySet(anyInt())).thenAnswer(i -> new AbstractSet<Map.Entry<String, Object>>() {
+            @Override
+            public Iterator<Map.Entry<String, Object>> iterator() {
+                Iterator<Map.Entry<String, Object>> it = Set.copyOf(store.entrySet()).iterator();
+                return new Iterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public Map.Entry<String, Object> next() {
+                        readEntries.incrementAndGet();
+                        return it.next();
+                    }
+                };
+            }
+
+            @Override
+            public int size() {
+                return store.size();
+            }
+        });
         return map;
     }
 
