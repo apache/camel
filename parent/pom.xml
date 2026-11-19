@@ -404,8 +404,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.40</metrics-version>
-        <micrometer-version>1.17.2</micrometer-version>
-        <micrometer-tracing-version>1.7.2</micrometer-tracing-version>
+        <micrometer-version>1.18.0</micrometer-version>
+        <micrometer-tracing-version>1.8.0</micrometer-tracing-version>
         <microprofile-config-version>3.1.3</microprofile-config-version>
         <milo-version>1.1.8</milo-version>
         <milvus-client-version>2.6.25</milvus-client-version>
@@ -486,8 +486,8 @@
         <quickfixj-version>3.0.2</quickfixj-version>
         <quickjs4j-version>0.1.1</quickjs4j-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.8.8</reactor-version>
-        <reactor-netty-version>1.3.8</reactor-netty-version>
+        <reactor-version>3.9.0</reactor-version>
+        <reactor-netty-version>1.4.0</reactor-netty-version>
         <redisson-version>4.8.0</redisson-version>
         <redshift-jdbc-version>2.1.0.33</redshift-jdbc-version>
         <resilience4j-version>2.4.0</resilience4j-version>
@@ -519,16 +519,16 @@
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spring-ai-version>2.1.0</spring-ai-version>
-        <spring-cloud-config-version>5.0.6</spring-cloud-config-version>
-        <spring-batch-version>6.0.6</spring-batch-version>
-        <spring-boot-version>4.1.2</spring-boot-version>
-        <spring-data-redis-version>4.1.2</spring-data-redis-version>
-        <spring-ldap-version>4.1.2</spring-ldap-version>
-        <spring-vault-core-version>4.1.1</spring-vault-core-version>
-        <spring-version>7.0.10</spring-version>
-        <spring-rabbitmq-version>4.1.2</spring-rabbitmq-version>
-        <spring-security-version>7.1.2</spring-security-version>
-        <spring-ws-version>5.0.3</spring-ws-version>
+        <spring-cloud-config-version>5.1.0</spring-cloud-config-version>
+        <spring-batch-version>6.1.0</spring-batch-version>
+        <spring-boot-version>4.2.0</spring-boot-version>
+        <spring-data-redis-version>4.2.0</spring-data-redis-version>
+        <spring-ldap-version>4.2.0</spring-ldap-version>
+        <spring-vault-core-version>4.1.2</spring-vault-core-version>
+        <spring-version>7.1.0</spring-version>
+        <spring-rabbitmq-version>4.2.0</spring-rabbitmq-version>
+        <spring-security-version>7.2.0</spring-security-version>
+        <spring-ws-version>5.1.0</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.5.1</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
