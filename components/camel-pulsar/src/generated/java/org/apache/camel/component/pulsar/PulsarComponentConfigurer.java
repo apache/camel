@@ -75,6 +75,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "enableRetry": getOrCreateConfiguration(target).setEnableRetry(property(camelContext, boolean.class, value)); return true;
         case "hashingscheme":
         case "hashingScheme": getOrCreateConfiguration(target).setHashingScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": getOrCreateConfiguration(target).setInitialSequenceId(property(camelContext, long.class, value)); return true;
         case "keysharedpolicy":
@@ -123,6 +125,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionTopicsMode": getOrCreateConfiguration(target).setSubscriptionTopicsMode(property(camelContext, org.apache.pulsar.client.api.RegexSubscriptionMode.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": getOrCreateConfiguration(target).setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
+        case "tlstrustcertsfilepath":
+        case "tlsTrustCertsFilePath": getOrCreateConfiguration(target).setTlsTrustCertsFilePath(property(camelContext, java.lang.String.class, value)); return true;
         case "topicspattern":
         case "topicsPattern": getOrCreateConfiguration(target).setTopicsPattern(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -182,6 +186,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "enableRetry": return boolean.class;
         case "hashingscheme":
         case "hashingScheme": return java.lang.String.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
         case "keysharedpolicy":
@@ -230,6 +236,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionTopicsMode": return org.apache.pulsar.client.api.RegexSubscriptionMode.class;
         case "subscriptiontype":
         case "subscriptionType": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class;
+        case "tlstrustcertsfilepath":
+        case "tlsTrustCertsFilePath": return java.lang.String.class;
         case "topicspattern":
         case "topicsPattern": return boolean.class;
         default: return null;
@@ -285,6 +293,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "enableRetry": return getOrCreateConfiguration(target).isEnableRetry();
         case "hashingscheme":
         case "hashingScheme": return getOrCreateConfiguration(target).getHashingScheme();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "initialsequenceid":
         case "initialSequenceId": return getOrCreateConfiguration(target).getInitialSequenceId();
         case "keysharedpolicy":
@@ -333,6 +343,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionTopicsMode": return getOrCreateConfiguration(target).getSubscriptionTopicsMode();
         case "subscriptiontype":
         case "subscriptionType": return getOrCreateConfiguration(target).getSubscriptionType();
+        case "tlstrustcertsfilepath":
+        case "tlsTrustCertsFilePath": return getOrCreateConfiguration(target).getTlsTrustCertsFilePath();
         case "topicspattern":
         case "topicsPattern": return getOrCreateConfiguration(target).isTopicsPattern();
         default: return null;
