@@ -36,9 +36,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * The option values of an endpoint whose uri is computed from the message are bound as literal text, also for a real
  * component that binds its options inside its own {@code createEndpoint}, with a generated configurer and typed options
  * ({@code log}). A {@code #class:} value is not created for a typed option (through the configurer and through
- * {@code resolveAndRemoveReferenceParameter}), a {@code #class:} value stays literal for a String option (also for a
- * bean that the component configures with {@code setProperties(Object, Map)}), while {@code #bean:} and {@code #type:}
- * in the static text of the {@code toD} still resolve, and {@code #class:} in a static {@code to} still works.
+ * {@code resolveAndRemoveReferenceParameter}), a property placeholder stays literal (also for a bean that the component
+ * configures with {@code setProperties(Object, Map)}), while {@code #bean:} and {@code #type:} in the static text of
+ * the {@code toD} still resolve, and {@code #class:} in a static {@code to} still works.
  */
 class DynamicEndpointMessageOptionLiteralLogTest extends ContextTestSupport {
 
@@ -79,13 +79,10 @@ class DynamicEndpointMessageOptionLiteralLogTest extends ContextTestSupport {
     }
 
     @Test
-    void placeholderFromMessageIsResolvedInUriString() {
-        // on camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is
-        // created (as before), so a {{...}} from the message is resolved; only #class:, #property: and RAW($simple{})
-        // in the option values are kept literal
+    void placeholderFromMessageStaysLiteral() {
         template.sendBodyAndHeader("direct:marker", "Hello", "m", "{{secretTarget}}");
 
-        assertThat(logEndpoint("m3").getMarker()).isEqualTo("resolved");
+        assertThat(logEndpoint("m3").getMarker()).isEqualTo("{{secretTarget}}");
     }
 
     @Test
@@ -98,14 +95,12 @@ class DynamicEndpointMessageOptionLiteralLogTest extends ContextTestSupport {
     }
 
     @Test
-    void classValueFromMessageStaysLiteralForComponentConfiguredBean() {
+    void placeholderFromMessageStaysLiteralForComponentConfiguredBean() {
         // the log component binds the options to the logFormatter bean with setProperties(Object, Map)
-        String value = "#class:" + CountingFormatter.class.getName();
-        template.sendBodyAndHeader("direct:prefix", "Hello", "p", value);
+        template.sendBodyAndHeader("direct:prefix", "Hello", "p", "{{secretTarget}}");
 
         PrefixFormatter formatter = context.getRegistry().lookupByNameAndType("logFormatter", PrefixFormatter.class);
-        assertThat(formatter.getPrefix()).isEqualTo(value);
-        assertThat(CountingFormatter.instances).isZero();
+        assertThat(formatter.getPrefix()).isEqualTo("{{secretTarget}}");
     }
 
     @Test

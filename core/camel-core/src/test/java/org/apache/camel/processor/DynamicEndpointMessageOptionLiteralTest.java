@@ -28,6 +28,7 @@ import org.apache.camel.Header;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
@@ -40,13 +41,16 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The per-message recipient of the dynamic-uri EIPs is computed from the message, so its option values are bound as
- * literal text. A {@code #class:} value or a {@code #property:} value in a runtime-computed option value is kept
- * verbatim: it is not resolved and no class is created. Registry references ({@code #bean:}, {@code #type:}) are still
- * resolved. See CAMEL-27160.
+ * Companion to {@link DynamicEndpointMessagePlaceholderTest}: the per-message recipient of the dynamic-uri EIPs is
+ * computed from the message, so its option values are bound as literal text. A property placeholder ({@code {{...}}}),
+ * a {@code #class:} value or a {@code #property:} value in a runtime-computed option value is kept verbatim: it is not
+ * resolved and no class is created. Registry references ({@code #bean:}, {@code #type:}) are still resolved. See
+ * CAMEL-27160, which extends the CAMEL-24282 treatment from the uri path to the option binding.
  * <p/>
- * On camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is created, for
- * all the dynamic-uri EIPs (as before), so a {@code {{...}}} from the message is resolved there.
+ * For {@code recipientList}, {@code routingSlip} and {@code dynamicRouter} the documented resolution of property
+ * placeholders in the computed uri string is preserved (see {@link DynamicEndpointMessagePlaceholderTest}); only the
+ * {@code #class:} and {@code #property:} resolution of their runtime option values is brought in line, which is why
+ * those EIPs are exercised here with {@code #class:} values rather than placeholders.
  * <p/>
  * {@link DynamicEndpointMessageOptionLiteralLogTest} covers a real component with a generated configurer and typed
  * options.
@@ -77,16 +81,13 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
     }
 
     @Test
-    void toDOptionPlaceholderTokenIsResolvedInUriString() throws Exception {
-        // on camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is
-        // created (as before), so a {{...}} from the message is resolved; only #class:, #property: and RAW($simple{})
-        // in the option values are kept literal
+    void toDOptionPlaceholderTokenStaysLiteral() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:a?option={{secretTarget}}");
 
         assertMockEndpointsSatisfied();
-        assertThat(SinkEndpoint.lastOption).isEqualTo("resolved");
+        assertThat(SinkEndpoint.lastOption).isEqualTo("{{secretTarget}}");
     }
 
     @Test
@@ -126,15 +127,13 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
     }
 
     @Test
-    void toDOptionNamePlaceholderIsResolvedInUriString() {
-        // on camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is
-        // created (as before), so a {{...}} from the message is resolved; only #class:, #property: and RAW($simple{})
-        // in the option values are kept literal
+    void toDOptionNamePlaceholderIsNotResolved() {
+        // the option names of the uri were resolved when the route was built, a name computed from the message is not
         Exchange out = template.send("direct:tod",
                 e -> e.getMessage().setHeader("target", "sink:n?{{optionName}}=hello"));
 
-        assertThat(out.getException()).isNull();
-        assertThat(SinkEndpoint.lastOption).isEqualTo("hello");
+        assertThat(out.getException()).isInstanceOf(ResolveEndpointFailedException.class);
+        assertThat(SinkEndpoint.lastOption).isNull();
     }
 
     @Test
@@ -176,13 +175,13 @@ class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
     }
 
     @Test
-    void toDSelfBindingComponentPropertyReferenceStaysLiteral() throws Exception {
+    void toDSelfBindingComponentPlaceholderStaysLiteral() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:b?option=#property:secretTarget");
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:b?option={{secretTarget}}");
 
         assertMockEndpointsSatisfied();
-        assertThat(SinkEndpoint.lastOption).isEqualTo("#property:secretTarget");
+        assertThat(SinkEndpoint.lastOption).isEqualTo("{{secretTarget}}");
     }
 
     @Test

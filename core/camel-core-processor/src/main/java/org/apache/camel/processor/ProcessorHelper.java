@@ -53,9 +53,9 @@ final class ProcessorHelper {
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint. Property placeholders in the computed uri string are still resolved
-            // here (documented recipientList/routingSlip/dynamicRouter/pollEnrich behaviour), but the uri was computed
-            // from the message, so its option values are bound as literal text: no #class: or #property: resolution
-            // on the option values; registry references (#bean:, #type:) are still resolved (CAMEL-27160).
+            // here (documented recipientList/routingSlip/dynamicRouter behaviour), but the uri was computed from the
+            // message, so its option values are bound as literal text: no #class: or #property: resolution on the
+            // option values; registry references (#bean:, #type:) are still resolved (CAMEL-27160).
             try {
                 String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(ecc, uri);
                 return NormalizedUri.newNormalizedUri(resolved, false, true);
