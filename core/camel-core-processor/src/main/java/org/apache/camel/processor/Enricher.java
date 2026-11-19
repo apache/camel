@@ -37,6 +37,7 @@ import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
@@ -228,6 +229,8 @@ public class Enricher extends BaseProcessorSupport
         return sendDynamicProcessor.process(resourceExchange, new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
+                // whether the resource was used (aggregated, or discarded by the aggregation strategy)
+                boolean used = false;
                 if (!isAggregateOnException() && resourceExchange.isFailed()) {
                     // copy resource exchange onto original exchange (preserving pattern)
                     copyResultsWithoutCorrelationId(exchange, resourceExchange);
@@ -249,14 +252,26 @@ public class Enricher extends BaseProcessorSupport
                             }
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
-                            // handover any synchronization (if unit of work is not shared)
-                            if (resourceExchange != null && !isShareUnitOfWork()) {
-                                resourceExchange.getExchangeExtension().handoverCompletions(exchange);
-                            }
                         }
+                        used = true;
                     } catch (Exception e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+                        if (resourceExchange.getException() == null) {
+                            resourceExchange.setException(e);
+                        }
+                    }
+                }
+                if (!isShareUnitOfWork()) {
+                    if (used) {
+                        // handover any synchronization to complete together with the exchange
+                        resourceExchange.getExchangeExtension().handoverCompletions(exchange);
+                    } else {
+                        // the resource or the aggregation failed, so release the resource as failed now (such as
+                        // closing a response stream), and not together with the exchange, which may still complete
+                        // successfully (such as by redelivery)
+                        UnitOfWorkHelper.doneSynchronizations(resourceExchange,
+                                resourceExchange.getExchangeExtension().handoverCompletions());
                     }
                 }
 
