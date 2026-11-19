@@ -10010,23 +10010,25 @@ The demo Kamelets `bitcoin-source`, `chuck-norris-source`, `earthquake-source` a
 catalog. They are kept as examples in the `examples/kamelets` directory of the camel-kamelets repository. To run one, use
 `camel run route.yaml --local-kamelet-dir=examples/kamelets`.
 
+It removes the Apicurio Registry Kafka Kamelets, which were deprecated during 4.24. `kafka-source` and `kafka-sink`
+take a schema registry instead:
+
+[cols="3,1,3",options="header"]
+|===
+| Removed Kamelet | Records | Use instead
+| `kafka-not-secured-apicurio-registry-source` | Avro | `kafka-source` with `schemaRegistryVendor: apicurio`, `schemaFormat: avro` and `schemaRegistryUrl`
+| `kafka-apicurio-registry-not-secured-sink`, `kafka-not-secured-apicurio-registry-sink` | Avro | `kafka-sink` with `schemaRegistryVendor: apicurio`, `schemaFormat: avro` and `schemaRegistryUrl`
+| `kafka-apicurio-registry-not-secured-source`, `kafka-not-secured-apicurio-registry-json-source` | JSON Schema | Nothing yet. Use the `kafka` component with the Apicurio serde
+| `kafka-batch-apicurio-registry-source`, `kafka-batch-apicurio-registry-not-secured-source` | Avro, many per message | Nothing yet. Use the `kafka` component with the Apicurio serde, or `kafka-source`, which gives one record per message
+|===
+
+`schemaRegistryVendor: apicurio` uses the serde of Apicurio Registry 3.x, whereas the removed Kamelets used the 2.x serde
+and the `/apis/registry/v2` API. The Kafka Kamelets have no options yet to log in to the registry, such as the Keycloak
+login of `kafka-batch-apicurio-registry-source`.
+
 The public `KameletPrefixSchemeEnum` of `camel-kamelets-catalog` loses the entries of these Kamelets: `dropbox`, the
 `twitter_*` entries, `azure_storage_blob_changefeed`, `elasticsearch_search`, `google_functions`, the `kubernetes_*`
-entries, `bitcoin`, `chuck_norris`, `wttrin` and `http_secured`.
-
-=== Kamelets - deprecated Kamelets
-
-These Kamelets still work, and will be removed in a later release:
-
-[cols="2,2,3",options="header"]
-|===
-| Deprecated Kamelet | Use instead | What to change
-| `kafka-apicurio-registry-not-secured-sink`, `kafka-apicurio-registry-not-secured-source`,
-`kafka-batch-apicurio-registry-not-secured-source`, `kafka-batch-apicurio-registry-source`,
-`kafka-not-secured-apicurio-registry-json-source`, `kafka-not-secured-apicurio-registry-sink`,
-`kafka-not-secured-apicurio-registry-source`
-| `kafka-source`, `kafka-sink` and `kafka-batch-source` | Use the schema registry options of the Kafka Kamelets
-|===
+entries, `bitcoin`, `chuck_norris`, `wttrin`, `http_secured`, `kafka_apicurio` and `kafka_not_secured`.
 
 === Kamelets - renamed options
 
