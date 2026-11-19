@@ -68,6 +68,28 @@ public interface Aws2LambdaComponentBuilderFactory {
     
         
         /**
+         * How invokeFunction invokes the function. RequestResponse waits until
+         * the function has finished and gives its result. Event queues the
+         * event for an asynchronous invocation and answers at once with status
+         * code 202 and an empty body. DryRun only checks that the function can
+         * be invoked (status code 204). The CamelAwsLambdaInvocationType header
+         * overrides it per message. Not used with pojoRequest.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: RequestResponse
+         * Group: producer
+         * 
+         * @param invocationType the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder invocationType(java.lang.String invocationType) {
+            doSetProperty("invocationType", invocationType);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -88,6 +110,26 @@ public interface Aws2LambdaComponentBuilderFactory {
          */
         default Aws2LambdaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        
+        /**
+         * Set to Tail to get the last 4 KB of the execution log of a
+         * RequestResponse invocation in the CamelAwsLambdaLogResult header
+         * (base64-encoded). The CamelAwsLambdaLogType header overrides it per
+         * message. Not used with pojoRequest.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: None
+         * Group: producer
+         * 
+         * @param logType the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder logType(java.lang.String logType) {
+            doSetProperty("logType", logType);
             return this;
         }
     
@@ -460,7 +502,9 @@ public interface Aws2LambdaComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
+            case "invocationType": getOrCreateConfiguration((Lambda2Component) component).setInvocationType((java.lang.String) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "logType": getOrCreateConfiguration((Lambda2Component) component).setLogType((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Lambda2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;

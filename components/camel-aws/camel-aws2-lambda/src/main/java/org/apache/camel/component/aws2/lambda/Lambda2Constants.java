@@ -151,7 +151,9 @@ public interface Lambda2Constants {
               description = "The Amazon Resource Name (ARN) of the function.", javaType = "String")
     String FUNCTION_ARN = "CamelAwsLambdaFunctionArn";
     @Metadata(label = "invokeFunction",
-              description = "The HTTP status code of the function invocation.", javaType = "Integer")
+              description = "The HTTP status code of the function invocation: 200 for RequestResponse, 202 for Event"
+                            + " and 204 for DryRun.",
+              javaType = "Integer")
     String STATUS_CODE = "CamelAwsLambdaStatusCode";
     @Metadata(label = "invokeFunction",
               description = "If present, indicates that an error occurred during function execution."
@@ -159,8 +161,20 @@ public interface Lambda2Constants {
               javaType = "String")
     String FUNCTION_ERROR = "CamelAwsLambdaFunctionError";
     @Metadata(label = "invokeFunction",
-              description = "The last 4 KB of the execution log.", javaType = "String")
+              description = "The last 4 KB of the execution log, base64-encoded. Lambda returns it only when the log type"
+                            + " is Tail (the logType option or the CamelAwsLambdaLogType header).",
+              javaType = "String")
     String LOG_RESULT = "CamelAwsLambdaLogResult";
+    @Metadata(label = "invokeFunction",
+              description = "How to invoke the function: RequestResponse, Event or DryRun. Overrides the invocationType"
+                            + " option.",
+              javaType = "String")
+    String INVOCATION_TYPE = "CamelAwsLambdaInvocationType";
+    @Metadata(label = "invokeFunction",
+              description = "Set to Tail to get the last 4 KB of the execution log in the CamelAwsLambdaLogResult header,"
+                            + " or None. Overrides the logType option.",
+              javaType = "String")
+    String LOG_TYPE = "CamelAwsLambdaLogType";
 
     // Function URL constants
     @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
