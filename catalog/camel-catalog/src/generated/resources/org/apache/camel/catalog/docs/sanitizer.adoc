@@ -293,8 +293,8 @@ Exchange sanitizer: process returned true, and its callback was called on anothe
 The second part of R3 looks for two threads that use the same exchange at the same time, as KCSAN does in the Linux
 kernel. The routing engine uses an exchange at known points: a step is called, the callback of a step continues the
 exchange, and an on completion runs. At a sample of these points the thread opens a short watch window on the exchange
-and pauses in it. If another thread comes to one of these points of the same exchange during the window, both are
-reported, each with its thread and stack (`USED_BY_TWO_THREADS`). A thread that only waits, such as a caller that waits
+and pauses in it. If another thread comes to a point of the same exchange during the window, both are reported.
+Each report names the thread and its stack (`USED_BY_TWO_THREADS`). A thread that only waits, such as a caller that waits
 for its task, is at no point, so it is not reported. The return of `process` is not a point: after an asynchronous
 processor handed the exchange on, its caller only unwinds, while the thread that got the exchange may already call the
 callback.
