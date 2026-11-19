@@ -10,3 +10,16 @@
 *Since Camel {since}*
 
 The Redis component provides an `AggregationStrategy` to use Redis as the backend datastore.
+
+== Storage format
+
+The `RedisAggregationRepository` stores each exchange in a Redis hash: the field is the correlation key as a string,
+and the value is the exchange (its body, headers, exchange properties and variables) in Java serialization.
+The codec configured on a `RedissonClient` given with the `redisson` option is not used for these hashes.
+
+When it reads an exchange back, the repository only accepts the classes allowed by the `deserializationFilter` option,
+a pattern in the syntax of the `jdk.serialFilter` system property. When the option is not set, the JVM-wide
+`jdk.serialFilter` applies if it is set, otherwise a default filter that allows the `java`, `javax` and
+`org.apache.camel` packages (except `java.net`) and rejects the other classes. Set the option when the message bodies or
+headers of the aggregated exchanges are instances of your own classes, for example
+`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;!*`.

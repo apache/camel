@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.redis.processor.aggregate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +35,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceSupport;
@@ -40,12 +47,21 @@ import org.redisson.api.RScript;
 import org.redisson.api.RTransaction;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.TransactionOptions;
+import org.redisson.client.codec.ByteArrayCodec;
+import org.redisson.client.codec.Codec;
+import org.redisson.client.codec.StringCodec;
+import org.redisson.codec.CompositeCodec;
 import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.AggregationRepository} using Redis as store.
+ * <p/>
+ * The exchanges are stored in Redis hashes: the field is the correlation key (or the exchange id in the persistence
+ * map) as a string, and the value is the {@link DefaultExchangeHolder} of the exchange in Java serialization. The
+ * values are read back through an {@link java.io.ObjectInputFilter}, see {@link #setDeserializationFilter(String)}. The
+ * codec configured on the {@link RedissonClient} is not used for these hashes.
  */
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Redis to store exchanges.",
@@ -56,8 +72,19 @@ public class RedisAggregationRepository extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(RedisAggregationRepository.class);
     private static final String COMPLETED_SUFFIX = "-completed";
 
-    private Map<String, DefaultExchangeHolder> cache;
-    private Map<String, DefaultExchangeHolder> persistedCache;
+    /**
+     * The codec of the hashes: the fields are strings and the values are the serialized {@link DefaultExchangeHolder}.
+     */
+    private static final Codec CODEC
+            = new CompositeCodec(StringCodec.INSTANCE, ByteArrayCodec.INSTANCE, ByteArrayCodec.INSTANCE);
+
+    /**
+     * The number of entries read per HSCAN call when checking the stored entries at startup.
+     */
+    private static final int SCAN_COUNT = 100;
+
+    private RMap<String, byte[]> cache;
+    private RMap<String, byte[]> persistedCache;
     private boolean shutdownRedisson;
 
     /**
@@ -72,8 +99,8 @@ public class RedisAggregationRepository extends ServiceSupport
      * Returns 1 on success and 0 if the active exchange does not match the expected holder.
      *
      * <p>
-     * The comparison uses serialized bytes. Therefore, the configured Redisson codec must produce identical serialized
-     * bytes for the same holder when storing and comparing it.
+     * The comparison uses serialized bytes. Therefore, the serialization must produce identical bytes for the same
+     * holder when storing and comparing it.
      *
      * <p>
      * The {@code HSET} into the recovery map is intentionally placed before the {@code HDEL} from the active map. Redis
@@ -123,6 +150,14 @@ public class RedisAggregationRepository extends ServiceSupport
     @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " the exchanges read back from Redis. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when the message bodies or headers stored in the repository are instances"
+                            + " of your own classes.")
+    private String deserializationFilter;
 
     public RedisAggregationRepository() {
     }
@@ -161,18 +196,18 @@ public class RedisAggregationRepository extends ServiceSupport
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
-            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
-            final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
+            byte[] holder = marshallHolder(newExchange);
+            final byte[] misbehaviorHolder = cache.putIfAbsent(key, holder);
             if (misbehaviorHolder != null) {
-                Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
+                Exchange misbehaviorEx = unmarshallExchange(camelContext, mapName, key, misbehaviorHolder);
                 LOG.warn(
                         "Optimistic locking failed for exchange with key {}: RMap#putIfAbsent returned Exchange with ID {}, while it's expected no exchanges to be returned",
                         key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw new OptimisticLockingException();
             }
         } else {
-            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
+            byte[] oldHolder = marshallHolder(oldExchange);
+            byte[] newHolder = marshallHolder(newExchange);
             if (!cache.replace(key, oldHolder, newHolder)) {
                 LOG.warn(
                         "Optimistic locking failed for exchange with key {}: RMap#replace returned no Exchanges, while it's expected to replace one",
@@ -190,12 +225,12 @@ public class RedisAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        byte[] newHolder = marshallHolder(exchange);
         RLock lock = redisson.getLock(mapName + "-lock-" + key);
         try {
             lock.lock();
-            DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
-            return unmarshallExchange(camelContext, oldHolder);
+            byte[] oldHolder = cache.put(key, newHolder);
+            return unmarshallExchange(camelContext, mapName, key, oldHolder);
         } finally {
             LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             lock.unlock();
@@ -220,7 +255,8 @@ public class RedisAggregationRepository extends ServiceSupport
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
-        return useRecovery ? unmarshallExchange(camelContext, persistedCache.get(exchangeId)) : null;
+        return useRecovery
+                ? unmarshallExchange(camelContext, persistenceMapName, exchangeId, persistedCache.get(exchangeId)) : null;
     }
 
     public boolean isOptimistic() {
@@ -310,7 +346,7 @@ public class RedisAggregationRepository extends ServiceSupport
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, cache.get(key));
+        return unmarshallExchange(camelContext, mapName, key, cache.get(key));
     }
 
     /**
@@ -334,9 +370,24 @@ public class RedisAggregationRepository extends ServiceSupport
         this.allowSerializedHeaders = allowSerializedHeaders;
     }
 
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing the exchanges read back from Redis. When not set, the JVM-wide {@code jdk.serialFilter} is used if
+     * present, otherwise a conservative default filter is applied, see
+     * {@link org.apache.camel.support.DeserializationFilterHelper#DEFAULT_DESERIALIZATION_FILTER}. Widen this pattern
+     * when the message bodies or headers stored in the repository are instances of your own classes.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
+    }
+
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        byte[] holder = marshallHolder(exchange);
 
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.",
@@ -346,16 +397,17 @@ public class RedisAggregationRepository extends ServiceSupport
                 LOG.trace("Atomically moving exchange with ID {} for key {} into recoverable storage.",
                         exchange.getExchangeId(), key);
 
-                RScript script = redisson.getScript();
+                // the arguments are passed as bytes, encoded as the fields and values of the hashes
+                RScript script = redisson.getScript(ByteArrayCodec.INSTANCE);
 
                 Long result = script.eval(
                         RScript.Mode.READ_WRITE,
                         OPTIMISTIC_REMOVE_SCRIPT,
                         RScript.ReturnType.LONG,
                         List.of(mapName, persistenceMapName),
-                        key,
+                        key.getBytes(StandardCharsets.UTF_8),
                         holder,
-                        exchange.getExchangeId());
+                        exchange.getExchangeId().getBytes(StandardCharsets.UTF_8));
 
                 if (result == null || result.longValue() != 1L) {
                     LOG.warn(
@@ -387,8 +439,8 @@ public class RedisAggregationRepository extends ServiceSupport
                 RTransaction transaction = redisson.createTransaction(tOpts);
 
                 try {
-                    RMap<String, DefaultExchangeHolder> tCache = transaction.getMap(mapName);
-                    RMap<String, DefaultExchangeHolder> tPersistentCache = transaction.getMap(persistenceMapName);
+                    RMap<String, byte[]> tCache = transaction.getMap(mapName, CODEC);
+                    RMap<String, byte[]> tPersistentCache = transaction.getMap(persistenceMapName, CODEC);
 
                     tCache.remove(key);
                     LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
@@ -477,11 +529,44 @@ public class RedisAggregationRepository extends ServiceSupport
             }
         }
 
-        cache = redisson.getMap(mapName);
+        cache = redisson.getMap(mapName, CODEC);
+        warnUnreadableEntries(cache, mapName);
 
         if (useRecovery) {
-            persistedCache = redisson.getMap(persistenceMapName);
+            persistedCache = redisson.getMap(persistenceMapName, CODEC);
+            warnUnreadableEntries(persistedCache, persistenceMapName);
         }
+    }
+
+    /**
+     * Logs a WARN when the hash has entries that are not serialized exchanges, such as the entries stored by an older
+     * version of this repository, which are not read. Only the first bytes of each value are checked.
+     */
+    private void warnUnreadableEntries(RMap<String, byte[]> map, String name) {
+        try {
+            long count = 0;
+            for (Map.Entry<String, byte[]> entry : map.entrySet(SCAN_COUNT)) {
+                if (!isSerializedObject(entry.getValue())) {
+                    count++;
+                }
+            }
+            if (count > 0) {
+                LOG.warn("The Redis hash {} has entries that are not exchanges serialized by this version of"
+                         + " RedisAggregationRepository (count: {}). These entries are ignored: entries stored by an"
+                         + " older Camel version are not read. See the camel-redis section of the Camel 4.24 upgrade"
+                         + " guide.",
+                        name, count);
+            }
+        } catch (Exception e) {
+            LOG.debug("Cannot check the entries of the Redis hash {}", name, e);
+        }
+    }
+
+    /**
+     * Whether the value starts with the magic number 0xACED of a Java serialization stream.
+     */
+    private static boolean isSerializedObject(byte[] value) {
+        return value != null && value.length >= 2 && value[0] == (byte) 0xAC && value[1] == (byte) 0xED;
     }
 
     @Override
@@ -499,5 +584,54 @@ public class RedisAggregationRepository extends ServiceSupport
             DefaultExchangeHolder.unmarshal(exchange, holder);
         }
         return exchange;
+    }
+
+    /**
+     * Serializes the {@link DefaultExchangeHolder} of the exchange, as stored in Redis.
+     */
+    protected byte[] marshallHolder(Exchange exchange) {
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(holder);
+            out.flush();
+            return bytes.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeCamelException(
+                    "Cannot serialize the exchange with ID " + exchange.getExchangeId() + " to store it in Redis", e);
+        }
+    }
+
+    /**
+     * Deserializes a value read from Redis into an exchange, applying the deserialization filter.
+     *
+     * @param  camelContext the camel context
+     * @param  name         the name of the Redis hash the value was read from
+     * @param  key          the field of the value in the hash
+     * @param  value        the value, may be null
+     * @return              the exchange, or null when the value is null
+     */
+    protected Exchange unmarshallExchange(CamelContext camelContext, String name, String key, byte[] value) {
+        if (value == null) {
+            return null;
+        }
+        if (!isSerializedObject(value)) {
+            throw new RuntimeCamelException(
+                    "The value of " + key + " in the Redis hash " + name + " is not a serialized exchange");
+        }
+        Object answer;
+        try (ObjectInputStream in
+                = new CamelObjectInputStream(new ByteArrayInputStream(value), camelContext, deserializationFilter)) {
+            answer = in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeCamelException(
+                    "Cannot deserialize the exchange of " + key + " in the Redis hash " + name, e);
+        }
+        if (!(answer instanceof DefaultExchangeHolder holder)) {
+            throw new RuntimeCamelException(
+                    "The value of " + key + " in the Redis hash " + name + " is not a serialized exchange but "
+                                            + (answer != null ? answer.getClass().getName() : "null"));
+        }
+        return unmarshallExchange(camelContext, holder);
     }
 }

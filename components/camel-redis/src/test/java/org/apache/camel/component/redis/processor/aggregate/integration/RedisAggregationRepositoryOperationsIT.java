@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.redis.processor.aggregate.integration;
 
+import java.io.InvalidClassException;
+import java.net.URI;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.redis.processor.aggregate.RedisAggregationRepository;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.support.DefaultExchange;
@@ -34,6 +37,7 @@ import org.redisson.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -67,6 +71,39 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
             Exchange result = repo.get(context, "key1");
             assertNotNull(result);
             assertEquals("testBody", result.getIn().getBody(String.class));
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testBodyOfClassOutsideTheDeserializationFilterIsNotRead() {
+        RedisAggregationRepository repo = createRepo("deserializationFilterDefault", false);
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody(URI.create("http://localhost/orders"));
+            repo.add(context, "key1", exchange);
+
+            RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> repo.get(context, "key1"));
+            assertInstanceOf(InvalidClassException.class, e.getCause());
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testDeserializationFilterAllowsClass() {
+        RedisAggregationRepository repo
+                = new RedisAggregationRepository("deserializationFilterCustom", service.getServiceAddress(), false);
+        repo.setDeserializationFilter("java.net.URI;java.**;org.apache.camel.**;!*");
+        repo.start();
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody(URI.create("http://localhost/orders"));
+            repo.add(context, "key1", exchange);
+
+            Exchange result = repo.get(context, "key1");
+            assertEquals(URI.create("http://localhost/orders"), result.getIn().getBody());
         } finally {
             repo.stop();
         }

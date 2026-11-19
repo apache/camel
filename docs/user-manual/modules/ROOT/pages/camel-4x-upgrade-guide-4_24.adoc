@@ -7989,6 +7989,26 @@ before upgrading. Existing aggregation data may need to be migrated to the new R
 The repository now validates this configuration during startup and throws an
 `IllegalArgumentException` if the keys belong to different hash slots.
 
+=== camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
+
+`RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
+key (or the exchange id) as a plain string field, and reads them back through an `ObjectInputFilter`. Before, the
+fields and values were encoded with the codec of the Redisson client, by default the Redisson `Kryo5Codec`. The codec
+of a `RedissonClient` given with the `redisson` option is no longer used for these hashes.
+
+The new option `deserializationFilter` sets the filter pattern, in the syntax of the `jdk.serialFilter` system
+property. When it is not set, the JVM-wide `jdk.serialFilter` applies if it is set, otherwise the default filter
+allows the `java`, `javax` and `org.apache.camel` packages, except `java.net`, and rejects the other classes. If the
+message bodies or headers of the aggregated exchanges are instances of your own classes, add their packages to the
+pattern, for example `!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;!*`. As Java serialization
+writes the whole object graph, the objects that a body or header value refers to must be `java.io.Serializable` too.
+
+The exchanges stored by an older version are not read: they stay in Redis, but the repository does not find them, so
+these aggregations do not complete and these completed exchanges are not recovered. When the repository starts, it
+logs a WARN with the number of such entries in each of its hashes. Complete the aggregations in progress, and let the
+recovery of the completed exchanges finish, before upgrading. Otherwise, remove the hashes of the repository
+(`mapName` and the persistence map, by default `mapName` with the suffix `-completed`) from Redis.
+
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with
