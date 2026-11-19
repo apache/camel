@@ -10093,6 +10093,10 @@ the option of the Kamelet, or the input header it documents (such as `ce-issueKe
 * `http-sink` no longer sends an `Authorization` or `Proxy-Authorization` header that is on the message, such as the
   one of the caller of `webhook-source`. Log in with the options of the Kamelet. For a token that differs for each
   message, use the `http` component directly.
+* `azure-functions-sink` sends the function key in the `x-functions-key` header instead of the `code` query
+  parameter, and removes the header after the call. The key is no longer in the address of the request, nor in the
+  logs of a proxy. Azure Functions accepts the key in either place, so the function needs no change, but a gateway in
+  front of it must pass the header on.
 * The passwords, keys and tokens that a Kamelet puts into the address of an endpoint are passed in `RAW()`, so a value
   with `&`, `+` or `=` is sent whole. A value that was URL-encoded to work around this, such as `%2B` for `+`, is now
   sent literally and must be changed back to the plain value.
