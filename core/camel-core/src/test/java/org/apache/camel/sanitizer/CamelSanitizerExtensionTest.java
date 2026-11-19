@@ -121,6 +121,17 @@ class CamelSanitizerExtensionTest {
     }
 
     @Test
+    void aSamplingBelowMinusOneFailsTheClass() {
+        // as camel.sanitizer.overlapSampling below 0 fails the start of the context, -5 is not taken as the default
+        TestExecutionSummary summary = run(SamplingBelowMinusOne.class);
+        assertEquals(0, summary.getTestsSucceededCount());
+        assertEquals(1, summary.getFailures().size(), () -> summary.getFailures().toString());
+        Throwable failure = summary.getFailures().get(0).getException();
+        assertInstanceOf(IllegalArgumentException.class, failure);
+        assertTrue(failure.getMessage().contains("overlapSampling = -5"), failure::getMessage);
+    }
+
+    @Test
     void theThreadIsNotMarkedAfterTheClass() {
         run(BreaksTheRule.class);
         // the classes ran on this thread; their mark is gone, so a context built here now is not tied to them
@@ -210,9 +221,22 @@ class CamelSanitizerExtensionTest {
     static class WatchWindowsByDefault extends ContextTestSupport {
         @Test
         void watchesAt1In100Points() {
-            // unless camel.sanitizer.overlapSampling is set for the run
-            assertEquals(Integer.getInteger("camel.sanitizer.overlapSampling", 100),
-                    Sanitizer.get(context).getOverlaps().getSampling());
+            // unless camel.sanitizer.overlapSampling is set for the run (0 turns the windows off)
+            int sampling = Integer.getInteger("camel.sanitizer.overlapSampling", 100);
+            Overlaps overlaps = Sanitizer.get(context).getOverlaps();
+            if (sampling == 0) {
+                assertNull(overlaps);
+            } else {
+                assertEquals(sampling, overlaps.getSampling());
+            }
+        }
+    }
+
+    @CamelSanitizer(overlapSampling = -5)
+    static class SamplingBelowMinusOne extends ContextTestSupport {
+        @Test
+        void neverRuns() {
+            // the class fails before its tests
         }
     }
 

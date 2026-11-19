@@ -98,13 +98,15 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
             // of a project: it acts only with the CI switch (camel.sanitizer.enabled=true)
             return;
         }
+        // read first: a value below -1 fails the class before the extension takes it over
+        int overlapSampling = overlapSampling(context.getRequiredTestClass());
         ExtensionContext.Store store = context.getStore(NAMESPACE);
         // the extension can be registered twice (the annotation and the automatic detection): the first one acts
         if (store.getOrComputeIfAbsent(OWNER + context.getUniqueId(), k -> this) != this) {
             return;
         }
         SanitizerTestSession session = SanitizerTestSession.open(context.getRequiredTestClass().getName(),
-                overlapSampling(context.getRequiredTestClass()));
+                overlapSampling);
         store.put(SESSION, session);
         store.put(MARKED_BEFORE + context.getUniqueId(), new SanitizerTestSession[] { session.mark() });
         store.put(BETWEEN_TESTS + context.getUniqueId(), Collections.synchronizedList(new ArrayList<SanitizerViolation>()));
@@ -202,12 +204,21 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
     /**
      * The sampling of the watch windows of rule R3 that the nearest {@link CamelSanitizer} of the class (its own or
      * inherited, or of an enclosing class) sets, or -1.
+     *
+     * @throws IllegalArgumentException if it is below -1, as {@code camel.sanitizer.overlapSampling} is rejected below
+     *                                  0
      */
     private static int overlapSampling(Class<?> testClass) {
         for (Class<?> c = testClass; c != null; c = c.getEnclosingClass()) {
             Optional<CamelSanitizer> found = AnnotationSupport.findAnnotation(c, CamelSanitizer.class);
             if (found.isPresent()) {
-                return found.get().overlapSampling();
+                int sampling = found.get().overlapSampling();
+                if (sampling < -1) {
+                    throw new IllegalArgumentException(
+                            "@CamelSanitizer(overlapSampling = " + sampling + ") of " + c.getName()
+                                                       + " must be 0 or more, or -1 for the default");
+                }
+                return sampling;
             }
         }
         return -1;

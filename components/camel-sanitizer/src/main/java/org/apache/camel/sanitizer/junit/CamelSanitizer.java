@@ -64,7 +64,8 @@ public @interface CamelSanitizer {
      * routing engine uses an exchange, and its thread pauses in it ({@code camel.sanitizer.overlapWindow}). {@code 0}
      * turns them off, such as for a class with a short timeout or a throttler that the pauses would break. The default,
      * {@code -1}, is {@code camel.sanitizer.overlapSampling} when it is set, else {@code 100}. A value set here wins
-     * over {@code camel.sanitizer.overlapSampling}.
+     * over {@code camel.sanitizer.overlapSampling}. A value below -1 fails the test class, as
+     * {@code camel.sanitizer.overlapSampling} below 0 fails the start of the context.
      */
     int overlapSampling() default -1;
 }
