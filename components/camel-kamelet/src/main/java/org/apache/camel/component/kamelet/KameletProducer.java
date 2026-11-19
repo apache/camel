@@ -174,7 +174,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
         try {
             ServiceHelper.startService(processor);
             return processor;
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // no transformer for the type: as the output type of the route did, convert a Java type with the type
             // converter, and take any other body as already of the type
             DataType dataType = new DataType(type);
