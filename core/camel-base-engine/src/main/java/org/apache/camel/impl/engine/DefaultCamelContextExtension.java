@@ -269,8 +269,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint getEndpoint(NormalizedEndpointUri uri) {
-        String rawUri = uri instanceof NormalizedUri nu ? nu.getRawUri() : null;
-        return camelContext.doGetEndpoint(uri.getUri(), rawUri, null, true, false);
+        NormalizedUri nu = uri instanceof NormalizedUri n ? n : null;
+        String rawUri = nu != null ? nu.getRawUri() : null;
+        boolean literal = nu != null && nu.isLiteralOptionBinding();
+        return camelContext.doGetEndpoint(uri.getUri(), rawUri, null, true, false, literal);
     }
 
     @Override
@@ -280,14 +282,18 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
-        String rawUri = uri instanceof NormalizedUri nu ? nu.getRawUri() : null;
-        return camelContext.doGetEndpoint(uri.getUri(), rawUri, null, true, true);
+        NormalizedUri nu = uri instanceof NormalizedUri n ? n : null;
+        String rawUri = nu != null ? nu.getRawUri() : null;
+        boolean literal = nu != null && nu.isLiteralOptionBinding();
+        return camelContext.doGetEndpoint(uri.getUri(), rawUri, null, true, true, literal);
     }
 
     @Override
     public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
-        String rawUri = uri instanceof NormalizedUri nu ? nu.getRawUri() : null;
-        return camelContext.doGetEndpoint(uri.getUri(), rawUri, parameters, true, false);
+        NormalizedUri nu = uri instanceof NormalizedUri n ? n : null;
+        String rawUri = nu != null ? nu.getRawUri() : null;
+        boolean literal = nu != null && nu.isLiteralOptionBinding();
+        return camelContext.doGetEndpoint(uri.getUri(), rawUri, parameters, true, false, literal);
     }
 
     @Override

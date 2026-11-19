@@ -38,9 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code recipientList} / {@code routingSlip} / {@code dynamicRouter} compute their recipients entirely from a runtime
  * expression (no static template resolved at build time), so they continue to resolve {@code {{...}}} in those
  * recipients - this is relied upon e.g. by routes carrying a {@code {{port}}}-style placeholder in the recipient
- * header, and must be preserved. {@code pollEnrich} does resolve its static uri at build time, but its per-message
- * recipient goes through the same shared resolution path, so it too still resolves {@code {{...}}} (left unchanged in
- * this PR).
+ * header, and must be preserved. {@code pollEnrich} resolves the placeholders of its expression text at build time, so
+ * its per-message recipient is not re-resolved either, like {@code toD} and {@code enrich} (CAMEL-27160).
  */
 class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
 
@@ -105,15 +104,29 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
     }
 
     @Test
-    void pollEnrichPlaceholderInHeaderStillResolved() throws Exception {
-        // pollEnrich's per-message recipient goes through the shared resolution path, so {{...}} is still resolved
+    void pollEnrichPlaceholderInHeaderNotResolved() throws Exception {
         template.sendBody("seda:resolved", "SEED");
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:pe", "trigger", "target", "seda:{{secretTarget}}");
 
         assertMockEndpointsSatisfied();
-        // resolved -> pollEnrich drained the seed from seda:resolved (not from the literal seda:{{secretTarget}})
+        // not resolved -> pollEnrich polled the literal seda:{{secretTarget}} and left the seed untouched
+        SedaEndpoint seda = context.getEndpoint("seda:resolved", SedaEndpoint.class);
+        assertThat(seda.getQueue()).hasSize(1);
+    }
+
+    @Test
+    void pollEnrichPlaceholderInRouteTextIsResolved() throws Exception {
+        // control: a placeholder written in the expression text of pollEnrich is resolved when the route is created
+        template.sendBody("seda:resolved", "SEED");
+        template.sendBody("seda:resolved", "SEED2");
+        getMockEndpoint("mock:done").expectedBodiesReceived("SEED", "SEED2");
+
+        template.sendBodyAndHeader("direct:peStaticSimple", "trigger", "suffix", "");
+        template.sendBody("direct:peStaticConstant", "trigger");
+
+        assertMockEndpointsSatisfied();
         SedaEndpoint seda = context.getEndpoint("seda:resolved", SedaEndpoint.class);
         assertThat(seda.getQueue()).isEmpty();
     }
@@ -147,6 +160,9 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
                 from("direct:rs").routingSlip(header("target")).to("mock:done");
                 from("direct:dr").dynamicRouter(method(DynamicEndpointMessagePlaceholderTest.this, "route"));
                 from("direct:pe").pollEnrich().simple("${header.target}").timeout(2000).end().to("mock:done");
+                from("direct:peStaticSimple").pollEnrich().simple("seda:{{secretTarget}}${header.suffix}").timeout(2000).end()
+                        .to("mock:done");
+                from("direct:peStaticConstant").pollEnrich("seda:{{secretTarget}}", 2000).to("mock:done");
                 from("direct:staticTemplate").toD("mock:{{secretTarget}}");
             }
         };
