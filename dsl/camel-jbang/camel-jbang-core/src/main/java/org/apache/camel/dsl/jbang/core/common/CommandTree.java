@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,14 @@ import org.aesh.command.impl.internal.ProcessedCommand;
 import org.aesh.command.impl.parser.CommandLineParser;
 import org.aesh.command.impl.registry.AeshCommandRegistryBuilder;
 import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.metadata.CommandMetadataProvider;
+import org.aesh.command.metadata.MetadataProviderRegistry;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionGroup;
+import org.aesh.command.option.OptionList;
 import org.aesh.command.registry.CommandRegistry;
 import org.aesh.complete.AeshCompleteOperation;
 import org.aesh.terminal.formatting.TerminalString;
@@ -327,6 +336,7 @@ public final class CommandTree {
      * metadata of the commands.
      */
     public ProcessedCommand<?, ?> processedCommand() throws Exception {
+        checkMetadataOf(getCommand());
         return newBuilder().create(getCommand(), getName(), aliasesOf(getCommand()))
                 .getParser().getProcessedCommand();
     }
@@ -366,6 +376,7 @@ public final class CommandTree {
     private CommandContainer<CommandInvocation> container(
             AeshCommandContainerBuilder<CommandInvocation> builder, String[] args)
             throws Exception {
+        checkMetadataOf(getCommand());
         CommandContainer<CommandInvocation> container
                 = builder.create(getCommand(), getName(), aliases != null ? aliases : aliasesOf(getCommand()));
         if (helpGroup != null) {
@@ -391,13 +402,56 @@ public final class CommandTree {
     }
 
     private static String[] aliasesOf(Object command) {
+        CommandMetadataProvider<?> provider = providerOf(command);
+        if (provider != null) {
+            return provider.commandAliases();
+        }
         CommandDefinition definition = definitionOf(command.getClass());
         return definition != null ? definition.aliases() : new String[0];
     }
 
     private static String nameOf(Object command) {
+        CommandMetadataProvider<?> provider = providerOf(command);
+        if (provider != null) {
+            return provider.commandName();
+        }
         CommandDefinition definition = definitionOf(command.getClass());
         return definition != null ? definition.name() : null;
+    }
+
+    /**
+     * Fails when aesh would use the generated metadata of a super class for the command (aesh looks up the class, and
+     * then its super classes), while the command has options of its own, which aesh would then not know: such as a
+     * plugin command that extends a command of the CLI. See {@link CommandMetadataRegistry}.
+     */
+    public static void checkMetadataOf(Object command) {
+        CommandMetadataProvider<?> provider = providerOf(command);
+        if (provider == null || provider.commandType() == command.getClass()) {
+            return;
+        }
+        for (Class<?> c = command.getClass(); c != null && c != provider.commandType(); c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                if (field.isAnnotationPresent(Option.class) || field.isAnnotationPresent(OptionList.class)
+                        || field.isAnnotationPresent(OptionGroup.class) || field.isAnnotationPresent(Argument.class)
+                        || field.isAnnotationPresent(Arguments.class) || field.isAnnotationPresent(Mixin.class)) {
+                    throw new IllegalStateException(
+                            "The command " + command.getClass().getName() + " has options of its own (" + field.getName()
+                                                    + "), but no generated aesh metadata, so aesh would use the metadata of "
+                                                    + provider.commandType().getName()
+                                                    + ", which does not have them: add the class of the command it extends to"
+                                                    + " the excluded classes of the CommandMetadataRegistry");
+                }
+            }
+        }
+    }
+
+    /**
+     * The aesh metadata of the command, generated at compile time (see {@link CommandMetadataRegistry}): reading the
+     * annotation instead creates a proxy class at run time.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static CommandMetadataProvider<?> providerOf(Object command) {
+        return command instanceof Command ? MetadataProviderRegistry.getProvider((Class) command.getClass()) : null;
     }
 
     /**

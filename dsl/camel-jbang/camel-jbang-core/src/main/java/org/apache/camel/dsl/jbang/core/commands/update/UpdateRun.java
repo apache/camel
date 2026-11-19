@@ -45,7 +45,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 public class UpdateRun extends CamelCommand {
 
     @Mixin
-    private CamelUpdateMixin updateMixin;
+    CamelUpdateMixin updateMixin;
 
     // the directory of the Maven project to update
     Path projectDir = Path.of(".");

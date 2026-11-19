@@ -71,7 +71,7 @@ public class TransformRoute extends CamelCommand {
 
     @Option(name = "output",
             description = "File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard.")
-    private String output;
+    String output;
 
     @Option(name = "format",
             description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa."

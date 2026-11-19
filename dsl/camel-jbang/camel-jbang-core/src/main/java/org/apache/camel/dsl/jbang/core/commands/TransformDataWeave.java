@@ -36,17 +36,17 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 public class TransformDataWeave extends CamelCommand {
 
     @Option(name = "input", shortName = 'i', description = "Input .dwl file or directory containing .dwl files")
-    private String input;
+    String input;
 
     @Option(name = "output", shortName = 'o', description = "Output .ds file or directory (defaults to stdout)")
-    private String output;
+    String output;
 
     @Option(name = "expression", shortName = 'e', description = "Inline DataWeave expression to convert")
-    private String expression;
+    String expression;
 
     @Option(name = "include-comments", hasValue = false, description = "Include conversion notes as comments in output",
             defaultValue = "true")
-    private boolean includeComments = true;
+    boolean includeComments = true;
 
     @Override
     public Integer doCall() throws Exception {

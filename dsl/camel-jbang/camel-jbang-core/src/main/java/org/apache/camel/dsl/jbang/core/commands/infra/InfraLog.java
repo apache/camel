@@ -52,7 +52,7 @@ public class InfraLog extends InfraBaseCommand {
 
     @Option(name = "lines", description = "The number of lines from the end of the log to use as starting offset",
             defaultValue = "50")
-    private int logLines = 50;
+    int logLines = 50;
 
     @Option(name = "follow", hasValue = false,
             description = "Keep following and outputting new log lines (press enter to exit)."

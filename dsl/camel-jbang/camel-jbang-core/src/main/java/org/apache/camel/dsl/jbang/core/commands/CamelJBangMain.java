@@ -75,6 +75,7 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandMetadataRegistry;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -102,6 +103,26 @@ public class CamelJBangMain implements Command<CommandInvocation> {
 
     private static CommandTree commandLine;
 
+    /**
+     * The aesh metadata of the commands of the CLI, which the aesh annotation processor generates: the packages of all
+     * the commands of camel-jbang-core. Export is extended by KubernetesExport, which has options of its own (and its
+     * super classes have no metadata, so they are not looked up).
+     */
+    static final CommandMetadataRegistry COMMAND_METADATA = new CommandMetadataRegistry(
+            CamelJBangMain.class.getClassLoader(),
+            Set.of("org.apache.camel.dsl.jbang.core.commands",
+                    "org.apache.camel.dsl.jbang.core.commands.action",
+                    "org.apache.camel.dsl.jbang.core.commands.catalog",
+                    "org.apache.camel.dsl.jbang.core.commands.config",
+                    "org.apache.camel.dsl.jbang.core.commands.infra",
+                    "org.apache.camel.dsl.jbang.core.commands.plugin",
+                    "org.apache.camel.dsl.jbang.core.commands.process",
+                    "org.apache.camel.dsl.jbang.core.commands.update",
+                    "org.apache.camel.dsl.jbang.core.commands.version"),
+            Set.of("org.apache.camel.dsl.jbang.core.commands.Export",
+                    "org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand",
+                    "org.apache.camel.dsl.jbang.core.commands.CamelCommand"));
+
     @Option(name = "version", shortName = 'V', hasValue = false, description = "Print version information and exit")
     boolean versionRequested;
 
@@ -125,6 +146,14 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         main.execute(args);
     }
 
+    /**
+     * Tells aesh to use the metadata of the commands that is generated at compile time, and not to look through every
+     * JAR on the class path for other registries of it.
+     */
+    public static void useCommandMetadata() {
+        MetadataProviderRegistry.useOnly(new InternalCommandMetadataRegistry(), COMMAND_METADATA);
+    }
+
     public void execute(String... args) {
         // set pid as system property as logging ${sys:pid} needs to be resolved on windows
         try {
@@ -134,9 +163,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             // ignore
         }
 
-        // the commands of the CLI have no generated aesh metadata, so aesh does not need to look through every JAR on
-        // the class path for registries of it (a plugin with generated metadata registers its own registry)
-        MetadataProviderRegistry.useOnly(new InternalCommandMetadataRegistry());
+        useCommandMetadata();
 
         args = expandArgumentFiles(args);
         if (args == null) {

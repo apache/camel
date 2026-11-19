@@ -39,7 +39,7 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 public class InfraRestart extends InfraBaseCommand {
 
     @Arguments(paramLabel = "service", required = true, description = "Service name (and optional implementation)")
-    private List<String> serviceName;
+    List<String> serviceName;
 
     @Option(name = "port", description = "Override the default port for the service")
     Integer port;

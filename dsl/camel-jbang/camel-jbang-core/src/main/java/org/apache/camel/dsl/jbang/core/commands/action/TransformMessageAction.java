@@ -63,27 +63,27 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     @Option(name = "source",
             description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
-    private String source;
+    String source;
 
     @Option(name = "language", description = "The language to use for message transformation")
-    private String language;
+    String language;
 
     @Option(name = "component", description = "The component to use for message transformation")
-    private String component;
+    String component;
 
     @Option(name = "dataformat", description = "The dataformat to use for message transformation")
-    private String dataformat;
+    String dataformat;
 
     @Option(name = "template",
             description = "The template to use for message transformation (prefix with file: to refer to loading template from file)")
-    private String template;
+    String template;
 
     @OptionList(name = "option", valueSeparator = OptionList.NO_SEPARATOR,
                 description = "Option for additional configuration of the used language, component or dataformat (key=value)")
     List<String> options;
 
     @Option(name = "output", description = "File to store output. If none provide then output is printed to console.")
-    private String output;
+    String output;
 
     @Option(name = "show-exchange-properties", hasValue = false,
             description = "Show exchange properties from the output message", defaultValue = "false")

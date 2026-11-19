@@ -31,15 +31,15 @@ import org.apache.camel.tooling.maven.MavenDownloader;
 public class MavenResolverMixin implements MavenResolverMixinSpec {
     @Option(name = "download", hasValue = false,
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)", defaultValue = "true")
-    boolean download = true;
+    public boolean download = true;
 
     @Option(name = "repo", aliases = { "repos" },
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    public String repos;
 
     @Option(name = "fresh", hasValue = false, description = "Make sure we use fresh (i.e. non-cached) resources",
             defaultValue = "false")
-    boolean fresh;
+    public boolean fresh;
 
     // not an option: set by an export through the Java API, else the camel.extra.repos system property is in use
     String extraRepos;

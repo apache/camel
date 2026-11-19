@@ -2009,7 +2009,10 @@ A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core
 built for Camel 4.24:
 
 * `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
-  `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
+  `commandLine.addSubcommand("mycommand", new CommandTree(main.command(new MyCommand())))`.
+* A command that extends `CamelCommand` has a no-arg constructor: the constructor with the `CamelJBangMain` is removed.
+  The main is set after the command is created, with `main.command(new MyCommand())`, and `getMain()` fails when it was
+  not set. The CLI generates the aesh metadata of its commands at compile time, which needs the no-arg constructor.
 * The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
   is an attribute of it; aesh wraps the lines of the footer at 80 columns, except indented lines such as examples, so
   keep a line of text within 80 columns), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with

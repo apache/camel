@@ -71,7 +71,7 @@ public class InfraRun extends InfraBaseCommand {
     private static final long STARTUP_POLL_INTERVAL = 200;
 
     @Arguments(paramLabel = "service", required = true, description = "Service name")
-    private List<String> serviceName;
+    List<String> serviceName;
 
     @Option(name = "log", hasValue = false, description = "Log container output to console")
     boolean logToStdout;

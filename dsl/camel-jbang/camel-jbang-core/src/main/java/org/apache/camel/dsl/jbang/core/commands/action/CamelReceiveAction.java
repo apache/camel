@@ -225,7 +225,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     @Option(name = "output", description = "Output format (${COMPLETION-CANDIDATES})",
             completer = OutputFormatCompletionCandidates.class)
-    private String output;
+    String output;
 
     @Mixin
     MavenResolverMixin mavenResolver;

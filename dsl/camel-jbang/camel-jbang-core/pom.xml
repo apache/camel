@@ -299,6 +299,56 @@
 
     <build>
         <plugins>
+            <!-- the aesh annotation processor generates the metadata of the commands at compile time (see
+                 CommandMetadataRegistry); not for the tests: aesh would also generate it for their sub classes of
+                 commands, which it cannot reach when they are private nested classes -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths combine.children="append">
+                        <path>
+                            <groupId>org.aesh</groupId>
+                            <artifactId>aesh-processor</artifactId>
+                            <version>${aesh-version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs combine.children="append">
+                        <arg>-AaeshNativeImageDisable=true</arg>
+                    </compilerArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <proc>none</proc>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- the CLI uses its own registry of the generated metadata (CommandMetadataRegistry): the one of the
+                 processor must not be found, as it has the metadata of commands that a plugin extends with options of
+                 its own (and it is in the package of the command the processor happens to see first) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>remove-aesh-metadata-registry</id>
+                        <!-- after the recompile execution (process-classes), which runs the processor again -->
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="${project.build.outputDirectory}/META-INF/aesh/registry"/>
+                                <delete file="${project.build.outputDirectory}/META-INF/services/org.aesh.command.metadata.MetadataRegistry"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- the tests jar has only the helpers the tests of the plugins use too -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
