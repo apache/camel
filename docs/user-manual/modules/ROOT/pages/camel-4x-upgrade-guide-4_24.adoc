@@ -10078,6 +10078,25 @@ Other changes to the messaging Kamelets:
   over from one Kamelet to the other. When both are set, the `CamelPulsarProducerMessageKey` header wins. Messages that
   had a `key` header for another purpose now use it as the Pulsar key.
 
+=== Kamelets - the component headers of the incoming message are removed
+
+The sink and action Kamelets that call a Camel component now remove the headers of that component from the incoming
+message as their first step. A header such as `CamelAwsS3Key`, `CamelJmsDestinationName` or `CamelJiraIssueKey` that
+comes with the message no longer changes what the Kamelet was configured to do. The headers that a Kamelet documents
+as input are kept, and its description names them, for example `CamelKafkaKey`, `CamelPulsarProducerMessageKey` and
+`CamelFileName` for the FTP, SFTP and SCP sinks. A route that set such a header on purpose before a sink must now use
+the option of the Kamelet, or the input header it documents (such as `ce-issueKey` for the Jira sinks or `key` for
+`redis-sink`), or call the Camel component directly.
+
+* `rest-openapi-sink`, `ogcapi-features-action` and `azure-functions-sink` remove the `CamelHttp*` and
+  `CamelRestHttp*` headers, as `http-sink` already did.
+* `http-sink` no longer sends an `Authorization` or `Proxy-Authorization` header that is on the message, such as the
+  one of the caller of `webhook-source`. Log in with the options of the Kamelet. For a token that differs for each
+  message, use the `http` component directly.
+* The passwords, keys and tokens that a Kamelet puts into the address of an endpoint are passed in `RAW()`, so a value
+  with `&`, `+` or `=` is sent whole. A value that was URL-encoded to work around this, such as `%2B` for `+`, is now
+  sent literally and must be changed back to the plain value.
+
 === Kamelets - other changes in behaviour
 
 * `solr-source` gives JSON text, with `Content-Type: application/json`, instead of a SolrJ object. A route that read
