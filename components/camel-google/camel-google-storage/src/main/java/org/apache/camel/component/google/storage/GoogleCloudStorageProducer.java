@@ -35,6 +35,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.CopyRequest;
+import com.google.cloud.storage.StorageClass;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -151,6 +152,10 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             if (cc != null) {
                 builder.setCacheControl(cc);
             }
+            StorageClass storageClass = determineObjectStorageClass(exchange);
+            if (storageClass != null) {
+                builder.setStorageClass(storageClass);
+            }
             BlobInfo blobInfo = builder.setMetadata(objectMetadata).build();
             // According to documentation, this internally uses a WriteChannel
             createdBlob = storage.createFrom(blobInfo, is);
@@ -160,6 +165,19 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         } finally {
             IOHelper.close(is);
         }
+    }
+
+    /**
+     * The storage class of the object to upload: the header, else the objectStorageClass option, else none (the default
+     * storage class of the bucket).
+     */
+    private StorageClass determineObjectStorageClass(Exchange exchange) {
+        StorageClass storageClass
+                = exchange.getIn().getHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, StorageClass.class);
+        if (storageClass == null) {
+            storageClass = getConfiguration().getObjectStorageClass();
+        }
+        return storageClass;
     }
 
     /**

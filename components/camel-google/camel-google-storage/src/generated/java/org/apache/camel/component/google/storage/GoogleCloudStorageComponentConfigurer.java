@@ -61,6 +61,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "moveAfterRead": getOrCreateConfiguration(target).setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "objectname":
         case "objectName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectstorageclass":
+        case "objectStorageClass": getOrCreateConfiguration(target).setObjectStorageClass(property(camelContext, com.google.cloud.storage.StorageClass.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
@@ -117,6 +119,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "moveAfterRead": return boolean.class;
         case "objectname":
         case "objectName": return java.lang.String.class;
+        case "objectstorageclass":
+        case "objectStorageClass": return com.google.cloud.storage.StorageClass.class;
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
         case "prefix": return java.lang.String.class;
         case "serviceaccountkey":
@@ -169,6 +173,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "moveAfterRead": return getOrCreateConfiguration(target).isMoveAfterRead();
         case "objectname":
         case "objectName": return getOrCreateConfiguration(target).getObjectName();
+        case "objectstorageclass":
+        case "objectStorageClass": return getOrCreateConfiguration(target).getObjectStorageClass();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "serviceaccountkey":

@@ -63,6 +63,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "moveAfterRead": target.getConfiguration().setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "objectname":
         case "objectName": target.getConfiguration().setObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectstorageclass":
+        case "objectStorageClass": target.getConfiguration().setObjectStorageClass(property(camelContext, com.google.cloud.storage.StorageClass.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
@@ -147,6 +149,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "moveAfterRead": return boolean.class;
         case "objectname":
         case "objectName": return java.lang.String.class;
+        case "objectstorageclass":
+        case "objectStorageClass": return com.google.cloud.storage.StorageClass.class;
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
@@ -227,6 +231,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "moveAfterRead": return target.getConfiguration().isMoveAfterRead();
         case "objectname":
         case "objectName": return target.getConfiguration().getObjectName();
+        case "objectstorageclass":
+        case "objectStorageClass": return target.getConfiguration().getObjectStorageClass();
         case "operation": return target.getConfiguration().getOperation();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();

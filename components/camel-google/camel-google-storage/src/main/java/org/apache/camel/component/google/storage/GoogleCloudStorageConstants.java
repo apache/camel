@@ -85,7 +85,9 @@ public final class GoogleCloudStorageConstants {
     public static final String METADATA_MEDIA_LINK = "CamelGoogleCloudStorageMediaLink";
     @Metadata(description = "The metageneration of the object", javaType = "Long")
     public static final String METADATA_METAGENERATION = "CamelGoogleCloudStorageMetageneration";
-    @Metadata(description = "The storage class of the object",
+    @Metadata(description = "The storage class of the object. When uploading an object, it sets the storage class of"
+                            + " the object, and takes precedence over the objectStorageClass option; a name such as"
+                            + " NEARLINE can be given.",
               javaType = "com.google.cloud.storage.StorageClass")
     public static final String METADATA_STORAGE_CLASS = "CamelGoogleCloudStorageStorageClass";
     @Metadata(description = "The creation time of the object", javaType = "Long")
