@@ -97,9 +97,9 @@ public class PulsarHostnameVerificationTest extends CamelTestSupport {
     private void connect(String options) throws Exception {
         URL ca = getClass().getClassLoader().getResource(RESOURCES + "ca.pem");
         endpoint = context.getEndpoint("pulsar:persistent://public/default/hostname?serviceUrl=RAW(pulsar+ssl://"
-                                                      + "localhost:" + server.getLocalPort() + ")"
-                                                      + "&tlsTrustCertsFilePath=" + Path.of(ca.toURI())
-                                                      + options,
+                                       + "localhost:" + server.getLocalPort() + ")"
+                                       + "&tlsTrustCertsFilePath=" + Path.of(ca.toURI())
+                                       + options,
                 PulsarEndpoint.class);
         endpoint.start();
         // the client connects when it is first used; the server is not a broker, so this does not complete
