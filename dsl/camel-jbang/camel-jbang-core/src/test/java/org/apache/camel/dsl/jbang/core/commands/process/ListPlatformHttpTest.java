@@ -38,7 +38,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
     void testDisplaysEndpoint() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithHttp("/api/orders", "GET", "/q/health", "GET"));
 
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -59,7 +59,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
     void testManagementEndpointsHiddenByDefault() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithHttp("/api/orders", "GET", "/q/health", "GET"));
 
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -79,7 +79,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
     void testAllFlagIncludesManagementEndpoints() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithHttp("/api/orders", "POST", "/q/health", "GET"));
 
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
         command.sort = "pid";
         command.all = true;
 
@@ -103,7 +103,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("noHttpApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -120,7 +120,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -139,7 +139,7 @@ class ListPlatformHttpTest extends ProcessCommandTestSupport {
     void testJsonOutput() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithHttp("/api/ping", "GET", "/q/health", "GET"));
 
-        ListPlatformHttp command = new ListPlatformHttp(new CamelJBangMain().withPrinter(printer));
+        ListPlatformHttp command = new CamelJBangMain().withPrinter(printer).command(new ListPlatformHttp());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

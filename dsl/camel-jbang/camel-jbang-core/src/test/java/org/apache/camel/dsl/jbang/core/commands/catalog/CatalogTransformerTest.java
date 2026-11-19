@@ -53,7 +53,7 @@ class CatalogTransformerTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogTransformer createCommand() {
-        CatalogTransformer command = new CatalogTransformer(new CamelJBangMain().withPrinter(printer));
+        CatalogTransformer command = new CamelJBangMain().withPrinter(printer).command(new CatalogTransformer());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

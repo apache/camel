@@ -30,7 +30,7 @@ class CamelActionPropOptionTest {
 
     @Test
     void sendTakesAPropertyAfterASpace() {
-        CamelSendAction send = new CamelSendAction(new CamelJBangMain());
+        CamelSendAction send = new CamelJBangMain().command(new CamelSendAction());
         CommandLineTestHelper.parse(send, "--prop", "greeting=Hi", "--prop=other=1");
 
         assertThat(send.property).containsExactly("greeting=Hi", "other=1");
@@ -39,7 +39,7 @@ class CamelActionPropOptionTest {
 
     @Test
     void receiveTakesAPropertyAfterASpace() {
-        CamelReceiveAction receive = new CamelReceiveAction(new CamelJBangMain());
+        CamelReceiveAction receive = new CamelJBangMain().command(new CamelReceiveAction());
         CommandLineTestHelper.parse(receive, "--prop", "greeting=Hi");
 
         assertThat(receive.property).containsExactly("greeting=Hi");

@@ -36,7 +36,7 @@ class CamelGCActionTest extends ActionCommandTestSupport {
     void testWritesGcActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelGCAction command = new CamelGCAction(new CamelJBangMain().withPrinter(printer));
+        CamelGCAction command = new CamelJBangMain().withPrinter(printer).command(new CamelGCAction());
         command.name = "myApp";
 
         int exit = callWithSingleProcess(command);
@@ -51,7 +51,7 @@ class CamelGCActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelGCAction command = new CamelGCAction(new CamelJBangMain().withPrinter(printer));
+        CamelGCAction command = new CamelJBangMain().withPrinter(printer).command(new CamelGCAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

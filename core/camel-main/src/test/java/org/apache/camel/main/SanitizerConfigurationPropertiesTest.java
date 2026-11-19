@@ -37,6 +37,8 @@ class SanitizerConfigurationPropertiesTest {
         main.addInitialProperty("camel.sanitizer.stack-depth", "0");
         main.addInitialProperty("camel.sanitizer.reportOnShutdown", "false");
         main.addInitialProperty("camel.sanitizer.pending-timeout", "5s");
+        main.addInitialProperty("camel.sanitizer.overlap-sampling", "10");
+        main.addInitialProperty("camel.sanitizer.overlapWindow", "2ms");
 
         main.start();
         try {
@@ -46,6 +48,8 @@ class SanitizerConfigurationPropertiesTest {
             assertEquals(0, config.getStackDepth());
             assertFalse(config.isReportOnShutdown());
             assertEquals("5s", config.getPendingTimeout());
+            assertEquals(10, config.getOverlapSampling());
+            assertEquals("2ms", config.getOverlapWindow());
 
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("true", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
@@ -53,6 +57,8 @@ class SanitizerConfigurationPropertiesTest {
             assertEquals("0", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
             assertEquals("5s", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));
+            assertEquals("10", pc.resolveProperty("camel.sanitizer.overlapSampling").orElse(null));
+            assertEquals("2ms", pc.resolveProperty("camel.sanitizer.overlapWindow").orElse(null));
         } finally {
             main.stop();
         }
@@ -70,6 +76,9 @@ class SanitizerConfigurationPropertiesTest {
             assertEquals("false", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
             // not published when not set: camel-sanitizer decides (R1 and R3, and R1, R2 and R3 in a test)
             assertFalse(pc.resolveProperty("camel.sanitizer.checks").isPresent());
+            // the same for the sampling of rule R3 (0, and 100 in a test); the window has its default
+            assertFalse(pc.resolveProperty("camel.sanitizer.overlapSampling").isPresent());
+            assertEquals("1ms", pc.resolveProperty("camel.sanitizer.overlapWindow").orElse(null));
             assertEquals("8", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
             assertEquals("0", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));

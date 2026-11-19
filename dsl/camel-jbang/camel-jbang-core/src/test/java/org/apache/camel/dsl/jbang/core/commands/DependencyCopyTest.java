@@ -124,7 +124,7 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
 
     @Test
     void theOutputDirectoryIsLibByDefault() {
-        DependencyCopy command = new DependencyCopy(new CamelJBangMain().withPrinter(printer));
+        DependencyCopy command = new CamelJBangMain().withPrinter(printer).command(new DependencyCopy());
 
         CommandLineTestHelper.parse(command);
 
@@ -132,7 +132,7 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
     }
 
     private DependencyCopy command(MavenDownloader downloader) {
-        DependencyCopy command = new DependencyCopy(new CamelJBangMain().withPrinter(printer));
+        DependencyCopy command = new CamelJBangMain().withPrinter(printer).command(new DependencyCopy());
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + work, "--quiet",
                 "--runtime=camel-main", "--camel-version=4.11.0", "--quarkus-version=3.22.2",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(), "--output-directory=" + lib);

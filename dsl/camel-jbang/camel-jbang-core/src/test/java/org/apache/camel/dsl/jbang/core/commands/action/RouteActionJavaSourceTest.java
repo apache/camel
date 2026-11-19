@@ -101,7 +101,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
         Path orders = write(dir, "Orders.java", ORDERS);
         Path billing = write(dir, "Billing.java", BILLING);
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
 
         List<RouteInfo> routes = command.doCallSource(List.of(orders.toString(), billing.toString()));
 
@@ -120,7 +121,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
     void diagramCompilesWithCompileOption(@TempDir Path dir) throws Exception {
         Path missing = dir.resolve("Missing.java");
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
         command.compile = true;
 
         // the existence check comes first, also when compiling
@@ -140,7 +142,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
                 }
                 """);
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
 
         assertThat(command.doCallSource(List.of(helper.toString()))).isNull();
         assertThat(printer.getOutput())
@@ -154,7 +157,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
         Path orders = write(dir, "Orders.java", ORDERS);
         Path billing = write(dir, "Billing.java", BILLING);
         StringPrinter printer = new StringPrinter();
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.files = List.of(orders.toString(), billing.toString());
         command.jsonOutput = true;
 
@@ -179,7 +183,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
     void structureReadsJavaRoutesWithoutCompilingThem(@TempDir Path dir) throws Exception {
         Path billing = write(dir, "Billing.java", BILLING);
         StringPrinter printer = new StringPrinter();
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = billing.toString();
 
         int exit = command.doCall();
@@ -196,7 +201,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
     void diagramReadsJavaRoutesWithoutRouteId(@TempDir Path dir) throws Exception {
         Path mixed = write(dir, "Mixed.java", MIXED);
         StringPrinter printer = new StringPrinter();
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
 
         List<RouteInfo> routes = command.doCallSource(List.of(mixed.toString()));
 
@@ -208,7 +214,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
     void structureReadsJavaRouteWithoutRouteId(@TempDir Path dir) throws Exception {
         Path mixed = write(dir, "Mixed.java", MIXED);
         StringPrinter printer = new StringPrinter();
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = mixed.toString();
         // the default of --sort (two routes are sorted)
         command.sort = "name";
@@ -241,7 +248,8 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
                 }
                 """);
         StringPrinter printer = new StringPrinter();
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = orders.toString();
         command.jsonOutput = true;
 
@@ -269,7 +277,7 @@ class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
 
         // the text shows it under the source
         printer = new StringPrinter();
-        command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = orders.toString();
         assertThat(command.doCall()).isZero();
         assertThat(printer.getOutput()).contains("Source: Orders.java", "Checksum: " + read);

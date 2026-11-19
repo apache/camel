@@ -74,7 +74,7 @@ class KubernetesDeleteKubeConfigTest extends KubernetesBaseTestSupport {
                     token: secret
                 """.formatted(kubernetesClient.getMasterUrl()));
 
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         // the current context is another cluster, which cannot be reached
         command.withClient(new KubernetesClientBuilder()
                 .withConfig(new ConfigBuilder().withMasterUrl("http://localhost:1").withRequestTimeout(500)

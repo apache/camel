@@ -39,7 +39,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("myApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -61,7 +61,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("suspendedApp", 7);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -90,7 +90,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
         status.put("routes", routes);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -109,7 +109,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle currentHandle = mockCurrentHandle();
@@ -129,7 +129,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("jsonApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -157,7 +157,7 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
         stats.put("remoteExchangesInflight", 0);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

@@ -38,7 +38,7 @@ class PluginDeleteTest extends CamelCommandBaseTestSupport {
     public void shouldDeletePlugin() throws Exception {
         PluginHelper.enable(PluginType.KUBERNETES);
 
-        PluginDelete command = new PluginDelete(new CamelJBangMain().withPrinter(printer));
+        PluginDelete command = new CamelJBangMain().withPrinter(printer).command(new PluginDelete());
         command.name = "kubernetes";
         command.doCall();
 
@@ -49,7 +49,7 @@ class PluginDeleteTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldHandleUnknownPlugin() throws Exception {
-        PluginDelete command = new PluginDelete(new CamelJBangMain().withPrinter(printer));
+        PluginDelete command = new CamelJBangMain().withPrinter(printer).command(new PluginDelete());
         command.name = "foo";
         int exit = command.doCall();
 

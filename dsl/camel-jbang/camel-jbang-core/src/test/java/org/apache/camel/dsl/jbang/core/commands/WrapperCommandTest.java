@@ -53,7 +53,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
 
@@ -71,7 +71,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
 
@@ -91,7 +91,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
 
         int exit = cmd.doCall();
@@ -111,7 +111,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
         cmd.repoUrl = "https://custom.repo.example.com/maven2";
@@ -130,7 +130,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
 
@@ -149,7 +149,7 @@ class WrapperCommandTest {
     @Test
     void testBuildDistributionUrl() {
         CamelJBangMain main = new CamelJBangMain();
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.camelVersion = "4.10.0";
         cmd.repoUrl = "https://repo1.maven.org/maven2";
 
@@ -165,7 +165,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
 
@@ -185,7 +185,7 @@ class WrapperCommandTest {
         StringPrinter printer = new StringPrinter();
         main.setOut(printer);
 
-        WrapperCommand cmd = new WrapperCommand(main);
+        WrapperCommand cmd = main.command(new WrapperCommand());
         cmd.directory = workingDir.toString();
         cmd.camelVersion = "4.10.0";
         cmd.commandName = "cheese";

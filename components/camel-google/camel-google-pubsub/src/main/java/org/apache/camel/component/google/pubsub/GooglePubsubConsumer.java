@@ -395,7 +395,8 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                                     "Message {} has reached max delivery attempts ({}/{}), nacking to route to dead-letter topic",
                                     pubsubMessage.getMessageId(), deliveryAttempt, resolvedMaxDeliveryAttempts);
                             GooglePubsubAcknowledge ack = new AcknowledgeSync(
-                                    () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
+                                    () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName,
+                                    message.getAckId());
                             try {
                                 ack.nack(exchange);
                             } catch (Exception e) {
@@ -412,11 +413,18 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                         //existing subscriber can not be propagated, because it will be closed at the end of this block
                         //subscriber will be created at the moment of use
                         // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
-                        GooglePubsubAcknowledge acknowledge = new AcknowledgeSync(
-                                () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
                         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                            // acks or nacks the message received, with the ack id it was received with: the route
+                            // may change or remove the ack id header, or replace the message, before it completes
+                            GooglePubsubAcknowledge acknowledge = new AcknowledgeSync(
+                                    () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName,
+                                    message.getAckId());
                             exchange.getExchangeExtension().addOnCompletion(new AcknowledgeCompletion(acknowledge));
                         } else {
+                            // the route acks or nacks with the ack ids of the exchange it gives, which may be an
+                            // aggregated exchange of several messages
+                            GooglePubsubAcknowledge acknowledge = new AcknowledgeSync(
+                                    () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
                             exchange.getIn().setHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE, acknowledge);
                         }
 

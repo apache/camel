@@ -18,18 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "plugin", description = "Manage plugins that add sub-commands to this CLI", generateHelp = true,
                    sortOptions = true)
 public class PluginCommand extends CamelCommand {
 
-    public PluginCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
-        return runDefault(new PluginGet(getMain()));
+        return runDefault(getMain().command(new PluginGet()));
     }
 }

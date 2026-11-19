@@ -47,7 +47,7 @@ class RunBackgroundStateLineTest extends CamelCommandBaseTestSupport {
         useTestHomeDir();
         Path camelDir = CommandLineHelper.getCamelDir();
         Files.createDirectories(camelDir);
-        Run run = new Run(new CamelJBangMain().withPrinter(printer));
+        Run run = new CamelJBangMain().withPrinter(printer).command(new Run());
         run.name = "orders";
         run.transformRun = transform;
         // a process that writes the status of a started Camel (phase 5) for its own pid, as an integration does

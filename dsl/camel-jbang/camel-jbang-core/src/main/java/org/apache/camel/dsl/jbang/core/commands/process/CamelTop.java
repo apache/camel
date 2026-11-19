@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "top", description = "Top status of Camel integrations (use top --help to see sub commands)",
                    generateHelp = true,
@@ -33,14 +32,10 @@ public class CamelTop extends CamelCommand {
     @Option(name = "watch", hasValue = false, description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    public CamelTop(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // default to top the integrations
-        CamelContextTop cmd = new CamelContextTop(getMain());
+        CamelContextTop cmd = getMain().command(new CamelContextTop());
         cmd.watch = watch;
         return runDefault(cmd);
     }

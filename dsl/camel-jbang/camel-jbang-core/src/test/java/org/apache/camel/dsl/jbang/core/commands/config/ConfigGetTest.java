@@ -30,7 +30,7 @@ class ConfigGetTest extends BaseConfigTestSupport {
     public void shouldGetConfig() throws Exception {
         UserConfigHelper.createUserConfig("foo=bar");
 
-        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        ConfigGet command = new CamelJBangMain().withPrinter(printer).command(new ConfigGet());
         command.key = "foo";
         int exit = command.doCall();
 
@@ -42,7 +42,7 @@ class ConfigGetTest extends BaseConfigTestSupport {
     public void shouldHandleConfigGetKeyNotFound() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        ConfigGet command = new CamelJBangMain().withPrinter(printer).command(new ConfigGet());
         command.key = "foo";
         CliException e = Assertions.assertThrows(CliException.class, command::doCall);
 
@@ -55,7 +55,7 @@ class ConfigGetTest extends BaseConfigTestSupport {
     public void shouldGetConfigAsJson() throws Exception {
         UserConfigHelper.createUserConfig("foo=bar");
 
-        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        ConfigGet command = new CamelJBangMain().withPrinter(printer).command(new ConfigGet());
         command.key = "foo";
         command.jsonOutput = true;
         int exit = command.doCall();
@@ -68,7 +68,7 @@ class ConfigGetTest extends BaseConfigTestSupport {
     public void shouldGetLocalConfig() throws Exception {
         UserConfigHelper.createUserConfig("foo=bar", true);
 
-        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        ConfigGet command = new CamelJBangMain().withPrinter(printer).command(new ConfigGet());
         command.key = "foo";
         command.global = false;
         command.doCall();

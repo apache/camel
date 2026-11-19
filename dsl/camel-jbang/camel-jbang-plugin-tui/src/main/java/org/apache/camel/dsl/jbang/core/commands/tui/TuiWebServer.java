@@ -198,7 +198,7 @@ class TuiWebServer {
 
     private void runSession(Terminal terminal) {
         try {
-            CamelMonitor monitor = new CamelMonitor(main, classLoader);
+            CamelMonitor monitor = main.command(new CamelMonitor(classLoader));
             monitor.name = name;
             monitor.refreshInterval = refreshInterval;
             monitor.theme = theme;

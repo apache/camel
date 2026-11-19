@@ -29,7 +29,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -115,10 +114,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
-
-    public CamelRouteStructureAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {
@@ -251,7 +246,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     throw CliException.failure("Cannot read the routes of " + name);
                 }
             } else {
-                Run run = new Run(getMain()) {
+                Run run = new Run() {
                     @Override
                     protected void doAddInitialProperty(KameletMain main) {
                         main.addInitialProperty("camel.main.dumpRoutes", "json");
@@ -267,6 +262,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                         }
                     }
                 };
+                run.setCamelMain(getMain());
                 run.files = List.of(name);
                 run.setWorkDir(workDir);
                 run.executionLimitOptions.maxSeconds = 1;

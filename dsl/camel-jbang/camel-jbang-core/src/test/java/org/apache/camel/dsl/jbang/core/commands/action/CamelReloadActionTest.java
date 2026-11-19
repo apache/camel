@@ -142,7 +142,7 @@ class CamelReloadActionTest extends ActionCommandTestSupport {
     }
 
     private CamelReloadAction command(String name) {
-        CamelReloadAction command = new CamelReloadAction(new CamelJBangMain().withPrinter(printer));
+        CamelReloadAction command = new CamelJBangMain().withPrinter(printer).command(new CamelReloadAction());
         command.name = name;
         return command;
     }

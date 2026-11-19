@@ -23,7 +23,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 
 @CommandDefinition(name = "tui", description = "Camel TUI (use --help to see sub commands)", generateHelp = true,
@@ -85,8 +84,7 @@ public class TuiCommand extends CamelCommand {
                           + " session and are not saved")
     boolean defaults;
 
-    public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
-        super(main);
+    public TuiCommand(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -96,7 +94,7 @@ public class TuiCommand extends CamelCommand {
             // a recording plays a tape headless, and --web without a terminal serves browsers only
             requireInteractiveTerminal("camel tui");
         }
-        CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
+        CamelMonitor cmd = getMain().command(new CamelMonitor(classLoader));
         return new CommandTree(cmd).execute(buildArgs().toArray(String[]::new)).getResultValue();
     }
 

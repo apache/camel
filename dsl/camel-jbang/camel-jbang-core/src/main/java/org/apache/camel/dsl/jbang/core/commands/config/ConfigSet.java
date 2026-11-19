@@ -27,7 +27,6 @@ import org.aesh.command.impl.internal.ProcessedOption;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -46,10 +45,6 @@ public class ConfigSet extends CamelCommand {
 
     @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
-
-    public ConfigSet(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

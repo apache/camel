@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.DevConsoleModel;
 
 @CommandDefinition(name = "dev-console", description = "List dev-consoles from the Camel Catalog", generateHelp = true,
@@ -28,10 +27,6 @@ import org.apache.camel.tooling.model.DevConsoleModel;
                            "Examples:",
                            "  camel catalog dev-console" })
 public class CatalogDevConsole extends CatalogBaseCommand {
-
-    public CatalogDevConsole(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     List<Row> collectRows() {

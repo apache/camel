@@ -81,6 +81,8 @@ If any of the above headers are set, they will override their corresponding quer
 === Consumer
 
 The consumer polls objects from a bucket using `listObjectsV2`, downloads each object body, and optionally deletes objects after they have been processed when `deleteAfterRead` is enabled.
+The consumer deletes the object it consumed, whatever the route does with the `CamelAlibabaOssBucketName` and `CamelAlibabaOssObjectKey` headers.
+A route can set the bucket name header to write a copy of the object to another bucket.
 
 By default (`includeBody=true`) the consumer reads the content of each object into a `byte[]`, which is the body, so an object needs as much memory as its size.
 With `includeBody=false` the body is the `InputStream` of the content of the object instead, which the consumer closes when the exchange is done.

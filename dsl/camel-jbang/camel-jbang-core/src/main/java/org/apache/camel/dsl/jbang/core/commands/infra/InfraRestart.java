@@ -28,7 +28,6 @@ import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.BackgroundWait;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 
@@ -40,7 +39,7 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 public class InfraRestart extends InfraBaseCommand {
 
     @Arguments(paramLabel = "service", required = true, description = "Service name (and optional implementation)")
-    private List<String> serviceName;
+    List<String> serviceName;
 
     @Option(name = "port", description = "Override the default port for the service")
     Integer port;
@@ -64,10 +63,6 @@ public class InfraRestart extends InfraBaseCommand {
 
     @Option(name = "kill", hasValue = false, description = "To force killing the process (SIGKILL) when stopping")
     boolean kill;
-
-    public InfraRestart(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {
@@ -103,7 +98,7 @@ public class InfraRestart extends InfraBaseCommand {
     }
 
     private Integer startService(String service) throws Exception {
-        InfraRun infraRun = new InfraRun(getMain());
+        InfraRun infraRun = getMain().command(new InfraRun());
         infraRun.setServiceName(serviceName);
         infraRun.port = port;
         infraRun.setLogToStdout(logToStdout);

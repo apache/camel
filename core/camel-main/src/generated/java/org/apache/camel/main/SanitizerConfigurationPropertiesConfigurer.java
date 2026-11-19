@@ -25,6 +25,8 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Checks", java.lang.String.class);
         map.put("Enabled", java.lang.Boolean.class);
+        map.put("OverlapSampling", java.lang.Integer.class);
+        map.put("OverlapWindow", java.lang.String.class);
         map.put("PendingTimeout", java.lang.String.class);
         map.put("ReportOnShutdown", boolean.class);
         map.put("StackDepth", int.class);
@@ -37,6 +39,10 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": target.setChecks(property(camelContext, java.lang.String.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "overlapsampling":
+        case "overlapSampling": target.setOverlapSampling(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "overlapwindow":
+        case "overlapWindow": target.setOverlapWindow(property(camelContext, java.lang.String.class, value)); return true;
         case "pendingtimeout":
         case "pendingTimeout": target.setPendingTimeout(property(camelContext, java.lang.String.class, value)); return true;
         case "reportonshutdown":
@@ -57,6 +63,10 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": return java.lang.String.class;
         case "enabled": return java.lang.Boolean.class;
+        case "overlapsampling":
+        case "overlapSampling": return java.lang.Integer.class;
+        case "overlapwindow":
+        case "overlapWindow": return java.lang.String.class;
         case "pendingtimeout":
         case "pendingTimeout": return java.lang.String.class;
         case "reportonshutdown":
@@ -73,6 +83,10 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": return target.getChecks();
         case "enabled": return target.getEnabled();
+        case "overlapsampling":
+        case "overlapSampling": return target.getOverlapSampling();
+        case "overlapwindow":
+        case "overlapWindow": return target.getOverlapWindow();
         case "pendingtimeout":
         case "pendingTimeout": return target.getPendingTimeout();
         case "reportonshutdown":

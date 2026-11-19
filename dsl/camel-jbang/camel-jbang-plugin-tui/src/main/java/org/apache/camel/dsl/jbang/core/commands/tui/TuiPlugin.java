@@ -33,8 +33,8 @@ public class TuiPlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        var cmd = new CommandTree(new TuiCommand(main, classLoader))
-                .addSubcommand("monitor", new CommandTree(new CamelMonitor(main, classLoader)));
+        var cmd = new CommandTree(main.command(new TuiCommand(classLoader)))
+                .addSubcommand("monitor", new CommandTree(main.command(new CamelMonitor(classLoader))));
 
         commandLine.addSubcommand("tui", cmd);
     }

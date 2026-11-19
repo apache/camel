@@ -410,6 +410,56 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public void startRouteGroup(String routeGroup) throws Exception {
+        lock.lock();
+        try {
+            List<RouteHolder> group = routesOfGroup(routeGroup);
+            for (RouteHolder route : group) {
+                // as startRoute: the controller takes care that the route is started, and the manual start cancels a
+                // restart task (and clears an exhausted state)
+                route.get().setRouteController(this);
+                routeManager.release(route);
+            }
+            try {
+                super.startRouteGroup(routeGroup);
+            } catch (Exception e) {
+                // as startRoute: the routes of the group that did not start are moved to the controller supervision,
+                // so they get (eventually) restarted
+                for (RouteHolder route : group) {
+                    if (route.getStatus().isStopped()) {
+                        LOG.debug("Route {} of route group {} failed to start and is moved to the controller supervision",
+                                route.getId(), routeGroup);
+                        EventHelper.notifyRouteRestartingFailure(getCamelContext(), route.get(), 0, e, false);
+                        routeManager.start(route);
+                    }
+                }
+                throw e;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        lock.lock();
+        try {
+            for (RouteHolder route : routesOfGroup(routeGroup)) {
+                // as stopRoute: a route stopped manually is no longer started by its restart task
+                routeManager.release(route);
+                route.get().setRouteController(null);
+            }
+            super.stopRouteGroup(routeGroup);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private List<RouteHolder> routesOfGroup(String routeGroup) {
+        return routes.stream().filter(r -> routeGroup.equals(r.get().getGroup())).toList();
+    }
+
+    @Override
     public Collection<Route> getControlledRoutes() {
         return routes.stream()
                 .map(RouteHolder::get)

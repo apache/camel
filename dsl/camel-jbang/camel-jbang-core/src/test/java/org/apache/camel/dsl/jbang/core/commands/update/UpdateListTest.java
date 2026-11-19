@@ -28,7 +28,7 @@ public class UpdateListTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void listUpdateVersions() throws Exception {
-        UpdateList infraList = new UpdateList(new CamelJBangMain().withPrinter(printer));
+        UpdateList infraList = new CamelJBangMain().withPrinter(printer).command(new UpdateList());
 
         infraList.doCall();
 

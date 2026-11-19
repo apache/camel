@@ -189,7 +189,7 @@ class CamelMemoryLeakTest extends ActionCommandTestSupport {
 
     private CamelMemoryLeak command(String... args) throws Exception {
         writeStatusFile(TEST_PID, "orders");
-        CamelMemoryLeak command = new CamelMemoryLeak(new CamelJBangMain().withPrinter(printer));
+        CamelMemoryLeak command = new CamelJBangMain().withPrinter(printer).command(new CamelMemoryLeak());
         CommandLineTestHelper.parse(command, Stream.concat(Stream.of("orders"), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

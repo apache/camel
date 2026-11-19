@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
 
@@ -30,10 +29,6 @@ public class PluginDelete extends PluginBaseCommand {
 
     @Argument(required = true, description = "The Camel plugin to remove", paramLabel = "plugin")
     String name;
-
-    public PluginDelete(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

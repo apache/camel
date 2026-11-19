@@ -50,8 +50,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
                 step(2, 1, 1, null, "From", "timer:tick", 50),
                 step(3, 1, 1, null, "To", "log:info", 30));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
 
         int exit = command.doWatchCall();
 
@@ -67,8 +67,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
         JsonObject mockOutput = buildStartupOutput(
                 step(1, 0, 0, "myRoute", "Route", "Configure route", 100));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
 
         int exit = command.doWatchCall();
 
@@ -85,8 +85,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
                 step(2, 0, 0, null, "Route", "SlowStep", 500),
                 step(3, 0, 0, null, "Route", "MidStep", 200));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
         command.sort = "duration";
 
         int exit = command.doWatchCall();
@@ -107,8 +107,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
                 step(1, 0, 0, null, "Route", "FastStep", 10),
                 step(2, 0, 0, null, "Route", "SlowStep", 500));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
         command.sort = "-duration";
 
         int exit = command.doWatchCall();
@@ -125,8 +125,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
         JsonObject mockOutput = buildStartupOutput(
                 step(1, 0, 0, null, "Route", "ZeroDurationStep", 0));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
 
         int exit = command.doWatchCall();
 
@@ -138,7 +138,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
     @Test
     void testNotFoundWhenNoIntegrationMatches() {
         // no integration runs in the home directory of the test
-        CamelStartupRecorderAction command = new CamelStartupRecorderAction(new CamelJBangMain().withPrinter(printer));
+        CamelStartupRecorderAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelStartupRecorderAction());
 
         CliException e = assertThrows(CliException.class, command::doWatchCall);
 
@@ -150,8 +151,8 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
         JsonObject mockOutput = buildStartupOutput(
                 step(1, 0, 0, "myRoute", "Route", "Configure route", 100));
 
-        TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), mockOutput);
+        TestableStartupRecorder command
+                = new CamelJBangMain().withPrinter(printer).command(new TestableStartupRecorder(mockOutput));
         command.jsonOutput = true;
 
         int exit = command.doWatchCall();
@@ -193,8 +194,7 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
     private static class TestableStartupRecorder extends CamelStartupRecorderAction {
         private final JsonObject mockOutput;
 
-        TestableStartupRecorder(CamelJBangMain main, JsonObject mockOutput) {
-            super(main);
+        TestableStartupRecorder(JsonObject mockOutput) {
             this.mockOutput = mockOutput;
         }
 

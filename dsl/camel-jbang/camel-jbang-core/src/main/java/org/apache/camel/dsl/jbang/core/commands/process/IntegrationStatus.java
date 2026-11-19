@@ -26,7 +26,6 @@ import java.util.StringJoiner;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ReloadOutcome;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -76,10 +75,6 @@ public class IntegrationStatus extends ProcessBaseCommand {
     @Option(name = "mask", hasValue = false, defaultValue = "true",
             description = "Whether to mask the endpoint URIs of the routes to avoid printing sensitive information such as password or access keys")
     boolean mask = true;
-
-    public IntegrationStatus(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

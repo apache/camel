@@ -38,7 +38,7 @@ class InfraListTest extends InfraCommandTestSupport {
         writePidFile("ftp", 1234, "{\"port\":21}");
         writePidFile("ftp", 5678, "{\"port\":2121}");
 
-        InfraList command = new InfraList(new CamelJBangMain().withPrinter(printer));
+        InfraList command = new CamelJBangMain().withPrinter(printer).command(new InfraList());
         command.aliveCheck = pid -> true;
         int exit = command.doCall();
 
@@ -53,7 +53,7 @@ class InfraListTest extends InfraCommandTestSupport {
 
     @Test
     void shouldListTheCatalogWhenNothingIsRunning() throws Exception {
-        InfraList command = new InfraList(new CamelJBangMain().withPrinter(printer));
+        InfraList command = new CamelJBangMain().withPrinter(printer).command(new InfraList());
         int exit = command.doCall();
 
         assertEquals(0, exit);

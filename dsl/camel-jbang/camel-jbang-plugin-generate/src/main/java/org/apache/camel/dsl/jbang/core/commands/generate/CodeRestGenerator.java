@@ -33,7 +33,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -98,10 +97,6 @@ public class CodeRestGenerator extends CamelCommand {
     @Option(name = "openapi-version", description = "Openapi specification 3.0 or 3.1", defaultValue = "3.0",
             completer = OpenApiVersionCompletionCandidates.class)
     private String openApiVersion = "3.0";
-
-    public CodeRestGenerator(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

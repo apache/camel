@@ -40,7 +40,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
         stats.put("exchangesFailed", "3");
         writeStatusFile(TEST_PID, status);
 
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -66,7 +66,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
         stats.put("exchangesFailed", "5");
         writeStatusFile(TEST_PID, status);
 
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
         command.total = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -90,7 +90,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
         stats.put("exchangesFailed", "7");
         writeStatusFile(TEST_PID, status);
 
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
         command.fail = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -114,7 +114,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
         stats.put("exchangesFailed", "2");
         writeStatusFile(TEST_PID, status);
 
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
         command.total = true;
         command.fail = true;
 
@@ -133,7 +133,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -156,7 +156,7 @@ class CamelCountTest extends ProcessCommandTestSupport {
         stats.put("exchangesFailed", "1");
         writeStatusFile(TEST_PID, status);
 
-        CamelCount command = new CamelCount(new CamelJBangMain().withPrinter(printer));
+        CamelCount command = new CamelJBangMain().withPrinter(printer).command(new CamelCount());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

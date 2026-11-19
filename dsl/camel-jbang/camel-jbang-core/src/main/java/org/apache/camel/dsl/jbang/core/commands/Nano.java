@@ -35,11 +35,7 @@ public class Nano extends CamelCommand {
 
     private Path filePath; // Defined only for file path completion; the field never used
     @Argument(required = true, description = "Name of file", paramLabel = "file")
-    private String file;
-
-    public Nano(CamelJBangMain main) {
-        super(main);
-    }
+    String file;
 
     @Override
     public Integer doCall() throws Exception {

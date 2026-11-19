@@ -215,13 +215,13 @@ class ExitCodeContractTest {
 
         @Override
         public void postAddCommands(CommandTree commandLine, String[] args) {
-            commandLine.addSubcommand("test-ok", new CommandTree(new OkCommand(this)));
-            commandLine.addSubcommand("test-fail", new CommandTree(new FailCommand(this)));
-            commandLine.addSubcommand("test-crash", new CommandTree(new CrashCommand(this)));
-            commandLine.addSubcommand("test-error", new CommandTree(new ErrorCommand(this)));
-            commandLine.addSubcommand("test-missing-file", new CommandTree(new MissingFileCommand(this)));
-            commandLine.addSubcommand("test-download", new CommandTree(new DownloadCommand(this)));
-            commandLine.addSubcommand("test-parent", new CommandTree(new ParentCommand(this)));
+            commandLine.addSubcommand("test-ok", new CommandTree(command(new OkCommand())));
+            commandLine.addSubcommand("test-fail", new CommandTree(command(new FailCommand())));
+            commandLine.addSubcommand("test-crash", new CommandTree(command(new CrashCommand())));
+            commandLine.addSubcommand("test-error", new CommandTree(command(new ErrorCommand())));
+            commandLine.addSubcommand("test-missing-file", new CommandTree(command(new MissingFileCommand())));
+            commandLine.addSubcommand("test-download", new CommandTree(command(new DownloadCommand())));
+            commandLine.addSubcommand("test-parent", new CommandTree(command(new ParentCommand())));
         }
 
         @Override
@@ -232,10 +232,6 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-ok", description = "", generateHelp = true, sortOptions = true)
     static class OkCommand extends CamelCommand {
-        OkCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             printer().println("ok");
@@ -254,10 +250,6 @@ class ExitCodeContractTest {
         @Option(name = "verbose", hasValue = false)
         boolean verbose;
 
-        FailCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             throw new CliException(code, message);
@@ -266,10 +258,6 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-crash", description = "", generateHelp = true, sortOptions = true)
     static class CrashCommand extends CamelCommand {
-        CrashCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             throw new IllegalStateException("Boom");
@@ -278,10 +266,6 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-error", description = "", generateHelp = true, sortOptions = true)
     static class ErrorCommand extends CamelCommand {
-        ErrorCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             throw new NoClassDefFoundError("org/acme/Missing");
@@ -290,10 +274,6 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-missing-file", description = "", generateHelp = true, sortOptions = true)
     static class MissingFileCommand extends CamelCommand {
-        MissingFileCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() throws Exception {
             throw new RuntimeException("Cannot load the routes", new NoSuchFileException("routes/missing.yaml"));
@@ -302,10 +282,6 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-download", description = "", generateHelp = true, sortOptions = true)
     static class DownloadCommand extends CamelCommand {
-        DownloadCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             // as camel run fails to start, when a dependency it needs cannot be downloaded
@@ -317,13 +293,9 @@ class ExitCodeContractTest {
 
     @CommandDefinition(name = "test-parent", description = "", generateHelp = true, sortOptions = true)
     static class ParentCommand extends CamelCommand {
-        ParentCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
-            FailCommand child = new FailCommand(getMain());
+            FailCommand child = getMain().command(new FailCommand());
             return runDefault(child, "--code=3", "--message=from the default sub-command");
         }
     }

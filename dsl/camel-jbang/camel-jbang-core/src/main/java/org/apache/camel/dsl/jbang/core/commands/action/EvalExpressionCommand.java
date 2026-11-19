@@ -25,7 +25,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
@@ -93,10 +92,6 @@ public class EvalExpressionCommand extends ActionWatchCommand {
 
     long pid;
 
-    public EvalExpressionCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // as exceptions, so --json prints them as the JSON of an error
@@ -129,7 +124,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
         } else {
             try {
                 // start a new empty camel in the background
-                Run run = new Run(getMain());
+                Run run = getMain().command(new Run());
                 // requires camel 4.3 onwards
                 if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                     throw CliException.usage("This requires Camel version 4.3 or newer");

@@ -33,10 +33,6 @@ import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
                            "  camel export --dry-run hello.java" })
 public class Export extends ExportBaseCommand {
 
-    public Export(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public boolean disarrangeLogging() {
         return false; // export logs specially to a camel-export.log

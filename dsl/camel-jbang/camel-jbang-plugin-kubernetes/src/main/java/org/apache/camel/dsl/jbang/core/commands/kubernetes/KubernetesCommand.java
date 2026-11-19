@@ -17,16 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "kubernetes",
                    description = "Manage Camel applications running on Kubernetes (use k8s --help to see sub commands)",
                    generateHelp = true, sortOptions = true)
 public class KubernetesCommand extends KubernetesBaseCommand {
-
-    public KubernetesCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

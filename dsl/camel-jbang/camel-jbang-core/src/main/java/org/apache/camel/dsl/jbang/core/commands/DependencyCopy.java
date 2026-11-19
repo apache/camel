@@ -53,10 +53,6 @@ public class DependencyCopy extends DependencyList {
     // the dependencies to copy
     private final List<MavenGav> gavs = new ArrayList<>();
 
-    public DependencyCopy(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         Path dir = Paths.get(outputDirectory);

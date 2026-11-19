@@ -44,7 +44,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -67,7 +67,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         root.put("producers", producerContainer(producer("route1", "log:info?showAll=true")));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -94,7 +94,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
                 producer("route2", "mock:result?retainFirst=1")));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
         command.filter = "log:";
         command.shortUri = true;
@@ -124,7 +124,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
                 producer("route2", "log:two")));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
         command.limit = 1;
 
@@ -150,7 +150,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         root.put("producers", producerContainer(producer("route1", "direct:out")));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -181,7 +181,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         root.put("producers", producerContainer(p));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -205,7 +205,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         root.put("producers", producerContainer(producer("route1", "pqc:sign?keyStorePassword=changeit&signer=dilithium")));
         writeStatusFile(TEST_PID, root);
 
-        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        ListProducer command = new CamelJBangMain().withPrinter(printer).command(new ListProducer());
         command.sort = "pid";
         command.wideUri = true;
 

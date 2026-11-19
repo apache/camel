@@ -27,7 +27,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionVisibility;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
@@ -51,14 +50,10 @@ public class PluginGet extends PluginBaseCommand {
     @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     public boolean jsonOutput;
 
-    public PluginGet(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (all) {
-            PluginList delegate = new PluginList(getMain());
+            PluginList delegate = getMain().command(new PluginList());
             delegate.repos = this.repos;
             delegate.jsonOutput = this.jsonOutput;
             return delegate.doCall();

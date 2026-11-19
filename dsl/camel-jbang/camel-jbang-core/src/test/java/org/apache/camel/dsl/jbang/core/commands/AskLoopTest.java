@@ -188,7 +188,7 @@ class AskLoopTest extends CamelCommandBaseTestSupport {
     }
 
     private Ask command(String... args) {
-        Ask command = new Ask(new CamelJBangMain().withPrinter(printer));
+        Ask command = new CamelJBangMain().withPrinter(printer).command(new Ask());
         CommandLineTestHelper.parse(command, Stream.concat(
                 Stream.of("what routes are running?", "--url=" + server.url(), "--api-type=ollama", "--model=test"),
                 Arrays.stream(args)).toArray(String[]::new));

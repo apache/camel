@@ -50,7 +50,7 @@ class CamelProcessorTopTest extends ProcessCommandTestSupport {
     }
 
     private void assertSlowBeforeFast(long firstPid, long secondPid) throws Exception {
-        CamelProcessorTop command = new CamelProcessorTop(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorTop command = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorTop());
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -73,7 +73,7 @@ class CamelProcessorTopTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelProcessorTop command = new CamelProcessorTop(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorTop command = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();

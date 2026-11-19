@@ -69,7 +69,8 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
     private void checkOneDependencyAddedForArangoDb(RuntimeType rt) throws Exception {
         StringPrinter secondUpdateCommandPrinter = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
+        DependencyUpdate command
+                = new CamelJBangMain().withPrinter(secondUpdateCommandPrinter).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 "--camel-version=4.13.0",
@@ -100,7 +101,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     }
 
     private void checkNoUpdateOnFreshlyGeneratedproject(RuntimeType rt) throws Exception {
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(printer).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 "--camel-version=4.13.0",
@@ -116,13 +117,13 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
     private void prepareMavenProject(RuntimeType rt) throws Exception {
         StringPrinter initCommandPrinter = new StringPrinter();
-        Init initCommand = new Init(new CamelJBangMain().withPrinter(initCommandPrinter));
+        Init initCommand = new CamelJBangMain().withPrinter(initCommandPrinter).command(new Init());
         String camelFilePath = new File(workingDir, "my.camel.yaml").getAbsolutePath();
         CommandLineTestHelper.parse(initCommand, camelFilePath);
         Assertions.assertEquals(0, initCommand.doCall(), initCommandPrinter.getLines().toString());
 
         StringPrinter exportCommandPrinter = new StringPrinter();
-        Export exportCommand = new Export(new CamelJBangMain().withPrinter(exportCommandPrinter));
+        Export exportCommand = new CamelJBangMain().withPrinter(exportCommandPrinter).command(new Export());
         CommandLineTestHelper.parse(exportCommand,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
@@ -148,7 +149,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         // pass BOTH pom.xml AND route file as positional arguments
         // (this is the calling convention used by IDE tooling)
         StringPrinter updatePrinter = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(updatePrinter).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--camel-version=4.13.0",
                 "--dir=" + workingDir,
@@ -184,7 +185,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
         // run with --scan-routes
         StringPrinter updatePrinter = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(updatePrinter).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--scan-routes",
                 "--camel-version=4.13.0",
@@ -227,7 +228,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
         // run with --scan-routes to sync
         StringPrinter updatePrinter = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(updatePrinter).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--scan-routes",
                 "--dir=" + workingDir,
@@ -261,7 +262,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
         // run with --scan-routes to sync
         StringPrinter updatePrinter = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(updatePrinter).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--scan-routes",
                 "--dir=" + workingDir,
@@ -299,7 +300,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
         // run scan-routes with just the Java file (no separate route files)
         StringPrinter p = new StringPrinter();
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(p));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(p).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--scan-routes",
                 "--dir=" + workingDir,
@@ -333,7 +334,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         // run scan-routes twice
         for (int run = 0; run < 2; run++) {
             StringPrinter p = new StringPrinter();
-            DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(p));
+            DependencyUpdate command = new CamelJBangMain().withPrinter(p).command(new DependencyUpdate());
             CommandLineTestHelper.parse(command,
                     "--scan-routes",
                     "--dir=" + workingDir,
@@ -371,7 +372,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
                 }
                 """);
 
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(printer).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 java1.toAbsolutePath().toString(),
@@ -399,7 +400,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
                 }
                 """);
 
-        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
+        DependencyUpdate command = new CamelJBangMain().withPrinter(printer).command(new DependencyUpdate());
         CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 java.toAbsolutePath().toString());

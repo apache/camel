@@ -45,7 +45,6 @@ import org.aesh.command.option.OptionList;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.cli.connector.RepeatedSend;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
@@ -180,10 +179,6 @@ public class CamelSendAction extends ActionBaseCommand {
     private static final int MAX_MESSAGES = RepeatedSend.MAX_MESSAGES;
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-
-    public CamelSendAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {
@@ -475,13 +470,14 @@ public class CamelSendAction extends ActionBaseCommand {
 
     private Integer doCallLocal() throws Exception {
         AtomicReference<KameletMain> ref = new AtomicReference<>();
-        Run run = new Run(this.getMain()) {
+        Run run = new Run() {
             @Override
             protected int runKameletMain(ConfiguredRun run) throws Exception {
                 ref.set(run.getMain());
                 return super.runKameletMain(run);
             }
         };
+        run.setCamelMain(this.getMain());
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;

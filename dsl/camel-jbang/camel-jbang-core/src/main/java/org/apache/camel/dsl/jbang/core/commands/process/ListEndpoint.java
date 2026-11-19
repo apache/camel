@@ -30,7 +30,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
@@ -98,10 +97,6 @@ public class ListEndpoint extends ProcessWatchCommand {
     @Option(name = "mask", hasValue = false, defaultValue = "true",
             description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask = true;
-
-    public ListEndpoint(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

@@ -75,10 +75,6 @@ public class Doctor extends CamelCommand {
 
     private final List<Check> checks = new ArrayList<>();
 
-    public Doctor(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         checks.clear();

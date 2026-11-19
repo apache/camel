@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.OtherModel;
 
 @CommandDefinition(name = "other", description = "List miscellaneous components from the Camel Catalog", generateHelp = true,
@@ -28,10 +27,6 @@ import org.apache.camel.tooling.model.OtherModel;
                            "Examples:",
                            "  camel catalog other" })
 public class CatalogOther extends CatalogBaseCommand {
-
-    public CatalogOther(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     List<Row> collectRows() {

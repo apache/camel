@@ -58,7 +58,7 @@ class JolokiaTest extends ProcessCommandTestSupport {
     }
 
     private int call(String name, long... pids) throws Exception {
-        Jolokia command = new Jolokia(new CamelJBangMain().withPrinter(printer));
+        Jolokia command = new CamelJBangMain().withPrinter(printer).command(new Jolokia());
         command.name = name;
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             List<ProcessHandle> handles = LongStream.of(pids).mapToObj(ProcessCommandTestSupport::mockProcessHandle).toList();

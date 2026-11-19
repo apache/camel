@@ -28,7 +28,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.apache.camel.cli.connector.RepeatedSend;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.process.ListChaos;
 import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -111,10 +110,6 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
 
     @Option(name = "end", hasValue = false, description = "End the open experiment (with --note) instead of running a new one")
     boolean end;
-
-    public CamelChaosExperimentAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

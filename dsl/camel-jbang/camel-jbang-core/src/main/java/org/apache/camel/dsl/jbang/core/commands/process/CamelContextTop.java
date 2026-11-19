@@ -31,7 +31,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -74,10 +73,6 @@ public class CamelContextTop extends ProcessWatchCommand {
     @Option(name = "sort", description = "Sort by pid, name, mem, or age", defaultValue = "mem",
             completer = PidNameMemAgeCompletionCandidates.class)
     String sort;
-
-    public CamelContextTop(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

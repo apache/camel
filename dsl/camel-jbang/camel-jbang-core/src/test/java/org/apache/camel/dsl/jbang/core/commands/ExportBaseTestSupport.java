@@ -102,7 +102,7 @@ abstract class ExportBaseTestSupport extends CamelCommandBaseTestSupport {
     }
 
     protected Export createCommand(RuntimeType rt, String[] files, String... args) {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());
@@ -204,7 +204,7 @@ abstract class ExportBaseTestSupport extends CamelCommandBaseTestSupport {
     }
 
     protected int exportWithConsole(Path baseDir, RuntimeType rt, String... extraArgs) throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir;
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",

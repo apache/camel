@@ -2150,7 +2150,11 @@ A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core
 built for Camel 4.24:
 
 * `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
-  `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
+  `commandLine.addSubcommand("mycommand", new CommandTree(main.command(new MyCommand())))`.
+* A command that extends `CamelCommand` has a no-arg constructor: the constructor with the `CamelJBangMain` is removed.
+  The main is set after the command is created, with `main.command(new MyCommand())`, and `getMain()` throws
+  `IllegalStateException` when it was not set. The CLI generates the aesh metadata of its commands at compile time,
+  which needs the no-arg constructor.
 * The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
   is an attribute of it; aesh wraps the lines of the footer at 80 columns, except indented lines such as examples, so
   keep a line of text within 80 columns), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
@@ -2313,6 +2317,17 @@ section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
+=== camel-google-pubsub - the synchronous consumer acks the message it received
+
+With `synchronousPull=true` and the default `ackMode`, the `google-pubsub` consumer now acks (or nacks, when the exchange
+failed) the message it received, with the ack id it received it with. Before, it took the ack id from the
+`CamelGooglePubsubMsgAckId` header as the route left it. A route that removed the headers, or replaced the message,
+acked nothing and logged a WARN, and a route that changed the header acked another ack id: the message was delivered
+again after its ack deadline, and again after each later delivery.
+
+Manual acknowledgement (`ackMode=NONE`) is unchanged: the `GooglePubsubAcknowledge` of the synchronous consumer acks
+the ack ids of the exchange given to `ack` or `nack`, so that an aggregated exchange acks every grouped message.
 
 === camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
 
@@ -7108,6 +7123,17 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
 
+=== camel-google-mail - the stream consumer marks as read the mail it consumed
+
+With `markAsRead` (the default), the `google-mail-stream` consumer now marks as read the mail it consumed, and marks it
+as unread again when its exchange failed. Before, it took the id of the mail from the `CamelGoogleMailId` header as the
+route left it. A route that removed the headers, or replaced the message, marked nothing as read, so the mail was
+consumed again by every poll (with the default query `is:unread`). A route that set the header marked that other mail.
+
+The consumer now calls `processCommit(Exchange, String, String)` and `processRollback(Exchange, String, String)` with
+the id of the mail. A subclass of `GoogleMailStreamConsumer` that overrides `processCommit(Exchange, String)` or
+`processRollback(Exchange, String)` must override the new methods instead. The former methods are deprecated.
+
 === camel-google-storage, camel-minio, camel-alibaba-mns - the consumer deletes or moves what it consumed
 
 With `deleteAfterRead` or `moveAfterRead`, the `google-storage` and `minio` consumers now delete or move the object
@@ -7124,6 +7150,20 @@ did not delete it, and the message was received again once it was visible again.
 The consumers now call `processCommit(Exchange, String)` with the name of the object or the receipt handle. A subclass
 of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
 the new method instead. `processCommit(Exchange)` is deprecated.
+
+=== camel-alibaba-oss, camel-huaweicloud-obs - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead`, the `alibaba-oss` consumer now deletes the object it consumed. Before, it took the bucket and
+the key from the `CamelAlibabaOssBucketName` and `CamelAlibabaOssObjectKey` headers as the route left them. The
+producer writes to the bucket of the `CamelAlibabaOssBucketName` header, so a route that set it to write a copy of the
+object to another bucket deleted the object with the same key in that bucket, and the consumed object was consumed
+again by the next poll. A route that removed these headers, or replaced the message, deleted nothing.
+
+With `moveAfterRead` and `deleteAfterRead`, the `hwcloud-obs` consumer now copies and deletes the object it consumed.
+Before, it took the bucket and the key from the `CamelHwCloudObsBucketName` and `CamelHwCloudObsObjectKey` headers as
+the route left them: a route that changed them copied and deleted another object, and a route that removed them, or
+replaced the message, copied and deleted nothing, so the consumed object was consumed again by the next poll. (The
+`hwcloud-obs` producer takes its bucket from the exchange property of that name, not from the header.)
 
 === camel-mongodb - connectionUriString without hosts creates the client of the endpoint
 

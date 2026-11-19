@@ -372,10 +372,6 @@ public class Run extends CamelCommand implements CommandLifecycle {
             fallbackValue = "")
     String example;
 
-    public Run(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public boolean disarrangeLogging() {
         // every runtime except the in-process jbang runtime spawns a separate JVM

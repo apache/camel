@@ -87,7 +87,7 @@ class DependencyListTest extends CamelCommandBaseTestSupport {
     }
 
     private DependencyList createCommand(RuntimeType rt, String[] files, String... args) {
-        DependencyList command = new DependencyList(new CamelJBangMain().withPrinter(printer));
+        DependencyList command = new CamelJBangMain().withPrinter(printer).command(new DependencyList());
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());

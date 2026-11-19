@@ -248,10 +248,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
             defaultValue = HawtioVersion.HAWTIO_VERSION)
     protected String hawtioVersion;
 
-    protected ExportBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // configure logging first

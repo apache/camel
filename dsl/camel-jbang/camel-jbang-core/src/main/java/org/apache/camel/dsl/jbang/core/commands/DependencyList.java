@@ -74,10 +74,6 @@ public class DependencyList extends Export {
             completer = OutputFormatCompletionCandidates.class)
     protected String output;
 
-    public DependencyList(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date

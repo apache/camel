@@ -187,7 +187,7 @@ class VersionSetTest extends BaseConfigTestSupport {
     }
 
     private VersionSet command() {
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        VersionSet command = new CamelJBangMain().withPrinter(printer).command(new VersionSet());
         command.versionCheck = (version, repos) -> true;
         return command;
     }

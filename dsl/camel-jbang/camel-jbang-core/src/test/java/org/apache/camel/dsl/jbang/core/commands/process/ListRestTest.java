@@ -40,7 +40,7 @@ class ListRestTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListRest command = new ListRest(new CamelJBangMain().withPrinter(printer));
+        ListRest command = new CamelJBangMain().withPrinter(printer).command(new ListRest());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -63,7 +63,7 @@ class ListRestTest extends ProcessCommandTestSupport {
         root.put("rests", restContainer(restEntry("/api/users", "GET")));
         writeStatusFile(TEST_PID, root);
 
-        ListRest command = new ListRest(new CamelJBangMain().withPrinter(printer));
+        ListRest command = new CamelJBangMain().withPrinter(printer).command(new ListRest());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -88,7 +88,7 @@ class ListRestTest extends ProcessCommandTestSupport {
         root.put("rests", restContainer(restEntry("/api/items", "POST")));
         writeStatusFile(TEST_PID, root);
 
-        ListRest command = new ListRest(new CamelJBangMain().withPrinter(printer));
+        ListRest command = new CamelJBangMain().withPrinter(printer).command(new ListRest());
         command.sort = "pid";
         command.jsonOutput = true;
 

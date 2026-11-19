@@ -218,7 +218,7 @@ class QuarkusPlatformLookupTest extends CamelCommandBaseTestSupport {
         if (runtime == RuntimeType.springBoot) {
             args.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         // parsed at once: an option that is not given again is set to its default
         CommandLineTestHelper.parse(command, args.toArray(new String[0]));
         // the export adds application.properties to the files when the directory has one

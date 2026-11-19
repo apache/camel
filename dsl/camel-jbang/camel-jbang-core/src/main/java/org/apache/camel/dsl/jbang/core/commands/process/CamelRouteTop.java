@@ -25,7 +25,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -36,10 +35,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel top route",
                            "  camel top route --watch" })
 public class CamelRouteTop extends CamelRouteStatus {
-
-    public CamelRouteTop(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void printTable(List<Row> rows, boolean remoteVisible) {

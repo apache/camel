@@ -251,7 +251,7 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
     }
 
     private IntegrationStatus command() {
-        return new IntegrationStatus(new CamelJBangMain().withPrinter(printer));
+        return new CamelJBangMain().withPrinter(printer).command(new IntegrationStatus());
     }
 
     private static int call(IntegrationStatus command) throws Exception {
