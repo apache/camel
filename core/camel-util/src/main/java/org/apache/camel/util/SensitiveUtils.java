@@ -121,6 +121,8 @@ public final class SensitiveUtils {
                     "saslpassword",
                     "sassignature",
                     "sastoken",
+                    "schemaregistryoauthclientsecret",
+                    "schemaregistrypassword",
                     "secret",
                     "secretid",
                     "secretkey",
@@ -277,6 +279,8 @@ public final class SensitiveUtils {
                                                     + "|\\Qsaslpassword\\E"
                                                     + "|\\Qsassignature\\E"
                                                     + "|\\Qsastoken\\E"
+                                                    + "|\\Qschemaregistryoauthclientsecret\\E"
+                                                    + "|\\Qschemaregistrypassword\\E"
                                                     + "|\\Qsecret\\E"
                                                     + "|\\Qsecretid\\E"
                                                     + "|\\Qsecretkey\\E"

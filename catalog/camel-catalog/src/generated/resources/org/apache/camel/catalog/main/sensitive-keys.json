@@ -82,6 +82,8 @@
   "saslpassword",
   "sassignature",
   "sastoken",
+  "schemaregistryoauthclientsecret",
+  "schemaregistrypassword",
   "secret",
   "secretid",
   "secretkey",
