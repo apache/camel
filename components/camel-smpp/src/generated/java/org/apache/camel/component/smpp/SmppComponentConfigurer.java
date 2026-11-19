@@ -33,6 +33,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": getOrCreateConfiguration(target).setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": getOrCreateConfiguration(target).setAllowSystemIdAndPasswordFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "alphabet": getOrCreateConfiguration(target).setAlphabet(property(camelContext, byte.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -124,6 +126,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return java.lang.String.class;
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": return boolean.class;
         case "alphabet": return byte.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -216,6 +220,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return getOrCreateConfiguration(target).getAddressRange();
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": return getOrCreateConfiguration(target).isAllowSystemIdAndPasswordFromHeaders();
         case "alphabet": return getOrCreateConfiguration(target).getAlphabet();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

@@ -26,6 +26,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": target.getConfiguration().setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": target.getConfiguration().setAllowSystemIdAndPasswordFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -118,6 +120,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return java.lang.String.class;
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": return boolean.class;
         case "alphabet": return byte.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
@@ -211,6 +215,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return target.getConfiguration().getAddressRange();
+        case "allowsystemidandpasswordfromheaders":
+        case "allowSystemIdAndPasswordFromHeaders": return target.getConfiguration().isAllowSystemIdAndPasswordFromHeaders();
         case "alphabet": return target.getConfiguration().getAlphabet();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();

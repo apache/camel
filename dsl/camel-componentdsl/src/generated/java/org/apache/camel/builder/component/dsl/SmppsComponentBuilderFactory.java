@@ -254,10 +254,10 @@ public interface SmppsComponentBuilderFactory {
         
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
-         * not available when the Camel producer is started. Camel will check
-         * the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of
-         * the first exchange. If they are present, Camel will use these data to
-         * connect to the SMSC.
+         * not available when the Camel producer is started. The session is then
+         * created when the first exchange is sent, with the systemId and
+         * password of the endpoint. See the allowSystemIdAndPasswordFromHeaders
+         * option to take them from the message headers instead.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -808,6 +808,30 @@ public interface SmppsComponentBuilderFactory {
     
         
         /**
+         * Whether a producer with lazySessionCreation=true may take the system
+         * id and the password, with which it connects to the SMSC, from the
+         * 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first
+         * exchange. When both headers are present, the producer connects with
+         * them in place of the systemId and password of the endpoint, and keeps
+         * using them when it reconnects. This is disabled by default, and the
+         * headers are then ignored. Enable this only when the route sets these
+         * headers itself.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSystemIdAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SmppsComponentBuilder allowSystemIdAndPasswordFromHeaders(boolean allowSystemIdAndPasswordFromHeaders) {
+            doSetProperty("allowSystemIdAndPasswordFromHeaders", allowSystemIdAndPasswordFromHeaders);
+            return this;
+        }
+    
+        
+        /**
          * Whether to check that the certificate of the SMSC matches the host
          * Camel connects to, when SSL is used. When disabled, any certificate
          * trusted by the JVM is accepted, whatever host it was issued for.
@@ -934,6 +958,7 @@ public interface SmppsComponentBuilderFactory {
             case "httpProxyPort": getOrCreateConfiguration((SmppComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
             case "httpProxyUsername": getOrCreateConfiguration((SmppComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
             case "proxyHeaders": getOrCreateConfiguration((SmppComponent) component).setProxyHeaders((java.util.Map) value); return true;
+            case "allowSystemIdAndPasswordFromHeaders": getOrCreateConfiguration((SmppComponent) component).setAllowSystemIdAndPasswordFromHeaders((boolean) value); return true;
             case "hostnameVerification": getOrCreateConfiguration((SmppComponent) component).setHostnameVerification((boolean) value); return true;
             case "password": getOrCreateConfiguration((SmppComponent) component).setPassword((java.lang.String) value); return true;
             case "systemId": getOrCreateConfiguration((SmppComponent) component).setSystemId((java.lang.String) value); return true;
