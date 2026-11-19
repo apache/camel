@@ -98,7 +98,10 @@ public final class SpringAiChatConstants {
     @Metadata(description = "Metadata to attach to system messages", javaType = "java.util.Map<String, Object>")
     public static final String SYSTEM_METADATA = "CamelSpringAiChatSystemMetadata";
 
-    @Metadata(description = "Conversation ID for managing separate conversation contexts in chat memory", javaType = "String")
+    @Metadata(description = "The conversation ID. It selects the session (sessionService) or the conversation "
+                            + "(chatMemory, chatMemoryVectorStore), and is passed to every memory advisor, also to those "
+                            + "of the advisors option or of a configured chatClient. Session advisors require it.",
+              javaType = "String")
     public static final String CONVERSATION_ID = "CamelSpringAiChatConversationId";
 
     @Metadata(description = "Maximum file size in bytes for multimodal content. Overrides endpoint configuration.",

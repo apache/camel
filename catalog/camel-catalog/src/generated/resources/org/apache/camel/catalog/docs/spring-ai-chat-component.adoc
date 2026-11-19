@@ -430,7 +430,9 @@ The component provides automatic conversation memory management via Spring AI's 
 
 One memory is used per endpoint: `sessionService`, else `chatMemory`, else `chatMemoryVectorStore`. When `chatMemoryVectorStore` is set with one of the others, it is not used, and a warning is logged. When the `advisors` option has a memory advisor of its own, none of the three is used.
 
-NOTE: Memory is only activated when the `CamelSpringAiChatConversationId` header is set on the exchange. Without this header, the memory advisor is not applied, even if `sessionService`, `chatMemory` or `chatMemoryVectorStore` is configured. This allows you to selectively enable memory on a per-request basis.
+NOTE: Memory is only activated when the `CamelSpringAiChatConversationId` header is set on the exchange. Without this header, the memory advisor of the endpoint is not applied, even if `sessionService`, `chatMemory` or `chatMemoryVectorStore` is configured. This allows you to selectively enable memory on a per-request basis. This applies to the memory of the endpoint only: session advisors passed with the `advisors` option need the header on every exchange (see below).
+
+IMPORTANT: The conversation id decides whose history is read and appended to, and a session is created for any id on first use, without an access check. Derive it from an authenticated identity, such as the user of the request, and not from a raw field of the request that a caller can choose.
 
 ==== Session Memory (SessionService)
 
@@ -464,6 +466,15 @@ In Spring Boot, add `spring-ai-starter-model-session-jdbc`. With a `DataSource`,
 
 The `sessionMessageWindow` option sets how many of the newest messages of the session go into the prompt. It is 20 by default, as for a `MessageWindowChatMemory`. The window is extended back to the start of its turn, so a tool result is never sent without its tool call. The session keeps every message, only the prompt is windowed. `0` sends the whole session.
 
+A session keeps every event, while a `MessageWindowChatMemory` kept the last 20 messages of a conversation; compaction only changes what the prompt is built from. A `DefaultSessionService` gives a session a time to live of 60 days (`spring.ai.session.time-to-live` in Spring Boot), but expired sessions are only removed when `SessionService.deleteExpiredSessions(Instant)` is called, so plan for the growth of a JDBC store, for example with a route:
+
+._Java-only: remove expired sessions every hour_
+[source,java]
+----
+from("timer:expiredSessions?period=3600000")
+    .process(exchange -> sessionService.deleteExpiredSessions(Instant.now()));
+----
+
 The component does not compact the session. To compact it, build the session advisors yourself and pass them with the `advisors` option. The component then adds no memory advisor of its own, and `sessionService` is not used.
 
 ._Java-only: session advisors with compaction_
@@ -480,6 +491,10 @@ from("direct:chat")
 ----
 
 The `CamelSpringAiChatConversationId` header is passed to every memory advisor as the conversation id (`MemoryAdvisor.CONVERSATION_ID`, the key that `SessionAdvisors.session` sets). This includes the advisors of the `advisors` option and of a `chatClient` you configure.
+
+Session advisors need the header: without it they fail the exchange with `IllegalStateException: No session ID found in advisor context`. A `MessageChatMemoryAdvisor` instead uses a default conversation id.
+
+The component looks for a memory advisor in the `advisors` option only, not in the default advisors of a `chatClient` you configure. When such a `chatClient` has its own memory advisor, and a `SessionService` or `ChatMemory` bean is autowired (in Spring Boot, the model starters create a `ChatMemory` bean), the endpoint adds its own memory advisor as well, and the conversation is stored twice. Pass the memory advisor with the `advisors` option instead, or turn off autowiring with `autowiredEnabled=false` on the component.
 
 See the https://docs.spring.io/spring-ai/reference/2.1/api/session.html[Spring AI Session Memory] documentation.
 

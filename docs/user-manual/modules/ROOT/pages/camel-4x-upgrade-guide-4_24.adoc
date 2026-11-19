@@ -2909,7 +2909,14 @@ The `CamelSpringAiChatConversationId` header is now passed as the conversation i
 when the endpoint has no memory, so the memory advisors of the `advisors` option and of a configured `chatClient` get it,
 and the Spring AI `ChatClient` observation records it. When the `advisors` option has a memory advisor, such as session
 advisors with compaction, the endpoint adds no memory advisor of its own. Before, an autowired `chatMemory` added a second
-memory advisor to the request.
+memory advisor to the request. This check covers the `advisors` option only: a configured `chatClient` whose default
+advisors include a memory advisor still gets the memory advisor of the endpoint on top, as with an autowired
+`chatMemory` before, and now also when a `SessionService` bean appears, for example with
+`spring-ai-starter-model-session-jdbc`. Pass the memory advisor with the `advisors` option instead, or set
+`autowiredEnabled=false` on the component.
+
+A session keeps every event of the conversation, while a `MessageWindowChatMemory` kept the last 20 messages. Expired
+sessions (60 days by default) are only removed when `SessionService.deleteExpiredSessions` is called.
 
 === camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 

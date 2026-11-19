@@ -552,8 +552,10 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * List of custom advisors to add to the ChatClient. These advisors will
          * be added after the built-in advisors (SimpleLogger, SafeGuard,
-         * ChatMemory, QuestionAnswer) in the order they are provided in the
-         * list.
+         * QuestionAnswer) in the order they are provided in the list. When the
+         * list has a memory advisor, such as the session advisors, the endpoint
+         * adds no memory advisor of its own (sessionService, chatMemory or
+         * chatMemoryVectorStore).
          * 
          * The option is a:
          * <code>java.util.List&lt;org.springframework.ai.chat.client.advisor.api.Advisor&gt;</code> type.
@@ -570,8 +572,10 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * List of custom advisors to add to the ChatClient. These advisors will
          * be added after the built-in advisors (SimpleLogger, SafeGuard,
-         * ChatMemory, QuestionAnswer) in the order they are provided in the
-         * list.
+         * QuestionAnswer) in the order they are provided in the list. When the
+         * list has a memory advisor, such as the session advisors, the endpoint
+         * adds no memory advisor of its own (sessionService, chatMemory or
+         * chatMemoryVectorStore).
          * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.springframework.ai.chat.client.advisor.api.Advisor&gt;</code> type.
@@ -1683,8 +1687,10 @@ public interface SpringAiChatEndpointBuilderFactory {
             return "CamelSpringAiChatSystemMetadata";
         }
         /**
-         * Conversation ID for managing separate conversation contexts in chat
-         * memory.
+         * The conversation ID. It selects the session (sessionService) or the
+         * conversation (chatMemory, chatMemoryVectorStore), and is passed to
+         * every memory advisor, also to those of the advisors option or of a
+         * configured chatClient. Session advisors require it.
          * 
          * The option is a: {@code String} type.
          * 

@@ -491,7 +491,9 @@ public class SpringAiChatConfiguration implements Cloneable {
 
     /**
      * List of custom advisors to add to the ChatClient. These advisors will be added after the built-in advisors
-     * (SimpleLogger, SafeGuard, ChatMemory, QuestionAnswer) in the order they are provided in the list.
+     * (SimpleLogger, SafeGuard, QuestionAnswer) in the order they are provided in the list. When the list has a memory
+     * advisor, such as the session advisors, the endpoint adds no memory advisor of its own (sessionService, chatMemory
+     * or chatMemoryVectorStore).
      */
     public void setAdvisors(List<Advisor> advisors) {
         this.advisors = advisors;
