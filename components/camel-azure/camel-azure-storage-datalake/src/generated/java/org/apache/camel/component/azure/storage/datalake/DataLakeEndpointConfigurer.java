@@ -50,6 +50,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "datalakeserviceclient":
         case "dataLakeServiceClient": target.setDataLakeServiceClient(property(camelContext, com.azure.storage.file.datalake.DataLakeServiceClient.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "deleteafterread":
+        case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "directoryname":
         case "directoryName": target.getConfiguration().setDirectoryName(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadlinkexpiration":
@@ -157,6 +159,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "datalakeserviceclient":
         case "dataLakeServiceClient": return com.azure.storage.file.datalake.DataLakeServiceClient.class;
         case "delay": return long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
         case "directoryname":
         case "directoryName": return java.lang.String.class;
         case "downloadlinkexpiration":
@@ -260,6 +264,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "datalakeserviceclient":
         case "dataLakeServiceClient": return target.getDataLakeServiceClient();
         case "delay": return target.getDelay();
+        case "deleteafterread":
+        case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
         case "directoryname":
         case "directoryName": return target.getConfiguration().getDirectoryName();
         case "downloadlinkexpiration":

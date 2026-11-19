@@ -284,6 +284,16 @@ YAML::
 ----
 ====
 
+The consumer reads every file of the file system (or of `path`) at every poll. To consume each file once, set
+`deleteAfterRead=true`: the file is deleted once its exchange has completed. When the exchange fails, the file is kept
+and consumed again at the next poll. A file that is already gone is ignored, and a failure to delete goes to the
+exception handler of the consumer.
+
+[source,java]
+----
+from("azure-storage-datalake:cameltesting/filesystem?accountKey=yourAccountKey&path=inbox&deleteAfterRead=true")
+    .to("mock:results");
+----
 
 === Producer Examples
 -  `listFileSystem`
