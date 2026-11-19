@@ -157,6 +157,11 @@ class CamelMainExporter extends Exporter {
                                 // old option name for Camel 4.13 and older
                                 prop.put("camel.server.health-check-enabled", "true");
                             }
+                            // the health check does not start without camel-health, and the dependencies were
+                            // resolved from the application.properties before this added it
+                            if (!hasCamelArtifact(deps, "camel-health")) {
+                                deps.add("camel:health");
+                            }
                         }
                     }
                     port = ExportHelper.httpManagementPort(settings);
