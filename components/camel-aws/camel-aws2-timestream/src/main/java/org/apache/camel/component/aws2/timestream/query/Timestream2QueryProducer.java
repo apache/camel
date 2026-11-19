@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.timestream.query;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
@@ -542,16 +543,54 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 builder.maxRows(maxRows);
             }
 
+            String nextToken = exchange.getIn().getHeader(Timestream2Constants.QUERY_NEXT_TOKEN, String.class);
+            if (ObjectHelper.isNotEmpty(nextToken)) {
+                builder.nextToken(nextToken);
+            }
+
             QueryResponse result;
             try {
-                result = timestreamQueryClient.query(builder.build());
+                if (getConfiguration().isQueryAllPages()) {
+                    result = queryAllPages(timestreamQueryClient, builder);
+                } else {
+                    result = timestreamQueryClient.query(builder.build());
+                }
             } catch (AwsServiceException ase) {
                 LOG.trace("Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (result.nextToken() != null) {
+                message.setHeader(Timestream2Constants.QUERY_NEXT_TOKEN, result.nextToken());
+            } else {
+                // the last page: a route that loops while the header is set stops
+                message.removeHeader(Timestream2Constants.QUERY_NEXT_TOKEN);
+            }
         }
+    }
+
+    /**
+     * Reads the pages of the query until the last one, and gives one response with the rows of all the pages. A page
+     * can have no rows while the query still runs, so only the token tells whether a next page exists.
+     */
+    private static QueryResponse queryAllPages(TimestreamQueryClient timestreamQueryClient, QueryRequest.Builder builder) {
+        List<Row> rows = new ArrayList<>();
+        List<ColumnInfo> columnInfo = null;
+        QueryResponse page;
+        do {
+            page = timestreamQueryClient.query(builder.build());
+            rows.addAll(page.rows());
+            if (columnInfo == null && page.hasColumnInfo()) {
+                columnInfo = page.columnInfo();
+            }
+            builder.nextToken(page.nextToken());
+        } while (page.nextToken() != null);
+        QueryResponse.Builder all = page.toBuilder().rows(rows).nextToken(null);
+        if (columnInfo != null) {
+            all.columnInfo(columnInfo);
+        }
+        return all.build();
     }
 
     private void cancelQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {

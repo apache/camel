@@ -62,6 +62,11 @@ public class Timestream2Configuration implements Cloneable, AwsCommonConfigurati
     private TimestreamQueryClient awsTimestreamQueryClient;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "For the query operation: read all the pages of the result, and give all the rows in one"
+                            + " QueryResponse. Without it, the body is one page, and the CamelAwsTimestreamQueryNextToken"
+                            + " header gives the token of the next page. Not used with pojoRequest.")
+    private boolean queryAllPages;
     @UriParam(security = "insecure:ssl", defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
@@ -215,6 +220,17 @@ public class Timestream2Configuration implements Cloneable, AwsCommonConfigurati
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
+    }
+
+    public boolean isQueryAllPages() {
+        return queryAllPages;
+    }
+
+    /**
+     * For the query operation: read all the pages of the result, and give all the rows in one QueryResponse.
+     */
+    public void setQueryAllPages(boolean queryAllPages) {
+        this.queryAllPages = queryAllPages;
     }
 
     public boolean isTrustAllCertificates() {
