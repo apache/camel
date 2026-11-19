@@ -61,10 +61,14 @@ public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTestSupport
     @Test
     public void testBasicAuth() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello Public", "Hello World");
+        // the public page is not checked, so its Authorization header is kept
+        getMockEndpoint("mock:input").message(0).header("Authorization").isEqualTo("Basic Zm9vOmJhcg==");
+        // the credential checked by Camel is not passed on to the route
+        getMockEndpoint("mock:input").message(1).header("Authorization").isNull();
 
         // we dont need auth for the public page
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public",
-                String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo/public/hello.txt",
+                "Hello Public", "Authorization", "Basic Zm9vOmJhcg==", String.class);
         assertEquals("Bye World", out);
 
         CamelExecutionException e = assertThrows(CamelExecutionException.class,

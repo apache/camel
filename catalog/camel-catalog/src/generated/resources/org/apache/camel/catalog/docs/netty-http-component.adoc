@@ -236,6 +236,10 @@ the JAAS based authenticator is used, which will use the realm name
 specified (`_someRealm_` in the example above) and use the JAAS realm and the
 `JAAS \{\{LoginModule}}s` of this realm for authentication.
 
+Once the credential of a request has been checked, the `Authorization` header is removed from the message, so it is
+not passed on to the route. The `CamelHttpAuthentication` header is still set to `Basic`. A request to a resource
+that the security constraint does not restrict keeps the header as sent.
+
 ==== Specifying ACL on web resources
 
 The `org.apache.camel.component.netty.http.SecurityConstraint` allows

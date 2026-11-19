@@ -488,7 +488,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected Future<Void> populateCamelMessage(RoutingContext ctx, Exchange exchange, Message message) {
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         populateCamelHeaders(ctx, message.getHeaders(), exchange, headerFilterStrategy);
-        if (securityHandler != null) {
+        if (securityHandler != null || Boolean.TRUE.equals(ctx.get(VertxPlatformHttpServer.AUTHENTICATED_BY_SERVER))) {
+            // the credential has been checked by Camel (the security handler of the endpoint, or the authentication
+            // configured on the server), so it is not passed on to the route
             message.removeHeader(AUTHORIZATION);
         }
         return httpRequestBodyHandler.handle(ctx, message);
