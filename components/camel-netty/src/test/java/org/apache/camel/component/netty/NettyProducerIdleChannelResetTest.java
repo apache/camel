@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
@@ -32,24 +33,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * The server resets the connection after it replied, while the channel is idle in the producer pool and the exchange of
- * that reply is still routing: the exchange is not failed by that reset.
+ * The server resets the connection after the call, while the channel is idle in the producer pool and the exchange of
+ * that call is still routing (on another thread): the exchange is not failed by that reset.
  */
 class NettyProducerIdleChannelResetTest extends BaseNettyTest {
 
     private final CountDownLatch resetNow = new CountDownLatch(1);
     private ServerSocket server;
-    private NettyProducer producer;
 
     @AfterEach
     void stopServer() throws Exception {
         resetNow.countDown();
-        if (producer != null) {
-            producer.stop();
-        }
         if (server != null) {
             server.close();
         }
@@ -57,36 +54,62 @@ class NettyProducerIdleChannelResetTest extends BaseNettyTest {
 
     @Test
     void testResetOfIdleChannelDoesNotFailTheExchange() throws Exception {
-        server = new ServerSocket(getPort());
-        Thread serverThread = new Thread(this::serveOneRequestThenReset, "reset-server");
-        serverThread.setDaemon(true);
-        serverThread.start();
-
-        producer = (NettyProducer) context.getEndpoint(
-                "netty:tcp://localhost:" + getPort() + "?textline=true&sync=true").createProducer();
-        producer.start();
+        startServer(true);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        String out = template.requestBody("direct:start", "Hello World", String.class);
+        String out = template.requestBody("direct:sync", "Hello World", String.class);
         assertEquals("Bye World", out);
         mock.assertIsSatisfied();
     }
 
-    private void serveOneRequestThenReset() {
+    @Test
+    void testResetOfIdleChannelDoesNotFailTheExchangeWhenNotSync() throws Exception {
+        startServer(false);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        Exchange out = template.send("direct:async", e -> e.getIn().setBody("Hello World"));
+        assertNull(out.getException());
+        mock.assertIsSatisfied();
+    }
+
+    private void startServer(boolean reply) throws Exception {
+        server = new ServerSocket(getPort());
+        Thread serverThread = new Thread(() -> serveOneRequestThenReset(reply), "reset-server");
+        serverThread.setDaemon(true);
+        serverThread.start();
+    }
+
+    private void serveOneRequestThenReset(boolean reply) {
         try (Socket socket = server.accept()) {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             in.readLine();
-            OutputStream out = socket.getOutputStream();
-            out.write("Bye World\n".getBytes(StandardCharsets.UTF_8));
-            out.flush();
-            // reset the connection (RST) once the reply was received and the exchange routes on
-            assertTrue(resetNow.await(20, TimeUnit.SECONDS));
+            if (reply) {
+                OutputStream out = socket.getOutputStream();
+                out.write("Bye World\n".getBytes(StandardCharsets.UTF_8));
+                out.flush();
+            }
+            // reset the connection (RST) once the call is done and the exchange routes on
+            if (!resetNow.await(20, TimeUnit.SECONDS)) {
+                return;
+            }
             socket.setSoLinger(true, 0);
         } catch (Exception e) {
             // the test ended
         }
+    }
+
+    private void resetAndWaitUntilChannelClosed(Exchange exchange) {
+        // the next step of the route runs (on another thread than the event loop of the channel) while the server
+        // resets the channel of the call, which is back in the producer pool
+        resetNow.countDown();
+        // until the producer closed the channel, or the reset failed this exchange
+        await().atMost(10, TimeUnit.SECONDS).until(
+                () -> exchange.getException() != null
+                        || context.hasServices(NettyProducer.class).stream().allMatch(p -> p.getAllChannels().isEmpty()));
     }
 
     @Override
@@ -94,15 +117,16 @@ class NettyProducerIdleChannelResetTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        // the call of .to("netty:...") with the producer of this test, which shows its channels
-                        .process(exchange -> producer.process(exchange))
-                        .process(exchange -> {
-                            // the next step of the route runs while the server resets the channel of the reply,
-                            // which is back in the producer pool
-                            resetNow.countDown();
-                            await().atMost(10, TimeUnit.SECONDS).until(() -> producer.getAllChannels().isEmpty());
-                        })
+                from("direct:sync")
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                        .threads(1)
+                        .process(exchange -> resetAndWaitUntilChannelClosed(exchange))
+                        .to("mock:result");
+
+                from("direct:async")
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=false")
+                        .threads(1)
+                        .process(exchange -> resetAndWaitUntilChannelClosed(exchange))
                         .to("mock:result");
             }
         };
