@@ -4250,6 +4250,20 @@ again. With `transacted=true` the SQL and MyBatis consumers break out of the bat
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
 
+=== camel-sql - onConsumeBatchComplete is not run when the consumer stops before the end of the batch
+
+The `onConsumeBatchComplete` query runs after the consumer has routed the whole batch. When the consumer was stopped
+while it routed a batch (a route stop, a CamelContext shutdown or a route reload), it left the batch and still ran the
+query, so a query such as `delete from projects`, or an update that marks the rows as processed, also took the rows
+that were never routed, and they were lost. The query is now not run when the consumer routed only part of the batch
+(logged at INFO), and the next poll reads the rows that were not routed.
+
+A route that uses `onConsumeBatchComplete` alone (without `onConsume`) to delete or mark the rows now also leaves the
+rows of that batch that were already routed as they are, so it routes them again after a restart, where before the
+rows that were not routed were lost. Use `onConsume` to delete or mark each row as it is routed, or set
+`shutdownRunningTask=CompleteAllTasks` on the route, so that a graceful stop routes the whole batch (within the
+shutdown timeout) and the query runs.
+
 === camel-sql - sql and sql-stored with batch=true: the update count and a single Map body
 
 With `batch=true` the `CamelSqlUpdateCount` (sql) and `CamelSqlStoredUpdateCount` (sql-stored) headers no longer add
