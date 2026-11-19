@@ -297,9 +297,9 @@ and pauses in it. If another thread comes to a point of the same exchange during
 Each report names the thread and its stack (`USED_BY_TWO_THREADS`). A thread that only waits, such as a caller that waits
 for its task, is at no point, so it is not reported. The return of `process` is not a point: after an asynchronous
 processor handed the exchange on, its caller only unwinds, while the thread that got the exchange may already call the
-callback. An access between these points is not seen, such as an `AggregationStrategy` that runs on a thread of a pool,
-`copyResults` after a circuit breaker timed out, or a thread of the application that reads the headers: the rule
-finds overlaps at the points of the routing engine, not every overlap.
+callback. An access between these points is not seen. Examples are an `AggregationStrategy` that runs on a thread of
+a pool, `copyResults` after a circuit breaker timed out, and a thread of the application that reads the headers. The
+rule finds overlaps at the points of the routing engine, not every overlap.
 
 The sample is taken by a counter, not at random: `camel.sanitizer.overlapSampling=100` opens a window at every 100th
 point of the context. When one thread routes the exchanges, a rerun samples the same points; when several threads do,
