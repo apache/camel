@@ -2873,6 +2873,24 @@ stream failed after part of the request had already been sent.
 The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
 body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
 
+=== camel-spring-ai - Spring AI 2.1.0
+
+The Spring AI components use Spring AI 2.1.0, which is built on Spring Boot 4.2 and Spring Framework 7.1. See the
+https://docs.spring.io/spring-ai/reference/2.1/upgrade-notes.html[Spring AI upgrade notes]. The changes that show
+through Camel are:
+
+* The Anthropic chat model ignores the `temperature`, `topP` and `topKSampling` options of `spring-ai-chat`, and their
+headers, and logs a warning (Anthropic Java SDK 3.x). It sends the API key in the `Authorization: Bearer` header
+instead of `X-Api-Key`, which matters for a proxy that filters headers.
+* The chat models return one generation, whose message holds the reply in ordered parts. The body of `spring-ai-chat`
+is the text of the first generation, so with Google GenAI and `includeThoughts` it was the first thought, and with
+Bedrock Converse a reply of several text blocks gave only the first one. The body is now the whole answer.
+* With an `entityClass` (option or `CamelSpringAiChatEntityClass` header), a request that the SafeGuard advisor
+(`safeguardSensitiveWords`) refuses no longer fails the exchange with a JSON parsing error of the refusal text. The body
+is now `null` and the `CamelSpringAiChatFinishReason` header is `guardrailRefusal`. A response that the provider
+filtered and that cannot be converted gives a `null` body too. Check the finish reason header where the route handled
+the exception.
+
 === camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 
 A `List` body with one text now gives a `List<float[]>` with one vector, as a `List` of more texts does, and sets the
