@@ -4671,6 +4671,25 @@
                                     </excludes>
                                 </configuration>
                             </execution>
+                            <!-- Generates the coverage report of one module from the execution data of all the modules
+                                 merged by the "coverage" profile of the root pom (some modules are covered by the tests of other modules).
+                                 Not bound to the build: run it with "mvn -Pcoverage jacoco:report@report-module"
+                                 after the merge of the execution data, see the Jenkinsfile. -->
+                            <execution>
+                                <id>report-module</id>
+                                <phase>none</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <dataFile>${maven.multiModuleProjectDirectory}/target/jacoco-merged.exec</dataFile>
+                                    <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
+                                    <excludes>
+                                        <exclude>**/CamelThreadFactory*</exclude>
+                                        <exclude>**/ContextValueFactory*</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
