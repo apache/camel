@@ -166,6 +166,16 @@ What still works as before:
 * An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
   before.
 
+=== camel-core - RAW() option values of a dynamic endpoint computed from the message are literal text
+
+A `RAW(...)` option value of an endpoint whose uri is computed from the current message at runtime (`toD`, `enrich`,
+`wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and `dynamicRouter`) is still unwrapped, but its content is now
+taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endpoints written in the route, such as
+`+to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})")+`, are unchanged. As the whole uri of `toD`
+is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
+use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
+is resolved once when the route is created.
+
 === camel-core - Rest DSL binding mode json fails at startup without a JSON data format
 
 A Rest DSL service with `bindingMode` `json` or `json_xml` whose JSON data format (`jackson` unless `jsonDataFormat`
