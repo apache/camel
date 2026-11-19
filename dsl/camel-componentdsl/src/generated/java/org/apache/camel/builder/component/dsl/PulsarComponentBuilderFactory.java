@@ -953,6 +953,44 @@ public interface PulsarComponentBuilderFactory {
             doSetProperty("pulsarClient", pulsarClient);
             return this;
         }
+    
+        
+        /**
+         * Whether to check that the certificate of the broker matches the host
+         * Camel connects to, with pulsarssl://. When disabled, any certificate
+         * trusted by the client is accepted, whatever host it was issued for.
+         * Not used when a pulsarClient is given.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
+        /**
+         * The path of a PEM file with the certificates of the certificate
+         * authorities to trust, for a broker on pulsarssl:// whose certificate
+         * is not signed by an authority that the JVM trusts. Not used when a
+         * pulsarClient is given.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param tlsTrustCertsFilePath the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder tlsTrustCertsFilePath(java.lang.String tlsTrustCertsFilePath) {
+            doSetProperty("tlsTrustCertsFilePath", tlsTrustCertsFilePath);
+            return this;
+        }
     }
 
     class PulsarComponentBuilderImpl
@@ -1024,6 +1062,8 @@ public interface PulsarComponentBuilderFactory {
             case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
             case "autowiredEnabled": ((PulsarComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((PulsarComponent) component).setHostnameVerification((boolean) value); return true;
+            case "tlsTrustCertsFilePath": getOrCreateConfiguration((PulsarComponent) component).setTlsTrustCertsFilePath((java.lang.String) value); return true;
             default: return false;
             }
         }
