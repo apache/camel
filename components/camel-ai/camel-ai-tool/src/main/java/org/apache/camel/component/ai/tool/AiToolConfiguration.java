@@ -287,6 +287,66 @@ public class AiToolConfiguration implements Cloneable {
         this.allRolesRequired = allRolesRequired;
     }
 
+    /**
+     * Copies onto this configuration every value that is set on the other one, and keeps the values of this
+     * configuration that the other one does not set. A value is set when it is not null, or, for a boolean option whose
+     * default is false, when it is true. A new option must be added here too; AiToolConfigurationOverrideWithTest fails
+     * when one is missing.
+     */
+    void overrideWith(AiToolConfiguration other) {
+        if (other.tags != null) {
+            tags = other.tags;
+        }
+        if (other.description != null) {
+            description = other.description;
+        }
+        if (other.parameters != null) {
+            parameters = new HashMap<>(other.parameters);
+        }
+        if (other.argSchema != null) {
+            argSchema = other.argSchema;
+        }
+        if (other.argumentsAsBody) {
+            argumentsAsBody = true;
+        }
+        if (other.outputParameters != null) {
+            outputParameters = new HashMap<>(other.outputParameters);
+        }
+        if (other.outputSchema != null) {
+            outputSchema = other.outputSchema;
+        }
+        if (other.title != null) {
+            title = other.title;
+        }
+        if (other.readOnlyHint != null) {
+            readOnlyHint = other.readOnlyHint;
+        }
+        if (other.destructiveHint != null) {
+            destructiveHint = other.destructiveHint;
+        }
+        if (other.idempotentHint != null) {
+            idempotentHint = other.idempotentHint;
+        }
+        if (other.openWorldHint != null) {
+            openWorldHint = other.openWorldHint;
+        }
+        if (other.returnDirect != null) {
+            returnDirect = other.returnDirect;
+        }
+        if (other.searchable) {
+            searchable = true;
+        }
+        if (other.authorizationPolicy != null) {
+            authorizationPolicy = other.authorizationPolicy;
+        }
+        if (other.allowedRoles != null) {
+            allowedRoles = other.allowedRoles;
+        }
+        if (other.allRolesRequired) {
+            allRolesRequired = true;
+        }
+    }
+
     public AiToolConfiguration copy() {
         try {
             AiToolConfiguration copy = (AiToolConfiguration) super.clone();

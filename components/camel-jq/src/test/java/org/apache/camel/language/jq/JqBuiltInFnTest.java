@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.jq;
 
-import java.net.InetAddress;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,7 @@ public class JqBuiltInFnTest extends JqTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jq(".foo = hostname")
+                        .transform().jq("import \"jackson-jq/uuid\" as uuid; .foo = (uuid::uuid4 | length)")
                         .to("mock:result");
             }
         };
@@ -37,10 +35,8 @@ public class JqBuiltInFnTest extends JqTestSupport {
 
     @Test
     public void testExpression() throws Exception {
-        InetAddress addr = InetAddress.getLocalHost();
-
         getMockEndpoint("mock:result")
-                .expectedBodiesReceived(node("foo", addr.getHostName()));
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", 36));
 
         template.sendBodyAndHeader("direct:start", node("foo", "bar"), "MyHeader", "MyValue");
 

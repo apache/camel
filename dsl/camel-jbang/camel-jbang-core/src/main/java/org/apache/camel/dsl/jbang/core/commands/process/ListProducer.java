@@ -68,6 +68,10 @@ public class ListProducer extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     public ListProducer(CamelJBangMain main) {
         super(main);
     }
@@ -94,7 +98,7 @@ public class ListProducer extends ProcessWatchCommand {
                         row.name = ProcessHelper.extractName(root, ph);
                     }
                     row.pid = Long.toString(ph.pid());
-                    row.uri = o.getString("uri");
+                    row.uri = ListingFormat.masked(o.getString("uri"), mask);
                     row.id = o.getString("routeId");
                     row.state = o.getString("state");
                     // the console says clazz (class before Camel 4.23)

@@ -84,6 +84,15 @@ class CamelJBangMainArgumentFileTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void spacesInARowSeparateOnce() throws Exception {
+        Path file = dir.resolve("spaces.txt");
+        Files.writeString(file, "run  orders.yaml \t --dev  \n");
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+
+        assertThat(main.expandArgumentFiles("@" + file)).containsExactly("run", "orders.yaml", "--dev");
+    }
+
+    @Test
     public void aDoubleAtIsALiteralAt() {
         CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
 

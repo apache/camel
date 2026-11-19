@@ -61,7 +61,7 @@
         <activemq-version>5.19.12</activemq-version>
         <activemq6-version>6.3.2</activemq6-version>
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
-        <aesh-version>3.19.1</aesh-version>
+        <aesh-version>3.19.2</aesh-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
@@ -275,7 +275,8 @@
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-annotations-version>2.23</jackson-annotations-version>
-        <jackson-jq-version>1.6.5</jackson-jq-version>
+        <!-- jackson-jq 2.x is still in alpha: check the upstream API and operator precedence changes when bumping -->
+        <jackson-jq-version>2.0.0-alpha2</jackson-jq-version>
         <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
@@ -4667,6 +4668,25 @@
                                     <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
                                     <excludes>
                                         <exclude>**/CamelThreadFactory*</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                            <!-- Generates the coverage report of one module from the execution data of all the modules
+                                 merged by the "coverage" profile of the root pom (some modules are covered by the tests of other modules).
+                                 Not bound to the build: run it with "mvn -Pcoverage jacoco:report@report-module"
+                                 after the merge of the execution data, see the Jenkinsfile and sonar-build.yml. -->
+                            <execution>
+                                <id>report-module</id>
+                                <phase>none</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <dataFile>${maven.multiModuleProjectDirectory}/target/jacoco-merged.exec</dataFile>
+                                    <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
+                                    <excludes>
+                                        <exclude>**/CamelThreadFactory*</exclude>
+                                        <exclude>**/ContextValueFactory*</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>

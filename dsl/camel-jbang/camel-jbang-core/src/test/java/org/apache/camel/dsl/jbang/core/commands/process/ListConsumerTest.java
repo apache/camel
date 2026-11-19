@@ -31,6 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
@@ -160,6 +161,32 @@ class ListConsumerTest extends ProcessCommandTestSupport {
 
             assertEquals(0, exit);
             assertTrue(printer.getOutput().contains("\"type\":\"org.apache.camel.component.timer.Timer\""));
+        }
+    }
+
+    @Test
+    void testJsonOutputMasksSecretOptionsOfUri() throws Exception {
+        JsonObject c = consumer();
+        c.put("uri", "sftp://scott@localhost/inbox?password=RAW(tiger)&delay=5000");
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("consumers", consumerContainer(c));
+        writeStatusFile(TEST_PID, root);
+
+        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            assertTrue(output.contains("password=xxxxxx&delay=5000"), output);
+            assertFalse(output.contains("tiger"), output);
         }
     }
 
