@@ -543,7 +543,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -559,7 +560,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1893,7 +1895,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1909,7 +1912,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3172,7 +3176,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3188,7 +3193,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
