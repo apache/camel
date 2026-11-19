@@ -28,6 +28,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.redisson.Redisson;
@@ -48,13 +49,33 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
     @RegisterExtension
     static RedisService service = RedisServiceFactory.createSingletonService();
 
-    private RedisAggregationRepository createRepo(String mapName, boolean optimistic) {
+    @BeforeEach
+    void flushRedis() {
+        // the tests of the subclasses use the same map names
+        Config config = new Config();
+        config.useSingleServer().setAddress(String.format("redis://%s", service.getServiceAddress()));
+        RedissonClient client = Redisson.create(config);
+        try {
+            client.getKeys().flushall();
+        } finally {
+            client.shutdown();
+        }
+    }
+
+    /**
+     * Configures the repository before it starts.
+     */
+    protected void configure(RedisAggregationRepository repo) {
+    }
+
+    protected RedisAggregationRepository createRepo(String mapName, boolean optimistic) {
         RedisAggregationRepository repo = new RedisAggregationRepository(mapName, service.getServiceAddress(), optimistic);
+        configure(repo);
         repo.start();
         return repo;
     }
 
-    private Exchange createExchange(String body) {
+    protected Exchange createExchange(String body) {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(body);
         return exchange;
@@ -339,6 +360,7 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
         RedisAggregationRepository repo
                 = new RedisAggregationRepository("removeNoRecovery", service.getServiceAddress(), true);
         repo.setUseRecovery(false);
+        configure(repo);
         repo.start();
         try {
             Exchange exchange = createExchange("noRecover");

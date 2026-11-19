@@ -8009,6 +8009,12 @@ logs a WARN with the number of such entries in each of its hashes. Complete the 
 recovery of the completed exchanges finish, before upgrading. Otherwise, remove the hashes of the repository
 (`mapName` and the persistence map, by default `mapName` with the suffix `-completed`) from Redis.
 
+To upgrade without draining, set the new `codec` option (flagged `insecure:serialization`) to
+`new org.redisson.codec.Kryo5Codec()`: the repository then reads and writes the entries in the same format as the
+older versions, and the `deserializationFilter` option and the WARN at startup do not apply. Once the aggregations
+stored by the older version have completed and been recovered, remove the `codec` option to switch to the Java
+serialization read through the deserialization filter.
+
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with

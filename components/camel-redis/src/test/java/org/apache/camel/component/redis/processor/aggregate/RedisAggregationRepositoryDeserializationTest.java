@@ -68,18 +68,18 @@ import static org.mockito.Mockito.when;
  */
 public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupport {
 
-    private final Map<String, byte[]> active = new HashMap<>();
-    private final Map<String, byte[]> completed = new HashMap<>();
+    private final Map<String, Object> active = new HashMap<>();
+    private final Map<String, Object> completed = new HashMap<>();
     private RedissonClient redisson;
     private RedisAggregationRepository repository;
 
     @BeforeEach
     void createRepository() {
         redisson = mock(RedissonClient.class);
-        RMap<String, byte[]> activeMap = inMemoryMap(active);
-        RMap<String, byte[]> completedMap = inMemoryMap(completed);
-        when(redisson.<String, byte[]> getMap(eq("orders"), any(Codec.class))).thenReturn(activeMap);
-        when(redisson.<String, byte[]> getMap(eq("orders-completed"), any(Codec.class))).thenReturn(completedMap);
+        RMap<String, Object> activeMap = inMemoryMap(active);
+        RMap<String, Object> completedMap = inMemoryMap(completed);
+        when(redisson.<String, Object> getMap(eq("orders"), any(Codec.class))).thenReturn(activeMap);
+        when(redisson.<String, Object> getMap(eq("orders-completed"), any(Codec.class))).thenReturn(completedMap);
         when(redisson.getLock(anyString())).thenReturn(mock(RLock.class));
 
         repository = new RedisAggregationRepository();
@@ -112,7 +112,7 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
         repository.add(context, "key1", exchange);
 
         // the value is a Java serialization stream
-        byte[] value = active.get("key1");
+        byte[] value = (byte[]) active.get("key1");
         assertEquals((byte) 0xAC, value[0]);
         assertEquals((byte) 0xED, value[1]);
 
@@ -234,9 +234,76 @@ public class RedisAggregationRepositoryDeserializationTest extends CamelTestSupp
         assertTrue(captor.events.stream().noneMatch(event -> event.getLevel() == Level.WARN));
     }
 
+    @Test
+    void testCodecIsUsedForTheHashes() {
+        Codec codec = mock(Codec.class);
+        repository.setCodec(codec);
+        repository.start();
+
+        verify(redisson).getMap("orders", codec);
+        verify(redisson).getMap("orders-completed", codec);
+    }
+
+    @Test
+    void testCodecStoresTheHolderAndTheFilterDoesNotApply() {
+        repository.setCodec(mock(Codec.class));
+        repository.start();
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(URI.create("http://localhost/orders"));
+        exchange.getIn().setHeader("count", 3);
+        repository.add(context, "key1", exchange);
+
+        // the codec encodes the holder itself
+        assertInstanceOf(DefaultExchangeHolder.class, active.get("key1"));
+
+        Exchange answer = repository.get(context, "key1");
+        assertEquals(exchange.getExchangeId(), answer.getExchangeId());
+        assertEquals(URI.create("http://localhost/orders"), answer.getIn().getBody());
+        assertEquals(3, answer.getIn().getHeader("count"));
+
+        completed.put(exchange.getExchangeId(), DefaultExchangeHolder.marshal(exchange, true, false));
+        assertEquals(URI.create("http://localhost/orders"),
+                repository.recover(context, exchange.getExchangeId()).getIn().getBody());
+    }
+
+    @Test
+    void testCodecValueThatIsNotAnExchangeIsNotUsed() {
+        repository.setCodec(mock(Codec.class));
+        repository.start();
+
+        active.put("key1", "Hello");
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> repository.get(context, "key1"));
+        assertTrue(e.getMessage().contains("java.lang.String"), e.getMessage());
+    }
+
+    @Test
+    void testNoWarnAtStartWithCodec() {
+        // entries of the codec are not Java serialization streams, and are expected
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello");
+        active.put("key1", DefaultExchangeHolder.marshal(exchange, true, false));
+        active.put("key2", new byte[] { 1, 0, 'o', 'r', 'g' });
+        completed.put("id1", new byte[] { 1, 0, 'o', 'r', 'g' });
+        repository.setCodec(mock(Codec.class));
+
+        Logger logger = (Logger) LogManager.getLogger(RedisAggregationRepository.class);
+        LogEventCaptor captor = new LogEventCaptor();
+        logger.addAppender(captor);
+        try {
+            repository.start();
+        } finally {
+            logger.removeAppender(captor);
+        }
+
+        assertTrue(repository.isStarted());
+        assertTrue(captor.events.stream().noneMatch(event -> event.getLevel() == Level.WARN));
+    }
+
     @SuppressWarnings("unchecked")
-    private static RMap<String, byte[]> inMemoryMap(Map<String, byte[]> store) {
-        RMap<String, byte[]> map = mock(RMap.class);
+    private static RMap<String, Object> inMemoryMap(Map<String, Object> store) {
+        RMap<String, Object> map = mock(RMap.class);
         when(map.get(any())).thenAnswer(i -> store.get(i.<String> getArgument(0)));
         when(map.put(anyString(), any())).thenAnswer(i -> store.put(i.getArgument(0), i.getArgument(1)));
         when(map.keySet()).thenAnswer(i -> Set.copyOf(store.keySet()));
