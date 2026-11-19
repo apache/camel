@@ -271,6 +271,11 @@ It is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
+When the route hands the file over to another thread, for example with `to("seda:...")`, the file is deleted or
+moved (`delete`, `move`, `moveFailed`) on that thread, when it is done with the file, on the connection of the consumer.
+The ftp and ftps consumers run one operation at a time on their connection, so such a delete or move waits until the
+consumer is done with its current operation (such as the download of the next file), and the other way around.
+
 === A server that stops answering
 
 When the FTP/FTPS server stops answering on an open connection (it hangs, or a firewall drops the connection without
