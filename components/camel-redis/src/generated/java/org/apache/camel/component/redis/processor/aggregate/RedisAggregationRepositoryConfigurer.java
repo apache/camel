@@ -25,8 +25,11 @@ public class RedisAggregationRepositoryConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "codec": target.setCodec(property(camelContext, org.redisson.client.codec.Codec.class, value)); return true;
         case "deadletteruri":
         case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "mapname":
         case "mapName": target.setMapName(property(camelContext, java.lang.String.class, value)); return true;
@@ -49,8 +52,11 @@ public class RedisAggregationRepositoryConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return boolean.class;
+        case "codec": return org.redisson.client.codec.Codec.class;
         case "deadletteruri":
         case "deadLetterUri": return java.lang.String.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
         case "mapname":
         case "mapName": return java.lang.String.class;
@@ -74,8 +80,11 @@ public class RedisAggregationRepositoryConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "codec": return target.getCodec();
         case "deadletteruri":
         case "deadLetterUri": return target.getDeadLetterUri();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "endpoint": return target.getEndpoint();
         case "mapname":
         case "mapName": return target.getMapName();
