@@ -39,6 +39,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.apache.commons.net.util.TrustManagerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,6 +162,9 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 trustMgrFactory.init(trustStore);
 
                 client.setTrustManager(trustMgrFactory.getTrustManagers()[0]);
+            } else {
+                // without trust store options, check the server certificate against the JVM default trust store
+                client.setTrustManager(TrustManagerUtils.getDefaultTrustManager(null));
             }
         }
 
