@@ -57,6 +57,11 @@ performed to create the directory configured for the endpoint. The default
 value for `autoCreate` is `true`. On the contrary, the share must exist; it
 is not automatically created.
 
+When the consumer cannot create the directory as the route starts, for example
+because the identity is not allowed to create directories in the share, or the
+share refuses the credentials, the route still starts: the consumer logs a WARN
+and tries again on each poll.
+
 If no *port* number is provided, Camel will provide default values
 according to the protocol (https 443).
 
@@ -304,12 +309,9 @@ The accept(file) file argument has properties:
 
 === Filtering using ANT path matcher
 
-The ANT path matcher is a filter shipped out-of-the-box in the
-*camel-spring* jar. So you need to depend on *camel-spring* if you are
-using Maven. +
- The reason is that we leverage Spring's
-http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
-to do the actual matching.
+The ANT path matcher is a filter shipped out-of-the-box with the file component: the `antInclude` and `antExclude`
+options need no other dependency. Use them for wildcards such as `+*.txt+`: the `fileName` option is a file name, not
+a pattern, and the `include` and `exclude` options are regular expressions.
 
 The file paths are matched with the following rules:
 

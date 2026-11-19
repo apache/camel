@@ -317,8 +317,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "skipMessagesWithoutChange": getOrCreateConfiguration(target).setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": getOrCreateConfiguration(target).setSnapshotDatabaseErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
@@ -668,8 +666,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": return int.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
         case "snapshotfetchsize":
@@ -1020,8 +1016,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "skipMessagesWithoutChange": return getOrCreateConfiguration(target).isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": return getOrCreateConfiguration(target).getSnapshotDatabaseErrorsMaxRetries();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":

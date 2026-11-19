@@ -95,8 +95,10 @@
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.2</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
+        <aws-glue-schema-registry-version>2.0.2</aws-glue-schema-registry-version>
         <aws-java-sdk2-version>2.57.11</aws-java-sdk2-version>
         <azure-iot-device-client-version>2.5.1</azure-iot-device-client-version>
+        <azure-schemaregistry-kafka-avro-version>1.1.4</azure-schemaregistry-kafka-avro-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -119,7 +121,7 @@
         <clickhouse-client-version>0.11.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <citrus-version>5.1.0</citrus-version>
+        <citrus-version>5.2.0</citrus-version>
         <classgraph-version>4.8.199</classgraph-version>
         <cloudant-version>0.10.22</cloudant-version>
         <com-ibm-mq-jakarta-client-version>10.0.1.0</com-ibm-mq-jakarta-client-version>
@@ -141,6 +143,7 @@
         <commons-text-version>1.15.0</commons-text-version>
         <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.1</compress-lzf-version>
+        <confluent-serializer-version>8.3.3</confluent-serializer-version>
         <consul-client-version>1.12.2</consul-client-version>
         <couchbase-client-version>3.13.1</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
@@ -153,7 +156,7 @@
         <dapr-version>1.19.0</dapr-version>
         <dapr-workflow-version>1.19.0</dapr-workflow-version>
         <datasonnet-mapper-version>3.0.1.3</datasonnet-mapper-version>
-        <debezium-version>3.7.0.Final</debezium-version>
+        <debezium-version>3.7.1.Final</debezium-version>
         <debezium-mysql-connector-version>26.10.0</debezium-mysql-connector-version>
         <dhis2-version>3.0.2</dhis2-version>
         <directory-api-version>2.1.9</directory-api-version>
@@ -542,11 +545,11 @@
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.7.0</tamboui-version>
         <testcontainers-version>2.0.5</testcontainers-version>
-        <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
+        <thymeleaf-version>3.1.7.RELEASE</thymeleaf-version>
         <tika-version>4.1.0</tika-version>
         <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-servlet-version>2.3.27.Final</undertow-servlet-version>
+        <undertow-ee-version>2.0.3.Final</undertow-ee-version>
         <undertow-version>2.4.4.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
@@ -4135,27 +4138,6 @@
                             <groupId>ant-contrib</groupId>
                             <artifactId>ant-contrib</artifactId>
                             <version>1.0b3</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-trax</artifactId>
-                            <version>1.8.0</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-nodeps</artifactId>
-                            <version>1.8.1</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.openjpa</groupId>
-                            <artifactId>openjpa-persistence-jdbc</artifactId>
-                            <version>${openjpa-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>ant</groupId>

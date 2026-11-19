@@ -33,8 +33,9 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
     @Test
     void testCodeFlowAuth() throws Exception {
 
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
 
         try (CamelContext context = createCamelContext()) {
             addOAuthCodeFlowRoutes(context);
@@ -47,26 +48,7 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
             Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
 
             LOG.info("Keycloak realm, client, and user available!");
-            LOG.info("Open: {}", APP_BASE_URL);
-
-            // Open WebApp in Browser (works on macOS)
-            // Runtime.getRuntime().exec("open " + APP_BASE_URL);
-
-            // Increase for manual testing
-            int maxLoopCount = 10; // 500ms per loop
-
-            for (int i = maxLoopCount; i > 0; i--) {
-                var options = context.getGlobalOptions();
-                if ("ok".equals(options.get("OAuthLogout"))) {
-                    LOG.info("OAuthLogout - ok");
-                    i = 0;
-                }
-                if (i % 4 == 0) {
-                    LOG.info("Waiting on logout: {}/{} - {}", maxLoopCount - i, maxLoopCount,
-                            APP_BASE_URL + "logout");
-                }
-                Thread.sleep(500L);
-            }
+            LOG.info("Open: {}", getAppBaseUrl());
         }
     }
 

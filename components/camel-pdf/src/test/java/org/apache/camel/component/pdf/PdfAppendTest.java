@@ -33,7 +33,6 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
@@ -104,7 +103,6 @@ public class PdfAppendTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, encryptedDocument);
-        headers.put(PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME, new StandardDecryptionMaterial(userPass));
 
         resultEndpoint.setExpectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {

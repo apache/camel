@@ -1,0 +1,14 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "fixedpath",
+    "title": "Fixed Path",
+    "description": "A test component whose path is fixed when the endpoint is created",
+    "scheme": "fixedpath",
+    "syntax": "fixedpath:name",
+    "producerOnly": true
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A name that is fixed when the endpoint is created" }
+  }
+}

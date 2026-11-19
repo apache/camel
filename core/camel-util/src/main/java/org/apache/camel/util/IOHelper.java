@@ -143,7 +143,7 @@ public final class IOHelper {
 
     /**
      * Skips exactly {@code offset} characters of the reader.
-     * <p/>
+     * <p>
      * {@link Reader#skip(long)} is allowed to skip fewer characters than asked for, so a single call leaves the reader
      * at an unknown position; this keeps calling it until the whole offset has been skipped.
      *

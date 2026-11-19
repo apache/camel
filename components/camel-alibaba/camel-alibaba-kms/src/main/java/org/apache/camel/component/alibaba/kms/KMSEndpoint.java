@@ -66,9 +66,9 @@ public class KMSEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "The region ID of KMS, for example cn-hangzhou. Only used when the endpoint option is not set, to"
-                            + " build the endpoint of KMS. Not used when the kmsClient option is set or autowired.",
+                            + " build the endpoint of KMS. One of the two is required, unless the kmsClient option is set or"
+                            + " autowired, which uses neither.",
               displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of KMS, which is a host name without http:// or https://. The producer sends requests"

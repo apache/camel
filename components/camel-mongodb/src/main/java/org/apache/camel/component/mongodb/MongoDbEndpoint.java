@@ -130,7 +130,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if"
+                           + " neither the hosts nor the connectionUriString parameter is present.")
     @Metadata(required = true)
     private String connectionBean;
 
@@ -255,7 +256,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private StateRepository<String, String> changeStreamTokenRepository;
     @UriParam(label = "consumer")
     private String changeStreamToken;
-    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
+    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint. When set, the endpoint creates"
+                            + " its client from it, instead of using the client of the component or the connectionBean.",
               label = "common")
     private String connectionUriString;
 
@@ -266,6 +268,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
+    // the client this endpoint created from hosts or connectionUriString, which it closes when it stops
+    private volatile MongoClient createdMongoConnection;
 
     public MongoDbEndpoint() {
     }
@@ -493,15 +497,40 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     protected void doStart() throws Exception {
         if (mongoConnection == null) {
             mongoConnection = resolveMongoConnection();
+            if (mongoDatabase != null) {
+                // started again after a stop closed the client the endpoint created: the producer and consumer use the
+                // database and collection of the new client
+                mongoDatabase = mongoConnection.getDatabase(database);
+                if (mongoCollection != null) {
+                    mongoCollection = mongoDatabase.getCollection(collection, Document.class);
+                }
+            }
         } else {
             LOG.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
         }
         super.doStart();
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // only the client this endpoint created is closed: a client set with mongoConnection, the client of the
+        // component or a bean from the registry may be shared with other endpoints
+        MongoClient created = createdMongoConnection;
+        if (created != null) {
+            createdMongoConnection = null;
+            if (mongoConnection == created) {
+                // a new client is created when the endpoint is started again
+                mongoConnection = null;
+            }
+            LOG.debug("Closing the MongoClient created by {}", this);
+            created.close();
+        }
+    }
+
     private MongoClient resolveMongoConnection() {
         MongoClient mongoClient;
-        if (this.hosts != null) {
+        if (this.hosts != null || this.connectionUriString != null) {
             String credentials = username == null ? "" : username;
             if (!credentials.isEmpty()) {
                 credentials += this.password == null ? "@" : ":" + password + "@";
@@ -516,6 +545,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             } else {
                 mongoClient = MongoClients.create(connectionUri);
             }
+            // doStart() and initializeConnection() both get their client here, so doStop() closes it whichever ran first
+            createdMongoConnection = mongoClient;
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = getComponent().getMongoConnection();

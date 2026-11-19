@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * * The <a href="http://camel.apache.org/file.html">File Component</a> provides access to file systems.
@@ -54,7 +55,22 @@ public class FileComponent extends GenericFileComponent<File> {
         if (StringHelper.hasStartToken(remaining, "simple")) {
             throw new IllegalArgumentException(
                     "Invalid directory: " + remaining + ". Dynamic expressions with ${ } placeholders is not allowed."
-                                               + " Use the fileName option to set the dynamic expression.");
+                                               + " Use the fileName option to set the dynamic expression."
+                                               + " The directory is fixed when the endpoint is created, so from, to and"
+                                               + " pollEnrich with a fixed uri do not evaluate it: use toD to write to a"
+                                               + " dynamic directory, or pollEnrich with a simple expression"
+                                               + " (pollEnrich().simple(\"...\") in Java) to read from one.");
+        }
+        if (remaining.startsWith("classpath:") || remaining.startsWith("resource:")) {
+            // file:classpath:data is the directory classpath:data of the file system, which the consumer creates
+            String resource = remaining.startsWith("resource:") ? remaining : "resource:" + remaining;
+            if (!resource.endsWith(":") && !resource.endsWith("/")) {
+                resource += "/";
+            }
+            log.warn("The directory {} of {} is a directory of the file system, not of the classpath: the file component"
+                     + " does not read classpath resources. To read a classpath resource use the language component,"
+                     + " such as language:constant:{}<file name>",
+                    remaining, URISupport.sanitizeUri(uri), resource);
         }
 
         remaining = FileUtil.normalizePath(remaining);

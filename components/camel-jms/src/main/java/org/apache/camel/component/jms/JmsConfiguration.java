@@ -31,7 +31,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -68,6 +68,9 @@ public class JmsConfiguration implements Cloneable {
     private JmsOperations jmsOperations;
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
+    // not options: they are only used in the message of the error when no connection factory is set
+    private String endpointUriForErrors;
+    private String connectionFactoryNotAutowiredReason;
 
     @UriParam(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
@@ -1956,8 +1959,41 @@ public class JmsConfiguration implements Cloneable {
      * Factory method which allows derived classes to customize the lazy creation
      */
     protected ConnectionFactory createConnectionFactory() {
-        ObjectHelper.notNull(connectionFactory, "connectionFactory");
+        if (connectionFactory == null) {
+            throw new IllegalArgumentException(missingConnectionFactoryMessage());
+        }
         return null;
+    }
+
+    /**
+     * The message of the error when no connection factory is set: it names the endpoint, and says why the component did
+     * not autowire a connection factory, when they are known.
+     */
+    private String missingConnectionFactoryMessage() {
+        StringBuilder sb = new StringBuilder("connectionFactory must be specified");
+        if (endpointUriForErrors != null) {
+            String scheme = StringHelper.before(endpointUriForErrors, ":", endpointUriForErrors);
+            sb.append(" on the ").append(scheme).append(" component or on the endpoint ").append(endpointUriForErrors);
+        }
+        if (connectionFactoryNotAutowiredReason != null) {
+            sb.append(". ").append(connectionFactoryNotAutowiredReason);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Sets the uri of the endpoint that uses this configuration, which the error of a missing connection factory names.
+     */
+    void setEndpointUriForErrors(String endpointUriForErrors) {
+        this.endpointUriForErrors = endpointUriForErrors;
+    }
+
+    /**
+     * Sets why the component did not autowire a connection factory, and what to do, which the error of a missing
+     * connection factory gives.
+     */
+    void setConnectionFactoryNotAutowiredReason(String connectionFactoryNotAutowiredReason) {
+        this.connectionFactoryNotAutowiredReason = connectionFactoryNotAutowiredReason;
     }
 
     /**

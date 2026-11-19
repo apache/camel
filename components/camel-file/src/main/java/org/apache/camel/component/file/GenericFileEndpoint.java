@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -87,7 +88,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "configured charset, so do not use this if you have big messages.")
     protected String charset;
     @UriParam(javaType = "java.lang.String", description = "Use Expression such as File Language to dynamically set "
-                                                           + "the filename. For consumers, it's used as a filename filter. For producers, it's used to evaluate the "
+                                                           + "the filename. For consumers, it's used as a filename filter: only a file with exactly this name is "
+                                                           + "consumed, as the name is not a pattern (use antInclude or include to consume the files that match a "
+                                                           + "pattern). For producers, it's used to evaluate the "
                                                            + "filename to write. If an expression is set, it take precedence over the CamelFileName header. (Note: "
                                                            + "The header itself can also be an Expression). The expression options support both String and Expression "
                                                            + "types. If the expression is a String type, it is always evaluated using the File Language. If the "
@@ -101,6 +104,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     // whether the fileName uses the file functions: poll and pollEnrich then evaluate it for each file found, else on the
     // message they enrich (CAMEL-25792)
     private boolean fileNameUsesFileFunctions = true;
+    // the fileName option when it is a fixed name (no expression), to warn when it has wildcards
+    private String staticFileName;
     @UriParam(description = "Producer: If provided, then Camel will write a 2nd done file when the original file has "
                             + "been written. The done file will be empty. This option configures what file name to use. Either you can "
                             + "specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the "
@@ -251,13 +256,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                        + "sub directory.")
     protected int minDepth;
     @UriParam(label = "consumer,filter", description = "Is used to include files, if filename matches the regex "
-                                                       + "pattern (matching is case in-sensitive). <p/> Notice if you use symbols such as plus sign and others "
+                                                       + "pattern (matching is case in-sensitive). The pattern is a regular expression, not a wildcard: "
+                                                       + "use antInclude for wildcards, or includeExt to include files by extension. <p/> Notice if you "
+                                                       + "use symbols such as plus sign and others "
                                                        + "you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See "
                                                        + "more details at <a href=\"http://camel.apache.org/how-do-i-configure-endpoints.html\">configuring "
                                                        + "endpoint uris</a>")
     protected String include;
     @UriParam(label = "consumer,filter", description = "Is used to exclude files, if filename matches the regex "
-                                                       + "pattern (matching is case in-sensitive). <p/> Notice if you use symbols such as plus sign and others "
+                                                       + "pattern (matching is case in-sensitive). The pattern is a regular expression, not a wildcard: "
+                                                       + "use antExclude for wildcards, or excludeExt to exclude files by extension. <p/> Notice if you "
+                                                       + "use symbols such as plus sign and others "
                                                        + "you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See "
                                                        + "more details at <a href=\"http://camel.apache.org/how-do-i-configure-endpoints.html\">configuring "
                                                        + "endpoint uris</a>")
@@ -643,7 +652,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Is used to include files, if filename matches the regex pattern (matching is case in-sensitive).
+     * Is used to include files, if filename matches the regex pattern (matching is case in-sensitive). The pattern is a
+     * regular expression, not a wildcard: use antInclude for wildcards, or includeExt to include files by extension.
      * <p/>
      * Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if
      * configuring this as an endpoint uri. See more details at
@@ -651,7 +661,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setInclude(String include) {
         this.include = include;
-        this.includePattern = Pattern.compile(include, Pattern.CASE_INSENSITIVE);
+        this.includePattern = compileFileNamePattern("include", include, "antInclude", "includeExt");
     }
 
     public Pattern getIncludePattern() {
@@ -663,7 +673,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Is used to exclude files, if filename matches the regex pattern (matching is case in-senstive).
+     * Is used to exclude files, if filename matches the regex pattern (matching is case in-senstive). The pattern is a
+     * regular expression, not a wildcard: use antExclude for wildcards, or excludeExt to exclude files by extension.
      * <p/>
      * Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if
      * configuring this as an endpoint uri. See more details at
@@ -671,7 +682,26 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
-        this.excludePattern = Pattern.compile(exclude, Pattern.CASE_INSENSITIVE);
+        this.excludePattern = compileFileNamePattern("exclude", exclude, "antExclude", "excludeExt");
+    }
+
+    /**
+     * Compiles the regular expression of the include or exclude option. A wildcard such as *.xml is not a regular
+     * expression and fails with only the message of the regex parser (Dangling meta character '*'), so the message says
+     * what the option expects and which options take wildcards or extensions.
+     */
+    private static Pattern compileFileNamePattern(String option, String regex, String antOption, String extOption) {
+        try {
+            return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        } catch (PatternSyntaxException e) {
+            // no cause: the binding of the option reports the message of the deepest cause, which must be this one
+            throw new IllegalArgumentException(
+                    e.getDescription() + (e.getIndex() >= 0 ? " near index " + e.getIndex() : "") + " in " + option + "="
+                                               + regex + ": the " + option
+                                               + " option is a regular expression matched against the file name, such as"
+                                               + " .*\\.xml. For wildcards such as *.xml use the " + antOption
+                                               + " option, or " + extOption + " to match the file extension.");
+        }
     }
 
     public Pattern getExcludePattern() {
@@ -935,12 +965,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setFileName(Expression fileName) {
         this.fileName = fileName;
+        this.staticFileName = null;
         // what an expression object reads is unknown, so poll and pollEnrich evaluate it for each file found as before
         this.fileNameUsesFileFunctions = true;
     }
 
     public void setFileName(String fileLanguageExpression) {
         this.fileName = createFileLanguageExpression(fileLanguageExpression);
+        // a name without $ is a constant (see createFileLanguageExpression)
+        this.staticFileName = fileLanguageExpression != null && !fileLanguageExpression.contains("$")
+                ? fileLanguageExpression : null;
         this.fileNameUsesFileFunctions
                 = fileLanguageExpression != null && FILE_FUNCTION.matcher(fileLanguageExpression).find();
     }
@@ -1029,6 +1063,39 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         LOG.warn("The consumer of {} does not use {}, as idempotent=true is not set: files already consumed are not skipped."
                  + " Set idempotent=true to skip them.",
                 this, options);
+    }
+
+    /**
+     * Logs a WARN for consumer options that start but do not do what they say:
+     * <ul>
+     * <li>noop=true with delete=true: delete wins, and the consumer deletes the files.</li>
+     * <li>noop=true with move: noop wins, and the consumer does not move the files.</li>
+     * <li>a fixed fileName with the wildcards * or ?: the name is compared as is, so it matches no file but one with
+     * this exact name.</li>
+     * </ul>
+     * A custom process strategy decides itself what happens to the files, so there is no WARN for noop then.
+     */
+    protected void warnIfConsumerOptionsConflict() {
+        if (noop && processStrategy == null) {
+            if (delete) {
+                LOG.warn("The consumer of {} has both noop=true and delete=true: delete wins, and the files are deleted"
+                         + " after they are processed. Remove delete=true to leave the files in place, or noop=true to"
+                         + " delete them.",
+                        this);
+            }
+            if (move != null) {
+                LOG.warn("The consumer of {} has both noop=true and the move option: noop wins, and the files are not moved"
+                         + " after they are processed. Remove noop=true to move the files, or the move option to leave them"
+                         + " in place.",
+                        this);
+            }
+        }
+        if (staticFileName != null && (staticFileName.indexOf('*') >= 0 || staticFileName.indexOf('?') >= 0)) {
+            LOG.warn("The consumer of {} only consumes a file named exactly {}: the fileName option is a file name, not a"
+                     + " pattern. To consume the files that match {} use antInclude={} (or include with a regular"
+                     + " expression) instead of fileName.",
+                    this, staticFileName, staticFileName, staticFileName);
+        }
     }
 
     public String getCharset() {

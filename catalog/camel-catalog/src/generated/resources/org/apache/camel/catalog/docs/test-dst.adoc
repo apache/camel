@@ -91,6 +91,16 @@ a|* checkpointing by checkpointBatchSize and checkpointBatchTimeout
 * an asynchronous downstream step
 |CAMEL-25683, CAMEL-25738, CAMEL-25781
 
+|camel-azure-servicebus
+|`ServiceBusWorld` (`ServiceBusConsumerDstTest`)
+|FakeServiceBus: a queue in peek-lock mode (lock duration, delivery count, dead-letter queue) behind the processor and receiver clients of ServiceBusClientFactory
+a|* the lock renewer of the consumer (PEEK_LOCK, maxAutoLockRenewDuration) with an asynchronous route
+* processing that takes longer than the lock duration
+* complete, abandon and dead-letter, also after the lock was lost
+* maxConcurrentCalls of one to three (with the asynchronous route it bounds the processMessage calls)
+* route stop and start while messages are processed
+|CAMEL-25701, CAMEL-26956, CAMEL-26969, CAMEL-26970, CAMEL-27066
+
 |camel-google-pubsub
 |`PubsubWorld` (`PubsubConsumerDstTest`)
 |FakePubsub: a subscription (Pull, Acknowledge, ModifyAckDeadline, ack deadlines, dead letter policy) behind the SubscriberStub of synchronousPull
@@ -111,7 +121,7 @@ a|* commits by Kafka's auto-commit, by manual synchronous or asynchronous commit
 * route restart, also while the consumer polls
 * route suspend and resume, with a second request while the consumer handles the first
 * partitions revoked and assigned again by a rebalance while records are processed
-|CAMEL-25313, CAMEL-25756
+|CAMEL-25313, CAMEL-25756, CAMEL-26967
 
 |camel-kafka-share
 |`KafkaShareWorld` (`KafkaShareConsumerDstTest`)
@@ -124,6 +134,16 @@ a|* explicit acknowledgement with onFailure RELEASE or REJECT
 * route start, restart, suspend and resume
 * suspend and resume of the CamelContext
 |CAMEL-25872, CAMEL-25910
+
+|camel-mongodb
+|`MongoDbChangeStreamsWorld` (`MongoDbChangeStreamsDstTest`)
+|FakeMongo: a MongoDB collection and its change stream (resumeAfter, startAfter, drop and invalidate events, the resume of the driver), behind the MongoClient of the connectionBean option
+a|* the change streams consumer with a store of its resume token (changeStreamTokenRepository)
+* a dropped collection, made again by an insert
+* a server that cannot be reached for a while: the cursor cannot be opened, a getMore fails
+* route restarts (the consumer thread interrupted, then the route stopped and started), resuming after the stored token
+* the fullDocument option and cursorRegenerationDelay
+|CAMEL-25679, CAMEL-25946, CAMEL-26992
 
 |camel-nats
 |`NatsWorld` (`NatsConsumerDstTest`)
@@ -161,6 +181,16 @@ a|* the polling consumer with maxResults and naturalOrder
 * the pages of conversations.history (oldest and cursor)
 * route suspend and resume while a batch is routed
 |CAMEL-25684, CAMEL-25738
+
+|camel-zookeeper-master
+|`ZooKeeperMasterWorld` (`ZooKeeperMasterDstTest`)
+|FakeZooKeeper: a ZooKeeper ensemble (sessions, ephemeral sequential znodes, one-time watches) with the other nodes of the group as sessions, behind a CuratorFramework shared as the curator bean
+a|* the master consumer (zookeeper-master endpoint) and the MasterRoutePolicy, on the real ZooKeeperGroup
+* connection losses shorter and longer than the session timeout (SUSPENDED, RECONNECTED, LOST)
+* other nodes that join, leave and die
+* a start of the consumer that fails and its retry; with the master consumer, a start that takes long
+* route stop and start, and a route of the policy removed and added again
+|CAMEL-25315, CAMEL-26540, CAMEL-26802, CAMEL-26870, CAMEL-26887, CAMEL-27037, CAMEL-27044
 |===
 // dst worlds: END
 
@@ -595,14 +625,15 @@ EH=components/camel-azure/camel-azure-eventhubs
 SLACK=components/camel-slack
 SHARE=components/camel-kafka-share
 PULSAR=components/camel-pulsar
+MONGODB=components/camel-mongodb
 MVN="./mvnw -B -Papache-snapshots test -Dsurefire.failIfNoSpecifiedTests=false -Dsurefire.rerunFailingTestsCount=0"
 
 # the harness self-tests
 $MVN -pl $DST -Dtest='Dst*Test'
 
 # the worlds, 1000 seeds each, then 5000 seeds without stopping at the first failing one
-$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest'
-$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR,$MONGODB -Dtest='*DstTest'
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR,$MONGODB -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
 
 # the self-check: revert the main code of a past fix locally (do not commit), run the world, restore
 git show d09593b4a584 -- $SQS/src/main | git apply -R          # CAMEL-25700
@@ -616,6 +647,10 @@ $MVN -pl $DST,$SQS -Dtest=SqsVisibilityDstTest -Ddst.seed=8
 diff /tmp/seed-8.first $SQS/target/dst/SqsVisibilityDstTest.*/seed-8.trace && echo identical
 ----
 
+For camel-mongodb (`MongoDbChangeStreamsDstTest`) the past fixes are the main code of 5f10c225652e (CAMEL-25946) and of
+3af2c90d63ad (CAMEL-25679), reverted by hand. Its world also found CAMEL-26992 (fixed by 1eb59175e600): a cursor that
+the consumer opened again before any exchange completed started at the current time and skipped the events in between.
+
 The past fixes of the other worlds are 83aaa80754f9 (CAMEL-25683, Event Hubs), 68329f0919bc (CAMEL-25684, Slack), the
 main code of b62e90ddb2d9 (CAMEL-25869, Pulsar), the main code of 20c94435789e (CAMEL-25872, Kafka share, whose world
 was also checked with planted faults), and the main code of 043ac9ec84ab (CAMEL-25569) and of 847ee9affb4c
@@ -626,10 +661,19 @@ CAMEL-25737), `dst.replayCheckSeed` (the seed of the in-JVM replay test of the E
 and `dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures).
 
 For camel-paho-mqtt5 (`components/camel-paho-mqtt5`, `PahoMqtt5ConsumerDstTest`) the past fixes are the main code of
-6044f38166f9 (CAMEL-25944) and the change of b7594f06e0b7 (CAMEL-25793), taken out by hand. Its world has two
-properties, each adding back a case that the default set leaves out: `dst.paho.strictCallbackThread` (`true` checks a
-client whose connect hangs while the callback thread is still in messageArrived, CAMEL-27043) and
-`dst.paho.stopWhileConnecting` (`true` lets the operator stop the route while the client connects, CAMEL-27041).
+6044f38166f9 (CAMEL-25944) and the change of b7594f06e0b7 (CAMEL-25793), taken out by hand, and the main code of
+CAMEL-27041 (a route stopped while the client connects). Its world has one property, which adds back a case that the
+default set leaves out: `dst.paho.strictCallbackThread` (`true` checks a client whose connect hangs while the callback
+thread is still in messageArrived, CAMEL-27043).
+
+For camel-zookeeper-master (`-pl components/camel-zookeeper-master`, `ZooKeeperMasterDstTest`) the past fixes are
+`MasterConsumer` of e670025a49a4^ (CAMEL-25315), `MasterRoutePolicy` of 706beec6d5ab^ (CAMEL-26540), 136ffd929263
+(CAMEL-26802) and 28f3170dcc6a (CAMEL-26887) reverted, and the `unregisterAsListener()` of 5ecab86a58ba (CAMEL-26870)
+taken out by hand. Its world has three properties, each adding back a case that the default set leaves out:
+`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected, CAMEL-27037),
+`dst.zookeeper.stopDuringCreate` (a route stopped while the group waits for the answer of a create, or a create made
+after the close interrupted the thread of the group, CAMEL-27037) and `dst.zookeeper.startStartedRoute` (a started
+route of the policy started again, CAMEL-27044).
 
 == Limits
 
