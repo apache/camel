@@ -27,8 +27,10 @@ import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -95,7 +97,51 @@ public class SmppProducerLazySessionCreationTest {
     }
 
     @Test
+    public void processShouldIgnoreTheSystemIdAndPasswordFromTheExchangeByDefault() throws Exception {
+        when(endpoint.getConnectionString())
+                .thenReturn("smpp://smppclient@localhost:2775");
+        BindParameter expectedBindParameter = new BindParameter(
+                BindType.BIND_TX,
+                "smppclient",
+                "password",
+                "cp",
+                TypeOfNumber.UNKNOWN,
+                NumberingPlanIndicator.UNKNOWN,
+                "");
+        BindParameter headerBindParameter = new BindParameter(
+                BindType.BIND_TX,
+                "smppclient2",
+                "password2",
+                "cp",
+                TypeOfNumber.UNKNOWN,
+                NumberingPlanIndicator.UNKNOWN,
+                "");
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
+                .thenReturn("1");
+        SmppBinding binding = mock(SmppBinding.class);
+        Exchange exchange = mock(Exchange.class);
+        Message in = mock(Message.class);
+        SmppCommand command = mock(SmppCommand.class);
+        when(endpoint.getBinding()).thenReturn(binding);
+        when(endpoint.isSingleton()).thenReturn(true);
+        when(binding.createSmppCommand(session, exchange)).thenReturn(command);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getHeader("CamelSmppSystemId", String.class)).thenReturn("smppclient2");
+        when(in.getHeader("CamelSmppPassword", String.class)).thenReturn("password2");
+
+        producer.doStart();
+        producer.process(exchange);
+
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
+        verify(session, never()).connectAndBind("localhost", Integer.valueOf(2775), headerBindParameter);
+        verify(command).execute(exchange);
+        assertEquals("smppclient", configuration.getSystemId());
+        assertEquals("password", configuration.getPassword());
+    }
+
+    @Test
     public void processShouldCreateTheSmppSessionWithTheSystemIdAndPasswordFromTheExchange() throws Exception {
+        configuration.setAllowSystemIdAndPasswordFromHeaders(true);
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
@@ -124,5 +170,7 @@ public class SmppProducerLazySessionCreationTest {
         producer.process(exchange);
 
         verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
+        assertEquals("smppclient2", configuration.getSystemId());
+        assertEquals("password2", configuration.getPassword());
     }
 }
