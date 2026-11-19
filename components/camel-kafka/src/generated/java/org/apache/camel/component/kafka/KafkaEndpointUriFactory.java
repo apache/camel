@@ -24,7 +24,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(124);
+        Set<String> props = new HashSet<>(130);
         props.add("additionalProperties");
         props.add("allowManualCommit");
         props.add("autoCommitEnable");
@@ -115,7 +115,13 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("saslPassword");
         props.add("saslUsername");
         props.add("schemaFormat");
+        props.add("schemaRegistryOauthClientId");
+        props.add("schemaRegistryOauthClientSecret");
+        props.add("schemaRegistryOauthScope");
+        props.add("schemaRegistryOauthTokenEndpoint");
+        props.add("schemaRegistryPassword");
         props.add("schemaRegistryURL");
+        props.add("schemaRegistryUsername");
         props.add("schemaRegistryVendor");
         props.add("securityProtocol");
         props.add("seekTo");
@@ -150,10 +156,12 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("workerPoolCoreSize");
         props.add("workerPoolMaxSize");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
+        Set<String> secretProps = new HashSet<>(8);
         secretProps.add("oauthClientSecret");
         secretProps.add("saslJaasConfig");
         secretProps.add("saslPassword");
+        secretProps.add("schemaRegistryOauthClientSecret");
+        secretProps.add("schemaRegistryPassword");
         secretProps.add("sslKeyPassword");
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");

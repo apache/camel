@@ -343,6 +343,33 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
                             + "deserializer of the schemaRegistryVendor. Not every vendor supports every format: azure "
                             + "supports only avro. Only used when schemaRegistryVendor is set.")
     private String schemaFormat = KafkaSchemaRegistry.AVRO;
+    @UriParam(label = "schema,security",
+              description = "The username to log in to the schema registry with basic auth, with schemaRegistryPassword. Used "
+                            + "with schemaRegistryVendor confluent (basic.auth.user.info, which is the API key for Confluent Cloud) "
+                            + "and apicurio (apicurio.registry.auth.username). The azure and aws-glue vendors log in with the "
+                            + "credentials of the environment instead.")
+    private String schemaRegistryUsername;
+    @UriParam(label = "schema,security", security = "secret",
+              description = "The password to log in to the schema registry with basic auth, with schemaRegistryUsername. For "
+                            + "Confluent Cloud, the API secret.")
+    private String schemaRegistryPassword;
+    @UriParam(label = "schema,security",
+              description = "The token endpoint of the OAuth2 server to log in to the schema registry with client credentials, "
+                            + "with schemaRegistryOauthClientId and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor "
+                            + "confluent (bearer.auth.issuer.endpoint.url) and apicurio "
+                            + "(apicurio.registry.auth.service.token.endpoint, such as the token endpoint of a Keycloak realm).")
+    private String schemaRegistryOauthTokenEndpoint;
+    @UriParam(label = "schema,security",
+              description = "The OAuth2 client id to log in to the schema registry with client credentials. Used with "
+                            + "schemaRegistryVendor confluent and apicurio.")
+    private String schemaRegistryOauthClientId;
+    @UriParam(label = "schema,security", security = "secret",
+              description = "The OAuth2 client secret to log in to the schema registry with client credentials.")
+    private String schemaRegistryOauthClientSecret;
+    @UriParam(label = "schema,security",
+              description = "The OAuth2 scope to ask for when logging in to the schema registry with client credentials "
+                            + "(optional).")
+    private String schemaRegistryOauthScope;
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true,
               description = "Sets additional properties for either kafka consumer or kafka producer in case they can't be "
@@ -436,6 +463,9 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         addPropertyIfNotEmpty(props, CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotEmpty(props, CommonClientConfigs.RETRY_BACKOFF_MAX_MS_CONFIG, getRetryBackoffMaxMs());
         KafkaSchemaRegistry.applyUrl(props, resolveSchemaRegistryVendor(), getSchemaRegistryURL());
+        KafkaSchemaRegistry.applyLogin(props, resolveSchemaRegistryVendor(), getSchemaRegistryUsername(),
+                getSchemaRegistryPassword(), getSchemaRegistryOauthTokenEndpoint(), getSchemaRegistryOauthClientId(),
+                getSchemaRegistryOauthClientSecret(), getSchemaRegistryOauthScope());
     }
 
     /**
@@ -808,6 +838,80 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
      */
     public void setSchemaFormat(String schemaFormat) {
         this.schemaFormat = schemaFormat;
+    }
+
+    public String getSchemaRegistryUsername() {
+        return schemaRegistryUsername;
+    }
+
+    /**
+     * The username to log in to the schema registry with basic auth, with schemaRegistryPassword. Used with
+     * schemaRegistryVendor confluent (basic.auth.user.info, which is the API key for Confluent Cloud) and apicurio
+     * (apicurio.registry.auth.username). The azure and aws-glue vendors log in with the credentials of the environment
+     * instead.
+     */
+    public void setSchemaRegistryUsername(String schemaRegistryUsername) {
+        this.schemaRegistryUsername = schemaRegistryUsername;
+    }
+
+    public String getSchemaRegistryPassword() {
+        return schemaRegistryPassword;
+    }
+
+    /**
+     * The password to log in to the schema registry with basic auth, with schemaRegistryUsername. For Confluent Cloud,
+     * the API secret.
+     */
+    public void setSchemaRegistryPassword(String schemaRegistryPassword) {
+        this.schemaRegistryPassword = schemaRegistryPassword;
+    }
+
+    public String getSchemaRegistryOauthTokenEndpoint() {
+        return schemaRegistryOauthTokenEndpoint;
+    }
+
+    /**
+     * The token endpoint of the OAuth2 server to log in to the schema registry with client credentials, with
+     * schemaRegistryOauthClientId and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor confluent
+     * (bearer.auth.issuer.endpoint.url) and apicurio (apicurio.registry.auth.service.token.endpoint, such as the token
+     * endpoint of a Keycloak realm).
+     */
+    public void setSchemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+        this.schemaRegistryOauthTokenEndpoint = schemaRegistryOauthTokenEndpoint;
+    }
+
+    public String getSchemaRegistryOauthClientId() {
+        return schemaRegistryOauthClientId;
+    }
+
+    /**
+     * The OAuth2 client id to log in to the schema registry with client credentials. Used with schemaRegistryVendor
+     * confluent and apicurio.
+     */
+    public void setSchemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+        this.schemaRegistryOauthClientId = schemaRegistryOauthClientId;
+    }
+
+    public String getSchemaRegistryOauthClientSecret() {
+        return schemaRegistryOauthClientSecret;
+    }
+
+    /**
+     * The OAuth2 client secret to log in to the schema registry with client credentials.
+     */
+    public void setSchemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+        this.schemaRegistryOauthClientSecret = schemaRegistryOauthClientSecret;
+    }
+
+    public String getSchemaRegistryOauthScope() {
+        return schemaRegistryOauthScope;
+    }
+
+    /**
+     * The OAuth2 scope to ask for when logging in to the schema registry with client credentials (optional).
+     */
+    public void setSchemaRegistryOauthScope(String schemaRegistryOauthScope) {
+        this.schemaRegistryOauthScope = schemaRegistryOauthScope;
     }
 
     public Integer getRetryBackoffMs() {
