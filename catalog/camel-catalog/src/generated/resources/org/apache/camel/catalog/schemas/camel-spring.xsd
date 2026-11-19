@@ -7389,7 +7389,7 @@ Class name to use for marshal and unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Which Avro library to use. Default value: avroJackson
+Which Avro library to use. Default value: Jackson
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12181,7 +12181,8 @@ expression (all case-insensitive).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of headers to not remove. You can use comma to separate multiple patterns.
+Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular
+expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12207,7 +12208,8 @@ case-insensitive).
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of properties to not remove. You can use comma to separate multiple patterns.
+Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all
+case-insensitive). To keep several properties, use a regular expression such as prop1|prop3.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15261,7 +15263,7 @@ reverse-proxy and networking going from HTTP to HTTPS etc. Default value: false
         <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid
-accordingly to the api document.
+according to the api document.
 ]]>
         </xs:documentation>
       </xs:annotation>
