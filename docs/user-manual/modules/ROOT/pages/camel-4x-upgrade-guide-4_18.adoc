@@ -1129,6 +1129,17 @@ of the headers or a producer that sends them on. A request that Camel does not c
 `authenticationPath` or to a resource that the netty-http security constraint does not restrict, keeps the header as
 sent. A route that has to call a backend with credentials sets them on that producer.
 
+=== camel-google-sheets, camel-google-drive, camel-google-mail, camel-google-calendar - the OAuth access token is sent only in the Authorization header
+
+The credential options (`clientId`, `clientSecret`, `accessToken`, `refreshToken`, `serviceAccountKey`, `delegate`,
+and `p12FileName` for calendar) are no longer set on the request of the Google API, whether they are given as endpoint
+options or as `CamelGoogleSheets.*`, `CamelGoogleDrive.*`, `CamelGoogleMail.*` or `CamelGoogleCalendar.*` headers (in
+any case). Before, an `accessToken` option or header could also be added to the request URL as the `access_token`
+query parameter. The access token is now sent only in the `Authorization` header, as the client already did.
+
+A route that used a `CamelGoogleXxx.accessToken` header to change the token for one request no longer gets that;
+configure the token on the endpoint or the component instead.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
