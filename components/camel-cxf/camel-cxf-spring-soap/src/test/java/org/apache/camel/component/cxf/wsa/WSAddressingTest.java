@@ -40,6 +40,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -48,6 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
+// Prevents Spring from reusing a stale ApplicationContext (and its already-bound CXF listener) across a
+// Surefire rerun: the ContextCache key doesn't include the ports @BeforeAll republishes each run. Declaring
+// this on the base class is enough - Spring resolves @DirtiesContext per concrete test class, so the
+// WSAddressingPAYLOADTest/WSAddressingCXFMSGTest subclasses inherit it.
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class WSAddressingTest {
 
     private static AvailablePortFinder.Port PORT1;
