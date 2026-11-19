@@ -487,6 +487,95 @@ class KameletLoaderTest extends YamlTestSupport {
     }
 
     @Test
+    void sourceKameletOutputTypeWithoutTransformerHandsMessagesOnUnchanged() throws Exception {
+        // the transformer of the format is not on the classpath (camel-slack is not a test dependency)
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-ce-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: cloudevents
+                      types:
+                        cloudevents:
+                          format: "slack:application-cloudevents"
+                  template:
+                    from:
+                      uri: "direct:feed"
+                      steps:
+                        - to: "kamelet:sink"
+                """);
+        loadRoutes("""
+                - from:
+                    uri: "kamelet:my-ce-source"
+                    steps:
+                      - to: "mock:ce"
+                """);
+
+        withMock("mock:ce", mock -> mock.expectedBodiesReceived("hello", "hello"));
+
+        context.start();
+
+        for (int i = 0; i < 2; i++) {
+            Exchange out = context.createProducerTemplate().send("direct:feed", e -> e.getMessage().setBody("hello"));
+            assertThat(out.getException()).isNull();
+        }
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void sourceKameletJavaOutputTypeIsConverted() throws Exception {
+        // the transformer registry has no transformer for a Java type: the type converter converts the body
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-string-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: text
+                      types:
+                        text:
+                          format: "java:java.lang.String"
+                  template:
+                    from:
+                      uri: "direct:feed"
+                      steps:
+                        - to: "kamelet:sink"
+                """);
+        loadRoutes("""
+                - from:
+                    uri: "kamelet:my-string-source"
+                    steps:
+                      - to: "mock:text"
+                """);
+
+        withMock("mock:text", mock -> {
+            mock.expectedBodiesReceived("42");
+            mock.message(0).body().isInstanceOf(String.class);
+        });
+
+        context.start();
+
+        Exchange out = context.createProducerTemplate().send("direct:feed", e -> e.getMessage().setBody(42));
+        assertThat(out.getException()).isNull();
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     void kameletWithLocalBeanViaBeanRef() throws Exception {
         loadKamelets("""
                 apiVersion: camel.apache.org/v1

@@ -24,7 +24,7 @@
         "bytes",
         "stream"
       ],
-      "description": "A stream body is kept as it is; any other body becomes a byte array"
+      "description": "A stream cache body is kept as it is; any other body becomes a byte array"
     }
   }
 }
