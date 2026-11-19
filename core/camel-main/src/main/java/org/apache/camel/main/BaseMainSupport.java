@@ -851,11 +851,11 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void configureVirtualThreadsEarly(CamelContext camelContext) {
+    private void configureVirtualThreadsEarly(OrderedLocationProperties earlyProperties) {
         // Check programmatic configuration first (main.configure().withVirtualThreadsEnabled(true))
         boolean enabled = mainConfigurationProperties.isVirtualThreadsEnabled();
 
-        Boolean configured = lookupEarlyOption(camelContext, "camel.main.virtualThreadsEnabled");
+        Boolean configured = lookupEarlyOption(earlyProperties, "camel.main.virtualThreadsEnabled");
         if (configured != null) {
             enabled = configured;
         }
@@ -951,11 +951,12 @@ public abstract class BaseMainSupport extends BaseService {
      * Enables the type converter statistics before the CamelContext is built, as the type converter registry is created
      * when the context is built, and its statistics cannot be enabled afterwards (CAMEL-27103).
      */
-    private void configureTypeConverterStatisticsEarly(CamelContext camelContext) {
+    private void configureTypeConverterStatisticsEarly(
+            CamelContext camelContext, OrderedLocationProperties earlyProperties) {
         // Check programmatic configuration first (main.configure().withTypeConverterStatisticsEnabled(true))
         boolean enabled = mainConfigurationProperties.isTypeConverterStatisticsEnabled();
 
-        Boolean configured = lookupEarlyOption(camelContext, "camel.main.typeConverterStatisticsEnabled");
+        Boolean configured = lookupEarlyOption(earlyProperties, "camel.main.typeConverterStatisticsEnabled");
         if (configured != null) {
             enabled = configured;
         }
@@ -966,31 +967,39 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     /**
-     * Looks up a boolean option of Camel Main that must be known before the CamelContext is built, which is before the
-     * auto configuration applies the configuration. The sources and their priority are the same as in
+     * Loads the configuration of the options of Camel Main that must be known before the CamelContext is built, which
+     * is before the auto configuration applies the configuration. The sources and their priority are the same as in
      * {@link #autoConfigurationSingleOption}: JVM system properties over OS environment variables over the properties
-     * component, with the key in any case, and the initial properties as fallback.
+     * component, with the key in any case. They are loaded once, for all these options.
+     *
+     * @return the properties, or <code>null</code> if the auto configuration is disabled
+     */
+    private OrderedLocationProperties loadEarlyProperties(CamelContext camelContext) {
+        if (!mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            return null;
+        }
+        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+        overrideWithEnvironmentAndSystemProperties(prop, "camel.main.");
+        return prop;
+    }
+
+    /**
+     * Looks up a boolean option of Camel Main that must be known before the CamelContext is built, in the properties
+     * from {@link #loadEarlyProperties(CamelContext)}, with the initial properties as fallback.
      * <p>
      * The value cannot be resolved before the context is built, as resolving a property placeholder needs the type
      * converter, so a value with a placeholder is ignored, with a WARN.
      *
      * @return the value, or <code>null</code> if the option is not configured
      */
-    private Boolean lookupEarlyOption(CamelContext camelContext, String optionName) {
-        if (!mainConfigurationProperties.isAutoConfigurationEnabled()) {
+    private Boolean lookupEarlyOption(OrderedLocationProperties earlyProperties, String optionName) {
+        if (earlyProperties == null) {
             return null;
         }
 
-        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
-                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            putAllOverride(prop, "ENV", MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." }));
-        }
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            putAllOverride(prop, "SYS", MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." }));
-        }
-        String key = findKeyIgnoreCase(prop, optionName);
-        Object value = key != null ? prop.get(key) : null;
+        String key = findKeyIgnoreCase(earlyProperties, optionName);
+        Object value = key != null ? earlyProperties.get(key) : null;
         if (ObjectHelper.isEmpty(value)) {
             // fallback to initial properties
             value = getInitialProperties().getProperty(optionName);
@@ -1097,9 +1106,10 @@ public abstract class BaseMainSupport extends BaseService {
         // configure custom main listeners
         configureMainListener(camelContext);
         // configure virtual threads early before build() to avoid ThreadType DCL race
-        configureVirtualThreadsEarly(camelContext);
+        OrderedLocationProperties earlyProperties = loadEarlyProperties(camelContext);
+        configureVirtualThreadsEarly(earlyProperties);
         // the type converter registry is created by build(), and its statistics cannot be enabled afterwards
-        configureTypeConverterStatisticsEarly(camelContext);
+        configureTypeConverterStatisticsEarly(camelContext, earlyProperties);
 
         // ensure camel context is build
         camelContext.build();
@@ -1223,30 +1233,8 @@ public abstract class BaseMainSupport extends BaseService {
                     jvmEnabled.toString());
         }
 
-        // load properties from ENV (override existing)
-        Properties propENV = null;
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
-            if (!propENV.isEmpty()) {
-                putAllOverride(prop, "ENV", propENV);
-                LOG.debug("Properties from OS environment variables:");
-                for (String key : propENV.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propENV.getProperty(key));
-                }
-            }
-        }
-        // load properties from JVM (override existing)
-        Properties propJVM = null;
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
-            if (!propJVM.isEmpty()) {
-                putAllOverride(prop, "SYS", propJVM);
-                LOG.debug("Properties from JVM system properties:");
-                for (String key : propJVM.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
-                }
-            }
-        }
+        // load properties from ENV and JVM (override existing)
+        overrideWithEnvironmentAndSystemProperties(prop, "camel.main.");
 
         // special for fail-fast as we need to know this early before we set all the other options
         // (SYS and ENV have been merged with priority, and the key can be in any case such as from ENV)
@@ -1258,6 +1246,34 @@ public abstract class BaseMainSupport extends BaseService {
                 mainConfigurationProperties
                         .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
                 autoConfiguredProperties.put(loc, "camel.main.autoConfigurationFailFast", failFast.toString());
+            }
+        }
+    }
+
+    /**
+     * Overrides the given properties with the OS environment variables and then with the JVM system properties that
+     * start with one of the given prefixes, when the auto configuration of each is enabled. JVM system properties have
+     * the highest priority.
+     */
+    private void overrideWithEnvironmentAndSystemProperties(OrderedLocationProperties prop, String... prefixes) {
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV = MainHelper.loadEnvironmentVariablesAsProperties(prefixes);
+            if (!propENV.isEmpty()) {
+                putAllOverride(prop, "ENV", propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(prefixes);
+            if (!propJVM.isEmpty()) {
+                putAllOverride(prop, "SYS", propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
             }
         }
     }
@@ -1309,30 +1325,8 @@ public abstract class BaseMainSupport extends BaseService {
         for (String key : prop.stringPropertyNames()) {
             LOG.debug("    {}={}", key, prop.getProperty(key));
         }
-        // load properties from ENV (override existing)
-        Properties propENV = null;
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
-            if (!propENV.isEmpty()) {
-                putAllOverride(prop, "ENV", propENV);
-                LOG.debug("Properties from OS environment variables:");
-                for (String key : propENV.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propENV.getProperty(key));
-                }
-            }
-        }
-        // load properties from JVM (override existing)
-        Properties propJVM = null;
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
-            if (!propJVM.isEmpty()) {
-                putAllOverride(prop, "SYS", propJVM);
-                LOG.debug("Properties from JVM system properties:");
-                for (String key : propJVM.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
-                }
-            }
-        }
+        // load properties from ENV and JVM (override existing)
+        overrideWithEnvironmentAndSystemProperties(prop, "camel.main.");
         // SYS and ENV have been merged with priority (the key can be in any case such as from ENV)
         String loc = null;
         Object value = null;
@@ -1366,29 +1360,8 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
 
-        // load properties from ENV (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV
-                    = MainHelper.loadEnvironmentVariablesAsProperties(GROUP_PREFIXES);
-            if (!propENV.isEmpty()) {
-                putAllOverride(prop, "ENV", propENV);
-                LOG.debug("Properties from OS environment variables:");
-                for (String key : propENV.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propENV.getProperty(key));
-                }
-            }
-        }
-        // load properties from JVM (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(GROUP_PREFIXES);
-            if (!propJVM.isEmpty()) {
-                putAllOverride(prop, "SYS", propJVM);
-                LOG.debug("Properties from JVM system properties:");
-                for (String key : propJVM.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
-                }
-            }
-        }
+        // load properties from ENV and JVM (override existing)
+        overrideWithEnvironmentAndSystemProperties(prop, GROUP_PREFIXES);
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1468,29 +1441,8 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
 
-        // load properties from ENV (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV
-                    = MainHelper.loadEnvironmentVariablesAsProperties(GROUP_PREFIXES);
-            if (!propENV.isEmpty()) {
-                putAllOverride(prop, "ENV", propENV);
-                LOG.debug("Properties from OS environment variables:");
-                for (String key : propENV.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propENV.getProperty(key));
-                }
-            }
-        }
-        // load properties from JVM (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(GROUP_PREFIXES);
-            if (!propJVM.isEmpty()) {
-                putAllOverride(prop, "SYS", propJVM);
-                LOG.debug("Properties from JVM system properties:");
-                for (String key : propJVM.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
-                }
-            }
-        }
+        // load properties from ENV and JVM (override existing)
+        overrideWithEnvironmentAndSystemProperties(prop, GROUP_PREFIXES);
 
         OrderedLocationProperties contextProperties = new OrderedLocationProperties();
         OrderedLocationProperties resilience4jProperties = new OrderedLocationProperties();
@@ -3097,21 +3049,8 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
 
-        // load properties from ENV (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV
-                    = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
-            if (!propENV.isEmpty()) {
-                putAllOverride(prop, "ENV", propENV);
-            }
-        }
-        // load properties from JVM (override existing)
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
-            if (!propJVM.isEmpty()) {
-                putAllOverride(prop, "SYS", propJVM);
-            }
-        }
+        // load properties from ENV and JVM (override existing)
+        overrideWithEnvironmentAndSystemProperties(prop, "camel.component.properties.");
 
         OrderedLocationProperties properties = new OrderedLocationProperties();
 
