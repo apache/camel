@@ -62,7 +62,7 @@ public final class RawParameterHelper {
      * @param camelContext the camel context
      * @param parameters   the uri parameters
      * @param literal      whether the RAW values are taken as literal text, without evaluating $simple{xxx}
-     * @since              4.24
+     * @since              4.18.6
      */
     public static void resolveRawParameterValues(
             CamelContext camelContext, Map<String, Object> parameters, boolean literal) {

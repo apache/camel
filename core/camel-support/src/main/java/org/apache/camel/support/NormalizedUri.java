@@ -63,7 +63,7 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      *                              {@code #property:}; registry references ({@code #bean:}, {@code #type:}) are still
      *                              resolved
      * @return                      the created normalized uri
-     * @since                       4.24
+     * @since                       4.18.6
      */
     public static NormalizedUri newNormalizedUri(String uri, boolean normalized, boolean literalOptionBinding) {
         if (normalized) {
@@ -79,7 +79,7 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * {@code #property:} value is not resolved. Registry references ({@code #bean:}, {@code #type:}) are still
      * resolved.
      *
-     * @since 4.24
+     * @since 4.18.6
      */
     public boolean isLiteralOptionBinding() {
         return literalOptionBinding;
