@@ -54,6 +54,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "flushTimeout": getOrCreateConfiguration(target).setFlushTimeout(property(camelContext, int.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "jetstreamasync":
         case "jetstreamAsync": getOrCreateConfiguration(target).setJetstreamAsync(property(camelContext, boolean.class, value)); return true;
         case "jetstreamenabled":
@@ -142,6 +144,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "flushTimeout": return int.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "jetstreamasync":
         case "jetstreamAsync": return boolean.class;
         case "jetstreamenabled":
@@ -231,6 +235,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "flushTimeout": return getOrCreateConfiguration(target).getFlushTimeout();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "jetstreamasync":
         case "jetstreamAsync": return getOrCreateConfiguration(target).isJetstreamAsync();
         case "jetstreamenabled":

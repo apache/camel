@@ -84,8 +84,9 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             if (resolveRawParameterValues()) {
                 // parameters using raw syntax: RAW(value)
                 // should have the token removed, so its only the value we have in parameters, as we are about to create
-                // an endpoint and want to have the parameter values without the RAW tokens
-                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map);
+                // an endpoint and want to have the parameter values without the RAW tokens. The uri was computed from
+                // the current message, so the RAW values are taken as literal text (a $simple{} in them is not evaluated)
+                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map, true);
             }
             // okay so only add the known properties as they are the non lenient properties
             properties = new LinkedHashMap<>();
@@ -115,8 +116,9 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             if (resolveRawParameterValues()) {
                 // parameters using raw syntax: RAW(value)
                 // should have the token removed, so its only the value we have in parameters, as we are about to create
-                // an endpoint and want to have the parameter values without the RAW tokens
-                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map);
+                // an endpoint and want to have the parameter values without the RAW tokens. The uri was computed from
+                // the current message, so the RAW values are taken as literal text (a $simple{} in them is not evaluated)
+                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map, true);
             }
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {

@@ -142,7 +142,7 @@ snmp:0.0.0.0:162?protocol=udp&type=TRAP&snmpVersion=3&securityName=camel&securit
     &authenticationProtocol=SHA1&authenticationPassphrase=RAW(...)&privacyProtocol=AES128&privacyPassphrase=RAW(...)
 ------------------------------------------------------------------------------------------------------------------
 
-Routing example in Java: (the body of the consumer is the SNMP PDU as XML text)
+Routing example in Java: (converts the SNMP PDU to XML String)
 
 [tabs]
 ====
