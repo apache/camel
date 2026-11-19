@@ -24,8 +24,9 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("addressRange");
+        props.add("allowSystemIdAndPasswordFromHeaders");
         props.add("alphabet");
         props.add("bridgeErrorHandler");
         props.add("dataCoding");
