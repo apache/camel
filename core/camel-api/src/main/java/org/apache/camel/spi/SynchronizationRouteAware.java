@@ -26,10 +26,10 @@ public interface SynchronizationRouteAware {
 
     /**
      * Invoked before the {@link org.apache.camel.Exchange} is being routed by the given route.
-     * <p/>
+     * <p>
      * Notice if the exchange is being routed through multiple routes, there will be callbacks for each route.
-     * <p/>
-     * <b>Important:</b> this callback may not invoked if the {@link org.apache.camel.spi.SynchronizationRouteAware}
+     * <p>
+     * <b>Important:</b> this callback may not be invoked if the {@link org.apache.camel.spi.SynchronizationRouteAware}
      * implementation is being added to the {@link org.apache.camel.spi.UnitOfWork} after the routing has started.
      *
      * @param route    the route
@@ -39,9 +39,9 @@ public interface SynchronizationRouteAware {
 
     /**
      * Invoked after the {@link org.apache.camel.Exchange} has been routed by the given route.
-     * <p/>
+     * <p>
      * Notice if the exchange is being routed through multiple routes, there will be callbacks for each route.
-     * <p/>
+     * <p>
      * This invocation happens before these callbacks:
      * <ul>
      * <li>The consumer of the route writes any response back to the caller (if in InOut mode)</li>

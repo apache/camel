@@ -27,8 +27,12 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": target.getConfiguration().setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": target.getConfiguration().setHealthCheckExpiryThreshold(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "localspiffeid":
+        case "localSpiffeId": target.getConfiguration().setLocalSpiffeId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.spiffe.SpiffeOperation.class, value)); return true;
         case "preservebody":
         case "preserveBody": target.getConfiguration().setPreserveBody(property(camelContext, boolean.class, value)); return true;
@@ -53,8 +57,12 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": return boolean.class;
         case "audience": return java.lang.String.class;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "localspiffeid":
+        case "localSpiffeId": return java.lang.String.class;
         case "operation": return org.apache.camel.component.spiffe.SpiffeOperation.class;
         case "preservebody":
         case "preserveBody": return boolean.class;
@@ -75,8 +83,12 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": return target.getConfiguration().isAllowOperationHeader();
         case "audience": return target.getConfiguration().getAudience();
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return target.getConfiguration().getHealthCheckExpiryThreshold();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "localspiffeid":
+        case "localSpiffeId": return target.getConfiguration().getLocalSpiffeId();
         case "operation": return target.getConfiguration().getOperation();
         case "preservebody":
         case "preserveBody": return target.getConfiguration().isPreserveBody();

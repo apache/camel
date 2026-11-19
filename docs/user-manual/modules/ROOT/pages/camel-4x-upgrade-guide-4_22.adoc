@@ -13,6 +13,20 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== Undertow servlet implementation
+
+`camel-undertow` now uses the Jakarta Servlet 6.1 implementation from Undertow EE,
+`io.undertow.ee:undertow-servlet:2.0.3.Final`, instead of `io.undertow:undertow-servlet`.
+Undertow core is upgraded from `2.4.2.Final` to `2.4.4.Final` to match this Undertow EE release.
+The Camel parent property for the servlet implementation changes from `undertow-servlet-version`
+to `undertow-ee-version`.
+
+Applications that declare or override the Undertow servlet dependency must migrate to the new coordinates.
+Remove or exclude the old servlet artifact from other dependencies: the two artifacts contain the same
+`io.undertow.servlet` packages and must not be included together.
+This also applies when combining `camel-undertow` with a Spring Boot Undertow server integration
+that uses Undertow EE.
+
 === camel-aws2-sns - string array message attributes
 
 String values in list-valued message headers are now JSON-escaped when mapped to SNS
@@ -69,6 +83,20 @@ only the default port of `http` (80); to deliver to another port, list it explic
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
+The query string of a request is also read more leniently: a parameter without a value (`?foo` or `?foo=`) gets an empty
+value, and a value that contains `=` is kept whole. Before, such a parameter made the request fail, and a value was cut at
+the first `=` it contained.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -98,6 +126,34 @@ configurations are not affected.
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-duckdb - copy loads one local file unless allowUrlCopySource or allowGlobCopySource is set
+
+The `copy` operation of the `duckdb` producer gave the path from the message body to DuckDB as it was, so DuckDB read a
+value with a URL scheme (such as `https://` or `s3://`) as a remote file, and expanded a value with glob pattern
+characters (`*`, `?`, `[` or `{`) to all the matching files. Now `copy` loads a single local file by default, and a
+source with a URL scheme or glob pattern characters fails with an `IllegalArgumentException`. This also applies to a
+`File` body, such as a file from the `file` consumer, whose name has one of these characters. A route that loads such
+sources must set the new `allowUrlCopySource=true` or `allowGlobCopySource=true` option (both disabled by default).
+
+The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
+links.
+
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly.
+
+Documents carrying an internal DTD subset still parse. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-file - idempotent consumer with an idempotent read lock
 
 With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
@@ -113,6 +169,18 @@ or changing to a directory could resolve the name to another file or directory w
 wildcard to select a file, use the real name of the file in the producer, and the `include` or `antInclude` option of a
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
+
+=== camel-ftp - ftp and ftps refuse a file or directory name with a carriage return or a line feed
+
+The `ftp` and `ftps` components now refuse a remote file or directory name with a carriage return or a line feed, with
+a `GenericFileOperationFailedException`, before they send any command to the server for it. This applies to the name
+the producer writes (the `CamelFileName` header, `tempFileName`, `doneFileName` and `moveExisting`), to the directories
+it creates or changes to, and to the names the consumer retrieves, deletes, renames or lists.
+
+The FTP control connection sends one command per line, so such a name cannot be sent as one command. Before, the server
+got the name cut at the line break: the operation failed or acted on another file, and the replies of the later
+commands on that connection could get out of step. Remove or replace these characters in the name before the producer.
+The `sftp` component is not affected. See the xref:components::ftp-component.adoc[FTP component].
 
 === camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
@@ -851,6 +919,52 @@ For Spring Boot, `camel export` and `camel run` without an explicit `--camel-ver
 catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
 uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
 to retain a different core dependency version.
+
+=== camel-main - the server and vault options flagged secret are sensitive keys
+
+The options `camel.server.jwtKeystorePassword`, `camel.management.jwtKeystorePassword`,
+`camel.vault.azure.eventhubConnectionString`, `camel.vault.azure.tenantId`, `camel.vault.gcp.serviceAccountKey`,
+`camel.vault.ibm.eventStreamUsername` and `camel.vault.ibm.eventStreamPassword` are flagged secret, and are now also
+sensitive keys, like the other secret options. The Camel Main auto-configuration summary shows their value as `xxxxxx`.
+These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
+`serviceAccountKey`, are not affected.
+
+The `camel.security.secretPolicy` check now also reports these options when they are configured as plain text,
+including a value set through an environment variable. By default this logs a warning, and with
+`camel.main.profile=prod` the startup fails. Configure them with a property placeholder or a vault reference instead.
+A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
+behind a property placeholder too.
+
+=== camel-quartz - a scheduler from the registry gets the CamelContext when the component starts
+
+With a Quartz `Scheduler` set on the quartz component or autowired from the registry, such as the scheduler of
+`spring-boot-starter-quartz`, the component now stores the CamelContext in the scheduler context when it starts, before
+the routes add their jobs. Before, it did so only once the CamelContext was fully started, so a trigger that fired in
+between on a scheduler that was already running failed with `No CamelContext could be found with name`. Such a job now
+runs its route if the route has started. The component now logs a WARN when this scheduler is already running when it
+starts, as a trigger that fires before its route has started is still lost (with Spring Boot, set
+`spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
+`propertiesFile` are set, as they are not used with such a scheduler.
+
+=== camel-cxf, camel-cxfrs - the former operationName and operationNamespace headers are not sent
+
+The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
+`operationNamespace` headers (see the xref:camel-4x-upgrade-guide-4_21.adoc#_camel_cxf[4.21 upgrade guide]). The
+`cxf` producer does not read the former names. It now logs a WARN once when one of them is set without its replacement.
+The default `CxfHeaderFilterStrategy` filters `operationName` and `operationNamespace` again, as it did before the
+rename, so the service no longer receives them as HTTP headers. A route that maps a header named `operationName` to
+`CamelCxfOperationName` keeps working.
+
+The `cxf` producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
+option selects the operation of a service with more than one operation. It then invokes the first operation that CXF
+returns, which is not the first one of the WSDL.
+
+The `cxfrs` producer does not read the former `operationName` header either. With the proxy-based client API
+(`httpClientAPI=false`) it still fails when `CamelCxfOperationName` is not set. The `NoSuchMethodException` now names
+that header, and says when `operationName` is set, in place of `Cannot find method with name: null`. The default
+`CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
+no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
+response header.
 
 == Upgrading from 4.22.1 to 4.22.2
 

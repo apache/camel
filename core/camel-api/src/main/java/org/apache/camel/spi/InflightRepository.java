@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A live registry that tracks every {@link org.apache.camel.Exchange} that is currently being processed within the
  * {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * The routing engine calls {@link #add(org.apache.camel.Exchange)} when an exchange enters processing and
  * {@link #remove(org.apache.camel.Exchange)} when it completes (successfully or with failure). Per-route counts are
  * available via {@link #size(String)}; the full list of inflight exchanges is accessible via {@link #browse()}, which
@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
  * {@link org.apache.camel.spi.ShutdownStrategy} polls this repository to wait until the inflight count reaches zero
  * before completing a graceful shutdown. The JMX management layer and developer console expose the inflight data for
  * operational visibility.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/graceful-shutdown.html">Graceful Shutdown</a> in the Camel user manual.
  *
  * @see ShutdownStrategy
@@ -62,16 +62,16 @@ public interface InflightRepository extends StaticService {
 
         /**
          * The id of the node from the route where the exchange currently is being processed
-         * <p/>
-         * Is <tt>null</tt> if message history is disabled.
+         * <p>
+         * Is <code>null</code> if message history is disabled.
          */
         @Nullable
         String getNodeId();
 
         /**
          * Where the node is in the source, such as {@code orders.camel.yaml:18}
-         * <p/>
-         * Is <tt>null</tt> if message history or source location is disabled.
+         * <p>
+         * Is <code>null</code> if message history or source location is disabled.
          *
          * @since 4.23
          */
@@ -92,8 +92,8 @@ public interface InflightRepository extends StaticService {
 
         /**
          * The id of the route where the exchange currently is being processed
-         * <p/>
-         * Is <tt>null</tt> if message history is disabled.
+         * <p>
+         * Is <code>null</code> if message history is disabled.
          */
         @Nullable
         String getAtRouteId();
@@ -132,7 +132,7 @@ public interface InflightRepository extends StaticService {
 
     /**
      * Current size of inflight exchanges.
-     * <p/>
+     * <p>
      * Will return 0 if there are no inflight exchanges.
      *
      * @return number of exchanges currently in flight.
@@ -140,9 +140,9 @@ public interface InflightRepository extends StaticService {
     int size();
 
     /**
-     * Adds the route from the in flight registry.
-     * <p/>
-     * Is used for initializing up resources
+     * Adds the route to the in flight registry.
+     * <p>
+     * Is used for initializing resources
      *
      * @param routeId the id of the route
      */
@@ -150,7 +150,7 @@ public interface InflightRepository extends StaticService {
 
     /**
      * Removes the route from the in flight registry.
-     * <p/>
+     * <p>
      * Is used for cleaning up resources to avoid leaking.
      *
      * @param routeId the id of the route
@@ -159,7 +159,7 @@ public interface InflightRepository extends StaticService {
 
     /**
      * Current size of inflight exchanges which are from the given route.
-     * <p/>
+     * <p>
      * Will return 0 if there are no inflight exchanges.
      *
      * @param  routeId the id of the route
@@ -192,7 +192,7 @@ public interface InflightRepository extends StaticService {
      * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight that started from the
      * given route.
      *
-     * @param fromRouteId the route id, or <tt>null</tt> for all routes.
+     * @param fromRouteId the route id, or <code>null</code> for all routes.
      */
     Collection<InflightExchange> browse(@Nullable String fromRouteId);
 
@@ -200,8 +200,9 @@ public interface InflightRepository extends StaticService {
      * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight.
      *
      * @param limit                 maximum number of entries to return
-     * @param sortByLongestDuration to sort by the longest duration. Set to <tt>true</tt> to include the exchanges that
-     *                              has been inflight the longest time, set to <tt>false</tt> to sort by exchange id
+     * @param sortByLongestDuration to sort by the longest duration. Set to <code>true</code> to include the exchanges
+     *                              that have been inflight the longest time, set to <code>false</code> to sort by
+     *                              exchange id
      */
     Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration);
 
@@ -209,18 +210,19 @@ public interface InflightRepository extends StaticService {
      * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight that started from the
      * given route.
      *
-     * @param fromRouteId           the route id, or <tt>null</tt> for all routes.
+     * @param fromRouteId           the route id, or <code>null</code> for all routes.
      * @param limit                 maximum number of entries to return
-     * @param sortByLongestDuration to sort by the longest duration. Set to <tt>true</tt> to include the exchanges that
-     *                              has been inflight the longest time, set to <tt>false</tt> to sort by exchange id
+     * @param sortByLongestDuration to sort by the longest duration. Set to <code>true</code> to include the exchanges
+     *                              that have been inflight the longest time, set to <code>false</code> to sort by
+     *                              exchange id
      */
     Collection<InflightExchange> browse(@Nullable String fromRouteId, int limit, boolean sortByLongestDuration);
 
     /**
-     * Gets the oldest {@link InflightExchange} that are currently inflight that started from the given route.
+     * Gets the oldest {@link InflightExchange} that is currently inflight that started from the given route.
      *
-     * @param  fromRouteId the route id, or <tt>null</tt> for all routes.
-     * @return             the oldest, or <tt>null</tt> if none inflight
+     * @param  fromRouteId the route id, or <code>null</code> for all routes.
+     * @return             the oldest, or <code>null</code> if none inflight
      */
     @Nullable
     InflightExchange oldest(@Nullable String fromRouteId);

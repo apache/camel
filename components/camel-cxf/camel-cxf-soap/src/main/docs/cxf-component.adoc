@@ -657,11 +657,23 @@ messageContentsList, you can get the result from that list.
 A `List` (or another `Collection`) or an `Object[]` body holds the parameters. Any other body, such as a `String`
 or a `byte[]`, is the one parameter of the operation: a `String` with a comma is not split into several parameters.
 
+For a document-literal wrapped operation, the parameters are the children of the request wrapper element, such as the
+`String` of the `greetMe` operation, not the wrapper object (the generated `GreetMe` class). To send the wrapper
+object, set `wrapped=true` on the endpoint. Only the request is in wrapped form: the reply is a `MessageContentsList`
+with the return value of the operation either way, not the response wrapper object (`GreetMeResponse`). A wrapper
+object sent while `wrapped` is false fails with an `IllegalArgumentException` that names the operation and its
+parameter types.
+
 If you don't specify the operation name in the message header,
 `CxfProducer` will try to use the `defaultOperationName` from
 `CxfEndpoint`, if there is no `defaultOperationName` set on
-`CxfEndpoint`, it will pick up the first operationName from the Operation
-list.
+`CxfEndpoint`, it invokes the first operation that CXF returns for the service,
+in an order that is not the order of the WSDL or of the service class.
+When the service has more than one operation, the producer logs a WARN once in this case.
+
+The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
+`operationNamespace` headers. The producer does not read the former names: it logs a WARN once when one of them
+is set without its replacement, and does not send them to the service as HTTP headers.
 
 If you want to get the object array from the message body, you can get
 the body using `message.getBody(Object[].class)`, as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfProducerRouterTest.java#L117[CxfProducerRouterTest.testInvokingSimpleServerWithParams]:

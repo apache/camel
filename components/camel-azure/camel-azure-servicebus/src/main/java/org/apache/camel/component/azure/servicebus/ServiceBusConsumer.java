@@ -22,11 +22,13 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusErrorContext;
+import com.azure.messaging.servicebus.ServiceBusException;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
@@ -54,7 +56,11 @@ import org.slf4j.LoggerFactory;
 public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
-    private static final int LOCK_RENEW_INTERVAL_SECONDS = 10;
+    // the lock renewer runs every LOCK_RENEW_INTERVAL_SECONDS (or a second later) and renews a lock that expires
+    // within LOCK_RENEW_BEFORE_EXPIRY_SECONDS, so its first renewal comes with more than 14 seconds left, and a
+    // transient failure of it is retried by the next run with more than 8 seconds left (when the runs come on time)
+    private static final int LOCK_RENEW_INTERVAL_SECONDS = 5;
+    private static final int LOCK_RENEW_BEFORE_EXPIRY_SECONDS = 20;
     // Azure recommends putting the exception type in the dead-letter reason and its stack trace in the description,
     // but both are length-limited: the .NET and JavaScript SDKs cap them at 4096 (MaxDeadLetterReasonLength, applied
     // to the description as well), and Azure separately warns that a stack trace here can push a message past the
@@ -70,6 +76,11 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private ServiceBusReceiverAsyncClient renewalClient;
     private LockRenewer lockRenewer;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
+    // Set by deferShutdown in peek-lock mode: a graceful stop waits for the exchanges in flight, which settle their
+    // message through the processor client, so the client stays open and the messages it delivers meanwhile are held
+    // (not routed) until the consumer stops
+    private volatile boolean deferredStop;
+    private volatile CountDownLatch stopped = new CountDownLatch(1);
 
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -84,6 +95,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        deferredStop = false;
+        stopped = new CountDownLatch(1);
 
         LOG.debug("Creating connection to Azure ServiceBus");
 
@@ -129,7 +143,16 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     }
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
+        // the latch of this run of the consumer, taken before the check, so a stop and start meanwhile cannot leave the
+        // message waiting for a later stop
+        CountDownLatch stop = stopped;
         pendingExchanges.incrementAndGet();
+        // counted before the check: a graceful stop that does not see this exchange as pending makes it be held here
+        if (deferredStop) {
+            pendingExchanges.decrementAndGet();
+            holdUntilStopped(stop);
+            return;
+        }
         try {
             final ServiceBusReceivedMessage message = messageContext.getMessage();
             final Exchange exchange = createServiceBusExchange(message);
@@ -156,6 +179,22 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         }
     }
 
+    /**
+     * Holds a message delivered during a graceful stop, without routing or settling it: the processor client delivers
+     * the next message only when processMessage returns, so at most maxConcurrentCalls messages are held (per session
+     * with sessions). The SDK renews their lock while they are held, up to maxAutoLockRenewDuration: with 0 the lock of
+     * a held message can expire during the graceful wait, and Service Bus then delivers it again to a free call, where
+     * it is held again (one more delivery count each time). They are released when the stop has closed the client:
+     * Service Bus delivers a held message again once its lock expires.
+     */
+    private static void holdUntilStopped(CountDownLatch stop) {
+        try {
+            stop.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     private void processError(ServiceBusErrorContext errorContext) {
         final Exchange exchange = createServiceBusExchange(errorContext);
 
@@ -176,14 +215,19 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             renewalClient.close();
             renewalClient = null;
         }
-        if (client != null) {
-            if (clientCloseable) {
-                client.close();
-                client = null;
-            } else {
-                // user-provided client: stop accepting messages but don't close
-                client.stop();
+        try {
+            if (client != null) {
+                if (clientCloseable) {
+                    client.close();
+                    client = null;
+                } else {
+                    // user-provided client: stop accepting messages but don't close
+                    client.stop();
+                }
             }
+        } finally {
+            // the client is closed or stopped: release the messages held during a graceful stop
+            stopped.countDown();
         }
 
         // shutdown camel consumer
@@ -205,15 +249,22 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             client.close();
             client = null;
         }
+        stopped.countDown();
 
         super.doShutdown();
     }
 
     @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
-        // stop accepting new messages but keep the connection open
-        // so that in-flight exchanges can still complete/abandon messages
-        if (client != null) {
+        if (clientCloseable && getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+            // stop routing new messages but keep the client open, so that in-flight exchanges can still
+            // complete/abandon their message: the stop() of the processor client closes its receiver (the default
+            // V2 stack of the SDK), and a message cannot be settled through a closed receiver. If a stop with
+            // abortAfterTimeout gives up, the consumer stays in this state until the route is stopped and started
+            deferredStop = true;
+        } else if (client != null) {
+            // receive and delete mode: nothing to settle; a processorClient given by the user: its messages do not go
+            // through processMessage. Stop receiving
             client.stop();
         }
         return true;
@@ -342,11 +393,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                     continue;
                 }
 
-                // renew if the lock expires before the run after the next one: the period task scheduler runs this
-                // task every LOCK_RENEW_INTERVAL_SECONDS or a second later, so waiting for the next run when the lock
-                // expires within one interval can be too late, and the renewal itself is a call to Service Bus
+                // renew if the lock expires within LOCK_RENEW_BEFORE_EXPIRY_SECONDS (several runs before it expires)
                 Instant lockExpiry = entry.lockedUntil.toInstant();
-                if (now.plusSeconds(2L * LOCK_RENEW_INTERVAL_SECONDS).isAfter(lockExpiry)) {
+                if (now.plusSeconds(LOCK_RENEW_BEFORE_EXPIRY_SECONDS).isAfter(lockExpiry)) {
                     client.renewMessageLock(entry.message)
                             .subscribe(
                                     newLockedUntil -> {
@@ -356,12 +405,27 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                                                 (k, e) -> new LockRenewerEntry(e.message, newLockedUntil, e.startTime));
                                     },
                                     error -> {
-                                        LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
-                                                error.getMessage());
-                                        entries.remove(exchangeId);
+                                        if (isTransient(error)) {
+                                            // the SDK makes one attempt: keep the entry, so the next run renews
+                                            // the lock again while it is still held
+                                            LOG.warn("Failed to renew lock for exchangeId {}, will try again: {}",
+                                                    exchangeId, error.getMessage());
+                                        } else {
+                                            LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
+                                                    error.getMessage());
+                                            entries.remove(exchangeId);
+                                        }
                                     });
                 }
             }
+        }
+
+        /**
+         * A transient error (such as a busy server or a connection that was lost) can be retried, as the processor of
+         * the Service Bus .NET SDK does for its own lock renewal; another error (such as a lost lock) ends the renewal.
+         */
+        private static boolean isTransient(Throwable error) {
+            return error instanceof ServiceBusException sbe && sbe.isTransient();
         }
 
         private record LockRenewerEntry(ServiceBusReceivedMessage message, OffsetDateTime lockedUntil, Instant startTime) {

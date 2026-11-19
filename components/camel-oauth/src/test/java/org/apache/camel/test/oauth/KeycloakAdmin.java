@@ -28,7 +28,7 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
-class KeycloakAdmin {
+class KeycloakAdmin implements AutoCloseable {
 
     private static Keycloak keycloak;
     private String lastRealm;

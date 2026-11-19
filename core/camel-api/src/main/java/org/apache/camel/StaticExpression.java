@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Marker for an {@link Expression} whose value is a compile-time or configuration-time constant.
- * <p/>
+ * <p>
  * A static expression always evaluates to the same result regardless of the {@link Exchange}, so the framework can
  * optimize it: it is evaluated once, the result is cached, and no per-exchange evaluation overhead is incurred.
  * Implementations must expose the constant through {@link #getValue()} and allow it to be overwritten via

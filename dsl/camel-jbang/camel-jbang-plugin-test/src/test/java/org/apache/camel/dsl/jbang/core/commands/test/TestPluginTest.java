@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.citrusframework.jbang.cli.CitrusJBangMain;
 import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -376,6 +377,46 @@ class TestPluginTest {
             Files.deleteIfExists(yamlFile);
             Files.deleteIfExists(testDir);
         }
+    }
+
+    @Test
+    public void shouldUseTestAgentInCommandTree() {
+        CamelJBangMain main = createCamelJBangMain();
+        CommandTree root = new CommandTree(main);
+        TestPlugin plugin = new TestPlugin();
+        plugin.customize(root, main);
+
+        CommandTree agentTree = root.getSubcommands().get("test")
+                .getSubcommands().get("agent");
+        Assertions.assertNotNull(agentTree, "test agent command should be registered");
+        Assertions.assertInstanceOf(TestAgent.class, agentTree.getCommand(),
+                "agent command should be TestAgent, not the plain Citrus Agent");
+    }
+
+    @Test
+    public void shouldUseTestAgentStartInCommandTree() {
+        CamelJBangMain main = createCamelJBangMain();
+        CommandTree root = new CommandTree(main);
+        TestPlugin plugin = new TestPlugin();
+        plugin.customize(root, main);
+
+        CommandTree startTree = root.getSubcommands().get("test")
+                .getSubcommands().get("agent")
+                .getSubcommands().get("start");
+        Assertions.assertNotNull(startTree, "test agent start command should be registered");
+        Assertions.assertInstanceOf(TestAgentStart.class, startTree.getCommand(),
+                "agent start command should be TestAgentStart, not the plain Citrus AgentStart");
+    }
+
+    @Test
+    public void testAgentGetCommandsShouldReturnTestAgentStart() {
+        CitrusJBangMain citrus = new CitrusJBangMain();
+        TestAgent agent = new TestAgent(citrus);
+
+        boolean hasTestAgentStart = agent.getCommands().stream()
+                .anyMatch(cmd -> cmd instanceof TestAgentStart);
+        Assertions.assertTrue(hasTestAgentStart,
+                "TestAgent.getCommands() must return TestAgentStart so aesh dispatches to it");
     }
 
     /**

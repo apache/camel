@@ -179,6 +179,25 @@ public class KafkaShareEndpoint extends DefaultEndpoint implements MultipleConsu
         }
     }
 
+    /**
+     * Fails when the value deserializer that the schemaRegistryVendor sets cannot be loaded, with a message that names
+     * the Maven artifact to add, rather than when Kafka fails to load it. With a custom
+     * {@link KafkaShareClientFactory}, which may create the client without loading the class by its name, only logs the
+     * message as a WARN.
+     *
+     * @param props the properties of the share consumer, after {@link #updateClassProperties(Properties)}
+     */
+    void checkSchemaRegistrySerde(Properties props) {
+        String message = configuration.missingSchemaRegistrySerde(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG);
+        if (message != null) {
+            if (kafkaShareClientFactory == null
+                    || kafkaShareClientFactory.getClass() == DefaultKafkaShareClientFactory.class) {
+                throw new IllegalStateException(message);
+            }
+            LOG.warn("{}", message);
+        }
+    }
+
     ExecutorService createExecutor(Object source) {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
                 "KafkaShareConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());

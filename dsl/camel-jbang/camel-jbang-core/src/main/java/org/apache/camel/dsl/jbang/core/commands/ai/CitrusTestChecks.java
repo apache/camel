@@ -296,7 +296,7 @@ public final class CitrusTestChecks {
         for (String name : actions) {
             List<List<String>> paths = new ArrayList<>();
             refPaths(model.at("/definitions/TestActions/properties/" + name), new ArrayList<>(),
-                    ref -> ref.startsWith(NESTED_ACTION), paths, 0);
+                    ref -> ref.startsWith(NESTED_ACTION) || TEST_ACTIONS.equals(ref), paths, 0);
             if (!paths.isEmpty()) {
                 nested.put(name, paths);
             }
@@ -538,10 +538,6 @@ public final class CitrusTestChecks {
             if ("camel".equals(name)) {
                 checkLogMessage(at);
             }
-            JsonNode action = tree.at(at);
-            if (nested && !action.isMissingNode()) {
-                describe(schema.action().validate(action), at);
-            }
             for (List<String> path : schema.nested().getOrDefault(name, List.of())) {
                 forEachAction(keys.get(0).getValueNode(), path, 0, at + "/" + escape(name),
                         (n, p) -> checkAction(n, p, true));
@@ -626,7 +622,10 @@ public final class CitrusTestChecks {
             Map<String, List<Error>> unknown = new LinkedHashMap<>();
             for (Error e : errors) {
                 if ("additionalProperties".equals(e.getKeyword()) && e.getProperty() != null) {
-                    unknown.computeIfAbsent(prefix + location(e), k -> new ArrayList<>()).add(e);
+                    String at = prefix + location(e);
+                    if (!slots.contains(at)) {
+                        unknown.computeIfAbsent(at, k -> new ArrayList<>()).add(e);
+                    }
                 }
             }
             for (Error e : errors) {

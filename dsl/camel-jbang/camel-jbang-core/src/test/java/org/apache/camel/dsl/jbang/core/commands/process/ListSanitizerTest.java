@@ -91,13 +91,14 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         assertThat(run(sanitizerOn(), "--report")).isZero();
 
         String out = printer.getStdout();
-        assertThat(out).contains("orders (pid " + TEST_PID + "): 1 violations in 42 calls of steps checked, R2 not checked"
-                                 + " (camel.sanitizer.checks=callback,commit)");
+        assertThat(lineOf(out, "violations in")).isEqualTo("orders (pid " + TEST_PID + "): 1 violations in 42 calls of"
+                                                           + " steps checked, R2 not checked"
+                                                           + " (camel.sanitizer.checks=callback,commit,threads)");
         // the kinds at the level of the rules, so a kind of R1 does not look as if it were of the rule above it
         assertThat(out).contains("  R1: 1").contains("\n  COMPLETED_TWICE: 1").doesNotContain("    COMPLETED_TWICE")
                 .doesNotContain("THREW_BEFORE_CALLBACK");
-        // without the commits followed, R2 is not checked: no count of 0 for it
-        assertThat(out).doesNotContain("  R2:");
+        // without the commits followed, R2 is not checked: no count of 0 for it; R3 is checked (the default)
+        assertThat(out).doesNotContain("  R2:").contains("  R3: 0").doesNotContain("R3 not checked");
         assertThat(out).contains("first call of the callback: thread price-timeout-1",
                 "at com.acme.PriceLookup.lambda$process$1(PriceLookup.java:47)");
     }
@@ -142,7 +143,8 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         String out = printer.getStdout();
         assertThat(out).contains("orders (pid " + TEST_PID + "): 2 violations in 42 calls of steps checked, 7 commits"
                                  + " followed, 1 calls reported still pending (warnings), 1 pending now");
-        assertThat(out).contains("  R1: 1", "  R2: 1", "\n  COMMIT_NEVER_RUN: 1").doesNotContain("    COMMIT_NEVER_RUN");
+        assertThat(out).contains("  R1: 1", "  R2: 1", "  R3: 0", "\n  COMMIT_NEVER_RUN: 1")
+                .doesNotContain("    COMMIT_NEVER_RUN").doesNotContain("not checked");
         assertThat(out).contains(STILL_PENDING);
 
         assertThat(run(withCommitAndStillPending(), "--report", "--json")).isZero();
@@ -151,6 +153,42 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         assertThat(report.getLong("stillPending")).isEqualTo(1);
         assertThat(report.getLong("pendingCalls")).isEqualTo(1);
         assertThat((JsonArray) report.get("stillPendingWarnings")).containsExactly(STILL_PENDING);
+    }
+
+    @Test
+    void aViolationOfR3() throws Exception {
+        JsonObject sanitizer = sanitizerOn();
+        JsonObject violation = (JsonObject) ((JsonArray) sanitizer.get("violations")).get(0);
+        violation.put("rule", "R3");
+        violation.put("kind", "RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD");
+        violation.put("title", "process returned true, and its callback was called on another thread");
+        sanitizer.put("rules", new JsonObject(Map.of("R1", 0L, "R2", 0L, "R3", 1L)));
+
+        assertThat(run(sanitizer)).isZero();
+        assertThat(lineOf(printer.getStdout(), "EX-1")).contains("R3", "process returned true", "lookup");
+
+        assertThat(run(sanitizer, "--report")).isZero();
+        assertThat(printer.getStdout()).contains("  R3: 1");
+    }
+
+    @Test
+    void withoutTheCheckThreadsR3IsNotChecked() throws Exception {
+        JsonObject sanitizer = sanitizerOn();
+        sanitizer.put("checks", new JsonArray(List.of("callback")));
+
+        assertThat(run(sanitizer, "--report")).isZero();
+        assertThat(lineOf(printer.getStdout(), "violations in"))
+                .endsWith("R2 not checked (camel.sanitizer.checks=callback,commit), R3 not checked (threads is not in"
+                          + " camel.sanitizer.checks)");
+        assertThat(printer.getStdout()).doesNotContain("  R3:");
+
+        // an integration of a version without R3 tells no checks, and would not start with the check threads
+        sanitizer.remove("checks");
+        sanitizer.put("rules", new JsonObject(Map.of("R1", 1L, "R2", 0L)));
+        assertThat(run(sanitizer, "--report")).isZero();
+        assertThat(lineOf(printer.getStdout(), "violations in"))
+                .endsWith("R2 not checked (camel.sanitizer.checks=callback,commit)");
+        assertThat(printer.getStdout()).doesNotContain("R3");
     }
 
     @Test
@@ -308,7 +346,8 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         ((JsonArray) sanitizer.get("violations")).add(violation);
         ((JsonObject) sanitizer.get("kinds")).put("COMMIT_NEVER_RUN", 1L);
         sanitizer.put("total", 2L);
-        sanitizer.put("rules", new JsonObject(Map.of("R1", 1L, "R2", 1L)));
+        sanitizer.put("checks", new JsonArray(List.of("callback", "commit", "threads")));
+        sanitizer.put("rules", new JsonObject(Map.of("R1", 1L, "R2", 1L, "R3", 0L)));
         sanitizer.put("commits", 7L);
         sanitizer.put("pendingCalls", 1L);
         sanitizer.put("stillPending", 1L);
@@ -332,10 +371,11 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         kinds.put("THREW_BEFORE_CALLBACK", 0L);
         JsonObject sanitizer = new JsonObject();
         sanitizer.put("enabled", true);
+        sanitizer.put("checks", new JsonArray(List.of("callback", "threads")));
         sanitizer.put("calls", 42L);
         sanitizer.put("total", 1L);
         // as the console lists it with R2 not checked (the default outside a test): every rule, and no commits
-        sanitizer.put("rules", new JsonObject(Map.of("R1", 1L, "R2", 0L)));
+        sanitizer.put("rules", new JsonObject(Map.of("R1", 1L, "R2", 0L, "R3", 0L)));
         sanitizer.put("kinds", kinds);
         sanitizer.put("violations", new JsonArray(List.of(violation)));
         return sanitizer;

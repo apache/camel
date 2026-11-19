@@ -32,7 +32,7 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private Boolean enabled;
-    @Metadata(defaultValue = "callback")
+    @Metadata(defaultValue = "callback,threads")
     private String checks;
     @Metadata(defaultValue = "32")
     private int stackDepth = 32;
@@ -72,10 +72,11 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step
-     * is called exactly once, and process does not throw) and commit (rule R2, each commit of a consumer runs exactly
-     * once, for the unit of work that owns it). The default is callback, as rule R2 costs more per message; for a
-     * CamelContext built on a thread the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI
-     * switch) it is callback,commit.
+     * is called exactly once, and process does not throw), commit (rule R2, each commit of a consumer runs exactly
+     * once, for the unit of work that owns it) and threads (rule R3, process returns the value its callback is called
+     * with). The default is callback,threads, as rule R2 costs more per message; for a CamelContext built on a thread
+     * the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is
+     * callback,commit,threads.
      */
     public void setChecks(String checks) {
         this.checks = checks;
@@ -102,8 +103,8 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
      * Only the innermost pending call of an exchange is reported. 0 turns the warning off, as does a value of checks
      * without callback. The parts of a split, multicast or recipient list with parallel processing share one lock of
      * the table of pending calls, which orders their threads: when hunting races between such parts, use 0, and leave
-     * commit out of checks (checks=callback), as rule R2 takes one lock of the context at each unit of work given, each
-     * on completion added, handed over or run, and each exchange done.
+     * commit out of checks (checks=callback,threads), as rule R2 takes one lock of the context at each unit of work
+     * given, each on completion added, handed over or run, and each exchange done.
      */
     public void setPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;
@@ -132,10 +133,11 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step
-     * is called exactly once, and process does not throw) and commit (rule R2, each commit of a consumer runs exactly
-     * once, for the unit of work that owns it). The default is callback, as rule R2 costs more per message; for a
-     * CamelContext built on a thread the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI
-     * switch) it is callback,commit.
+     * is called exactly once, and process does not throw), commit (rule R2, each commit of a consumer runs exactly
+     * once, for the unit of work that owns it) and threads (rule R3, process returns the value its callback is called
+     * with). The default is callback,threads, as rule R2 costs more per message; for a CamelContext built on a thread
+     * the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is
+     * callback,commit,threads.
      */
     public SanitizerConfigurationProperties withChecks(String checks) {
         this.checks = checks;
@@ -156,8 +158,8 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
      * Only the innermost pending call of an exchange is reported. 0 turns the warning off, as does a value of checks
      * without callback. The parts of a split, multicast or recipient list with parallel processing share one lock of
      * the table of pending calls, which orders their threads: when hunting races between such parts, use 0, and leave
-     * commit out of checks (checks=callback), as rule R2 takes one lock of the context at each unit of work given, each
-     * on completion added, handed over or run, and each exchange done.
+     * commit out of checks (checks=callback,threads), as rule R2 takes one lock of the context at each unit of work
+     * given, each on completion added, handed over or run, and each exchange done.
      */
     public SanitizerConfigurationProperties withPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;

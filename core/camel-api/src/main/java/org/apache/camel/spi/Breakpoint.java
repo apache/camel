@@ -27,16 +27,16 @@ import org.jspecify.annotations.Nullable;
 /**
  * Callback interface for a debugger breakpoint, registered with the {@link Debugger} and invoked as
  * {@link org.apache.camel.Exchange}s pass through route nodes.
- * <p/>
+ * <p>
  * Breakpoints are registered via {@link Debugger#addBreakpoint(Breakpoint)} (unconditional) or
  * {@link Debugger#addBreakpoint(Breakpoint, Condition...)} (conditional). When all provided {@link Condition}s are
  * satisfied, the {@code Debugger} calls the appropriate {@code before*} / {@code after*} callback on this interface.
  * Multiple {@code before*} methods exist to differentiate the type of routing event: entering a processor node,
  * handling an exchange event, and so on.
- * <p/>
+ * <p>
  * Exceptions thrown from any callback method are caught by the {@code Debugger} and logged at {@code WARN} level. This
  * ensures that a buggy breakpoint does not abort routing of the exchange.
- * <p/>
+ * <p>
  * A breakpoint can be in {@link State#Active} or {@link State#Suspended} state. The {@link BacklogDebugger} uses the
  * suspended state to pause exchange processing and wait for a resume signal from a debugging client.
  *
@@ -95,9 +95,9 @@ public interface Breakpoint {
      * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.
      *
      * @param exchange   the {@link Exchange}
-     * @param event      the event (instance of {@link ExchangeEvent}
-     * @param definition the {@link NamedNode} definition of the last processor executed, may be <tt>null</tt> if not
-     *                   possible to resolve from tracing
+     * @param event      the event (instance of {@link ExchangeEvent})
+     * @param definition the {@link NamedNode} definition of the last processor executed, may be <code>null</code> if
+     *                   not possible to resolve from tracing
      * @see              ExchangeEvent
      */
     void onEvent(Exchange exchange, ExchangeEvent event, @Nullable NamedNode definition);

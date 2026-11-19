@@ -64,6 +64,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lockmodetype":
         case "lockModeType": target.setLockModeType(property(camelContext, jakarta.persistence.LockModeType.class, value)); return true;
+        case "locktimeout":
+        case "lockTimeout": target.setLockTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "maximumresults":
@@ -162,6 +164,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return boolean.class;
         case "lockmodetype":
         case "lockModeType": return jakarta.persistence.LockModeType.class;
+        case "locktimeout":
+        case "lockTimeout": return long.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return int.class;
         case "maximumresults":
@@ -261,6 +265,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "lockmodetype":
         case "lockModeType": return target.getLockModeType();
+        case "locktimeout":
+        case "lockTimeout": return target.getLockTimeout();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "maximumresults":

@@ -27,9 +27,9 @@ import org.apache.camel.Service;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD) to
+ * Used for components that can optimise the usage of {@code org.apache.camel.processor.SendDynamicProcessor} (toD) to
  * reuse a static {@link org.apache.camel.Endpoint} and {@link Producer} that supports using headers to provide the
- * dynamic parts. For example many of the HTTP components supports this.
+ * dynamic parts. For example many of the HTTP components support this.
  */
 public interface SendDynamicAware extends Service, CamelContextAware {
 
@@ -47,7 +47,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
 
     /**
      * Whether to traverse the given parameters, and resolve any parameter values which uses the RAW token syntax:
-     * <tt>key=RAW(value)</tt>. And then remove the RAW tokens, and replace the content of the value, with just the
+     * <code>key=RAW(value)</code>. And then remove the RAW tokens, and replace the content of the value, with just the
      * value.
      */
     default boolean resolveRawParameterValues() {
@@ -110,12 +110,12 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception;
 
     /**
-     * Resolves the static part of the uri that are used for creating a single {@link org.apache.camel.Endpoint} and
+     * Resolves the static part of the uri that is used for creating a single {@link org.apache.camel.Endpoint} and
      * {@link Producer} that will be reused for processing the optimised toD.
      *
      * @param  exchange  the exchange
      * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the static uri, or <tt>null</tt> to not let toD use this optimisation.
+     * @return           the static uri, or <code>null</code> to not let toD use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
     @Nullable
@@ -127,7 +127,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      *
      * @param  exchange  the exchange
      * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the processor, or <tt>null</tt> to not let toD use this optimisation.
+     * @return           the processor, or <code>null</code> to not let toD use this optimisation.
      * @throws Exception is thrown if error creating the pre processor.
      */
     @Nullable
@@ -139,7 +139,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      *
      * @param  exchange  the exchange
      * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the post processor, or <tt>null</tt> if no post processor is needed.
+     * @return           the post processor, or <code>null</code> if no post processor is needed.
      * @throws Exception is thrown if error creating the post processor.
      */
     @Nullable

@@ -52,7 +52,8 @@ public interface MongodbComponentBuilderFactory {
     
         /**
          * Shared client used for connection. All endpoints generated from the
-         * component will share this connection client.
+         * component will share this connection client, except the endpoints
+         * that set hosts or connectionUriString, which create their own client.
          * 
          * The option is a:
          * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.

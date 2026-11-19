@@ -616,7 +616,9 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Overrides the desired operation to be used in the producer.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation}
+         * type.
          * 
          * Group: producer
          * 

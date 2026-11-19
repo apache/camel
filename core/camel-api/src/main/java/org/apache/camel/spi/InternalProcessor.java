@@ -55,7 +55,7 @@ public interface InternalProcessor extends AsyncProcessor {
      * Gets the advice with the given type.
      *
      * @param  type the type of the advice
-     * @return      the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
+     * @return      the advice if exists, or <code>null</code> if no advices have been added with the given type.
      */
     <T> @Nullable T getAdvice(Class<T> type);
 

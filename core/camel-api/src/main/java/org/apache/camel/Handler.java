@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method on a bean as the preferred handler for
  * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
- * <p/>
+ * <p>
  * When Camel invokes a bean via the Bean EIP or {@link Consume} and the bean has multiple public methods, it uses
  * heuristics to select the best match. Annotating exactly one method with {@code @Handler} short-circuits that
  * selection: Camel always calls the annotated method without ambiguity checks or reflection-based scoring. Only one

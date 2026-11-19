@@ -21,7 +21,7 @@ import org.apache.camel.Endpoint;
 
 /**
  * Strategy for a {@link org.apache.camel.PollingConsumer} when polling an {@link org.apache.camel.Endpoint}.
- * <p/>
+ * <p>
  * This pluggable strategy allows to plugin different implementations what to do, most noticeable what to do in case the
  * polling goes wrong. This can be handled in the
  * {@link #rollback(org.apache.camel.Consumer , org.apache.camel.Endpoint , int, Exception) rollback} method.
@@ -33,7 +33,7 @@ public interface PollingConsumerPollStrategy {
      *
      * @param  consumer the consumer
      * @param  endpoint the endpoint being consumed
-     * @return          <tt>true</tt> to begin polling, or <tt>false</tt> to skip polling this time.
+     * @return          <code>true</code> to begin polling, or <code>false</code> to skip polling this time.
      */
     boolean begin(Consumer consumer, Endpoint endpoint);
 
@@ -42,7 +42,7 @@ public interface PollingConsumerPollStrategy {
      *
      * @param consumer       the consumer
      * @param endpoint       the endpoint being consumed
-     * @param polledMessages number of messages polled, will be <tt>0</tt> if no message was polled at all.
+     * @param polledMessages number of messages polled, will be <code>0</code> if no message was polled at all.
      */
     void commit(Consumer consumer, Endpoint endpoint, int polledMessages);
 
@@ -53,11 +53,11 @@ public interface PollingConsumerPollStrategy {
      * @param  endpoint     the endpoint being consumed
      * @param  retryCounter current retry attempt, starting from 0.
      * @param  cause        the caused exception
-     * @throws Exception    can be used to rethrow the caused exception. Notice that thrown an exception will terminate
-     *                      the scheduler and thus Camel will not trigger again. So if you want to let the scheduler to
-     *                      continue to run then do <b>not</b> throw any exception from this method.
-     * @return              whether to retry immediately or not. Return <tt>false</tt> to ignore the problem,
-     *                      <tt>true</tt> to try immediately again
+     * @throws Exception    can be used to rethrow the caused exception. Notice that throwing an exception will
+     *                      terminate the scheduler and thus Camel will not trigger again. So if you want to let the
+     *                      scheduler to continue to run then do <b>not</b> throw any exception from this method.
+     * @return              whether to retry immediately or not. Return <code>false</code> to ignore the problem,
+     *                      <code>true</code> to try immediately again
      */
     boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception;
 

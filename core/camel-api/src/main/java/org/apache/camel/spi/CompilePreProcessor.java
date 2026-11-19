@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 /**
  * Allows to plugin custom pre-processors that are processed before the DSL has loaded the source and compiled into a
  * Java object.
- * <p/>
+ * <p>
  * This is used among others to detect imported classes that may need to be downloaded into classloader to allow to
  * compile the class.
  *

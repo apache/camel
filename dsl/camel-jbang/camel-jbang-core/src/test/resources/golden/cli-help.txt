@@ -2337,10 +2337,10 @@ Options:
       --sanitizer           Add camel-sanitizer, which reports where the
                             processors of the routes break the contract of
                             AsyncProcessor, and with
-                            camel.sanitizer.checks=callback,commit also where
-                            the commits of the consumers do not run exactly once
-                            (camel get sanitizer); on with profile dev, never
-                            with prod. Not with Quarkus yet
+                            camel.sanitizer.checks=callback,commit,threads also
+                            where the commits of the consumers do not run
+                            exactly once (camel get sanitizer); on with profile
+                            dev, never with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories
@@ -3321,10 +3321,10 @@ Options:
       --sanitizer           Add camel-sanitizer, which reports where the
                             processors of the routes break the contract of
                             AsyncProcessor, and with
-                            camel.sanitizer.checks=callback,commit also where
-                            the commits of the consumers do not run exactly once
-                            (camel get sanitizer); on with profile dev, never
-                            with prod. Not with Quarkus yet
+                            camel.sanitizer.checks=callback,commit,threads also
+                            where the commits of the consumers do not run
+                            exactly once (camel get sanitizer); on with profile
+                            dev, never with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories
@@ -5671,10 +5671,10 @@ Options:
       --sanitizer           Add camel-sanitizer, which reports where the
                             processors of the routes break the contract of
                             AsyncProcessor, and with
-                            camel.sanitizer.checks=callback,commit also where
-                            the commits of the consumers do not run exactly once
-                            (camel get sanitizer); on with profile dev, never
-                            with prod. Not with Quarkus yet
+                            camel.sanitizer.checks=callback,commit,threads also
+                            where the commits of the consumers do not run
+                            exactly once (camel get sanitizer); on with profile
+                            dev, never with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories

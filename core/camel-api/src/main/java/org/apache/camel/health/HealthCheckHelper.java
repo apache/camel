@@ -234,7 +234,7 @@ public final class HealthCheckHelper {
      * Gets the {@link HealthCheckRegistry}.
      *
      * @param  context the camel context
-     * @return         the health check registry, or <tt>null</tt> if health-check is not enabled.
+     * @return         the health check registry, or <code>null</code> if health-check is not enabled.
      */
     public static @Nullable HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
         Objects.requireNonNull(context, "context");
@@ -246,7 +246,7 @@ public final class HealthCheckHelper {
      *
      * @param  context the camel context
      * @param  id      the id of the health check
-     * @return         the health check, or <tt>null</tt> if no health check exists with this id
+     * @return         the health check, or <code>null</code> if no health check exists with this id
      */
     public static @Nullable HealthCheck getHealthCheck(CamelContext context, String id) {
         Objects.requireNonNull(context, "context");
@@ -279,7 +279,7 @@ public final class HealthCheckHelper {
      * @param  context the camel context
      * @param  id      the id of the health check
      * @param  type    the expected type of the health check repository
-     * @return         the health check, or <tt>null</tt> if no health check exists with this id
+     * @return         the health check, or <code>null</code> if no health check exists with this id
      */
     public static <T extends HealthCheck> @Nullable T getHealthCheck(CamelContext context, String id, Class<T> type) {
         Objects.requireNonNull(context, "context");
@@ -297,7 +297,8 @@ public final class HealthCheckHelper {
      *
      * @param  context the camel context
      * @param  id      the id of the health check repository
-     * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
+     * @return         the health check repository, or <code>null</code> if no health check repository exists with this
+     *                 id
      */
     public static @Nullable HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
         Objects.requireNonNull(context, "context");
@@ -330,7 +331,8 @@ public final class HealthCheckHelper {
      * @param  context the camel context
      * @param  id      the id of the health check repository
      * @param  type    the expected type of the health check repository
-     * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
+     * @return         the health check repository, or <code>null</code> if no health check repository exists with this
+     *                 id
      */
     public static <T extends HealthCheckRepository> @Nullable T getHealthCheckRepository(
             CamelContext context, String id, Class<T> type) {

@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Channel acts as a channel between {@link Processor}s in the route graph.
- * <p/>
+ * <p>
  * The channel is responsible for routing the {@link Exchange} to the next {@link Processor} in the route graph.
  *
  * @see Processor
@@ -56,7 +56,7 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     /**
      * Gets the {@link ErrorHandler} this Channel uses.
      *
-     * @return the error handler, or <tt>null</tt> if no error handler is used.
+     * @return the error handler, or <code>null</code> if no error handler is used.
      */
     @Nullable
     Processor getErrorHandler();

@@ -21,6 +21,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedIdempotentConsumerMBean;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
+import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 
 @ManagedResource(description = "Managed Idempotent Consumer")
 public class ManagedIdempotentConsumer extends ManagedProcessor implements ManagedIdempotentConsumerMBean {
@@ -68,6 +70,17 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
     @Override
     public Boolean isRemoveOnFailure() {
         return getProcessor().isRemoveOnFailure();
+    }
+
+    @Override
+    public String getIdempotentRepositoryClassName() {
+        IdempotentRepository repository = getProcessor().getIdempotentRepository();
+        return repository != null ? repository.getClass().getName() : null;
+    }
+
+    @Override
+    public boolean isIdempotentRepositoryInMemory() {
+        return getProcessor().getIdempotentRepository() instanceof InMemoryStrategy s && s.isInMemory();
     }
 
     @Override

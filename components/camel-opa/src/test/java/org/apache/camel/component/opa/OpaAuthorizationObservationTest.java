@@ -21,17 +21,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.styra.opa.OPAClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 class OpaAuthorizationObservationTest {
     @Test
@@ -112,6 +120,62 @@ class OpaAuthorizationObservationTest {
                     .containsExactly(true, false, false);
             assertThat(fixture.events.getFirst().getCounts()).isEqualTo(new AuthorizationDecisionEvent.Counts(1, 0, 1, 1, 0));
             assertThat(exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES, List.class)).hasSize(3);
+        }
+    }
+
+    @Test
+    void reloadWrapperObservesMappedWasmInputOnceAndKeepsThePoolWait() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            OpaWasmEvaluator inner = mock(OpaWasmEvaluator.class);
+            when(inner.evaluateDecision(anyMap(), any(long[].class))).thenAnswer(invocation -> {
+                Map<String, Object> input = invocation.getArgument(0);
+                assertThat(input).containsEntry("subject", "verified").containsEntry("order", "secret-body");
+                long[] poolWait = invocation.getArgument(1);
+                poolWait[0] = 123;
+                return true;
+            });
+            try (var evaluator = new OpaReloadableWasmEvaluator(
+                    fixture.context, 0,
+                    () -> new OpaWasmEvaluator.Bundle(new byte[] { 1 }, null), bundle -> inner,
+                    "policy", "allow", "*", null, true, false, new ExpressionAdapter() {
+                        @Override
+                        public Object evaluate(Exchange exchange) {
+                            return Map.of("subject", exchange.getProperty("verifiedSubject"),
+                                    "order", exchange.getMessage().getBody());
+                        }
+                    })) {
+                Exchange exchange = fixture.exchange();
+                exchange.setProperty("verifiedSubject", "verified");
+                assertThat(evaluator.evaluate(exchange)).isTrue();
+                assertThat(exchange.getMessage().getBody()).isEqualTo("secret-body");
+                assertThat(fixture.events).hasSize(1);
+                AuthorizationDecisionEvent event = fixture.events.getFirst();
+                assertThat(event.getEngine()).isEqualTo(AuthorizationDecisionEvent.Engine.OPA_WASM);
+                assertThat(event.getOutcome()).isEqualTo(Outcome.ALLOW);
+                assertThat(event.getPoolWaitNanos()).isEqualTo(123);
+            }
+        }
+    }
+
+    @Test
+    void mapperIoFailureIsAnEvaluationErrorWithoutCallingTheDecisionPoint() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            OPAClient client = mock(OPAClient.class);
+            OpaRestEvaluator evaluator = new OpaRestEvaluator(
+                    client, null, "policy", "allow", "*", null, true, true,
+                    new ExpressionAdapter() {
+                        @Override
+                        public Object evaluate(Exchange exchange) {
+                            throw new RuntimeCamelException(new IOException("mapper unavailable"));
+                        }
+                    });
+            assertThatThrownBy(() -> evaluator.evaluate(fixture.exchange())).isInstanceOf(OpaPolicyEvaluationException.class);
+            assertThatThrownBy(() -> evaluator.evaluateBatch(fixture.exchange(), List.of("a", "b")))
+                    .isInstanceOf(OpaPolicyEvaluationException.class);
+            assertThat(fixture.events).extracting(AuthorizationDecisionEvent::getOutcome)
+                    .containsExactly(Outcome.ERROR, Outcome.ERROR);
+            assertThat(fixture.events.getLast().getCounts()).isEqualTo(new AuthorizationDecisionEvent.Counts(0, 0, 2, 0, 0));
+            verifyNoInteractions(client);
         }
     }
 

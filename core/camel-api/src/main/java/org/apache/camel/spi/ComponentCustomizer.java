@@ -27,13 +27,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for applying custom configuration to {@link Component} instances as they are created.
- * <p/>
+ * <p>
  * Customizers are discovered from the {@link Registry} and applied to each component during bootstrap, with
  * {@link #isEnabled(String, Component)} (and an optional {@link Policy}) deciding whether a given component is
  * customized, and {@link Ordered} controlling the order. Use the {@link #builder()} /
  * {@link #forType(Class, ThrowingConsumer)} helpers to target a concrete component type. This is the component-level
  * counterpart to {@link CamelContextCustomizer}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
  * the Camel user manual.
  *
@@ -86,7 +86,7 @@ public interface ComponentCustomizer extends Ordered {
      *
      * @param  name   the unique name of the component
      * @param  target the component to configure
-     * @return        <tt>true</tt> if the customizer should be applied
+     * @return        <code>true</code> if the customizer should be applied
      */
     default boolean isEnabled(String name, Component target) {
         return true;
@@ -104,9 +104,9 @@ public interface ComponentCustomizer extends Ordered {
     // ***************************************
 
     /**
-     * Used as additional filer mechanism to control if customizers need to be applied or not. Each of this filter is
+     * Used as additional filter mechanism to control if customizers need to be applied or not. Each of these filters is
      * applied before any of the discovered {@link ComponentCustomizer} is invoked.
-     * </p>
+     * <p>
      * This interface is useful to implement enable/disable logic on a group of customizers.
      */
     @FunctionalInterface

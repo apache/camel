@@ -33,7 +33,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -55,6 +58,57 @@ public class FileStateRepositoryTest extends TestSupport {
     @BeforeEach
     public void setUpTemporaryFile() {
         repositoryStore = testFile("file-state-repository.dat").toFile();
+    }
+
+    @Test
+    public void shouldBindFileNameAsString() throws Exception {
+        // Given a FileStateRepository declared as a bean, with the file name as a plain String
+        FileStateRepository repository = new FileStateRepository();
+        try (CamelContext context = new DefaultCamelContext()) {
+            boolean hit = PropertyBindingSupport.build()
+                    .withCamelContext(context)
+                    .withTarget(repository)
+                    .withProperty("fileName", repositoryStore.getPath())
+                    .bind();
+            assertTrue(hit);
+        }
+        assertEquals(repositoryStore, repository.getFileStore());
+        assertEquals(repositoryStore.getPath(), repository.getFileName());
+
+        // When the state is stored
+        repository.start();
+        repository.setState("key", "value");
+        repository.stop();
+
+        // Then a new repository with the same file name reads it again
+        FileStateRepository other = fileStateRepository(repositoryStore.getPath());
+        other.start();
+        assertEquals("value", other.getState("key"));
+        other.stop();
+    }
+
+    @Test
+    public void shouldBindFileStoreAsFile() throws Exception {
+        // Given a FileStateRepository declared as a bean, with the file store as a java.io.File
+        FileStateRepository repository = new FileStateRepository();
+        try (CamelContext context = new DefaultCamelContext()) {
+            boolean hit = PropertyBindingSupport.build()
+                    .withCamelContext(context)
+                    .withTarget(repository)
+                    .withProperty("fileStore", "#class:java.io.File('" + repositoryStore.getPath() + "')")
+                    .bind();
+            assertTrue(hit);
+        }
+        assertEquals(repositoryStore, repository.getFileStore());
+        assertEquals(repositoryStore.getPath(), repository.getFileName());
+    }
+
+    @Test
+    public void shouldFailToStartWithoutFile() {
+        FileStateRepository repository = new FileStateRepository();
+
+        Exception e = assertThrows(IllegalArgumentException.class, repository::start);
+        assertTrue(e.getMessage().contains("fileStore or fileName"), e.getMessage());
     }
 
     @Test

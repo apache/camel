@@ -136,23 +136,26 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Makes sure that this endpoint has the client that the producer and the consumer send their requests with, which
-     * they then get with {@link #getMnsClient()}. If no client is set or autowired, the first call creates it from the
-     * options of this endpoint, while it holds the lock of this endpoint: the calls made at the same time wait for this
-     * creation, and the calls made once the client exists do not take the lock. A failed creation keeps no client, so
-     * each call that waited for it, and each later call, tries again.
+     * Returns the client that the producer and the consumer send their requests with. If no client is set or autowired,
+     * the first call creates it from the options of this endpoint, while it holds the lock of this endpoint: the calls
+     * made at the same time wait for this creation, and the calls made once the client exists do not take the lock. A
+     * failed creation keeps no client, so each call that waited for it, and each later call, tries again.
      */
-    public void initClient() {
-        if (mnsClient == null) {
+    public MNSClient initClient() {
+        MNSClient answer = mnsClient;
+        if (answer == null) {
             lock.lock();
             try {
-                if (mnsClient == null) {
-                    mnsClient = createClient();
+                answer = mnsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    mnsClient = answer;
                 }
             } finally {
                 lock.unlock();
             }
         }
+        return answer;
     }
 
     MNSClient createClient() {

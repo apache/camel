@@ -234,7 +234,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             if (dataField.trim()) {
-                token = trim(token, dataField, paddingChar);
+                token = trim(token, dataField, paddingChar, annotatedFields.get(dataField.pos()).getType());
                 //token = token.trim();
             }
 
@@ -344,19 +344,30 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
     }
 
-    private String trim(String token, DataField dataField, char paddingChar) {
+    private String trim(String token, DataField dataField, char paddingChar, Class<?> type) {
         char myPaddingChar = dataField.paddingChar();
         if (dataField.paddingChar() == 0) {
             myPaddingChar = paddingChar;
         }
+        String trimmed;
         if ("R".equals(dataField.align())) {
-            return leftTrim(token, myPaddingChar);
+            trimmed = leftTrim(token, myPaddingChar);
         } else if ("L".equals(dataField.align())) {
-            return rightTrim(token, myPaddingChar);
+            trimmed = rightTrim(token, myPaddingChar);
         } else {
-            token = leftTrim(token, myPaddingChar);
-            return rightTrim(token, myPaddingChar);
+            trimmed = rightTrim(leftTrim(token, myPaddingChar), myPaddingChar);
         }
+        // a number padded with '0' that is only made of '0' is the number 0, not an empty field
+        if (trimmed.isEmpty() && !token.isEmpty() && myPaddingChar == '0' && isNumber(type)) {
+            return "0";
+        }
+        return trimmed;
+    }
+
+    private static boolean isNumber(Class<?> type) {
+        return Number.class.isAssignableFrom(type)
+                || type == int.class || type == long.class || type == short.class || type == byte.class
+                || type == double.class || type == float.class;
     }
 
     private String rightTrim(String token, char myPaddingChar) {

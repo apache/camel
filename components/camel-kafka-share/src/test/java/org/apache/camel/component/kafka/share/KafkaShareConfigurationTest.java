@@ -85,6 +85,34 @@ class KafkaShareConfigurationTest {
         assertThat(configuration.getAdditionalProperties()).doesNotContainKey("other.option");
     }
 
+    @Test
+    void schemaRegistryVendorSetsTheValueDeserializerAndRegistryProperties() {
+        KafkaShareConfiguration configuration = configuration();
+        configuration.setSchemaRegistryVendor("apicurio");
+        configuration.setSchemaRegistryURL("http://registry:8080/apis/registry/v3");
+        configuration.setSpecificAvroReader(true);
+
+        Properties props = configuration.createShareConsumerProperties();
+
+        assertThat(props)
+                .containsEntry(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                        "io.apicurio.registry.serde.avro.AvroKafkaDeserializer")
+                .containsEntry("apicurio.registry.url", "http://registry:8080/apis/registry/v3")
+                .containsEntry("apicurio.registry.use-specific-avro-reader", true)
+                .doesNotContainKeys("schema.registry.url", "specific.avro.reader");
+    }
+
+    @Test
+    void schemaRegistryVendorWithAnUnsupportedFormatFails() {
+        KafkaShareConfiguration configuration = configuration();
+        configuration.setSchemaRegistryVendor("azure");
+        configuration.setSchemaFormat("json");
+
+        assertThatThrownBy(configuration::createShareConsumerProperties)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("azure supports only schemaFormat avro");
+    }
+
     private static KafkaShareConfiguration configuration() {
         KafkaShareConfiguration configuration = new KafkaShareConfiguration();
         configuration.setTopic("orders");

@@ -105,10 +105,9 @@ public class KeyStoreParameters extends JsseParameters {
     }
 
     /**
-     * Creates a {@link KeyStoreParameters} instance based off of the configuration state of this instance. If
-     * {@link #getType()} returns {@code null}, the default key store type is loaded, otherwise the type will be of that
-     * specified.
-     * <p/>
+     * Creates a {@link KeyStore} instance based off of the configuration state of this instance. If {@link #getType()}
+     * returns {@code null}, the default key store type is loaded, otherwise the type will be of that specified.
+     * <p>
      * The created instance will always be loaded, but if the type requires an input stream and {@link #getResource()}
      * returns {@code null}, the instance will be empty. The loading of the resource, if not {@code null}, is attempted
      * by treating the resource as a file path, a class path resource, and a URL in that order. An exception is thrown

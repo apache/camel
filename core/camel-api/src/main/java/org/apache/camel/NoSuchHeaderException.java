@@ -22,11 +22,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown when a mandatory header is not available on the {@link Message} of an {@link Exchange}.
- * <p/>
- * Typically raised by {@link org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)} when
+ * <p>
+ * Typically raised by {@code org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)} when
  * a processor requires a specific header to be present.
  *
- * @see org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
  * @see NoSuchPropertyException
  * @see Message
  */

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.Injector;
@@ -38,6 +43,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
 
     private volatile boolean loadTypeConvertersDone;
     private final boolean loadTypeConverters;
+    private Set<String> typeConverterFiles;
+    private boolean typeConverterFilesWarned;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
                                 boolean loadTypeConverters, boolean statisticsEnabled) {
@@ -71,6 +78,46 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
         if (!loadTypeConvertersDone && isLoadTypeConverters()) {
             scanTypeConverters();
         }
+    }
+
+    @Override
+    public void loadCoreAndFastTypeConverters() throws Exception {
+        super.loadCoreAndFastTypeConverters();
+
+        // the META-INF/services/org/apache/camel/TypeConverter files are only read when scanning for type converters,
+        // remember them to warn on startup if scanning is turned off (runtimes that discover the converters at build
+        // time override this method, and do not get the warning)
+        Set<String> files = new LinkedHashSet<>();
+        try {
+            for (URL url : getLoaderUrls(AnnotationTypeConverterLoader.META_INF_SERVICES)) {
+                files.add(url.toString());
+            }
+        } catch (IOException e) {
+            LOG.debug("Cannot find {} files due to: {}", AnnotationTypeConverterLoader.META_INF_SERVICES, e.getMessage(), e);
+        }
+        typeConverterFiles = files;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // loadTypeConverters can be set after this type converter is initialized (such as by camel-main),
+        // so check on startup
+        if (!typeConverterFilesWarned && !loadTypeConvertersDone && typeConverterFiles != null
+                && !typeConverterFiles.isEmpty() && !isLoadTypeConverters() && getBasePackageScan() == null) {
+            typeConverterFilesWarned = true;
+            LOG.warn("Type converter file {} found at {} is not read, because scanning the classpath for type converters"
+                     + " is turned off, so the @Converter classes it lists are not loaded."
+                     + " Set camel.main.loadTypeConverters=true (or setLoadTypeConverters(true) on the CamelContext),"
+                     + " or annotate the converter classes with @Converter(generateLoader = true) and build them with the"
+                     + " camel-component-maven-plugin, or add them with addTypeConverters on the TypeConverterRegistry.",
+                    AnnotationTypeConverterLoader.META_INF_SERVICES, String.join(", ", typeConverterFiles));
+        }
+    }
+
+    private String getBasePackageScan() {
+        return camelContext != null ? camelContext.getCamelContextExtension().getBasePackageScan() : null;
     }
 
     private boolean isLoadTypeConverters() {
@@ -111,7 +158,6 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
      * Creates the {@link TypeConverterLoader} to use for scanning for type converters such as from the classpath.
      */
     protected TypeConverterLoader createScanTypeConverterLoader() {
-        String basePackages = camelContext != null ? camelContext.getCamelContextExtension().getBasePackageScan() : null;
-        return new AnnotationTypeConverterLoader(resolver, basePackages);
+        return new AnnotationTypeConverterLoader(resolver, getBasePackageScan());
     }
 }

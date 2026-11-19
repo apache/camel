@@ -23,6 +23,8 @@ import java.util.concurrent.CompletableFuture;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckSingleResponse;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientCheckResponse;
 import org.apache.camel.Exchange;
@@ -107,6 +109,59 @@ class OpenFgaAuthorizationObservationTest {
                 assertThat(fixture.events.getFirst().getOutcome()).isEqualTo(Outcome.ERROR);
                 assertThat(fixture.events.getFirst().getCounts())
                         .isEqualTo(new AuthorizationDecisionEvent.Counts(1, 1, 1, 0, 0));
+            } finally {
+                producer.stop();
+                endpoint.stop();
+            }
+        }
+    }
+
+    @Test
+    void nativeServerBatchObservesEachCorrelatedDecisionIncludingDuplicateObjects() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            fixture.configuration.setBatchCheckMode(OpenFgaBatchCheckMode.server);
+            when(fixture.client.batchCheck(any(), any())).thenReturn(CompletableFuture.completedFuture(
+                    new ClientBatchCheckResponse(
+                            List.of(
+                                    new ClientBatchCheckSingleResponse(true, null, "2", null),
+                                    new ClientBatchCheckSingleResponse(true, null, "0", null),
+                                    new ClientBatchCheckSingleResponse(false, null, "1", null)))));
+            var endpoint
+                    = new OpenFgaEndpoint("openfga:batchCheck", new OpenFgaComponent(fixture.context), fixture.configuration);
+            endpoint.setOperation(OpenFgaOperation.batchCheck);
+            endpoint.start();
+            var producer = new OpenFgaProducer(endpoint);
+            producer.start();
+            try {
+                Exchange exchange = new DefaultExchange(fixture.context);
+                exchange.getMessage().setBody(List.of("document:a", "document:b", "document:a"));
+                producer.process(exchange);
+                assertThat(exchange.getMessage().getBody(List.class)).containsExactly("document:a", "document:a");
+                assertThat(fixture.events).hasSize(1);
+                assertThat(fixture.events.getFirst().getCounts())
+                        .isEqualTo(new AuthorizationDecisionEvent.Counts(2, 1, 0, 0, 0));
+                assertThat(fixture.events.getFirst().getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
+            } finally {
+                producer.stop();
+                endpoint.stop();
+            }
+        }
+    }
+
+    @Test
+    void atomicRelationshipWriteDoesNotPublishAnAuthorizationDecision() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            when(fixture.client.write(any(), any())).thenReturn(CompletableFuture.completedFuture(null));
+            var endpoint = new OpenFgaEndpoint("openfga:write", new OpenFgaComponent(fixture.context), fixture.configuration);
+            endpoint.setOperation(OpenFgaOperation.write);
+            endpoint.start();
+            var producer = new OpenFgaProducer(endpoint);
+            producer.start();
+            try {
+                Exchange exchange = new DefaultExchange(fixture.context);
+                producer.process(exchange);
+                assertThat(fixture.events).isEmpty();
+                assertThat(exchange.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
             } finally {
                 producer.stop();
                 endpoint.stop();

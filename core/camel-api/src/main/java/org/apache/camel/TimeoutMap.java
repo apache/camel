@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A map whose entries expire automatically after a configurable period of inactivity.
- * <p/>
+ * <p>
  * Entries are added via {@link #put(Object, Object, long)} with an individual timeout in milliseconds. A background
  * {@link Service} thread periodically scans the map and evicts entries whose timeout has elapsed, notifying any
  * registered {@link Listener}. This is used internally by components that need session or correlation state with
@@ -36,7 +36,7 @@ public interface TimeoutMap<K, V> extends Service {
      * Looks up the value in the map by the given key.
      *
      * @param  key the key of the value to search for
-     * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
+     * @return     the value for the given key or <code>null</code> if it is not present (or has timed out)
      */
     @Nullable
     V get(K key);
@@ -54,8 +54,8 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key           the key
      * @param  value         the value
      * @param  timeoutMillis timeout in millis
-     * @return               the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping
-     *                       for <tt>key</tt>.
+     * @return               the previous value associated with <code>key</code>, or <code>null</code> if there was no
+     *                       mapping for <code>key</code>.
      */
     @Nullable
     V put(K key, V value, long timeoutMillis);
@@ -67,8 +67,8 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key           the key
      * @param  value         the value
      * @param  timeoutMillis timeout in millis
-     * @return               the value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for
-     *                       <tt>key</tt>.
+     * @return               the value associated with <code>key</code>, or <code>null</code> if there was no mapping
+     *                       for <code>key</code>.
      */
     @Nullable
     V putIfAbsent(K key, V value, long timeoutMillis);
@@ -77,7 +77,7 @@ public interface TimeoutMap<K, V> extends Service {
      * Removes the object with the given key
      *
      * @param  key key for the object to remove
-     * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
+     * @return     the value for the given key or <code>null</code> if it is not present (or has timed out)
      */
     @Nullable
     V remove(K key);

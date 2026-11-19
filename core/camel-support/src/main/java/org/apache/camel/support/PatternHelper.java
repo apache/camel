@@ -16,10 +16,14 @@
  */
 package org.apache.camel.support;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -209,6 +213,74 @@ public final class PatternHelper {
             // ignore
         }
         return false;
+    }
+
+    /**
+     * Combines several patterns into one pattern, which {@link #matchPattern(String, String)} matches when any of the
+     * patterns matches. This is how options that hold a single pattern, such as the excludePattern of removeHeaders,
+     * keep several patterns.
+     * <p>
+     * A single pattern is returned as it is. Several patterns are joined with | into one regular expression: a name
+     * stays as it is, a regular expression is put in a group, and a pattern that is not a valid regular expression is
+     * quoted, so it keeps its exact or wildcard match. matchPattern reads a wildcard (text ending with a *) also as a
+     * regular expression, so a wildcard keeps both: Camel* becomes Camel.*|(?:Camel*), which matches CamelFoo and Came,
+     * and my.app* becomes \Qmy.app\E.*|(?:my.app*), which matches my.app.id. A wildcard such as kafka.* stays one
+     * regular expression, which already matches every name that starts with kafka.
+     * <p>
+     * Two readings are not kept. A regular expression no longer matches its own text as an exact name: a+b matches aab,
+     * not the name a+b. A property placeholder is combined before it is resolved: {{keep}} is quoted, so it keeps the
+     * exact name it resolves to, and {{keep}}* the names that start with it, but not a wildcard or a regular expression
+     * it resolves to.
+     *
+     * @param  patterns the patterns, <code>null</code> elements are ignored
+     * @return          the combined pattern, or <code>null</code> if there is no pattern
+     */
+    public static String combinePatterns(String... patterns) {
+        if (patterns == null) {
+            return null;
+        }
+        List<String> list = Arrays.stream(patterns).filter(Objects::nonNull).toList();
+        if (list.size() <= 1) {
+            return list.isEmpty() ? null : list.get(0);
+        }
+        StringJoiner answer = new StringJoiner("|");
+        for (String pattern : list) {
+            answer.add(asRegex(pattern));
+        }
+        return answer.toString();
+    }
+
+    private static String asRegex(String pattern) {
+        if (!pattern.endsWith("*")) {
+            if (!hasRegexChars(pattern)) {
+                return pattern;
+            }
+            return isRegex(pattern) ? "(?:" + pattern + ")" : Pattern.quote(pattern);
+        }
+        String text = pattern.substring(0, pattern.length() - 1);
+        String wildcard = (hasRegexChars(text) ? Pattern.quote(text) : text) + ".*";
+        if (text.isEmpty() || !isRegex(pattern)) {
+            return wildcard;
+        }
+        String head = text.substring(0, text.length() - 1);
+        if (text.endsWith(".") && matchRegex(head, head)) {
+            // head.* matches every name that starts with head, so the names that start with head. too
+            return "(?:" + pattern + ")";
+        }
+        return wildcard + "|(?:" + pattern + ")";
+    }
+
+    private static boolean hasRegexChars(String text) {
+        return text.chars().anyMatch(c -> REGEX_METACHARS.indexOf(c) >= 0);
+    }
+
+    private static boolean isRegex(String pattern) {
+        try {
+            Pattern.compile(pattern);
+            return true;
+        } catch (PatternSyntaxException e) {
+            return false;
+        }
     }
 
     public static boolean isExcludePatternMatch(String key, String... excludePatterns) {

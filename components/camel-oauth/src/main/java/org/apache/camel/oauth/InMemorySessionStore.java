@@ -25,17 +25,23 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_SESSION_ID;
 
-public class InMemorySessionStore implements OAuthSessionStore {
+public class InMemorySessionStore implements OAuthSessionStore, InMemoryStrategy {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<String, OAuthSession> sessions = new ConcurrentHashMap<>();
+
+    @Override
+    public boolean isInMemory() {
+        return true;
+    }
 
     @Override
     public Optional<OAuthSession> getSession(Exchange exchange) {

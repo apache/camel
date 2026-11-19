@@ -41,9 +41,9 @@ class ChaosFeedReachTest extends ChaosTestSupport {
                 // orders come by themselves, are charged over HTTP at a route of the same integration, and shipped
                 from("timer:orders?delay=-1&repeatCount=1").routeId("orders")
                         .to("netty-http:http://localhost:" + PORT + "/payment")
-                        .to("seda:shipping");
+                        .to("seda:shipping?pollTimeout=10");
                 from("netty-http:http://0.0.0.0:" + PORT + "/payment").routeId("payment").setBody(constant("paid"));
-                from("seda:shipping").routeId("shipping").to("mock:shipped");
+                from("seda:shipping?pollTimeout=10").routeId("shipping").to("mock:shipped");
                 // refunds come from outside, and a parked order goes nowhere else
                 from("direct:refunds").routeId("refunds").to("direct:payback");
                 from("direct:payback").routeId("payback").to("mock:paidBack");

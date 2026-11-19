@@ -27,26 +27,27 @@ public interface SecurityHubConstants {
     String OPERATION = "CamelAwsSecurityHubOperation";
 
     @Metadata(description = "The findings to import, as a List of AwsSecurityFinding. When not set, the findings are taken from the body: a Collection or an array of AwsSecurityFinding, or one AwsSecurityFinding.",
-              javaType = "List<AwsSecurityFinding>")
+              javaType = "List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFinding>")
     String FINDINGS = "CamelAwsSecurityHubFindings";
 
-    @Metadata(description = "The finding identifiers for batch update", javaType = "List<AwsSecurityFindingIdentifier>")
+    @Metadata(description = "The finding identifiers for batch update",
+              javaType = "List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingIdentifier>")
     String FINDING_IDENTIFIERS = "CamelAwsSecurityHubFindingIdentifiers";
 
     @Metadata(description = "The filters to apply when retrieving findings. It must be an AwsSecurityFindingFilters object; a value of another type, such as JSON text, fails the exchange.",
-              javaType = "AwsSecurityFindingFilters")
+              javaType = "software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingFilters")
     String FILTERS = "CamelAwsSecurityHubFilters";
 
     @Metadata(description = "The note to add to findings during update. It must be a NoteUpdate object; a value of another type fails the exchange.",
-              javaType = "NoteUpdate")
+              javaType = "software.amazon.awssdk.services.securityhub.model.NoteUpdate")
     String NOTE = "CamelAwsSecurityHubNote";
 
     @Metadata(description = "The severity to set on findings during update. It must be a SeverityUpdate object; a value of another type fails the exchange.",
-              javaType = "SeverityUpdate")
+              javaType = "software.amazon.awssdk.services.securityhub.model.SeverityUpdate")
     String SEVERITY = "CamelAwsSecurityHubSeverity";
 
     @Metadata(description = "The workflow status to set on findings. It must be a WorkflowUpdate object; a value of another type fails the exchange.",
-              javaType = "WorkflowUpdate")
+              javaType = "software.amazon.awssdk.services.securityhub.model.WorkflowUpdate")
     String WORKFLOW = "CamelAwsSecurityHubWorkflow";
 
     @Metadata(description = "The verification state to set on findings", javaType = "String")
@@ -61,7 +62,8 @@ public interface SecurityHubConstants {
     @Metadata(description = "User-defined fields to add to findings", javaType = "Map<String, String>")
     String USER_DEFINED_FIELDS = "CamelAwsSecurityHubUserDefinedFields";
 
-    @Metadata(description = "Related findings to associate", javaType = "List<RelatedFinding>")
+    @Metadata(description = "Related findings to associate",
+              javaType = "List<software.amazon.awssdk.services.securityhub.model.RelatedFinding>")
     String RELATED_FINDINGS = "CamelAwsSecurityHubRelatedFindings";
 
     @Metadata(description = "The types to assign to findings", javaType = "List<String>")
@@ -89,12 +91,12 @@ public interface SecurityHubConstants {
 
     @Metadata(label = "batchUpdateFindings",
               description = "The list of findings that were not updated",
-              javaType = "List<BatchUpdateFindingsUnprocessedFinding>")
+              javaType = "List<software.amazon.awssdk.services.securityhub.model.BatchUpdateFindingsUnprocessedFinding>")
     String UNPROCESSED_FINDINGS = "CamelAwsSecurityHubUnprocessedFindings";
 
     @Metadata(label = "batchUpdateFindings",
               description = "The list of findings that were updated successfully",
-              javaType = "List<AwsSecurityFindingIdentifier>")
+              javaType = "List<software.amazon.awssdk.services.securityhub.model.AwsSecurityFindingIdentifier>")
     String PROCESSED_FINDINGS = "CamelAwsSecurityHubProcessedFindings";
 
     @Metadata(label = "getFindingHistory",

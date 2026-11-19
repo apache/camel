@@ -26,17 +26,17 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}
- * using a <i>fluent</i> build style. <br/>
- * <p/>
+ * using a <i>fluent</i> build style. <br>
+ * <p>
  * <b>Important:</b> Read the javadoc of each method carefully to ensure the behavior of the method is understood. Some
- * methods is for <tt>InOnly</tt>, others for <tt>InOut</tt> MEP. And some methods throws
- * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
- * {@link Exchange}. <br/>
- * <p/>
- * The {@link FluentProducerTemplate} is <b>thread safe</b> with the assumption that its the same (single) thread that
- * builds the message (via the fluent methods) that also sends the message. <br/>
- * <p/>
- * When using the fluent template its required to chain the methods such as:
+ * methods are for <code>InOnly</code>, others for <code>InOut</code> MEP. And some methods throw
+ * {@link org.apache.camel.CamelExecutionException} while others store any thrown exception on the returned
+ * {@link Exchange}. <br>
+ * <p>
+ * The {@link FluentProducerTemplate} is <b>thread safe</b> with the assumption that it's the same (single) thread that
+ * builds the message (via the fluent methods) that also sends the message. <br>
+ * <p>
+ * When using the fluent template it's required to chain the methods such as:
  *
  * <pre>
  *     FluentProducerTemplate fluent = ...
@@ -64,25 +64,25 @@ import org.jspecify.annotations.Nullable;
  *     fluent = fluent.to("kafka:cheese")
  *     fluent.send();
  * </pre>
- * <p/>
- * You can either only use either withExchange, or withProcessor or a combination of withBody/withHeaders to construct
- * the message to be sent.<br/>
- * <p/>
- * All the methods which sends a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
+ * <p>
+ * You can only use either withExchange, or withProcessor or a combination of withBody/withHeaders to construct the
+ * message to be sent.<br>
+ * <p>
+ * All the methods which send a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
  * could not be created. Or a {@link NoSuchEndpointException} if the endpoint could not be resolved. There may be other
- * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.<br/>
- * <p/>
+ * related exceptions being thrown which occur <i>before</i> the {@link Producer} has started sending the message.<br>
+ * <p>
  * All the send or request methods will return the content according to this strategy:
  * <ul>
  * <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing with the
  * caused exception wrapped</li>
- * <li>The <tt>OUT</tt> body if the pattern is Out capable, otherwise <tt>IN</tt>.
+ * <li>The <code>OUT</code> body if the pattern is Out capable, otherwise <code>IN</code>.
  * </ul>
- * <br/>
- * <p/>
+ * <br>
+ * <p>
  * Before using the template it must be started. And when you are done using the template, make sure to {@link #stop()}
- * the template.<br/>
- * <p/>
+ * the template.<br>
+ * <p>
  * <b>Important note on usage:</b> See this
  * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.
@@ -148,10 +148,10 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate}
      * to send events about the {@link Exchange} being sent.
-     * <p/>
+     * <p>
      * By default this is enabled.
      *
-     * @param enabled <tt>true</tt> to enable, <tt>false</tt> to disable.
+     * @param enabled <code>true</code> to enable, <code>false</code> to disable.
      */
     void setEventNotifierEnabled(boolean enabled);
 
@@ -159,7 +159,7 @@ public interface FluentProducerTemplate extends Service {
      * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate} to
      * send events about the {@link Exchange} being sent.
      *
-     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     boolean isEventNotifierEnabled();
 

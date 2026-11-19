@@ -18,12 +18,12 @@ package org.apache.camel;
 
 /**
  * Low-level SPI interface for objects that can contribute route configurations to a {@link CamelContext}.
- * <p/>
+ * <p>
  * Route configurations are shared cross-cutting concerns (such as error handlers, interceptors, and on-exception
  * clauses) that can be applied to multiple {@link Route}s without repeating them inside each individual route
  * definition. They are built alongside routes using {@code RouteConfigurationBuilder} (the Java DSL subtype) or the
  * YAML / XML equivalents.
- * <p/>
+ * <p>
  * This interface is analogous to {@link RoutesBuilder} but targets configuration artifacts rather than executable
  * routes. Implementations register the configurations in the {@link CamelContext} prior to route startup so that each
  * route can resolve them by id.

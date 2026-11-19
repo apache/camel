@@ -19,12 +19,12 @@ package org.apache.camel;
 /**
  * {@link org.apache.camel.Endpoint} can optionally implement this interface to indicate whether or not it supports
  * multiple consumers.
- * <p/>
+ * <p>
  * By default endpoints are assumed <b>not</b> to support multiple consumers.
- * <p/>
+ * <p>
  * A rare few endpoints do in fact support multiple consumers and thus the purpose of this interface. For example JMS
  * endpoints which have topics that can be consumed by multiple consumers.
- * <p/>
+ * <p>
  * The purpose of this is to check on startup that we do not have multiple consumers for the <b>same</b> endpoints. This
  * prevents starting up with copy/paste mistakes in the Camel routes.
  *
@@ -36,7 +36,7 @@ public interface MultipleConsumersSupport {
     /**
      * Are multiple consumers supported?
      *
-     * @return <tt>true</tt> if multiple consumers are supported
+     * @return <code>true</code> if multiple consumers are supported
      */
     boolean isMultipleConsumersSupported();
 }

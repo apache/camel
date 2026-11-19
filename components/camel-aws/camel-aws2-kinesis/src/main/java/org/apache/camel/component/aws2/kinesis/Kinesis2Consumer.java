@@ -81,6 +81,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // cached one has expired. Like the cached iterators it is not cleared in doStop, and a route that is stopped and
     // started gets a new consumer.
     private final Map<String, String> lastSequenceNumbers = new ConcurrentHashMap<>();
+    // The time the consumer asked for the first LATEST iterator of each shard: where it continues a shard from which it
+    // has not routed a record yet when that iterator has expired (a LATEST iterator again would skip the records stored
+    // in between)
+    private final Map<String, Instant> latestStartTimes = new ConcurrentHashMap<>();
     // Written by the shard monitor, read by poll(): the shards of the lists seen so far, and those of them that
     // appeared after the first list as the child of a listed shard (resharding).
     private final Set<String> knownShardIds = ConcurrentHashMap.newKeySet();
@@ -286,6 +290,11 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 // shard again (TRIM_HORIZON, AT_TIMESTAMP, a sequence number) or skip the new ones (LATEST)
                 request.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
                         .startingSequenceNumber(lastSequenceNumber);
+            } else if (latestStartTimes.containsKey(shardId)) {
+                // the shard started at LATEST and the expired iterator returned no record: continue from the time of
+                // that start, so the records stored since then are routed (Kinesis compares this time of the consumer's
+                // clock with the arrival time it gave each record)
+                request.shardIteratorType(ShardIteratorType.AT_TIMESTAMP).timestamp(latestStartTimes.get(shardId));
             } else if (childShardIds.contains(shardId)) {
                 // a shard created by resharding while the consumer was reading its parent: all its records are new
                 request.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
@@ -304,12 +313,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
             resume(shardId, request);
 
+            GetShardIteratorRequest iteratorRequest = request.build();
+            Instant requestedAt = Instant.now();
             GetShardIteratorResponse result;
             if (getEndpoint().getConfiguration().isAsyncClient()) {
                 try {
                     result = kinesisConnection
                             .getAsyncClient(getEndpoint())
-                            .getShardIterator(request.build())
+                            .getShardIterator(iteratorRequest)
                             .get();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -320,7 +331,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             } else {
                 result = kinesisConnection
                         .getClient(getEndpoint())
-                        .getShardIterator(request.build());
+                        .getShardIterator(iteratorRequest);
+            }
+            if (iteratorRequest.shardIteratorType() == ShardIteratorType.LATEST) {
+                // the iterator points after the records stored before Kinesis handled the request, which was after
+                // requestedAt
+                latestStartTimes.putIfAbsent(shardId, requestedAt);
             }
 
             currentShardIterators.put(shardId, result.shardIterator());

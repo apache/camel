@@ -44,8 +44,9 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
     private final RowMapper<?> rowMapper;
     private final AtomicBoolean closed = new AtomicBoolean();
     private int rowNum;
-    // set when reading a row has failed: the rest of the result cannot be read, so the iterator must not look finished
-    private volatile SQLException failure;
+    // set when reading or mapping a row has failed: the rest of the result cannot be read, so the iterator must not
+    // look finished (an SQLException, or the RuntimeException of the row mapper)
+    private volatile Exception failure;
 
     public ResultSetIterator(Connection connection, Statement statement, ResultSet resultSet,
                              RowMapper<?> rowMapper) throws SQLException {
@@ -71,15 +72,16 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
     /**
      * Whether there are more rows.
      *
-     * @throws RuntimeCamelException when reading a row has failed before, as whether there are more rows is then
-     *                               unknown (whoever reads the iterator again, such as a redelivered split, gets an
-     *                               error and not the end of the rows)
+     * @throws RuntimeCamelException when reading or mapping a row has failed before, as whether there are more rows is
+     *                               then unknown (whoever reads the iterator again, such as a redelivered split, gets
+     *                               an error and not the end of the rows)
      */
     @Override
     public boolean hasNext() {
-        SQLException cause = failure;
+        Exception cause = failure;
         if (cause != null) {
-            throw new RuntimeCamelException("Cannot process result: reading a row failed before", cause);
+            String step = cause instanceof SQLException ? "reading" : "mapping";
+            throw new RuntimeCamelException("Cannot process result: " + step + " a row failed before", cause);
         }
         return !closed.get();
     }
@@ -98,6 +100,13 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
             failure = e;
             close();
             throw new RuntimeCamelException("Cannot process result", e);
+        } catch (RuntimeException e) {
+            // the row mapper failed (such as a value that does not convert to a property of the outputClass): keep
+            // failing, as a closed iterator looks finished (the splitter closes it when the split fails), and whoever
+            // reads it again, such as a redelivered split, must not skip the rest of the rows
+            failure = e;
+            close();
+            throw e;
         }
     }
 

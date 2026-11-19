@@ -357,6 +357,19 @@ public interface JsonataEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-jsonata
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JsonataHeaderNameBuilder jsonata() {
+            return JsonataHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JSONata (camel-jsonata)
+         * Transforms JSON payload using JSONata transformation.
+         * 
+         * Category: transformation
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-jsonata
+         * 
          * Syntax: <code>jsonata:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -404,6 +417,30 @@ public interface JsonataEndpointBuilderFactory {
             return JsonataEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the JSONata component.
+     */
+    public static class JsonataHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final JsonataHeaderNameBuilder INSTANCE = new JsonataHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to load and use instead of the
+         * endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JsonataResourceUri}.
+         */
+        public String jsonataResourceUri() {
+            return "CamelJsonataResourceUri";
+        }
     }
     static JsonataEndpointBuilder endpointBuilder(String componentName, String path) {
         class JsonataEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonataEndpointBuilder, AdvancedJsonataEndpointBuilder {

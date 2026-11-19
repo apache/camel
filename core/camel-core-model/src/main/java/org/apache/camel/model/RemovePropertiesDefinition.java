@@ -27,6 +27,7 @@ import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Removes message exchange properties whose name matches a specified pattern
@@ -50,7 +51,8 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.")
+              description = "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive)."
+                            + " To keep several properties, use a regular expression such as prop1|prop3.")
     private String excludePattern;
 
     public RemovePropertiesDefinition() {
@@ -106,6 +108,8 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
 
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
+        // XML and YAML have only the excludePattern option: it holds them too, so a dumped route keeps them
+        this.excludePattern = PatternHelper.combinePatterns(excludePatterns);
     }
 
     public String getExcludePattern() {

@@ -23,7 +23,7 @@ import static org.apache.camel.util.URISupport.sanitizeUri;
 /**
  * Thrown when an {@link Endpoint} cannot produce a {@link Consumer}, for example because the endpoint URI is not
  * consumer-capable, required options are missing, or an underlying client connection cannot be opened.
- * <p/>
+ * <p>
  * The originating endpoint URI is sanitized (credentials removed) before being included in the message.
  */
 public class FailedToCreateConsumerException extends RuntimeCamelException {

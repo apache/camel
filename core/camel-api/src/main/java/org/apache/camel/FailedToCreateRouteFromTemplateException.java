@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Thrown when the {@link CamelContext} fails to instantiate a {@link Route} from a route template definition, for
  * example because a required template parameter is missing or the generated route is invalid.
- * <p/>
+ * <p>
  * Carries the template id and the target route id to help diagnose which template and instantiation attempt failed.
  *
  * @see   Route

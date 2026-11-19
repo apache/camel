@@ -22,13 +22,13 @@ import org.apache.camel.StaticService;
 
 /**
  * A registry which captures exceptions that occurred during message routing and stores them in memory.
- * <p/>
+ * <p>
  * This is an opt-in feature that must be enabled. When enabled, the registry captures error snapshots including
  * exception details, exchange data (headers, body, properties, variables), and routing context — without retaining
  * references to the original exchange objects.
- * <p/>
+ * <p>
  * The registry has a configurable maximum capacity and time-to-live to prevent unbounded memory growth and stale data.
- * <p/>
+ * <p>
  * The registry itself implements {@link ErrorRegistryView} for global scope, and scoped views for individual routes can
  * be obtained via {@link #forRoute(String)}.
  *
@@ -40,7 +40,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Gets a view scoped to a specific route.
-     * <p/>
+     * <p>
      * The returned view is a lightweight filter over the same underlying data.
      *
      * @param  routeId the route id
@@ -57,7 +57,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether the error registry is enabled.
-     * <p/>
+     * <p>
      * This is by default disabled.
      */
     void setEnabled(boolean enabled);
@@ -69,7 +69,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets the maximum number of error entries to keep. When the limit is exceeded, the oldest entries are evicted.
-     * <p/>
+     * <p>
      * The default value is 100.
      */
     void setMaximumEntries(int maximumEntries);
@@ -85,7 +85,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
      * Sets the maximum number of error entries of the same kind (same route, node and exception type) to keep, so a
      * storm of one failure does not evict all the other errors. The counter of that kind keeps rising even when its
      * older entries are evicted.
-     * <p/>
+     * <p>
      * The default value is 3.
      *
      * @since 4.23
@@ -99,7 +99,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets the time-to-live for error entries. Entries older than this duration are evicted.
-     * <p/>
+     * <p>
      * The default value is 0 (disabled). Set to a positive duration to enable time-based eviction.
      */
     void setTimeToLive(Duration timeToLive);
@@ -113,7 +113,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets the maximum number of characters to keep for the message body.
-     * <p/>
+     * <p>
      * The default value is 32768 (32kb).
      */
     void setBodyMaxChars(int bodyMaxChars);
@@ -125,7 +125,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether to include message body from streams.
-     * <p/>
+     * <p>
      * This is by default disabled because reading from a stream is a destructive operation.
      */
     void setBodyIncludeStreams(boolean bodyIncludeStreams);
@@ -137,7 +137,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether to include message body from files.
-     * <p/>
+     * <p>
      * This is by default enabled.
      */
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
@@ -149,7 +149,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether to include exchange properties.
-     * <p/>
+     * <p>
      * This is by default enabled.
      */
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
@@ -161,7 +161,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether to include exchange variables.
-     * <p/>
+     * <p>
      * This is by default enabled.
      */
     void setIncludeExchangeVariables(boolean includeExchangeVariables);
@@ -175,7 +175,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 
     /**
      * Sets whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop.
-     * <p/>
+     * <p>
      * This is by default disabled.
      */
     void setIncludeRouteStopping(boolean includeRouteStopping);

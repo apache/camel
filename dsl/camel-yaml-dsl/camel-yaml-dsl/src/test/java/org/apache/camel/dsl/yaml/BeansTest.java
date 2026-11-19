@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
@@ -26,6 +27,7 @@ import org.apache.camel.dsl.yaml.support.model.MyCtrBean;
 import org.apache.camel.dsl.yaml.support.model.MyDestroyBean;
 import org.apache.camel.dsl.yaml.support.model.MyFacBean;
 import org.apache.camel.dsl.yaml.support.model.MyFacHelper;
+import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +69,23 @@ class BeansTest extends YamlTestSupport {
         assertThat(props.getField2()).isEqualTo("f2_p");
         assertThat(props.getNested().getFoo()).isEqualTo("nf1_p");
         assertThat(props.getNested().getBar()).isEqualTo("nf2_p");
+    }
+
+    @Test
+    void beansWithFileName() throws Exception {
+        // CAMEL-27112: the file of a file idempotent repository is given as a plain file name
+        loadRoutes("""
+                    - beans:
+                      - name: readFiles
+                        type: "#class:%s"
+                        properties:
+                          fileName: "target/data/read-files.dat"
+                """.formatted(FileIdempotentRepository.class.getName()));
+
+        FileIdempotentRepository repo = context.getRegistry().lookupByNameAndType("readFiles", FileIdempotentRepository.class);
+        assertThat(repo).isNotNull();
+        assertThat(repo.getFileName()).isEqualTo("target/data/read-files.dat");
+        assertThat(repo.getFileStore()).isEqualTo(new File("target/data/read-files.dat"));
     }
 
     @Test

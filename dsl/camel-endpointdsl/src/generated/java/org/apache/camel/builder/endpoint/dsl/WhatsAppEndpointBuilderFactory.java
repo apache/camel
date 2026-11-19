@@ -908,6 +908,8 @@ public interface WhatsAppEndpointBuilderFactory {
 
         /**
          * Phone Number ID taken from WhatsApp Meta for Developers Dashboard.
+         * Deprecation note: Never read by the component: the phone number ID
+         * comes from the endpoint URI, as the phoneNumberId path parameter.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -915,11 +917,14 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * @return the name of the header {@code WhatsAppPhoneNumberId}.
          */
+        @Deprecated
         public String whatsAppPhoneNumberId() {
             return "CamelWhatsAppPhoneNumberId";
         }
         /**
-         * Recipient phone number associated with Phone Number ID.
+         * Recipient phone number associated with Phone Number ID. Deprecation
+         * note: Never read by the component: the recipient comes from the to
+         * field of the BaseMessage the body is converted to.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -928,6 +933,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * @return the name of the header {@code
          * WhatsAppRecipientPhoneNumberId}.
          */
+        @Deprecated
         public String whatsAppRecipientPhoneNumberId() {
             return "CamelWhatsAppRecipientPhoneNumberId";
         }

@@ -18,6 +18,7 @@ package org.apache.camel.component.rest;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -42,6 +43,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -345,7 +347,8 @@ public class RestEndpoint extends DefaultEndpoint {
         ProducerFactoryResult factoryResult = findProducerFactory();
 
         if (factoryResult.factory == null) {
-            throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
+            throw new IllegalStateException(
+                    factoryNotFound("RestProducerFactory", DEFAULT_REST_PRODUCER_COMPONENTS, "producerComponent"));
         }
 
         LOG.debug("Using RestProducerFactory: {}", factoryResult.factory);
@@ -434,7 +437,9 @@ public class RestEndpoint extends DefaultEndpoint {
         if (comp != null) {
             throw new IllegalArgumentException("Component " + pname + " is not a RestProducerFactory");
         }
-        throw new NoSuchBeanException(pname, RestProducerFactory.class.getName());
+        throw new NoSuchBeanException(
+                pname, RestProducerFactory.class.getName(),
+                componentNameHint(pname, DEFAULT_REST_PRODUCER_COMPONENTS, "producerComponent"));
     }
 
     @SuppressWarnings("unchecked")
@@ -499,7 +504,8 @@ public class RestEndpoint extends DefaultEndpoint {
         ConsumerFactoryResult factoryResult = findConsumerFactory();
 
         if (factoryResult.factory == null) {
-            throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
+            throw new IllegalStateException(
+                    factoryNotFound("RestConsumerFactory", DEFAULT_REST_CONSUMER_COMPONENTS, "component"));
         }
 
         RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), factoryResult.name);
@@ -560,7 +566,9 @@ public class RestEndpoint extends DefaultEndpoint {
         if (comp != null) {
             throw new IllegalArgumentException("Component " + cname + " is not a RestConsumerFactory");
         }
-        throw new NoSuchBeanException(cname, RestConsumerFactory.class.getName());
+        throw new NoSuchBeanException(
+                cname, RestConsumerFactory.class.getName(),
+                componentNameHint(cname, DEFAULT_REST_CONSUMER_COMPONENTS, "component"));
     }
 
     private ConsumerFactoryResult findConsumerFromExistingComponents() {
@@ -599,6 +607,34 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
         return new ConsumerFactoryResult(null, null);
+    }
+
+    /**
+     * The message when no factory is found: the components the Rest DSL looks for, each with the artifact that has it,
+     * and the option that chooses one.
+     */
+    static String factoryNotFound(String factory, String[] components, String option) {
+        StringJoiner names = new StringJoiner(", ");
+        for (String name : components) {
+            String artifact = ArtifactUtils.componentArtifact(name);
+            names.add(artifact != null ? name + " (" + artifact + ")" : name);
+        }
+        return "Cannot find " + factory + " in Registry or as a Component to use. Add one of these components to the"
+               + " classpath: " + names + ". To choose one, set the " + option
+               + " option of the rest configuration to its name.";
+    }
+
+    /**
+     * The hint when the component the option names is not found: the artifact to add when it is a Camel component, or
+     * else the names the option takes (it is the name of a component, not of a bean or a servlet).
+     */
+    static String componentNameHint(String name, String[] components, String option) {
+        String hint = ArtifactUtils.componentHint(name);
+        if (ArtifactUtils.componentArtifact(name) != null) {
+            return hint;
+        }
+        return hint + ". The " + option + " option of the rest configuration takes the name of a component that"
+               + " supports the Rest DSL: " + String.join(", ", components);
     }
 
     private String[] buildServiceUrls(RestConfiguration config) throws Exception {

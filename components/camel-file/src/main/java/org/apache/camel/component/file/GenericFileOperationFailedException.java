@@ -60,6 +60,21 @@ public class GenericFileOperationFailedException extends RuntimeCamelException {
     }
 
     /**
+     * A failure with the status that the server answered, keeping the given message as it is.
+     *
+     * @param message the message
+     * @param code    the status code of the server
+     * @param reason  the status text of the server
+     * @param cause   the cause
+     * @since         4.24
+     */
+    public GenericFileOperationFailedException(String message, int code, String reason, Throwable cause) {
+        super(message, cause);
+        this.code = code;
+        this.reason = reason;
+    }
+
+    /**
      * Return the file failure code (if any)
      */
     public int getCode() {

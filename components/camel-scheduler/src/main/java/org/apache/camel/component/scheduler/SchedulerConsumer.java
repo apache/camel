@@ -17,6 +17,7 @@
 package org.apache.camel.component.scheduler;
 
 import java.util.Date;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
@@ -29,6 +30,12 @@ import org.slf4j.LoggerFactory;
 public class SchedulerConsumer extends ScheduledPollConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchedulerConsumer.class);
+
+    // the thread pool of the component this consumer runs on (null when it has its own scheduler or thread pool),
+    // and whether it holds a reference to it: the pool is released when the consumer stops, and taken again when it
+    // starts again
+    private ScheduledExecutorService componentPool;
+    private boolean componentPoolTaken;
 
     public SchedulerConsumer(SchedulerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -104,6 +111,22 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
         boolean polled = exchange.getProperty(Exchange.SCHEDULER_POLLED_MESSAGES, true, boolean.class);
         releaseExchange(exchange, false);
         return polled ? 1 : 0;
+    }
+
+    ScheduledExecutorService getComponentPool() {
+        return componentPool;
+    }
+
+    void setComponentPool(ScheduledExecutorService componentPool) {
+        this.componentPool = componentPool;
+    }
+
+    boolean isComponentPoolTaken() {
+        return componentPoolTaken;
+    }
+
+    void setComponentPoolTaken(boolean componentPoolTaken) {
+        this.componentPoolTaken = componentPoolTaken;
     }
 
     @Override

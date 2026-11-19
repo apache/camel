@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Cross-cutting runtime configuration options shared by {@link CamelContext} and individual {@link Route}s.
- * <p/>
+ * <p>
  * Settings on a {@link Route} override the same setting on the {@link CamelContext} for that route only, allowing
  * fine-grained per-route tuning. Options covered include:
  * <ul>
@@ -46,7 +46,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether stream cache is enabled
      *
-     * @return <tt>true</tt> if stream cache is enabled
+     * @return <code>true</code> if stream cache is enabled
      */
     Boolean isStreamCaching();
 
@@ -61,7 +61,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether message size capturing is enabled.
      *
-     * @return <tt>true</tt> if message size is enabled
+     * @return <code>true</code> if message size is enabled
      * @since  4.21
      */
     Boolean isMessageSize();
@@ -76,11 +76,11 @@ public interface RuntimeConfiguration {
     void setTracing(Boolean tracing);
 
     /**
-     * Returns whether tracing enabled
+     * Returns whether tracing is enabled.
      *
      * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.
      *
-     * @return <tt>true</tt> if tracing is enabled
+     * @return <code>true</code> if tracing is enabled
      */
     Boolean isTracing();
 
@@ -110,7 +110,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether backlog tracing is enabled.
      *
-     * @return <tt>true</tt> if backlog tracing is enabled
+     * @return <code>true</code> if backlog tracing is enabled
      */
     Boolean isBacklogTracing();
 
@@ -127,7 +127,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether debugging is enabled.
      *
-     * @return <tt>true</tt> if debugging is enabled
+     * @return <code>true</code> if debugging is enabled
      */
     Boolean isDebugging();
 
@@ -141,21 +141,21 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether message history is enabled
      *
-     * @return <tt>true</tt> if message history is enabled
+     * @return <code>true</code> if message history is enabled
      */
     Boolean isMessageHistory();
 
     /**
      * Sets whether security mask for Logging is enabled or not (default is disabled).
      *
-     * @param logMask <tt>true</tt> if mask is enabled
+     * @param logMask <code>true</code> if mask is enabled
      */
     void setLogMask(Boolean logMask);
 
     /**
      * Gets whether security mask for Logging is enabled or not.
      *
-     * @return <tt>true</tt> if mask is enabled
+     * @return <code>true</code> if mask is enabled
      */
     Boolean isLogMask();
 
@@ -169,14 +169,14 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether to log exhausted message body with message history.
      *
-     * @return <tt>true</tt> if logging of message body is enabled
+     * @return <code>true</code> if logging of message body is enabled
      */
     Boolean isLogExhaustedMessageBody();
 
     /**
      * Sets a delay value in millis that a message is delayed at every step it takes in the route path, slowing the
      * process down to better observe what is occurring
-     * <p/>
+     * <p>
      * Is disabled by default
      *
      * @param delay delay in millis
@@ -186,21 +186,21 @@ public interface RuntimeConfiguration {
     /**
      * Gets the delay value
      *
-     * @return delay in millis, or <tt>null</tt> if disabled
+     * @return delay in millis, or <code>null</code> if disabled
      */
     @Nullable
     Long getDelayer();
 
     /**
      * Sets whether the object should automatically start when Camel starts.
-     * <p/>
-     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started. <br/>
-     * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence and
-     * <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using the
+     * <p>
+     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started. <br>
+     * <b>Note:</b> When setting auto startup <code>false</code> on {@link CamelContext} then that takes precedence and
+     * <i>no</i> routes are started. You would need to start {@link CamelContext} explicitly using the
      * {@link org.apache.camel.CamelContext#start()} method, to start the context, and then you would need to start the
      * routes manually using {@link org.apache.camel.spi.RouteController#startRoute(String)}.
-     * <p/>
-     * Default is <tt>true</tt> to always start up.
+     * <p>
+     * Default is <code>true</code> to always start up.
      *
      * @param autoStartup whether to start up automatically.
      */
@@ -208,11 +208,11 @@ public interface RuntimeConfiguration {
 
     /**
      * Gets whether the object should automatically start when Camel starts.
-     * <p/>
-     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started. <br/>
-     * Default is <tt>true</tt> to always start up.
+     * <p>
+     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started. <br>
+     * Default is <code>true</code> to always start up.
      *
-     * @return <tt>true</tt> if object should automatically start
+     * @return <code>true</code> if object should automatically start
      */
     Boolean isAutoStartup();
 
@@ -247,7 +247,7 @@ public interface RuntimeConfiguration {
     /**
      * Sets whether to allow access to the original message from Camel's error handler, or from
      * {@link org.apache.camel.spi.UnitOfWork#getOriginalInMessage()}.
-     * <p/>
+     * <p>
      * Turning this off can optimize performance, as defensive copy of the original message is not needed.
      *
      * @param allowUseOriginalMessage the option to use.
@@ -266,9 +266,9 @@ public interface RuntimeConfiguration {
      * Whether to use case sensitive or insensitive headers.
      *
      * Important: When using case sensitive (this is set to false). Then the map is case sensitive which means headers
-     * such as <tt>content-type</tt> and <tt>Content-Type</tt> are two different keys which can be a problem for some
-     * protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations can
-     * yield faster performance. Therefore use case sensitive implementation with care.
+     * such as <code>content-type</code> and <code>Content-Type</code> are two different keys which can be a problem for
+     * some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations
+     * can yield faster performance. Therefore use case sensitive implementation with care.
      */
     Boolean isCaseInsensitiveHeaders();
 
@@ -276,9 +276,9 @@ public interface RuntimeConfiguration {
      * Whether to use case sensitive or insensitive headers.
      *
      * Important: When using case sensitive (this is set to false). Then the map is case sensitive which means headers
-     * such as <tt>content-type</tt> and <tt>Content-Type</tt> are two different keys which can be a problem for some
-     * protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations can
-     * yield faster performance. Therefore use case sensitive implementation with care.
+     * such as <code>content-type</code> and <code>Content-Type</code> are two different keys which can be a problem for
+     * some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations
+     * can yield faster performance. Therefore use case sensitive implementation with care.
      */
     void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders);
 

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A {@link Service} that exposes its current {@link ServiceStatus} together with the full lifecycle, including
  * suspend/resume from {@link SuspendableService} and shutdown from {@link ShutdownableService}.
- * <p/>
+ * <p>
  * Most Camel built-in services extend this contract via {@code ServiceSupport} in {@code camel-support}, so route code
  * can ask any service whether it is started, suspended, stopping, etc.
  *
@@ -70,10 +70,10 @@ public interface StatefulService extends SuspendableService, ShutdownableService
     boolean isSuspending();
 
     /**
-     * Helper methods so the service knows if it should keep running. Returns <tt>false</tt> if the service is being
+     * Helper methods so the service knows if it should keep running. Returns <code>false</code> if the service is being
      * stopped or is stopped.
      *
-     * @return <tt>true</tt> if the service should continue to run.
+     * @return <code>true</code> if the service should continue to run.
      */
     boolean isRunAllowed();
 

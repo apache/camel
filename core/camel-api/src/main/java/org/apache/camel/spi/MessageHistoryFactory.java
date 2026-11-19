@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Factory for creating {@link MessageHistory} entries, which together form the audit trail of a single
  * {@link org.apache.camel.Exchange} as it passes through each node of a route.
- * <p/>
+ * <p>
  * When the message history feature is enabled on the {@link org.apache.camel.CamelContext}, Camel's
  * {@link InternalProcessor} calls
  * {@link #newMessageHistory(String, org.apache.camel.NamedNode, org.apache.camel.Exchange)} at every route-node

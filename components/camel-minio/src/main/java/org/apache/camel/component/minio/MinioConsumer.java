@@ -398,6 +398,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the object to get, and to delete or move once the exchange is done. It is taken now, as the route may
+            // change or remove the object name header before it ends (the producer takes the name of the object to
+            // write from it)
             String srcBucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
             String srcObjectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
             if (getConfiguration().isIncludeBody()) {
@@ -443,7 +446,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     try {
-                        processCommit(exchange);
+                        processCommit(exchange, srcObjectName);
                     } finally {
                         inProgress.remove(srcObjectName);
                     }
@@ -487,15 +490,26 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy to delete the message after being processed.
+     * Strategy to delete or move the object after being processed, the object named by the
+     * {@link MinioConstants#OBJECT_NAME} header.
      *
-     * @param exchange the exchange
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange) {
-        try {
-            String srcBucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
-            String srcObjectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
+        processCommit(exchange, exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class));
+    }
 
+    /**
+     * Strategy to delete or move the object after being processed.
+     *
+     * @param exchange      the exchange
+     * @param srcObjectName the name of the object the exchange was created from, in the bucket of the endpoint
+     */
+    protected void processCommit(Exchange exchange, String srcObjectName) {
+        final String srcBucketName = getConfiguration().getBucketName();
+        try {
             if (getConfiguration().isDeleteAfterRead() || getConfiguration().isMoveAfterRead()) {
                 if (getConfiguration().isMoveAfterRead()) {
                     copyObject(srcBucketName, srcObjectName);

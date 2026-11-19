@@ -28,20 +28,19 @@ import org.jspecify.annotations.Nullable;
 /**
  * Validates message content against a declared {@link DataType}, as described in the
  * <a href="https://camel.apache.org/manual/transformer.html">Transformer and Validator</a> documentation.
- * <p/>
+ * <p>
  * When a route declares an {@code inputType} or {@code outputType} with {@code validate = true},
- * {@link org.apache.camel.processor.ContractAdvice} invokes the registered {@code Validator} for that type before (or
+ * {@code org.apache.camel.processor.ContractAdvice} invokes the registered {@code Validator} for that type before (or
  * after) the route's main processing logic. If the message content does not satisfy the validator's rules, the
  * validator should throw a {@link org.apache.camel.ValidationException} to signal the failure.
- * <p/>
+ * <p>
  * Validators are registered in the {@link ValidatorRegistry} keyed by their target {@link DataType}. Custom validators
  * extend this abstract class and are registered via the DSL (e.g., {@code inputType} / {@code outputType} with
- * {@code validate = true}), which wires them through {@link org.apache.camel.model.ValidatorDefinition} during route
+ * {@code validate = true}), which wires them through {@code org.apache.camel.model.ValidatorDefinition} during route
  * startup.
  *
  * @see ValidatorRegistry
  * @see DataType
- * @see org.apache.camel.model.ValidatorDefinition
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 

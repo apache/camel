@@ -25,13 +25,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Pluggable contract for looking up beans by name or type, forming the foundation of Camel's
  * <a href="https://camel.apache.org/manual/registry.html">Registry</a>.
- * <p/>
+ * <p>
  * At runtime, the active {@link org.apache.camel.CamelContext} exposes a composite
  * {@link org.apache.camel.spi.Registry} that delegates to one or more {@code BeanRepository} instances, allowing Camel
  * to integrate with external containers such as Spring {@code ApplicationContext}, CDI, JNDI, or OSGi service
  * registries without changes to core code. The composited view is used transparently whenever a route references a bean
  * by name (for example in the {@code .bean()} DSL call) or when Camel auto-wires component options from the registry.
- * <p/>
+ * <p>
  * Lookup is available in three forms: by name only ({@link #lookupByName}), by name and expected type
  * ({@link #lookupByNameAndType}), and by type alone ({@link #findByType} / {@link #findByTypeWithName}). Prefer the
  * typed variants to avoid ambiguity when the same name is bound more than once.
@@ -42,15 +42,15 @@ import org.jspecify.annotations.Nullable;
 public interface BeanRepository {
 
     /**
-     * Looks up a bean in the registry based purely on name, returning the bean or <tt>null</tt> if it could not be
+     * Looks up a bean in the registry based purely on name, returning the bean or <code>null</code> if it could not be
      * found.
-     * <p/>
-     * Important: Multiple beans of different types may be bound with the same name, and its encouraged to use the
+     * <p>
+     * Important: Multiple beans of different types may be bound with the same name, and it's encouraged to use the
      * {@link #lookupByNameAndType(String, Class)} to lookup the bean with a specific type, or to use any of the
-     * <tt>find</tt> methods.
+     * <code>find</code> methods.
      *
      * @param  name the name of the bean
-     * @return      the bean from the registry or <tt>null</tt> if it could not be found
+     * @return      the bean from the registry or <code>null</code> if it could not be found
      */
     @Nullable
     @Metadata(label = "api",
@@ -60,11 +60,11 @@ public interface BeanRepository {
     Object lookupByName(String name);
 
     /**
-     * Looks up a bean in the registry, returning the bean or <tt>null</tt> if it could not be found.
+     * Looks up a bean in the registry, returning the bean or <code>null</code> if it could not be found.
      *
      * @param  name the name of the bean
      * @param  type the type of the required bean
-     * @return      the bean from the registry or <tt>null</tt> if it could not be found
+     * @return      the bean from the registry or <code>null</code> if it could not be found
      */
     @Metadata(label = "api",
               important = true,

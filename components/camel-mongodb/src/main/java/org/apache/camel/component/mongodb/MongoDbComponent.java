@@ -72,7 +72,8 @@ public class MongoDbComponent extends DefaultComponent implements SSLContextPara
     }
 
     /**
-     * Shared client used for connection. All endpoints generated from the component will share this connection client.
+     * Shared client used for connection. All endpoints generated from the component will share this connection client,
+     * except the endpoints that set hosts or connectionUriString, which create their own client.
      */
     public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;

@@ -26,6 +26,38 @@ public final class GenAiObservabilityProperties {
      */
     public static final String ENABLED = "camel.aiObservability.enabled";
 
+    /**
+     * Global property selecting how much GenAI telemetry is recorded: {@code basic} (default), {@code detailed} or
+     * {@code full}. See {@link GenAiObservabilityLevel}.
+     *
+     * @since 4.24
+     */
+    public static final String LEVEL = "camel.aiObservability.level";
+
+    /**
+     * Global property capping the length of every text recorded at level {@code full}. Default is
+     * {@value #DEFAULT_CONTENT_MAX_LENGTH} characters; a value that is not positive means the default.
+     *
+     * @since 4.24
+     */
+    public static final String CONTENT_MAX_LENGTH = "camel.aiObservability.contentMaxLength";
+
+    /**
+     * Global property: when the AI framework behind a component already traces its model calls and tool calls (Spring
+     * AI with an ObservationRegistry, quarkus-langchain4j, a LangChain4j model with an observation listener), Camel
+     * does not record its own span and metrics for them, so they are counted once. Default is {@code true}.
+     *
+     * @since 4.24
+     */
+    public static final String DEFER_TO_FRAMEWORK = "camel.aiObservability.deferToFramework";
+
+    /**
+     * Default for {@link #CONTENT_MAX_LENGTH}.
+     *
+     * @since 4.24
+     */
+    public static final int DEFAULT_CONTENT_MAX_LENGTH = 8192;
+
     private GenAiObservabilityProperties() {
     }
 }

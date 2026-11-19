@@ -39,7 +39,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Returns the component information as JSON format.
-     * <p/>
+     * <p>
      * This API is needed by {@link ComponentVerifierExtension}.
      *
      * @param  name the component name
@@ -50,7 +50,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Parses the endpoint uri and constructs a key/value properties of each option.
-     * <p/>
+     * <p>
      * This API is needed by {@link SendDynamicAware}.
      *
      * @param  uri the endpoint uri
@@ -60,9 +60,9 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Parses the endpoint uri and constructs a key/value properties of only the lenient properties (eg custom options)
-     * <p/>
+     * <p>
      * For example using the HTTP components to provide query parameters in the endpoint uri.
-     * <p/>
+     * <p>
      * This API is needed by {@link SendDynamicAware}.
      *
      * @param  uri the endpoint uri
@@ -72,7 +72,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Validates the properties for the given scheme against component and endpoint
-     * <p/>
+     * <p>
      * This API is needed by {@link ComponentVerifierExtension}.
      *
      * @param  scheme     the endpoint scheme
@@ -83,9 +83,9 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties
-     * <p/>
+     * <p>
      * This API is needed by {@link SendDynamicAware}.
-     * <p/>
+     * <p>
      * The options are in the order of the properties when the map has one (such as a {@code LinkedHashMap}), otherwise
      * they are sorted by name.
      *
@@ -99,7 +99,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
      * Checks whether two endpoint URIs refer to the same logical endpoint.
-     * <p/>
+     * <p>
      * Two URIs match when they share the same scheme, context-path, and — if the component declares any query
      * parameters as {@code endpointIdentity} — the same values for those identity parameters. Non-identity query
      * parameters (timeouts, buffer sizes, etc.) are ignored.

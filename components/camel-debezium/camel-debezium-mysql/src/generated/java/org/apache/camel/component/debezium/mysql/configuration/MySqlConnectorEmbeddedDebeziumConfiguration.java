@@ -178,6 +178,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
+    private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
@@ -276,8 +278,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int notificationHttpRetries = 2;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
-    @UriParam(label = LABEL_NAME, defaultValue = "10000")
-    private long databaseServerIdOffset = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectionValidationTimeoutMs = 60000;
 
@@ -1419,6 +1419,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify the constant that will be provided by Debezium to indicate that
+     * the original value is unavailable and not provided by the database. If
+     * starts with 'hex:' prefix it is expected that the rest of the string
+     * represents hexadecimal encoded octets.
+     */
+    public void setUnavailableValuePlaceholder(
+            String unavailableValuePlaceholder) {
+        this.unavailableValuePlaceholder = unavailableValuePlaceholder;
+    }
+
+    public String getUnavailableValuePlaceholder() {
+        return unavailableValuePlaceholder;
+    }
+
+    /**
      * The query executed with every heartbeat.
      */
     public void setHeartbeatActionQuery(String heartbeatActionQuery) {
@@ -2058,20 +2073,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Only relevant if parallel snapshotting is configured. During parallel
-     * snapshotting, multiple (4) connections open to the database client, and
-     * they each need their own unique connection ID. This offset is used to
-     * generate those IDs from the base configured cluster ID.
-     */
-    public void setDatabaseServerIdOffset(long databaseServerIdOffset) {
-        this.databaseServerIdOffset = databaseServerIdOffset;
-    }
-
-    public long getDatabaseServerIdOffset() {
-        return databaseServerIdOffset;
-    }
-
-    /**
      * The maximum time in milliseconds to wait for connection validation to
      * complete. Defaults to 60 seconds.
      */
@@ -2169,6 +2170,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "ddl.parser.type", ddlParserType);
         addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
+        addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
@@ -2217,7 +2219,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
-        addPropertyIfNotNull(configBuilder, "database.server.id.offset", databaseServerIdOffset);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();

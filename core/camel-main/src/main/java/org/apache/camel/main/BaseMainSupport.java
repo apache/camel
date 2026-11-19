@@ -855,44 +855,12 @@ public abstract class BaseMainSupport extends BaseService {
         // Check programmatic configuration first (main.configure().withVirtualThreadsEnabled(true))
         boolean enabled = mainConfigurationProperties.isVirtualThreadsEnabled();
 
-        if (!enabled && mainConfigurationProperties.isAutoConfigurationEnabled()) {
-            // Check initial properties (main.addInitialProperty / main.setInitialProperties)
-            if (initialProperties != null) {
-                String val = initialProperties.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled) {
-                // Load from PropertiesComponent (application.properties, etc.)
-                OrderedLocationProperties props = (OrderedLocationProperties) camelContext.getPropertiesComponent()
-                        .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
-                String val = props.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled && mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-                Properties envProps = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
-                String val = envProps.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (!enabled && mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-                Properties sysProps = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
-                String val = sysProps.getProperty("camel.main.virtualThreadsEnabled");
-                if (val != null) {
-                    enabled = Boolean.parseBoolean(val);
-                }
-            }
-
-            if (enabled) {
-                mainConfigurationProperties.setVirtualThreadsEnabled(true);
-            }
+        Boolean configured = lookupEarlyOption(camelContext, "camel.main.virtualThreadsEnabled");
+        if (configured != null) {
+            enabled = configured;
+        }
+        if (enabled) {
+            mainConfigurationProperties.setVirtualThreadsEnabled(true);
         }
 
         if (enabled) {
@@ -977,6 +945,68 @@ public abstract class BaseMainSupport extends BaseService {
                 scs.addStartupCondition(camelContext.getInjector().newInstance(clazz));
             }
         }
+    }
+
+    /**
+     * Enables the type converter statistics before the CamelContext is built, as the type converter registry is created
+     * when the context is built, and its statistics cannot be enabled afterwards (CAMEL-27103).
+     */
+    private void configureTypeConverterStatisticsEarly(CamelContext camelContext) {
+        // Check programmatic configuration first (main.configure().withTypeConverterStatisticsEnabled(true))
+        boolean enabled = mainConfigurationProperties.isTypeConverterStatisticsEnabled();
+
+        Boolean configured = lookupEarlyOption(camelContext, "camel.main.typeConverterStatisticsEnabled");
+        if (configured != null) {
+            enabled = configured;
+        }
+        if (enabled) {
+            mainConfigurationProperties.setTypeConverterStatisticsEnabled(true);
+            camelContext.setTypeConverterStatisticsEnabled(true);
+        }
+    }
+
+    /**
+     * Looks up a boolean option of Camel Main that must be known before the CamelContext is built, which is before the
+     * auto configuration applies the configuration. The sources and their priority are the same as in
+     * {@link #autoConfigurationSingleOption}: JVM system properties over OS environment variables over the properties
+     * component, with the key in any case, and the initial properties as fallback.
+     * <p>
+     * The value cannot be resolved before the context is built, as resolving a property placeholder needs the type
+     * converter, so a value with a placeholder is ignored, with a WARN.
+     *
+     * @return the value, or <code>null</code> if the option is not configured
+     */
+    private Boolean lookupEarlyOption(CamelContext camelContext, String optionName) {
+        if (!mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            return null;
+        }
+
+        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            putAllOverride(prop, "ENV", MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." }));
+        }
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            putAllOverride(prop, "SYS", MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." }));
+        }
+        String key = findKeyIgnoreCase(prop, optionName);
+        Object value = key != null ? prop.get(key) : null;
+        if (ObjectHelper.isEmpty(value)) {
+            // fallback to initial properties
+            value = getInitialProperties().getProperty(optionName);
+        }
+        if (ObjectHelper.isEmpty(value)) {
+            return null;
+        }
+
+        String str = value.toString().trim();
+        if (str.contains(PropertiesComponent.PREFIX_TOKEN)) {
+            LOG.warn("The option {}={} is ignored, as it must be known before the CamelContext is built,"
+                     + " which is before property placeholders can be resolved. Use true or false instead.",
+                    optionName, str);
+            return null;
+        }
+        return Boolean.parseBoolean(str);
     }
 
     protected void configureRoutesLoader(CamelContext camelContext) {
@@ -1068,6 +1098,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureMainListener(camelContext);
         // configure virtual threads early before build() to avoid ThreadType DCL race
         configureVirtualThreadsEarly(camelContext);
+        // the type converter registry is created by build(), and its statistics cannot be enabled afterwards
+        configureTypeConverterStatisticsEarly(camelContext);
 
         // ensure camel context is build
         camelContext.build();
@@ -2780,6 +2812,12 @@ public abstract class BaseMainSupport extends BaseService {
             // make the setting available to the components when they are in use (at runtime from any thread)
             camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.enabled",
                     Boolean.toString(config.isEnabled()));
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.level",
+                    config.getLevel());
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.contentMaxLength",
+                    Integer.toString(config.getContentMaxLength()));
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.deferToFramework",
+                    Boolean.toString(config.isDeferToFramework()));
         }
     }
 

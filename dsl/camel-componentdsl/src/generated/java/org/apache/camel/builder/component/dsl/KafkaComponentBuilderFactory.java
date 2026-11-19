@@ -639,7 +639,10 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The number of consumers that connect to kafka server. Each consumer
          * is run on a separate thread that retrieves and process the incoming
-         * data.
+         * data. Each consumer is a member of the consumer group, so the
+         * consumers beyond the number of partitions of the topic (counting the
+         * consumers of all the application instances) get no records. With
+         * groupInstanceId, each consumer gets its own group instance id.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -720,7 +723,13 @@ public interface KafkaComponentBuilderFactory {
          * A string that uniquely identifies the group of consumer processes to
          * which this consumer belongs. By setting the same group id, multiple
          * processes can indicate that they are all part of the same consumer
-         * group. This option is required for consumers.
+         * group. It takes precedence over a group.id set in
+         * additionalProperties. If neither is set, the consumer uses a
+         * generated group id, a new one at each start, and logs a WARN: it does
+         * not resume from the offsets committed before a restart, and each
+         * instance of the application receives every record. Set it on a
+         * consumer that must resume after a restart or share the records with
+         * other instances.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -742,7 +751,10 @@ public interface KafkaComponentBuilderFactory {
          * used in combination with a larger session timeout to avoid group
          * rebalances caused by transient unavailability (e.g., process
          * restarts). If not set, the consumer will join the group as a dynamic
-         * member, which is the traditional behavior.
+         * member, which is the traditional behavior. When consumersCount is
+         * greater than 1, each consumer is a static member of its own, with
+         * this ID followed by a dash and the index of the consumer (myId-0,
+         * myId-1, ...).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1060,7 +1072,10 @@ public interface KafkaComponentBuilderFactory {
          * This enables the use of a specific Avro reader for use with the in
          * multiple Schema registries documentation with Avro Deserializers
          * implementation. This option is only available externally (not
-         * standard Apache Kafka).
+         * standard Apache Kafka). When schemaRegistryVendor is set, it is set
+         * under the property of the vendor (for apicurio
+         * apicurio.registry.use-specific-avro-reader, for aws-glue
+         * avroRecordType=SPECIFIC_RECORD).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2063,11 +2078,38 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The format of the record values in the schema registry, which selects
+         * the serializer and deserializer of the schemaRegistryVendor. Not
+         * every vendor supports every format: azure supports only avro. Only
+         * used when schemaRegistryVendor is set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: schema
+         * 
+         * @param schemaFormat the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder schemaFormat(java.lang.String schemaFormat) {
+            doSetProperty("schemaFormat", schemaFormat);
+            return this;
+        }
+    
         /**
          * URL of the schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in
          * multiple Schema registries documentation. This option is only
-         * available externally (not standard Apache Kafka).
+         * available externally (not standard Apache Kafka). When
+         * schemaRegistryVendor is set, the URL is set under the property of the
+         * vendor: schema.registry.url for confluent, apicurio.registry.url for
+         * apicurio (the URL of the registry API, such as
+         * http://localhost:8080/apis/registry/v3), schema.registry.url for
+         * azure (the fully qualified namespace, such as
+         * my-namespace.servicebus.windows.net), and endpoint for aws-glue
+         * (optional, as Glue is addressed by the AWS region).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2078,6 +2120,30 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder schemaRegistryURL(java.lang.String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+    
+        /**
+         * The schema registry vendor, which sets up the value serializer
+         * (producer), the value deserializer (consumer) and the registry
+         * properties of the vendor for the schemaFormat, so that you do not
+         * need to know the class names or the property names of the vendor. The
+         * schemaRegistryURL is set as the registry URL of the vendor. A
+         * valueSerializer or valueDeserializer other than the default, and
+         * additionalProperties, take precedence. The serde jars of the vendor
+         * must be on the classpath, as Camel does not include them. Leave it
+         * unset to configure the serializer, deserializer and registry
+         * properties yourself.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryVendor the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder schemaRegistryVendor(java.lang.String schemaRegistryVendor) {
+            doSetProperty("schemaRegistryVendor", schemaRegistryVendor);
             return this;
         }
     
@@ -2782,7 +2848,9 @@ public interface KafkaComponentBuilderFactory {
             case "healthCheckConsumerEnabled": ((KafkaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((KafkaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
+            case "schemaFormat": getOrCreateConfiguration((KafkaComponent) component).setSchemaFormat((java.lang.String) value); return true;
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
+            case "schemaRegistryVendor": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryVendor((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;
             case "kerberosConfigLocation": getOrCreateConfiguration((KafkaComponent) component).setKerberosConfigLocation((java.lang.String) value); return true;
             case "kerberosInitCmd": getOrCreateConfiguration((KafkaComponent) component).setKerberosInitCmd((java.lang.String) value); return true;

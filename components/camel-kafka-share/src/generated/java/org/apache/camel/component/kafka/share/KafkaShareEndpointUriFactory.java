@@ -24,7 +24,7 @@ public class KafkaShareEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(74);
+        Set<String> props = new HashSet<>(76);
         props.add("acquireMode");
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
@@ -77,7 +77,9 @@ public class KafkaShareEndpointUriFactory extends org.apache.camel.support.compo
         props.add("saslMechanism");
         props.add("saslPassword");
         props.add("saslUsername");
+        props.add("schemaFormat");
         props.add("schemaRegistryURL");
+        props.add("schemaRegistryVendor");
         props.add("securityProtocol");
         props.add("sendBufferBytes");
         props.add("shutdownTimeout");

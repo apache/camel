@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchBeanTypeException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
@@ -82,9 +83,16 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
                 // registry
                 Object transactionManager = findSingleByType(tmClazz);
                 if (transactionManager == null) {
-                    // none, but the application has one DataSource (Camel Main, camel run): a local transaction
-                    // manager for it
-                    transactionManager = localTransactionManager(tmClazz);
+                    int found = findByType(tmClazz).size();
+                    if (found > 1) {
+                        // Camel does not choose one of them: the route must refer to a policy with the one to use
+                        throw new NoSuchBeanTypeException(tmClazz, found);
+                    }
+                    if (found == 0) {
+                        // none, but the application has one DataSource (Camel Main, camel run): a local transaction
+                        // manager for it
+                        transactionManager = localTransactionManager(tmClazz);
+                    }
                 }
                 if (transactionManager == null) {
                     // fails telling that there is no PlatformTransactionManager

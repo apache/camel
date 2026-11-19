@@ -199,4 +199,25 @@ class MainHelperTest {
         Assertions.assertEquals("false", prop.getProperty("camel.language.exchangeProperty.trim"));
     }
 
+    @Test
+    void testEnvVariableToKeyWithUnderscoresBetweenWords() {
+        // the underscores between the words of an option are optional
+        Assertions.assertEquals("camel.vault.gcp.serviceaccountkey",
+                MainHelper.envVariableToKey("CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY"));
+        Assertions.assertEquals("camel.vault.gcp.serviceaccountkey",
+                MainHelper.envVariableToKey("CAMEL_VAULT_GCP_SERVICEACCOUNTKEY"));
+        Assertions.assertEquals("camel.vault.gcp.projectid", MainHelper.envVariableToKey("CAMEL_VAULT_GCP_PROJECT_ID"));
+        Assertions.assertEquals("camel.vault.ibm.eventstreambootstrapservers",
+                MainHelper.envVariableToKey("CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS"));
+        Assertions.assertEquals("camel.main.shutdowntimeout", MainHelper.envVariableToKey("CAMEL_MAIN_SHUTDOWN_TIMEOUT"));
+        Assertions.assertEquals("camel.main.shutdowntimeout", MainHelper.envVariableToKey("CAMEL_MAIN_SHUTDOWNTIMEOUT"));
+        // a key with a dash (camel.cluster.jgroups-raft)
+        Assertions.assertEquals("camel.cluster.jgroups-raft.enabled",
+                MainHelper.envVariableToKey("CAMEL_CLUSTER_JGROUPS_RAFT_ENABLED"));
+        // a variable that is not a camel-main option keeps the mapping of each underscore to a dot
+        Assertions.assertEquals("camel.beans.mybean.name", MainHelper.envVariableToKey("CAMEL_BEANS_MYBEAN_NAME"));
+        Assertions.assertEquals("camel.vault.gcp.unknown.option",
+                MainHelper.envVariableToKey("CAMEL_VAULT_GCP_UNKNOWN_OPTION"));
+    }
+
 }

@@ -86,7 +86,7 @@ public interface EndpointServiceRegistry extends StaticService {
 
         /**
          * Usage of the endpoint service, such as how many messages it has received / sent to
-         * <p/>
+         * <p>
          * This information is only available if {@link org.apache.camel.ManagementStatisticsLevel} is configured as
          * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
          */

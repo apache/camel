@@ -27,8 +27,10 @@ import org.apache.camel.oauth.OAuthBearerTokenProcessor;
 import org.apache.camel.oauth.OAuthClientCredentialsProcessor;
 import org.apache.camel.oauth.OAuthFactory;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -39,11 +41,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredentialsTest {
 
+    @RegisterExtension
+    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
+    static final int PORT = SERVER_PORT.getPort();
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
+
     @Test
     public void testOAuthSetup() throws Exception {
 
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
 
         try (CamelContext context = createCamelContext()) {
             context.start();
@@ -66,9 +78,9 @@ public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredenti
     CamelContext createCamelContext() throws Exception {
 
         var conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(PORT);
 
-        RestAssured.port = port;
+        RestAssured.port = PORT;
 
         var context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));

@@ -21,12 +21,12 @@ import java.util.Optional;
 /**
  * Looks up and instantiates SPI factory classes declared in resource files on the classpath, following the
  * {@code META-INF/services/org/apache/camel/} service-file convention used throughout Camel.
- * <p/>
+ * <p>
  * Each service file contains the fully-qualified class name of a factory implementation. Given a lookup key, the finder
  * appends the key to {@link #getResourcePath()}, reads the file, loads the named class via the {@link ClassResolver},
  * and instantiates it. This mechanism lets components and modules ship their implementations without explicit
  * registration; Camel discovers them automatically at startup via this discovery contract.
- * <p/>
+ * <p>
  * {@link FactoryFinderResolver} creates and caches {@code FactoryFinder} instances per resource path, so each distinct
  * path has exactly one finder for the lifetime of the {@link org.apache.camel.CamelContext}.
  *
@@ -73,7 +73,7 @@ public interface FactoryFinder {
      * Finds the optional factory class using the key to lookup.
      *
      * @param  key is the key to add to the path to find a text file containing the factory name
-     * @return     the factory class if found, or <tt>null</tt> if no class existed
+     * @return     the factory class if found, or <code>null</code> if no class existed
      */
     Optional<Class<?>> findOptionalClass(String key);
 

@@ -29,6 +29,7 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -36,9 +37,9 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * A minimal in-process fake of the S3 API calls the consumer makes for a single bucket (path-style requests): head
- * bucket, list objects (v2, paginated with max-keys and start-after/continuation-token), head, get and delete object.
- * An object can be removed right after it was listed, the gets (and heads) of an object can be refused, and the body of
- * an object can be cut short.
+ * bucket, list objects (v2, paginated with max-keys and start-after/continuation-token), head, get, delete and copy
+ * object. A copy to another bucket is only recorded. An object can be removed right after it was listed, the gets (and
+ * heads) of an object can be refused, and the body of an object can be cut short.
  */
 final class FakeS3Server {
 
@@ -47,6 +48,8 @@ final class FakeS3Server {
     private final NavigableMap<String, byte[]> objects = new ConcurrentSkipListMap<>();
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> heads = new ConcurrentHashMap<>();
+    private final List<String> deletes = new CopyOnWriteArrayList<>();
+    private final List<String> copies = new CopyOnWriteArrayList<>();
     private final Set<String> removedWhenListed = ConcurrentHashMap.newKeySet();
     private final Set<String> refused = ConcurrentHashMap.newKeySet();
     private final Map<String, AtomicInteger> refusedGets = new ConcurrentHashMap<>();
@@ -128,9 +131,26 @@ final class FakeS3Server {
         return n != null ? n.get() : 0;
     }
 
+    /**
+     * The keys of the delete object requests, in order.
+     */
+    List<String> deletes() {
+        return List.copyOf(deletes);
+    }
+
+    /**
+     * The copy object requests, in order, as {@code sourceBucket/sourceKey -> destinationBucket/destinationKey}.
+     */
+    List<String> copies() {
+        return List.copyOf(copies);
+    }
+
     private void handle(HttpExchange http) throws IOException {
-        String path = http.getRequestURI().getRawPath();
-        String key = path.length() > bucket.length() + 2 ? decode(path.substring(bucket.length() + 2)) : null;
+        // path-style requests: /bucket/key
+        String path = http.getRequestURI().getRawPath().substring(1);
+        int slash = path.indexOf('/');
+        String requestBucket = decode(slash >= 0 ? path.substring(0, slash) : path);
+        String key = slash >= 0 && slash < path.length() - 1 ? decode(path.substring(slash + 1)) : null;
         String method = http.getRequestMethod();
         if (key == null) {
             if ("GET".equals(method) && query(http).containsKey("list-type")) {
@@ -139,6 +159,11 @@ final class FakeS3Server {
                 // head bucket, location, ...
                 respond(http, 200, null, null);
             }
+            return;
+        }
+        String copySource = http.getRequestHeaders().getFirst("x-amz-copy-source");
+        if ("PUT".equals(method) && copySource != null) {
+            copy(http, decode(copySource), requestBucket, key);
             return;
         }
         byte[] data = objects.get(key);
@@ -181,12 +206,34 @@ final class FakeS3Server {
                 }
             }
             case "DELETE" -> {
+                deletes.add(key);
                 objects.remove(key);
                 http.sendResponseHeaders(204, -1);
                 http.close();
             }
             default -> respond(http, 405, null, null);
         }
+    }
+
+    private void copy(HttpExchange http, String source, String destinationBucket, String destinationKey)
+            throws IOException {
+        String sourcePath = source.startsWith("/") ? source.substring(1) : source;
+        int slash = sourcePath.indexOf('/');
+        String sourceBucket = sourcePath.substring(0, slash);
+        String sourceKey = sourcePath.substring(slash + 1);
+        copies.add(sourceBucket + "/" + sourceKey + " -> " + destinationBucket + "/" + destinationKey);
+        byte[] data = bucket.equals(sourceBucket) ? objects.get(sourceKey) : null;
+        if (data == null) {
+            noSuchKey(http, sourceKey);
+            return;
+        }
+        if (bucket.equals(destinationBucket)) {
+            objects.put(destinationKey, data);
+        }
+        respond(http, 200, "application/xml",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><CopyObjectResult>"
+                                              + "<LastModified>2026-10-09T00:00:00.000Z</LastModified>"
+                                              + "<ETag>\"0123456789abcdef0123456789abcdef\"</ETag></CopyObjectResult>");
     }
 
     private void list(HttpExchange http, Map<String, String> query) throws IOException {

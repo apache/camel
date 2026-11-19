@@ -46,13 +46,15 @@ public interface FCEndpointBuilderFactory {
 
         /**
          * The endpoint of Function Compute, which is a host name without
-         * http:// or https://. The producer sends requests to it over HTTPS. If
-         * not set, the region option determines the endpoint, and one of the
-         * two is required. Not used when the fcClient option is set or
-         * autowired.
+         * http:// or https://. It contains the ID of the Alibaba Cloud account,
+         * as in 12345.cn-hangzhou.fc.aliyuncs.com. The producer sends requests
+         * to it over HTTPS. The region option does not determine the endpoint,
+         * so this option is required. Not used when the fcClient option is set
+         * or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param endpoint the value to set
@@ -98,19 +100,18 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * The region ID of Function Compute, for example cn-hangzhou. Only used
-         * when the endpoint option is not set, to build the endpoint of
-         * Function Compute. Not used when the fcClient option is set or
-         * autowired.
+         * The region ID of Function Compute, for example cn-hangzhou. The
+         * producer does not use it. Deprecation note: Use the endpoint option,
+         * which contains the region.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param region the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default FCEndpointBuilder region(String region) {
             doSetProperty("region", region);
             return this;
@@ -265,10 +266,10 @@ public interface FCEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.fc_open20210406.Client. The producer sends
-         * its requests with this client, and the region, endpoint, accessKey,
-         * secretKey and serviceKeys options are not used. If no client is set
-         * or autowired, the Camel endpoint creates a client from these options.
-         * It creates this client when the producer processes its first message.
+         * its requests with this client, and the endpoint, accessKey, secretKey
+         * and serviceKeys options are not used. If no client is set or
+         * autowired, the Camel endpoint creates a client from these options. It
+         * creates this client when the producer processes its first message.
          * 
          * The option is a: <code>com.aliyun.fc_open20210406.Client</code> type.
          * 
@@ -283,10 +284,10 @@ public interface FCEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.fc_open20210406.Client. The producer sends
-         * its requests with this client, and the region, endpoint, accessKey,
-         * secretKey and serviceKeys options are not used. If no client is set
-         * or autowired, the Camel endpoint creates a client from these options.
-         * It creates this client when the producer processes its first message.
+         * its requests with this client, and the endpoint, accessKey, secretKey
+         * and serviceKeys options are not used. If no client is set or
+         * autowired, the Camel endpoint creates a client from these options. It
+         * creates this client when the producer processes its first message.
          * 
          * The option will be converted to a
          * <code>com.aliyun.fc_open20210406.Client</code> type.
@@ -378,6 +379,20 @@ public interface FCEndpointBuilderFactory {
          */
         public static final FCHeaderNameBuilder INSTANCE = new FCHeaderNameBuilder();
 
+        /**
+         * The operation that the producer performs. This header replaces the
+         * operation option. If this header is not set, an exchange property of
+         * the same name replaces the operation option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaFcOperation}.
+         */
+        public String alibabaFcOperation() {
+            return "CamelAlibabaFcOperation";
+        }
         /**
          * The name of the service that contains the function. This header
          * replaces the serviceName option. If this header is not set, an

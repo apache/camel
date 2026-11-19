@@ -135,6 +135,44 @@ public interface SpiffeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Minimum remaining X.509-SVID validity, in milliseconds, for the
+         * producer readiness check to report UP. A certificate at or below this
+         * threshold reports DOWN before expiry. Zero requires only an unexpired
+         * identity. Does not apply to JWT-bundle readiness because bundles have
+         * no expiry timestamp.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: health
+         * 
+         * @param healthCheckExpiryThreshold the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder healthCheckExpiryThreshold(long healthCheckExpiryThreshold) {
+            doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
+            return this;
+        }
+        /**
+         * Minimum remaining X.509-SVID validity, in milliseconds, for the
+         * producer readiness check to report UP. A certificate at or below this
+         * threshold reports DOWN before expiry. Zero requires only an unexpired
+         * identity. Does not apply to JWT-bundle readiness because bundles have
+         * no expiry timestamp.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: health
+         * 
+         * @param healthCheckExpiryThreshold the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder healthCheckExpiryThreshold(String healthCheckExpiryThreshold) {
+            doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
+            return this;
+        }
+        /**
          * Whether the CamelSpiffeOperation header may override the configured
          * operation. Disabled by default: the operation decides whether this
          * endpoint validates a token or mints one, so a message that can set it
@@ -170,6 +208,27 @@ public interface SpiffeEndpointBuilderFactory {
          */
         default SpiffeEndpointBuilder allowOperationHeader(String allowOperationHeader) {
             doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
+        /**
+         * The exact local SPIFFE ID to use when the Workload API supplies
+         * several identities: fetchX509Svid selects that X.509-SVID instead of
+         * the SDK's default one, and fetchJwtSvid mints the JWT-SVID with it as
+         * the subject. A configured identity that is absent, or that the
+         * workload is not entitled to, fails without selecting a different
+         * identity. This option comes only from endpoint configuration, never
+         * from a message header; validateJwtSvid has no local identity to
+         * choose and ignores it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param localSpiffeId the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder localSpiffeId(String localSpiffeId) {
+            doSetProperty("localSpiffeId", localSpiffeId);
             return this;
         }
         /**

@@ -765,7 +765,8 @@ public interface AWS2EC2EndpointBuilderFactory {
         /**
          * A collection of tags to add or remove from EC2 resources.
          * 
-         * The option is a: {@code Collection<Tag>} type.
+         * The option is a: {@code
+         * Collection<software.amazon.awssdk.services.ec2.model.Tag>} type.
          * 
          * Group: producer
          * 

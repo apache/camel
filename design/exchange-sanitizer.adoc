@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-09
+last-updated: 2026-11-14
 status: implementable
 see-also:
   - "CAMEL-26630"
@@ -45,9 +45,10 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1, 2, 3, 5 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension
-and the CI switch, the on completion listener SPI with R2, the dev console with `camel get sanitizer` and
-`camel run --sanitizer`, and R1 "still pending". The rest is design.
+Steps 1, 2, 3, 5 and 6 of the order of work are built, and the first part of step 4: the step listener SPI, the module
+with R1, the JUnit extension and the CI switch, the on completion listener SPI with R2, the `AsyncProcessor` contract of
+R3, the dev console with `camel get sanitizer` and `camel run --sanitizer`, and R1 "still pending". The rest is
+design.
 
 == Motivation
 
@@ -281,6 +282,27 @@ the threads are:
   Whether every processor of the core EIPs keeps this today is the first thing the camel-core run shows; a processor
   that does not is fixed with its own JIRA, or the rule is narrowed with the reason written down, before R3 is
   proposed.
++
+The rule is narrowed by one case that the Javadoc of `AsyncProcessor` allows: a processor that hands its callback to
+the reactive executor returns the value of the processor it calls, and the reactive executor calls the callback with
+`false` on the calling thread, at once or after the work the thread is running. The channel of a step without an
+error handler does exactly that, so a step that calls such a channel directly sees it (such as a `choice` whose branch
+has one step, in a route with `noErrorHandler()`; with the default error handler the channel returns `false`), and it
+is not a bug. A callback with `false` on the thread that called `process` is
+therefore never reported. What is reported: `process` returned `true` and the callback came on another thread before
+the return, with either value (`RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD`); `process` returned `true` and the callback
+came later on another thread, or with `true` (`RETURNED_TRUE_BEFORE_CALLBACK`); and `process` returned `false` with a
+callback with `true` (`RETURNED_FALSE_CALLBACK_TRUE`). Only the first callback is compared (a second one is R1), and a
+call that threw is not compared (R1). The first camel-core run found one processor of Camel that breaks the rule,
+`InterceptSendToEndpointProcessor` (it returns the value of the `before` of the interceptor and calls the callback
+with the value of the producer after it), which is fixed with its own JIRA. The check is on by default, also in profile
+`dev`: a small record per call, and a stack only for a callback on another thread before the return, or for a report
+(see Cost).
+Its check is `threads` in `camel.sanitizer.checks`, shared with the sampled overlaps below when they are built
+(`overlapSampling` switches the sampling). What Validation asks of R3 is done for this part on camel-core only: the
+runs on the async component suites, a TLA+ model of its record and the JMH run come with the sampled overlaps, before
+R3 is complete. The record of this part is two values compared under one lock; its tests drive every order of the
+return and the callbacks, on one thread and on two, and race them.
 . *Accesses that overlap in time*, as KCSAN does in the Linux kernel. The routing engine uses the exchange at known
   points: a step starts, its callback continues the exchange, an on completion runs. At a small sample of these points
   the sanitizer opens a short watch window on the exchange, during which that thread pauses. If another thread uses
@@ -579,7 +601,8 @@ test scope and run its own suite with it.
 |`camel.sanitizer.enabled` |`false`, `true` with profile `dev` or a test marked by the JUnit extension |Install the
 sanitizer. Ignored with profile `prod`.
 |`camel.sanitizer.checks` |`callback,commit,threads,tasks` |The checks to run: R1, R2, R3, R4. Built so far:
-`callback`, and `callback,commit` in a test (R2 costs more per message, see Cost).
+`callback,threads`, and `callback,commit,threads` in a test (R2 costs more per message, see Cost); `threads` is the
+`AsyncProcessor` contract of R3 so far.
 |`camel.sanitizer.stackDepth` |`32` |Frames kept of each stack; `0` keeps only the thread name, which costs least.
 |`camel.sanitizer.overlapSampling` |`0`, `100` in the JUnit extension |R3 watch windows: every Nth point (a counter,
 not random, so a rerun samples the same points of the same run); `0` is off.
@@ -602,8 +625,9 @@ set), and in `camel get sanitizer`.
 === Using it
 
 *In development.* `camel run --sanitizer` adds the dependency, as `--chaos` does; `--dep camel:sanitizer` works too.
-With profile `dev`, the default of `camel run`, it is on (R1; R2 with `camel.sanitizer.checks=callback,commit`, as it is
-on by default only in tests, see Cost). Violations are logged at WARN when they happen; a `sanitizer` dev console
+With profile `dev`, the default of `camel run`, it is on (R1 and R3; R2 with
+`camel.sanitizer.checks=callback,commit,threads`, as it is on by default only in tests, see Cost). Violations are
+logged at WARN when they happen; a `sanitizer` dev console
 (read-only, as `@DevConsole` is by default) and `camel get sanitizer` show the report: the violations with their
 stacks, the counts per rule, the commits followed (with R2), and the calls still pending (the still pending warnings,
 and how many calls are pending now).
@@ -679,6 +703,8 @@ gets the sanitizer; each violation is still charged as described above. In the C
 === Validation
 
 Each step below is done before the code it validates is proposed for merge, and its result goes in the pull request.
+For R3, whose `AsyncProcessor` contract is proposed before its sampled overlaps, the steps are done for that part on
+camel-core, and the rest before R3 is complete (see R3).
 
 . *R1 first.* A prototype with the step listener and R1 only.
 . *The real bugs.* Run the tests of each fix above on the commit before the fix, with the sanitizer on, and show that
@@ -700,17 +726,21 @@ Each step below is done before the code it validates is proposed for merge, and 
   by the hook is not a call of the processor).
 . *Cost.* A JMH benchmark in the camel-performance-tests repository: a route with several steps, a consumer commit and
   an `InOnly` send to `seda` with handover; with no listener (it must not differ from main), and with the sanitizer on,
-  with and without stacks. No number is claimed before that run. R2 (camel-performance-tests style, 2 forks, 5 x 2 s,
+  with and without stacks. No number is claimed before that run, except the quick loop of R3 below. R2 (camel-performance-tests style, 2 forks, 5 x 2 s,
   `pendingTimeout=0`, no stacks, a commit on each message): one sending thread, 6 steps 0.96 us off, 1.16 us R1,
   2.16 us R1 and R2; an `InOnly` send to `seda` 1.07, 1.16 and 2.96 us. Four sending threads: 2.5 / 1.9 / 5.8 us and
   3.3 / 3.4 / 13.0 us, as the records of R2 have one lock for the context (R1 below off there is noise: +-0.4 us, load
   8-12). With the default 32 frames of stack (one thread): R1 63.7 us and R1 and R2 76.7 us for the steps, 36.5 and
   49.8 us with `seda`, so R2 adds about 13 us (1.2 to 1.4 times); not run with 4 threads. So R2 is on by default only
-  in tests, and `checks=callback,commit` turns it on elsewhere.
+  in tests, and `checks=callback,commit,threads` turns it on elsewhere. For the `AsyncProcessor` contract of R3 only a
+  quick loop was run so far, not the JMH run (one sending thread, the same 6 steps, no stacks, 5 rounds of 200 000
+  messages after a warm-up): off 1.00 us, R1 1.21-1.28 us, R1 and R3 1.25-1.30 us, R3 alone 1.21-1.27 us; with 32
+  frames 53.5-54.2 us with or without R3. It is on by default on that number; the JMH run of R3 comes with its
+  sampled overlaps.
 . *The side table.* The records of the sanitizer are concurrent code too: callbacks arrive on many threads. Stress
   tests with many threads check it, and a small TLA+ model of it (a first callback, a second callback, a throw and an
-  overlap on different threads) must show no false report and no missed violation in any interleaving, before R1 and
-  R3 are proposed.
+  overlap on different threads) must show no false report and no missed violation in any interleaving, before R1 is
+  proposed and before R3 is complete.
 
 The rules are the properties that were checked when these bugs were hunted, with TLA+ and SPIN models, Fray and
 deterministic tests: "the callback is called once" for the error handlers and `NoErrorHandler`, "the commit runs once,
@@ -728,7 +758,9 @@ Each step is its own pull request after this document:
 . camel-core: the on completion listener SPI, the new `UnitOfWork` method and the calls, with the JMH run without a
   listener (#29436); then R2, with the JMH run with the sanitizer on (see Cost: R2 is on by default only in tests).
   Done.
-. R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
+. R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites. The
+  contract is done, narrowed for the reactive executor as described in R3, with the run on camel-core; the sampled
+  overlaps and the runs on the async component suites are not.
 . The dev console, `camel get sanitizer` and `camel run --sanitizer`. Done: `camel get sanitizer` asks the integration
   for the console through the CLI connector when it runs, rather than reading it from the status file that is written
   each second, as the report can list 1000 violations with their stacks.

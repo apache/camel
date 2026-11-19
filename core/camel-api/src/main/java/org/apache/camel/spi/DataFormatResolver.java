@@ -21,13 +21,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI strategy for resolving a {@link DataFormat} implementation by name.
- * <p/>
+ * <p>
  * The default implementation first checks the Camel {@link Registry} for a bean registered under the data format name,
  * then falls back to classpath service files under {@code META-INF/services/org/apache/camel/dataformat/}. Each call to
  * {@link #createDataFormat(String, org.apache.camel.CamelContext)} returns a fresh, non-shared instance because data
  * formats carry per-invocation state. Custom resolvers can alias format names, wrap the resolved instance with
  * decorators, or source formats from a non-classpath registry.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/data-format.html">Data Format</a> in the Camel user manual.
  *
  * @see DataFormat
@@ -39,7 +39,7 @@ public interface DataFormatResolver {
      *
      * @param  name    the name of the data format factory to lookup in {@link org.apache.camel.spi.Registry} or create
      * @param  context the camel context
-     * @return         the data format or <tt>null</tt> if not possible to resolve
+     * @return         the data format or <code>null</code> if not possible to resolve
      */
     @Nullable
     DataFormat createDataFormat(String name, CamelContext context);

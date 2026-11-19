@@ -24,12 +24,18 @@ The binding modes are:
 the necessary data formats are included in the classpath. Notice that if
 for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled. Notice that for XML then `jaxb` is default, and you must be explicit to set `xmlDataFormat=jacksonXml`
-if you want to use jackson XML instead.
+if you want to use jackson XML instead. When neither the JSON nor the XML data format is found, nothing is bound,
+and Camel logs a WARN when it creates the route.
 |`json` |Binding to/from JSON is enabled, and requires a JSON capable data
 format on the classpath. By default, Camel will use `jackson` as the data format.
 |`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` or `camel-jacksonxml` on the classpath.
 |`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to be on the classpath.
 |===
+
+With `json`, `xml` or `json_xml`, a data format the binding needs and cannot find fails the route when Camel creates
+it, with a message that names the artifact to add, for example
+`JSON DataFormat jackson not found (the jackson data format is in camel-jackson3; add camel-jackson3 to the classpath).`
+Jackson 2 users add `camel-jackson` instead.
 
 IMPORTANT: In `auto` binding mode, the `consumes` option is used as a *fallback* for format detection when the incoming request has no `Content-Type` header (or the header does not indicate JSON or XML). It does *not* reject requests whose `Content-Type` does not match `consumes`. For example, an endpoint configured with `.consumes("application/json").bindingMode(auto)` will still accept and deserialize an XML request if the client sends `Content-Type: application/xml` and an XML-capable data format (e.g., `camel-jaxb`) is on the classpath. If you need to enforce that the `Content-Type` matches the `consumes` declaration, enable xref:rest-dsl-validation.adoc#_client_request_and_response_validation[Client Request and Response Validation] with `clientRequestValidation(true)`, which returns HTTP 415 for mismatched content types. Alternatively, use an explicit binding mode (`json` or `xml`) to restrict which data formats are available.
 
@@ -386,7 +392,7 @@ The Rest DSL supports the following options:
 | *inlineRoutes*| true| boolean| Inline routes in rest-dsl which are linked using direct endpoints. If disabling then each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By default, this allows Camel to optimize and inline this as a single route. However, this requires using direct endpoints, which must be unique per service.
 | *jsonDataFormat*|| String| Sets a custom JSON data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
 | *port*|| int| Sets the port to use by the REST consumer
-| *producerApiDoc*|| String| Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document...
+| *producerApiDoc*|| String| Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid according to the api document...
 | *producerComponent*|| String| Sets the name of the Camel component to use as the REST producer
 | *scheme*|| String| Sets the scheme to use by the REST consumer
 | *skipBindingOnErrorCode*| true| boolean| Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.

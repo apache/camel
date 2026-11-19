@@ -71,7 +71,7 @@ public class RestConfigurationDefinition {
               label = "consumer,advanced", javaType = "java.lang.Boolean")
     private String useXForwardHeaders;
     @XmlAttribute
-    @Metadata(description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.",
+    @Metadata(description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document.",
               label = "producer,advanced")
     private String producerApiDoc;
     @XmlAttribute
@@ -645,7 +645,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the
      * response.
      */
     public RestConfigurationDefinition enableCORS(boolean enableCORS) {
@@ -654,7 +654,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the
      * response.
      */
     public RestConfigurationDefinition enableCORS(String enableCORS) {

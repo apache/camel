@@ -34,6 +34,19 @@ option, e.g., by setting `fileName=thefilename`.
  Also, the starting directory must not contain dynamic expressions with
 `${ }` placeholders. Again use the `fileName` option to specify the
 dynamic part of the filename.
+The directory is fixed when the endpoint is created: to write to a dynamic directory use `toD`, and to read from one
+use `pollEnrich` with a simple expression (`pollEnrich().simple("...")` in Java), as `pollEnrich("...")` uses the
+uri as is.
+
+The `fileName` option of a consumer is a file name, not a pattern: `+fileName=*.csv+` only consumes a file named
+`+*.csv+`. To consume the files that match a pattern use `antInclude` (wildcards such as `+*.csv+`), `include` (a regular
+expression such as `+.*\.csv+`) or `includeExt` (file extensions such as `csv`). The consumer logs a WARN when a fixed
+`fileName` has the wildcards `+*+` or `+?+`.
+
+The directory is a directory of the file system: `file:classpath:data` is a directory named `classpath:data` in the
+working directory, not a directory of the classpath. To read a classpath resource use the
+xref:language-component.adoc[Language] component, such as `language:constant:resource:classpath:data/order.json`.
+The file component logs a WARN when the directory starts with `classpath:` or `resource:`.
 
 [WARNING]
 ====
@@ -105,6 +118,10 @@ YAML::
             uri: bean:handleOrder
 ----
 ====
+
+NOTE: `noop=true` leaves the files in place, so it does not go with `delete=true` or `move`. With `delete=true`
+the files are deleted (delete wins), and with `move` they are not moved (noop wins); the consumer logs a WARN for both.
+`delete=true` with `move` fails when the consumer is created.
 
 [NOTE]
 ====
@@ -1195,6 +1212,10 @@ YAML::
 ----
 ====
 
+NOTE: The `idempotentKey` and `idempotentRepository` options are used only with `idempotent=true` (`noop=true` turns
+it on), or by the idempotent read locks (`readLock=idempotent`, `idempotent-changed` and `idempotent-rename`). Set
+without them, they do not skip any file, and the consumer logs a WARN when it is created.
+
 Camel will log at `DEBUG` level if it skips a file because it has been
 consumed before:
 
@@ -1207,7 +1228,7 @@ DEBUG FileConsumer is idempotent and the file has been consumed before. Will ski
 ==== Using a file-based idempotent repository
 
 In this section we will use the file-based idempotent repository
-`org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
+`org.apache.camel.support.processor.idempotent.FileIdempotentRepository` instead
 of the in-memory one that is used as default.
 This repository uses a first level cache to avoid reading the file
 repository. It will only use the file repository to store the content of
@@ -1215,14 +1236,52 @@ the first level cache. Thereby, the repository can survive server restarts.
 It will load the content of the file into the first level cache upon
 startup. The file structure is basic as it stores the key in
 separate lines in the file. By default, the file store has a size limit
-of 1mb. When the file grows larger, Camel will truncate the file store,
-rebuilding the content by flushing the first level cache into a fresh
-empty file.
+of 32mb. When the file grows larger, Camel drops the oldest entries from
+the file store (1000 by default) to make room for new ones.
 
-We configure our repository using Spring XML creating our file
-idempotent repository and define our file consumer to use our repository
-with the `idempotentRepository` using `#` sign to indicate
-Registry lookup:
+We declare the repository as a bean with the name of its file (`fileName`), and define our file consumer to use
+the repository with the `idempotentRepository` option, using `#bean:` to look it up in the Registry. After a restart,
+the files that were read before are skipped, and only the new files are read:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@BindToRegistry("readFiles")
+public IdempotentRepository readFiles() {
+    return FileIdempotentRepository.fileIdempotentRepository("/var/data/read-files.dat");
+}
+
+@Override
+public void configure() {
+    from("file:/var/data/in?noop=true&idempotentRepository=#bean:readFiles")
+        .log("${header.CamelFileName}");
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: readFiles
+      type: "#class:org.apache.camel.support.processor.idempotent.FileIdempotentRepository"
+      properties:
+        fileName: /var/data/read-files.dat
+- route:
+    from:
+      uri: file:/var/data/in
+      parameters:
+        noop: true
+        idempotentRepository: "#bean:readFiles"
+      steps:
+        - log: "${header.CamelFileName}"
+----
+====
+
+The `fileName` property of the repository takes the file name as plain text. Use `fileStore` instead when you have a `java.io.File`.
 
 ==== Using a JPA based idempotent repository
 
@@ -1307,6 +1366,11 @@ YAML::
 === Filtering Strategies
 
 Camel supports pluggable filtering strategies. They are described below.
+
+The `include` and `exclude` options are regular expressions matched against the file name (case-insensitive), such
+as `+include=.*\.xml+`. A wildcard such as `+*.xml+` is not a valid regular expression, and the endpoint fails with a
+message that says so. Use `antInclude` and `antExclude` for wildcards, or `includeExt` and `excludeExt` for file
+extensions.
 
 ==== Filter using the `GenericFilter`
 
