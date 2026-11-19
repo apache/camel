@@ -102,11 +102,8 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         }
     };
 
-    private Cache<String, Publisher> cachedPublishers = CacheBuilder.newBuilder()
-            .expireAfterWrite(publisherCacheTimeout, TimeUnit.MILLISECONDS)
-            .maximumSize(publisherCacheSize)
-            .removalListener(removalListener)
-            .build();
+    // built in doInit, so the configured size and timeout are used
+    private Cache<String, Publisher> cachedPublishers;
 
     public GooglePubsubComponent() {
     }
@@ -136,15 +133,30 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        cachedPublishers = CacheBuilder.newBuilder()
+                .expireAfterWrite(publisherCacheTimeout, TimeUnit.MILLISECONDS)
+                .maximumSize(publisherCacheSize)
+                .removalListener(removalListener)
+                .build();
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
-        cachedPublishers.cleanUp();
-        cachedPublishers.invalidateAll();
+        if (cachedPublishers != null) {
+            cachedPublishers.cleanUp();
+            cachedPublishers.invalidateAll();
+        }
         super.doShutdown();
     }
 
     public Publisher getPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint)
             throws ExecutionException {
-        return cachedPublishers.get(topicName, () -> buildPublisher(topicName, googlePubsubEndpoint));
+        // a publisher is built from the settings of the endpoint (credentials, regional endpoint, ordering, retry),
+        // so endpoints that publish to the same topic with other settings must not share it
+        String key = topicName + " " + googlePubsubEndpoint.getEndpointUri();
+        return cachedPublishers.get(key, () -> buildPublisher(topicName, googlePubsubEndpoint));
     }
 
     private Publisher buildPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint)
