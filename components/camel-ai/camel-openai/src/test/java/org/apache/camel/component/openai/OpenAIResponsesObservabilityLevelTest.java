@@ -129,14 +129,14 @@ class OpenAIResponsesObservabilityLevelTest extends CamelTestSupport {
         closedSpans.clear();
         context.getPropertiesComponent().addOverrideProperty(GenAiObservabilityProperties.LEVEL, "detailed");
 
-        String endpointUri = "openai:responses?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
-                             + "&temperature=0.7&maxTokens=200"
-                             + "&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
+        String endpointUri = ENDPOINT + "&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
         injectWeatherTool(endpointUri);
 
         template.request("direct:responses", e -> {
             e.getIn().setBody("weather please");
             e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-test");
+            e.getIn().setHeader(OpenAIConstants.TEMPERATURE, 0.7);
+            e.getIn().setHeader(OpenAIConstants.MAX_TOKENS, 200);
         });
 
         RecordingSpan run = span("invoke_agent weather-responses");
