@@ -17,9 +17,11 @@
 package org.apache.camel.component.google.sheets;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -29,12 +31,14 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesHelper;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -69,6 +73,13 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " is also a Map of the JSON fields"))
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration>
         implements EndpointServiceLocation {
+
+    /**
+     * The options that make up the credential of the client. The client sends the credential in the Authorization
+     * header, so they are not set on the request, where accessToken would become the access_token query parameter.
+     */
+    private static final Set<String> CREDENTIAL_OPTIONS
+            = Set.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate");
 
     @UriParam
     private GoogleSheetsConfiguration configuration;
@@ -142,6 +153,19 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
             }
         }
         return answer;
+    }
+
+    /**
+     * Sets the options and headers on the request of the method, such as the standard parameters of the Google API,
+     * except the options of the credential, which the client already sends in the Authorization header.
+     */
+    void configureRequest(AbstractGoogleClientRequest<?> request, Map<String, Object> properties) throws Exception {
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
+        for (Map.Entry<String, Object> p : properties.entrySet()) {
+            if (!CREDENTIAL_OPTIONS.contains(p.getKey())) {
+                beanIntrospection.setProperty(getCamelContext(), request, p.getKey(), p.getValue());
+            }
+        }
     }
 
     @Override
