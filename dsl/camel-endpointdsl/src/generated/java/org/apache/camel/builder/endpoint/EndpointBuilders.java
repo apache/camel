@@ -251,6 +251,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingStoreEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LangChain4jIngestEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.LangChain4jServiceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LangChain4jWebSearchEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory,

@@ -1,0 +1,261 @@
+---
+title: Invoking user-built LangChain4j AI Services and agents from routes
+authors:
+  - "@zbendhiba"
+reviewers: []
+approvers: []
+creation-date: 2026-10-22
+last-updated: 2026-11-18
+status: implementable
+see-also:
+  - "CAMEL-21916"
+  - "CAMEL-23950"
+  - "design/langchain4j-evolution.adoc"
+  - "design/aiTool.adoc"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+`camel-langchain4j-service` is a producer-only component. It looks up a LangChain4j AI
+Service, or a LangChain4j agent, in the Camel registry and invokes one of its methods.
+The user builds the object with LangChain4j's own builders. The component neither creates
+nor configures it.
+
+The endpoint is `langchain4j-service:serviceName[?method=methodName]`. The message body
+and two component headers feed the method parameters. The return value becomes the new
+body.
+
+== Motivation
+
+The point is to decouple. Camel stops owning the AI configuration. LangChain4j keeps it.
+
+`camel-langchain4j-agent` builds the AI Service itself. Model, memory, tools and
+guardrails are all configured through Camel options. So the component has to chase the
+`AiServices` builder surface, option by option, release after release (CAMEL-23950).
+`design/langchain4j-evolution.adoc` shows where that ends. Embedding stores, memory
+services, MCP connections and guardrail chains have no property-driven path in Camel
+core. That document calls it the configuration cliff.
+
+This component flips the ownership:
+
+[source,text]
+----
+      camel-langchain4j-agent            │        camel-langchain4j-service
+      Camel owns the config              │        the user owns the config
+                                         │
+  ?chatModel=#model                      │   AiServices.builder(MyAssistant.class)
+  &chatMemory=#memory                    │       .chatModel(model)
+  &tags=crm                              │       .chatMemory(memory)
+            │                            │       .tools(crm)
+            │ Camel maps each option     │       .build()
+            ▼ onto the builder           │              │ bound in the registry
+  ┌──────────────────────┐               │   ┌──────────────────────┐
+  │ the component builds │               │   │ the component looks  │
+  │ the AI Service       │               │   │ it up and invokes it │
+  └──────────┬───────────┘               │   └──────────┬───────────┘
+             ▼                           │              ▼
+        LangChain4j                      │         LangChain4j
+                                         │
+  a new LangChain4j feature              │   a new LangChain4j feature
+  needs a new Camel option               │   needs nothing
+----
+
+The user defines the AI Service the standard LangChain4j way. LangChain4j deals with the
+rest: the model, the system and user messages, chat memory, RAG, tools and agentic
+behaviour, guardrails, structured output. Whatever the user configures works. No Camel
+option for any of it, including LangChain4j features that do not exist yet.
+
+Camel invokes it from a route, and the route is the orchestrator. Messages arrive through
+any Camel connector, the AI Service reasons, the route pushes the result onward.
+LangChain4j does the AI, Camel does the integration:
+
+[source,text]
+----
+┌──────────────────────────────── Camel ─────────────────────────────────┐
+│  from("kafka:inbox")                                                   │
+│      .to("langchain4j-service:myAssistant?method=chat")                │
+│      .to("kafka:ai-responses");                                        │
+│                                                                        │
+│  connectors, EIPs, error handling, the endpoint span                   │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+         body and headers in        │   the producer looks the bean up,
+         return value out           │   then calls Method.invoke
+                                    ▼
+┌───────────────────────────── LangChain4j ──────────────────────────────┐
+│  MyAssistant, the user's own interface                                 │
+│  built with AiServices.builder(...) or AgenticServices                 │
+│                                                                        │
+│  model · system and user messages · chat memory · RAG · tools          │
+│  agents and workflows · guardrails · structured output · what is next  │
+└────────────────────────────────────────────────────────────────────────┘
+
+No Camel option configures anything in the lower box.
+----
+
+Decoupling buys three things:
+
+* *The user's own interface.* `camel-langchain4j-agent` fixes the contract. Here the
+  interface is the user's domain interface, with their method names, their parameters,
+  their return types. A route calls it as-is.
+* *No feature lag.* Nothing wrapped means nothing to catch up with. A LangChain4j feature
+  released tomorrow works with no component change. Agent support bore this out: no new
+  option, no runtime dependency, and nothing in the component that knows what an agent is.
+* *It works both ways.* Camel users get the full LangChain4j feature set. And LangChain4j
+  users get a new way to integrate the AI Services they already have: Camel's connectors
+  and enterprise integration patterns drive their existing interfaces, unchanged.
+
+The two components are complementary. The choice is who configures the AI:
+
+[width="100%",cols="35%,65%",options="header"]
+|===
+| Component | Who builds and configures the AI
+
+| `camel-langchain4j-agent`
+| Camel, from endpoint options and registry beans. Property-driven, so usable from YAML,
+  the CLI and Kaoto, within the surface the component wraps.
+
+| `camel-langchain4j-service`
+| The user, in Java, with `AiServices.builder(...)` or `AgenticServices`. Camel performs
+  lookup and invocation only.
+|===
+
+=== Why not the bean component?
+
+The xref:bean-component.adoc[Bean] component can invoke a registered AI Service too, so
+the question is fair. The component in fact builds on bean binding rather than competing
+with it: the introspection below is `camel-bean`'s. What bean binding does not do is any
+of the AI-shaped work:
+
+* *AI-shaped invocation*: the body is the user message, headers carry the template
+  variables and the memory id, following LangChain4j's own annotations.
+* *Fail-fast validation* on AI-specific shapes, at route startup.
+* *A home for AI-specific behaviour* as it comes: guardrail error mapping, moderation,
+  streaming.
+* *A name the LangChain4j world already knows.* A route reading
+  `langchain4j-service:myAssistant?method=chat` tells a LangChain4j user exactly what
+  happens. `bean:myAssistant` says nothing. And it shows up as an AI component in the
+  catalog, the docs and the tooling.
+
+Observability follows the same ownership split. Tokens, model and latency come from
+LangChain4j and its integrations. The component adds no tracing of its own and relies on
+the default Camel endpoint span, whose URI already carries the service name and the
+method.
+
+== Goals
+
+* Invoke any LangChain4j AI Service a user can build, including tool-enabled ones.
+* Invoke LangChain4j agents and agentic workflows the same way.
+* Bind method parameters from the exchange following LangChain4j's own annotations.
+* Fail at route startup, not on the first message, for anything checkable statically.
+* Add no configuration surface and no runtime dependency beyond `langchain4j` itself.
+
+== Non-Goals
+
+* Creating or configuring AI Services. That is `camel-langchain4j-agent`'s job.
+* A consumer. There is nothing to consume from an AI Service.
+* Streaming. Methods returning `TokenStream` are out of scope for this version.
+* Property-driven configuration for YAML, the CLI or Kaoto. A Java-built bean is required
+  by design.
+
+== Proposal
+
+The producer resolves everything when it starts, then invokes per message. On start it
+looks the bean up, resolves the method, and computes the parameter bindings once. Anything
+wrong fails the route at startup: no such bean, an ambiguous method, a parameter it cannot
+bind.
+
+The component does not work out which interface the user meant, because the question does
+not need answering. `camel-bean` does the introspection: it pools the methods of the
+registered instance and of every interface it implements, and it collects each parameter's
+annotations from wherever they are declared, which for an AI Service is the interface. The
+`method` option names the method as soon as there is more than one candidate.
+
+That is what makes agents and framework-built services work without the component knowing
+anything about them. `AgenticServices` builds a service over the user's agent interface
+plus framework interfaces of its own, and Quarkus LangChain4j generates a class that
+implements the user's interface plus `ChatMemoryRemovable`. Their methods simply sit next
+to the user's, and `method` picks the right one. There is no list of framework types to
+keep current, and no package to filter.
+
+Bean binding collected those annotations internally without exposing them, so `MethodInfo`
+gained `getParameterAnnotations()`. It mirrors `Method.getParameterAnnotations()`, except
+that an annotation declared on the method of an interface or of a superclass is found too,
+which `Method` does not do.
+
+Parameters are bound from the exchange:
+
+[width="100%",cols="30%,70%",options="header"]
+|===
+| Parameter | Bound from
+
+| `@UserMessage` | the message body, converted to the parameter type
+| `@V("name")` | the `"name"` key of the `CamelLangChain4jServiceVariables` map header
+| `@MemoryId` | the `CamelLangChain4jServiceMemoryId` header
+| the only parameter, un-annotated | the message body
+|===
+
+Template variables come from one map header rather than one header per variable. A header
+per variable collided with the memory ID header and leaked variable names into the header
+namespace. A non-void return value becomes the new body.
+
+=== Agents and agentic workflows
+
+An agent is an interface with one `@Agent` method, built with `AgenticServices`. The
+workflow kinds, sequence, parallel, loop, conditional, supervisor and planner, are agents
+too, so a workflow is invoked exactly like a single agent and runs inside the one
+invocation. Agent methods take `@V` parameters, which the binding above already covers.
+
+The component keeps no compile dependency on `langchain4j-agentic`. Invocation is
+reflective and nothing in the component names an agentic type, so the agentic module is a
+test-scope dependency only. Untyped agents are not supported in this version: their
+builders return a LangChain4j interface whose methods carry no LangChain4j parameter
+annotation, so there is nothing to bind the body and headers to.
+
+Agent support is marked experimental in the user documentation. LangChain4j ships its
+agentic module as a `-betaNN` artifact whose API still moves between releases.
+
+== Runtime considerations
+
+The component carries no runtime-specific code, and should not. Nothing about Quarkus, CDI
+or Spring belongs in `components/camel-ai`: a runtime adapts the component, not the
+reverse. Filtering `io.quarkiverse.langchain4j.*` alongside `dev.langchain4j.*` was
+considered for that reason and rejected. Delegating the introspection to `camel-bean`
+removed the need for any such filter, which is the better answer: the component stops
+having an opinion about the shape of the bean it was handed.
+
+A framework-built bean exposes more than the user's interface. Quarkus LangChain4j
+generates a class implementing the `@RegisterAiService` interface plus
+`ChatMemoryRemovable`; CDI and Spring add their own. Bean binding already handles that
+shape, unwrapping `_ClientProxy`, `_Subclass` and CGLIB classes and finding annotations
+declared on an interface, so such a bean works with no delegate and no component change.
+The one consequence is that `method` is required, because the framework's methods are
+candidates too.
+
+What is left for a camel-quarkus extension is native mode, where reflective invocation
+needs the AI Service interfaces registered. Nothing in this design stands in the way: all
+resolution happens at runtime in `doStart`, so there is nothing to move to build time.
+
+== Security
+
+The component moves no trust boundary. Per `docs/user-manual/modules/ROOT/pages/security-model.adoc`,
+the route author and the deployment operator are trusted. Choosing which registry bean to
+invoke, and building the AI Service, are trusted-side decisions, equivalent to what the
+xref:bean-component.adoc[Bean] component already allows.
+
+Untrusted message data reaches the AI Service as the user message, as template variable
+values and as a memory ID. The component interprets none of it. Prompt injection through
+the body is a property of the model and of the prompt the route author wrote, not of the
+invocation. One point is worth keeping in mind: the memory ID comes from a header, so the
+usual `removeHeaders("Camel*")` hardening applies when a consumer maps untrusted input
+into headers.
+
+== Testing
+
+Unit tests run in CI with no model. They cover resolution, binding and the failure modes,
+using JDK proxy fakes, plain classes and lambdas, which are the shapes a registered AI
+Service takes. Integration tests run
+against an Ollama test-infra container and real LangChain4j objects, agents included, and
+are skipped in CI through `ci.env.name`.
