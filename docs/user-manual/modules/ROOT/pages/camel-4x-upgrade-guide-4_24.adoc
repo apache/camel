@@ -7082,6 +7082,15 @@ the `CamelContext` stops, and creates a new one when it is started again. Before
 open. A client the endpoint did not create (the `mongoConnection` option, the client of the component, or the bean
 named by the endpoint path) is not closed.
 
+=== camel-mongodb - the tls and tlsAllowInvalidHostnames options are applied
+
+The `tls` and `tlsAllowInvalidHostnames` endpoint options are now applied to the client the endpoint creates from
+`hosts` or `connectionUriString`, as `sslContextParameters` already was. Before, they were not used: an endpoint with
+`tls=true` and no `sslContextParameters` connected without TLS. Such an endpoint now connects with TLS, so the MongoDB
+server must accept TLS connections, and its certificate must be trusted by the JVM (or set `sslContextParameters`).
+When none of these options is set, the TLS settings of `connectionUriString` (for example `?tls=true`) are used as
+before.
+
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
