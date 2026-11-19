@@ -47,7 +47,8 @@ public final class ListingFormat {
      * <tt>xxxxxx</tt>, the same way Camel logs it, or as it is when not masked.
      *
      * @param uri  the endpoint URI, as the integration has it
-     * @param mask whether to mask the sensitive values (the --mask option); when {@code false} the URI is returned as-is
+     * @param mask whether to mask the sensitive values (the --mask option); when {@code false} the URI is returned
+     *             as-is
      */
     public static String masked(String uri, boolean mask) {
         return mask && uri != null ? URISupport.sanitizeUri(uri) : uri;
