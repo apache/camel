@@ -10026,9 +10026,13 @@ take a schema registry instead:
 and the `/apis/registry/v2` API. The Kafka Kamelets have no options yet to log in to the registry, such as the Keycloak
 login of `kafka-batch-apicurio-registry-source`.
 
+It removes `mqtt-source` and `mqtt-sink`, the MQTT 3.1.1 Kamelets on the `paho` component, which is deprecated. Use
+`mqtt5-source` and `mqtt5-sink` with a broker that supports MQTT 5, or the `paho` component directly for a broker that
+only speaks MQTT 3.1.1.
+
 The public `KameletPrefixSchemeEnum` of `camel-kamelets-catalog` loses the entries of these Kamelets: `dropbox`, the
 `twitter_*` entries, `azure_storage_blob_changefeed`, `elasticsearch_search`, `google_functions`, the `kubernetes_*`
-entries, `bitcoin`, `chuck_norris`, `wttrin`, `http_secured`, `kafka_apicurio` and `kafka_not_secured`.
+entries, `bitcoin`, `chuck_norris`, `wttrin`, `http_secured`, `kafka_apicurio`, `kafka_not_secured` and `mqtt`.
 
 === Kamelets - renamed options
 
