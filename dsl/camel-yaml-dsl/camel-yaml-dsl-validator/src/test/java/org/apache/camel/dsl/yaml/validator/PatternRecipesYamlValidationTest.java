@@ -84,7 +84,6 @@ public class PatternRecipesYamlValidationTest {
         YamlValidator validator = new YamlValidator(true, null, catalog);
         validator.init();
 
-        JsonNode yamlMapperTree;
         List<JsonObject> recipes = loadRecipes();
 
         Set<String> ids = new HashSet<>();

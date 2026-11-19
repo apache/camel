@@ -242,7 +242,7 @@ public final class AuthoringTools {
                         answer.put("recipes", matches);
                         return answer.toJson();
                     } catch (Exception e) {
-                        throw new ToolExecutionException("The Camel pattern recipes resource could not be read as JSON");
+                        throw new ToolExecutionException("The Camel pattern recipes resource could not be read as JSON", e);
                     }
                 }));
 
