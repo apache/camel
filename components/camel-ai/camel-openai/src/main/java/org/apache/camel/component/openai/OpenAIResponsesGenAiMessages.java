@@ -18,8 +18,11 @@ package org.apache.camel.component.openai;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.openai.core.ObjectMappers;
 import com.openai.models.responses.EasyInputMessage;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
@@ -47,9 +50,7 @@ final class OpenAIResponsesGenAiMessages {
             if (input.isText()) {
                 messages.text(GenAiMessages.USER, input.asText());
             } else if (input.isResponse()) {
-                for (ResponseInputItem item : input.asResponse()) {
-                    addInputItem(messages, item);
-                }
+                addInputItems(messages, input.asResponse());
             }
         });
         return messages;
@@ -72,39 +73,90 @@ final class OpenAIResponsesGenAiMessages {
         return messages.finishReason(finishReason);
     }
 
+    @SuppressWarnings("unchecked")
     static GenAiToolDefinitions toolDefinitions(ResponseCreateParams params) {
         GenAiToolDefinitions definitions = new GenAiToolDefinitions();
         for (Tool tool : params.tools().orElse(List.of())) {
             tool.function().ifPresent(function -> definitions.function(
                     function.name(),
                     function.description().orElse(null),
-                    null));
+                    function.parameters()
+                            .map(p -> ObjectMappers.jsonMapper().convertValue(p, Map.class))
+                            .orElse(null)));
         }
         return definitions;
     }
 
-    private static void addInputItem(GenAiMessages messages, ResponseInputItem item) {
-        if (item.isEasyInputMessage()) {
-            EasyInputMessage msg = item.asEasyInputMessage();
-            String role = roleOf(msg.role().asString());
-            EasyInputMessage.Content content = msg.content();
-            if (content.isTextInput()) {
-                messages.text(role, content.asTextInput());
-            } else if (content.isResponseInputMessageContentList()) {
-                String text = content.asResponseInputMessageContentList().stream()
+    private static void addInputItems(GenAiMessages messages, List<ResponseInputItem> items) {
+        boolean lastIsAssistant = false;
+        for (ResponseInputItem item : items) {
+            if (item.isEasyInputMessage()) {
+                EasyInputMessage msg = item.asEasyInputMessage();
+                String role = roleOf(msg.role().asString());
+                lastIsAssistant = GenAiMessages.ASSISTANT.equals(role);
+                addEasyInputMessage(messages, role, msg.content());
+            } else if (item.isMessage()) {
+                // ResponseInputItem.Message - image/PDF prompt items from OpenAIResponsesInputBuilder
+                ResponseInputItem.Message msg = item.asMessage();
+                String role = roleOf(msg.role().asString());
+                lastIsAssistant = GenAiMessages.ASSISTANT.equals(role);
+                String text = msg.content().stream()
                         .filter(ResponseInputContent::isInputText)
                         .map(c -> c.asInputText().text())
                         .collect(Collectors.joining("\n"));
-                messages.text(role, text.isEmpty() ? null : text);
+                if (text.isEmpty()) {
+                    // binary content (image/PDF) - record placeholder
+                    messages.text(role, null);
+                } else {
+                    messages.text(role, text);
+                }
+            } else if (item.isResponseOutputMessage()) {
+                // assistant preamble from OpenAIResponsesSupport.toInputItems()
+                ResponseOutputMessage msg = item.asResponseOutputMessage();
+                String text = msg.content().stream()
+                        .filter(ResponseOutputMessage.Content::isOutputText)
+                        .map(c -> c.asOutputText().text())
+                        .collect(Collectors.joining("\n"));
+                lastIsAssistant = true;
+                messages.text(GenAiMessages.ASSISTANT, text.isEmpty() ? null : text);
+            } else if (item.isFunctionCallOutput()) {
+                lastIsAssistant = false;
+                ResponseInputItem.FunctionCallOutput output = item.asFunctionCallOutput();
+                String callId = output.callId().orElse(null);
+                String content = output.output().string().orElse(null);
+                messages.toolResult(callId, content);
+            } else if (item.isFunctionCall()) {
+                // Ensure tool_call lands in an assistant message per semconv
+                if (!lastIsAssistant) {
+                    messages.text(GenAiMessages.ASSISTANT, null);
+                }
+                lastIsAssistant = true;
+                ResponseFunctionToolCall call = item.asFunctionCall();
+                messages.toolCall(call.callId(), call.name(), call.arguments());
             }
-        } else if (item.isFunctionCallOutput()) {
-            ResponseInputItem.FunctionCallOutput output = item.asFunctionCallOutput();
-            String callId = output.callId().orElse(null);
-            String content = output.output().string().orElse(null);
-            messages.toolResult(callId, content);
-        } else if (item.isFunctionCall()) {
-            ResponseFunctionToolCall call = item.asFunctionCall();
-            messages.toolCall(call.callId(), call.name(), call.arguments());
+        }
+    }
+
+    private static void addEasyInputMessage(GenAiMessages messages, String role, EasyInputMessage.Content content) {
+        if (content.isTextInput()) {
+            messages.text(role, content.asTextInput());
+        } else if (content.isResponseInputMessageContentList()) {
+            String text = content.asResponseInputMessageContentList().stream()
+                    .map(c -> {
+                        if (c.isInputText()) {
+                            return c.asInputText().text();
+                        }
+                        if (c.isInputImage()) {
+                            return "[image]";
+                        }
+                        if (c.isInputFile()) {
+                            return "[file]";
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining("\n"));
+            messages.text(role, text.isEmpty() ? null : text);
         }
     }
 

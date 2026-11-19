@@ -46,8 +46,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * At observability level detailed, the Responses API tool loop is wrapped in one invoke_agent span with one chat span
- * per model call and an execute_tool span per MCP tool call.
+ * At observability level full, the Responses API tool loop is wrapped in one invoke_agent span with one chat span per
+ * model call and an execute_tool span per MCP tool call.
  */
 class OpenAIResponsesObservabilityLevelTest extends CamelTestSupport {
 
@@ -104,17 +104,57 @@ class OpenAIResponsesObservabilityLevelTest extends CamelTestSupport {
                 .doesNotContainKey(GenAiAttributes.INPUT_TOKENS);
         // input messages recorded on the agent run at level full
         assertThat((String) run.tags().get(GenAiAttributes.INPUT_MESSAGES)).contains("weather please");
+        // output messages recorded on the agent run
+        assertThat((String) run.tags().get(GenAiAttributes.OUTPUT_MESSAGES)).contains("It is sunny");
 
         // two model calls: first requests the tool, second delivers the final answer
         assertThat(calls).hasSize(2).allSatisfy(call -> assertThat(call.parent()).isSameAs(run));
         // tool definitions recorded on the first call at level full
         assertThat((String) calls.get(0).tags().get(GenAiAttributes.TOOL_DEFINITIONS))
                 .contains("\"type\":\"function\"", "\"name\":\"get_weather\"");
+        // system instructions recorded when present (none in this test, but output messages on model calls)
+        assertThat((String) calls.get(1).tags().get(GenAiAttributes.OUTPUT_MESSAGES)).contains("It is sunny");
+
+        // second call's input messages include tool result
+        assertThat((String) calls.get(1).tags().get(GenAiAttributes.INPUT_MESSAGES)).contains("tool");
 
         // execute_tool span under the agent run
         assertThat(tool.parent()).isSameAs(run);
         assertThat(tool.tags()).containsEntry(GenAiAttributes.TOOL_NAME, "get_weather")
                 .containsEntry(GenAiAttributes.TOOL_CALL_RESULT, "sunny");
+    }
+
+    @Test
+    void shouldRecordRequestDetailsAtDetailedLevel() {
+        closedSpans.clear();
+        context.getPropertiesComponent().addOverrideProperty(GenAiObservabilityProperties.LEVEL, "detailed");
+
+        String endpointUri = "openai:responses?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
+                             + "&temperature=0.7&maxTokens=200"
+                             + "&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
+        injectWeatherTool(endpointUri);
+
+        template.request("direct:responses", e -> {
+            e.getIn().setBody("weather please");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-test");
+        });
+
+        RecordingSpan run = span("invoke_agent weather-responses");
+        List<RecordingSpan> chatSpans = closedSpans.stream().filter(s -> s.name().equals("chat gpt-4o-mini")).toList();
+
+        // conversation_id on the invoke_agent span
+        assertThat(run.tags()).containsEntry(GenAiAttributes.CONVERSATION_ID, "conv-test");
+
+        // request params on the chat spans
+        assertThat(chatSpans).isNotEmpty();
+        assertThat(chatSpans.get(0).tags())
+                .containsEntry(GenAiAttributes.REQUEST_PREFIX + "temperature", 0.7)
+                .containsEntry(GenAiAttributes.REQUEST_PREFIX + "max_tokens", 200L)
+                .containsEntry(GenAiAttributes.CONVERSATION_ID, "conv-test");
+
+        // INPUT_MESSAGES is NOT set at detailed level
+        assertThat(chatSpans.get(0).tags()).doesNotContainKey(GenAiAttributes.INPUT_MESSAGES);
+        assertThat(run.tags()).doesNotContainKey(GenAiAttributes.INPUT_MESSAGES);
     }
 
     private RecordingSpan span(String name) {
@@ -181,6 +221,11 @@ class OpenAIResponsesObservabilityLevelTest extends CamelTestSupport {
 
         @Override
         public void setTag(String key, long value) {
+            tags.put(key, value);
+        }
+
+        @Override
+        public void setTag(String key, double value) {
             tags.put(key, value);
         }
 

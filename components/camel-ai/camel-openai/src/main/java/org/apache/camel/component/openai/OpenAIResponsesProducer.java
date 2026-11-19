@@ -172,7 +172,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
         String conversationId = resolveParameter(in, OpenAIConstants.CONVERSATION_ID, config.getConversationId(),
                 String.class);
-        if (ObjectHelper.isNotEmpty(conversationId)) {
+        conversationId = ObjectHelper.isNotEmpty(conversationId) ? conversationId : null;
+        if (conversationId != null) {
             paramsBuilder.conversation(conversationId);
         }
         if (config.isBackground()) {
@@ -233,11 +234,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                     processObservedToolLoop(exchange, config, params, inputSpec.items(), model, conversationId);
                 } else {
                     processToolLoop(exchange, config, params, inputSpec.items(), model,
-                            ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
+                            conversationId);
                 }
             } else {
                 Response response = createResponse(exchange, model, params,
-                        ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
+                        conversationId);
                 List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
                 // with autoToolExecution=false the route handles the function calls requested by the model
                 Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
@@ -269,13 +270,13 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 .agentName(routeId != null ? routeId : "openai")
                 .system("openai")
                 .requestModel(model)
-                .conversationId(ObjectHelper.isNotEmpty(conversationId) ? conversationId : null)
+                .conversationId(conversationId)
                 .componentScheme("openai")
                 .build());
         agentRun.recordInputMessages(() -> OpenAIResponsesGenAiMessages.input(params));
         try {
             processToolLoop(exchange, config, params, input, model,
-                    ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
+                    conversationId);
             // the model calls carry the token usage; repeating it on the agent run would double-count
             agentRun.recordSuccess(GenAiUsage.of((Long) null, null,
                     exchange.getMessage().getHeader(OpenAIConstants.FINISH_REASON, String.class), null));
@@ -453,7 +454,6 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 .requestParameter("temperature", params.temperature().orElse(null))
                 .requestParameter("top_p", params.topP().orElse(null))
                 .requestParameter("max_tokens", params.maxOutputTokens().orElse(null))
-                .tracedByFramework(OpenAIClientTracing.tracedByOpenTelemetry(exchange.getContext(), getEndpoint().getClient()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         observation.recordInputMessages(() -> OpenAIResponsesGenAiMessages.input(params));
