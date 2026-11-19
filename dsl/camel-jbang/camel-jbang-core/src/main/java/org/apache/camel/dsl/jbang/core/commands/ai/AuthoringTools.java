@@ -199,13 +199,11 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_catalog_pattern_recipes",
-                "Curated integration-pattern recipes from the Camel catalog: complete route compositions, transport "
-                                                              + "alternatives, component requirements, recommended options, pitfalls and example links. "
-                                                              + "Use term to filter by recipe content; use camel_catalog_sample for an individual EIP or "
-                                                              + "component YAML example, and camel_catalog_doc to check the selected version's options.")
+                "Find curated Camel integration recipes: routes, variants, requirements, options, pitfalls and examples. "
+                                                              + "Use camel_catalog_sample for EIP snippets and camel_catalog_doc to verify options.")
                 .param("term", "string",
-                        "Optional phrase to match in recipe names, problems, routes, options, requirements or pitfalls", false)
-                .param("camelVersion", "string", VERSION_DESC, false)
+                        "Optional text to filter recipes.", false)
+                .param("camelVersion", "string", "Camel version (default: CLI or selected integration)", false)
                 .core(true)
                 .deterministic(true)
                 .repeatHint("Use the matching recipe as a starting point, then check its component and EIP options with "
