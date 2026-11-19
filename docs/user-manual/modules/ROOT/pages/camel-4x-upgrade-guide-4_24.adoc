@@ -7105,6 +7105,20 @@ The consumers now call `processCommit(Exchange, String)` with the name of the ob
 of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
 the new method instead. `processCommit(Exchange)` is deprecated.
 
+=== camel-alibaba-oss, camel-huaweicloud-obs - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead`, the `alibaba-oss` consumer now deletes the object it consumed. Before, it took the bucket and
+the key from the `CamelAlibabaOssBucketName` and `CamelAlibabaOssObjectKey` headers as the route left them. The
+producer writes to the bucket of the `CamelAlibabaOssBucketName` header, so a route that set it to write a copy of the
+object to another bucket deleted the object with the same key in that bucket, and the consumed object was consumed
+again by the next poll. A route that removed these headers, or replaced the message, deleted nothing.
+
+With `moveAfterRead` and `deleteAfterRead`, the `hwcloud-obs` consumer now copies and deletes the object it consumed.
+Before, it took the bucket and the key from the `CamelHwCloudObsBucketName` and `CamelHwCloudObsObjectKey` headers as
+the route left them: a route that changed them copied and deleted another object, and a route that removed them, or
+replaced the message, copied and deleted nothing, so the consumed object was consumed again by the next poll. (The
+`hwcloud-obs` producer takes its bucket from the exchange property of that name, not from the header.)
+
 === camel-mongodb - connectionUriString without hosts creates the client of the endpoint
 
 An endpoint that sets `connectionUriString` without `hosts` now creates its client from the connection string. Before,
