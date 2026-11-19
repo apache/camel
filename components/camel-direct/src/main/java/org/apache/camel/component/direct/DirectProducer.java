@@ -16,11 +16,19 @@
  */
 package org.apache.camel.component.direct;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Route;
 import org.apache.camel.RouteStoppingException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ArtifactUtils;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +63,7 @@ public class DirectProducer extends DefaultAsyncProducer {
         DirectConsumer consumer = getConsumer();
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
-                throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+                throw new DirectConsumerNotAvailableException(noConsumerMessage(), exchange);
             } else {
                 LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
@@ -76,8 +84,7 @@ public class DirectProducer extends DefaultAsyncProducer {
             DirectConsumer consumer = getConsumer();
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
-                    exchange.setException(new DirectConsumerNotAvailableException(
-                            "No consumers available on endpoint: " + endpoint, exchange));
+                    exchange.setException(new DirectConsumerNotAvailableException(noConsumerMessage(), exchange));
                 } else {
                     LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
                 }
@@ -121,6 +128,65 @@ public class DirectProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
+    }
+
+    /**
+     * The message when there is no consumer: the text users and tools search for, then why there is none (the route
+     * that consumes from the endpoint and its status, or that no route does, with a close name), how long the producer
+     * waited, and the options that change this.
+     */
+    private String noConsumerMessage() {
+        CamelContext context = endpoint.getCamelContext();
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("No consumers available on endpoint: ").append(endpoint).append(". ");
+
+        String routeId = null;
+        boolean rest = false;
+        // the other direct endpoints routes consume from, by name, for a close name
+        Map<String, String> others = new LinkedHashMap<>();
+        for (Route route : context.getRoutes()) {
+            rest |= route.isCreatedByRestDsl();
+            if (route.getEndpoint() instanceof DirectEndpoint direct && direct.getComponent() == component) {
+                if (key.equals(direct.getKey())) {
+                    routeId = route.getRouteId();
+                } else {
+                    others.put(name(direct.getKey()), direct.getKey());
+                }
+            }
+        }
+        if (routeId != null) {
+            ServiceStatus status = context.getRouteController().getRouteStatus(routeId);
+            sb.append("Route ").append(routeId).append(" in CamelContext ").append(context.getName())
+                    .append(" consumes from it");
+            if (status != null) {
+                sb.append(" and is ").append(status);
+            }
+            sb.append(". ");
+        } else {
+            sb.append("No route in CamelContext ").append(context.getName()).append(" consumes from it");
+            String closest = ArtifactUtils.closest(name(key), others.keySet());
+            if (closest != null) {
+                sb.append(", did you mean ").append(others.get(closest)).append("? ");
+            } else {
+                sb.append(". ");
+            }
+            if (rest && context.getRestConfiguration().isInlineRoutes()) {
+                sb.append("A direct route that only one REST DSL service calls is inlined into that service, and no other"
+                          + " route can call it (inlineRoutes in the rest configuration). ");
+            }
+        }
+        if (block && timeout > 0) {
+            sb.append("The producer waited ").append(timeout).append(" millis for a consumer");
+        } else {
+            sb.append("The producer did not wait for a consumer");
+        }
+        sb.append(" (see the block, timeout and failIfNoConsumers options)");
+        return sb.toString();
+    }
+
+    private static String name(String key) {
+        // direct://foo is foo
+        return StringHelper.after(key, "://", key);
     }
 
     /**

@@ -114,6 +114,7 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
         applyCommonClientProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializer());
         addPropertyIfNotEmpty(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializer());
+        applySchemaRegistryConsumerProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.GROUP_ID_CONFIG, getGroupId());
         props.put(ConsumerConfig.SHARE_ACKNOWLEDGEMENT_MODE_CONFIG, EXPLICIT_ACKNOWLEDGEMENT);
         addPropertyIfNotEmpty(props, ConsumerConfig.SHARE_ACQUIRE_MODE_CONFIG, getAcquireMode());
@@ -124,7 +125,6 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
         addPropertyIfNotEmpty(props, ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, getMaxPartitionFetchBytes());
         addPropertyIfNotEmpty(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.CHECK_CRCS_CONFIG, getCheckCrcs());
-        addPropertyIfNotFalse(props, "specific.avro.reader", isSpecificAvroReader());
 
         applySecurityProperties(props);
         applyAdditionalProperties(props);

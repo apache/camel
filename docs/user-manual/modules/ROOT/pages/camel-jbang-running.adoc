@@ -306,6 +306,19 @@ camel run foo.java --repos=https://packages.atlassian.com/maven-external
 
 TIP: Separate multiple repositories with commas.
 
+Some repositories are known by name, so you can use the name instead of the URL, such as `--repos=confluent`:
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Name | Repository
+| central | `https://repo1.maven.org/maven2`
+| apache-snapshot | `https://repository.apache.org/snapshots`
+| atlassian | `https://packages.atlassian.com/maven-external`
+| confluent | `https://packages.confluent.io/maven/` (the Confluent serializers and deserializers for Kafka, such as `io.confluent:kafka-avro-serializer`)
+| jboss | `https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content`
+| redhat | `https://maven.repository.redhat.com/ga`
+|===
+
 You can also configure repositories in `application.properties`:
 
 [source,properties]

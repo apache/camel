@@ -736,7 +736,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "include", type = "string", description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL.", displayName = "Include"),
                     @YamlProperty(name = "instanceClassName", type = "string", description = "Class name to use for marshal and unmarshalling.", displayName = "Instance Class Name"),
                     @YamlProperty(name = "jsonView", type = "string", description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations.", displayName = "Json View"),
-                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson", defaultValue = "avroJackson", description = "Which Avro library to use.", displayName = "Library"),
+                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson", defaultValue = "Jackson", description = "Which Avro library to use.", displayName = "Library"),
                     @YamlProperty(name = "moduleClassNames", type = "string", description = "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.", displayName = "Module Class Names"),
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
@@ -7902,6 +7902,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "accessExternalSchemaProtocols", type = "string", description = "Only in use if schema validation has been enabled. Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.", displayName = "Access External Schema Protocols"),
+                    @YamlProperty(name = "allowPartClassFromHeader", type = "boolean", defaultValue = "false", description = "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets these headers itself, not on routes that receive them from external systems.", displayName = "Allow Part Class From Header"),
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", defaultValue = "true", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
                     @YamlProperty(name = "contextPath", type = "string", required = true, description = "Package name where your JAXB classes are located. The package must have an ObjectFactory class or a jaxb.index file that lists the classes. To use a class name instead, set contextPathIsClassName to true.", displayName = "Context Path"),
                     @YamlProperty(name = "contextPathIsClassName", type = "boolean", defaultValue = "false", description = "This can be set to true to mark that the contextPath is referring to a classname and not a package name.", displayName = "Context Path Is Class Name"),
@@ -7942,6 +7943,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "accessExternalSchemaProtocols": {
                     String val = asText(node);
                     target.setAccessExternalSchemaProtocols(val);
+                    break;
+                }
+                case "allowPartClassFromHeader": {
+                    String val = asText(node);
+                    target.setAllowPartClassFromHeader(val);
                     break;
                 }
                 case "contentTypeHeader": {
@@ -13820,7 +13826,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
+                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).", displayName = "Pattern")
@@ -13895,7 +13901,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
+                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive).", displayName = "Pattern")
@@ -14693,7 +14699,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inlineRoutes", type = "boolean", defaultValue = "true", description = "Inline routes in rest-dsl which are linked using direct endpoints. By inlining, Camel can optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service.", displayName = "Inline Routes"),
                     @YamlProperty(name = "jsonDataFormat", type = "enum:jackson,jsonb,fastjson,gson", defaultValue = "jackson", description = "Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.", displayName = "Json Data Format"),
                     @YamlProperty(name = "port", type = "string", description = "The port number to use for exposing the REST service.", displayName = "Port"),
-                    @YamlProperty(name = "producerApiDoc", type = "string", description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.", displayName = "Producer Api Doc"),
+                    @YamlProperty(name = "producerApiDoc", type = "string", description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document.", displayName = "Producer Api Doc"),
                     @YamlProperty(name = "producerComponent", type = "enum:vertx-http,http,undertow,netty-http", description = "Sets the name of the Camel component to use as the REST producer.", displayName = "Producer Component"),
                     @YamlProperty(name = "scheme", type = "string", description = "The scheme to use for exposing the REST service. Usually http or https is supported.", displayName = "Scheme"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),

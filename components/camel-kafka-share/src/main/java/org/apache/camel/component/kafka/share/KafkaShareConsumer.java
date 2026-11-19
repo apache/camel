@@ -99,7 +99,9 @@ public class KafkaShareConsumer extends DefaultConsumer {
         }
 
         // the share consumer rejects the consumer group options, fail now rather than on every attempt to create it
-        KafkaShareConfiguration.validateShareConsumerProperties(getProps());
+        Properties props = getProps();
+        KafkaShareConfiguration.validateShareConsumerProperties(props);
+        endpoint.checkSchemaRegistrySerde(props);
 
         executor = endpoint.createExecutor(this);
 

@@ -366,6 +366,29 @@ class CamelRouteStatusTest extends ProcessCommandTestSupport {
         assertThat(printer.getOutput()).contains("route1", "route2").doesNotContain("route3", "route5");
     }
 
+    @Test
+    void fromMasksTheSecretOptionsOfTheUri() throws Exception {
+        writeStatusFile(TEST_PID, integration("myApp",
+                route("route1", "mongodb:db?database=test&password=RAW(s3cret)", "Started", stats(1, 0, 0, 5))));
+
+        assertThat(call(command("--wide-uri"))).isZero();
+        // the table wraps the long URIs
+        assertThat(printer.getOutput().replaceAll("\\s", "")).contains("password=xxxxxx").doesNotContain("s3cret");
+
+        printer = new StringPrinter();
+        assertThat(call(command("--json"))).isZero();
+        JsonArray routes = Jsoner.deserialize(printer.getOutput(), (JsonArray) null);
+        JsonObject route = routes.getMap(0);
+        assertThat(route.getString("from")).isEqualTo("mongodb:db?database=test&password=xxxxxx");
+
+        // as configured when asked for
+        printer = new StringPrinter();
+        assertThat(call(command("--json", "--mask=false"))).isZero();
+        routes = Jsoner.deserialize(printer.getOutput(), (JsonArray) null);
+        route = routes.getMap(0);
+        assertThat(route.getString("from")).isEqualTo("mongodb:db?database=test&password=RAW(s3cret)");
+    }
+
     private CamelRouteStatus command(String... args) {
         CamelRouteStatus command = new CamelRouteStatus(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, args);

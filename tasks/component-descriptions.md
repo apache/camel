@@ -64,7 +64,7 @@ or removes its row.
 | camel-alibaba-mns | alibaba-mns |  |
 | camel-alibaba-oss | alibaba-oss |  |
 | camel-alibaba-ots | alibaba-ots | yes |
-| camel-alibaba-sls | alibaba-sls |  |
+| camel-alibaba-sls | alibaba-sls | yes |
 | camel-alibaba-sms | alibaba-sms | yes |
 | camel-amqp | amqp |  |
 | camel-apicurio-registry | apicurio-registry |  |

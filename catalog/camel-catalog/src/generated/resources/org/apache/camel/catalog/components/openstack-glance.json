@@ -4,7 +4,7 @@
     "name": "openstack-glance",
     "title": "OpenStack Glance",
     "description": "Manage VM images and metadata definitions in OpenStack Glance.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.glance.GlanceComponent",

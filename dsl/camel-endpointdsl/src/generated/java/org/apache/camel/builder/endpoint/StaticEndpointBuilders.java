@@ -584,7 +584,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -593,7 +594,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sls:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSlsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
      * 
@@ -605,7 +609,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -614,7 +619,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sls:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSlsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
      * 
@@ -12520,7 +12528,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database if no hosts parameter is present.
+     * to a database if neither the hosts nor the connectionUriString parameter
+     * is present.
      * 
      * @param path connectionBean
      * @return the dsl builder
@@ -12540,7 +12549,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database if no hosts parameter is present.
+     * to a database if neither the hosts nor the connectionUriString parameter
+     * is present.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13438,9 +13448,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 11 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples, write
+     * There are 12 enums and the value can be one of: check, batchCheck,
+     * listObjects, streamedListObjects, listRelations, listUsers, readTuples,
+     * readChanges, expand, writeTuples, deleteTuples, write
      * 
      * @param path operation
      * @return the dsl builder
@@ -13464,9 +13474,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 11 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples, write
+     * There are 12 enums and the value can be one of: check, batchCheck,
+     * listObjects, streamedListObjects, listRelations, listUsers, readTuples,
+     * readChanges, expand, writeTuples, deleteTuples, write
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13684,6 +13694,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String path) {
         return openstackCinder("openstack-cinder", path);
     }
@@ -13705,6 +13716,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String componentName, String path) {
         return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13724,6 +13736,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String path) {
         return openstackGlance("openstack-glance", path);
     }
@@ -13745,6 +13758,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String componentName, String path) {
         return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13765,6 +13779,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String path) {
         return openstackKeystone("openstack-keystone", path);
     }
@@ -13787,6 +13802,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String componentName, String path) {
         return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13806,6 +13822,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String path) {
         return openstackNeutron("openstack-neutron", path);
     }
@@ -13827,6 +13844,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String componentName, String path) {
         return NeutronEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13846,6 +13864,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String path) {
         return openstackNova("openstack-nova", path);
     }
@@ -13867,6 +13886,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String componentName, String path) {
         return NovaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -13886,6 +13906,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String path) {
         return openstackSwift("openstack-swift", path);
     }
@@ -13907,6 +13928,7 @@ public class StaticEndpointBuilders {
      * @param path host
      * @return the dsl builder
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String componentName, String path) {
         return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

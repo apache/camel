@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
@@ -31,10 +32,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consumer registering a prompt route while its route is started and removing it when stopped.
+ * <p>
+ * It is {@link Suspendable}, so a route stop or graceful shutdown suspends it first, which deregisters the prompt, and
+ * stops it once the prompt requests in flight have completed or the shutdown timeout has elapsed. Suspending the route
+ * deregisters the prompt without stopping the route, and resuming it registers the same prompt spec again. A suspended
+ * prompt refuses new requests.
  *
  * @since 4.24
  */
-public class AiPromptConsumer extends DefaultConsumer {
+public class AiPromptConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AiPromptConsumer.class);
 

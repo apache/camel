@@ -39,8 +39,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A shared {@link HttpServerInitializerFactory} for a shared Netty HTTP server.
  *
- * @see NettySharedHttpServer
+ * @see        NettySharedHttpServer
+ *
+ * @deprecated the shared Netty HTTP server was added for OSGi/Karaf, so that several applications in one JVM could use
+ *             the same port. Use a netty-http consumer per port, where several routes can use the same port, or the
+ *             platform-http component.
  */
+@Deprecated
 public class HttpServerSharedInitializerFactory extends HttpServerInitializerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedInitializerFactory.class);

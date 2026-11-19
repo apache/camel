@@ -37,6 +37,12 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.spiffe.SpiffeConfiguration.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": getOrCreateConfiguration(target).setHealthCheckExpiryThreshold(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "localspiffeid":
@@ -68,6 +74,12 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.spiffe.SpiffeConfiguration.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return long.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "localspiffeid":
@@ -95,6 +107,12 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return getOrCreateConfiguration(target).getHealthCheckExpiryThreshold();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "localspiffeid":

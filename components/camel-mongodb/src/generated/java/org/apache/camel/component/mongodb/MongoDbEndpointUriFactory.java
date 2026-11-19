@@ -85,7 +85,8 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
         props.add("writeResultAsHeader");
         props.add("zlibCompressionLevel");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("connectionUriString");
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);

@@ -480,6 +480,60 @@ public interface OpenfgaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Transport for streamedListObjects. Required with an injected
+         * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
+         * this transport's lifecycle. storeId and readTimeout remain required
+         * for streaming.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaStreamingClient&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param streamingClient the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamingClient(org.apache.camel.component.openfga.OpenFgaStreamingClient streamingClient) {
+            doSetProperty("streamingClient", streamingClient);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum characters in one streamed JSON record; must be positive.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 65536
+         * Group: producer (advanced)
+         * 
+         * @param streamMaxLineLength the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamMaxLineLength(int streamMaxLineLength) {
+            doSetProperty("streamMaxLineLength", streamMaxLineLength);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum streamed objects before iteration fails; must be positive. No
+         * partial answer is silently truncated.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: producer (advanced)
+         * 
+         * @param streamMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamMaxResults(int streamMaxResults) {
+            doSetProperty("streamMaxResults", streamMaxResults);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -586,7 +640,9 @@ public interface OpenfgaComponentBuilderFactory {
          * An existing OpenFgaClient to use. When set, every option describing
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
-         * baked into the client that was handed over.
+         * baked into the client that was handed over. streamedListObjects
+         * additionally needs an explicit streamingClient, a storeId and a
+         * positive readTimeout.
          * 
          * The option is a:
          * &lt;code&gt;dev.openfga.sdk.api.client.OpenFgaClient&lt;/code&gt;
@@ -862,6 +918,9 @@ public interface OpenfgaComponentBuilderFactory {
             case "type": getOrCreateConfiguration((OpenFgaComponent) component).setType((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((OpenFgaComponent) component).setUser((java.lang.String) value); return true;
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
+            case "streamingClient": getOrCreateConfiguration((OpenFgaComponent) component).setStreamingClient((org.apache.camel.component.openfga.OpenFgaStreamingClient) value); return true;
+            case "streamMaxLineLength": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxLineLength((int) value); return true;
+            case "streamMaxResults": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxResults((int) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((OpenFgaComponent) component).setMaxBatchSize((int) value); return true;

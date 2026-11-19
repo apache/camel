@@ -29,7 +29,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Micrometer-backed metrics recording. Loaded reflectively only when {@link MeterRegistry} is on the classpath.
+ * Micrometer-backed metrics recording. Only loaded when {@link MeterRegistry} is on the classpath.
  */
 final class GenAiMicrometerSupport implements GenAiMetricsBackend {
 

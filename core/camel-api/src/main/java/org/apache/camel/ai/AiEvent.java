@@ -58,9 +58,9 @@ public interface AiEvent extends CamelEvent {
     }
 
     /**
-     * Fired when a tool call is denied by the route's {@code authorizationPolicy}. Also a
-     * {@link CamelEvent.FailureEvent}, so {@link #getCause()} returns the {@code CamelAuthorizationException} the
-     * policy raised.
+     * Fired when a tool call is denied by the route's {@code allowedRoles} or {@code authorizationPolicy}. Also a
+     * {@link CamelEvent.FailureEvent}, so {@link #getCause()} returns the {@code CamelAuthorizationException} the check
+     * raised.
      *
      * @since 4.24
      */

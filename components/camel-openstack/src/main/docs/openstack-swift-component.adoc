@@ -1,10 +1,11 @@
-= OpenStack Swift Component
+= OpenStack Swift Component (deprecated)
 :doctitle: OpenStack Swift
 :shortname: openstack-swift
 :artifactid: camel-openstack
 :description: Access OpenStack Swift object/blob store.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

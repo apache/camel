@@ -62,7 +62,15 @@ public class AiToolComponent extends DefaultComponent {
 
         final String toolName = remaining;
 
+        // the configuration bean of the endpoint is taken out of the parameters before the options are bound, so the
+        // options set on the endpoint win over the values of the bean, whatever the order they are given in, and the
+        // values that the bean does not set come from the component (such as its authorization policy)
+        AiToolConfiguration endpointConfiguration
+                = resolveAndRemoveReferenceParameter(parameters, "configuration", AiToolConfiguration.class);
         AiToolConfiguration config = this.configuration.copy();
+        if (endpointConfiguration != null) {
+            config.overrideWith(endpointConfiguration);
+        }
 
         Map<String, Object> toolParameters = PropertiesHelper.extractProperties(parameters, "parameter.");
         if (!toolParameters.isEmpty()) {
@@ -86,7 +94,16 @@ public class AiToolComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * Sets the component configuration. The options already set on the component are kept, and win over the values of
+     * the given configuration: when the configuration and the options are bound together (such as from
+     * {@code camel.component.ai-tool.*} properties) the result does not depend on the order they are bound in, and an
+     * option such as {@code authorizationPolicy} is never dropped.
+     */
     public void setConfiguration(AiToolConfiguration configuration) {
+        if (configuration != null && this.configuration != null && configuration != this.configuration) {
+            configuration.overrideWith(this.configuration);
+        }
         this.configuration = configuration;
     }
 }

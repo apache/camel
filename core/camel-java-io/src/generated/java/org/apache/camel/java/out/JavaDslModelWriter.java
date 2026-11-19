@@ -2881,7 +2881,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "instanceClassName", def.getInstanceClassName(), null);
-        doWriteAttribute(sb, "library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute(sb, "library", toString(def.getLibrary()), "Jackson");
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(sb, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(sb, "include", def.getInclude(), null);
@@ -3174,6 +3174,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "fragment", def.getFragment(), null);
         doWriteAttribute(sb, "partClass", def.getPartClass(), null);
         doWriteAttribute(sb, "partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute(sb, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute(sb, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(sb, "xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute(sb, "schemaLocation", def.getSchemaLocation(), null);

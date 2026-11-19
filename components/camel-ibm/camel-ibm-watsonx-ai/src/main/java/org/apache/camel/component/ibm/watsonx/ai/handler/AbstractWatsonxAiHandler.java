@@ -18,8 +18,14 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
@@ -33,6 +39,8 @@ import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.support.FileInput;
+import org.apache.camel.spi.BodyTypeRegistry;
+import org.apache.camel.support.BodyFacts;
 
 /**
  * Abstract base class for watsonx.ai operation handlers providing common helper methods.
@@ -65,7 +73,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
 
         // Fall back to body
         if (input == null || input.isEmpty()) {
-            input = in.getBody(String.class);
+            input = readAsText(in, "the prompt");
         }
 
         if (input == null || input.isEmpty()) {
@@ -93,7 +101,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                 inputs = (List<String>) body;
             } else if (body != null) {
                 // Single input, read as text (as textGeneration does), so a byte[] or InputStream body works too
-                String text = in.getBody(String.class);
+                String text = readAsText(in, "the input text");
                 if (text != null) {
                     inputs = List.of(text);
                 }
@@ -134,7 +142,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                     messages = List.of(chatMessage);
                 } else if (body != null) {
                     // The user message, read as text (as textGeneration does), so a byte[] or InputStream body works too
-                    userMessage = in.getBody(String.class);
+                    userMessage = readAsText(in, "the user message");
                 }
             }
 
@@ -182,6 +190,54 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             }
         }
         return messages;
+    }
+
+    /**
+     * The body as the text an operation reads, whether it sends it to the model or uses it as a file path or a request
+     * id: text, bytes, a stream or a file is read as it is, and so is any other body Camel converts to its text, such
+     * as a {@code char[]} or a {@code ByteBuffer}. A Map or a POJO fails instead, since Camel has no conversion for it
+     * other than its {@code toString()}, so the model would be asked about a map written in Java notation, or the
+     * request would name such a map as its file (CAMEL-26521).
+     *
+     * @param  in   the inbound message whose body to read
+     * @param  what the input in the words of the operation, such as "the prompt", for the error message of a body that
+     *              is not text
+     * @return      the body as text, or {@code null} when the body is null
+     */
+    protected static String readAsText(Message in, String what) {
+        Object body = in.getBody();
+        String text = in.getBody(String.class);
+        if (text != null && isOnlyToString(body, text)) {
+            throw new IllegalArgumentException(
+                    "The message body must be " + what + " as text (a String, bytes, a stream or a file), but it is a "
+                                               + body.getClass().getName()
+                                               + ", which Camel reads only as its toString(). Marshal it first, for"
+                                               + " example with marshal().json(), set the body to the text, or, when"
+                                               + " the toString() of the object is the text to send, convert it with"
+                                               + " convertBodyTo(String.class)");
+        }
+        return text;
+    }
+
+    /**
+     * Whether the text is no more than the {@code toString()} of the body, which {@code ToStringTypeConverter} gives
+     * for an object no type converter reads as text. A payload (text, bytes, a stream, a file) or a single value (a
+     * number, a boolean) is text by itself, whatever its {@code toString()}.
+     */
+    private static boolean isOnlyToString(Object body, String text) {
+        return BodyFacts.kindOf(body) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(body)
+                && text.equals(body.toString());
+    }
+
+    /**
+     * A value whose {@code toString()} is its text, rather than a dump of its fields: an id, an address or a point in
+     * time. {@link BodyFacts} counts text, a number, a boolean and an enum as a payload, but not these, and the type
+     * converter has nothing for them either, so they would otherwise be read as only a {@code toString()} (raised in
+     * the review of CAMEL-26521).
+     */
+    private static boolean isTextValue(Object body) {
+        return body instanceof UUID || body instanceof URI || body instanceof URL || body instanceof Temporal
+                || body instanceof TemporalAmount || body instanceof Date;
     }
 
     /**

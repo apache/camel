@@ -431,7 +431,7 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Expected type is
-         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial]. Mandatory* header if PDF document is encrypted.
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial]. Deprecation note: No longer read by the component since Camel 2.21: PDFBox 2 decrypts at load time via Loader.loadPDF(bytes, password). The byte[] converter loads without a password. Decrypt in a Processor before the PDF endpoint instead.
          * 
          * The option is a: {@code
          * org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial} type.
@@ -440,6 +440,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * @return the name of the header {@code PdfDecryptionMaterial}.
          */
+        @Deprecated
         public String pdfDecryptionMaterial() {
             return "CamelPdfDecryptionMaterial";
         }

@@ -201,6 +201,7 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResetableClock;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -255,6 +256,8 @@ public abstract class AbstractCamelContext extends BaseService
     private final ContextValue<Boolean> isStartingRoutes = ContextValue.newInstance("isStartingRoutes");
     private final ContextValue<Boolean> isLockModel = ContextValue.newInstance("isLockModel");
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
+    // the endpoints in use by the routes while removeAllRoutes() removes them, guarded by lock
+    private EndpointsInUse endpointsInUseOfRemovedRoutes;
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
@@ -872,11 +875,17 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
-        return doGetEndpoint(uri, null, parameters, normalized, prototype);
+        return doGetEndpoint(uri, null, parameters, normalized, prototype, false);
     }
 
     protected Endpoint doGetEndpoint(
             String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        return doGetEndpoint(uri, explicitRawUri, parameters, normalized, prototype, false);
+    }
+
+    protected Endpoint doGetEndpoint(
+            String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype,
+            boolean literalOptionBinding) {
         // ensure CamelContext are initialized before we can get an endpoint
         build();
 
@@ -943,9 +952,21 @@ public abstract class AbstractCamelContext extends BaseService
                     LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                     // Have the component create the endpoint if it can.
-                    answer = component.createEndpoint(
-                            component.useRawUri() ? rawUri : uri,
-                            parameters);
+                    String createUri = component.useRawUri() ? rawUri : uri;
+                    if (literalOptionBinding) {
+                        // the uri was computed from the current message at runtime, so its option values are bound
+                        // as literal text while the component creates the endpoint: no property placeholders,
+                        // #class: or #property: (registry references such as #bean: and #type: are still resolved).
+                        // The scope covers every way a component binds its options (see PropertyBindingSupport)
+                        boolean prev = PropertyBindingSupport.setLiteralOptionBinding(true);
+                        try {
+                            answer = component.createEndpoint(createUri, parameters);
+                        } finally {
+                            PropertyBindingSupport.setLiteralOptionBinding(prev);
+                        }
+                    } else {
+                        answer = component.createEndpoint(createUri, parameters);
+                    }
 
                     if (answer != null && LOG.isDebugEnabled()) {
                         LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,
@@ -1421,9 +1442,25 @@ public abstract class AbstractCamelContext extends BaseService
         // as this is used by route-reload functionality, so lets be brief
         logRouteStopSummary(LoggingLevel.DEBUG);
 
-        // remove all routes
-        for (Route route : getRoutes()) {
-            removeRoute(route.getRouteId(), LoggingLevel.DEBUG);
+        // remove all routes, gathering the endpoints in use once instead of for each removed route.
+        // The lock is not held across the loop, as removeRoute may be overridden to take other locks first
+        lock.lock();
+        try {
+            endpointsInUseOfRemovedRoutes = EndpointsInUse.of(routeServices);
+        } finally {
+            lock.unlock();
+        }
+        try {
+            for (Route route : getRoutes()) {
+                removeRoute(route.getRouteId(), LoggingLevel.DEBUG);
+            }
+        } finally {
+            lock.lock();
+            try {
+                endpointsInUseOfRemovedRoutes = null;
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -1651,15 +1688,13 @@ public abstract class AbstractCamelContext extends BaseService
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 if (getRouteStatus(routeId).isStopped()) {
-                    // gather a map of all the endpoints in use by the routes, so we can
-                    // know if a given endpoint is in use by one or more routes, when we
-                    // remove the route. This walks every route, so it is only done when a
-                    // route is actually removed: adding a route with an explicit id calls
-                    // this method too, for an id that is usually not in use.
-                    Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
-                    for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-                        endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
-                    }
+                    // the endpoints in use by the routes, so we can know if a given endpoint
+                    // is in use by one or more routes, when we remove the route. Gathering
+                    // them walks every route, so it is only done when a route is actually
+                    // removed: adding a route with an explicit id calls this method too, for
+                    // an id that is usually not in use. removeAllRoutes() gathers them once.
+                    EndpointsInUse endpointsInUse = endpointsInUseOfRemovedRoutes != null
+                            ? endpointsInUseOfRemovedRoutes : EndpointsInUse.of(routeServices);
                     try {
                         doRemove(routeId, loggingLevel, routeService, endpointsInUse);
                     } catch (Exception e) {
@@ -1679,7 +1714,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     private void doRemove(
-            String routeId, LoggingLevel loggingLevel, RouteService routeService, Map<String, Set<Endpoint>> endpointsInUse) {
+            String routeId, LoggingLevel loggingLevel, RouteService routeService, EndpointsInUse endpointsInUse) {
         routeService.setRemovingRoutes(true);
         shutdownRouteService(routeService, loggingLevel);
         routeServices.remove(routeId);
@@ -1696,22 +1731,7 @@ public abstract class AbstractCamelContext extends BaseService
         // from the route which we have removed, then remove all its
         // private endpoints
         // (eg the endpoints which are not in use by other routes)
-        Set<Endpoint> toRemove = new LinkedHashSet<>();
-        for (Endpoint endpoint : endpointsInUse.get(routeId)) {
-            // how many times is the endpoint in use
-            int count = 0;
-            for (Set<Endpoint> endpointSet : endpointsInUse.values()) {
-                if (endpointSet.contains(endpoint)) {
-                    count++;
-                }
-            }
-            // notice we will count ourselves so if there is only 1
-            // then its safe to remove
-            if (count <= 1) {
-                toRemove.add(endpoint);
-            }
-        }
-        for (Endpoint endpoint : toRemove) {
+        for (Endpoint endpoint : endpointsInUse.removeRoute(routeId)) {
             LOG.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
             removeEndpoint(endpoint);
         }
@@ -3815,6 +3835,8 @@ public abstract class AbstractCamelContext extends BaseService
                 } else {
                     // start the route service
                     routeServices.put(routeService.getId(), routeService);
+                    // the endpoints gathered by removeAllRoutes() do not include those of this route
+                    endpointsInUseOfRemovedRoutes = null;
                     // special situation if Camel is stopping and we do graceful shutdown, and process remainder
                     // inflight messages, and they trigger a dynamic endpoint (toD) that calls a kamelet, then
                     // we need to allow creating the kamelet route to be able to process the inflight message
@@ -4986,5 +5008,43 @@ public abstract class AbstractCamelContext extends BaseService
     @SuppressWarnings("unused")
     private List<BootstrapCloseable> getBootstraps() {
         return camelContextExtension.getBootstraps();
+    }
+
+    /**
+     * The endpoints in use by routes, and by how many of them, to find the endpoints that only a removed route uses.
+     */
+    private static final class EndpointsInUse {
+
+        private final Map<String, Set<Endpoint>> endpointsByRoute = new HashMap<>();
+        private final Map<Endpoint, Integer> routeCountByEndpoint = new HashMap<>();
+
+        static EndpointsInUse of(Map<String, RouteService> routeServices) {
+            EndpointsInUse answer = new EndpointsInUse();
+            for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+                Set<Endpoint> endpoints = entry.getValue().gatherEndpoints();
+                answer.endpointsByRoute.put(entry.getKey(), endpoints);
+                for (Endpoint endpoint : endpoints) {
+                    answer.routeCountByEndpoint.merge(endpoint, 1, Integer::sum);
+                }
+            }
+            return answer;
+        }
+
+        /**
+         * Removes the route and returns the endpoints that no other route uses.
+         */
+        Set<Endpoint> removeRoute(String routeId) {
+            Set<Endpoint> answer = new LinkedHashSet<>();
+            Set<Endpoint> endpoints = endpointsByRoute.remove(routeId);
+            if (endpoints != null) {
+                for (Endpoint endpoint : endpoints) {
+                    if (routeCountByEndpoint.merge(endpoint, -1, Integer::sum) <= 0) {
+                        routeCountByEndpoint.remove(endpoint);
+                        answer.add(endpoint);
+                    }
+                }
+            }
+            return answer;
+        }
     }
 }

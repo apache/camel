@@ -157,6 +157,11 @@ class CamelMainExporter extends Exporter {
                                 // old option name for Camel 4.13 and older
                                 prop.put("camel.server.health-check-enabled", "true");
                             }
+                            // the health check does not start without camel-health, and the dependencies were
+                            // resolved from the application.properties before this added it
+                            if (!hasCamelArtifact(deps, "camel-health")) {
+                                deps.add("camel:health");
+                            }
                         }
                     }
                     port = ExportHelper.httpManagementPort(settings);
@@ -379,8 +384,6 @@ class CamelMainExporter extends Exporter {
         // log4j configuration
         InputStream is = CamelMainExporter.class.getResourceAsStream("/log4j2-main.properties");
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
-        is = CamelMainExporter.class.getResourceAsStream("/export/log4j2.component.properties");
-        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
     }
 
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {

@@ -113,7 +113,21 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     protected Path exportBaseDir;
     // the working directory, which is deleted and created again when running
-    Path workDir = CommandLineHelper.getWorkDir();
+    protected Path workDir = CommandLineHelper.getWorkDir();
+
+    public Path getWorkDir() {
+        return workDir;
+    }
+
+    public void setWorkDir(Path workDir) {
+        this.workDir = workDir;
+    }
+
+    public Run withWorkDir(Path workDir) {
+        this.workDir = workDir;
+        return this;
+    }
+
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;

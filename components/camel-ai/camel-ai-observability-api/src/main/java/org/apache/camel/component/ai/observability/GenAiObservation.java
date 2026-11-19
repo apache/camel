@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.function.Supplier;
+
 /**
  * Active GenAI operation observation. Close when the LLM call completes.
  */
@@ -30,6 +32,75 @@ public interface GenAiObservation extends AutoCloseable {
      * Records a failed GenAI operation.
      */
     void recordError(Throwable error);
+
+    /**
+     * Records the number of input tokens read from the provider's prompt cache. Recorded from level
+     * {@link GenAiObservabilityLevel#DETAILED}.
+     *
+     * @since 4.24
+     */
+    default void recordCachedInputTokens(Long cachedInputTokens) {
+        // noop
+    }
+
+    /**
+     * Records the messages sent to the model. The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordInputMessages(Supplier<GenAiMessages> messages) {
+        // noop
+    }
+
+    /**
+     * Records the messages returned by the model. The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordOutputMessages(Supplier<GenAiMessages> messages) {
+        // noop
+    }
+
+    /**
+     * Records the system instructions given separately from the chat history. The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordSystemInstructions(Supplier<String> instructions) {
+        // noop
+    }
+
+    /**
+     * Records the tools offered to the model in the request. The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordToolDefinitions(Supplier<GenAiToolDefinitions> definitions) {
+        // noop
+    }
+
+    /**
+     * Records the arguments of a tool call (JSON). The supplier is only called at level
+     * {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordToolArguments(Supplier<String> arguments) {
+        // noop
+    }
+
+    /**
+     * Records the result of a tool call. The supplier is only called at level {@link GenAiObservabilityLevel#FULL}.
+     *
+     * @since 4.24
+     */
+    default void recordToolResult(Supplier<String> result) {
+        // noop
+    }
 
     @Override
     void close();

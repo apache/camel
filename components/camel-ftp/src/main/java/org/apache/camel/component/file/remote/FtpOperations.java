@@ -844,7 +844,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     is = GenericFileHelper.toInputStream(exchange, charset);
                     log.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
-                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                    is = GenericFileHelper.mandatoryBodyStream(exchange, exchange.getIn(), FileUtil.stripPath(name));
                 }
             }
 
@@ -883,7 +883,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } catch (InvalidPayloadException e) {
-            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+            // say why: the body cannot be written as it is (CAMEL-27151)
+            throw new GenericFileOperationFailedException("Cannot store file: " + name + ": " + e.getMessage(), e);
         } finally {
             IOHelper.close(is, "store: " + name, log);
         }
@@ -1021,8 +1022,23 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
         if (!success) {
-            throw new GenericFileOperationFailedException(
-                    client.getReplyCode(), client.getReplyString(), "Cannot change directory to: " + path);
+            // the reply to the change of directory, before the command that reads the current directory replaces it
+            int replyCode = client.getReplyCode();
+            String replyString = client.getReplyString();
+            String message = "Cannot change directory to: " + path;
+            if (!FileUtil.hasLeadingSeparator(path)) {
+                // give the directory that a relative path starts from (the login directory, for the directory of the
+                // endpoint)
+                try {
+                    String current = client.printWorkingDirectory();
+                    if (current != null) {
+                        message += ". The path is relative to the current directory: " + current;
+                    }
+                } catch (IOException e) {
+                    log.trace("Cannot get the current directory: {}", e.getMessage(), e);
+                }
+            }
+            throw new GenericFileOperationFailedException(replyCode, replyString, message);
         }
     }
 

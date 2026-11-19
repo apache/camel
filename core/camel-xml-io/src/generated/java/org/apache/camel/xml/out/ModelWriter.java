@@ -2193,7 +2193,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("instanceClassName", def.getInstanceClassName(), null);
-        doWriteAttribute("library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute("library", toString(def.getLibrary()), "Jackson");
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
         doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute("include", def.getInclude(), null);
@@ -2532,6 +2532,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("partClass", def.getPartClass(), null);
         doWriteAttribute("partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute("allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute("schemaLocation", def.getSchemaLocation(), null);

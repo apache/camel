@@ -34,8 +34,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
- * The partClass of the jaxb data format configured on the context (such as with camel.dataformat.jaxb.part-class in
- * Camel Main) does not apply to the REST DSL binding, where the type of the verb decides the body type.
+ * The partClass and allowPartClassFromHeader of the jaxb data format configured on the context (such as with
+ * camel.dataformat.jaxb.part-class in Camel Main) do not apply to the REST DSL binding, where the type of the verb
+ * decides the body type.
  */
 public class JaxbRestBindingPartClassTest extends CamelTestSupport {
 
@@ -45,6 +46,7 @@ public class JaxbRestBindingPartClassTest extends CamelTestSupport {
         context.getRegistry().bind("direct-rest", new DirectRestConsumerFactory());
         JaxbDataFormat jaxb = (JaxbDataFormat) context.resolveDataFormat("jaxb");
         jaxb.setPartClass(Bar.class);
+        jaxb.setAllowPartClassFromHeader(true);
         return context;
     }
 
@@ -54,6 +56,18 @@ public class JaxbRestBindingPartClassTest extends CamelTestSupport {
         posted.expectedMessageCount(1);
 
         template.requestBody("direct:post-order", "<purchaseOrder name=\"foo\" price=\"1.23\" amount=\"2.0\"/>");
+
+        posted.assertIsSatisfied();
+        assertInstanceOf(PurchaseOrder.class, posted.getReceivedExchanges().get(0).getMessage().getBody());
+    }
+
+    @Test
+    void restBindingDoesNotTakeAllowPartClassFromHeader() throws Exception {
+        MockEndpoint posted = getMockEndpoint("mock:posted");
+        posted.expectedMessageCount(1);
+
+        template.requestBodyAndHeader("direct:post-order", "<purchaseOrder name=\"foo\" price=\"1.23\" amount=\"2.0\"/>",
+                JaxbConstants.JAXB_PART_CLASS, Bar.class.getName());
 
         posted.assertIsSatisfied();
         assertInstanceOf(PurchaseOrder.class, posted.getReceivedExchanges().get(0).getMessage().getBody());

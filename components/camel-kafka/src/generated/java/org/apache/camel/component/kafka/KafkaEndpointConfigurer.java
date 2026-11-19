@@ -197,8 +197,12 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "saslPassword": target.getConfiguration().setSaslPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "saslusername":
         case "saslUsername": target.getConfiguration().setSaslUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaformat":
+        case "schemaFormat": target.getConfiguration().setSchemaFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaregistryurl":
         case "schemaRegistryURL": target.getConfiguration().setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": target.getConfiguration().setSchemaRegistryVendor(property(camelContext, java.lang.String.class, value)); return true;
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "seekto":
@@ -439,8 +443,12 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "saslPassword": return java.lang.String.class;
         case "saslusername":
         case "saslUsername": return java.lang.String.class;
+        case "schemaformat":
+        case "schemaFormat": return java.lang.String.class;
         case "schemaregistryurl":
         case "schemaRegistryURL": return java.lang.String.class;
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": return java.lang.String.class;
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
         case "seekto":
@@ -682,8 +690,12 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "saslPassword": return target.getConfiguration().getSaslPassword();
         case "saslusername":
         case "saslUsername": return target.getConfiguration().getSaslUsername();
+        case "schemaformat":
+        case "schemaFormat": return target.getConfiguration().getSchemaFormat();
         case "schemaregistryurl":
         case "schemaRegistryURL": return target.getConfiguration().getSchemaRegistryURL();
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": return target.getConfiguration().getSchemaRegistryVendor();
         case "securityprotocol":
         case "securityProtocol": return target.getConfiguration().getSecurityProtocol();
         case "seekto":

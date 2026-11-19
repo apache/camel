@@ -29,6 +29,7 @@ import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
+import dev.langchain4j.observability.api.listener.AiServiceListener;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.AiServiceTool;
 import dev.langchain4j.service.tool.ToolProvider;
@@ -270,6 +271,12 @@ public abstract class AbstractAgent<S> implements Agent {
         // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed).
         if (configuration.getAiServicesCustomizer() != null) {
             configuration.getAiServicesCustomizer().accept(builder);
+        }
+
+        // Listeners of the current invocation, such as the GenAI observability of the Camel producer
+        List<AiServiceListener<?>> invocationListeners = AgentInvocationListeners.current();
+        if (!invocationListeners.isEmpty()) {
+            builder.registerListeners(invocationListeners);
         }
     }
 

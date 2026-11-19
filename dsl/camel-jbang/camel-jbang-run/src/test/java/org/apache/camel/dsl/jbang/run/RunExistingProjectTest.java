@@ -108,6 +108,8 @@ class RunExistingProjectTest {
         assertThat(content).contains("rootLogger.level = debug");
         assertThat(content).doesNotContain("{{");
 
+        assertThat(content).contains("shutdownHook = disable");
+
         RunRequest request = request();
         request.port = 9090;
         request.maxSeconds = 30;

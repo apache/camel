@@ -1,10 +1,11 @@
-= OpenStack Cinder Component
+= OpenStack Cinder Component (deprecated)
 :doctitle: OpenStack Cinder
 :shortname: openstack-cinder
 :artifactid: camel-openstack
 :description: Access data in OpenStack Cinder block storage.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

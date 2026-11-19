@@ -4,7 +4,7 @@
     "name": "openstack-neutron",
     "title": "OpenStack Neutron",
     "description": "Access OpenStack Neutron for network services.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.neutron.NeutronComponent",

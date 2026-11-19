@@ -73,7 +73,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
+         * Set the whole Connection String/Uri for mongodb endpoint. When set,
+         * the endpoint creates its client from it, instead of using the client
+         * of the component or the connectionBean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -541,7 +543,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -557,7 +560,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1652,7 +1656,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
+         * Set the whole Connection String/Uri for mongodb endpoint. When set,
+         * the endpoint creates its client from it, instead of using the client
+         * of the component or the connectionBean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1889,7 +1895,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1905,7 +1912,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2929,7 +2937,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
+         * Set the whole Connection String/Uri for mongodb endpoint. When set,
+         * the endpoint creates its client from it, instead of using the client
+         * of the component or the connectionBean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3166,7 +3176,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3182,7 +3193,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Specifies that all communication with MongoDB instances should use
-         * TLS. Supersedes the ssl option. Default: false.
+         * TLS. Supersedes the ssl option. Applies to the client the endpoint
+         * creates from hosts or connectionUriString. Default: false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4148,7 +4160,8 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * Path parameter: connectionBean (required)
          * Sets the connection bean reference used to lookup a client for
-         * connecting to a database if no hosts parameter is present.
+         * connecting to a database if neither the hosts nor the
+         * connectionUriString parameter is present.
          * 
          * @param path connectionBean
          * @return the dsl builder
@@ -4168,7 +4181,8 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * Path parameter: connectionBean (required)
          * Sets the connection bean reference used to lookup a client for
-         * connecting to a database if no hosts parameter is present.
+         * connecting to a database if neither the hosts nor the
+         * connectionUriString parameter is present.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

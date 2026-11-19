@@ -141,10 +141,14 @@ public final class EndpointHelper {
 
         // the query parameters needs to be rebuild by removing the unresolved key=value pairs
         if (query != null && query.contains(prefix)) {
-            Map<String, Object> params = URISupport.parseQuery(query);
+            // use raw mode to avoid URL-decoding parameter values (which would corrupt values
+            // containing special characters such as colons, slashes, question marks or equals signs,
+            // e.g. a URL passed as a Kamelet parameter). The corresponding createQueryString call
+            // must skip re-encoding to preserve the original raw values as-is.
+            Map<String, Object> params = URISupport.parseQuery(query, true);
             final Map<String, Object> keep = extractParamsToKeep(params, prefix);
-            // rebuild query
-            query = URISupport.createQueryString(keep);
+            // rebuild query without re-encoding (values are already raw)
+            query = URISupport.createQueryString(keep, false);
         }
 
         // assemble uri as answer
@@ -357,6 +361,9 @@ public final class EndpointHelper {
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
+        // while an endpoint whose uri is computed from the current message is created, its option values are bound as
+        // literal text: a placeholder, #class: or #property: value is not resolved (#bean: and #type: still are)
+        PropertyBindingSupport.checkLiteralOptionReference(value);
         Object answer;
         if (value.startsWith("#class:")) {
             try {

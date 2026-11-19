@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.List;
+
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Category;
 import org.apache.camel.Processor;
@@ -30,6 +32,8 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Upload and download files to/from SFTP servers.
@@ -59,6 +63,8 @@ import org.apache.camel.spi.UriParam;
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SftpEndpoint.class);
+
     @UriParam
     protected SftpConfiguration configuration;
     @UriParam(label = "advanced")
@@ -85,6 +91,22 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
         // need to set on both
         this.configuration = (SftpConfiguration) configuration;
         super.setConfiguration(configuration);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        String preferredAuthentications = configuration.getPreferredAuthentications();
+        if (preferredAuthentications != null) {
+            List<String> unknown = SftpOperations.unknownAuthenticationMethods(preferredAuthentications);
+            if (!unknown.isEmpty()) {
+                LOG.warn("The preferredAuthentications option of {} has authentication methods that JSch does not know,"
+                         + " which it skips: {}. The methods are password, keyboard-interactive, publickey and"
+                         + " gssapi-with-mic.",
+                        configuration.remoteServerInformation(), String.join(", ", unknown));
+            }
+        }
     }
 
     @Override

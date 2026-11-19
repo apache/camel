@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -78,7 +79,10 @@ public class StopProcess extends ProcessBaseCommand {
         if (!all && (name == null || name.isBlank())) {
             requireOneRunning();
         }
-        List<Long> pids = findIntegrationPids(all ? "*" : name);
+        List<Long> pids = launchedBy(all ? null : name);
+        if (pids.isEmpty()) {
+            pids = findIntegrationPids(all ? "*" : name);
+        }
 
         for (Long pid : pids) {
             Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
@@ -137,6 +141,35 @@ public class StopProcess extends ProcessBaseCommand {
             throw CliException.usage(running.size() + " Camel integrations are running: " + names
                                      + ". Give the name or pid of the one to stop, or --all to stop them all");
         }
+    }
+
+    /**
+     * The running Camel integrations that the process with this pid launched, when the pid is not a Camel integration
+     * itself: such as the JBang launcher of camel run, whose pid Citrus keeps, while the Camel JVM is its child. Camel
+     * 4.23 signalled a pid as it was given; since CAMEL-26911 only Camel integrations are signalled, so the
+     * integrations below the launcher are stopped instead (CAMEL-27149).
+     *
+     * @param  nameOrPid the argument of camel stop
+     * @return           the pids of the integrations, or an empty list when the argument is not a pid, is a Camel
+     *                   integration, or launched none
+     */
+    private List<Long> launchedBy(String nameOrPid) {
+        if (nameOrPid == null || !nameOrPid.matches("\\d+") || !ProcessFinder.find(nameOrPid).isEmpty()) {
+            return List.of();
+        }
+        long launcher = Long.parseLong(nameOrPid);
+        Set<Long> descendants = ProcessHandle.of(launcher)
+                .map(ph -> ph.descendants().map(ProcessHandle::pid).collect(Collectors.toSet()))
+                .orElse(Set.of());
+        if (descendants.isEmpty()) {
+            return List.of();
+        }
+        List<Long> pids = ProcessFinder.findAll().stream().map(ProcessFinder.CamelProcess::pid)
+                .filter(descendants::contains).collect(Collectors.toCollection(ArrayList::new));
+        if (!pids.isEmpty()) {
+            printer().println("PID " + launcher + " is not a Camel integration: stopping the Camel integration it launched");
+        }
+        return pids;
     }
 
     /**

@@ -4,7 +4,7 @@
     "name": "openstack-cinder",
     "title": "OpenStack Cinder",
     "description": "Access data in OpenStack Cinder block storage.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.cinder.CinderComponent",

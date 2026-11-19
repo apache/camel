@@ -188,7 +188,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -2427,6 +2428,19 @@ public class EndpointHeaderBuilders {
         return JsltEndpointBuilderFactory.JsltHeaderNameBuilder.INSTANCE;
     }
     /**
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder jsonata() {
+        return JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
@@ -3313,6 +3327,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderHeaderNameBuilder openstackCinder() {
         return CinderEndpointBuilderFactory.CinderHeaderNameBuilder.INSTANCE;
     }
@@ -3326,6 +3341,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder openstackGlance() {
         return GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder.INSTANCE;
     }
@@ -3340,6 +3356,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder openstackKeystone() {
         return KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder.INSTANCE;
     }
@@ -3353,6 +3370,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder openstackNeutron() {
         return NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder.INSTANCE;
     }
@@ -3366,6 +3384,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaHeaderNameBuilder openstackNova() {
         return NovaEndpointBuilderFactory.NovaHeaderNameBuilder.INSTANCE;
     }
@@ -3379,6 +3398,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder openstackSwift() {
         return SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder.INSTANCE;
     }

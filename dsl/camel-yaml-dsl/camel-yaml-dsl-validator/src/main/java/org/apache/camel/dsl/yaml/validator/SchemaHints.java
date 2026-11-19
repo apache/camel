@@ -879,7 +879,7 @@ final class SchemaHints {
             // - name: repo / type: ... / parameters: {...}: the options of a bean are its properties (CAMEL-26960)
             unknownProperty(".*/beans/\\d+",
                     m -> hasName(m) && Set.of("parameters", "params", "options", "args").contains(m.unknown()),
-                    m -> "what a bean is set up with goes under properties: (its setters, properties: {fileStore: x})"
+                    m -> "what a bean is set up with goes under properties: (its setters, properties: {fileName: x})"
                          + " or constructors: (the arguments of its constructor, constructors: {0: x})"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...; not for an item that has its name, where the
             // key is one a bean does not have

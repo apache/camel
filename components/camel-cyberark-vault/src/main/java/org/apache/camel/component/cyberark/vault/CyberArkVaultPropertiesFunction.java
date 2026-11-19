@@ -131,7 +131,7 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
         if (ObjectHelper.isNotEmpty(url) && ObjectHelper.isNotEmpty(account)) {
             // the SSL settings are only in the vault configuration (camel.vault.cyberark.verifySsl and certificatePath)
             CyberArkVaultConfiguration sslConfiguration = getCamelContext().getVaultConfiguration().cyberark();
-            SSLContext sslContext = ConjurClientFactory.createSslContext(sslConfiguration.isVerifySsl(),
+            SSLContext sslContext = ConjurClientFactory.createSslContext(getCamelContext(), sslConfiguration.isVerifySsl(),
                     sslConfiguration.getCertificatePath());
 
             // Create Conjur client based on authentication method

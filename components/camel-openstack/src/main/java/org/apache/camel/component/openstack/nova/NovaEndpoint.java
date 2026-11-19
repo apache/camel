@@ -55,6 +55,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                                    description = "The Flavor, Server or Keypair of openstack4j created or read (null when get finds none), a List "
                                                  + "of them for getAll, the id of the image as text for createSnapshot; delete and a server action "
                                                  + "keep the body"))
+@Deprecated(since = "4.24")
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")

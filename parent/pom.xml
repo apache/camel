@@ -58,10 +58,10 @@
         <sourcecheckExcludesComma />
 
         <!-- dependency versions -->
-        <activemq-version>5.19.11</activemq-version>
+        <activemq-version>5.19.12</activemq-version>
         <activemq6-version>6.3.2</activemq6-version>
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
-        <aesh-version>3.19.1</aesh-version>
+        <aesh-version>3.19.2</aesh-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
@@ -82,7 +82,7 @@
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
-        <apicurio-registry-sdk-version>3.3.3</apicurio-registry-sdk-version>
+        <apicurio-registry-sdk-version>3.3.4</apicurio-registry-sdk-version>
         <arangodb-java-version>7.28.0</arangodb-java-version>
         <ascii-table-version>1.13.0</ascii-table-version>
         <asm-version>9.11.1</asm-version>
@@ -95,8 +95,10 @@
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.2</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
+        <aws-glue-schema-registry-version>2.0.2</aws-glue-schema-registry-version>
         <aws-java-sdk2-version>2.57.11</aws-java-sdk2-version>
         <azure-iot-device-client-version>2.5.1</azure-iot-device-client-version>
+        <azure-schemaregistry-kafka-avro-version>1.1.4</azure-schemaregistry-kafka-avro-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -141,6 +143,7 @@
         <commons-text-version>1.15.0</commons-text-version>
         <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.1</compress-lzf-version>
+        <confluent-serializer-version>8.3.3</confluent-serializer-version>
         <consul-client-version>1.12.2</consul-client-version>
         <couchbase-client-version>3.13.1</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
@@ -153,7 +156,7 @@
         <dapr-version>1.19.0</dapr-version>
         <dapr-workflow-version>1.19.0</dapr-workflow-version>
         <datasonnet-mapper-version>3.0.1.3</datasonnet-mapper-version>
-        <debezium-version>3.7.0.Final</debezium-version>
+        <debezium-version>3.7.1.Final</debezium-version>
         <debezium-mysql-connector-version>26.10.0</debezium-mysql-connector-version>
         <dhis2-version>3.0.2</dhis2-version>
         <directory-api-version>2.1.9</directory-api-version>
@@ -272,7 +275,8 @@
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-annotations-version>2.23</jackson-annotations-version>
-        <jackson-jq-version>1.6.5</jackson-jq-version>
+        <!-- jackson-jq 2.x is still in alpha: check the upstream API and operator precedence changes when bumping -->
+        <jackson-jq-version>2.0.0-alpha2</jackson-jq-version>
         <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
@@ -431,7 +435,7 @@
         <flagd-provider-version>0.15.0</flagd-provider-version>
         <flagd-core-version>3.0.0</flagd-core-version>
         <flagd-api-version>1.0.0</flagd-api-version>
-        <mcp-java-sdk-version>2.1.0</mcp-java-sdk-version>
+        <mcp-java-sdk-version>2.2.0</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
         <openai-java-version>4.78.0</openai-java-version>
@@ -480,7 +484,7 @@
         <quarkus-version>3.40.1.1</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.2</quickfixj-version>
-        <quickjs4j-version>0.1.0</quickjs4j-version>
+        <quickjs4j-version>0.1.1</quickjs4j-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.8</reactor-version>
         <reactor-netty-version>1.3.8</reactor-netty-version>
@@ -511,7 +515,7 @@
         <snakeyaml-version>2.7</snakeyaml-version>
         <snakeyaml-engine-version>3.2</snakeyaml-engine-version>
         <snappy-java-version>1.1.10.12</snappy-java-version>
-        <snmp4j-version>3.13.1</snmp4j-version>
+        <snmp4j-version>3.13.2</snmp4j-version>
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spring-ai-version>2.0.2</spring-ai-version>
@@ -542,11 +546,11 @@
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.7.0</tamboui-version>
         <testcontainers-version>2.0.5</testcontainers-version>
-        <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
+        <thymeleaf-version>3.1.7.RELEASE</thymeleaf-version>
         <tika-version>4.1.0</tika-version>
         <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-servlet-version>2.3.27.Final</undertow-servlet-version>
+        <undertow-ee-version>2.0.3.Final</undertow-ee-version>
         <undertow-version>2.4.4.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
@@ -4142,27 +4146,6 @@
                                 </exclusion>
                             </exclusions>
                         </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-trax</artifactId>
-                            <version>1.8.0</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-nodeps</artifactId>
-                            <version>1.8.1</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.openjpa</groupId>
-                            <artifactId>openjpa-persistence-jdbc</artifactId>
-                            <version>${openjpa-version}</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -4678,9 +4661,32 @@
                                 </goals>
                                 <configuration>
                                     <propertyName>jacocoAgent</propertyName>
+                                    <!-- Only instrument Camel classes: instrumenting third party libraries slows down the tests for no coverage value -->
+                                    <includes>
+                                        <include>org/apache/camel/**</include>
+                                    </includes>
                                     <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
                                     <excludes>
                                         <exclude>**/CamelThreadFactory*</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                            <!-- Generates the coverage report of one module from the execution data of all the modules
+                                 merged by the "coverage" profile of the root pom (some modules are covered by the tests of other modules).
+                                 Not bound to the build: run it with "mvn -Pcoverage jacoco:report@report-module"
+                                 after the merge of the execution data, see the Jenkinsfile and sonar-build.yml. -->
+                            <execution>
+                                <id>report-module</id>
+                                <phase>none</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <dataFile>${maven.multiModuleProjectDirectory}/target/jacoco-merged.exec</dataFile>
+                                    <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
+                                    <excludes>
+                                        <exclude>**/CamelThreadFactory*</exclude>
+                                        <exclude>**/ContextValueFactory*</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>

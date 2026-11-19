@@ -192,8 +192,8 @@ class McpServerMainAuthenticationTest {
     @Test
     void testMcpToolCallCarriesRuntimeNeutralPrincipalNameToTheToolRoute() {
         // CAMEL-25405: alongside the raw principal, the runtime-neutral caller name must reach the tool route over MCP
-        // as the CamelMcpSecurityPrincipalName exchange property, so a policy can authorize on a stable name without
-        // depending on the Vert.x user type. For the basic-auth user the name is the username "camel".
+        // as the CamelAiToolSecurityPrincipalName exchange property, so a policy can authorize on a stable name
+        // without depending on the Vert.x user type. For the basic-auth user the name is the username "camel".
         String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
         McpSyncClient client = null;
         try {
@@ -222,8 +222,8 @@ class McpServerMainAuthenticationTest {
     void testMcpBasicAuthCallerHasNoRuntimeNeutralRoles() {
         // CAMEL-25405: roles are read from the authenticated token's claims. The camel-main basic-auth user carries
         // no roles in its principal (property-file roles live in the Vert.x authorizations, not principal()), so the
-        // CamelMcpSecurityPrincipalRoles property is not stamped for a basic-auth caller. This locks in the documented
-        // limitation; positive role extraction from token claims is covered by VertxMcpPrincipalTest.
+        // CamelAiToolSecurityPrincipalRoles property is not stamped for a basic-auth caller. This locks in the
+        // documented limitation; positive role extraction from token claims is covered by VertxMcpPrincipalTest.
         String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
         McpSyncClient client = null;
         try {

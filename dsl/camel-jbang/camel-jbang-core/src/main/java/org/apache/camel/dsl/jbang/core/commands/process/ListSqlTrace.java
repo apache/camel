@@ -30,6 +30,7 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -56,6 +57,10 @@ public class ListSqlTrace extends ProcessWatchCommand {
     @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
             completer = PidNameAgeCompletionCandidates.class)
     String sort;
+
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
 
     public ListSqlTrace(CamelJBangMain main) {
         super(main);
@@ -86,7 +91,7 @@ public class ListSqlTrace extends ProcessWatchCommand {
                         row.routeId = o.getString("routeId");
                         row.query = o.getString("query");
                         row.category = o.getString("category");
-                        row.endpoint = o.getString("endpoint");
+                        row.endpoint = ListingFormat.masked(o.getString("endpoint"), mask);
                         row.duration = o.getLongOrDefault("duration", 0);
                         row.rowCount = o.getIntegerOrDefault("rowCount", 0);
                         row.updateCount = o.getIntegerOrDefault("updateCount", 0);

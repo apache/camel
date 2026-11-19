@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.util.ObjectHelper;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -56,9 +56,12 @@ public class SmppProducer extends DefaultProducer {
     private final SmppConfiguration configuration;
     private final SessionStateListener internalSessionStateListener;
     private final ReentrantLock connectLock = new ReentrantLock();
-    private final ScheduledExecutorService reconnectService;
+    // created again by a start after a stop, as the stop shuts it down
+    private volatile ScheduledExecutorService reconnectService;
 
     private SMPPSession session;
+    // the reconnect task that the thread which reported the lost session waits for, so that a stop can release it
+    private volatile BackgroundTask reconnectTask;
 
     public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
@@ -84,6 +87,7 @@ public class SmppProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        restartReconnectService();
 
         if (!getConfiguration().isLazySessionCreation()) {
             if (connectLock.tryLock()) {
@@ -154,14 +158,16 @@ public class SmppProducer extends DefaultProducer {
                 if (connectLock.tryLock()) {
                     try {
                         if (session == null) {
-                            // set the system id and password with which we will try to connect to the SMSC
-                            Message in = exchange.getIn();
-                            String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
-                            String password = in.getHeader(SmppConstants.PASSWORD, String.class);
-                            if (systemId != null && password != null) {
-                                LOG.info("using the system id '{}' to connect to the SMSC...", systemId);
-                                this.configuration.setSystemId(systemId);
-                                this.configuration.setPassword(password);
+                            if (this.configuration.isAllowSystemIdAndPasswordFromHeaders()) {
+                                // set the system id and password with which we will try to connect to the SMSC
+                                Message in = exchange.getIn();
+                                String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
+                                String password = in.getHeader(SmppConstants.PASSWORD, String.class);
+                                if (systemId != null && password != null) {
+                                    LOG.info("using the system id '{}' to connect to the SMSC...", systemId);
+                                    this.configuration.setSystemId(systemId);
+                                    this.configuration.setPassword(password);
+                                }
                             }
                             session = createSession();
                         }
@@ -184,9 +190,26 @@ public class SmppProducer extends DefaultProducer {
         command.execute(exchange);
     }
 
+    /**
+     * A stop shuts down the reconnect service. When this instance is started again in place (such as by suspendRoute
+     * and resumeRoute, which stop and start a service that is not Suspendable), a lost session would otherwise schedule
+     * its reconnect task on the shut down service, where it never runs.
+     */
+    private void restartReconnectService() {
+        if (reconnectService.isShutdown()) {
+            reconnectService = createExecutor(this, getEndpoint(), RECONNECT_TASK_NAME);
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
         shutdownReconnectService(reconnectService);
+        // the shut down reconnect service no longer runs the reconnect task, so nothing else would release the thread
+        // that waits for it
+        BackgroundTask task = reconnectTask;
+        if (task != null) {
+            task.cancel(false);
+        }
 
         LOG.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
 
@@ -207,13 +230,19 @@ public class SmppProducer extends DefaultProducer {
 
     private void reconnect() {
         if (connectLock.tryLock()) {
-            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+            BackgroundTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
                     configuration.getInitialReconnectDelay(),
                     configuration.getReconnectDelay(), configuration.getMaxReconnect());
 
+            reconnectTask = task;
             try {
-                task.run(getEndpoint().getCamelContext(), this::doReconnect);
+                // a stop that began before the task was published does not cancel it, and the task would never run
+                // on the shut down reconnect service
+                if (!isServiceStopping(this)) {
+                    task.run(getEndpoint().getCamelContext(), this::doReconnect);
+                }
             } finally {
+                reconnectTask = null;
                 connectLock.unlock();
             }
         } else {

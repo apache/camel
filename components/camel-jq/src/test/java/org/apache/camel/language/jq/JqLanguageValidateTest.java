@@ -16,7 +16,7 @@
  */
 package org.apache.camel.language.jq;
 
-import net.thisptr.jackson.jq.exception.JsonQueryException;
+import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ public class JqLanguageValidateTest {
         JsonQueryException e = assertThrows(JsonQueryException.class, () -> {
             Assertions.assertFalse(lan.validateExpression(". ^^+ [{\"array\": body()}]"));
         });
-        Assertions.assertTrue(e.getMessage().startsWith("Cannot compile query"));
+        Assertions.assertTrue(e.getMessage().startsWith("Lexical error"));
     }
 
 }

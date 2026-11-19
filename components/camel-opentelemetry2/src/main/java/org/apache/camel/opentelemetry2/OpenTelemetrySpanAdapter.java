@@ -70,6 +70,16 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     }
 
     @Override
+    public void setTag(String key, long value) {
+        this.otelSpan.setAttribute(key, value);
+    }
+
+    @Override
+    public void setTag(String key, double value) {
+        this.otelSpan.setAttribute(key, value);
+    }
+
+    @Override
     public void setComponent(String component) {
         this.setTag(TagConstants.COMPONENT, component);
     }

@@ -13,6 +13,20 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== Undertow servlet implementation
+
+`camel-undertow` now uses the Jakarta Servlet 6.1 implementation from Undertow EE,
+`io.undertow.ee:undertow-servlet`, instead of `io.undertow:undertow-servlet`.
+Undertow core continues to use `io.undertow:undertow-core` and has its own version.
+The Camel parent property for the servlet implementation changes from `undertow-servlet-version`
+to `undertow-ee-version`.
+
+Applications that declare or override the Undertow servlet dependency must migrate to the new coordinates.
+Remove or exclude the old servlet artifact from other dependencies: the two artifacts contain the same
+`io.undertow.servlet` packages and must not be included together.
+This also applies when combining `camel-undertow` with a Spring Boot Undertow server integration
+that uses Undertow EE.
+
 === camel-opa - batch fail-open marker
 
 Batch evaluation now sets `CamelOpaDecisionFailedOpen=true` when any element proceeds because its decision point
@@ -82,6 +96,12 @@ The `camel-observability-services` component has been promoted from _Preview_ to
 
 The `camel-lra` component has been promoted from _Preview_ to _Stable_ support level.
 
+=== camel-openstack - deprecated
+
+The `camel-openstack` components (`openstack-cinder`, `openstack-glance`, `openstack-keystone`, `openstack-neutron`,
+`openstack-nova` and `openstack-swift`) are deprecated. The openstack4j library they are based on has had no release or
+commit since May 2024, and is based on Jackson 2 with no clear path to Jackson 3.
+
 === KeyValueRepository and State Store - namespace partitioning on shared backends
 
 In Camel 4.23, `state-store` endpoints stored keys directly into the underlying `KeyValueRepository` without namespacing. When a single `KeyValueRepository` was shared between multiple state stores, the Cache EIP, or repository adapters (such as `KeyValueAggregationRepository` or `KeyValueIdempotentRepository`), operations on one store (such as `clear()`) or key collisions could affect entries of another component or pattern.
@@ -103,6 +123,68 @@ messages, and grew with each one. An exception from a predicate of `onException`
 `onCompletion`, a saga compensation, or the completion of the aggregation strategy of a Multicast, Recipient List or
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
+
+=== camel-core - a to with an expression in its endpoint uri logs a WARN
+
+A `to` resolves its endpoint once, when the route starts, so `to("jms:queue:${header.queue}")` sends every message to
+one queue named by the text of the expression. Camel now logs a WARN for such a `to` when it creates the route, and
+the WARN says to use `toD`. The route works as before. Only the endpoint path is checked, not the options after the
+`?`. The components that evaluate their path for each message are left alone: `language`, the `:#${...}` parameters
+of `sql`, and the components whose path option is marked `supportSimpleExpression` in their metadata, which now
+includes the template of `sql-stored` and the bucket name of `aws2-s3`.
+
+=== camel-core - option values of a dynamic endpoint are bound as literal text
+
+The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
+`dynamicRouter` -- compute their target endpoint from the current message at runtime. The option values of that
+endpoint are now bound as literal text: a property placeholder (`+{{...}}+`), a `#class:` value or a `#property:` value
+is not resolved. This extends to the options the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave
+the endpoint path. It applies however the component binds its options, including components that bind them in their
+own `createEndpoint` or look up a reference option with `resolveAndRemoveReferenceParameter`.
+
+This applies to every option of that uri, not only to the parts that come from the message: a `#class:` or
+`#property:` value written in the text of a `toD`, or in a uri that a bean of the route builds for `recipientList`,
+`routingSlip` or `dynamicRouter`, is not resolved either. For an option of type `String` the text is bound as is. For
+an option of another type, a `#class:` value fails the creation of the endpoint with a `ResolveEndpointFailedException`.
+Register the bean instead and refer to it with `#bean:`, for example:
+
+[source,java]
+----
+// before: the class was created for every new endpoint
+toD("log:audit?exchangeFormatter=#class:com.foo.MyFormatter&marker=${header.customer}")
+
+// after: create the bean once (e.g. camel.beans.myFormatter = #class:com.foo.MyFormatter) and refer to it
+toD("log:audit?exchangeFormatter=#bean:myFormatter&marker=${header.customer}")
+----
+
+What still works as before:
+
+* Registry references (`#bean:name`, `#type:`, `#name`) are still resolved, so `+toD("sql:${header.query}?dataSource=#ds")+` keeps working.
+* Property placeholders written in the text of a `toD` are resolved once when the route is built, so
+  `+toD("mock:foo?delay={{myDelay}}")+` is unchanged. `recipientList`, `routingSlip` and `dynamicRouter` still resolve
+  property placeholders in the computed uri string.
+* An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
+  before.
+
+=== camel-core - RAW() option values of a dynamic endpoint computed from the message are literal text
+
+A `RAW(...)` option value of an endpoint whose uri is computed from the current message at runtime (`toD`, `enrich`,
+`wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and `dynamicRouter`) is still unwrapped, but its content is now
+taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endpoints written in the route, such as
+`+to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})")+`, are unchanged. As the whole uri of `toD`
+is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
+use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
+is resolved once when the route is created.
+
+=== camel-core - Rest DSL binding mode json fails at startup without a JSON data format
+
+A Rest DSL service with `bindingMode` `json` or `json_xml` whose JSON data format (`jackson` unless `jsonDataFormat`
+names another) is not on the classpath now fails when Camel creates the route, with
+`JSON DataFormat jackson not found (the jackson data format is in camel-jackson3; add camel-jackson3 to the classpath).`
+Before, the route started and every request failed with `Cannot bind to json as message body is not json compatible`.
+This is what `xml` binding already did without its XML data format. Add the JSON data format, such as `camel-jackson3`
+(or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
+neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
@@ -159,6 +241,54 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request). The REST binding does not take this
+option from the JAXB data format configured on the CamelContext (such as `camel.dataformat.jaxb.*` in Camel Main).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
+
+=== camel-google-sheets - the x-struct transformer writes to the configured spreadsheet
+
+When the `google-sheets:application-x-struct` data type transformer turns JSON rows into a `ValueRange`, a
+`spreadsheetId` field in a row no longer chooses the spreadsheet. The spreadsheet is the one of the
+`CamelGoogleSheets.spreadsheetId` header, or else the `spreadsheetId` option of the endpoint. The field is still left
+out of the row values. Before, the field of the last row replaced the spreadsheet id, also when the header was set.
+
+Without the `CamelGoogleSheets.spreadsheetId` header, the transformer no longer sets the spreadsheet id headers
+(before it set them to an empty value), so the `spreadsheetId` option of the endpoint applies.
+
+Routes that take the spreadsheet from the message body must set the `CamelGoogleSheets.spreadsheetId` header from it
+before the transformer, for example with `setHeader` and a JSONPath expression.
+
+=== camel-google-sheets - the OAuth access token is sent only in the Authorization header
+
+The producer of `google-sheets` no longer copies the `accessToken` option onto the request as the
+`access_token` query parameter of the Google API. The access token is sent in the `Authorization` header by the OAuth
+credential of the client, as before, so the request URL no longer carries it. The other credential options
+(`clientId`, `clientSecret`, `refreshToken`, `serviceAccountKey` and `delegate`) are not set on the request either.
+A `CamelGoogleSheets.accessToken` header is ignored for the same reason; use a separate endpoint with its own
+`accessToken` to call with another token.
+
+=== camel-google-drive, camel-google-mail - the OAuth access token is sent only in the Authorization header
+
+The producers of `google-drive` and `google-mail` no longer copy the `accessToken` option onto the request as the
+`access_token` query parameter of the Google API. The access token is sent in the `Authorization` header by the OAuth
+credential of the client, as before, so the request URL no longer carries it. The other credential options
+(`clientId`, `clientSecret`, `refreshToken`, `serviceAccountKey` and `delegate`) are not set on the request either.
+A `CamelGoogleDrive.accessToken` or `CamelGoogleMail.accessToken` header is ignored for the same reason; use a
+separate endpoint with its own `accessToken` to call with another token. `google-calendar` follows the same rule; its
+requests had no `access_token` parameter.
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
@@ -198,6 +328,17 @@ Before, its lock failed with an `OptimisticLockException`, and the poll was roll
 
 Other JPA providers, and the optimistic lock modes, are not affected.
 
+=== camel-vertx-http - an https:// address always uses TLS
+
+A `vertx-http` endpoint with an `https://` address now always calls it with TLS, also when no `sslContextParameters`
+is configured. The server certificate is then checked with the default trust store of the JVM, and the host name is
+verified. Before, the request was sent without TLS unless TLS was turned on by `sslContextParameters`, global SSL
+settings or custom `WebClientOptions`. This applied to `https://` addresses with an explicit port, and since 4.21 to
+all `https://` addresses.
+
+A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
+for such a server. An `http://` address with `sslContextParameters` is not changed.
+
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
 `writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with
@@ -221,6 +362,39 @@ a missing header or session id gave `-32601` and an unknown session `-32603`.
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
+
+=== camel-ai-observability - token counts are numbers and Micrometer Observations carry usage
+
+The GenAI spans recorded through `camel-opentelemetry2` now set `gen_ai.usage.input_tokens` and
+`gen_ai.usage.output_tokens` as numbers (long attributes) instead of strings, as the OpenTelemetry GenAI semantic
+conventions define them. A query or dashboard in the tracing backend that compared them as strings must compare them as
+numbers.
+
+When GenAI observations go through a Micrometer `ObservationRegistry` (for example on Spring Boot), the token usage, the
+response model and the finish reason are now added as high-cardinality key values, as Spring AI does. They reach the
+traces, so the LLM calls recorded by Camel show their token usage there. They are not metric tags: the
+`gen_ai.client.operation` and `gen_ai.client.token.usage` metrics are unchanged.
+
+=== camel-ai-observability - calls traced by Spring AI, quarkus-langchain4j or the OpenTelemetry agent are recorded once
+
+When a `spring-ai-chat` model is built with an `ObservationRegistry` (as Spring Boot does when observation support is
+enabled), or a `langchain4j-chat` / `langchain4j-agent` model traces its calls (quarkus-langchain4j with
+`quarkus-opentelemetry`, or the `langchain4j-observation` listener), or the OpenTelemetry Java agent traces the
+`openai-java` calls of `camel-openai`, Camel no longer records its own GenAI span and metrics for those model calls: the framework already records them, and both together counted every call and its tokens
+twice. Set `camel.aiObservability.deferToFramework=false` to keep the previous behavior.
+
+At the default level `basic`, this also removes the span that a `langchain4j-agent` run on such a model had, which
+summed the tokens of the whole tool loop and carried the `camel.component` tag: the framework's spans record each model
+call instead. At level `detailed` the run keeps its own `invoke_agent` span.
+
+=== camel-ai-observability - GenAI spans go through camel-opentelemetry2 when it is in use
+
+When both `camel-opentelemetry2` and a Micrometer `ObservationRegistry` are present (for example on Spring Boot with the
+Actuator), the GenAI spans are now created through `camel-opentelemetry2`, in the same tree as the route spans, instead
+of as Micrometer Observations. The `gen_ai.client.operation` timer is then recorded directly through the
+`MeterRegistry` rather than by the Observation's meter handler, so it has no `error` tag and no
+`gen_ai.client.operation.active` long task timer. Applications that trace through Micrometer only, or with
+`camel-micrometer-observability`, keep the Observations.
 
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
@@ -321,6 +495,26 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-ai-tool, camel-ai-resource - suspending a route no longer stops it, and calls in flight complete when the route stops
+
+Suspending an `ai-tool` or `ai-resource` route, with `suspendRoute` or `context.suspend()`, now suspends the route
+instead of stopping it: the tool or resource is deregistered, tool calls and resource reads in flight complete, a new
+call to the suspended tool or read of the suspended resource is refused, and resuming the route registers the tool or
+resource again. When an `ai-tool` or `ai-resource` route is stopped, or Camel shuts down gracefully, tool calls and
+resource reads in flight now complete instead of failing.
+
+=== camel-ai-tool - a configuration bean combines with the options set at the same level
+
+An `AiToolConfiguration` bean given as the `configuration` option no longer replaces the options set beside it:
+
+- On the component, the options set on the component (such as `camel.component.ai-tool.authorization-policy`) are
+  kept when `camel.component.ai-tool.configuration` is also set, and win over the values of the bean, in whatever
+  order they are bound. Previously the bean could replace an option, depending on the order of binding.
+- On an endpoint, `configuration=#myBean` gives the values that the bean sets. The other options of the endpoint win
+  over them, and the values that the bean does not set come from the component, such as its `authorizationPolicy` and
+  `allowedRoles`. Previously the bean replaced the options of the endpoint and the values of the component. The bean
+  itself is no longer changed by the options of the endpoints that use it.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
@@ -375,6 +569,20 @@ Spring AI transport provider must configure its own `Origin` validator. This Spr
 affect the Quarkus engine.
 
 
+=== camel-mcp-server - MCP protocol version 2026-07-28 is served on /mcp
+
+On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now also serves clients of MCP protocol version
+2026-07-28, next to the protocol versions that open with an `initialize` handshake, and chooses for each request from
+the protocol version it carries. A client that opens with `initialize` is served as before, with a session. A client
+of 2026-07-28 has no session: a restart of the application, or a request reaching another instance, does not end it.
+Clients that try 2026-07-28 first and fall back to `initialize` (for example the client of the MCP Python SDK) now use
+2026-07-28.
+
+Serving 2026-07-28 is a preview, built on an API of the MCP Java SDK that may still change. Set the new option
+`camel.server.mcp-protocol-era = legacy` to serve only the protocol versions that open with `initialize`, as before;
+`modern` serves only 2026-07-28. The new option `camel.server.mcp-stateless = true` also serves the clients that open
+with `initialize` without a session. The MCP Java SDK is upgraded to 2.2.0.
+
 === camel-oauth - the scp claim is included in scope checks
 
 JWT validation and token introspection now read scopes from both the standard `scope` claim and the
@@ -383,6 +591,12 @@ are read as individual scopes. When both claims are present their values are com
 scopes are removed. Consequently, a token that has a required scope only in `scp` can now pass an
 `OAuthTokenValidationResult.hasScope(...)` check where it did not pass before. Review authorization
 rules that intentionally relied on ignoring `scp`.
+
+=== camel-cassandraql - a Map body binds the named markers
+
+The `cql` producer binds a `Map` body by name: each named marker of the statement, such as `:login`,
+takes the value of the `Map` entry of that name. Before, a `Map` body was bound as the value of a single
+marker. To keep that, such as for a column of type `map`, wrap the `Map` in a `List`.
 
 === camel-mina-sftp - checking whether a file exists takes one lstat request
 
@@ -525,6 +739,63 @@ starting directory (`autoCreate=true`), it now logs
 `Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.` instead.
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - sftp failures give the status of the server, and preferredAuthentications is not case-sensitive
+
+When the server refuses a request, the `GenericFileOperationFailedException` of the `sftp` component now gives the
+status of the server after its message, such as `Cannot list directory: inbox: SSH_FX_NO_SUCH_FILE: No such file`, and
+`getCode()` and `getReason()` return the SFTP status code and its text, as for `ftp`. Before, the status was only in the
+cause, and `getCode()` was `0`. The messages start as before, except when the attributes of a file cannot be read: the
+message starts with `Cannot get the attributes of: <name>` (or `Cannot list directory: <directory>`) instead of the
+status. A failed change to a relative directory, with `sftp`, `ftp` and `ftps`, also gives the current directory, such
+as `. The path is relative to the current directory: /home/admin`. Update code that compares the whole message.
+
+The `preferredAuthentications` option of `sftp` now takes the method names in any case, and with spaces around them.
+Before, JSch skipped a name such as `Password`, as it compares the names with the lower-case names of the server, and the
+login failed with `Auth fail for methods '...'`. A name that JSch does not know is logged at WARN when the endpoint
+starts. See the xref:components::sftp-component.adoc[SFTP component].
+
+=== camel-ftp - ftps checks the server certificate against the JVM trust store when no trust store is configured
+
+An `ftps` endpoint configured with neither `sslContextParameters` nor the `ftpClient.trustStore.` options now checks the
+certificate of the server against the default trust store of the JVM (the `cacerts` file of the JDK, or the trust
+store set with the `javax.net.ssl.trustStore` system property). Before, such an endpoint accepted any server
+certificate within its validity dates, without checking who signed it.
+
+A server certificate signed by a public certificate authority works as before. For an FTPS server with a self-signed
+certificate, or a certificate signed by your own certificate authority, the connection now fails in the TLS handshake:
+put that certificate (or the certificate of the authority) in a trust store, and configure it with the
+`ftpClient.trustStore.file`, `ftpClient.trustStore.password` and `ftpClient.trustStore.type` options, or with
+`sslContextParameters`. A custom `ftpClient` keeps the trust manager it was created with. See
+xref:components::ftp-component.adoc#_ftps_component_default_trust_store[FTPS component default trust store].
+
+=== camel-smb - a starting directory that cannot be created
+
+When the server refuses to create the starting directory of the `smb` consumer as the route starts (`autoCreate=true`),
+such as `STATUS_ACCESS_DENIED` on a read-only share, the route now starts and the consumer tries again on each poll, as
+the xref:camel-4x-upgrade-guide-4_13.adoc#_camel_file_camel_ftp_camel_smb_camel_azure_files[Camel 4.13 upgrade guide]
+describes. Before, the route failed to start. `SmbOperations.buildDirectory` now throws a
+`GenericFileOperationFailedException` with the smbj exception as its cause, as the ftp and sftp operations do. The
+producer and the moves that create a directory get this exception type too, and still fail as before when the server
+refuses to create it. An `onException` or `doCatch` for the smbj exception still matches it, as the cause.
+
+When the `smb` consumer connects but cannot create its starting directory (`autoCreate=true`), it now logs
+`Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.`, once. Before, it logged
+`Cannot connect/login to: ... Will skip this poll.`, or nothing when an earlier poll had already logged that it could
+not connect. The `Cannot connect/login to: ... Will skip this poll.` WARN now gives the reason before
+`Will skip this poll.`, such as `due to: Connection refused`, on one line.
+
+=== camel-azure-files - a starting directory that cannot be created, or a refused connection, no longer fails the route start
+
+When the share refuses to create the starting directory of the `azure-files` consumer as the route starts
+(`autoCreate=true`), such as `403 AuthorizationPermissionMismatch`, or refuses the connection, such as
+`403 AuthenticationFailed`, the route now starts and the consumer tries again on each poll, as the
+xref:camel-4x-upgrade-guide-4_13.adoc#_camel_file_camel_ftp_camel_smb_camel_azure_files[Camel 4.13 upgrade guide]
+describes. Before, the route failed to start. `FilesOperations.connect` and `FilesOperations.buildDirectory` now throw a
+`GenericFileOperationFailedException` with the `ShareStorageException` of the Azure SDK as its cause, as the ftp and sftp
+operations do with the error of their client. The producer and the moves that connect or create a directory get this
+exception type too, and still fail as before when the share refuses; an `onException(ShareStorageException.class)`
+still matches it, as the cause.
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
@@ -551,6 +822,25 @@ with index n now joins the group with the id `<groupInstanceId>-n`, for example 
 Before, all the consumers used the same id and fenced each other in a loop (`FencedInstanceIdException`). With
 `consumersCount=1` the id is used as given. After the upgrade, the static member with the old id stays in the group
 until its session timeout (`sessionTimeoutMs`) expires.
+
+=== camel-kafka - a consumer without groupId logs a WARN
+
+A Kafka consumer without `groupId` now logs a WARN when it starts. It still uses a generated consumer group id, a new
+one at each start: it does not resume from the offsets committed before a restart, and each instance of the application
+receives every record. Set `groupId` to use a stable consumer group. See the
+xref:components::kafka-component.adoc[Kafka component].
+
+=== camel-kafka - a consumer uses the group.id set in additionalProperties
+
+A Kafka consumer without `groupId` now uses the `group.id` set in `additionalProperties`
+(`additionalProperties.group.id` on the endpoint, or `camel.component.kafka.additional-properties[group.id]`).
+Before, the consumer replaced it with a generated group id, a new one at each start. Such a consumer now joins that
+group: it starts from the offsets committed by the group (or where `autoOffsetReset` says when the group has none), and
+the instances of the application that use the same group share the records. With `group.id` in the
+`additionalProperties` of the component, every consumer endpoint without `groupId` now joins that one group, where
+before each had a generated group of its own: routes that consume the same topic now share its records. Set `groupId`
+on each route that must receive every record. When both `groupId` and the `group.id` property are set, `groupId` is
+still used.
 
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
@@ -589,6 +879,13 @@ message is processed once per consumer; this is unchanged. This also applies whe
 and the route consumes from a topic, and to camel-activemq, camel-activemq6 and camel-amqp. To process each message
 once, set `subscriptionShared=true` with a `subscriptionName`, or use a single consumer on the topic.
 
+=== camel-jms - the exceptionHandler of a consumer gets the JMS exceptions of its listener container
+
+A consumer with the `exceptionHandler` option now gives that handler the JMS exceptions of its listener container,
+such as a connection to the broker that cannot be established or is lost (the consumer tries again every
+`recoveryInterval`). Before, the option was not used. When `exceptionListener` is set too, it still gets each
+exception, before the handler. This also applies to camel-activemq, camel-activemq6 and camel-amqp.
+
 === camel-sjms, camel-sjms2 - pollEnrich and ConsumerTemplate read the message before they close the session
 
 `pollEnrich` and a `ConsumerTemplate` on an `sjms` or `sjms2` endpoint now read the body and the headers of the message
@@ -605,7 +902,13 @@ carry the built-in `kc-admin-api` client scope, and rejects other tokens with `4
 assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
 `clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
 pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
-and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2 on amd64 and against
+Keycloak 26.0.5 on ppc64le.
+
+The `createOrganization` operation no longer sends the `autoRedirect` and `identityProviderAlias` fields of the
+organization domain, which the Keycloak 26.8 client library serializes (`autoRedirect` with the value `false`) and a
+Keycloak 26.0 server rejects with `400 Bad Request`. The producer never set these fields, so nothing changes for a
+Keycloak 26.8 server.
 
 === camel-kubernetes - the context reload on a secret or config map update lists the resources
 
@@ -683,11 +986,68 @@ is now sent with the first request; before, the request failed with `IllegalStat
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
+=== camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
+
+When Camel checks the credential of an incoming request, the `Authorization` header of the request is now removed from
+the message before the route gets it, as the OAuth bearer token validation of these components already does since
+Camel 4.21. This applies to:
+
+* camel-platform-http-main: the requests under `camel.server.authenticationPath` when
+  `camel.server.authenticationEnabled=true`, with basic (`basicPropertiesFile`) or JWT authentication.
+* camel-netty-http: the requests that are checked with basic authentication (`securityConfiguration`).
+* camel-undertow: the requests that a security provider (`UndertowSecurityProvider`) has authenticated.
+
+Before, the header was passed on to the route, and from there to the steps that use the message headers, such as a
+log of the headers or a producer that sends them on. A request that Camel does not check, for example to a path outside
+`authenticationPath` or to a resource that the netty-http security constraint does not restrict, keeps the header as
+sent. A route that has to call a backend with credentials sets them on that producer.
+
 === camel-mdc - camel.routeId is the route being run
 
 The `camel.routeId` MDC value is now the id of the route that runs the step, as with the deprecated
 `camel.main.useMdcLogging`. Before, it was the id of the route that created the exchange, so the log lines of a route
 called with `direct:` (or another route-to-route endpoint) showed the id of the calling route.
+
+=== camel-bindy - fixed-length trim keeps the value 0 of a number padded with '0'
+
+In a fixed-length record, a numeric `@DataField` with `paddingChar = '0'` and `trim = true` that only holds `0`
+characters (for example `000`) is now read as 0. Before, trimming removed every `0` and the field was read as empty:
+`null` for an object type such as `Integer` or `BigDecimal`, `MIN_VALUE` for a primitive such as `int`, the
+`defaultValue` of the field when it has one, and an error for a `required` field. Text fields, and numeric fields
+padded with another char, are not changed.
+
+=== camel-cxf, camel-cxfrs - the former operationName and operationNamespace headers are not sent
+
+The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
+`operationNamespace` headers (see the xref:camel-4x-upgrade-guide-4_21.adoc#_camel_cxf[4.21 upgrade guide]). The
+`cxf` producer does not read the former names. It now logs a WARN once when one of them is set without its replacement.
+The default `CxfHeaderFilterStrategy` filters `operationName` and `operationNamespace` again, as it did before the
+rename, so the service no longer receives them as HTTP headers. A route that maps a header named `operationName` to
+`CamelCxfOperationName` keeps working.
+
+The `cxf` producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
+option selects the operation of a service with more than one operation. It then invokes the first operation that CXF
+returns, which is not the first one of the WSDL.
+
+The `cxfrs` producer does not read the former `operationName` header either. With the proxy-based client API
+(`httpClientAPI=false`) it still fails when `CamelCxfOperationName` is not set. The `NoSuchMethodException` now names
+that header, and says when `operationName` is set, in place of `Cannot find method with name: null`. The default
+`CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
+no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
+response header.
+
+=== camel-snmp - the trap consumer receives only the traps of its snmpVersion
+
+The trap consumer (`type=TRAP`) now receives only the traps of the `snmpVersion` of its endpoint. With `snmpVersion=0`
+(the default) or `snmpVersion=1`, it receives SNMPv1 and SNMPv2c traps, and drops SNMPv3 traps. With `snmpVersion=3`,
+it drops SNMPv1 and SNMPv2c traps, and receives the SNMPv3 traps of the user set in `securityName`, checked with the
+`authenticationProtocol`, `authenticationPassphrase`, `privacyProtocol` and `privacyPassphrase` of the endpoint, and
+with at least its `securityLevel` (the default is 3, authentication and privacy). The user is held by the consumer
+only, and is no longer taken from another `snmp` endpoint with SNMPv3 in the JVM.
+
+Before, the consumer received the traps of every version, and received SNMPv3 traps only when another `snmp` endpoint
+with SNMPv3, such as a trap producer, had been started in the same JVM. To receive traps of several versions, use a
+consumer per version, each on its own port.
 
 === Java
 
@@ -1338,6 +1698,10 @@ of the iterator of a streaming `split` (unless the EIP was `synchronous=true` or
 without `parallelProcessing`) reached the caller without the error handler, and the exchange stayed inflight until the
 CamelContext stopped; with `parallelProcessing` (or when the timeout was called) it was lost on a thread of the pool,
 and the caller got no answer. For the producer of an API component, the `Error` was lost on its thread.
+The same applies to an `Error` that is not a `VirtualMachineError` thrown by a producer injected with `@EndpointInject`
+or `@Produce` (or by the producer of a `@Produce` proxy) before it completes the exchange: the exchange fails with it,
+wrapped in a `CamelExecutionException`, and `process(exchange)` no longer throws it. Before, the `Error` reached the
+caller of `process(exchange)`, and the exchange stayed inflight.
 An `Error` of the `onPrepare` processor of a `split`, `multicast` or `recipientList` fails only the part it prepares, as
 an exception does, and the other parts are still sent. Before, no part was sent (for a streaming `split`, no part
 after it). The same applies to an `Error` that a part of a transacted `split`, `multicast` or `recipientList` (without
@@ -1531,9 +1895,9 @@ now also apply to the data formats that the Rest DSL binding creates for `json` 
 to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
 instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
 `xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`,
-`unmarshalType`, `useList`, `collectionType` and `partClass` options are not taken over: the body type comes from the
-`type` and `outType` of the verb, and the other options can be set with `camel.rest.dataFormatProperties` when the
-binding needs them.
+`unmarshalType`, `useList`, `collectionType`, `partClass` and `allowPartClassFromHeader` options are not taken over:
+the body type comes from the `type` and `outType` of the verb, and the other options can be set with
+`camel.rest.dataFormatProperties` when the binding needs them.
 
 === camel-support - API components use one thread pool per CamelContext
 
@@ -1896,6 +2260,15 @@ a route id) waited for the timeout. Now both go to the integration that runs. Wi
 command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
 an error, rather than reported as sent.
 
+=== camel-jbang - camel get endpoint and the other listings mask the passwords in endpoint URIs
+
+`camel get endpoint`, `camel get consumer`, `camel get producer`, `camel get route`, `camel get processor`,
+`camel get service`, `camel get kafka`, `camel get timeline`, `camel get sql-trace`, `camel top route`,
+`camel top processor` and `camel status` now show the endpoint URIs the way Camel logs them: the values of options
+such as `password`, `secretKey`, `authenticationToken` or `keyStorePassword`, and the password in the user info, are
+shown as `xxxxxx`. This applies to the table and to the `--json` output. To see the URIs as configured, use
+`--mask=false`.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
@@ -2069,6 +2442,15 @@ with `defaultFrom`.
 
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
+
+=== camel-smpp - the system id and password headers need the allowSystemIdAndPasswordFromHeaders option
+
+A producer with `lazySessionCreation=true` took the system id and the password, with which it connects to the SMSC,
+from the `CamelSmppSystemId` and `CamelSmppPassword` headers of the first message when both were set, over the
+`systemId` and `password` options of the endpoint. It now connects with the `systemId` and `password` of the endpoint,
+and ignores these headers, unless the endpoint sets the new `allowSystemIdAndPasswordFromHeaders=true` option (disabled
+by default), or the component sets `camel.component.smpp.allowSystemIdAndPasswordFromHeaders=true`. A route that
+relies on these headers must set this option.
 
 === camel-coap - a body that does not convert to a byte array fails
 
@@ -2526,6 +2908,8 @@ trust store of the JVM was always used.
 * With `certificatePath`, the certificates in that file (PEM or DER) are trusted instead of the default trust store of
   the JVM, and the endpoint or the function fails to start when the file cannot be read. Remove `certificatePath` to
   keep the default trust store of the JVM.
+  The file is a path of the file system, or a resource with the `classpath:` or `file:` prefix. Other prefixes, such
+  as `http:`, are rejected.
 * With `verifySsl=false`, neither the certificate nor the host name of the server is checked. The option is now marked
   as an insecure SSL setting, so the security policy reports `camel.component.cyberark-vault.verifySsl=false`, which
   fails the startup with `camel.main.profile=prod`. Set `certificatePath` to the certificate of the server or of its
@@ -3042,6 +3426,14 @@ a `Number` (or a `Byte`) instead. A `TINYINT UNSIGNED` column is still a `Short`
 
 The new Debezium options of 3.7 are available on all `debezium-*` components. The `ddlParserType` option of
 `debezium-mysql` is kept, although Debezium 3.7 no longer lists it in the configuration of its MySQL connector.
+
+Debezium 3.7.1.Final removed two options, so Camel removed them too, and an endpoint that still sets one fails to start
+with an unknown option:
+
+* `databaseServerIdOffset` (`database.server.id.offset`) of `debezium-mysql`
+* `snapshotDatabaseErrorsMaxRetries` (`snapshot.database.errors.max.retries`) of `debezium-oracle`
+
+The `debezium-mysql` component has the new `unavailableValuePlaceholder` option.
 
 === camel-docker - the streaming operations give their result, and their failures fail the exchange
 
@@ -3992,6 +4384,20 @@ again. With `transacted=true` the SQL and MyBatis consumers break out of the bat
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
 
+=== camel-sql - onConsumeBatchComplete is not run when the consumer stops before the end of the batch
+
+The `onConsumeBatchComplete` query runs after the consumer has routed the whole batch. When the consumer was stopped
+in the middle of a batch (a route stop, a CamelContext shutdown or a route reload), it still ran the query. A query
+such as `delete from projects`, or an update that marks the rows as processed, also deleted or marked the rows that
+were never routed, and those rows were lost. The query is now not run when the consumer routed only part of the batch
+(logged at INFO), and the next poll reads the rows that were not routed.
+
+A route that uses `onConsumeBatchComplete` alone (without `onConsume`) to delete or mark the rows behaves
+differently. Before, the rows of a cut-short batch that were not routed were lost. Now the whole batch is left as it is, so
+the rows that were already routed are routed again after a restart. Use `onConsume` to delete or mark each row as it
+is routed, or set `shutdownRunningTask=CompleteAllTasks` on the route, so that a graceful stop routes the whole batch
+(within the shutdown timeout) and the query runs.
+
 === camel-sql - sql and sql-stored with batch=true: the update count and a single Map body
 
 With `batch=true` the `CamelSqlUpdateCount` (sql) and `CamelSqlStoredUpdateCount` (sql-stored) headers no longer add
@@ -4074,6 +4480,22 @@ lock, set `readLockRemoveOnCommit=true` with `readLockIdempotentReleaseDelay`. W
 queries instead of `tableName`, set `confirmQuery` too; set it to null or empty to keep the old behaviour. All
 instances sharing the table must run this version: older ones see a confirmed key as absent (before 4.14.6 and 4.18.2
 they take it over).
+
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository does not take over the keys it holds
+
+`JdbcOrphanLockAwareIdempotentRepository` now treats a key that the instance itself holds (it added the key and has
+not confirmed or removed it yet) as a duplicate, whatever the age of its `createdAt`: on that instance `contains`
+returns true and `add` returns false. Before, when the keep-alive could not refresh the key for longer than
+`lockMaxAgeMillis` (the database could not be reached), the instance took its own key over, and a copy of a message
+that it was still processing was processed a second time.
+
+Another instance still takes such a key over, as it cannot tell the first instance from one that crashed: choose a
+`lockMaxAgeMillis` longer than the longest database outage the application must survive without processing a message
+twice. When an instance holds keys and its keep-alive has not refreshed them for longer than `lockMaxAgeMillis`, it
+now logs a WARN, and an INFO when it refreshes them again.
+
+Code that sets the `createdAt` of a key older than `lockMaxAgeMillis` and expects the repository that added the key
+to see it as absent, such as a test of the keep-alive, has to check the key with another repository instance.
 
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
@@ -6121,6 +6543,16 @@ checked at all. A consumer with `needClientAuth=true` and the option set now acc
 instead of rejecting all of them. Consumers that share a server through `nettySharedHttpServer` never applied the
 option, and are unchanged. The option still verifies the host on a `netty-http` producer.
 
+=== camel-netty-http - the shared HTTP server is deprecated
+
+The shared HTTP server of `camel-netty-http` is deprecated: the `nettySharedHttpServer` endpoint option, and the
+`NettySharedHttpServer`, `DefaultNettySharedHttpServer`, `NettySharedHttpServerBootstrapConfiguration` and
+`HttpServerSharedInitializerFactory` classes. It works as before, and will be removed in a future release.
+
+It was added for OSGi/Karaf, so that several applications (bundles) in one JVM could use the same port. Camel Main,
+Spring Boot and Quarkus applications run one application per JVM: use a `netty-http` consumer per port, where several
+routes can use the same port, or the `platform-http` component.
+
 === camel-alibaba-eventbridge - endpoint is marked as required instead of region
 
 The `endpoint` option of `alibaba-eventbridge` is now marked as required, and the `region` option no longer is. The
@@ -6153,6 +6585,23 @@ empty payload.
 A body that does not convert to bytes, such as a `Map` or a POJO, is no longer sent as its `toString()`: it now fails
 with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
 
+=== camel-alibaba-fc - endpoint is marked as required instead of region
+
+The `endpoint` option of `alibaba-fc` is now marked as required, and the `region` option no longer is. The endpoint of
+Function Compute contains the ID of the Alibaba Cloud account, as in `12345.cn-hangzhou.fc.aliyuncs.com`, so the
+region does not determine it.
+
+A URI with `region` and without `endpoint` now fails at the first message with `Endpoint is required`, unless the
+`fcClient` option is set or autowired. Before, the client of the SDK chose the host from the region. For a region in
+its own map of regions, the host was `account-id.<region>.fc.aliyuncs.com`, and Function Compute took the text
+`account-id` as the account ID. For a region outside this map, the host was `fc-open.<region>.aliyuncs.com`.
+
+The endpoint validation of the catalog now reports a URI without `endpoint` as missing a required option. Before, it
+reported a URI without `region`. It also reports a URI without `endpoint` when the `fcClient` option is set or
+autowired. Such a route still runs, because the producer then uses neither option.
+
+The `region` option is deprecated, because the producer no longer uses it.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
@@ -6181,6 +6630,21 @@ The `region` option of `alibaba-sms` is no longer marked as required. To create 
 the `region` or the `endpoint` option. It needs neither when the `smsClient` option is set or autowired. So the
 endpoint validation of the catalog no longer reports a URI without `region` as missing a required option. The behavior
 of the component at runtime does not change.
+
+=== camel-alibaba-sls - the header of listLogStores is named CamelAlibabaSlsListLogStoreName
+
+The header with the name of the Logstore for `listLogStores` is now `CamelAlibabaSlsListLogStoreName`. Before, it was
+`CamelAlibabaSlsLogstoreName`. That name differs from `CamelAlibabaSlsLogStoreName`, the Logstore of `putLogs` and
+`getLogs`, only in the case of one letter. Camel header names are case-insensitive by default, so the two names were one
+header. A header set for `putLogs` or `getLogs` also limited a later `listLogStores` to the Logstores whose name
+contains the value. A header set for `listLogStores` also replaced the `logStoreName` option of a later `putLogs` or
+`getLogs`.
+
+Routes that use the constant `AlibabaSlsHeaders.LOGSTORE_NAME` work without changes, as only its value changed. Routes
+that use the header or the exchange property by its literal name must use the new name. By default, the producer now
+reads a header with the previous name only as the Logstore of `putLogs` and `getLogs`. The producer no longer reads an
+exchange property with the previous name. The Endpoint DSL method `alibabaSlsLogstoreName()` is now
+`alibabaSlsListLogStoreName()`.
 
 === camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
 
@@ -6660,6 +7124,32 @@ did not delete it, and the message was received again once it was visible again.
 The consumers now call `processCommit(Exchange, String)` with the name of the object or the receipt handle. A subclass
 of `GoogleCloudStorageConsumer`, `MinioConsumer` or `MNSConsumer` that overrides `processCommit(Exchange)` must override
 the new method instead. `processCommit(Exchange)` is deprecated.
+
+=== camel-mongodb - connectionUriString without hosts creates the client of the endpoint
+
+An endpoint that sets `connectionUriString` without `hosts` now creates its client from the connection string. Before,
+the connection string was not used: the endpoint used the `MongoClient` of the component (autowired when the registry
+holds exactly one) or else the `MongoClient` bean named by the endpoint path, and failed to start when there was none.
+To keep using a client bean, remove `connectionUriString` from the endpoint.
+
+Each endpoint with `connectionUriString` or `hosts` creates its own client and connection pool, also when other
+endpoints (for example with another collection or operation) use the same connection string. To share one client
+between endpoints, bind a `MongoClient` and have the endpoints use it (the endpoint path or the `mongoConnection`
+option) instead of `connectionUriString` or `hosts`.
+
+The endpoint now closes the client it created when it stops, for example when its route is removed or reloaded, or when
+the `CamelContext` stops, and creates a new one when it is started again. Before, a client created from `hosts` stayed
+open. A client the endpoint did not create (the `mongoConnection` option, the client of the component, or the bean
+named by the endpoint path) is not closed.
+
+=== camel-mongodb - the tls and tlsAllowInvalidHostnames options are applied
+
+The `tls` and `tlsAllowInvalidHostnames` endpoint options are now applied to the client the endpoint creates from
+`hosts` or `connectionUriString`, as `sslContextParameters` already was. Before, they were not used: an endpoint with
+`tls=true` and no `sslContextParameters` connected without TLS. Such an endpoint now connects with TLS, so the MongoDB
+server must accept TLS connections, and its certificate must be trusted by the JVM (or set `sslContextParameters`).
+When none of these options is set, the TLS settings of `connectionUriString` (for example `?tls=true`) are used as
+before.
 
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
@@ -7706,6 +8196,46 @@ before upgrading. Existing aggregation data may need to be migrated to the new R
 The repository now validates this configuration during startup and throws an
 `IllegalArgumentException` if the keys belong to different hash slots.
 
+=== camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
+
+`RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
+key (or the exchange id) as a plain string field, and reads them back through an `ObjectInputFilter`. Before, the
+fields and values were encoded with the codec of the Redisson client, by default the Redisson `Kryo5Codec`. The codec
+of a `RedissonClient` given with the `redisson` option is no longer used for these hashes.
+
+The new option `deserializationFilter` sets the filter pattern, in the syntax of the `jdk.serialFilter` system
+property. When it is not set, the JVM-wide `jdk.serialFilter` applies if it is set, otherwise the default filter
+`!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`, the same as
+the JDBC and Cassandra aggregation repositories. It allows the `java`, `javax` and `org.apache.camel` packages, except
+`java.net`, and rejects the other classes. It also limits the size of a stored exchange: `maxdepth=20` (the depth of
+the object graph), `maxrefs=10000` (the number of objects in it) and `maxbytes=10485760` (10 MB). Before, there was no
+such limit. An exchange over a limit cannot be read back, and its aggregation does not complete, for example a `List`
+body that collects more than 10000 strings, or a body of more than 10 MB.
+
+If the message bodies or headers of the aggregated exchanges are instances of your own classes, or are larger, set the
+`deserializationFilter` option. It replaces the whole default pattern, so keep its other parts, for example
+`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;maxdepth=50;maxrefs=1000000;maxbytes=104857600;!*`
+to allow the classes of `com.foo.model` and raise the limits, or the same pattern without the `maxdepth`, `maxrefs` and
+`maxbytes` parts to have no limits. The `codec` option (see below) is the other way, without the filter. As Java
+serialization writes the whole object graph, the objects that a body or header value refers to must be
+`java.io.Serializable` too.
+
+A completed exchange that cannot be read back is skipped by the recovery, with a WARN that gives its exchange id, so
+the recovery of the other completed exchanges goes on.
+
+The exchanges stored by an older version are not read: they stay in Redis, but the repository does not find them, so
+these aggregations do not complete and these completed exchanges are not recovered. When the repository starts, it
+checks the first 100 entries of each of its hashes, and logs a WARN with the number of such entries among them.
+Complete the aggregations in progress, and let the recovery of the completed exchanges finish, before upgrading.
+Otherwise, remove the hashes of the repository (`mapName` and the persistence map, by default `mapName` with the
+suffix `-completed`) from Redis.
+
+To upgrade without draining, set the new `codec` option (flagged `insecure:serialization`) to
+`new org.redisson.codec.Kryo5Codec()`: the repository then reads and writes the entries in the same format as the
+older versions, and the `deserializationFilter` option and the WARN at startup do not apply. Once the aggregations
+stored by the older version have completed and been recovered, remove the `codec` option to switch to the Java
+serialization read through the deserialization filter.
+
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with
@@ -8132,6 +8662,17 @@ consumer stays paused until the route is resumed, and then polls each partition 
 resumed after the failed record. The new consumer leaves and rejoins the consumer group, so each such break is now a
 rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
 behaviour.
+
+=== camel-kafka - breakOnFirstError: a failed commit before the break goes to the exception handler
+
+With `breakOnFirstError=true`, the commit before the break on a failed record can fail or time out (for example a
+`TimeoutException` of `commitSync` with the `SyncCommitManager`). The consumer now reports that failure to its
+`ExceptionHandler` and still breaks out, polling again from the last committed offset.
+Before, the commit failure went to the `pollOnError` strategy. With `ERROR_HANDLER` (the default), `DISCARD` or
+`RETRY`, the failed record and the rest of the poll were skipped.
+The failure no longer reaches the error handler of the route (such as an `onException` that caught commit timeouts)
+unless `bridgeErrorHandler=true`. With `pollOnError=STOP`, the consumer now reconnects in this case instead of
+stopping.
 
 === camel-kafka - the Kafka idempotent and key-value repositories use the acks of the Kafka client
 
@@ -8586,6 +9127,15 @@ message expiry interval, content type, response topic, correlation data and user
 a publish no longer modifies. A topic alias or subscription identifiers set in the header object are not sent: the
 client assigns topic aliases for its connection, and subscription identifiers are sent by the server only.
 
+=== camel-paho-mqtt5 - a subscription the broker refuses fails the consumer
+
+The consumer now checks the reason code of the SUBACK. When the broker refuses the subscription (a reason code of 0x80
+or higher, such as 0x87 Not authorized), the subscribe fails with an `MqttException` that has that reason code, and
+the route does not start. When the subscription is refused after a reconnect (an automatic reconnect of the client, or
+the reconnect after a failed message with `manualAcksEnabled`), the route is restarted, and its start fails while the
+broker refuses the subscription; with a client given in the `client` option, an error is logged. Before, Paho returned
+normally from such a subscribe, so the route started and received no message of its topic.
+
 === camel-wal - the unconfirmed offsets of the previous run are replayed after a restart
 
 `WriteAheadResumeStrategy` now does what it is documented to do after a restart: when the consumer starts and loads the
@@ -8664,6 +9214,17 @@ route resumes a paused trigger with this mark when it starts. A trigger that was
 API or JMX) has no mark and stays paused; this now also holds when the same route is stopped and started again, which
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
+
+=== camel-quartz - a scheduler from the registry gets the CamelContext when the component starts
+
+With a Quartz `Scheduler` set on the quartz component or autowired from the registry, such as the scheduler of
+`spring-boot-starter-quartz`, the component now stores the CamelContext in the scheduler context when it starts, before
+the routes add their jobs. Before, it did so only once the CamelContext was fully started, so a trigger that fired in
+between on a scheduler that was already running failed with `No CamelContext could be found with name`. Such a job now
+runs its route if the route has started. The component now logs a WARN when this scheduler is already running when it
+starts, as a trigger that fires before its route has started is still lost (with Spring Boot, set
+`spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
+`propertiesFile` are set, as they are not used with such a scheduler.
 
 === camel-langchain4j-ingest - a media document whose type cannot be told is filtered
 
@@ -9038,10 +9599,10 @@ to your application, unless a library it uses still needs it; at most `jackson-a
 Jackson 2, for example an `ObjectMapper` it got through `camel-salesforce`, declare `jackson-databind` yourself.
 
 *Components that stay on Jackson 2.* `camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`, `camel-jackson-protobuf`,
-`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
+`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
 `camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi` and `camel-tahu` still use Jackson 2. Where
 they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`, not the
-`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq` expression
+`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jslt` transform
 after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
 
 *Jackson 2 nodes.* A component on Jackson 3 accepts JSON text, bytes, streams, Maps, Lists and `tools.jackson.databind.JsonNode`
@@ -9295,6 +9856,63 @@ Jackson 2 is no longer used.
 
 The limits on what is parsed are those of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million
 characters (it was 20 million). To change them, register a mapper with your own `StreamReadConstraints`.
+
+=== Jackson 3 - camel-jq
+
+`camel-jq` now uses jackson-jq 2 with its Jackson 3 provider, instead of jackson-jq 1 on Jackson 2. It depends on
+`camel-jackson3` instead of `camel-jackson`, and no longer brings Jackson 2 to your application: if your code uses Jackson 2,
+declare it yourself. The jackson-jq artifacts moved to the `net.thisptr.jackson.jq.v2` group: `net.thisptr:jackson-jq` and
+`net.thisptr:jackson-jq-extra` are replaced by `jackson-jq-core`, `jackson-jq-json-provider-impl-jackson3`,
+`jackson-jq-regex-impl-joni` and the `jackson-jq-ext-module-*` modules, which `camel-jq` brings.
+
+*With `camel-jackson` in the same application.* As `camel-jq` brings `camel-jackson3`, an application that also has
+`camel-jackson` now has both, and the Jackson 3 `jackson` data format is used for `marshal().json()` and `unmarshal().json()`
+(see _One data format name, two artifacts_ above): JSON is written with the defaults of Jackson 3, and on Spring Boot the
+`camel.dataformat.jackson.*` options of `camel-jackson-starter` no longer apply, as they configure the Jackson 2 data format.
+To keep the Jackson 2 data format, configure a `JacksonDataFormat` of `camel-jackson` explicitly in the route.
+
+*Results and input.* An expression without a `resultType` returns a `tools.jackson.databind.JsonNode`, where it returned a
+`com.fasterxml.jackson.databind.JsonNode`; its conversion to another type uses the type converters of `camel-jackson3`. An
+input that is a node of either line works: a Jackson 2 node is read as its JSON text. A Jackson 2 `resultType`, such as
+`com.fasterxml.jackson.databind.JsonNode`, is converted from the JSON text of the result, which needs `camel-jackson` on the
+classpath. The type converters of `camel-jackson3` use the `tools.jackson` `ObjectMapper` of the registry when there is
+exactly one: on Spring Boot 4 this is the `JsonMapper` of Spring Boot, so the `spring.jackson.*` settings apply to how jq
+reads its input and converts its results.
+
+*Functions in expressions.*
+
+* `constant` takes a JSON value: write `constant("sweden")` instead of `constant(sweden)`.
+* `hostname` no longer exists.
+* The functions of `jackson-jq-extra` are now in jq modules, which an expression imports before it calls their functions
+  with the module prefix, for example `import "jackson-jq/uuid" as uuid; .id = uuid::uuid4`:
++
+[cols="1,2"]
+|===
+| Module | Functions
+
+| `jackson-jq/uuid` | `uuid4`
+| `jackson-jq/random` | `random`
+| `jackson-jq/time` | `timestamp`, `strftime`, `strptime`
+| `jackson-jq/uri` | `uriparse`, `uridecode`
+|===
+
+The Camel functions (`header`, `property`, `variable`, `constant` and `body`) need no import.
+
+*Custom functions and scope.* The jackson-jq 1 types are gone, so Java code that extends `camel-jq` must be ported:
+
+* A function in the registry must implement `net.thisptr.jackson.jq.v2.spi.Function`, whose `bind` method replaces `apply`.
+  As before, a function bound as `name/arity`, such as `contains/1`, takes that number of arguments, and one bound under
+  its name alone takes any number. A function with the name and arity of a Camel function, such as `header/1`, is
+  ignored with a WARN, as the Camel function wins as before.
+* A custom root scope is now a `net.thisptr.jackson.jq.v2.core.Environment<tools.jackson.databind.JsonNode>` in the
+  registry, instead of a `net.thisptr.jackson.jq.Scope`. An environment cannot be changed once built, so Camel uses it as it
+  is: it no longer adds the Camel functions and the functions of the registry to it. Build it with
+  `JqFunctions.newEnvironmentBuilder(camelContext)`, which loads the jq builtins, the Camel functions and the modules on the
+  classpath, and define your own functions on that builder with `defineFunction`.
+* The `JqExpression(Scope, String)` constructor is replaced by `JqExpression(Environment<JsonNode>, String)`.
+* `JqExpression.getScope()` and `setScope()` are replaced by `getEnvironment()` and `setEnvironment()`, and
+  `JqLanguage.getRootScope()` by `getEnvironment()`. `JqFunctions.load()` and `loadLocal()` are removed, and
+  `JqFunctions.loadFromRegistry()` takes an `EnvironmentBuilder`.
 
 === Jackson 3 - camel-kafka
 
@@ -9569,6 +10187,52 @@ the permission with `CamelKeycloakPermissionId`
 
 Each is now deprecated, with a `deprecationNote` carrying the same information.
 
+=== camel-hazelcast - the CamelHazelcastCacheType header is deprecated
+
+The `CamelHazelcastCacheType` header is neither set nor read by the component. It was documented for
+`hazelcast-multimap` only, and the multimap listener sets the cache name, the listener type, the listener action and
+the listener time, never the cache type:
+
+[source,java]
+----
+public static void setListenerHeaders(Exchange ex, String listenerType, String listenerAction, String cacheName) {
+    ex.getIn().setHeader(HazelcastConstants.CACHE_NAME, cacheName);
+    HazelcastComponentHelper.setListenerHeaders(ex, listenerType, listenerAction);
+}
+
+public static void setListenerHeaders(Exchange ex, String listenerType, String listenerAction) {
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_ACTION, listenerAction);
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_TYPE, listenerType);
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_TIME, new Date().getTime());
+}
+----
+
+A route reading it gets `null`. It is now deprecated, with a `deprecationNote` that says so, and the rows for it were
+dropped from the consumer header tables of the `hazelcast-map` and `hazelcast-replicatedmap` pages, which also claimed
+their consumer sets it. Nothing replaces it: the cache the event came from is named by `CamelHazelcastCacheName`, and a
+route that needs to know which kind of cache that is can take it from the endpoint it consumes from.
+
+=== camel-pdf - the CamelPdfDecryptionMaterial header is deprecated
+
+The `CamelPdfDecryptionMaterial` header has had no effect since Camel 2.21. PDFBox 2 decrypts a document when it is
+loaded, from the password argument of `Loader.loadPDF`, so the producer was changed to stop calling the removed
+`PDDocument.openProtection(DecryptionMaterial)` and has not read the header since. A route that sets it gets no error
+and no decryption.
+
+It is now deprecated, with a `deprecationNote` that says so. Remove the header and load the document with its password
+before it reaches the endpoint, in a `Processor`:
+
+[source,java]
+----
+from("direct:start")
+    .process(e -> e.getMessage().setBody(
+            Loader.loadPDF(e.getMessage().getBody(byte[].class), "secret")))
+    .to("pdf:extractText");
+----
+
+The `byte[]` type converter of the component loads without a password, so an encrypted PDF sent as bytes still has to be
+loaded this way.
+
 === camel-whatsapp - both documented headers are deprecated
 
 `CamelWhatsAppPhoneNumberId` and `CamelWhatsAppRecipientPhoneNumberId` were the only two headers the component
@@ -9627,6 +10291,24 @@ endpoint.setJakartaServletWebApplication(
         JakartaServletWebApplication.buildApplication(servletContext));
 ----
 
+=== camel-ibm-watsonx-ai - a Map or a POJO body fails where it was read as its toString()
+
+The operations that read the message body as text now fail with an `IllegalArgumentException` for a `Map` or a POJO
+body: the prompt of `textGeneration`, `textGenerationStreaming`, `tokenize`, `detect` and `deploymentGenerate`, the
+user message of `chat`, `chatStreaming` and `deploymentChat`, the one text of `embedding` and `rerank`, and the file
+path, job id or file name of the text extraction and classification operations that do not upload. Before, Camel had
+no conversion for such a body other than the `toString()` of the object, so the model was asked about a map written in
+Java notation, and the extraction and classification requests named that text as their file.
+
+Text, a `byte[]`, a stream, a file, and any other body that Camel converts to its text, such as a `char[]` or a
+`ByteBuffer`, are read as before. So are the `List` bodies of `chat`, `embedding` and `rerank`, a `ChatMessage` body of
+the chat operations, a single value such as a number, and a value whose text is its `toString()`: a `UUID`, a `URI`, a
+`URL`, a `java.time` value or a `Date`.
+
+The rule is the text itself: a body is rejected when the text Camel gives for it is no more than its `toString()`.
+Marshal such a body first, for example with `marshal().json()`, set the body to the text, or, when the `toString()` of
+the object is the text to send, say so with `convertBodyTo(String.class)` before the endpoint.
+
 === camel-alibaba-kms - a Map or a POJO in the plaintext header fails, and only generateDataKey reads numberOfBytes
 
 A `Map` or a POJO in the `CamelAlibabaKmsPlaintext` header, or in the exchange property of the same name, now fails
@@ -9644,3 +10326,39 @@ an empty value counts as unset.
 The `region` option is no longer marked as required in the catalog, since `region` or `endpoint` is required and the
 `kmsClient` option replaces both. The producer still fails with "Region or endpoint is required" when it has to create
 a client and neither is set.
+
+=== camel-nats - the host name of the server is verified over TLS
+
+When the connection uses TLS (`secure=true`, or a `tls://` server address), camel-nats now checks that the certificate
+of the NATS server matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate
+trusted by the trust store was accepted, whatever host the certificate was issued for. To keep the host name for TLS,
+the client connects to the fastest of the IP addresses of a host name (the happy eyeballs mode of jnats), instead of
+replacing the host name by its IP addresses first.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; an IP
+address must be listed as a subject alternative name of the certificate. This also applies to the servers that the
+NATS cluster announces, which are often IP addresses.
+
+WARNING: The servers announced by the cluster are used only when the client reconnects, so a certificate without the
+IP addresses that the cluster announces still connects at startup, and fails only when the client fails over to
+another server. Before upgrading, check that the certificate of each server lists the host names or IP addresses that
+the cluster announces (the `connect_urls` in the `INFO` of the servers, set with their `client_advertise` option).
+
+Use certificates that match the hosts, or set the new `hostnameVerification` option to `false` to keep the previous
+behaviour. An `opentls://` server address still trusts
+any certificate and is not checked.
+
+=== camel-pulsar - the host name of the broker is verified with pulsar+ssl
+
+When the endpoint creates its own Pulsar client, a `pulsar+ssl://` connection now checks that the certificate of the
+broker matches the host it connects to, with the same rules as an HTTPS client. Before, the client kept the default of
+the Pulsar client, which accepts any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; this also
+applies to the brokers that a lookup returns (their advertised listeners). Use certificates that match the hosts, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour. A `pulsarClient` that is given to the
+component or the endpoint is used as it is.
+
+The new `tlsTrustCertsFilePath` option sets a PEM file with the certificates of the certificate authorities to trust,
+for a broker whose certificate is not signed by an authority that the JVM trusts.

@@ -40,6 +40,7 @@ import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
+import org.apache.camel.component.langchain4j.core.LangChain4jTracing;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -242,6 +243,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
                 .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), chatModel))
                 .requestModel(requestModel)
                 .componentScheme("langchain4j-chat")
+                .tracedByFramework(LangChain4jTracing.isTracedByFramework(chatModel))
                 .build();
     }
 

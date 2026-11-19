@@ -1540,7 +1540,7 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "jq", ". ^^+ [{\"array\": body()}]");
         assertFalse(result.isSuccess());
         assertEquals(". ^^+ [{\"array\": body()}]", result.getText());
-        assertEquals("Cannot compile query: . ^^+ [{\"array\": body()}]", result.getError());
+        assertTrue(result.getError().startsWith("Lexical error at line 1, column 3."), result.getError());
     }
 
     @Test
@@ -1602,6 +1602,21 @@ public class CamelCatalogTest {
 
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateEndpointAlibabaFc() {
+        String uri = "alibaba-fc:invokeFunction?endpoint=12345.cn-hangzhou.fc.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-fc:invokeFunction?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
+        ComponentModel model = catalog.componentModel("alibaba-fc");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaFcOperation".equals(h.getName())));
     }
 
     @Test

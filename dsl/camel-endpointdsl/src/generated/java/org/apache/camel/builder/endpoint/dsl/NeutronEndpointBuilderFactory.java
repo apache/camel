@@ -249,6 +249,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default NeutronHeaderNameBuilder openstackNeutron() {
             return NeutronHeaderNameBuilder.INSTANCE;
         }
@@ -268,6 +269,7 @@ public interface NeutronEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default NeutronEndpointBuilder openstackNeutron(String path) {
             return NeutronEndpointBuilderFactory.endpointBuilder("openstack-neutron", path);
         }
@@ -289,6 +291,7 @@ public interface NeutronEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default NeutronEndpointBuilder openstackNeutron(String componentName, String path) {
             return NeutronEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

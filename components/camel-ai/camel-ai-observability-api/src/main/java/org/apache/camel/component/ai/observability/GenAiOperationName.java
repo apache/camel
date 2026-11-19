@@ -33,7 +33,11 @@ public enum GenAiOperationName {
     /** OpenAI moderation and similar content-policy checks. */
     MODERATION("moderation"),
     /** Typed predicate, choice and rubric assessments (Camel extension). */
-    DECISIONS("decisions");
+    DECISIONS("decisions"),
+    /** An agent run that may call the model several times and execute tools. */
+    INVOKE_AGENT("invoke_agent"),
+    /** Execution of a tool requested by the model. */
+    EXECUTE_TOOL("execute_tool");
 
     private final String value;
 

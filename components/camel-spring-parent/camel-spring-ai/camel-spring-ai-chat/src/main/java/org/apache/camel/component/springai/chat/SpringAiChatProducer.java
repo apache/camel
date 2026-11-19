@@ -95,6 +95,8 @@ public class SpringAiChatProducer extends DefaultProducer {
 
     private ChatClient chatClient;
     private ChatModel observabilityChatModel;
+    private volatile Boolean observedBySpringAi;
+    private volatile Boolean toolCallsObservedBySpringAi;
     private SpringAiChatMcpManager mcpManager;
     private Advisor chatMemoryAdvisor;
 
@@ -1011,7 +1013,7 @@ public class SpringAiChatProducer extends DefaultProducer {
      */
     private <T> void processEntityRequest(
             ChatClient.ChatClientRequestSpec request, Exchange exchange, Class<T> entityClass) {
-        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservationContext observationContext = buildObservationContext(exchange);
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
             ResponseEntity<ChatResponse, T> responseEntity = request.call().responseEntity(entityClass);
@@ -1246,7 +1248,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             uniqueSpecs.addAll(registry.getToolsByTag(tag));
         }
         final List<ToolCallback> toolCallbacks = uniqueSpecs.stream()
-                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange))
+                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange, areToolCallsObservedBySpringAi()))
                 .collect(Collectors.toList());
 
         LOG.debug("Discovered {} tools from AiToolRegistry for tags: {}", toolCallbacks.size(), tags);
@@ -1393,7 +1395,7 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     private ChatResponse callWithObservability(ChatClient.ChatClientRequestSpec request, Exchange exchange) {
-        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservationContext observationContext = buildObservationContext(exchange);
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
             ChatResponse response = request.call().chatResponse();
@@ -1429,7 +1431,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         observation.recordSuccess(GenAiUsage.of(inputTokens, outputTokens, finishReason, responseModel));
     }
 
-    private GenAiObservationContext buildObservationContext() {
+    private GenAiObservationContext buildObservationContext(Exchange exchange) {
         Object modelSource = resolveObservabilityModelSource();
         String requestModel = GenAiModelResolver.resolveModelName(
                 getEndpoint().getCamelContext().getClassResolver(), modelSource);
@@ -1438,7 +1440,33 @@ public class SpringAiChatProducer extends DefaultProducer {
                 .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), modelSource))
                 .requestModel(requestModel)
                 .componentScheme("spring-ai-chat")
+                .conversationId(exchange.getMessage().getHeader(SpringAiChatConstants.CONVERSATION_ID))
+                .tracedByFramework(isObservedBySpringAi())
                 .build();
+    }
+
+    /**
+     * Whether Spring AI traces the model calls itself.
+     */
+    private boolean isObservedBySpringAi() {
+        Boolean observed = observedBySpringAi;
+        if (observed == null) {
+            observed = SpringAiTracing.isModelTraced(resolveObservabilityModelSource());
+            observedBySpringAi = observed;
+        }
+        return observed;
+    }
+
+    /**
+     * Whether Spring AI traces the tool calls itself, through the tool calling manager of the model.
+     */
+    private boolean areToolCallsObservedBySpringAi() {
+        Boolean observed = toolCallsObservedBySpringAi;
+        if (observed == null) {
+            observed = SpringAiTracing.areToolCallsTraced(resolveObservabilityModelSource());
+            toolCallsObservedBySpringAi = observed;
+        }
+        return observed;
     }
 
     private Object resolveObservabilityModelSource() {

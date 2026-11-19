@@ -589,6 +589,16 @@ JVM:
 camel.vault.cyberark.certificatePath=/path/to/cert.pem
 ----
 
+The file can also be a resource with the `classpath:` or `file:` prefix, for example a certificate packaged with the
+application:
+
+[source,properties]
+----
+camel.vault.cyberark.certificatePath=classpath:conjur-ca.pem
+----
+
+Other prefixes, such as `http:`, are not supported, as the certificates to trust should not come from the network.
+
 You can disable the verification for testing purposes, which trusts any server (not recommended for production):
 
 [source,properties]

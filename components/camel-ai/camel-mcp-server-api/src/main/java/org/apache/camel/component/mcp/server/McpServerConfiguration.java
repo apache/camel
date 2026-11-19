@@ -46,6 +46,8 @@ public class McpServerConfiguration {
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
     private String allowedOrigins;
     private String allowedHosts;
+    private String protocolEra = McpProtocolEra.DUAL.value();
+    private boolean stateless;
     private String oauthProfile;
     private String requiredScopes;
     private String resourceUri;
@@ -241,6 +243,39 @@ public class McpServerConfiguration {
 
     public void setAllowedHosts(String allowedHosts) {
         this.allowedHosts = allowedHosts;
+    }
+
+    /**
+     * The MCP protocol versions served: {@code dual} (default) serves both the versions whose clients open with an
+     * {@code initialize} handshake (2025-11-25 and earlier, with a session) and protocol version 2026-07-28 (without a
+     * session) on the same endpoint, choosing for each request from the protocol version it carries; {@code legacy}
+     * serves only the former, {@code modern} only the latter (see {@link McpProtocolEra}). Serving protocol version
+     * 2026-07-28 is a preview. Engine-owned: ignored by native engines.
+     *
+     * @since 4.24
+     */
+    public String getProtocolEra() {
+        return protocolEra;
+    }
+
+    public void setProtocolEra(String protocolEra) {
+        this.protocolEra = protocolEra;
+    }
+
+    /**
+     * Whether clients that open with an {@code initialize} handshake are served without a session, as the MCP
+     * streamable HTTP transport allows: no {@code Mcp-Session-Id} is returned, each request is served on its own, the
+     * server sends them no notifications, and {@code GET} or {@code DELETE} on the endpoint is answered with HTTP 405.
+     * Clients of protocol version 2026-07-28 never get a session. Engine-owned: ignored by native engines.
+     *
+     * @since 4.24
+     */
+    public boolean isStateless() {
+        return stateless;
+    }
+
+    public void setStateless(boolean stateless) {
+        this.stateless = stateless;
     }
 
     /**

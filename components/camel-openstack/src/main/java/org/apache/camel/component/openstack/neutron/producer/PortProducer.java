@@ -32,6 +32,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.builder.PortBuilder;
 
+@Deprecated(since = "4.24")
 public class PortProducer extends AbstractOpenstackProducer {
 
     public PortProducer(NeutronEndpoint endpoint, OSClient client) {

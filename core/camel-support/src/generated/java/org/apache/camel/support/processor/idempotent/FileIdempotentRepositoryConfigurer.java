@@ -28,6 +28,8 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
         case "cacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
         case "dropoldestfilestore":
         case "dropOldestFileStore": target.setDropOldestFileStore(property(camelContext, long.class, value)); return true;
+        case "filename":
+        case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filestore":
         case "fileStore": target.setFileStore(property(camelContext, java.io.File.class, value)); return true;
         case "maxfilestoresize":
@@ -43,6 +45,8 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
         case "cacheSize": return int.class;
         case "dropoldestfilestore":
         case "dropOldestFileStore": return long.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
         case "filestore":
         case "fileStore": return java.io.File.class;
         case "maxfilestoresize":
@@ -59,6 +63,8 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
         case "cacheSize": return target.getCacheSize();
         case "dropoldestfilestore":
         case "dropOldestFileStore": return target.getDropOldestFileStore();
+        case "filename":
+        case "fileName": return target.getFileName();
         case "filestore":
         case "fileStore": return target.getFileStore();
         case "maxfilestoresize":

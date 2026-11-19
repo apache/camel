@@ -24,6 +24,11 @@ import java.util.Set;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.util.json.Jsoner;
@@ -94,6 +99,69 @@ public final class AiToolExecutor {
      */
     public static AiToolResult execute(
             AiToolSpec spec, Map<String, Object> arguments, Exchange exchange, String toolCallId, String conversationId) {
+        return execute(spec, arguments, exchange, toolCallId, conversationId, false);
+    }
+
+    /**
+     * Executes a tool route, telling whether the calling AI framework already traces the tool call (as Spring AI does
+     * with an ObservationRegistry). Such a call gets no {@code execute_tool} span from Camel when GenAI observability
+     * defers to the framework.
+     *
+     * @param  spec              the tool specification
+     * @param  arguments         the tool arguments
+     * @param  exchange          the exchange to populate and execute
+     * @param  toolCallId        the tool invocation identifier, or {@code null} when unavailable
+     * @param  conversationId    the conversation identifier, or {@code null} when unavailable
+     * @param  tracedByFramework whether the calling framework traces the tool call itself
+     * @return                   the outcome of the invocation
+     * @since                    4.24
+     */
+    public static AiToolResult execute(
+            AiToolSpec spec, Map<String, Object> arguments, Exchange exchange, String toolCallId, String conversationId,
+            boolean tracedByFramework) {
+        if (!GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
+            return doExecute(spec, arguments, exchange, toolCallId, conversationId);
+        }
+        // an execute_tool span, nested under the agent run that requested the tool (through the copied exchange)
+        GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.EXECUTE_TOOL)
+                .toolName(spec.getName())
+                .toolCallId(toolCallId)
+                .conversationId(conversationId)
+                .componentScheme("ai-tool")
+                .tracedByFramework(tracedByFramework)
+                .build());
+        try {
+            observation.recordToolArguments(() -> Jsoner.serialize(arguments != null ? arguments : Map.of()));
+            AiToolResult result = doExecute(spec, arguments, exchange, toolCallId, conversationId);
+            recordResult(observation, result);
+            return result;
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private static void recordResult(GenAiObservation observation, AiToolResult result) {
+        switch (result) {
+            case AiToolResult.Success success -> observation.recordToolResult(success::value);
+            case AiToolResult.ArgumentError argumentError -> recordFailure(observation, argumentError.message(),
+                    argumentError.cause());
+            case AiToolResult.ExecutionError executionError -> recordFailure(observation, executionError.message(),
+                    executionError.cause());
+            case AiToolResult.AuthorizationDenied denied -> recordFailure(observation, denied.message(), denied.cause());
+        }
+    }
+
+    private static void recordFailure(GenAiObservation observation, String message, Exception cause) {
+        observation.recordToolResult(() -> message);
+        observation.recordError(cause != null ? cause : new IllegalStateException(message));
+    }
+
+    private static AiToolResult doExecute(
+            AiToolSpec spec, Map<String, Object> arguments, Exchange exchange, String toolCallId, String conversationId) {
         String toolName = spec.getName();
 
         DefaultConsumer consumer = spec.getConsumer();
@@ -103,8 +171,16 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        // Use the authorization-guarded processor when the consumer applied an AuthorizationPolicy, so the guard runs
-        // before the route body; falls back to the plain route processor otherwise.
+        // A suspended tool (suspended route, graceful shutdown) refuses new calls, as request/reply consumers do while
+        // suspended; a caller may still hold its spec from before the suspend. Calls in flight are past this point.
+        if (consumer.isSuspendingOrSuspended()) {
+            IllegalStateException cause = new IllegalStateException(
+                    String.format("Tool '%s' is suspended", toolName));
+            return new AiToolResult.ExecutionError(cause.getMessage(), cause);
+        }
+
+        // Use the authorization-guarded processor when the consumer applied allowedRoles or an AuthorizationPolicy, so
+        // the guard runs before the route body; falls back to the plain route processor otherwise.
         Processor routeProcessor = consumer instanceof AiToolConsumer atc ? atc.getToolProcessor() : consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
@@ -216,7 +292,7 @@ public final class AiToolExecutor {
         if (denial == null) {
             return null;
         }
-        LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        LOG.warn("Tool '{}' call denied by the authorization check: {}", toolName, denial.getMessage());
         fireAuthorizationDeniedEvent(exchange, toolName, denial);
         return new AiToolResult.AuthorizationDenied(
                 String.format("Access denied: not authorized to call tool '%s'", toolName), denial);

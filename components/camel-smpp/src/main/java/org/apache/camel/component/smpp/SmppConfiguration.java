@@ -96,6 +96,8 @@ public class SmppConfiguration implements Cloneable {
     private int maxReconnect = Integer.MAX_VALUE;
     @UriParam(label = "producer")
     private boolean lazySessionCreation;
+    @UriParam(label = "producer,security")
+    private boolean allowSystemIdAndPasswordFromHeaders;
     @UriParam(label = "producer")
     private String messageReceiverRouteId;
     @UriParam(label = "proxy")
@@ -587,11 +589,26 @@ public class SmppConfiguration implements Cloneable {
 
     /**
      * Sessions can be lazily created to avoid exceptions, if the SMSC is not available when the Camel producer is
-     * started. Camel will check the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of the first
-     * exchange. If they are present, Camel will use these data to connect to the SMSC.
+     * started. The session is then created when the first exchange is sent, with the systemId and password of the
+     * endpoint. See the allowSystemIdAndPasswordFromHeaders option to take them from the message headers instead.
      */
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
+    }
+
+    public boolean isAllowSystemIdAndPasswordFromHeaders() {
+        return allowSystemIdAndPasswordFromHeaders;
+    }
+
+    /**
+     * Whether a producer with lazySessionCreation=true may take the system id and the password, with which it connects
+     * to the SMSC, from the 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first exchange. When both
+     * headers are present, the producer connects with them in place of the systemId and password of the endpoint, and
+     * keeps using them when it reconnects. This is disabled by default, and the headers are then ignored. Enable this
+     * only when the route sets these headers itself.
+     */
+    public void setAllowSystemIdAndPasswordFromHeaders(boolean allowSystemIdAndPasswordFromHeaders) {
+        this.allowSystemIdAndPasswordFromHeaders = allowSystemIdAndPasswordFromHeaders;
     }
 
     public String getMessageReceiverRouteId() {
@@ -803,6 +820,7 @@ public class SmppConfiguration implements Cloneable {
                + ", reconnectDelay=" + reconnectDelay
                + ", maxReconnect=" + maxReconnect
                + ", lazySessionCreation=" + lazySessionCreation
+               + ", allowSystemIdAndPasswordFromHeaders=" + allowSystemIdAndPasswordFromHeaders
                + ", messageReceiverRouteId=" + messageReceiverRouteId
                + ", httpProxyHost=" + httpProxyHost
                + ", httpProxyPort=" + httpProxyPort

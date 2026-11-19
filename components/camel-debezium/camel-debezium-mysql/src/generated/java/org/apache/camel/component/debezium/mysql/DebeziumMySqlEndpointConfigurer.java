@@ -79,8 +79,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseQueryTimeoutMs": target.getConfiguration().setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseserverid":
         case "databaseServerId": target.getConfiguration().setDatabaseServerId(property(camelContext, long.class, value)); return true;
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": target.getConfiguration().setDatabaseServerIdOffset(property(camelContext, long.class, value)); return true;
         case "databasesslkeystore":
         case "databaseSslKeystore": target.getConfiguration().setDatabaseSslKeystore(property(camelContext, java.lang.String.class, value)); return true;
         case "databasesslkeystorepassword":
@@ -311,6 +309,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicPrefix": target.getConfiguration().setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": target.getConfiguration().setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": target.getConfiguration().setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": target.getConfiguration().setUseNongracefulDisconnect(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -375,8 +375,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseQueryTimeoutMs": return int.class;
         case "databaseserverid":
         case "databaseServerId": return long.class;
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": return long.class;
         case "databasesslkeystore":
         case "databaseSslKeystore": return java.lang.String.class;
         case "databasesslkeystorepassword":
@@ -607,6 +605,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicPrefix": return java.lang.String.class;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return java.lang.String.class;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return java.lang.String.class;
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": return boolean.class;
         default: return null;
@@ -672,8 +672,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseQueryTimeoutMs": return target.getConfiguration().getDatabaseQueryTimeoutMs();
         case "databaseserverid":
         case "databaseServerId": return target.getConfiguration().getDatabaseServerId();
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": return target.getConfiguration().getDatabaseServerIdOffset();
         case "databasesslkeystore":
         case "databaseSslKeystore": return target.getConfiguration().getDatabaseSslKeystore();
         case "databasesslkeystorepassword":
@@ -904,6 +902,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicPrefix": return target.getConfiguration().getTopicPrefix();
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return target.getConfiguration().getTransactionMetadataFactory();
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return target.getConfiguration().getUnavailableValuePlaceholder();
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": return target.getConfiguration().isUseNongracefulDisconnect();
         default: return null;

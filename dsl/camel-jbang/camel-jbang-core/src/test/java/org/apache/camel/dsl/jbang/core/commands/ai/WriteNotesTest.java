@@ -698,4 +698,81 @@ class WriteNotesTest {
         // a properties file is not a route
         assertThat(WriteNotes.unusedPropertyNotes(dir, "other.properties", "a={{report.schedule}}\n", "a=1\n")).isEmpty();
     }
+
+    /** route-enrich-and-dedupe step 1 of the local-model benchmark, as r35 wrote it: the duplicate is never logged. */
+    private static final String DEDUPE = """
+            - route:
+                id: incoming-orders
+                from:
+                  uri: file
+                  parameters:
+                    directoryName: orders
+                    noop: true
+                  steps:
+                    - unmarshal:
+                        json: {}
+                    - idempotentConsumer:
+                        expression:
+                          simple: "${body[orderId]}"
+                        idempotentRepository: orderRepo
+                        steps:
+                          - choice:
+                              when:
+                                - expression:
+                                    simple: "${exchangeProperty.CamelDuplicateMessage} == true"
+                                  steps:
+                                    - log:
+                                        message: "Order ${body[orderId]} is a duplicate, skipped"
+                              otherwise:
+                                steps:
+                                  - log:
+                                      message: "Order ${body[orderId]} accepted"
+            """;
+
+    @Test
+    void aCheckOfTheDuplicatePropertyUnderAnIdempotentConsumerThatSkipsDuplicates() {
+        assertThat(WriteNotes.duplicateMessageNotes(DEDUPE)).singleElement().isEqualTo(
+                "Line 11: this idempotentConsumer skips a duplicate (skipDuplicate is true by default): a duplicate"
+                                                                                       + " never reaches the steps under it, so the check of the exchange property"
+                                                                                       + " CamelDuplicateMessage there is never true. Add skipDuplicate: false, and a"
+                                                                                       + " duplicate goes on to these steps with CamelDuplicateMessage set to true.");
+    }
+
+    @Test
+    void aCheckWithEqualsFalseIsNeverTrueForANewMessage() {
+        String yaml = DEDUPE.replace("CamelDuplicateMessage} == true", "CamelDuplicateMessage} == false");
+        assertThat(WriteNotes.duplicateMessageNotes(yaml)).singleElement().asString()
+                .startsWith("Line 11: this idempotentConsumer skips a duplicate")
+                .endsWith(" Check == true for a duplicate (and otherwise: for a new message), not == false: a new"
+                          + " message has no such property.");
+    }
+
+    @Test
+    void skipDuplicateFalseOrACheckAfterTheIdempotentConsumerHasNoNote() {
+        // skipDuplicate: false routes a duplicate on to the steps, with the property set
+        assertThat(WriteNotes.duplicateMessageNotes(DEDUPE.replace("idempotentRepository: orderRepo",
+                "idempotentRepository: orderRepo\n" + " ".repeat(12) + "skipDuplicate: false"))).isEmpty();
+        // a placeholder may be false
+        assertThat(WriteNotes.duplicateMessageNotes(DEDUPE.replace("idempotentRepository: orderRepo",
+                "idempotentRepository: orderRepo\n" + " ".repeat(12) + "skipDuplicate: \"{{skip}}\""))).isEmpty();
+        // after the idempotentConsumer a duplicate goes on with the property set: the check works there
+        String after = """
+                - route:
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - idempotentConsumer:
+                            expression:
+                              simple: "${body[orderId]}"
+                            idempotentRepository: orderRepo
+                            steps:
+                              - log: "Order ${body[orderId]} accepted"
+                        - filter:
+                            expression:
+                              simple: "${exchangeProperty.CamelDuplicateMessage} == true"
+                            steps:
+                              - log: "Order ${body[orderId]} is a duplicate, skipped"
+                """;
+        assertThat(WriteNotes.duplicateMessageNotes(after)).isEmpty();
+    }
 }

@@ -25,10 +25,12 @@ import org.apache.camel.oauth.OAuthBearerTokenProcessor;
 import org.apache.camel.oauth.OAuthClientCredentialsProcessor;
 import org.apache.camel.oauth.OAuthFactory;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -39,11 +41,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthClientCredentialsServletTest extends AbstractOAuthClientCredentialsTest {
 
+    @RegisterExtension
+    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
+    static final int PORT = SERVER_PORT.getPort();
+
     static Undertow server;
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
 
     @BeforeAll
     static void setUp() throws Exception {
-        server = createUndertowServer();
+        // Check Keycloak availability before starting Undertow, so the test class skips
+        // cleanly (TestAbortedException) rather than failing with BindException.
+        try (var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL))) {
+            Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
+        }
+        server = createUndertowServer(PORT);
         server.start();
     }
 
@@ -54,9 +70,6 @@ public class OAuthClientCredentialsServletTest extends AbstractOAuthClientCreden
 
     @Test
     public void testOAuthSetup() throws Exception {
-
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
-        Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
 
         try (CamelContext context = createCamelContext()) {
             context.start();

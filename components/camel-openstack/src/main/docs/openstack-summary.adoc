@@ -1,4 +1,4 @@
-= OpenStack Component
+= OpenStack Component (deprecated)
 //attributes written by hand, not generated
 :doctitle: OpenStack
 :since: 2.19

@@ -19,104 +19,170 @@ package org.apache.camel.language.jq;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import net.thisptr.jackson.jq.BuiltinFunctionLoader;
-import net.thisptr.jackson.jq.Expression;
-import net.thisptr.jackson.jq.Function;
-import net.thisptr.jackson.jq.PathOutput;
-import net.thisptr.jackson.jq.Scope;
-import net.thisptr.jackson.jq.Version;
-import net.thisptr.jackson.jq.Versions;
-import net.thisptr.jackson.jq.exception.JsonQueryException;
-import net.thisptr.jackson.jq.internal.tree.FunctionCall;
-import net.thisptr.jackson.jq.path.Path;
+import net.thisptr.jackson.jq.v2.core.EnvironmentBuilder;
+import net.thisptr.jackson.jq.v2.core.version.Versions;
+import net.thisptr.jackson.jq.v2.json.JsonNodeType;
+import net.thisptr.jackson.jq.v2.json.JsonProvider;
+import net.thisptr.jackson.jq.v2.json.impl.jackson3.Jackson3JsonProvider;
+import net.thisptr.jackson.jq.v2.spi.BindContext;
+import net.thisptr.jackson.jq.v2.spi.Expression;
+import net.thisptr.jackson.jq.v2.spi.Function;
+import net.thisptr.jackson.jq.v2.spi.FunctionSignature;
+import net.thisptr.jackson.jq.v2.spi.Output;
+import net.thisptr.jackson.jq.v2.spi.RuntimeContext;
+import net.thisptr.jackson.jq.v2.spi.annotations.FunctionRegistration;
+import net.thisptr.jackson.jq.v2.spi.exception.JsonQueryException;
+import net.thisptr.jackson.jq.v2.spi.path.Path;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
+/**
+ * The Camel supplied jq functions.
+ * <p/>
+ * A new function must be annotated with {@link FunctionRegistration}, listed in
+ * {@code META-INF/services/net.thisptr.jackson.jq.v2.spi.Function} and added to {@link #CAMEL_FUNCTIONS}. The
+ * {@code ServiceLoader} lookup brings the functions to an environment that Camel does not build, such as one from a CDI
+ * producer, as a built environment cannot be changed. There a function of the same signature in another jar may win, as
+ * jackson-jq resolves such a clash in classpath order.
+ */
 public final class JqFunctions {
 
     public static final ContextValue<Exchange> EXCHANGE_LOCAL = ContextValue.newThreadLocal("JqExchange");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JqFunctions.class);
 
+    private static final Map<FunctionSignature, Function> CAMEL_FUNCTIONS = Map.ofEntries(
+            Map.entry(FunctionSignature.of(Header.NAME, 1), new Header()),
+            Map.entry(FunctionSignature.of(Header.NAME, 2), new Header()),
+            Map.entry(FunctionSignature.of(Property.NAME, 1), new Property()),
+            Map.entry(FunctionSignature.of(Property.NAME, 2), new Property()),
+            Map.entry(FunctionSignature.of(Constant.NAME, 1), new Constant()),
+            Map.entry(FunctionSignature.of(Constant.NAME, 2), new Constant()),
+            Map.entry(FunctionSignature.of(Variable.NAME, 1), new Variable()),
+            Map.entry(FunctionSignature.of(Variable.NAME, 2), new Variable()),
+            Map.entry(FunctionSignature.of(Body.NAME, 0), new Body()));
+
     private JqFunctions() {
     }
 
-    public static void load(CamelContext camelContext, Scope scope) {
-        Map<String, Function> fromServiceLoader = BuiltinFunctionLoader.getInstance()
-                .loadFunctionsFromServiceLoader(
-                        camelContext.getApplicationContextClassLoader() != null
-                                ? camelContext.getApplicationContextClassLoader()
-                                : BuiltinFunctionLoader.class.getClassLoader(),
-                        Versions.JQ_1_7);
-
-        Map<String, Function> fromJq = BuiltinFunctionLoader.getInstance()
-                .loadFunctionsFromJsonJq(
-                        camelContext.getApplicationContextClassLoader() != null
-                                ? camelContext.getApplicationContextClassLoader()
-                                : BuiltinFunctionLoader.class.getClassLoader(),
-                        Versions.JQ_1_7,
-                        scope);
-
-        if (fromServiceLoader != null) {
-            LOGGER.debug("Loading {} jq functions from ServiceLoader", fromServiceLoader.size());
-            fromServiceLoader.forEach(scope::addFunction);
-        }
-
-        if (fromJq != null) {
-            LOGGER.debug("Loading {} jq functions from Json JQ", fromJq.size());
-            fromJq.forEach(scope::addFunction);
-        }
+    /**
+     * Creates an environment builder with the jq builtins, the functions and modules found on the classpath, and the
+     * Camel functions in this class. The Camel functions are defined on the builder, so they win over a function of the
+     * same signature in another jar.
+     */
+    public static EnvironmentBuilder<JsonNode> newEnvironmentBuilder(CamelContext camelContext) {
+        ClassLoader classLoader = camelContext != null && camelContext.getApplicationContextClassLoader() != null
+                ? camelContext.getApplicationContextClassLoader()
+                : JqFunctions.class.getClassLoader();
+        EnvironmentBuilder<JsonNode> builder
+                = EnvironmentBuilder.withDefaultLoaders(Jackson3JsonProvider.getInstance(), Versions.JQ_1_7, classLoader);
+        CAMEL_FUNCTIONS.forEach(builder::defineFunction);
+        return builder;
     }
 
-    public static void loadFromRegistry(CamelContext camelContext, Scope scope) {
+    /**
+     * Adds the functions bound in the registry. A function bound as {@code name/arity} gets that arity, otherwise it is
+     * variadic. A function with the signature of a Camel function is skipped, as the Camel function wins.
+     */
+    public static void loadFromRegistry(CamelContext camelContext, EnvironmentBuilder<JsonNode> builder) {
         Map<String, Function> fromRegistry = camelContext.getRegistry().findByTypeWithName(Function.class);
         if (fromRegistry != null) {
             LOGGER.debug("Loading {} jq functions from Registry", fromRegistry.size());
-            fromRegistry.forEach(scope::addFunction);
+            fromRegistry.forEach((name, function) -> {
+                FunctionSignature signature = signature(name);
+                if (CAMEL_FUNCTIONS.containsKey(signature)) {
+                    LOGGER.warn("Ignoring the jq function {} from the registry, as it has the name of a Camel jq function",
+                            name);
+                } else {
+                    builder.defineFunction(signature, function);
+                }
+            });
         }
     }
 
-    public static void loadLocal(Scope scope) {
-        scope.addFunction(Header.NAME, 1, new Header());
-        scope.addFunction(Header.NAME, 2, new Header());
-        scope.addFunction(Property.NAME, 1, new Property());
-        scope.addFunction(Property.NAME, 2, new Property());
-        scope.addFunction(Constant.NAME, 1, new Constant());
-        scope.addFunction(Constant.NAME, 2, new Constant());
-        scope.addFunction(Variable.NAME, 1, new Variable());
-        scope.addFunction(Variable.NAME, 2, new Variable());
-        scope.addFunction(Body.NAME, new Body());
+    private static FunctionSignature signature(String name) {
+        int pos = name.lastIndexOf('/');
+        if (pos > 0) {
+            try {
+                return FunctionSignature.of(name.substring(0, pos), Integer.parseInt(name.substring(pos + 1)));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "Invalid jq function name in the registry, expected name/arity: " + name, e);
+            }
+        }
+        return FunctionSignature.ofVariadic(name);
+    }
+
+    private static <J> String asText(JsonProvider<J> provider, J node) {
+        JsonNodeType type = provider.getNodeType(node);
+        if (type == JsonNodeType.STRING) {
+            return provider.getString(node);
+        } else if (type == JsonNodeType.NULL) {
+            return null;
+        }
+        return provider.format(node);
+    }
+
+    private static <J> void emitText(JsonProvider<J> provider, Output<J> output, String text) throws JsonQueryException {
+        output.emit(text == null ? provider.createNull() : provider.createString(text), null);
     }
 
     public abstract static class ExchangeAwareFunction implements Function {
-
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public <C extends RuntimeContext, J> Expression<C, J> bind(BindContext<J> bindCtx, List<Expression<C, J>> args)
                 throws JsonQueryException {
-
-            Exchange exchange = EXCHANGE_LOCAL.get();
-
-            if (exchange != null) {
-                doApply(scope, args, in, path, output, version, exchange);
-            }
+            JsonProvider<J> provider = bindCtx.getJsonProvider();
+            return (context, in, ipath, output) -> {
+                Exchange exchange = EXCHANGE_LOCAL.get();
+                if (exchange != null) {
+                    doApply(provider, context, args, in, ipath, output, exchange);
+                }
+            };
         }
 
-        protected abstract void doApply(
-                Scope scope,
-                List<Expression> args,
-                JsonNode in,
-                Path path,
-                PathOutput output,
-                Version version,
+        protected abstract <C extends RuntimeContext, J> void doApply(
+                JsonProvider<J> provider,
+                C context,
+                List<Expression<C, J>> args,
+                J in,
+                Path<J> ipath,
+                Output<J> output,
                 Exchange exchange)
                 throws JsonQueryException;
+    }
+
+    /**
+     * Evaluates the name argument, and the optional default value argument, and emits the value looked up with them.
+     */
+    public abstract static class NamedValueFunction extends ExchangeAwareFunction {
+        @Override
+        protected <C extends RuntimeContext, J> void doApply(
+                JsonProvider<J> provider,
+                C context,
+                List<Expression<C, J>> args,
+                J in,
+                Path<J> ipath,
+                Output<J> output,
+                Exchange exchange)
+                throws JsonQueryException {
+            args.get(0).apply(context, in, ipath, (name, namePath) -> {
+                if (args.size() == 2) {
+                    args.get(1).apply(context, in, ipath, (defval, defvalPath) -> {
+                        emitText(provider, output,
+                                lookup(exchange, asText(provider, name), asText(provider, defval)));
+                    });
+                } else {
+                    emitText(provider, output, lookup(exchange, asText(provider, name), null));
+                }
+            });
+        }
+
+        protected abstract String lookup(Exchange exchange, String name, String defaultValue);
     }
 
     /**
@@ -133,48 +199,14 @@ public final class JqFunctions {
      * </pre>
      *
      */
-    public static class Header extends ExchangeAwareFunction {
+    @FunctionRegistration(name = Header.NAME, nargs = 1)
+    @FunctionRegistration(name = Header.NAME, nargs = 2)
+    public static class Header extends NamedValueFunction {
         public static final String NAME = "header";
 
         @Override
-        protected void doApply(
-                Scope scope,
-                List<Expression> args,
-                JsonNode in,
-                Path path,
-                PathOutput output,
-                Version version,
-                Exchange exchange)
-                throws JsonQueryException {
-
-            args.get(0).apply(scope, in, name -> {
-                if (args.size() == 2) {
-                    args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
-                    });
-                } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
-                }
-            });
-        }
-
-        private void extract(Exchange exchange, String headerName, String headerValue, PathOutput output)
-                throws JsonQueryException {
-            String header = exchange.getMessage().getHeader(headerName, headerValue, String.class);
-
-            if (header == null) {
-                output.emit(NullNode.getInstance(), null);
-            } else {
-                output.emit(new TextNode(header), null);
-            }
+        protected String lookup(Exchange exchange, String name, String defaultValue) {
+            return exchange.getMessage().getHeader(name, defaultValue, String.class);
         }
     }
 
@@ -192,48 +224,14 @@ public final class JqFunctions {
      * </pre>
      *
      */
-    public static class Property extends ExchangeAwareFunction {
+    @FunctionRegistration(name = Property.NAME, nargs = 1)
+    @FunctionRegistration(name = Property.NAME, nargs = 2)
+    public static class Property extends NamedValueFunction {
         public static final String NAME = "property";
 
         @Override
-        protected void doApply(
-                Scope scope,
-                List<Expression> args,
-                JsonNode in,
-                Path path,
-                PathOutput output,
-                Version version,
-                Exchange exchange)
-                throws JsonQueryException {
-
-            args.get(0).apply(scope, in, name -> {
-                if (args.size() == 2) {
-                    args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
-                    });
-                } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
-                }
-            });
-        }
-
-        private void extract(Exchange exchange, String propertyName, String propertyValue, PathOutput output)
-                throws JsonQueryException {
-            String header = exchange.getProperty(propertyName, propertyValue, String.class);
-
-            if (header == null) {
-                output.emit(NullNode.getInstance(), null);
-            } else {
-                output.emit(new TextNode(header), null);
-            }
+        protected String lookup(Exchange exchange, String name, String defaultValue) {
+            return exchange.getProperty(name, defaultValue, String.class);
         }
     }
 
@@ -249,15 +247,17 @@ public final class JqFunctions {
      * </pre>
      *
      */
+    @FunctionRegistration(name = Constant.NAME, nargs = 1)
+    @FunctionRegistration(name = Constant.NAME, nargs = 2)
     public static class Constant implements Function {
         public static final String NAME = "constant";
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public <C extends RuntimeContext, J> Expression<C, J> bind(BindContext<J> bindCtx, List<Expression<C, J>> args)
                 throws JsonQueryException {
-            FunctionCall fc = (FunctionCall) args.get(0);
-            String t = fc.toString();
-            output.emit(new TextNode(t), null);
+            JsonProvider<J> provider = bindCtx.getJsonProvider();
+            return (context, in, ipath, output) -> args.get(0).apply(context, in, ipath,
+                    (value, path) -> emitText(provider, output, asText(provider, value)));
         }
     }
 
@@ -275,48 +275,14 @@ public final class JqFunctions {
      * </pre>
      *
      */
-    public static class Variable extends ExchangeAwareFunction {
+    @FunctionRegistration(name = Variable.NAME, nargs = 1)
+    @FunctionRegistration(name = Variable.NAME, nargs = 2)
+    public static class Variable extends NamedValueFunction {
         public static final String NAME = "variable";
 
         @Override
-        protected void doApply(
-                Scope scope,
-                List<Expression> args,
-                JsonNode in,
-                Path path,
-                PathOutput output,
-                Version version,
-                Exchange exchange)
-                throws JsonQueryException {
-
-            args.get(0).apply(scope, in, name -> {
-                if (args.size() == 2) {
-                    args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
-                    });
-                } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
-                }
-            });
-        }
-
-        private void extract(Exchange exchange, String variableName, String variableValue, PathOutput output)
-                throws JsonQueryException {
-            String variable = exchange.getVariable(variableName, variableValue, String.class);
-
-            if (variable == null) {
-                output.emit(NullNode.getInstance(), null);
-            } else {
-                output.emit(new TextNode(variable), null);
-            }
+        protected String lookup(Exchange exchange, String name, String defaultValue) {
+            return exchange.getVariable(name, defaultValue, String.class);
         }
     }
 
@@ -332,23 +298,25 @@ public final class JqFunctions {
      * </pre>
      *
      */
+    @FunctionRegistration(name = Body.NAME, nargs = 0)
     public static class Body implements Function {
         public static final String NAME = "body";
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public <C extends RuntimeContext, J> Expression<C, J> bind(BindContext<J> bindCtx, List<Expression<C, J>> args)
                 throws JsonQueryException {
-            Exchange exchange = EXCHANGE_LOCAL.get();
-            if (exchange != null) {
-                // in case you refer to the body multiple times then we need to handle stream-caching
-                Object body = exchange.getMessage().getBody();
-                if (body instanceof StreamCache sc) {
-                    sc.reset();
+            JsonProvider<J> provider = bindCtx.getJsonProvider();
+            return (context, in, ipath, output) -> {
+                Exchange exchange = EXCHANGE_LOCAL.get();
+                if (exchange != null) {
+                    // in case you refer to the body multiple times then we need to handle stream-caching
+                    Object body = exchange.getMessage().getBody();
+                    if (body instanceof StreamCache sc) {
+                        sc.reset();
+                    }
+                    emitText(provider, output, exchange.getMessage().getBody(String.class));
                 }
-                String t = exchange.getMessage().getBody(String.class);
-                output.emit(new TextNode(t), null);
-            }
+            };
         }
     }
-
 }

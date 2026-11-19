@@ -33,6 +33,7 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeType;
 import org.openstack4j.model.storage.block.builder.VolumeBuilder;
 
+@Deprecated(since = "4.24")
 public class VolumeProducer extends AbstractOpenstackProducer {
 
     public VolumeProducer(CinderEndpoint endpoint, OSClient client) {

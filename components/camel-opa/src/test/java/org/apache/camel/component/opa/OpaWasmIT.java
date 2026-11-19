@@ -21,16 +21,21 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.opa.security.OpaSecurityPolicy;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -47,6 +52,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 
 /**
  * In-process evaluation of a bundle compiled from the very {@code authz.rego} that {@link OpaIT} uploads to a real OPA
@@ -282,6 +289,95 @@ public class OpaWasmIT extends CamelTestSupport {
                     .isEqualTo(true);
             assertThat(denied.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
         }
+    }
+
+    @Test
+    void atomicallyReloadsGeneratedWasmWithChangedDataAndRetainsItAfterInvalidReplacement() throws Exception {
+        var original = OpaWasmEvaluator.loadPolicy(context, roles);
+        var content = new AtomicReference<>(original);
+        try (var evaluator = new OpaReloadableWasmEvaluator(
+                context, 0, content::get,
+                bundle -> new OpaWasmEvaluator(
+                        bundle.wasm(), bundle.data(), "roles/allow", 1, 1000,
+                        "roles/allow", "allow", "*", "", false, false),
+                "roles/allow", "allow", "*", "", false, false)) {
+            Map<String, Object> alice = Map.of("headers", Map.of("user", "alice"));
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(false);
+            String originalRevision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(new OpaWasmEvaluator.Bundle(original.wasm(), "{\"admins\":[\"alice\"]}"));
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            String activeRevision = evaluator.getReloadStatus().getActiveRevision();
+            assertThat(activeRevision).isNotEqualTo(originalRevision);
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 0, 1, 2 }, "{}"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            // A valid module whose exported entrypoints do not include roles/allow is also rejected.
+            content.set(OpaWasmEvaluator.loadPolicy(context, authz));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            content.set(new OpaWasmEvaluator.Bundle(original.wasm(), "{invalid"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
+        }
+    }
+
+    /**
+     * The wiring of {@code policyReloadInterval}: the endpoint starts the watcher in {@code createWasmEvaluator} and
+     * the security policy in {@code onProcessorStart}, so a bundle file renamed over the configured one is picked up by
+     * both without a restart.
+     */
+    @Test
+    @Timeout(60)
+    void reloadsThroughTheEndpointAndPolicyOptionsWhenTheBundleFileChanges() throws Exception {
+        byte[] promoted = OpaWasmBundleBuilder.build(
+                Map.of("roles.rego", resource("/wasm-data/roles.rego").getBytes(StandardCharsets.UTF_8),
+                        "data.json", "{\"admins\":[\"alice\"]}".getBytes(StandardCharsets.UTF_8)),
+                "roles/allow");
+        Path watched = bundles.resolve("reload-bundle.tar.gz");
+        Files.copy(Path.of(roles.substring("file:".length())), watched);
+        String bundle = "file:" + watched.toAbsolutePath();
+        String endpointUri = "opa:roles/allow?evaluationMode=wasm&policyBundle=" + bundle + "&policyReloadInterval=200";
+
+        OpaSecurityPolicy policy = new OpaSecurityPolicy();
+        policy.setEvaluationMode("wasm");
+        policy.setPolicyBundle(bundle);
+        policy.setPolicyPath("roles/allow");
+        policy.setPolicyReloadInterval(200);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:reloadEndpoint").to(endpointUri);
+                from("direct:reloadPolicy").policy(policy).to("mock:reloadGuarded");
+            }
+        });
+
+        Exchange denied = template.request("direct:reloadEndpoint", e -> e.getMessage().setHeader("user", "alice"));
+        assertThat(denied.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        Exchange refused = template.request("direct:reloadPolicy", e -> e.getMessage().setHeader("user", "alice"));
+        assertThat(refused.getException()).isInstanceOf(CamelAuthorizationException.class);
+        OpaEndpoint endpoint = context.getEndpoint(endpointUri, OpaEndpoint.class);
+        String before = endpoint.getPolicyReloadStatus().getActiveRevision();
+        assertThat(policy.getPolicyReloadStatus().getActiveRevision()).isEqualTo(before);
+
+        // published the way the docs recommend: a complete file renamed over the configured one
+        Path staged = bundles.resolve("reload-bundle.tar.gz.next");
+        Files.write(staged, promoted);
+        Files.move(staged, watched, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            Exchange allowed = template.request("direct:reloadEndpoint", e -> e.getMessage().setHeader("user", "alice"));
+            assertThat(allowed.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        });
+        assertThat(endpoint.getPolicyReloadStatus().getActiveRevision()).isNotEqualTo(before);
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            Exchange passed = template.request("direct:reloadPolicy", e -> e.getMessage().setHeader("user", "alice"));
+            assertThat(passed.getException()).isNull();
+        });
+        assertThat(policy.getPolicyReloadStatus().getActiveRevision()).isNotEqualTo(before)
+                .isEqualTo(endpoint.getPolicyReloadStatus().getActiveRevision());
     }
 
     @Test
