@@ -157,14 +157,16 @@ public class SmppProducer extends DefaultProducer {
                 if (connectLock.tryLock()) {
                     try {
                         if (session == null) {
-                            // set the system id and password with which we will try to connect to the SMSC
-                            Message in = exchange.getIn();
-                            String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
-                            String password = in.getHeader(SmppConstants.PASSWORD, String.class);
-                            if (systemId != null && password != null) {
-                                LOG.info("using the system id '{}' to connect to the SMSC...", systemId);
-                                this.configuration.setSystemId(systemId);
-                                this.configuration.setPassword(password);
+                            if (this.configuration.isAllowSystemIdAndPasswordFromHeaders()) {
+                                // set the system id and password with which we will try to connect to the SMSC
+                                Message in = exchange.getIn();
+                                String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
+                                String password = in.getHeader(SmppConstants.PASSWORD, String.class);
+                                if (systemId != null && password != null) {
+                                    LOG.info("using the system id '{}' to connect to the SMSC...", systemId);
+                                    this.configuration.setSystemId(systemId);
+                                    this.configuration.setPassword(password);
+                                }
                             }
                             session = createSession();
                         }
