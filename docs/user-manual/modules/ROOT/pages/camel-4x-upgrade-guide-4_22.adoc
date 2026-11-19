@@ -997,9 +997,9 @@ stopping.
 The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
 `dynamicRouter` -- compute their target endpoint from the current message at runtime. The option values of that
 endpoint are now bound as literal text: a property placeholder (`+{{...}}+`), a `#class:` value or a `#property:` value
-is not resolved. This extends to the options the treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave
-the endpoint path. It applies however the component binds its options, including components that bind them in their
-own `createEndpoint` or look up a reference option with `resolveAndRemoveReferenceParameter`.
+is not resolved. The options now get the same treatment that `toD`, `enrich`, `wireTap` and `pollEnrich` already gave
+the endpoint path. This holds regardless of how the component binds its options, including components that bind them in
+their own `createEndpoint` or look up a reference option with `resolveAndRemoveReferenceParameter`.
 
 This applies to every option of that uri, not only to the parts that come from the message: a `#class:` or
 `#property:` value written in the text of a `toD`, or in a uri that a bean of the route builds for `recipientList`,
