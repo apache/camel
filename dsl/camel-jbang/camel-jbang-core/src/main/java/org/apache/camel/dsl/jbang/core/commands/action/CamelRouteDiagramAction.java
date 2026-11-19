@@ -48,7 +48,6 @@ import org.apache.camel.diagram.RouteErrorFrame;
 import org.apache.camel.diagram.TopologyErrorFrame;
 import org.apache.camel.diagram.TopologyHelper;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -166,10 +165,6 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     private Terminal terminal;
     private TerminalGraphics terminalGraphics;
     private LineReader lineReader;
-
-    public CamelRouteDiagramAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

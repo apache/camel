@@ -40,7 +40,7 @@ class ChaosExploreTest {
 
     @Test
     void camelAskGetsThePlaybookAndTheOptions() {
-        ChaosExplore command = new ChaosExplore(new CamelJBangMain());
+        ChaosExplore command = new CamelJBangMain().command(new ChaosExplore());
         CommandLineTestHelper.parse(command, "shop", "--budget=30m", "--focus=refunds", "--model=qwen3.6",
                 "--api-type=ollama", "--tools=core", "--show-tools");
 
@@ -149,7 +149,7 @@ class ChaosExploreTest {
 
     @Test
     void saveIsOnByDefault() {
-        ChaosExplore command = new ChaosExplore(new CamelJBangMain());
+        ChaosExplore command = new CamelJBangMain().command(new ChaosExplore());
         CommandLineTestHelper.parse(command);
         assertThat(command.save).isTrue();
         CommandLineTestHelper.parse(command, "--no-save");

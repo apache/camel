@@ -288,7 +288,7 @@ class CamelReceiveActionTest extends ActionCommandTestSupport {
     }
 
     private CamelReceiveAction command(String... args) {
-        CamelReceiveAction command = new CamelReceiveAction(new CamelJBangMain().withPrinter(printer));
+        CamelReceiveAction command = new CamelJBangMain().withPrinter(printer).command(new CamelReceiveAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("--follow=false", "--logging-color=false"), Arrays.stream(args))
                         .toArray(String[]::new));

@@ -26,7 +26,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
@@ -121,10 +120,6 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     private MessageTableHelper tableHelper;
 
-    public TransformMessageAction(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (dataformat == null) {
@@ -160,7 +155,7 @@ public class TransformMessageAction extends ActionWatchCommand {
         Integer exit;
         try {
             // start a new empty camel in the background
-            Run run = new Run(getMain());
+            Run run = getMain().command(new Run());
             // requires camel 4.3 onwards
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                 printer().printErr("This requires Camel version 4.3 or newer");

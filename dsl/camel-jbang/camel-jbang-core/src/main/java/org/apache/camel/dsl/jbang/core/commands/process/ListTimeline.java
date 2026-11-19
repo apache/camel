@@ -33,7 +33,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -109,10 +108,6 @@ public class ListTimeline extends ProcessWatchCommand {
 
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
-
-    public ListTimeline(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

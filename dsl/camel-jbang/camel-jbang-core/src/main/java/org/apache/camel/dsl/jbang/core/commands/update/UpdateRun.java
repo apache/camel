@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -50,10 +49,6 @@ public class UpdateRun extends CamelCommand {
 
     // the directory of the Maven project to update
     Path projectDir = Path.of(".");
-
-    public UpdateRun(CamelJBangMain main) {
-        super(main);
-    }
 
     /**
      * Executes the update command for a Camel project. This method determines the appropriate Maven command based on

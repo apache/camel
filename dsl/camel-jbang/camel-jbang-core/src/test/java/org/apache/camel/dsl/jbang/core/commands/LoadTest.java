@@ -73,7 +73,7 @@ class LoadTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldLoad() throws Exception {
-        Run run = new Run(new CamelJBangMain().withPrinter(printer));
+        Run run = new CamelJBangMain().withPrinter(printer).command(new Run());
         CommandLineTestHelper.parse(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
                 "--prop=mydir=" + workingDir.getAbsolutePath());
 
@@ -83,7 +83,7 @@ class LoadTest extends CamelCommandBaseTestSupport {
                 // wait until the integration has started: the status file is in the home dir, and it is empty or
                 // incomplete while the integration writes it
                 await().atMost(10, TimeUnit.SECONDS).ignoreExceptions().until(LoadTest::integrationStarted);
-                CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
+                CamelLoadAction load = new CamelJBangMain().command(new CamelLoadAction());
                 CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
             } catch (Exception e) {

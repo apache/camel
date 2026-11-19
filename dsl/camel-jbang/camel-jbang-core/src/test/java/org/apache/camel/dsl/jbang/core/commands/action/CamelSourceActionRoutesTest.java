@@ -64,7 +64,7 @@ class CamelSourceActionRoutesTest extends ActionCommandTestSupport {
     }
 
     private CamelSourceAction command(String... args) {
-        CamelSourceAction command = new CamelSourceAction(new CamelJBangMain().withPrinter(printer));
+        CamelSourceAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSourceAction());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

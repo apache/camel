@@ -367,7 +367,7 @@ class CamelRouteStatusTest extends ProcessCommandTestSupport {
     }
 
     private CamelRouteStatus command(String... args) {
-        CamelRouteStatus command = new CamelRouteStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStatus());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

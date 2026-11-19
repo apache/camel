@@ -33,7 +33,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -105,10 +104,6 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
 
     @Option(name = "show-group", hasValue = false, description = "Include group column")
     boolean showGroup;
-
-    public CamelProcessorStatus(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

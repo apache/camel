@@ -26,11 +26,11 @@ public class ValidatePlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        var cmd = new CommandTree(new ValidateCommand(main))
-                .addSubcommand("yaml", new CommandTree(new YamlValidateCommand(main)))
-                .addSubcommand("normalize", new CommandTree(new YamlNormalizeCommand(main)))
-                .addSubcommand("properties", new CommandTree(new PropertiesValidateCommand(main)))
-                .addSubcommand("source", new CommandTree(new SourceValidateCommand(main)));
+        var cmd = new CommandTree(main.command(new ValidateCommand()))
+                .addSubcommand("yaml", new CommandTree(main.command(new YamlValidateCommand())))
+                .addSubcommand("normalize", new CommandTree(main.command(new YamlNormalizeCommand())))
+                .addSubcommand("properties", new CommandTree(main.command(new PropertiesValidateCommand())))
+                .addSubcommand("source", new CommandTree(main.command(new SourceValidateCommand())));
 
         commandLine.addSubcommand("validate", cmd);
     }

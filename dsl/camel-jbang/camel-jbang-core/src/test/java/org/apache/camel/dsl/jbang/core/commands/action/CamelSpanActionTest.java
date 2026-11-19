@@ -38,7 +38,7 @@ class CamelSpanActionTest extends ActionCommandTestSupport {
     void testRequestsSpansAndRendersTrace() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSpanAction command = new CamelSpanAction(new CamelJBangMain().withPrinter(printer));
+        CamelSpanAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSpanAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.limit = 500;
@@ -59,7 +59,7 @@ class CamelSpanActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSpanAction command = new CamelSpanAction(new CamelJBangMain().withPrinter(printer));
+        CamelSpanAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSpanAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

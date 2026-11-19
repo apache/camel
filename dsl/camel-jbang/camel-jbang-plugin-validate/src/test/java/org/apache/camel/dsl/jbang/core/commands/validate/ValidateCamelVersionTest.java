@@ -46,14 +46,14 @@ class ValidateCamelVersionTest {
 
     private static int yaml(String... args) throws Exception {
         printer = new StringPrinter();
-        YamlValidateCommand cmd = new YamlValidateCommand(new CamelJBangMain().withPrinter(printer));
+        YamlValidateCommand cmd = new CamelJBangMain().withPrinter(printer).command(new YamlValidateCommand());
         CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }
 
     private static int source(String... args) throws Exception {
         printer = new StringPrinter();
-        SourceValidateCommand cmd = new SourceValidateCommand(new CamelJBangMain().withPrinter(printer));
+        SourceValidateCommand cmd = new CamelJBangMain().withPrinter(printer).command(new SourceValidateCommand());
         CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }

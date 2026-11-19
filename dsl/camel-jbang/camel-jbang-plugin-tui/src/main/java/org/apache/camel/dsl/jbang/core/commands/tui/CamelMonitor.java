@@ -65,7 +65,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -262,8 +261,7 @@ public class CamelMonitor extends CamelCommand {
 
     private final ClassLoader classLoader;
 
-    public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
-        super(main);
+    public CamelMonitor(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 

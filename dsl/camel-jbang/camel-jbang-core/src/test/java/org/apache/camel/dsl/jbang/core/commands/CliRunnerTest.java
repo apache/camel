@@ -162,8 +162,8 @@ class CliRunnerTest {
         @Override
         public void postAddCommands(CommandTree commandLine, String[] args) {
             // the commands of the CLI, one that ignores the interrupt, and one that counts its runs
-            commandLine.addSubcommand("busy", new CommandTree(new BusyCommand(this)));
-            commandLine.addSubcommand("count", new CommandTree(new CountCommand(this)));
+            commandLine.addSubcommand("busy", new CommandTree(command(new BusyCommand())));
+            commandLine.addSubcommand("count", new CommandTree(command(new CountCommand())));
         }
 
         @Override
@@ -179,10 +179,6 @@ class CliRunnerTest {
     static class CountCommand extends CamelCommand {
 
         private int runs;
-
-        CountCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         protected boolean disarrangeLogging() {
@@ -202,10 +198,6 @@ class CliRunnerTest {
      */
     @CommandDefinition(name = "busy", description = "", generateHelp = true, sortOptions = true)
     static class BusyCommand extends CamelCommand {
-
-        BusyCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         protected boolean disarrangeLogging() {

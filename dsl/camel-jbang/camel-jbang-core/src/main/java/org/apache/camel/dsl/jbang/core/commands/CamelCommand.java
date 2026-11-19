@@ -55,14 +55,26 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
     private CommandTree tree;
     private CommandInvocation invocation;
 
-    private final CamelJBangMain main;
+    // set after the command is created (see CamelJBangMain#command): the commands have a no-arg constructor, which the
+    // generated aesh metadata of the commands needs
+    private CamelJBangMain main;
 
-    protected CamelCommand(CamelJBangMain main) {
-        this.main = main;
+    /**
+     * The main of the CLI, which created this command.
+     *
+     * @throws IllegalStateException when the main was not set
+     */
+    public CamelJBangMain getMain() {
+        if (main == null) {
+            throw new IllegalStateException(
+                    "The CamelJBangMain of the command " + getClass().getName()
+                                            + " is not set (create the command with CamelJBangMain#command)");
+        }
+        return main;
     }
 
-    public CamelJBangMain getMain() {
-        return main;
+    public void setCamelMain(CamelJBangMain main) {
+        this.main = main;
     }
 
     protected void configureLoggingOff() throws Exception {
@@ -82,13 +94,13 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
     @Override
     public CommandResult execute(CommandInvocation invocation) {
         this.invocation = invocation;
-        if (main.parseOnly(this)) {
+        if (getMain().parseOnly(this)) {
             return CommandResult.SUCCESS;
         }
         try {
             return CommandResult.valueOf(call());
         } catch (Exception e) {
-            return CommandResult.valueOf(new CliExecutionExceptionHandler(main).handle(e, this));
+            return CommandResult.valueOf(new CliExecutionExceptionHandler(getMain()).handle(e, this));
         }
     }
 

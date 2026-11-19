@@ -17,17 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "list", description = "Displays available external services", generateHelp = true,
                    footer = {
                            "Examples:",
                            "  camel infra list" })
 public class InfraList extends InfraBaseCommand {
-
-    public InfraList(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -25,7 +25,6 @@ import java.util.Map;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
@@ -74,10 +73,6 @@ public class SemanticEvaluate extends SemanticActionCommand {
     @Option(name = "evaluation-timeout", description = "Provider evaluation timeout in milliseconds (1-50000)",
             defaultValue = "50000")
     long evaluationTimeout = 50000;
-
-    public SemanticEvaluate(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected JsonObject request() {

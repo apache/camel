@@ -43,7 +43,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testRequestsRouteStructureFromNamedIntegrationAndRendersSource() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
@@ -65,7 +66,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testShowsTheBodyTypesEachStepWasReachedWith() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
 
@@ -91,7 +93,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testVariedShowsOnlyTheStepsReachedWithMoreThanOneBodyType() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.varied = true;
@@ -112,7 +115,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testVariedSaysWhenNoStepVaried() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.varied = true;
@@ -145,7 +149,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testRawShowsOnlyTheCode() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.raw = true;
@@ -211,7 +216,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     @Test
     void testJsonOfAFilterThatMatchesNothingIsNotFound() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.jsonOutput = true;
@@ -227,7 +233,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     private JsonArray jsonRoutes(Consumer<CamelRouteStructureAction> options) throws Exception {
         printer = new StringPrinter();
         writeStatusFile(TEST_PID, "myApp");
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.jsonOutput = true;

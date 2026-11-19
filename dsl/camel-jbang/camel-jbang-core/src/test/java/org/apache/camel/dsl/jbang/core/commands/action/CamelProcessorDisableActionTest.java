@@ -36,7 +36,8 @@ class CamelProcessorDisableActionTest extends ActionCommandTestSupport {
     void testWritesDisableProcessorActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelProcessorDisableAction command = new CamelProcessorDisableAction(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorDisableAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorDisableAction());
         command.name = "myApp";
         command.id = "myProcessor";
 
@@ -54,7 +55,8 @@ class CamelProcessorDisableActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelProcessorDisableAction command = new CamelProcessorDisableAction(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorDisableAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorDisableAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

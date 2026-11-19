@@ -75,10 +75,6 @@ public class SBOMGenerator extends Export {
             defaultValue = SBOM_JSON_FORMAT)
     protected String sbomOutputFormat = SBOM_JSON_FORMAT;
 
-    public SBOMGenerator(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (!CYCLONEDX_FORMAT.equalsIgnoreCase(sbomFormat) && !SPDX_FORMAT.equalsIgnoreCase(sbomFormat)) {

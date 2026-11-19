@@ -48,7 +48,7 @@ class RunMcpStdioConfigurationTest extends BaseConfigTestSupport {
 
     private static String printRunConfiguration(String... args) {
         StringPrinter out = new StringPrinter();
-        Run run = new Run(new CamelJBangMain().withPrinter(out));
+        Run run = new CamelJBangMain().withPrinter(out).command(new Run());
         CommandTree commandLine = new CommandTree(run);
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         try {

@@ -540,7 +540,7 @@ class ExportDependencyTest extends ExportBaseTestSupport {
 
         // --dep=camel-platform-http becomes camel:platform-http, and it is the HTTP server of the exported
         // project, so the run controller is not needed to keep it alive
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir;
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
@@ -564,7 +564,7 @@ class ExportDependencyTest extends ExportBaseTestSupport {
         // --dep=camel-platform-http becomes camel:platform-http, which the camel-main runtime replaces with
         // camel-platform-http-main as well: the runtime exporter sees the dependencies before the duplicates are
         // removed, so it compares artifacts and not dependency strings
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=camel-main",

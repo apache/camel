@@ -141,7 +141,7 @@ class TransformMessageActionTest extends ActionCommandTestSupport {
     }
 
     private TransformMessageAction command(String... args) {
-        TransformMessageAction command = new TransformMessageAction(new CamelJBangMain().withPrinter(printer));
+        TransformMessageAction command = new CamelJBangMain().withPrinter(printer).command(new TransformMessageAction());
         CommandLineTestHelper.parse(command, args);
         if (!String.join(" ", args).contains("--logging-color")) {
             command.loggingColor = false;

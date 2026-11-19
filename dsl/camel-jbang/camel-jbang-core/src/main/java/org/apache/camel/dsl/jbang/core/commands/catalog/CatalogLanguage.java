@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.LanguageModel;
 
 @CommandDefinition(name = "language", description = "List expression languages from the Camel Catalog", generateHelp = true,
@@ -29,10 +28,6 @@ import org.apache.camel.tooling.model.LanguageModel;
                            "  camel catalog language",
                            "  camel catalog language --filter=simple" })
 public class CatalogLanguage extends CatalogBaseCommand {
-
-    public CatalogLanguage(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     List<Row> collectRows() {

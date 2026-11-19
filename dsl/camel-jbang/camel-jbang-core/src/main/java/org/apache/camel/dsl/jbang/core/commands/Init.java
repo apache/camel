@@ -96,10 +96,6 @@ public class Init extends CamelCommand {
     // when the template is picked in the terminal, where to ask whether to overwrite a file that exists already
     private Scanner overwritePrompt;
 
-    public Init(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (list) {

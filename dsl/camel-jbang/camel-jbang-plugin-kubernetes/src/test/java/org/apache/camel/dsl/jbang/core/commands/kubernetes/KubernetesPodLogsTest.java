@@ -92,7 +92,7 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
     }
 
     private KubernetesPodLogs createCommand() {
-        KubernetesPodLogs command = new KubernetesPodLogs(new CamelJBangMain().withPrinter(printer));
+        KubernetesPodLogs command = new CamelJBangMain().withPrinter(printer).command(new KubernetesPodLogs());
         command.withClient(kubernetesClient);
         return command;
     }

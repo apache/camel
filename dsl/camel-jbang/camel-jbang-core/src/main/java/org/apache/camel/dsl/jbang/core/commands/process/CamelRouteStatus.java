@@ -32,7 +32,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -107,10 +106,6 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     @Option(name = "checksum", hasValue = false,
             description = "Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it")
     boolean checksum;
-
-    public CamelRouteStatus(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

@@ -54,7 +54,7 @@ class InfraRunSelectionTest extends CamelCommandBaseTestSupport {
     }
 
     private InfraRun command(String... args) {
-        InfraRun command = new InfraRun(new CamelJBangMain().withPrinter(printer));
+        InfraRun command = new CamelJBangMain().withPrinter(printer).command(new InfraRun());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

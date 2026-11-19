@@ -36,7 +36,8 @@ class CamelProcessorEnableActionTest extends ActionCommandTestSupport {
     void testWritesEnableProcessorActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelProcessorEnableAction command = new CamelProcessorEnableAction(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorEnableAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorEnableAction());
         command.name = "myApp";
         command.id = "myProcessor";
 
@@ -54,7 +55,8 @@ class CamelProcessorEnableActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelProcessorEnableAction command = new CamelProcessorEnableAction(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorEnableAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorEnableAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

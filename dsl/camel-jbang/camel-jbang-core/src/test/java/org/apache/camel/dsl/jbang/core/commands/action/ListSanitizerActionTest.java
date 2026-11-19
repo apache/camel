@@ -40,7 +40,7 @@ class ListSanitizerActionTest extends ActionCommandTestSupport {
     void asksForTheSanitizerAndListsTheViolations() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(new ListSanitizer(new CamelJBangMain().withPrinter(printer)), sanitizer()))
+        assertThat(callWithResponse(new CamelJBangMain().withPrinter(printer).command(new ListSanitizer()), sanitizer()))
                 .isZero();
 
         assertThat(readActionFile(TEST_PID).getString("action")).isEqualTo("sanitizer");
@@ -54,7 +54,8 @@ class ListSanitizerActionTest extends ActionCommandTestSupport {
     void anAnswerWithoutTheConsoleIsAnIntegrationWithoutCamelSanitizer() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
-        assertThat(callWithResponse(new ListSanitizer(new CamelJBangMain().withPrinter(printer)), new JsonObject()))
+        assertThat(callWithResponse(new CamelJBangMain().withPrinter(printer).command(new ListSanitizer()),
+                new JsonObject()))
                 .isZero();
 
         assertThat(printer.getOutput())

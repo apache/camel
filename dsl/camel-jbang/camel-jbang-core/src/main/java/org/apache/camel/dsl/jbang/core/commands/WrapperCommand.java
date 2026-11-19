@@ -55,10 +55,6 @@ public class WrapperCommand extends CamelCommand {
     @Option(name = "command-name", description = "The name of the command to use (camel or camelw)", defaultValue = "camel")
     String commandName = "camel";
 
-    public WrapperCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (camelVersion == null || camelVersion.isEmpty()) {

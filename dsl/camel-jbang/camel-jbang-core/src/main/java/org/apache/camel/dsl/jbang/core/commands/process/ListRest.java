@@ -30,7 +30,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -59,10 +58,6 @@ public class ListRest extends ProcessWatchCommand {
 
     @Option(name = "verbose", hasValue = false, description = "Show more details")
     boolean verbose;
-
-    public ListRest(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

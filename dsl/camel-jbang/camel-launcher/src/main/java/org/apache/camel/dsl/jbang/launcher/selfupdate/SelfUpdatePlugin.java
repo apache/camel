@@ -24,6 +24,6 @@ public class SelfUpdatePlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("self-update", new CommandTree(new SelfUpdateCommand(main)));
+        commandLine.addSubcommand("self-update", new CommandTree(main.command(new SelfUpdateCommand())));
     }
 }

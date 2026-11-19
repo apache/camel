@@ -43,7 +43,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("log:info", "out", "10"));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -66,7 +66,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
         JsonObject root = buildEndpointStatus("myApp");
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("kafka:topic", "out", "5"));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
         command.filterDirection = "in";
 
@@ -116,7 +116,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("log:info", "out", "5"));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "-total";
         command.limit = 1;
         command.jsonOutput = true;
@@ -143,7 +143,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("timer:tick", "in", "1"));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -170,7 +170,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("exec:wc", "out", "1", false));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -196,7 +196,7 @@ class ListEndpointTest extends ProcessCommandTestSupport {
                 endpoint("exec:wc", "out", "1", false));
         writeStatusFile(TEST_PID, root);
 
-        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        ListEndpoint command = new CamelJBangMain().withPrinter(printer).command(new ListEndpoint());
         command.sort = "pid";
         command.jsonOutput = true;
 

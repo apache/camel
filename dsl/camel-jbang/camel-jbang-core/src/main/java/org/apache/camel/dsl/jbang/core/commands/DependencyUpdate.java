@@ -66,10 +66,6 @@ public class DependencyUpdate extends DependencyList {
     // actual target files to update (pom.xml or Java files with //DEPS)
     private final List<Path> updateTargets = new ArrayList<>();
 
-    public DependencyUpdate(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // clear state from any previous invocation

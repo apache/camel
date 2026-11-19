@@ -18,14 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.test;
 
 import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "test", description = "Manage tests for Camel applications", generateHelp = true)
 public class TestCommand extends CamelCommand {
-
-    public TestCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

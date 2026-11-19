@@ -37,10 +37,6 @@ public class Nano extends CamelCommand {
     @Argument(required = true, description = "Name of file", paramLabel = "file")
     private String file;
 
-    public Nano(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         requireInteractiveTerminal("camel nano");

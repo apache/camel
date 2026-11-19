@@ -30,7 +30,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
@@ -71,10 +70,6 @@ public class ListKafka extends ProcessWatchCommand {
 
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
-
-    public ListKafka(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void autoClearScreen() {

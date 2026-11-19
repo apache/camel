@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import org.aesh.command.option.Option;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -40,10 +39,6 @@ abstract class PluginBaseCommand extends CamelCommand {
                           + "for plugin commands themselves (e.g. 'camel kubernetes'), "
                           + "set CAMEL_CLI_PLUGIN_CONFIG instead.")
     String pluginConfig;
-
-    protected PluginBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     private Path pluginConfigPath() {
         if (pluginConfig != null) {

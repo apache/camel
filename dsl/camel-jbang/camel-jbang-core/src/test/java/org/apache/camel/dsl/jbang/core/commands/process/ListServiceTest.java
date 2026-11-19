@@ -41,7 +41,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -64,7 +64,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(service("platform-http", "in", "http", "http://0.0.0.0:8080/hello")));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(service("rest", "in", "http", "http://localhost:8080/orders")));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
         command.metadata = true;
         command.shortUri = true;
@@ -120,7 +120,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(entry));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
         command.jsonOutput = true;
 

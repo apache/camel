@@ -29,7 +29,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -91,10 +90,6 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
     @Option(name = "stacktrace", hasValue = false, description = "Show allocation stack trace for each sample")
     boolean stacktrace;
-
-    public CamelMemoryLeak(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

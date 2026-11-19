@@ -33,7 +33,7 @@ class CamelRouteDiagramActionTest {
     @Test
     void testParseRoutesEmpty() {
         JsonObject jo = new JsonObject();
-        CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);
+        CamelRouteDiagramAction action = new CamelRouteDiagramAction();
         List<RouteInfo> routes = action.parseRoutes(jo);
         assertTrue(routes.isEmpty());
     }
@@ -64,7 +64,7 @@ class CamelRouteDiagramActionTest {
         JsonObject jo = new JsonObject();
         jo.put("routes", routesArr);
 
-        CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);
+        CamelRouteDiagramAction action = new CamelRouteDiagramAction();
         List<RouteInfo> routes = action.parseRoutes(jo);
 
         assertEquals(1, routes.size());
@@ -101,7 +101,7 @@ class CamelRouteDiagramActionTest {
         JsonObject jo = new JsonObject();
         jo.put("routes", routesArr);
 
-        CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);
+        CamelRouteDiagramAction action = new CamelRouteDiagramAction();
         List<RouteInfo> routes = action.parseRoutes(jo);
 
         assertEquals("Poll every second", routes.get(0).nodes.get(0).description);

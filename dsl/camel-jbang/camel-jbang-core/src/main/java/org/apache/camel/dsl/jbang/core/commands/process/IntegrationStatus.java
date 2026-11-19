@@ -26,7 +26,6 @@ import java.util.StringJoiner;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ReloadOutcome;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -71,10 +70,6 @@ public class IntegrationStatus extends ProcessBaseCommand {
 
     @Option(name = "errors", description = "How many of the last errors to show", defaultValue = "5")
     int errors = 5;
-
-    public IntegrationStatus(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

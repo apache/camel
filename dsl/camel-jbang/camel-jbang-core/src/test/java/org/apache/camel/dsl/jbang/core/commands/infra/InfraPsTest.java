@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class InfraPsTest extends InfraCommandTestSupport {
 
     private InfraPs command() {
-        InfraPs command = new InfraPs(new CamelJBangMain().withPrinter(printer));
+        InfraPs command = new CamelJBangMain().withPrinter(printer).command(new InfraPs());
         // the pid files carry synthetic pids, so treat every pid as a live process
         command.aliveCheck = pid -> true;
         return command;
@@ -189,7 +189,7 @@ class InfraPsTest extends InfraCommandTestSupport {
         long pid = ProcessHandle.current().pid();
         writePidFile("ftp", pid, "{}");
 
-        InfraPs command = new InfraPs(new CamelJBangMain().withPrinter(printer));
+        InfraPs command = new CamelJBangMain().withPrinter(printer).command(new InfraPs());
         int exit = command.doCall();
 
         assertEquals(0, exit);

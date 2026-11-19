@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "suspend-route", description = "Suspend Camel routes", generateHelp = true,
@@ -26,10 +25,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd suspend-route --id=myRoute",
                            "  camel cmd suspend-route myApp --id=myRoute" })
 public class CamelRouteSuspendAction extends CamelRouteAction {
-
-    public CamelRouteSuspendAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void onAction(JsonObject root) {

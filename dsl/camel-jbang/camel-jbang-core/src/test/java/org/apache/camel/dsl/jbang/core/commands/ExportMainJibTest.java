@@ -73,7 +73,7 @@ class ExportMainJibTest extends CamelCommandBaseTestSupport {
         Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--java-version=21",
@@ -107,7 +107,7 @@ class ExportMainJibTest extends CamelCommandBaseTestSupport {
         Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         command.exportBaseDir = baseDir.toPath();
         CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()),

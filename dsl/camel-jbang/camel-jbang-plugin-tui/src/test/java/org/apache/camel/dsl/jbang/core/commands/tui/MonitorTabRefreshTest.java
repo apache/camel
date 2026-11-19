@@ -135,7 +135,7 @@ class MonitorTabRefreshTest {
         MonitorTab tab = mock(MonitorTab.class);
         TabRegistry registry = mock(TabRegistry.class);
         when(registry.activeTab()).thenReturn(tab);
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         set(monitor, "tabRegistry", registry);
         set(monitor, "ctx", ctx);
         set(monitor, "dataService", data);

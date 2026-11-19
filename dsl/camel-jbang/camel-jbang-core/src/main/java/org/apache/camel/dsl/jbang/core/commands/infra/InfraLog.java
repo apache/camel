@@ -32,7 +32,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -66,9 +65,7 @@ public class InfraLog extends InfraBaseCommand {
 
     private ExecutorService executorService;
 
-    public InfraLog(CamelJBangMain main) {
-        super(main);
-
+    public InfraLog() {
         executorService = Executors.newFixedThreadPool(10);
     }
 

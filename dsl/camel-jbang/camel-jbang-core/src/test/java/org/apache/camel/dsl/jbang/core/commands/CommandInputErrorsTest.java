@@ -71,7 +71,7 @@ class CommandInputErrorsTest {
     void explainChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(call(main.command(new Explain()), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -80,7 +80,7 @@ class CommandInputErrorsTest {
     void hardenChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(call(main.command(new Harden()), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -90,7 +90,7 @@ class CommandInputErrorsTest {
         // picocli requires --template, so only a blank value reaches the command
         // an exception of the command, so --json prints it as the JSON of an error (CAMEL-26931); the CLI prints it as
         // an ERROR line with the exit code
-        assertThatThrownBy(() -> call(new EvalExpressionCommand(main), "--template="))
+        assertThatThrownBy(() -> call(main.command(new EvalExpressionCommand()), "--template="))
                 .isInstanceOfSatisfying(CliException.class, e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
                 .hasMessage("Template is required");
     }
@@ -99,7 +99,7 @@ class CommandInputErrorsTest {
     void evalExpressionWithAMissingTemplateFile() throws Exception {
         Path missing = dir.resolve("missing.txt");
 
-        assertThatThrownBy(() -> call(new EvalExpressionCommand(main), "--template=file:" + missing))
+        assertThatThrownBy(() -> call(main.command(new EvalExpressionCommand()), "--template=file:" + missing))
                 .isInstanceOfSatisfying(CliException.class,
                         e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND))
                 .hasMessage("Template file does not exist: " + missing);
@@ -107,7 +107,7 @@ class CommandInputErrorsTest {
 
     @Test
     void transformMessageNeedsASourceOrATemplate() throws Exception {
-        assertThat(call(new TransformMessageAction(main), "--body=Hello")).isEqualTo(CliExitCode.USAGE);
+        assertThat(call(main.command(new TransformMessageAction()), "--body=Hello")).isEqualTo(CliExitCode.USAGE);
         assertThat(printer.getStderr())
                 .isEqualTo("ERROR: Either source or template and one of language/component must be configured");
     }
@@ -116,7 +116,7 @@ class CommandInputErrorsTest {
     void transformMessageWithAMissingSourceFile() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new TransformMessageAction(main), "--body=Hello", "--source=file:" + missing))
+        assertThat(call(main.command(new TransformMessageAction()), "--body=Hello", "--source=file:" + missing))
                 .isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
@@ -125,7 +125,7 @@ class CommandInputErrorsTest {
     void dependencyUpdateRejectsCleanWithScanRoutes() throws Exception {
         Path pom = dir.resolve("pom.xml");
 
-        assertThat(call(new DependencyUpdate(main), "--clean", "--scan-routes", pom.toString()))
+        assertThat(call(main.command(new DependencyUpdate()), "--clean", "--scan-routes", pom.toString()))
                 .isEqualTo(CliExitCode.USAGE);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Options --clean and --scan-routes are mutually exclusive");
     }
@@ -134,7 +134,7 @@ class CommandInputErrorsTest {
     void dependencyUpdateWithAMissingFile() throws Exception {
         Path missing = dir.resolve("missing/pom.xml");
 
-        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(call(main.command(new DependencyUpdate()), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -142,7 +142,8 @@ class CommandInputErrorsTest {
     void initFromKameletNeedsAKameletFile() throws Exception {
         Path file = dir.resolve("orders.yaml");
 
-        assertThat(call(new Init(main), file.toString(), "--from-kamelet=timer-source")).isEqualTo(CliExitCode.USAGE);
+        assertThat(call(main.command(new Init()), file.toString(), "--from-kamelet=timer-source"))
+                .isEqualTo(CliExitCode.USAGE);
         assertThat(printer.getStderr())
                 .isEqualTo("ERROR: When extending from an existing Kamelet then file must have extension .kamelet.yaml");
         assertThat(file).doesNotExist();
@@ -154,7 +155,7 @@ class CommandInputErrorsTest {
         // attach to is ProcessFinder.requireOne
         assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "runs without an interactive terminal");
 
-        assertThatThrownBy(() -> call(new Debug(main), "--remote-attach", "--name=no-such-integration"))
+        assertThatThrownBy(() -> call(main.command(new Debug()), "--remote-attach", "--name=no-such-integration"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("camel debug requires an interactive terminal")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -171,7 +172,7 @@ class CommandInputErrorsTest {
                                                              + "<type>pom</type><scope>import</scope></dependency>"
                                                              + "</dependencies></dependencyManagement></project>");
 
-        assertThatThrownBy(() -> call(new Debug(main), "--background", pom.toString()))
+        assertThatThrownBy(() -> call(main.command(new Debug()), "--background", pom.toString()))
                 .isInstanceOf(CliException.class)
                 .hasMessage("Debug Camel Spring Boot with --background is not supported")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -186,20 +187,21 @@ class CommandInputErrorsTest {
         // Override runBackgroundProcess so the test does not actually spawn a child JVM,
         // and record the kind string to verify the background branch was taken
         AtomicReference<String> capturedKind = new AtomicReference<>();
-        Debug debug = new Debug(main) {
+        Debug debug = new Debug() {
             @Override
             protected int runBackgroundProcess(ProcessBuilder pb, String kind) {
                 capturedKind.set(kind);
                 return 0;
             }
         };
+        debug.setCamelMain(main);
         assertThat(call(debug, "--background", file.toString())).isZero();
         assertThat(capturedKind.get()).isEqualTo("Camel Debug");
     }
 
     @Test
     void debugBackgroundAndRemoteAttachAreMutuallyExclusive() {
-        assertThatThrownBy(() -> call(new Debug(main), "--background", "--remote-attach"))
+        assertThatThrownBy(() -> call(main.command(new Debug()), "--background", "--remote-attach"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("--background and --remote-attach are mutually exclusive")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -209,7 +211,7 @@ class CommandInputErrorsTest {
     @ValueSource(strings = { "missing.yaml", "missing.xml", "missing.java", "file:missing.camel.yaml" })
     void runAFileThatDoesNotExist(String file) {
         // every extension, before anything is prepared or printed
-        assertThatThrownBy(() -> call(new Run(main), file))
+        assertThatThrownBy(() -> call(main.command(new Run()), file))
                 .isInstanceOf(CliException.class)
                 .hasMessage("File does not exist: " + file.replace("file:", ""))
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
@@ -224,17 +226,17 @@ class CommandInputErrorsTest {
 
         // a Citrus test is not a route: camel test run runs it, and nothing is prepared or printed
         for (String file : List.of(test.toString(), "file:" + test)) {
-            assertThatThrownBy(() -> call(new Run(main), file))
+            assertThatThrownBy(() -> call(main.command(new Run()), file))
                     .isInstanceOf(CliException.class)
                     .hasMessage(message)
                     .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
         }
         // the same for a folder that holds only Citrus tests, also with camel dev
         String folder = test.getParent().toString();
-        assertThatThrownBy(() -> call(new Run(main), folder))
+        assertThatThrownBy(() -> call(main.command(new Run()), folder))
                 .isInstanceOf(CliException.class).hasMessage(message)
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
-        assertThatThrownBy(() -> call(new Dev(main), "--source-dir=" + folder))
+        assertThatThrownBy(() -> call(main.command(new Dev()), "--source-dir=" + folder))
                 .isInstanceOf(CliException.class).hasMessage(message)
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
         assertThat(printer.getOutput()).isEmpty();
@@ -244,7 +246,7 @@ class CommandInputErrorsTest {
     void runFilesAndSourceDir() throws Exception {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
-        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--source-dir=" + dir))
+        assertThatThrownBy(() -> call(main.command(new Run()), file.toString(), "--source-dir=" + dir))
                 .isInstanceOf(CliException.class)
                 .hasMessage("Cannot specify both file(s) and source-dir at the same time.")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -254,7 +256,7 @@ class CommandInputErrorsTest {
     void sbomWithAnUnknownFormat() throws Exception {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
-        assertThatThrownBy(() -> call(new SBOMGenerator(main), file.toString(), "--sbom-format=bogus"))
+        assertThatThrownBy(() -> call(main.command(new SBOMGenerator()), file.toString(), "--sbom-format=bogus"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("Unknown SBOM format: bogus (use cyclonedx or spdx)")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -265,7 +267,8 @@ class CommandInputErrorsTest {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
         // the route is not sent to another LLM, such as a local Ollama
-        assertThat(call(new Harden(main), file.toString(), "--url=http://127.0.0.1:9")).isEqualTo(CliExitCode.FAILURE);
+        assertThat(call(main.command(new Harden()), file.toString(), "--url=http://127.0.0.1:9"))
+                .isEqualTo(CliExitCode.FAILURE);
         assertThat(printer.getStderr()).startsWith("ERROR: Cannot connect to LLM service at: http://127.0.0.1:9");
         assertThat(printer.getStdout()).doesNotContain("LLM Configuration");
     }
@@ -284,7 +287,7 @@ class CommandInputErrorsTest {
     void runQuarkusInTheBackground() throws Exception {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
-        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--background"))
+        assertThatThrownBy(() -> call(main.command(new Run()), file.toString(), "--runtime=quarkus", "--background"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("Run Camel Quarkus with --background is not supported")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
@@ -295,7 +298,7 @@ class CommandInputErrorsTest {
         // not yet with Camel Quarkus: --sanitizer must not be silently ignored
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
-        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--sanitizer"))
+        assertThatThrownBy(() -> call(main.command(new Run()), file.toString(), "--runtime=quarkus", "--sanitizer"))
                 .isInstanceOf(CliException.class)
                 .hasMessage(
                         "Run Camel Quarkus with --sanitizer is not supported yet (use --runtime=jbang, main or spring-boot)")

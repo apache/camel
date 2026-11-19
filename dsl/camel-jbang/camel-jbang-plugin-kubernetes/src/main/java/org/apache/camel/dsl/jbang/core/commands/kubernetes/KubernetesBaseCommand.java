@@ -36,7 +36,6 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import org.aesh.command.option.Option;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -58,8 +57,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
 
-    protected KubernetesBaseCommand(CamelJBangMain main) {
-        super(main);
+    protected KubernetesBaseCommand() {
         projectNameSuppliers.add(() -> name);
     }
 

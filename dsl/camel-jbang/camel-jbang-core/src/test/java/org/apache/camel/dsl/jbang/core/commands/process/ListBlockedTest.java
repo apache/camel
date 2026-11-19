@@ -40,7 +40,7 @@ class ListBlockedTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListBlocked command = new ListBlocked(new CamelJBangMain().withPrinter(printer));
+        ListBlocked command = new CamelJBangMain().withPrinter(printer).command(new ListBlocked());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -63,7 +63,7 @@ class ListBlockedTest extends ProcessCommandTestSupport {
         root.put("blocked", exchangeContainer(blockedExchange("exchange-1", "route1", "to1")));
         writeStatusFile(TEST_PID, root);
 
-        ListBlocked command = new ListBlocked(new CamelJBangMain().withPrinter(printer));
+        ListBlocked command = new CamelJBangMain().withPrinter(printer).command(new ListBlocked());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListBlockedTest extends ProcessCommandTestSupport {
         root.put("blocked", exchangeContainer(blockedExchange("exchange-2", "route2", "bean1")));
         writeStatusFile(TEST_PID, root);
 
-        ListBlocked command = new ListBlocked(new CamelJBangMain().withPrinter(printer));
+        ListBlocked command = new CamelJBangMain().withPrinter(printer).command(new ListBlocked());
         command.sort = "pid";
         command.jsonOutput = true;
 

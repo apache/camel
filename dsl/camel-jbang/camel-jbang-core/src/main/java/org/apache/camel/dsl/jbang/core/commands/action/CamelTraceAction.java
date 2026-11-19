@@ -45,7 +45,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
@@ -214,10 +213,6 @@ public class CamelTraceAction extends ActionBaseCommand {
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
     private int exchangeIdColorsIndex = 1;
     private final SimpleDateFormat sdfTimestamp = new SimpleDateFormat(TIMESTAMP_FORMAT);
-
-    public CamelTraceAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -36,7 +36,8 @@ class CamelRouteGroupStopActionTest extends ActionCommandTestSupport {
     void testWritesStopGroupActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteGroupStopAction command = new CamelRouteGroupStopAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStopAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStopAction());
         command.name = "myApp";
         command.id = "myGroup";
 
@@ -56,7 +57,8 @@ class CamelRouteGroupStopActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteGroupStopAction command = new CamelRouteGroupStopAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStopAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStopAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

@@ -37,7 +37,8 @@ class CamelRouteTopologyActionRenderTest {
     @Test
     void testRendersTwoRoutesWithEdgeAsPlainTopology() throws Exception {
         StringPrinter printer = new StringPrinter();
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
 
         int exit = command.renderTopology(twoRouteTopologyWithEdge());
 
@@ -53,7 +54,8 @@ class CamelRouteTopologyActionRenderTest {
     @Test
     void testRendersAsJson() throws Exception {
         StringPrinter printer = new StringPrinter();
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.jsonOutput = true;
 
         int exit = command.renderTopology(twoRouteTopologyWithEdge());
@@ -83,14 +85,15 @@ class CamelRouteTopologyActionRenderTest {
         ((JsonArray) topology.get("edges")).add(error);
 
         StringPrinter printer = new StringPrinter();
-        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTopologyAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.theme = "ascii";
         command.renderTopology(topology);
         assertTrue(!printer.getOutput().contains("Error handling"), "the happy path by default: " + printer.getOutput());
 
         // CAMEL-25466: parked, reached only on error, in a frame of its own with where its failures come from
         printer = new StringPrinter();
-        command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTopologyAction());
         command.theme = "ascii";
         command.errors = true;
         command.renderTopology(topology);

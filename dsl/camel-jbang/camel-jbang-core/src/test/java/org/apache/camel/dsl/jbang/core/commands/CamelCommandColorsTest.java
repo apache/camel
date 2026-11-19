@@ -37,7 +37,7 @@ class CamelCommandColorsTest {
     void coloredTextWithoutTerminalIsPrintedWithoutColors() throws Exception {
         assumeFalse(EnvironmentHelper.hasTerminal(), "runs without a terminal");
 
-        String out = printToConsole(new ColoredCommand(new CamelJBangMain()));
+        String out = printToConsole(new CamelJBangMain().command(new ColoredCommand()));
 
         assertThat(out).isEqualTo("red and bold" + System.lineSeparator() + "plain");
     }
@@ -46,7 +46,7 @@ class CamelCommandColorsTest {
     void consoleStripsTheColorsWithoutTerminal() {
         assumeFalse(EnvironmentHelper.hasTerminal(), "runs without a terminal");
 
-        assertThat(new ColoredCommand(new CamelJBangMain()).colorsStripped()).isTrue();
+        assertThat(new CamelJBangMain().command(new ColoredCommand()).colorsStripped()).isTrue();
     }
 
     private static String printToConsole(CamelCommand command) throws Exception {
@@ -62,10 +62,6 @@ class CamelCommandColorsTest {
     }
 
     private static final class ColoredCommand extends CamelCommand {
-
-        ColoredCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         public Integer doCall() {

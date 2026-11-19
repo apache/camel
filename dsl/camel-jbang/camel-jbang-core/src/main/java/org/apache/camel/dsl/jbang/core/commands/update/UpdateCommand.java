@@ -18,18 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.update;
 
 import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "update", description = "Update Camel project", generateHelp = true, sortOptions = true)
 public class UpdateCommand extends CamelCommand {
 
-    public UpdateCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // defaults to list
-        return runDefault(new UpdateList(getMain()));
+        return runDefault(getMain().command(new UpdateList()));
     }
 }

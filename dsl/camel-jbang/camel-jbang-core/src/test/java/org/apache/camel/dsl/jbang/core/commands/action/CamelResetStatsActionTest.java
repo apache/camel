@@ -36,7 +36,7 @@ class CamelResetStatsActionTest extends ActionCommandTestSupport {
     void testWritesResetStatsActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelResetStatsAction command = new CamelResetStatsAction(new CamelJBangMain().withPrinter(printer));
+        CamelResetStatsAction command = new CamelJBangMain().withPrinter(printer).command(new CamelResetStatsAction());
         command.name = "myApp";
 
         int exit = callWithSingleProcess(command);
@@ -51,7 +51,7 @@ class CamelResetStatsActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelResetStatsAction command = new CamelResetStatsAction(new CamelJBangMain().withPrinter(printer));
+        CamelResetStatsAction command = new CamelJBangMain().withPrinter(printer).command(new CamelResetStatsAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

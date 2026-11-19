@@ -48,10 +48,6 @@ public class TransformDataWeave extends CamelCommand {
             defaultValue = "true")
     private boolean includeComments = true;
 
-    public TransformDataWeave(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (expression != null) {

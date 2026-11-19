@@ -101,10 +101,6 @@ public class TransformRoute extends CamelCommand {
     @Mixin
     MavenResolverMixin mavenResolver;
 
-    public TransformRoute(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (format == null) {
@@ -151,7 +147,7 @@ public class TransformRoute extends CamelCommand {
                 // a route the parser cannot read completely (a lambda, a value known only at runtime): compile them all
             }
 
-            Run run = new Run(getMain()) {
+            Run run = new Run() {
                 @Override
                 protected void doAddInitialProperty(KameletMain main) {
                     main.addInitialProperty("camel.main.dumpRoutes", format);
@@ -171,6 +167,7 @@ public class TransformRoute extends CamelCommand {
                     }
                 }
             };
+            run.setCamelMain(getMain());
             run.files = files;
             run.setWorkDir(workDir);
             run.executionLimitOptions.maxSeconds = 1;

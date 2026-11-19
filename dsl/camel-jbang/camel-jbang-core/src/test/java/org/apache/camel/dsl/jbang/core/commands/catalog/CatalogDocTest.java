@@ -243,7 +243,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogDoc createCommand(String name, boolean example) {
-        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
+        CatalogDoc command = new CamelJBangMain().withPrinter(printer).command(new CatalogDoc());
         command.name = name;
         command.example = example;
         command.mavenResolver = new MavenResolverMixin();

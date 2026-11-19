@@ -91,7 +91,7 @@ class CamelSqlQueryActionTest extends ActionCommandTestSupport {
     }
 
     private CamelSqlQueryAction command(String... args) {
-        CamelSqlQueryAction command = new CamelSqlQueryAction(new CamelJBangMain().withPrinter(printer));
+        CamelSqlQueryAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSqlQueryAction());
         CommandLineTestHelper.parse(command, args);
         return command;
     }
