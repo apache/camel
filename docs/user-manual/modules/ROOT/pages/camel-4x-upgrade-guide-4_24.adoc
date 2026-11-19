@@ -10023,6 +10023,27 @@ The `region` option is no longer marked as required in the catalog, since `regio
 `kmsClient` option replaces both. The producer still fails with "Region or endpoint is required" when it has to create
 a client and neither is set.
 
+=== camel-nats - the host name of the server is verified over TLS
+
+When the connection uses TLS (`secure=true`, or a `tls://` server address), camel-nats now checks that the certificate
+of the NATS server matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate
+trusted by the trust store was accepted, whatever host the certificate was issued for. To keep the host name for TLS,
+the client connects to the fastest of the IP addresses of a host name (the happy eyeballs mode of jnats), instead of
+replacing the host name by its IP addresses first.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; an IP
+address must be listed as a subject alternative name of the certificate. This also applies to the servers that the
+NATS cluster announces, which are often IP addresses.
+
+WARNING: The servers announced by the cluster are used only when the client reconnects, so a certificate without the
+IP addresses that the cluster announces still connects at startup, and fails only when the client fails over to
+another server. Before upgrading, check that the certificate of each server lists the host names or IP addresses that
+the cluster announces (the `connect_urls` in the `INFO` of the servers, set with their `client_advertise` option).
+
+Use certificates that match the hosts, or set the new `hostnameVerification` option to `false` to keep the previous
+behaviour. An `opentls://` server address still trusts
+any certificate and is not checked.
+
 === camel-pulsar - the host name of the broker is verified with pulsar+ssl
 
 When the endpoint creates its own Pulsar client, a `pulsar+ssl://` connection now checks that the certificate of the

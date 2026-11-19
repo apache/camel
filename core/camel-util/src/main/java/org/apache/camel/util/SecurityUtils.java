@@ -185,6 +185,7 @@ public final class SecurityUtils {
                 "component:ftps",
                 "component:mina",
                 "component:mllp",
+                "component:nats",
                 "component:netty",
                 "component:nettyhttp",
                 "component:pulsar",
