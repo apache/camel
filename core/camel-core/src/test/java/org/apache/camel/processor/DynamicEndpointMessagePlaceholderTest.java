@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.AggregationStrategies;
@@ -129,6 +130,31 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
     }
 
     @Test
+    void pollEnrichOptimisedPlaceholderInHeaderNotResolved() throws Exception {
+        // the file component polls through its PollDynamicAware, which takes the evaluated uri as it is
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:peFile", "trigger", "dir", "{{secretTarget}}");
+
+        assertMockEndpointsSatisfied();
+        assertThat(context.getEndpoints()).extracting(Endpoint::getEndpointUri)
+                .filteredOn(uri -> uri.startsWith("file:"))
+                .isNotEmpty()
+                .noneMatch(uri -> uri.contains("resolved"));
+    }
+
+    @Test
+    void pollEnrichOptimisedPlaceholderInRouteTextIsResolved() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:peFileRoute", "trigger", "dir", "probe");
+
+        assertMockEndpointsSatisfied();
+        assertThat(context.getEndpoints()).extracting(Endpoint::getEndpointUri)
+                .anyMatch(uri -> uri.startsWith("file:") && uri.contains("resolved"));
+    }
+
+    @Test
     void placeholderInStaticTemplateIsResolved() throws Exception {
         // control: a placeholder written in the route template itself is still resolved at build time
         getMockEndpoint("mock:resolved").expectedMessageCount(1);
@@ -159,6 +185,11 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
                 from("direct:dr").dynamicRouter(method(DynamicEndpointMessagePlaceholderTest.this, "route"));
                 from("direct:pe").pollEnrich().simple("${header.target}").timeout(2000).end().to("mock:done");
                 from("direct:staticTemplate").toD("mock:{{secretTarget}}");
+                from("direct:peFile").pollEnrich().simple("file:" + testDirectory() + "/${header.dir}?initialDelay=0")
+                        .timeout(100).end().to("mock:done");
+                from("direct:peFileRoute")
+                        .pollEnrich().simple("file:" + testDirectory() + "/{{secretTarget}}/${header.dir}?initialDelay=0")
+                        .timeout(100).end().to("mock:done");
             }
         };
     }

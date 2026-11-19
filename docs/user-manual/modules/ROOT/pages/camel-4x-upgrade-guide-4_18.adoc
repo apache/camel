@@ -1061,8 +1061,8 @@ toD("log:audit?exchangeFormatter=#bean:myFormatter&marker=${header.customer}")
 What still works as before:
 
 * Registry references (`#bean:name`, `#type:`, `#name`) are still resolved, so `+toD("sql:${header.query}?dataSource=#ds")+` keeps working.
-* On 4.18.x, property placeholders (`+{{...}}+`) in the uri computed per message are still resolved, for all the
-  dynamic-endpoint EIPs, as before.
+* Property placeholders (`+{{...}}+`) in the uri computed per message are still resolved by `recipientList`,
+  `routingSlip` and `dynamicRouter`. For `toD`, `enrich`, `wireTap` and `pollEnrich`, see the next sections.
 * An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
   before.
 
@@ -1075,6 +1075,61 @@ taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endp
 is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
 use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
 is resolved once when the route is created.
+
+=== camel-core - property placeholders in a toD, enrich, wireTap or pollEnrich uri computed from the message
+
+`toD`, `enrich`, `wireTap` and `pollEnrich` no longer resolve property placeholders (`+{{...}}+`) in the uri evaluated
+for each message, as in Camel 4.22 and 4.23. A placeholder written in the route is resolved once, when the route is
+created. A `+{{...}}+` that only appears in the value computed at runtime, for example from a message header or the
+body, is now taken as a literal part of the endpoint uri instead of being expanded.
+
+This only affects routes where the message carried a `+{{...}}+` and relied on it being expanded. Placeholders written
+in the route keep working, for example:
+
+[source,java]
+----
+.toD("{{myEndpoint}}/${header.id}")
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+To have a placeholder resolved, keep it in the uri written in the route rather than in the message.
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is computed entirely at runtime and may
+carry a placeholder that comes from configuration, so they continue to resolve `+{{...}}+` in the computed recipient.
+
+=== camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
+
+`RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
+key (or the exchange id) as a plain string field, and reads them back through an `ObjectInputFilter`. Before, the
+fields and values were encoded with the codec of the Redisson client, by default the Redisson `Kryo5Codec`. The codec
+of a `RedissonClient` given with the `redisson` option is no longer used for these hashes.
+
+The new option `deserializationFilter` sets the filter pattern, in the syntax of the `jdk.serialFilter` system
+property. When it is not set, the JVM-wide `jdk.serialFilter` applies if it is set, otherwise the default filter
+`!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`. It allows the
+`java`, `javax` and `org.apache.camel` packages, except `java.net`, and rejects the other classes. It also limits the
+size of a stored exchange: `maxdepth=20` (the depth of the object graph), `maxrefs=10000` (the number of objects in it)
+and `maxbytes=10485760` (10 MB). Before, there was no such limit. An exchange over a limit cannot be read back, and its
+aggregation does not complete, for example a `List` body that collects more than 10000 strings, or a body of more than
+10 MB. If the bodies or headers are instances of your own classes, or are larger, set `deserializationFilter`. It
+replaces the whole default pattern, so keep its other parts, for example
+`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;maxdepth=50;maxrefs=1000000;maxbytes=104857600;!*`,
+or leave out the `maxdepth`, `maxrefs` and `maxbytes` parts to have no limits. The objects that a body or header value
+refers to must be `java.io.Serializable`.
+
+A completed exchange that cannot be read back is skipped by the recovery, with a WARN that gives its exchange id, so
+the recovery of the other completed exchanges goes on.
+
+The exchanges stored by Camel 4.18.5 and older are not read: they stay in Redis, but these aggregations do not complete
+and these completed exchanges are not recovered. When the repository starts, it checks the first 100 entries of each
+of its hashes and logs a WARN with the number of such entries among them. Complete the aggregations in progress, and
+let the recovery of the completed exchanges finish, before upgrading. Otherwise, remove the hashes of the repository
+(`mapName` and the persistence map, by default `mapName` with the suffix `-completed`) from Redis.
+
+To upgrade without draining, set the new `codec` option to `new org.redisson.codec.Kryo5Codec()`. The repository
+then reads and writes the entries in the same format as the older versions, and the `deserializationFilter` option and
+the WARN at startup do not apply. Once the old aggregations have completed and been recovered, remove the `codec` option
+to switch to the Java serialization read through the filter.
 
 == Upgrading from 4.18.4 to 4.18.5
 

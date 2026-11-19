@@ -471,6 +471,18 @@ call to the suspended tool or read of the suspended resource is refused, and res
 resource again. When an `ai-tool` or `ai-resource` route is stopped, or Camel shuts down gracefully, tool calls and
 resource reads in flight now complete instead of failing.
 
+=== camel-ai-tool - a configuration bean combines with the options set at the same level
+
+An `AiToolConfiguration` bean given as the `configuration` option no longer replaces the options set beside it:
+
+- On the component, the options set on the component (such as `camel.component.ai-tool.authorization-policy`) are
+  kept when `camel.component.ai-tool.configuration` is also set, and win over the values of the bean, in whatever
+  order they are bound. Previously the bean could replace an option, depending on the order of binding.
+- On an endpoint, `configuration=#myBean` gives the values that the bean sets. The other options of the endpoint win
+  over them, and the values that the bean does not set come from the component, such as its `authorizationPolicy` and
+  `allowedRoles`. Previously the bean replaced the options of the endpoint and the values of the component. The bean
+  itself is no longer changed by the options of the endpoints that use it.
+
 === camel-wordpress - each endpoint uses its own site URL and credentials
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
@@ -942,6 +954,22 @@ is now sent with the first request; before, the request failed with `IllegalStat
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
+=== camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
+
+When Camel checks the credential of an incoming request, the `Authorization` header of the request is now removed from
+the message before the route gets it, as the OAuth bearer token validation of these components already does since
+Camel 4.21. This applies to:
+
+* camel-platform-http-main: the requests under `camel.server.authenticationPath` when
+  `camel.server.authenticationEnabled=true`, with basic (`basicPropertiesFile`) or JWT authentication.
+* camel-netty-http: the requests that are checked with basic authentication (`securityConfiguration`).
+* camel-undertow: the requests that a security provider (`UndertowSecurityProvider`) has authenticated.
+
+Before, the header was passed on to the route, and from there to the steps that use the message headers, such as a
+log of the headers or a producer that sends them on. A request that Camel does not check, for example to a path outside
+`authenticationPath` or to a resource that the netty-http security constraint does not restrict, keeps the header as
+sent. A route that has to call a backend with credentials sets them on that producer.
+
 === camel-mdc - camel.routeId is the route being run
 
 The `camel.routeId` MDC value is now the id of the route that runs the step, as with the deprecated
@@ -975,6 +1003,19 @@ that header, and says when `operationName` is set, in place of `Cannot find meth
 `CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
 no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
 response header.
+
+=== camel-snmp - the trap consumer receives only the traps of its snmpVersion
+
+The trap consumer (`type=TRAP`) now receives only the traps of the `snmpVersion` of its endpoint. With `snmpVersion=0`
+(the default) or `snmpVersion=1`, it receives SNMPv1 and SNMPv2c traps, and drops SNMPv3 traps. With `snmpVersion=3`,
+it drops SNMPv1 and SNMPv2c traps, and receives the SNMPv3 traps of the user set in `securityName`, checked with the
+`authenticationProtocol`, `authenticationPassphrase`, `privacyProtocol` and `privacyPassphrase` of the endpoint, and
+with at least its `securityLevel` (the default is 3, authentication and privacy). The user is held by the consumer
+only, and is no longer taken from another `snmp` endpoint with SNMPv3 in the JVM.
+
+Before, the consumer received the traps of every version, and received SNMPv3 traps only when another `snmp` endpoint
+with SNMPv3, such as a trap producer, had been started in the same JVM. To receive traps of several versions, use a
+consumer per version, each on its own port.
 
 === Java
 
@@ -2187,6 +2228,15 @@ a route id) waited for the timeout. Now both go to the integration that runs. Wi
 command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
 an error, rather than reported as sent.
 
+=== camel-jbang - camel get endpoint and the other listings mask the passwords in endpoint URIs
+
+`camel get endpoint`, `camel get consumer`, `camel get producer`, `camel get route`, `camel get processor`,
+`camel get service`, `camel get kafka`, `camel get timeline`, `camel get sql-trace`, `camel top route`,
+`camel top processor` and `camel status` now show the endpoint URIs the way Camel logs them: the values of options
+such as `password`, `secretKey`, `authenticationToken` or `keyStorePassword`, and the password in the user info, are
+shown as `xxxxxx`. This applies to the table and to the `--json` output. To see the URIs as configured, use
+`--mask=false`.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
@@ -2360,6 +2410,15 @@ with `defaultFrom`.
 
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
+
+=== camel-smpp - the system id and password headers need the allowSystemIdAndPasswordFromHeaders option
+
+A producer with `lazySessionCreation=true` took the system id and the password, with which it connects to the SMSC,
+from the `CamelSmppSystemId` and `CamelSmppPassword` headers of the first message when both were set, over the
+`systemId` and `password` options of the endpoint. It now connects with the `systemId` and `password` of the endpoint,
+and ignores these headers, unless the endpoint sets the new `allowSystemIdAndPasswordFromHeaders=true` option (disabled
+by default), or the component sets `camel.component.smpp.allowSystemIdAndPasswordFromHeaders=true`. A route that
+relies on these headers must set this option.
 
 === camel-coap - a body that does not convert to a byte array fails
 
@@ -4292,6 +4351,20 @@ run its `onConsume` statement, and the jOOQ consumer does not delete the entity,
 again. With `transacted=true` the SQL and MyBatis consumers break out of the batch and roll back.
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
+
+=== camel-sql - onConsumeBatchComplete is not run when the consumer stops before the end of the batch
+
+The `onConsumeBatchComplete` query runs after the consumer has routed the whole batch. When the consumer was stopped
+in the middle of a batch (a route stop, a CamelContext shutdown or a route reload), it still ran the query. A query
+such as `delete from projects`, or an update that marks the rows as processed, also deleted or marked the rows that
+were never routed, and those rows were lost. The query is now not run when the consumer routed only part of the batch
+(logged at INFO), and the next poll reads the rows that were not routed.
+
+A route that uses `onConsumeBatchComplete` alone (without `onConsume`) to delete or mark the rows behaves
+differently. Before, the rows of a cut-short batch that were not routed were lost. Now the whole batch is left as it is, so
+the rows that were already routed are routed again after a restart. Use `onConsume` to delete or mark each row as it
+is routed, or set `shutdownRunningTask=CompleteAllTasks` on the route, so that a graceful stop routes the whole batch
+(within the shutdown timeout) and the query runs.
 
 === camel-sql - sql and sql-stored with batch=true: the update count and a single Map body
 
@@ -7026,6 +7099,15 @@ The endpoint now closes the client it created when it stops, for example when it
 the `CamelContext` stops, and creates a new one when it is started again. Before, a client created from `hosts` stayed
 open. A client the endpoint did not create (the `mongoConnection` option, the client of the component, or the bean
 named by the endpoint path) is not closed.
+
+=== camel-mongodb - the tls and tlsAllowInvalidHostnames options are applied
+
+The `tls` and `tlsAllowInvalidHostnames` endpoint options are now applied to the client the endpoint creates from
+`hosts` or `connectionUriString`, as `sslContextParameters` already was. Before, they were not used: an endpoint with
+`tls=true` and no `sslContextParameters` connected without TLS. Such an endpoint now connects with TLS, so the MongoDB
+server must accept TLS connections, and its certificate must be trusted by the JVM (or set `sslContextParameters`).
+When none of these options is set, the TLS settings of `connectionUriString` (for example `?tls=true`) are used as
+before.
 
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 

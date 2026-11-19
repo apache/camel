@@ -73,6 +73,10 @@ public class ListConsumer extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     public ListConsumer(CamelJBangMain main) {
         super(main);
     }
@@ -100,7 +104,7 @@ public class ListConsumer extends ProcessWatchCommand {
                     }
                     row.pid = Long.toString(ph.pid());
                     row.id = o.getString("id");
-                    row.uri = o.getString("uri");
+                    row.uri = ListingFormat.masked(o.getString("uri"), mask);
                     row.state = o.getString("state");
                     // the console says clazz and hosted (class and hostedService before Camel 4.23)
                     row.className = o.getStringOrDefault("clazz", o.getString("class"));

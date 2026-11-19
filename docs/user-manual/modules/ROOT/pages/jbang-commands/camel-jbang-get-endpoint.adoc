@@ -25,6 +25,7 @@ camel get endpoint [options]
 | `--filter-total` | Filter endpoints that must be higher than the given usage |  | long
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter endpoints by limiting to the given number of rows |  | int
+| `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys | true | boolean
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name, age, total, or size | pid | String
 | `--verbose` | Show additional size statistics (min/max body and headers) |  | boolean
