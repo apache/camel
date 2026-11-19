@@ -1642,6 +1642,35 @@ public interface SpringAiChatEndpointBuilderFactory {
             return "CamelSpringAiChatFinishReason";
         }
         /**
+         * The category of the finish reason, the same for every provider:
+         * COMPLETED, TRUNCATED (a token or length limit), TOOL_CALL, FILTERED
+         * (a content filter, or a refusal of the SafeGuard advisor), OTHER or
+         * UNSPECIFIED.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringAiChatFinishReasonCategory}.
+         */
+        public String springAiChatFinishReasonCategory() {
+            return "CamelSpringAiChatFinishReasonCategory";
+        }
+        /**
+         * The reasoning of the model for its reply (thinking, thoughts or
+         * reasoning content), when the model returns it as text.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringAiChatReasoning}.
+         */
+        public String springAiChatReasoning() {
+            return "CamelSpringAiChatReasoning";
+        }
+        /**
          * The name of the AI model used to generate the response.
          * 
          * The option is a: {@code String} type.

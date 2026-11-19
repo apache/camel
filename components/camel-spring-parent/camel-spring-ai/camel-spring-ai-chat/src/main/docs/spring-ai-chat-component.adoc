@@ -317,12 +317,36 @@ The following headers are set after each chat operation:
 
 **Response Metadata Headers:**
 
-* `CamelSpringAiChatFinishReason` - Why the generation stopped (e.g., "STOP", "LENGTH", "TOOL_CALLS")
+* `CamelSpringAiChatFinishReason` - Why the generation stopped, as the provider names it (e.g., "STOP", "end_turn", "LENGTH", "TOOL_CALLS")
+* `CamelSpringAiChatFinishReasonCategory` - The category of the finish reason, the same for every provider: `COMPLETED`, `TRUNCATED`, `TOOL_CALL`, `FILTERED`, `OTHER` or `UNSPECIFIED`
+* `CamelSpringAiChatReasoning` - The reasoning of the model for its reply (thinking, thoughts or reasoning content), when the model returns it as text
 * `CamelSpringAiChatModelName` - The name of the AI model used for the response
 * `CamelSpringAiChatResponseId` - Unique identifier for the response
 * `CamelSpringAiChatResponseMetadata` - Full metadata Map containing all available fields
 
 NOTE: Not all AI models provide all metadata fields. The availability of specific metadata depends on the underlying model and provider. Most models provide at least finish reason and token counts.
+
+The finish reason is named differently by each provider: `stop`, `end_turn` and `STOP` all mean that the model finished
+its answer. Check `CamelSpringAiChatFinishReasonCategory` instead, so that a route works with any model. For example, an
+answer cut by the token limit is `TRUNCATED`, and a reply blocked by a content filter, or refused by the SafeGuard
+advisor (`safeguardSensitiveWords`), is `FILTERED`:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel")
+    .choice()
+        .when(header("CamelSpringAiChatFinishReasonCategory").isEqualTo("TRUNCATED"))
+            .log("The answer was cut by the token limit")
+        .when(header("CamelSpringAiChatFinishReasonCategory").isEqualTo("FILTERED"))
+            .log("The reply was filtered or refused")
+    .end();
+----
+
+`CamelSpringAiChatReasoning` holds the text of the reasoning parts of the reply, such as the thinking of Anthropic and
+Bedrock models, the thoughts of Gemini models, or the `reasoning_content` of DeepSeek and OpenAI-compatible servers. A
+part with only a summary gives its summary, and a redacted part is left out. The header is not set, and is removed if an
+earlier call set it, when the reply has no reasoning.
 
 === Message Metadata
 
