@@ -33,9 +33,19 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
     // NormalizedEndpointUri (e.g. from SendDynamicProcessor / toD).
     private final String rawUri;
 
-    private NormalizedUri(String normalizedValue, String rawUri) {
+    // Whether the endpoint uri was computed from the current message at runtime (for example the per-message
+    // recipient of toD, enrich, wireTap, pollEnrich, recipientList, routingSlip or dynamicRouter). When true the
+    // query option values are bound more strictly, to stop message content from being turned into routing
+    // configuration: a {{...}} property placeholder, a #class: reference or a #property: reference in such a value is
+    // kept as literal text (no placeholder resolution, no class instantiation, no property lookup), while plain
+    // registry references (#bean:, #type:) are still resolved. Not part of equals/hashCode: the endpoint registry key
+    // stays the uri alone.
+    private final boolean literalOptionBinding;
+
+    private NormalizedUri(String normalizedValue, String rawUri, boolean literalOptionBinding) {
         super(normalizedValue);
         this.rawUri = rawUri;
+        this.literalOptionBinding = literalOptionBinding;
     }
 
     /**
@@ -46,10 +56,26 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * @return            the created normalized uri
      */
     public static NormalizedUri newNormalizedUri(String uri, boolean normalized) {
+        return newNormalizedUri(uri, normalized, false);
+    }
+
+    /**
+     * Creates a new {@link NormalizedUri} instance.
+     *
+     * @param  uri                  the uri
+     * @param  normalized           whether its already normalized
+     * @param  literalOptionBinding whether the uri was computed from the current message, so its option values are
+     *                              bound as literal text: no property placeholders, {@code #class:} or
+     *                              {@code #property:}; registry references ({@code #bean:}, {@code #type:}) are still
+     *                              resolved
+     * @return                      the created normalized uri
+     * @since                       4.24
+     */
+    public static NormalizedUri newNormalizedUri(String uri, boolean normalized, boolean literalOptionBinding) {
         if (normalized) {
-            return new NormalizedUri(uri, null);
+            return new NormalizedUri(uri, null, literalOptionBinding);
         } else {
-            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri);
+            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri, literalOptionBinding);
         }
     }
 
@@ -66,6 +92,18 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      */
     public String getRawUri() {
         return rawUri;
+    }
+
+    /**
+     * Whether this uri was computed from the current message at runtime, so the option values of the endpoint created
+     * from it are bound as literal text: a property placeholder ({@code {{...}}}), a {@code #class:} value or a
+     * {@code #property:} value is not resolved. Registry references ({@code #bean:}, {@code #type:}) are still
+     * resolved.
+     *
+     * @since 4.24
+     */
+    public boolean isLiteralOptionBinding() {
+        return literalOptionBinding;
     }
 
     @Override
