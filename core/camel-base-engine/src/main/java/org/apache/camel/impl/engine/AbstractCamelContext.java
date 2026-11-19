@@ -193,6 +193,7 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResetableClock;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -775,6 +776,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        return doGetEndpoint(uri, parameters, normalized, prototype, false);
+    }
+
+    protected Endpoint doGetEndpoint(
+            String uri, Map<String, Object> parameters, boolean normalized, boolean prototype,
+            boolean literalOptionBinding) {
         // ensure CamelContext are initialized before we can get an endpoint
         build();
 
@@ -841,9 +848,21 @@ public abstract class AbstractCamelContext extends BaseService
                     LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                     // Have the component create the endpoint if it can.
-                    answer = component.createEndpoint(
-                            component.useRawUri() ? rawUri : uri,
-                            parameters);
+                    String createUri = component.useRawUri() ? rawUri : uri;
+                    if (literalOptionBinding) {
+                        // the uri was computed from the current message at runtime, so its option values are bound
+                        // as literal text while the component creates the endpoint: no property placeholders,
+                        // #class: or #property: (registry references such as #bean: and #type: are still resolved).
+                        // The scope covers every way a component binds its options (see PropertyBindingSupport)
+                        boolean prev = PropertyBindingSupport.setLiteralOptionBinding(true);
+                        try {
+                            answer = component.createEndpoint(createUri, parameters);
+                        } finally {
+                            PropertyBindingSupport.setLiteralOptionBinding(prev);
+                        }
+                    } else {
+                        answer = component.createEndpoint(createUri, parameters);
+                    }
 
                     if (answer != null && LOG.isDebugEnabled()) {
                         LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,

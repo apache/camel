@@ -40,6 +40,7 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -299,8 +300,18 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
             if (colon == -1 || colon == uri.length() - 1) {
                 throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
-            // optimize and normalize endpoint
-            return ecc.getCamelContextExtension().normalizeUri(uri);
+            // optimize and normalize endpoint. Property placeholders in the computed uri string are still resolved
+            // here, but the uri was computed from the message, so its option values are bound as literal text: no
+            // #class: or #property: resolution on the option values; registry references (#bean:, #type:) are still
+            // resolved (CAMEL-27160).
+            try {
+                String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(ecc, uri);
+                return NormalizedUri.newNormalizedUri(resolved, false, true);
+            } catch (ResolveEndpointFailedException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
         }
         return null;
     }

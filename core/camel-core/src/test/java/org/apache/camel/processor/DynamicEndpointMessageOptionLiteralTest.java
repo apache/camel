@@ -1,0 +1,387 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.processor;
+
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Header;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.builder.AggregationStrategies;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PollingConsumerSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * The per-message recipient of the dynamic-uri EIPs is computed from the message, so its option values are bound as
+ * literal text. A {@code #class:} value or a {@code #property:} value in a runtime-computed option value is kept
+ * verbatim: it is not resolved and no class is created. Registry references ({@code #bean:}, {@code #type:}) are still
+ * resolved. See CAMEL-27160.
+ * <p/>
+ * On camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is created, for
+ * all the dynamic-uri EIPs (as before), so a {@code {{...}}} from the message is resolved there.
+ * <p/>
+ * {@link DynamicEndpointMessageOptionLiteralLogTest} covers a real component with a generated configurer and typed
+ * options.
+ */
+class DynamicEndpointMessageOptionLiteralTest extends ContextTestSupport {
+
+    private static final String MARKER_CLASS = "#class:" + Marker.class.getName();
+    private static final String MARKER_BEAN = "#bean:marker";
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        Properties prop = new Properties();
+        prop.setProperty("secretTarget", "resolved");
+        prop.setProperty("optionName", "option");
+        context.getPropertiesComponent().setInitialProperties(prop);
+        context.addComponent("sink", new SinkComponent());
+        context.addComponent("selfsink", new SelfBindingSinkComponent());
+        context.addComponent("singletonsink", new SingletonSinkComponent());
+        context.getRegistry().bind("marker", new Marker());
+        return context;
+    }
+
+    @BeforeEach
+    void resetSink() {
+        SinkEndpoint.lastOption = null;
+        Marker.instances = 0;
+    }
+
+    @Test
+    void toDOptionPlaceholderTokenIsResolvedInUriString() throws Exception {
+        // on camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is
+        // created (as before), so a {{...}} from the message is resolved; only #class:, #property: and RAW($simple{})
+        // in the option values are kept literal
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:a?option={{secretTarget}}");
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("resolved");
+    }
+
+    @Test
+    void toDOptionClassReferenceTokenStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:b?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionBeanReferenceStillResolves() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:c?option=" + MARKER_BEAN);
+
+        assertMockEndpointsSatisfied();
+        // a #bean: / #type: reference is a plain registry lookup of an already-registered bean, so it is still
+        // resolved: this keeps references a route author wrote in a dynamic uri (such as dataSource=#ds) working.
+        // Only property placeholders, #class: and #property: are kept literal.
+        assertThat(SinkEndpoint.lastOption).isSameAs(context.getRegistry().lookupByName("marker"));
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionTypeReferenceStillResolves() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:t?option=#type:" + Marker.class.getName());
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isSameAs(context.getRegistry().lookupByName("marker"));
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDOptionNamePlaceholderIsResolvedInUriString() {
+        // on camel-4.18.x the property placeholders of the computed uri string are resolved before the endpoint is
+        // created (as before), so a {{...}} from the message is resolved; only #class:, #property: and RAW($simple{})
+        // in the option values are kept literal
+        Exchange out = template.send("direct:tod",
+                e -> e.getMessage().setHeader("target", "sink:n?{{optionName}}=hello"));
+
+        assertThat(out.getException()).isNull();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("hello");
+    }
+
+    @Test
+    void toDSingletonEndpointClassReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(2);
+
+        // a singleton endpoint is created once and then taken from the endpoint registry
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "singletonsink:a?option=" + MARKER_CLASS);
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "singletonsink:a?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+        assertThat(context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("singletonsink:"))).hasSize(1);
+    }
+
+    @Test
+    void toDOptionPropertyReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "sink:p?option=#property:secretTarget");
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("#property:secretTarget");
+    }
+
+    @Test
+    void toDSelfBindingComponentClassReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        // selfsink binds its options inside its own createEndpoint, like log/aws2-s3/sql/jms and ~329 other
+        // components; literal binding must be enforced there too (CAMEL-27160), so a #class: option value from the
+        // message is not instantiated
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:a?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void toDSelfBindingComponentPropertyReferenceStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:tod", "Hello", "target", "selfsink:b?option=#property:secretTarget");
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo("#property:secretTarget");
+    }
+
+    @Test
+    void enrichOptionClassReferenceTokenStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:en", "Hello", "target", "sink:d?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void pollEnrichOptionClassReferenceTokenStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:pe", "Hello", "target", "sink:e?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void recipientListOptionClassReferenceTokenStaysLiteral() throws Exception {
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:rl", "Hello", "target", "sink:f?option=" + MARKER_CLASS);
+
+        assertMockEndpointsSatisfied();
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void routingSlipOptionClassReferenceTokenStaysLiteral() throws Exception {
+        template.sendBodyAndHeader("direct:rs", "Hello", "target", "sink:g?option=" + MARKER_CLASS);
+
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    @Test
+    void dynamicRouterOptionClassReferenceTokenStaysLiteral() throws Exception {
+        template.sendBodyAndHeader("direct:dr", "Hello", "target", "sink:h?option=" + MARKER_CLASS);
+
+        assertThat(SinkEndpoint.lastOption).isEqualTo(MARKER_CLASS);
+        assertThat(Marker.instances).isZero();
+    }
+
+    /**
+     * Dynamic router bean: routes to the header-supplied recipient on the first hop, then stops.
+     */
+    public String route(@Header("target") String target, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+        return previous == null ? target : null;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:tod").toD("${header.target}").to("mock:done");
+                from("direct:en").enrich().simple("${header.target}")
+                        .aggregationStrategy(AggregationStrategies.useOriginal()).to("mock:done");
+                from("direct:pe").pollEnrich().simple("${header.target}").timeout(100).end().to("mock:done");
+                from("direct:rl").recipientList(header("target")).to("mock:done");
+                from("direct:rs").routingSlip(header("target"));
+                from("direct:dr").dynamicRouter(method(DynamicEndpointMessageOptionLiteralTest.this, "route"));
+            }
+        };
+    }
+
+    /**
+     * Marker whose public no-arg constructor counts instantiations, so a {@code #class:} reference that is wrongly
+     * resolved can be detected.
+     */
+    public static class Marker {
+        static volatile int instances;
+
+        public Marker() {
+            instances++;
+        }
+    }
+
+    /**
+     * A local in-JVM sink that records the value bound to its {@code option} property, so the test can assert that a
+     * runtime-computed option value is kept literal.
+     */
+    private static final class SinkComponent extends DefaultComponent {
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new SinkEndpoint(uri, this);
+        }
+    }
+
+    /**
+     * Like {@link SinkComponent} but binds its options inside its own {@code createEndpoint} (through the two-argument
+     * {@code setProperties}), the pattern used by {@code log}, {@code aws2-s3}, {@code sql}, {@code jms} and ~329 other
+     * components. It proves that literal binding is also enforced for these components (CAMEL-27160).
+     */
+    private static final class SelfBindingSinkComponent extends DefaultComponent {
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
+            SinkEndpoint endpoint = new SinkEndpoint(uri, this);
+            setProperties(endpoint, parameters);
+            return endpoint;
+        }
+    }
+
+    /**
+     * Like {@link SinkComponent} but its endpoints are singletons, so they are kept in the endpoint registry.
+     */
+    private static final class SingletonSinkComponent extends DefaultComponent {
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new SinkEndpoint(uri, this, true);
+        }
+    }
+
+    private static final class SinkEndpoint extends DefaultEndpoint {
+        static volatile Object lastOption;
+        private final boolean singleton;
+        private Object option;
+
+        SinkEndpoint(String uri, DefaultComponent component) {
+            this(uri, component, false);
+        }
+
+        SinkEndpoint(String uri, DefaultComponent component, boolean singleton) {
+            super(uri, component);
+            this.singleton = singleton;
+        }
+
+        public Object getOption() {
+            return option;
+        }
+
+        public void setOption(Object option) {
+            this.option = option;
+            lastOption = option;
+        }
+
+        @Override
+        public Producer createProducer() {
+            return new DefaultProducer(this) {
+                @Override
+                public void process(Exchange exchange) {
+                    // no-op sink
+                }
+            };
+        }
+
+        @Override
+        public Consumer createConsumer(Processor processor) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PollingConsumer createPollingConsumer() {
+            return new NoopPollingConsumer(this);
+        }
+
+        @Override
+        public boolean isSingleton() {
+            return singleton;
+        }
+    }
+
+    private static final class NoopPollingConsumer extends PollingConsumerSupport {
+        NoopPollingConsumer(Endpoint endpoint) {
+            super(endpoint);
+        }
+
+        @Override
+        public Exchange receive() {
+            return null;
+        }
+
+        @Override
+        public Exchange receive(long timeout) {
+            return null;
+        }
+
+        @Override
+        public Exchange receiveNoWait() {
+            return null;
+        }
+
+        @Override
+        protected void doStart() {
+            // noop
+        }
+
+        @Override
+        protected void doStop() {
+            // noop
+        }
+    }
+}

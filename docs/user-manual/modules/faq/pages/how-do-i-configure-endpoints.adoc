@@ -149,6 +149,11 @@ using `+++$simple{xxx}+++` syntax in `RAW(...)` as shown below:
 .to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&binary=true")
 ----
 
+NOTE: The `+++$simple{xxx}+++` in a `RAW(...)` value is evaluated only for endpoints written in the route. For an
+endpoint whose uri is computed from the message at runtime, such as with `toD` or `pollEnrich`, a `RAW(...)` value is
+taken as literal text. Use a property placeholder such as `+RAW({{env:MY_FTP_PASSWORD}})+` there, which is resolved
+when the route is created.
+
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
 === Using property placeholders
 
