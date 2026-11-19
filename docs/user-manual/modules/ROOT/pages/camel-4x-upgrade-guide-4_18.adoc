@@ -1036,6 +1036,68 @@ that header, and says when `operationName` is set, in place of `Cannot find meth
 no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
 response header.
 
+=== camel-core - option values of a dynamic endpoint are bound as literal text
+
+The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
+`dynamicRouter` -- compute their target endpoint from the current message at runtime. The option values of that
+endpoint are now bound as literal text: a `#class:` value or a `#property:` value is not resolved. This holds regardless
+of how the component binds its options, including components that bind them in their own `createEndpoint` or look up
+a reference option with `resolveAndRemoveReferenceParameter`.
+
+This applies to every option of that uri, not only to the parts that come from the message: a `#class:` or
+`#property:` value written in the text of a `toD`, or in a uri that a bean of the route builds for `recipientList`,
+`routingSlip` or `dynamicRouter`, is not resolved either. For an option of type `String` the text is bound as is. For
+an option of another type, a `#class:` value fails the creation of the endpoint with a `ResolveEndpointFailedException`.
+Register the bean instead and refer to it with `#bean:`, for example:
+
+[source,java]
+----
+// before: the class was created for every new endpoint
+toD("log:audit?exchangeFormatter=#class:com.foo.MyFormatter&marker=${header.customer}")
+
+// after: create the bean once (e.g. camel.beans.myFormatter = #class:com.foo.MyFormatter) and refer to it
+toD("log:audit?exchangeFormatter=#bean:myFormatter&marker=${header.customer}")
+----
+
+What still works as before:
+
+* Registry references (`#bean:name`, `#type:`, `#name`) are still resolved, so `+toD("sql:${header.query}?dataSource=#ds")+` keeps working.
+* Property placeholders (`+{{...}}+`) in the uri computed per message are still resolved by `recipientList`,
+  `routingSlip` and `dynamicRouter`. For `toD`, `enrich`, `wireTap` and `pollEnrich`, see the next sections.
+* An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
+  before.
+
+=== camel-core - RAW() option values of a dynamic endpoint computed from the message are literal text
+
+A `RAW(...)` option value of an endpoint whose uri is computed from the current message at runtime (`toD`, `enrich`,
+`wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and `dynamicRouter`) is still unwrapped, but its content is now
+taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endpoints written in the route, such as
+`+to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})")+`, are unchanged. As the whole uri of `toD`
+is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
+use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
+is resolved once when the route is created.
+
+=== camel-core - property placeholders in a toD, enrich, wireTap or pollEnrich uri computed from the message
+
+`toD`, `enrich`, `wireTap` and `pollEnrich` no longer resolve property placeholders (`+{{...}}+`) in the uri evaluated
+for each message, as in Camel 4.22 and 4.23. A placeholder written in the route is resolved once, when the route is
+created. A `+{{...}}+` that only appears in the value computed at runtime, for example from a message header or the
+body, is now taken as a literal part of the endpoint uri instead of being expanded.
+
+This only affects routes where the message carried a `+{{...}}+` and relied on it being expanded. Placeholders written
+in the route keep working, for example:
+
+[source,java]
+----
+.toD("{{myEndpoint}}/${header.id}")
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+To have a placeholder resolved, keep it in the uri written in the route rather than in the message.
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is computed entirely at runtime and may
+carry a placeholder that comes from configuration, so they continue to resolve `+{{...}}+` in the computed recipient.
+
 === camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
 
 `RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
