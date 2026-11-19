@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -66,10 +65,6 @@ public class StopProcess extends ProcessBaseCommand {
 
     @Option(name = "no-wait", hasValue = false, description = "Do not wait for the integration to stop")
     boolean noWait;
-
-    public StopProcess(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

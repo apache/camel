@@ -194,7 +194,7 @@ class ListHealthTest extends ProcessCommandTestSupport {
     }
 
     private ListHealth command(String... args) {
-        ListHealth command = new ListHealth(new CamelJBangMain().withPrinter(printer));
+        ListHealth command = new CamelJBangMain().withPrinter(printer).command(new ListHealth());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

@@ -29,7 +29,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
@@ -74,10 +73,6 @@ public class LoggerAction extends ActionBaseCommand {
 
     @Mixin
     ActionTimeoutMixin timeoutOption;
-
-    public LoggerAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

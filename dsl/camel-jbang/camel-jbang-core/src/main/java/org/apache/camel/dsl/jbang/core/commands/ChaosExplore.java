@@ -122,10 +122,6 @@ public class ChaosExplore extends CamelCommand {
     @Option(name = "verbose", hasValue = false, description = "Print debug information of the LLM calls")
     boolean verbose;
 
-    public ChaosExplore(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         CamelProcess process = ProcessFinder.requireOneForChaos(name);
@@ -197,7 +193,7 @@ public class ChaosExplore extends CamelCommand {
 
     /** camel ask, with the playbook as its question, for the integration. */
     Ask ask(CamelProcess process, String integration) {
-        Ask ask = new Ask(getMain());
+        Ask ask = getMain().command(new Ask());
         ask.question = List.of(ChaosExplorePlaybook.text(ChaosExplorePlaybook.ASK, integration, budget, focus, true));
         ask.nameOrPid = Long.toString(process.pid());
         ask.url = url;

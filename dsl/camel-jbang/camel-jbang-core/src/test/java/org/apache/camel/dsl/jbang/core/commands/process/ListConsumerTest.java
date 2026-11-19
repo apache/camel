@@ -44,7 +44,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -67,7 +67,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -92,7 +92,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -118,7 +118,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -147,7 +147,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(c));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -173,7 +173,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(c));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 

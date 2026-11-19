@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.json.JsonObject;
@@ -35,10 +34,6 @@ public class InfraGet extends InfraBaseCommand {
 
     @Argument(description = "Name or pid of running service(s)")
     String name = "*";
-
-    public InfraGet(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

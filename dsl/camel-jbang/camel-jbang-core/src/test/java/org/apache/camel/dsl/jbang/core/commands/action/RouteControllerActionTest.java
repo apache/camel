@@ -169,7 +169,7 @@ class RouteControllerActionTest extends ActionCommandTestSupport {
     @Test
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        RouteControllerAction command = new RouteControllerAction(new CamelJBangMain().withPrinter(printer));
+        RouteControllerAction command = new CamelJBangMain().withPrinter(printer).command(new RouteControllerAction());
         CommandLineTestHelper.parse(command, "doesNotExist");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -180,7 +180,7 @@ class RouteControllerActionTest extends ActionCommandTestSupport {
     }
 
     private RouteControllerAction command(String... args) {
-        RouteControllerAction command = new RouteControllerAction(new CamelJBangMain().withPrinter(printer));
+        RouteControllerAction command = new CamelJBangMain().withPrinter(printer).command(new RouteControllerAction());
         CommandLineTestHelper.parse(command, Stream.concat(Stream.of("myApp"), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

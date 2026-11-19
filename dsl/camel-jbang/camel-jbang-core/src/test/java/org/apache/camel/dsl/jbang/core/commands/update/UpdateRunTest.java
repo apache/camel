@@ -177,7 +177,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
     @Test
     void theExitCodeOfMaven() throws Exception {
         recipes("camel-upgrade-recipes", "latest.yaml", "org.apache.camel.upgrade.CamelMigrationRecipe");
-        UpdateRun command = new UpdateRun(new CamelJBangMain().withPrinter(printer)) {
+        UpdateRun command = new UpdateRun() {
             @Override
             protected MavenDependencyDownloader createDownloader() {
                 return downloader();
@@ -188,6 +188,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
                 return 1;
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, "4.18.0");
         command.projectDir = project;
 
@@ -195,7 +196,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
     }
 
     private UpdateRun command(String... args) {
-        UpdateRun command = new UpdateRun(new CamelJBangMain().withPrinter(printer)) {
+        UpdateRun command = new UpdateRun() {
             @Override
             protected MavenDependencyDownloader createDownloader() {
                 return downloader();
@@ -207,6 +208,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
                 return 0;
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, args);
         command.projectDir = project;
         return command;

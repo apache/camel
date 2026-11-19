@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -53,10 +52,6 @@ public class CamelSqlQueryAction extends ActionBaseCommand {
 
     @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
-
-    public CamelSqlQueryAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

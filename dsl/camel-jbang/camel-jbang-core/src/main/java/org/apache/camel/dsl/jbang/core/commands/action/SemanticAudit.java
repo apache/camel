@@ -37,7 +37,6 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
 import org.apache.camel.dsl.jbang.core.common.SemanticImagePreview;
@@ -125,10 +124,6 @@ public class SemanticAudit extends SemanticActionCommand {
     @Option(name = "output",
             description = "Write the full JSON response to a new file, including requested captured image data")
     Path output;
-
-    public SemanticAudit(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected JsonObject request() {

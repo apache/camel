@@ -26,6 +26,6 @@ public class McpPlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("mcp", new CommandTree(new McpCommand(main)));
+        commandLine.addSubcommand("mcp", new CommandTree(main.command(new McpCommand())));
     }
 }

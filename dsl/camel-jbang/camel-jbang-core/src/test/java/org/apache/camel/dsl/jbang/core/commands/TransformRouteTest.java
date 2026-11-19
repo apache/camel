@@ -182,7 +182,7 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
     }
 
     private TransformRoute command(List<String> files, String... args) {
-        TransformRoute command = new TransformRoute(new CamelJBangMain().withPrinter(printer));
+        TransformRoute command = new CamelJBangMain().withPrinter(printer).command(new TransformRoute());
         CommandLineTestHelper.parse(command, args);
         command.files = Arrays.asList(files.toArray(String[]::new));
         return command;

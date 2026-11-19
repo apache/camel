@@ -39,7 +39,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle currentHandle = mockCurrentHandle();
@@ -58,7 +58,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
     void testUnknownSortKeyIsAUsageError() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.sort = "nmae";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -81,7 +81,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         ((JsonObject) status.get("context")).put("statistics", stats);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -105,7 +105,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("startingApp", 3);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -128,7 +128,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("myApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.pid = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -151,7 +151,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("myApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -174,7 +174,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("myApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.pid = true;
         command.jsonOutput = true;
 
@@ -211,7 +211,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
     }
 
     private void assertAppleBeforeZebra(long firstPid, long secondPid) throws Exception {
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -243,7 +243,7 @@ class ListProcessTest extends ProcessCommandTestSupport {
         stats.put("reload", reload);
         writeStatusFile(TEST_PID, status);
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);

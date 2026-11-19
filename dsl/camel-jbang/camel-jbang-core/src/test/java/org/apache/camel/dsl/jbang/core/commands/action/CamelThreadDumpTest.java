@@ -37,7 +37,7 @@ class CamelThreadDumpTest extends ActionCommandTestSupport {
     void testRequestsThreadDumpAndRendersThreads() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelThreadDump command = new CamelThreadDump(new CamelJBangMain().withPrinter(printer));
+        CamelThreadDump command = new CamelJBangMain().withPrinter(printer).command(new CamelThreadDump());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.filters = new String[] { "all" };
@@ -62,7 +62,7 @@ class CamelThreadDumpTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelThreadDump command = new CamelThreadDump(new CamelJBangMain().withPrinter(printer));
+        CamelThreadDump command = new CamelJBangMain().withPrinter(printer).command(new CamelThreadDump());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

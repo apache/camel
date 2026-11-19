@@ -29,7 +29,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -54,10 +53,6 @@ public class SourceValidateCommand extends CamelCommand {
             description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
                           + " camel_validate_source answers")
     boolean jsonOutput;
-
-    public SourceValidateCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "disable-processor", description = "Disable Camel processor", generateHelp = true,
@@ -26,10 +25,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd disable-processor --id=myId",
                            "  camel cmd disable-processor myApp --id=myId" })
 public class CamelProcessorDisableAction extends CamelProcessorAction {
-
-    public CamelProcessorDisableAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void onAction(JsonObject root) {

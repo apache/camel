@@ -120,7 +120,7 @@ class HardenTest extends CamelCommandBaseTestSupport {
 
     @Test
     void anUnreachableUrlIsNotReplacedByAnotherLlm() throws Exception {
-        Harden command = new Harden(new CamelJBangMain().withPrinter(printer));
+        Harden command = new CamelJBangMain().withPrinter(printer).command(new Harden());
         CommandLineTestHelper.parse(command, route.toString(), "--url=http://127.0.0.1:1", "--model=test");
 
         // the route is not sent to the Ollama of the host
@@ -139,7 +139,7 @@ class HardenTest extends CamelCommandBaseTestSupport {
     }
 
     private Harden command(String... args) {
-        Harden command = new Harden(new CamelJBangMain().withPrinter(printer));
+        Harden command = new CamelJBangMain().withPrinter(printer).command(new Harden());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Arrays.stream(args), Stream.of("--url=" + llm.url(), "--model=test"))
                         .toArray(String[]::new));

@@ -60,13 +60,14 @@ class CodeSchemaGeneratorTest {
     }
 
     private int generate(String component, String className, String... options) throws Exception {
-        CodeSchemaGenerator command = new CodeSchemaGenerator(new CamelJBangMain().withPrinter(printer)) {
+        CodeSchemaGenerator command = new CodeSchemaGenerator() {
             @Override
             DependencyDownloaderClassLoader getDependencyDownloaderClassLoader(
                     String camelComponent, String version, boolean verbose) {
                 return new DependencyDownloaderClassLoader(CodeSchemaGeneratorTest.class.getClassLoader());
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         String[] args = new String[options.length + 2];
         args[0] = component;
         args[1] = className;

@@ -41,7 +41,7 @@ class ListEventTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListEvent command = new ListEvent(new CamelJBangMain().withPrinter(printer));
+        ListEvent command = new CamelJBangMain().withPrinter(printer).command(new ListEvent());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -62,7 +62,7 @@ class ListEventTest extends ProcessCommandTestSupport {
         JsonObject root = buildEventStatus();
         writeStatusFile(TEST_PID, root);
 
-        ListEvent command = new ListEvent(new CamelJBangMain().withPrinter(printer));
+        ListEvent command = new CamelJBangMain().withPrinter(printer).command(new ListEvent());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -86,7 +86,7 @@ class ListEventTest extends ProcessCommandTestSupport {
         JsonObject root = buildEventStatus();
         writeStatusFile(TEST_PID, root);
 
-        ListEvent command = new ListEvent(new CamelJBangMain().withPrinter(printer));
+        ListEvent command = new CamelJBangMain().withPrinter(printer).command(new ListEvent());
         command.sort = "pid";
         command.filter = "route";
 
@@ -111,7 +111,7 @@ class ListEventTest extends ProcessCommandTestSupport {
         JsonObject root = buildEventStatus();
         writeStatusFile(TEST_PID, root);
 
-        ListEvent command = new ListEvent(new CamelJBangMain().withPrinter(printer));
+        ListEvent command = new CamelJBangMain().withPrinter(printer).command(new ListEvent());
         command.sort = "pid";
         command.jsonOutput = true;
 

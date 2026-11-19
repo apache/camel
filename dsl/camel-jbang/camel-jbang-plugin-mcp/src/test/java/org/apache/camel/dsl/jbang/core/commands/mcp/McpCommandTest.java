@@ -31,7 +31,7 @@ class McpCommandTest {
 
     @Test
     void withoutJBangSaysHowToRunTheServer() {
-        McpCommand command = new McpCommand(new CamelJBangMain());
+        McpCommand command = new CamelJBangMain().command(new McpCommand());
         command.jbang = "no-such-jbang-command-26932";
         command.version = "4.24.0";
 

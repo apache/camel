@@ -29,10 +29,6 @@ import org.apache.camel.dsl.jbang.core.common.CommandTree;
                            "  source <(camel completion)" })
 public class Complete extends CamelCommand {
 
-    public Complete(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         CommandTree root = CommandTree.of(this).getParent();

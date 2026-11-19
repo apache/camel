@@ -451,7 +451,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     private int run(String... args) throws Exception {
-        ListChaos command = new ListChaos(new CamelJBangMain().withPrinter(printer));
+        ListChaos command = new CamelJBangMain().withPrinter(printer).command(new ListChaos());
         CommandLineTestHelper.parse(command, args);
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);

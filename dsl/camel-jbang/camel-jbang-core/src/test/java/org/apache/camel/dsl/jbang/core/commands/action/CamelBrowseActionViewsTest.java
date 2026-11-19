@@ -135,7 +135,7 @@ class CamelBrowseActionViewsTest extends ActionCommandTestSupport {
     }
 
     private CamelBrowseAction command(String... args) {
-        CamelBrowseAction command = new CamelBrowseAction(new CamelJBangMain().withPrinter(printer));
+        CamelBrowseAction command = new CamelJBangMain().withPrinter(printer).command(new CamelBrowseAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("myApp", "--logging-color=false"), Arrays.stream(args)).toArray(String[]::new));
         return command;

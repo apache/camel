@@ -372,7 +372,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
     }
 
     private TestPluginAdd newCommand() {
-        return new TestPluginAdd(new CamelJBangMain().withPrinter(printer), downloader);
+        return new CamelJBangMain().withPrinter(printer).command(new TestPluginAdd(downloader));
     }
 
     // a community plugin under its own groupId
@@ -395,8 +395,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         private boolean downloadFails;
         private boolean doesNotLink;
 
-        TestPluginAdd(CamelJBangMain main, DependencyDownloader downloader) {
-            super(main);
+        TestPluginAdd(DependencyDownloader downloader) {
             this.downloader = downloader;
         }
 

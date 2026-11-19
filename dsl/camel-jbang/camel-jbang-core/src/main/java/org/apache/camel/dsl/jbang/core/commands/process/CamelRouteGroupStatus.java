@@ -32,7 +32,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -87,10 +86,6 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     @OptionList(name = "filter", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter groups by name")
     String[] filter;
-
-    public CamelRouteGroupStatus(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

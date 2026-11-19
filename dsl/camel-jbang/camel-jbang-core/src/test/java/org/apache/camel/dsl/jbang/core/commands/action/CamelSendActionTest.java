@@ -40,7 +40,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
     void testSendsToNamedIntegrationAndRendersStatus() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         command.name = "myApp";
         command.endpoint = "seda://foo";
         // route the status line to the captured printer instead of AnsiConsole
@@ -64,7 +64,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         command.name = "doesNotExist";
         command.endpoint = "seda://foo";
 
@@ -81,7 +81,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
         // Camel of the CLI took the message, which sent nothing and reported success (CAMEL-26929)
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         command.body = "Something here";
         command.loggingColor = false;
 
@@ -97,7 +97,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
     void withoutANameAnEndpointOfAnIntegrationGoesToTheIntegrationThatRuns() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         command.endpoint = "direct:orders";
         command.loggingColor = false;
 
@@ -108,7 +108,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
 
     @Test
     void withoutANameAndNoIntegrationRunningTheSendIsRefused() {
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         command.endpoint = "seda:orders";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
@@ -124,7 +124,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "myApp");
         writeStatusFile(TEST_PID + 1, "billing");
 
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
 
         CliException e = assertThrows(CliException.class,
                 () -> callWithResponse(command, sentResponse(), TEST_PID + 1));

@@ -37,7 +37,7 @@ class CamelRouteDumpActionTest extends ActionCommandTestSupport {
     void testRequestsRouteDumpAndRendersSource() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteDumpAction command = new CamelRouteDumpAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDumpAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDumpAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.format = "yaml";
@@ -63,7 +63,7 @@ class CamelRouteDumpActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteDumpAction command = new CamelRouteDumpAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDumpAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDumpAction());
         command.name = "doesNotExist";
 
         // no process matches, so the command returns before requesting any output

@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 public abstract class CamelRouteAction extends ActionBaseCommand {
@@ -32,10 +31,6 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
 
     @Mixin
     ActionTimeoutMixin timeoutOption;
-
-    protected CamelRouteAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

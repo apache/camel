@@ -17,19 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "infra", description = "List and Run external services for testing and prototyping",
                    generateHelp = true, sortOptions = true)
 public class InfraCommand extends InfraBaseCommand {
 
-    public InfraCommand(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // defaults to list
-        return runDefault(new InfraList(getMain()));
+        return runDefault(getMain().command(new InfraList()));
     }
 }

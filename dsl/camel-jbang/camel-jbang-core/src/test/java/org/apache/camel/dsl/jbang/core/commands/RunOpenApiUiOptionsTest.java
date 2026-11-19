@@ -28,7 +28,7 @@ class RunOpenApiUiOptionsTest {
 
     @Test
     void shouldParseOpenApiUiFlag() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
 
         assertThat(run.serverOptions.openapiUi).isTrue();
@@ -37,7 +37,7 @@ class RunOpenApiUiOptionsTest {
 
     @Test
     void shouldPassTheOpenApiUiOptionsToTheSettingsPipeline() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
 
         RunRequest request = run.toRunRequest(Path.of("."));
@@ -49,7 +49,7 @@ class RunOpenApiUiOptionsTest {
 
     @Test
     void shouldTakeThePortsThePipelineCompleted() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
         RunRequest request = run.toRunRequest(Path.of("."));
         // as the pipeline does for the OpenAPI UI

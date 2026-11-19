@@ -38,7 +38,7 @@ class CamelRouteTopTest extends ProcessCommandTestSupport {
     void testDisplaysRouteRow() throws Exception {
         writeStatusFile(TEST_PID, buildRouteStatus("myRoute", "Started"));
 
-        CamelRouteTop command = new CamelRouteTop(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTop command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -69,7 +69,7 @@ class CamelRouteTopTest extends ProcessCommandTestSupport {
     }
 
     private void assertSlowBeforeFast(long firstPid, long secondPid) throws Exception {
-        CamelRouteTop command = new CamelRouteTop(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTop command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTop());
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -92,7 +92,7 @@ class CamelRouteTopTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelRouteTop command = new CamelRouteTop(new CamelJBangMain().withPrinter(printer));
+        CamelRouteTop command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();

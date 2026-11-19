@@ -35,7 +35,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
@@ -135,17 +134,14 @@ public class KubernetesExport extends Export {
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
 
-    public KubernetesExport(CamelJBangMain main) {
-        super(main);
+    public KubernetesExport() {
     }
 
-    public KubernetesExport(CamelJBangMain main, String[] files) {
-        super(main);
+    public KubernetesExport(String[] files) {
         this.files.addAll(Arrays.asList(files));
     }
 
-    public KubernetesExport(CamelJBangMain main, ExportConfigurer configurer) {
-        super(main);
+    public KubernetesExport(ExportConfigurer configurer) {
 
         runtime = configurer.runtime;
         final Properties emptyProps = new Properties();

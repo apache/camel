@@ -37,7 +37,6 @@ import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.BackgroundWait;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -72,7 +71,7 @@ public class InfraRun extends InfraBaseCommand {
     private static final long STARTUP_POLL_INTERVAL = 200;
 
     @Arguments(paramLabel = "service", required = true, description = "Service name")
-    private List<String> serviceName;
+    List<String> serviceName;
 
     @Option(name = "log", hasValue = false, description = "Log container output to console")
     boolean logToStdout;
@@ -96,10 +95,6 @@ public class InfraRun extends InfraBaseCommand {
     @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
                 description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
     List<String> serviceProperties = new ArrayList<>();
-
-    public InfraRun(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

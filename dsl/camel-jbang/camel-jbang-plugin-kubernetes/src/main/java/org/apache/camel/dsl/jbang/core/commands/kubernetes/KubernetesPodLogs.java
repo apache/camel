@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -64,8 +63,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
     private boolean podFound;
     private boolean readFailed;
 
-    public KubernetesPodLogs(CamelJBangMain main) {
-        super(main);
+    public KubernetesPodLogs() {
         projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 

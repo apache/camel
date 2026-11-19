@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -29,10 +28,6 @@ import org.apache.camel.util.json.JsonObject;
 public class SemanticMonitoring extends SemanticActionCommand {
     @Option(name = "source", description = "Producer or configured metric source name")
     String source;
-
-    public SemanticMonitoring(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected JsonObject request() {

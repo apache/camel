@@ -49,7 +49,7 @@ class ExportPropertiesAndRepositoriesTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar"));
@@ -73,7 +73,7 @@ class ExportPropertiesAndRepositoriesTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
         LOG.info("testShouldGenerateProjectMultivalue {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0"));
@@ -207,7 +207,7 @@ class ExportPropertiesAndRepositoriesTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldExportWithParentPom(RuntimeType rt) throws Exception {
         LOG.info("shouldExportWithParentPom {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()),
@@ -270,7 +270,7 @@ class ExportPropertiesAndRepositoriesTest extends ExportBaseTestSupport {
         // the bean uses driverClassName org.postgresql.Driver which Camel auto-detects and adds
         // org.postgresql:postgresql with the version from the camel-dependencies BOM. An explicit
         // --dep for the same groupId:artifactId must override that auto-detected version.
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=camel-main",
@@ -316,7 +316,7 @@ class ExportPropertiesAndRepositoriesTest extends ExportBaseTestSupport {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime())));

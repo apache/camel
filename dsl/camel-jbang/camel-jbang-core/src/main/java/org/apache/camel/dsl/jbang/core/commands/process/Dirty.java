@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
 
@@ -45,10 +44,6 @@ public class Dirty extends ProcessBaseCommand {
 
     // the log a log4j configuration of the CLI writes when the pid system property is not set yet
     static final String STRAY_LOG = "${sys:pid}.log";
-
-    public Dirty(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

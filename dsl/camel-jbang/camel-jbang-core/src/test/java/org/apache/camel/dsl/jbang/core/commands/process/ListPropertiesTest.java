@@ -42,7 +42,7 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
         root.put("properties", propertyContainer("properties"));
         writeStatusFile(TEST_PID, root);
 
-        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        ListProperties command = new CamelJBangMain().withPrinter(printer).command(new ListProperties());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -66,7 +66,7 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
                 property("camel.password", "secret", "secret", false, "properties:app", "initial")));
         writeStatusFile(TEST_PID, root);
 
-        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        ListProperties command = new CamelJBangMain().withPrinter(printer).command(new ListProperties());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -96,7 +96,7 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
                 property("internal.key", "hidden", "hidden", true, "properties:app", "SYS")));
         writeStatusFile(TEST_PID, root);
 
-        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        ListProperties command = new CamelJBangMain().withPrinter(printer).command(new ListProperties());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -122,7 +122,7 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
                 property("camel.main.name", "demo", "demo", false, "sys:camel.main.name", "CLI")));
         writeStatusFile(TEST_PID, root);
 
-        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        ListProperties command = new CamelJBangMain().withPrinter(printer).command(new ListProperties());
         command.sort = "pid";
         command.startup = true;
         command.verbose = true;
@@ -153,7 +153,7 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
                 property("greeting", "Hello", "Hello", false, null, "application.properties")));
         writeStatusFile(TEST_PID, root);
 
-        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        ListProperties command = new CamelJBangMain().withPrinter(printer).command(new ListProperties());
         command.sort = "pid";
         command.jsonOutput = true;
 

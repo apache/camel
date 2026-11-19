@@ -110,7 +110,7 @@ class CatalogComponentTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogComponent createCommand() {
-        CatalogComponent command = new CatalogComponent(new CamelJBangMain().withPrinter(printer));
+        CatalogComponent command = new CamelJBangMain().withPrinter(printer).command(new CatalogComponent());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

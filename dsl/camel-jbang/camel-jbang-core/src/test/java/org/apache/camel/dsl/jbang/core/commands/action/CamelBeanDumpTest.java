@@ -188,7 +188,7 @@ class CamelBeanDumpTest extends ActionCommandTestSupport {
     @Test
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        CamelBeanDump command = new CamelBeanDump(new CamelJBangMain().withPrinter(printer));
+        CamelBeanDump command = new CamelJBangMain().withPrinter(printer).command(new CamelBeanDump());
         CommandLineTestHelper.parse(command, "doesNotExist");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -199,7 +199,7 @@ class CamelBeanDumpTest extends ActionCommandTestSupport {
     }
 
     private CamelBeanDump command(String... args) {
-        CamelBeanDump command = new CamelBeanDump(new CamelJBangMain().withPrinter(printer));
+        CamelBeanDump command = new CamelJBangMain().withPrinter(printer).command(new CamelBeanDump());
         CommandLineTestHelper.parse(command, Stream.concat(Stream.of("myApp"), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

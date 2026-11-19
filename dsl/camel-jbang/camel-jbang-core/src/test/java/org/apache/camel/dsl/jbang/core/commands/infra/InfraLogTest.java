@@ -43,7 +43,7 @@ class InfraLogTest extends InfraCommandTestSupport {
 
     @Test
     void shouldReportNoRunningServices() throws Exception {
-        InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
+        InfraLog command = new CamelJBangMain().withPrinter(printer).command(new InfraLog());
         int exit = command.doCall();
 
         assertEquals(3, exit);
@@ -54,7 +54,7 @@ class InfraLogTest extends InfraCommandTestSupport {
     void shouldReportMissingLogForNamedService() throws Exception {
         writePidFile("ftp", 1234, "{}");
 
-        InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
+        InfraLog command = new CamelJBangMain().withPrinter(printer).command(new InfraLog());
         command.aliveCheck = pid -> true;
         command.serviceName = List.of("kafka");
         int exit = command.doCall();
@@ -69,7 +69,7 @@ class InfraLogTest extends InfraCommandTestSupport {
         writePidFile("ftp", 1234, "{}");
         writeLogFile("ftp", 1234, "starting\n");
 
-        InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
+        InfraLog command = new CamelJBangMain().withPrinter(printer).command(new InfraLog());
         command.aliveCheck = pid -> false;
         int exit = command.doCall();
 
@@ -85,7 +85,7 @@ class InfraLogTest extends InfraCommandTestSupport {
         writePidFile("ftp", 1234, "{}");
         writeLogFile("ftp", 1234, "one\ntwo\nthree\n");
 
-        InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
+        InfraLog command = new CamelJBangMain().withPrinter(printer).command(new InfraLog());
         command.aliveCheck = pid -> true;
         CommandLineTestHelper.parse(command, "--lines=2");
         int exit = assertTimeoutPreemptively(Duration.ofSeconds(30), command::doCall);
@@ -99,7 +99,7 @@ class InfraLogTest extends InfraCommandTestSupport {
         writePidFile("ftp", 1234, "{}");
         writeLogFile("ftp", 1234, "starting\n");
 
-        InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
+        InfraLog command = new CamelJBangMain().withPrinter(printer).command(new InfraLog());
         command.aliveCheck = pid -> true;
         CommandLineTestHelper.parse(command, "--follow", "--duration=300");
         StopWatch watch = new StopWatch();

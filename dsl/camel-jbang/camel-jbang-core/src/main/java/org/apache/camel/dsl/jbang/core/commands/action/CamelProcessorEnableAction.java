@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "enable-processor", description = "Enable Camel processor", generateHelp = true,
@@ -26,10 +25,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd enable-processor --id=myId",
                            "  camel cmd enable-processor myApp --id=myId" })
 public class CamelProcessorEnableAction extends CamelProcessorAction {
-
-    public CamelProcessorEnableAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void onAction(JsonObject root) {

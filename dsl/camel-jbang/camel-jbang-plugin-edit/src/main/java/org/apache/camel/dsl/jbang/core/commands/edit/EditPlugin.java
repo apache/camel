@@ -26,7 +26,7 @@ public class EditPlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("edit", new CommandTree(new EditCommand(main)));
+        commandLine.addSubcommand("edit", new CommandTree(main.command(new EditCommand())));
     }
 
 }

@@ -52,10 +52,6 @@ public class DependencyRuntime extends CamelCommand {
     @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    public DependencyRuntime(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // read pom.xml

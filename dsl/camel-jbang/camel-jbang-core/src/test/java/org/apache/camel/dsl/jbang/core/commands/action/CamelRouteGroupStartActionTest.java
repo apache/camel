@@ -36,7 +36,8 @@ class CamelRouteGroupStartActionTest extends ActionCommandTestSupport {
     void testWritesStartGroupActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteGroupStartAction command = new CamelRouteGroupStartAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStartAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStartAction());
         command.name = "myApp";
         command.id = "myGroup";
 
@@ -56,7 +57,8 @@ class CamelRouteGroupStartActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteGroupStartAction command = new CamelRouteGroupStartAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStartAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStartAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

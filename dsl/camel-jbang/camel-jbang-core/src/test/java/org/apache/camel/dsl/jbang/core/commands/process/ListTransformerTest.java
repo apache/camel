@@ -43,7 +43,7 @@ class ListTransformerTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListTransformer command = new ListTransformer(new CamelJBangMain().withPrinter(printer));
+        ListTransformer command = new CamelJBangMain().withPrinter(printer).command(new ListTransformer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -67,7 +67,7 @@ class ListTransformerTest extends ProcessCommandTestSupport {
         root.put("transformers", JsonRecordSupport.toJsonObject(new TransformerConsole.Response(0, 0, 0, 1000, null)));
         writeStatusFile(TEST_PID, root);
 
-        ListTransformer command = new ListTransformer(new CamelJBangMain().withPrinter(printer));
+        ListTransformer command = new CamelJBangMain().withPrinter(printer).command(new ListTransformer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -91,7 +91,7 @@ class ListTransformerTest extends ProcessCommandTestSupport {
         root.put("transformers", transformerContainer(transformer("order-transformer", "xml:Order", "json:Order")));
         writeStatusFile(TEST_PID, root);
 
-        ListTransformer command = new ListTransformer(new CamelJBangMain().withPrinter(printer));
+        ListTransformer command = new CamelJBangMain().withPrinter(printer).command(new ListTransformer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -117,7 +117,7 @@ class ListTransformerTest extends ProcessCommandTestSupport {
         root.put("transformers", transformerContainer(transformer("order-transformer", "xml:Order", "json:Order")));
         writeStatusFile(TEST_PID, root);
 
-        ListTransformer command = new ListTransformer(new CamelJBangMain().withPrinter(printer));
+        ListTransformer command = new CamelJBangMain().withPrinter(printer).command(new ListTransformer());
         command.sort = "pid";
         command.jsonOutput = true;
 

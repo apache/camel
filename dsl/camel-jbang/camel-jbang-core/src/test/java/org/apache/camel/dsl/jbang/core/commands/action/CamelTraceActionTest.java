@@ -257,7 +257,7 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
     }
 
     private CamelTraceAction command(String... args) {
-        CamelTraceAction command = new CamelTraceAction(new CamelJBangMain().withPrinter(printer));
+        CamelTraceAction command = new CamelJBangMain().withPrinter(printer).command(new CamelTraceAction());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

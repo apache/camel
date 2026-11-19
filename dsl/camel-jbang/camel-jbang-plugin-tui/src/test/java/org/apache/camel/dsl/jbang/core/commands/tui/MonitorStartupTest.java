@@ -54,11 +54,11 @@ class MonitorStartupTest {
 
     @Test
     void camelTuiForwardsDefaults() {
-        TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
+        TuiCommand command = new CamelJBangMain().command(new TuiCommand(getClass().getClassLoader()));
         CommandLineTestHelper.parse(command, "--web", "--defaults");
         assertThat(command.buildArgs()).containsExactly("--web", "--defaults");
 
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         CommandLineTestHelper.parse(monitor, command.buildArgs().toArray(String[]::new));
         assertThat(monitor.web).isTrue();
         assertThat(monitor.defaults).isTrue();

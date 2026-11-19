@@ -36,7 +36,8 @@ class CamelRouteSuspendActionTest extends ActionCommandTestSupport {
     void testWritesSuspendActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteSuspendAction command = new CamelRouteSuspendAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteSuspendAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteSuspendAction());
         command.name = "myApp";
         command.id = "myRoute";
 
@@ -54,7 +55,8 @@ class CamelRouteSuspendActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteSuspendAction command = new CamelRouteSuspendAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteSuspendAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteSuspendAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

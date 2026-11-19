@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "resume-route", description = "Resume Camel routes", generateHelp = true,
@@ -26,10 +25,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd resume-route --id=myRoute",
                            "  camel cmd resume-route myApp --id=myRoute" })
 public class CamelRouteResumeAction extends CamelRouteAction {
-
-    public CamelRouteResumeAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void onAction(JsonObject root) {

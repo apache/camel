@@ -48,7 +48,7 @@ public class TestPlugin implements Plugin {
         CitrusJBangMain citrus = new CitrusJBangMain();
         citrus.withPrinter(new PipedPrinter(main.getOut()));
 
-        commandLine.addSubcommand("test", new CommandTree(new TestCommand(main))
+        commandLine.addSubcommand("test", new CommandTree(main.command(new TestCommand()))
                 .addSubcommand("init", new CommandTree(new TestInit(citrus)))
                 .addSubcommand("inspect", new CommandTree(new TestInspect(citrus)))
                 .addSubcommand("run", new CommandTree(new TestRun(citrus)))

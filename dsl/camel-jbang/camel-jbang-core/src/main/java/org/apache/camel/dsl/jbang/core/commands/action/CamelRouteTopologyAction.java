@@ -38,7 +38,6 @@ import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -120,10 +119,6 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     ActionTimeoutMixin timeoutOption;
 
     private long pid;
-
-    public CamelRouteTopologyAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -22,7 +22,6 @@ import java.util.List;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.json.JsonObject;
@@ -41,10 +40,6 @@ public class ConfigList extends CamelCommand {
     @Option(name = "json", hasValue = false,
             description = "Output in JSON Format: one entry per key, with its scope (local or global)")
     boolean jsonOutput;
-
-    public ConfigList(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

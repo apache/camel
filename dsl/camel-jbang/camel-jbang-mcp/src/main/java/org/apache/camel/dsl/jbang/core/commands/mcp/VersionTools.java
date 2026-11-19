@@ -58,7 +58,7 @@ public class VersionTools {
             StringPrinter printer = new StringPrinter();
             CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
 
-            VersionList versionList = new VersionList(main);
+            VersionList versionList = main.command(new VersionList());
             versionList.runtime = resolveRuntime(runtime);
             versionList.jsonOutput = true;
             versionList.lts = lts != null && lts;

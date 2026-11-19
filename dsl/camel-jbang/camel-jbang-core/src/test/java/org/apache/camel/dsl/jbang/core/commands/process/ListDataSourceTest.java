@@ -43,7 +43,7 @@ class ListDataSourceTest extends ProcessCommandTestSupport {
         root.put("dataSources", dataSources(pool("default", 2, 3)));
         writeStatusFile(TEST_PID, root);
 
-        ListDataSource command = new ListDataSource(new CamelJBangMain().withPrinter(printer));
+        ListDataSource command = new CamelJBangMain().withPrinter(printer).command(new ListDataSource());
         command.jsonOutput = true;
         command.sort = "pid";
 
@@ -67,7 +67,7 @@ class ListDataSourceTest extends ProcessCommandTestSupport {
         root.put("dataSources", dataSources(pool("default", 2, 3), pool("audit", 0, 1)));
         writeStatusFile(TEST_PID, root);
 
-        ListDataSource command = new ListDataSource(new CamelJBangMain().withPrinter(printer));
+        ListDataSource command = new CamelJBangMain().withPrinter(printer).command(new ListDataSource());
         command.sort = "pid";
 
         assertThat(call(command)).isZero();
@@ -79,7 +79,7 @@ class ListDataSourceTest extends ProcessCommandTestSupport {
     void integrationWithoutDataSourcesListsNothing() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("orders", 5));
 
-        ListDataSource command = new ListDataSource(new CamelJBangMain().withPrinter(printer));
+        ListDataSource command = new CamelJBangMain().withPrinter(printer).command(new ListDataSource());
         command.jsonOutput = true;
         command.sort = "pid";
 

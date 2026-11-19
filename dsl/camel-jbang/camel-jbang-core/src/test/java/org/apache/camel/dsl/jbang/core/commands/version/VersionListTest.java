@@ -33,7 +33,7 @@ class VersionListTest extends CamelCommandBaseTestSupport {
     @Test
     void aVersionListCreatedWithoutItsCommandLineHasItsOptionGroups() {
         // the MCP server creates the command itself: camel_version_list failed with a NullPointerException
-        VersionList versionList = new VersionList(new CamelJBangMain().withPrinter(printer));
+        VersionList versionList = new CamelJBangMain().withPrinter(printer).command(new VersionList());
 
         Assertions.assertThat(versionList.mavenResolver).isNotNull();
         Assertions.assertThat(versionList.mavenResolver.download()).isTrue();
@@ -42,7 +42,7 @@ class VersionListTest extends CamelCommandBaseTestSupport {
 
     @Test
     void springbootVersionIsAvailable() throws Exception {
-        VersionList versionList = new VersionList(new CamelJBangMain().withPrinter(printer));
+        VersionList versionList = new CamelJBangMain().withPrinter(printer).command(new VersionList());
         versionList.sort = "version";
         versionList.runtime = RuntimeType.springBoot;
         versionList.mavenResolver = new MavenResolverMixin();
@@ -163,7 +163,7 @@ class VersionListTest extends CamelCommandBaseTestSupport {
     }
 
     VersionList createQuarkusVersionList() {
-        VersionList versionList = new VersionList(new CamelJBangMain().withPrinter(printer));
+        VersionList versionList = new CamelJBangMain().withPrinter(printer).command(new VersionList());
         versionList.sort = "version";
         versionList.runtime = RuntimeType.quarkus;
         versionList.mavenResolver = new MavenResolverMixin();

@@ -31,7 +31,7 @@ class ConfigSetTest extends BaseConfigTestSupport {
     public void shouldSetConfig() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        ConfigSet command = new CamelJBangMain().withPrinter(printer).command(new ConfigSet());
         command.configuration = "foo=bar";
         command.doCall();
 
@@ -47,7 +47,7 @@ class ConfigSetTest extends BaseConfigTestSupport {
     public void shouldOverwriteConfig() throws Exception {
         UserConfigHelper.createUserConfig("foo=bar");
 
-        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        ConfigSet command = new CamelJBangMain().withPrinter(printer).command(new ConfigSet());
         command.configuration = "foo=baz";
         command.doCall();
 
@@ -61,7 +61,7 @@ class ConfigSetTest extends BaseConfigTestSupport {
 
     @Test
     public void setLocalConfig() throws Exception {
-        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        ConfigSet command = new CamelJBangMain().withPrinter(printer).command(new ConfigSet());
         command.configuration = "foo=local";
         command.global = false;
         command.doCall();
@@ -78,7 +78,7 @@ class ConfigSetTest extends BaseConfigTestSupport {
     public void shouldRejectConfigWithoutKey() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        ConfigSet command = new CamelJBangMain().withPrinter(printer).command(new ConfigSet());
         command.configuration = "=bar";
 
         CliException e = Assertions.assertThrows(CliException.class, command::doCall);
@@ -89,7 +89,7 @@ class ConfigSetTest extends BaseConfigTestSupport {
 
     @Test
     public void shouldRejectConfigWithoutValue() throws Exception {
-        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        ConfigSet command = new CamelJBangMain().withPrinter(printer).command(new ConfigSet());
         command.configuration = "foo";
         command.global = false;
 

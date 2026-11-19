@@ -66,28 +66,28 @@ public class Init extends CamelCommand {
 
     private Path filePath; // Defined only for file path completion; the field never used
     @Argument(description = "Name of integration file (or a github link)", paramLabel = "file")
-    private String file;
+    String file;
 
     @Option(name = "list", hasValue = false, description = "List available templates")
-    private boolean list;
+    boolean list;
 
     @Option(name = "dir", aliases = { "directory" },
             description = "Directory relative path where the new Camel integration will be saved", defaultValue = ".")
-    private String directory;
+    String directory;
 
     @Option(name = "clean-dir", aliases = { "clean-directory" }, hasValue = false,
             description = "Whether to clean directory first (deletes all files in directory)")
-    private boolean cleanDirectory;
+    boolean cleanDirectory;
 
     @Option(name = "force", hasValue = false,
             description = "Overwrite a file that exists already (by default the command fails instead)")
-    private boolean force;
+    boolean force;
 
     @Option(name = "from-kamelet", description = "To be used when extending an existing Kamelet")
-    private String fromKamelet;
+    String fromKamelet;
 
     @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
-    private String kameletsVersion;
+    String kameletsVersion;
 
     @Option(name = "repo", aliases = { "repos" },
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
@@ -95,10 +95,6 @@ public class Init extends CamelCommand {
 
     // when the template is picked in the terminal, where to ask whether to overwrite a file that exists already
     private Scanner overwritePrompt;
-
-    public Init(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

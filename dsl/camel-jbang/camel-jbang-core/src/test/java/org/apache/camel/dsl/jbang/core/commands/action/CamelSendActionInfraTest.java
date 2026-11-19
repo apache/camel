@@ -58,7 +58,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
     @BeforeEach
     public void setup() throws Exception {
         super.setup();
-        sendAction = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        sendAction = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         catalog = new DefaultCamelCatalog();
     }
 

@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "chaos-clear",
@@ -42,10 +41,6 @@ public class CamelChaosClearAction extends CamelChaosAction {
     @Option(name = "reset", hasValue = false,
             description = "Also start a new report: the removed rules, the counts per route and the verdict are gone")
     boolean reset;
-
-    public CamelChaosClearAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

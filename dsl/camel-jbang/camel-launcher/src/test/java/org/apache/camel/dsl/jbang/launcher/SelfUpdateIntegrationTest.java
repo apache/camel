@@ -128,7 +128,8 @@ class SelfUpdateIntegrationTest {
         InstallScriptFetcher scriptFetcher = new InstallScriptFetcher(fixture.baseUrl(), httpClient);
         Map<String, String> installerEnv = fixture.environment(home);
         SelfUpdateCommand cmd
-                = new SelfUpdateCommand(new CamelJBangMain().withPrinter(printer), fetcher, scriptFetcher, installerEnv);
+                = new CamelJBangMain().withPrinter(printer)
+                        .command(new SelfUpdateCommand(fetcher, scriptFetcher, installerEnv));
         try {
             return new CommandTree(cmd).execute(args).getResultValue();
         } catch (Exception e) {
@@ -161,7 +162,8 @@ class SelfUpdateIntegrationTest {
                     fixture.baseUrl() + "/camel-cli/releases", fixture.mavenUrl(), fixture.snapshotUrl(), httpClient);
             Map<String, String> installerEnv = fixture.environment(home);
             SelfUpdateCommand cmd
-                    = new SelfUpdateCommand(new CamelJBangMain().withPrinter(printer), fetcher, hangingFetcher, installerEnv);
+                    = new CamelJBangMain().withPrinter(printer)
+                            .command(new SelfUpdateCommand(fetcher, hangingFetcher, installerEnv));
             // Shorten the 5-minute process wait to 2 seconds so the test completes quickly
             cmd.processWaitTimeoutSeconds = 2;
 

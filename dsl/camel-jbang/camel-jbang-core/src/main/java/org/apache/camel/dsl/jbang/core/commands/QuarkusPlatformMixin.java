@@ -35,17 +35,17 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
     @Option(name = "quarkus-group-id",
             description = "groupId of Quarkus Platform BOM; honored only if --quarkus-version is set",
             defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
+    public String quarkusGroupId = "io.quarkus.platform";
 
     @Option(name = "quarkus-artifact-id",
             description = "Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context.",
             defaultValue = "quarkus-bom")
     @Deprecated(forRemoval = true, since = "4.21.0")
-    String quarkusArtifactId = "quarkus-bom";
+    public String quarkusArtifactId = "quarkus-bom";
 
     @Option(name = "quarkus-version",
             description = "version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry")
-    String quarkusVersion;
+    public String quarkusVersion;
 
     /**
      * If {@link #quarkusVersion} is set, returns {@link QuarkusPlatformBom} with that version and

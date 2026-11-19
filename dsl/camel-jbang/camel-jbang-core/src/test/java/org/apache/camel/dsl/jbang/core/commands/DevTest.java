@@ -83,6 +83,6 @@ class DevTest extends CamelCommandBaseTestSupport {
     }
 
     private Dev createDev() {
-        return new Dev(new CamelJBangMain().withPrinter(printer));
+        return new CamelJBangMain().withPrinter(printer).command(new Dev());
     }
 }

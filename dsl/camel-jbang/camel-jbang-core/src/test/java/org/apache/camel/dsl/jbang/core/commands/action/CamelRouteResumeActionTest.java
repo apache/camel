@@ -36,7 +36,7 @@ class CamelRouteResumeActionTest extends ActionCommandTestSupport {
     void testWritesResumeActionForMatchingName() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteResumeAction command = new CamelRouteResumeAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteResumeAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteResumeAction());
         command.name = "myApp";
         command.id = "myRoute";
 
@@ -54,7 +54,7 @@ class CamelRouteResumeActionTest extends ActionCommandTestSupport {
     void testNoActionWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteResumeAction command = new CamelRouteResumeAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteResumeAction command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteResumeAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

@@ -146,7 +146,7 @@ class ExportTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
         LOG.info("shouldExportWithJpaAndHibernate {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa"));
@@ -323,7 +323,7 @@ class ExportTest extends ExportBaseTestSupport {
 
     @Test
     public void shouldExportJBangRuntimeAsCamelMain() throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         CommandLineTestHelper.parse(command, "--runtime=jbang", "route.yaml");
 
         assertThat(command.runtime).isEqualTo(RuntimeType.main);
@@ -378,7 +378,7 @@ class ExportTest extends ExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldExportFromDir(RuntimeType rt) throws Exception {
         LOG.info("shouldExportFromDir {}", rt);
-        Export command = new Export(new CamelJBangMain());
+        Export command = new CamelJBangMain().command(new Export());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
                         "--runtime=%s".formatted(rt.runtime())));
