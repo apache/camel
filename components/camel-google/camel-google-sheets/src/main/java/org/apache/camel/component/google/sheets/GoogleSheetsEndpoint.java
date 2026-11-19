@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,11 +82,13 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
      * header, so they are not set on the request, where accessToken would become the access_token query parameter. The
      * names are matched ignoring case, as a header such as CamelGoogleSheets.AccessToken sets the same property.
      */
-    private static final Set<String> CREDENTIAL_OPTIONS = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    private static final Set<String> CREDENTIAL_OPTIONS;
 
     static {
-        CREDENTIAL_OPTIONS.addAll(
+        Set<String> options = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        options.addAll(
                 List.of("clientId", "clientSecret", "accessToken", "refreshToken", "serviceAccountKey", "delegate"));
+        CREDENTIAL_OPTIONS = Collections.unmodifiableSet(options);
     }
 
     @UriParam
