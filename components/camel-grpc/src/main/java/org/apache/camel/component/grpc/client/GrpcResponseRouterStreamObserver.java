@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConfiguration;
 import org.apache.camel.component.grpc.GrpcConstants;
+import org.apache.camel.component.grpc.GrpcProducerStrategy;
 
 /**
  * A stream observer that routes all responses to another endpoint.
@@ -66,6 +67,11 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
             newExchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
             newExchange.getIn().setBody(throwable);
             doSend(newExchange);
+        } else if (configuration.getProducerStrategy() == GrpcProducerStrategy.SIMPLE) {
+            // the call of this exchange failed, and the error is not routed to the replies endpoint: fail the exchange,
+            // else the failed call is reported as a success and the error is lost. In STREAMING mode the exchanges are
+            // completed when they are sent on the stream, before it ends
+            exchange.setException(throwable);
         }
         callback.done(true);
     }
