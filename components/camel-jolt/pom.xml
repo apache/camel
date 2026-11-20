@@ -67,6 +67,12 @@
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- a body can be a Jackson 2 node -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
