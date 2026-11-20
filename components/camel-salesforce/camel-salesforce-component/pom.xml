@@ -128,7 +128,7 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
         </dependency>
-        <!-- the Pub/Sub classes are generated with protoc ${protobuf-version} and need protobuf-java 4.x at runtime;
+        <!-- the Pub/Sub classes are generated with protoc ${protoc-version} and need protobuf-java 4.x at runtime;
              grpc-protobuf brings 3.x, so declare it here for the users of this component -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -248,7 +248,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin-version}</version>
                 <configuration>
-                    <protocVersion>${protobuf-version}</protocVersion>
+                    <protocVersion>${protoc-version}</protocVersion>
                     <sourceDirectories>
                         <sourceDirectory>${project.basedir}/src/main/proto</sourceDirectory>
                     </sourceDirectories>
