@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -310,16 +309,26 @@ public class DefaultHttpBinding implements HttpBinding {
                 // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
                 String text = message.getBody(String.class);
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(text)) {
+                    Charset formCharset;
+                    try {
+                        formCharset = Charset.forName(charset);
+                    } catch (IllegalArgumentException e) {
+                        throw new UnsupportedEncodingException(charset);
+                    }
                     for (String param : text.split("&")) {
                         if (param.isEmpty()) {
                             // an empty field, as in a=1&&b=2, has no name
                             continue;
                         }
                         // a field without = is a name with an empty value, as in the URL-encoded form parser
-                        // of the WHATWG URL standard, which is what browsers and Vert.x do
+                        // of the WHATWG URL standard, which is what browsers and Vert.x do, and that parser also keeps
+                        // a % that is not followed by two hex digits, as in a text such as "50% off"
                         int pos = param.indexOf('=');
-                        String name = URLDecoder.decode(pos < 0 ? param : param.substring(0, pos), charset);
-                        String value = pos < 0 ? "" : URLDecoder.decode(param.substring(pos + 1), charset);
+                        String name = org.apache.camel.http.base.HttpHelper
+                                .decodeFormComponent(pos < 0 ? param : param.substring(0, pos), formCharset);
+                        String value = pos < 0
+                                ? "" : org.apache.camel.http.base.HttpHelper.decodeFormComponent(param.substring(pos + 1),
+                                        formCharset);
                         if (headerFilterStrategy != null
                                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                             HttpHelper.appendHeader(headers, name, value);

@@ -10657,17 +10657,20 @@ that reads objects from one bucket and uploads them to another now keeps the sto
 before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
 the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
 
-=== camel-http-common, camel-netty-http - a form field without = and a response header whose name is not a token
+=== camel-http-common, camel-netty-http, camel-http - a form field without =, and a header whose name is not a token
 
 A consumer that maps the fields of an `application/x-www-form-urlencoded` request to headers (camel-servlet,
 platform-http on Spring Boot and the other components that use `DefaultHttpBinding`, and camel-netty-http) now reads
 a field without `=` as a header with an empty value, as browsers and Vert.x do, and skips an empty field, as in
-`a=1&&b=2`. Before, such a request failed with an `IllegalArgumentException` ("Invalid parameter, expected to be a
-pair") before the route ran: a 500 response, or a closed connection with camel-netty-http. A text body that a client
-sends as form data, as `curl -d "some text"` does, now reaches the route, with the text as the name of a header.
+`a=1&&b=2`. It also keeps a `%` that is not followed by two hex digits as it is, as in `Save 50% now`. Before, such
+a request failed with an `IllegalArgumentException` ("Invalid parameter, expected to be a pair", or "Illegal hex
+characters in escape (%) pattern") before the route ran: a 500 response, or a closed connection with camel-netty-http.
+A text body that a client sends as form data, as `curl -d "some text"` does, now reaches the route, with the text as
+the name of a header.
 
-These consumers now leave out of the response a message header whose name is not a valid HTTP header name (an RFC 9110
-token, for example a name with a space, a comma or a colon), and log it at DEBUG level. Before, camel-netty-http
-failed to write the response, after the route had run, and the other consumers passed the name on to the servlet
-container. Headers with a valid name are written as before. A route that needs such a value in the response must set
-it in a header with a valid name.
+These consumers, and the camel-netty-http and camel-http producers, now leave out a message header whose name is not
+a valid HTTP header name (an RFC 9110 token, for example a name with a space, a comma or a colon) when they write the
+response or the request, and log it at DEBUG level. Before, camel-netty-http failed to write the response or the
+request, the other consumers passed the name on to the servlet container, and camel-http sent it, which a server may
+reject with a 400. Headers with a valid name are written as before. A route that needs such a value in the response or
+in the request must set it in a header with a valid name.

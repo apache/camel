@@ -16,8 +16,10 @@
  */
 package org.apache.camel.http.base;
 
+import java.io.ByteArrayOutputStream;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -318,6 +320,49 @@ public final class HttpHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Decodes a name or a value of an {@code application/x-www-form-urlencoded} body, as the URL-encoded form parser of
+     * the WHATWG URL standard does: a {@code +} is a space, and a {@code %} followed by two hex digits is a byte of the
+     * text in the given charset. Unlike {@link URLDecoder}, which fails, a {@code %} that is not followed by two hex
+     * digits is kept as it is, as in a text such as {@code 50% off} sent as form data.
+     *
+     * @param  value   the encoded name or value
+     * @param  charset the charset of the encoded bytes
+     * @return         the decoded text
+     */
+    public static String decodeFormComponent(String value, Charset charset) {
+        if (value.indexOf('%') < 0 && value.indexOf('+') < 0) {
+            return value;
+        }
+        StringBuilder answer = new StringBuilder(value.length());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        int i = 0;
+        while (i < value.length()) {
+            char ch = value.charAt(i);
+            if (ch == '%' && i + 2 < value.length() && isHexDigit(value.charAt(i + 1))
+                    && isHexDigit(value.charAt(i + 2))) {
+                // collect consecutive escapes, as a character can take several bytes
+                bytes.write(Character.digit(value.charAt(i + 1), 16) << 4 | Character.digit(value.charAt(i + 2), 16));
+                i += 3;
+                continue;
+            }
+            if (bytes.size() > 0) {
+                answer.append(bytes.toString(charset));
+                bytes.reset();
+            }
+            answer.append(ch == '+' ? ' ' : ch);
+            i++;
+        }
+        if (bytes.size() > 0) {
+            answer.append(bytes.toString(charset));
+        }
+        return answer.toString();
+    }
+
+    private static boolean isHexDigit(char ch) {
+        return Character.digit(ch, 16) >= 0 && ch < 128;
     }
 
     /**

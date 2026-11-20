@@ -271,10 +271,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                     // a field without = is a name with an empty value, as in the URL-encoded form parser
                     // of the WHATWG URL standard, which is what browsers and Vert.x do
                     int pos = param.indexOf('=');
-                    String name = shouldUrlDecodeHeader(configuration, "", pos < 0 ? param : param.substring(0, pos),
-                            StandardCharsets.UTF_8);
-                    String value = pos < 0
-                            ? "" : shouldUrlDecodeHeader(configuration, name, param.substring(pos + 1), StandardCharsets.UTF_8);
+                    String name = decodeFormField(configuration, "", pos < 0 ? param : param.substring(0, pos));
+                    String value = pos < 0 ? "" : decodeFormField(configuration, name, param.substring(pos + 1));
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         NettyHttpHelper.appendHeader(headers, name, value);
@@ -346,6 +344,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
      * @throws     UnsupportedEncodingException is thrown if error decoding.
      */
     @Deprecated(since = "4.4.0")
+    /**
+     * Decodes a name or a value of a form field as a header with {@link #shouldUrlDecodeHeader}. A % that is not
+     * followed by two hex digits, as in a text such as "50% off" sent as form data, is kept as it is, as in the
+     * URL-encoded form parser of the WHATWG URL standard, instead of failing the request.
+     */
+    private String decodeFormField(NettyHttpConfiguration configuration, String headerName, String value) {
+        try {
+            return shouldUrlDecodeHeader(configuration, headerName, value, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return HttpHelper.decodeFormComponent(value, StandardCharsets.UTF_8);
+        }
+    }
+
     protected String shouldUrlDecodeHeader(
             NettyHttpConfiguration configuration, String headerName, Object value, String charset)
             throws UnsupportedEncodingException {
@@ -768,6 +779,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // we should not add headers for the parameters in the uri if we bridge the endpoint
             // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
             if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                continue;
+            }
+            if (!HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field mapped to a header by a consumer,
+                // but it cannot be sent as an HTTP header
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping header {} in the request, as its name is not a valid HTTP header name",
+                            key.replaceAll("[\n\r]", "_"));
+                }
                 continue;
             }
 

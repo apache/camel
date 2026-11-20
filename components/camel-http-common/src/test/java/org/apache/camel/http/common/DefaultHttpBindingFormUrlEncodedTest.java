@@ -71,6 +71,16 @@ class DefaultHttpBindingFormUrlEncodedTest {
     }
 
     @Test
+    void testPercentNotFollowedByTwoHexDigitsIsKept() throws Exception {
+        assertEquals("", readForm("Save 50% now").getHeader("Save 50% now"));
+        assertEquals("", readForm("{\"discount\":\"50%\"}").getHeader("{\"discount\":\"50%\"}"));
+
+        Message message = readForm("off=50%&price=10%25");
+        assertEquals("50%", message.getHeader("off"));
+        assertEquals("10%", message.getHeader("price"));
+    }
+
+    @Test
     void testInvalidHeaderNameIsNotWrittenToResponse() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message message = exchange.getMessage();
