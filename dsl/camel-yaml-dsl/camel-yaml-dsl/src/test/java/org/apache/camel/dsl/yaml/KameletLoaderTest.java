@@ -16,6 +16,12 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -652,6 +658,94 @@ class KameletLoaderTest extends YamlTestSupport {
         assertThat(out.getException()).isNull();
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void sourceKameletBinaryOutputTypeKeepsStream() throws Exception {
+        // CAMEL-27299: with stream caching off, the binary type of a source keeps a stream that can be read only once,
+        // as the consuming route got it before the output type of a source was applied before it
+        context.setStreamCaching(false);
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-binary-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: binary
+                      types:
+                        binary:
+                          format: application-octet-stream
+                  template:
+                    from:
+                      uri: "direct:feed"
+                      steps:
+                        - to: "kamelet:sink"
+                """);
+        loadRoutes("""
+                - from:
+                    uri: "kamelet:my-binary-source"
+                    steps:
+                      - to: "mock:first"
+                """);
+
+        InputStream stream = oneShotStream("payload");
+        withMock("mock:first", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived("Content-Type", "application/octet-stream");
+            mock.message(0).body().isEqualTo(stream);
+        });
+
+        context.start();
+
+        Exchange out = context.createProducerTemplate().send("direct:feed", e -> e.getMessage().setBody(stream));
+        assertThat(out.getException()).isNull();
+
+        MockEndpoint.assertIsSatisfied(context);
+        // the stream was not read
+        assertThat(new String(stream.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo("payload");
+    }
+
+    @Test
+    void actionKameletBinaryOutputTypeReadsStream() throws Exception {
+        // the steps after an action Kamelet got a byte array before, so its binary type still reads a stream
+        context.setStreamCaching(false);
+        loadKamelets(BINARY_ACTION);
+        loadRoutes("""
+                - from:
+                    uri: "direct:to"
+                    steps:
+                      - to: "kamelet:my-binary-action"
+                      - to: "mock:after"
+                """);
+
+        withMock("mock:after", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived("Content-Type", "application/octet-stream");
+            mock.message(0).body().isInstanceOf(byte[].class);
+        });
+
+        context.start();
+
+        Exchange out = context.createProducerTemplate().send("direct:to",
+                e -> e.getMessage().setBody(oneShotStream("payload")));
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getBody(String.class)).isEqualTo("payload");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    /**
+     * A stream that can be read only once (no mark/reset), as a component with stream caching off can give.
+     */
+    private static InputStream oneShotStream(String text) {
+        return new SequenceInputStream(
+                Collections.enumeration(List.of(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)))));
     }
 
     @Test

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.io.InputStream;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -23,12 +25,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.processor.transformer.ByteArrayDataTypeTransformer;
 import org.apache.camel.processor.transformer.DataTypeProcessor;
 import org.apache.camel.processor.transformer.TypeConverterTransformer;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -55,6 +59,8 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     private volatile Processor outputType;
     private volatile DataType outputDataType;
     private volatile boolean outputTypeResolved;
+    // whether the output data type is binary and the Kamelet is a source, which then keeps a stream body as it is
+    private volatile boolean outputTypeKeepsStream;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -154,10 +160,19 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
         if (processor == null) {
             return true;
         }
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+        if (outputTypeKeepsStream && exchange.getMessage().getBody() instanceof InputStream) {
+            // the binary type of a source keeps any stream, also one that can be read only once (stream caching off),
+            // and only sets the content type: this is what the consuming route got before the output type of a source
+            // was applied before it (it was applied when the route of the Kamelet completed), and a large object, such
+            // as a file of an FTP server with streamDownload, is not read into memory. The binary type itself reads such
+            // a stream into a byte array, so the steps after it in the same route can read it again.
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/octet-stream");
+        } else {
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
         }
         if (exchange.getException() != null) {
             return false;
@@ -181,6 +196,12 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                     if (type != null) {
                         outputDataType = new DataType(type.toString());
                         outputType = createOutputType(route, type.toString());
+                        // the route of a source Kamelet starts from a component; the route of an action Kamelet from
+                        // kamelet:source
+                        boolean source = !(route.getConsumer() instanceof KameletConsumer);
+                        outputTypeKeepsStream = source && outputType != null && getEndpoint().getCamelContext()
+                                .getTransformerRegistry().resolveTransformer(new TransformerKey(
+                                        DataType.ANY, outputDataType)) instanceof ByteArrayDataTypeTransformer;
                     }
                     outputTypeResolved = true;
                 }
@@ -216,6 +237,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
         outputType = null;
         outputDataType = null;
         outputTypeResolved = false;
+        outputTypeKeepsStream = false;
         super.doStop();
     }
 
