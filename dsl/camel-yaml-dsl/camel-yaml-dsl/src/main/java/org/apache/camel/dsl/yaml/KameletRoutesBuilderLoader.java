@@ -47,11 +47,10 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "kamelet.yaml";
     /**
-     * The route property with the output data type of a source Kamelet, which the kamelet producer applies when the
-     * message is handed to {@code kamelet:sink} (the same key as {@code Kamelet.SOURCE_OUTPUT_TYPE_PROPERTY}).
+     * The route property with the output data type of a Kamelet, which the kamelet producer applies when the message is
+     * handed to {@code kamelet:sink} (the same key as {@code Kamelet.OUTPUT_TYPE_PROPERTY}).
      */
-    public static final String SOURCE_OUTPUT_TYPE_PROPERTY = "kameletSourceOutputType";
-    private static final String KAMELET_TYPE_LABEL = "camel.apache.org/kamelet.type";
+    public static final String OUTPUT_TYPE_PROPERTY = "kameletOutputType";
 
     public KameletRoutesBuilderLoader() {
         super(EXTENSION);
@@ -77,7 +76,7 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // process data types (inputType/outputType) if defined
         Node dataTypesNode = nodeAt(root, "/spec/dataTypes");
         if (dataTypesNode != null) {
-            configureDataTypes(asMappingNode(dataTypesNode), rtd, isSource(root));
+            configureDataTypes(asMappingNode(dataTypesNode), rtd);
         }
 
         Node properties = nodeAt(root, "/spec/definition/properties");
@@ -114,22 +113,7 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         };
     }
 
-    /**
-     * Whether the Kamelet is a source, as its {@code camel.apache.org/kamelet.type} label says.
-     */
-    private static boolean isSource(Node root) {
-        MappingNode labels = asMappingNode(nodeAt(root, "/metadata/labels"));
-        if (labels != null) {
-            for (NodeTuple label : labels.getValue()) {
-                if (KAMELET_TYPE_LABEL.equals(asText(label.getKeyNode()))) {
-                    return "source".equals(asText(label.getValueNode()));
-                }
-            }
-        }
-        return false;
-    }
-
-    private void configureDataTypes(MappingNode dataTypes, RouteTemplateDefinition rtd, boolean source) {
+    private void configureDataTypes(MappingNode dataTypes, RouteTemplateDefinition rtd) {
         MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
         if (in != null) {
             String dataType = extractKameletDataType(in);
@@ -141,14 +125,10 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (out != null) {
             String dataType = extractKameletDataType(out);
             if (dataType != null) {
-                if (source) {
-                    // a source hands each message on with kamelet:sink, which runs the consuming route inside the
-                    // template route, so an output type of the route would be applied only after the consuming route:
-                    // the kamelet producer applies it when the message is handed to kamelet:sink instead
-                    rtd.route().routeProperty(SOURCE_OUTPUT_TYPE_PROPERTY, dataType);
-                } else {
-                    rtd.route().outputType(dataType);
-                }
+                // a Kamelet hands each message on with kamelet:sink, which runs the consuming route of a source, or
+                // the steps after a Kamelet EIP, inside the template route, so an output type of the route would be
+                // applied only after them: the kamelet producer applies it when the message is handed to kamelet:sink
+                rtd.route().routeProperty(OUTPUT_TYPE_PROPERTY, dataType);
             }
         }
     }

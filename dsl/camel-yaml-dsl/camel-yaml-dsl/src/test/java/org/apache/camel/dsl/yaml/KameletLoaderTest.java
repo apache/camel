@@ -16,12 +16,18 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Transformer;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -369,7 +375,7 @@ class KameletLoaderTest extends YamlTestSupport {
         RouteTemplateDefinition rtd = context.getRouteTemplateDefinitions().get(0);
         assertThat(rtd.getId()).isEqualTo("my-action");
         assertThat(rtd.getRoute().getInputType().getUrn()).isEqualTo("my-component:application-json");
-        assertThat(rtd.getRoute().getOutputType().getUrn()).isEqualTo("application-octet-stream");
+        assertOutputTypeProperty(rtd, "application-octet-stream");
     }
 
     @Test
@@ -399,7 +405,7 @@ class KameletLoaderTest extends YamlTestSupport {
         RouteTemplateDefinition rtd = context.getRouteTemplateDefinitions().get(0);
         assertThat(rtd.getId()).isEqualTo("my-source");
         assertThat(rtd.getRoute().getInputType()).isNull();
-        assertThat(rtd.getRoute().getOutputType().getUrn()).isEqualTo("application-octet-stream");
+        assertOutputTypeProperty(rtd, "application-octet-stream");
     }
 
     @Test
@@ -427,11 +433,173 @@ class KameletLoaderTest extends YamlTestSupport {
                         - to: "kamelet:sink"
                 """);
 
-        RouteTemplateDefinition rtd = context.getRouteTemplateDefinitions().get(0);
+        assertOutputTypeProperty(context.getRouteTemplateDefinitions().get(0), "application-octet-stream");
+    }
+
+    private static void assertOutputTypeProperty(RouteTemplateDefinition rtd, String type) {
+        // not an output type of the route: the kamelet producer applies it when the message is handed to kamelet:sink
         assertThat(rtd.getRoute().getOutputType()).isNull();
         assertThat(rtd.getRoute().getRouteProperties())
-                .anyMatch(p -> KameletRoutesBuilderLoader.SOURCE_OUTPUT_TYPE_PROPERTY.equals(p.getKey())
-                        && "application-octet-stream".equals(p.getValue()));
+                .anyMatch(p -> KameletRoutesBuilderLoader.OUTPUT_TYPE_PROPERTY.equals(p.getKey())
+                        && type.equals(p.getValue()));
+    }
+
+    @Test
+    void actionKameletOutputTypeIsAppliedBeforeTheStepsAfterTheEip() throws Exception {
+        loadKamelets(BINARY_ACTION);
+        // the steps after the EIP get the output type, then leave a body the type could not be converted to
+        loadRoutes("""
+                - from:
+                    uri: "direct:eip"
+                    steps:
+                      - kamelet:
+                          name: my-binary-action
+                      - to: "mock:after"
+                      - setBody:
+                          groovy: "[a: 1]"
+                      - to: "mock:last"
+                """);
+
+        withMock("mock:after", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived("Content-Type", "application/octet-stream");
+            mock.message(0).body().isInstanceOf(byte[].class);
+        });
+        withMock("mock:last", mock -> mock.expectedMessageCount(1));
+
+        context.start();
+
+        // the output type is no longer applied when the route of the Kamelet completes, so the Map does not fail
+        Exchange out = context.createProducerTemplate().send("direct:eip", e -> e.getMessage().setBody("hello"));
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getBody()).isInstanceOf(Map.class);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void actionKameletOutputTypeIsAppliedOnceWithTo() throws Exception {
+        loadKamelets(BINARY_ACTION);
+        loadRoutes("""
+                - from:
+                    uri: "direct:to"
+                    steps:
+                      - to: "kamelet:my-binary-action"
+                      - to: "mock:after"
+                """);
+
+        withMock("mock:after", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived("Content-Type", "application/octet-stream");
+            mock.message(0).body().isInstanceOf(byte[].class);
+        });
+
+        context.start();
+
+        Exchange out = context.createProducerTemplate().send("direct:to", e -> e.getMessage().setBody("hello"));
+        assertThat(out.getException()).isNull();
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void actionKameletOutputTypeIsAppliedOnceInBothForms() throws Exception {
+        CountingTransformer counting = new CountingTransformer();
+        context.getRegistry().bind("my-counting", counting);
+        loadKamelets("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-counting-action
+                  labels:
+                    camel.apache.org/kamelet.type: action
+                spec:
+                  definition:
+                    title: "My Action"
+                  dataTypes:
+                    out:
+                      default: counting
+                      types:
+                        counting:
+                          format: my-counting
+                  template:
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - setHeader:
+                            name: action
+                            constant: "yes"
+                """);
+        loadRoutes("""
+                - from:
+                    uri: "direct:eip"
+                    steps:
+                      - kamelet:
+                          name: my-counting-action
+                      - to: "mock:eip"
+                - from:
+                    uri: "direct:to"
+                    steps:
+                      - to: "kamelet:my-counting-action"
+                      - to: "mock:to"
+                """);
+
+        withMock("mock:eip", mock -> mock.expectedBodiesReceived("HELLO"));
+        withMock("mock:to", mock -> mock.expectedBodiesReceived("WORLD"));
+
+        context.start();
+
+        Exchange out = context.createProducerTemplate().send("direct:eip", e -> e.getMessage().setBody("hello"));
+        assertThat(out.getException()).isNull();
+        assertThat(counting.count).hasValue(1);
+
+        out = context.createProducerTemplate().send("direct:to", e -> e.getMessage().setBody("world"));
+        assertThat(out.getException()).isNull();
+        assertThat(counting.count).hasValue(2);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    private static final String BINARY_ACTION = """
+            apiVersion: camel.apache.org/v1
+            kind: Kamelet
+            metadata:
+              name: my-binary-action
+              labels:
+                camel.apache.org/kamelet.type: action
+            spec:
+              definition:
+                title: "My Action"
+              dataTypes:
+                out:
+                  default: binary
+                  types:
+                    binary:
+                      format: application-octet-stream
+              template:
+                from:
+                  uri: "kamelet:source"
+                  steps:
+                    - setHeader:
+                        name: action
+                        constant: "yes"
+            """;
+
+    /**
+     * Upper cases the body and counts how often it is applied.
+     */
+    private static final class CountingTransformer extends Transformer {
+        private final AtomicInteger count = new AtomicInteger();
+
+        CountingTransformer() {
+            setName("my-counting");
+        }
+
+        @Override
+        public void transform(Message message, DataType from, DataType to) {
+            count.incrementAndGet();
+            message.setBody(message.getBody(String.class).toUpperCase());
+        }
     }
 
     @Test
