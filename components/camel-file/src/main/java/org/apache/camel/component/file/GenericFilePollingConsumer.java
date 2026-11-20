@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Consumer;
 import org.apache.camel.DynamicPollingConsumer;
 import org.apache.camel.Exchange;
@@ -23,6 +24,7 @@ import org.apache.camel.PooledExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -162,7 +164,12 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
                         polledMessages = getConsumer().poll(exchange);
                         LOG.trace("Polled {} messages", polledMessages);
 
-                        if (polledMessages == 0 && sendEmptyMessageWhenIdle) {
+                        if (polledMessages == 0 && isExchangeTakenByThisCall()) {
+                            // no file was polled, but the poll delivered an exchange to this call, such as an error
+                            // bridged to the error handler: return it, and do not poll again, as a file found by
+                            // that poll could not be returned as well (CAMEL-27264)
+                            LOG.trace("Not polling again as the poll delivered an exchange");
+                        } else if (polledMessages == 0 && sendEmptyMessageWhenIdle) {
                             // send an "empty" exchange
                             processEmptyMessage();
                             // set polledMessages=1 since the empty message is queued
@@ -233,7 +240,37 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
             slot[0] = isCopy() || exchange instanceof PooledExchange ? prepareCopy(exchange, true) : exchange;
             return;
         }
+        if (slot != null) {
+            // the receive call on this thread already returns another exchange, and nothing takes this one from the
+            // queue, which would keep its file in the in-progress repository, skipped by every later poll (CAMEL-27264)
+            rollbackNotReturned(exchange, slot[0]);
+            return;
+        }
         super.process(exchange);
+    }
+
+    /**
+     * Completes an exchange that the receive call cannot return as failed, so a polled file is rolled back, and removed
+     * from the in-progress repository to be polled again.
+     */
+    private static void rollbackNotReturned(Exchange exchange, Exchange returned) {
+        if (exchange.getException() == null) {
+            exchange.setException(new CamelExchangeException(
+                    "Rolled back as the receive call already returns exchange: " + returned.getExchangeId(), exchange));
+        } else {
+            LOG.warn(
+                    "Cannot return exchange: {} as the receive call already returns exchange: {}. Its exception is ignored: {}",
+                    exchange.getExchangeId(), returned.getExchangeId(), exchange.getException().getMessage());
+        }
+        UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
+    }
+
+    /**
+     * Whether a receive call on this thread is polling and has already been given the exchange it returns.
+     */
+    private boolean isExchangeTakenByThisCall() {
+        Exchange[] slot = polledByThisThread.get();
+        return slot != null && slot[0] != null;
     }
 
     /**
