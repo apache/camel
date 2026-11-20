@@ -130,6 +130,31 @@ Spring Web Services 5.1 removed the deprecated `WebServiceMessageSender.supports
 A custom `WebServiceMessageSender` configured on the `spring-ws` component must implement
 `supports(URI, WebServiceMessageSender.UriSource)` instead.
 
+=== Bouncy Castle 1.87
+
+Camel is upgraded to Bouncy Castle 1.87.
+
+Bouncy Castle 1.87 removed the LMS/HSS and XMSS implementations under `org.bouncycastle.pqc.crypto.lms` and
+`org.bouncycastle.pqc.crypto.xmss`, which 1.86 had deprecated. Application code that builds LMS or HSS keys, for example
+for the `pqc` component, must import `LMSigParameters` and `LMOtsParameters` from `org.bouncycastle.crypto.params`. The
+LMS and XMSS JCE classes in `org.bouncycastle.pqc.jcajce.spec` and `org.bouncycastle.pqc.jcajce.interfaces` are
+deprecated in favour of the same classes in `org.bouncycastle.jcajce.spec` and `org.bouncycastle.jcajce.interfaces`.
+Keys and signatures keep the same encoding.
+
+==== camel-pqc - HQC, NTRU, NTRU LPRime and SNTRU Prime key encapsulation
+
+HQC now follows the specification of the HQC team of 2026-10-12. HQC keys, encapsulations and shared secrets made with
+an earlier Camel release cannot be used with this release. This includes HQC keys stored by a key lifecycle manager,
+which must be generated again.
+
+The `generateSecretKeyEncapsulation` and `extractSecretKeyEncapsulation` operations of the NTRU, NTRU LPRime and
+SNTRU Prime algorithms now derive the secret key with the key derivation function of the encapsulation spec, where
+earlier Bouncy Castle releases used the raw shared secret. An encapsulation made with an earlier Camel release gives a
+different secret key when it is extracted with this release, so both sides of an exchange must be upgraded together.
+
+Bouncy Castle deprecated Classic McEliece (`CMCE`), as it is now believed to be unsafe to use, and will remove it in a
+future release. Use `MLKEM` instead.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
