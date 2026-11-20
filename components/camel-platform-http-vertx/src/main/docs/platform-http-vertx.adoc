@@ -96,6 +96,74 @@ The body of the reply is written as text, bytes or a stream. Text is written in 
 `setBody(constant(42))` replies with `42`. A Map, a List or an object must be marshalled first (for example with
 `marshal().json()`), or the consumer answers `500`.
 
+== Synchronous or asynchronous routing
+
+Each request is routed on a thread of the Vert.x worker pool, as the first steps of a route may block. The
+`synchronous` option of the `platform-http` endpoint decides whether this worker thread waits until the route is
+complete. The same option on the `platform-http` component sets the default for all its endpoints.
+
+In both modes, when the route continues on another thread (for example after an asynchronous producer such as
+`vertx-http`), the rest of the route runs on that thread, and the response is written when the route is complete. A
+route that is synchronous to its end (no asynchronous step) runs the same way in both modes: on the worker thread.
+
+`synchronous=false` (the default)::
+The route runs with the asynchronous routing engine, and the worker thread is free for the next request as soon as the
+route continues on another thread. So the size of the worker pool does not limit how many requests of such a route
+are in flight. Choose this mode when a route calls an asynchronous producer that uses the same Vert.x as the HTTP
+server, such as `vertx-http` with a Vert.x instance in the registry (as in Camel Quarkus). Such a producer needs a
+worker thread of that Vert.x to complete its exchange, and with `synchronous=true` the requests in flight can hold
+every worker thread, so that no request completes any more. The consumer worked this way from Camel 3.6 to 4.1.
+
+`synchronous=true`::
+The worker thread waits until the route is complete, also while the route waits for an asynchronous step. So the size
+of the worker pool limits how many requests are routed at the same time, and further requests wait for a free worker
+thread. Choose this mode when you rely on that limit, for example to bound the number of concurrent calls to a
+backend, and the route does not call an asynchronous producer on the same Vert.x. The consumer worked this way from
+Camel 4.2 to 4.23.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("platform-http:/orders?synchronous=true")
+    .to("bean:orderService");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="platform-http:/orders?synchronous=true"/>
+  <to uri="bean:orderService"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: platform-http:/orders
+      parameters:
+        synchronous: true
+      steps:
+        - to:
+            uri: bean:orderService
+----
+====
+
+To use the synchronous mode for all routes, set `camel.component.platform-http.synchronous=true`.
+
+A route in the asynchronous mode that needs a bound on the requests in flight can use the
+xref:eips:throttle-eip.adoc[Throttle] EIP in concurrent requests mode with `asyncDelayed`, for example
+`throttle(10).concurrentRequestsMode().asyncDelayed()`. With `asyncDelayed`, a request that waits for a permit does
+not hold a worker thread either. Without it, the waiting requests hold the worker threads, and on a shared Vert.x
+they can again hold every worker thread that the asynchronous producer needs.
+
 == Handling large request / response payloads
 
 When large request / response payloads are expected, there is a `useStreaming` option, which can be enabled to improve performance.

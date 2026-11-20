@@ -143,6 +143,30 @@ public interface PlatformHttpComponentBuilderFactory {
     
         
         /**
+         * Whether the consumers route each request synchronously, as the
+         * default for the endpoints of this component. When true, the route
+         * runs on a thread of the Vert.x worker pool, which waits until the
+         * route is complete, so the size of the worker pool limits how many
+         * requests are routed at the same time. When false, the worker thread
+         * is free as soon as the route continues on another thread (such as an
+         * asynchronous producer). See the synchronous endpoint option.
+         * (currently only supported by camel-platform-http-vertx).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -215,6 +239,7 @@ public interface PlatformHttpComponentBuilderFactory {
             case "handleWriteResponseError": ((PlatformHttpComponent) component).setHandleWriteResponseError((boolean) value); return true;
             case "requestTimeout": ((PlatformHttpComponent) component).setRequestTimeout((long) value); return true;
             case "serverRequestValidation": ((PlatformHttpComponent) component).setServerRequestValidation((boolean) value); return true;
+            case "synchronous": ((PlatformHttpComponent) component).setSynchronous((boolean) value); return true;
             case "autowiredEnabled": ((PlatformHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
             case "headerFilterStrategy": ((PlatformHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

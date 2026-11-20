@@ -1097,6 +1097,24 @@ read. A custom `httpBinding` set on the component is now used by the Rest DSL co
 `ServletRestHttpBinding`. Any other binding set on the component is still used only by `servlet:` routes, as it does
 not map the path placeholders such as `+{id}+` to headers.
 
+=== camel-platform-http-vertx - a route with an asynchronous step no longer holds a worker thread
+
+A `platform-http` route with an asynchronous step, such as a `vertx-http` call, no longer holds a Vert.x worker thread
+while it waits for that step. So the size of the worker pool no longer limits how many requests of such a route are in
+flight at the same time. A route that is synchronous to its end runs as before.
+
+This is the default (`false`) of the new `synchronous` option of the `platform-http` endpoint and component. It is the
+default because a route that calls an asynchronous producer on the same Vert.x as the HTTP server (such as `vertx-http`
+in Camel Quarkus, or with a Vert.x instance in the registry) could otherwise stop answering for good once there were as
+many requests in flight as worker threads. Camel 3.x up to 4.1 also routed this way; from Camel 4.2 to 4.23 the
+worker thread waited until the route was complete.
+
+To keep the behaviour of Camel 4.2 to 4.23, where the worker thread waits until the route is complete and the worker
+pool bounds the requests in flight, set `synchronous=true` on the endpoint, or
+`camel.component.platform-http.synchronous=true` for all of them. A route that stays in the asynchronous mode and needs
+a bound sets one itself, for example with `throttle(n).concurrentRequestsMode().asyncDelayed()`: with `asyncDelayed`, a
+request that waits for a permit does not hold a worker thread either.
+
 === camel-http - authMethod=Bearer and authMethod=NTLM are applied
 
 The endpoint options `authMethod=Bearer` and `authBearerToken` now send the token when the server asks for it. Before,

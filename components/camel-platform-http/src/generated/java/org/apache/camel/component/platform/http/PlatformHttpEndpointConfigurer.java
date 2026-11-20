@@ -68,6 +68,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "returnHttpRequestHeaders": target.setReturnHttpRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "stripuriprefix":
         case "stripUriPrefix": target.setStripUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "unmatchedrequesthandling":
         case "unmatchedRequestHandling": target.setUnmatchedRequestHandling(property(camelContext, java.lang.String.class, value)); return true;
         case "usebodyhandler":
@@ -127,6 +128,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "returnHttpRequestHeaders": return boolean.class;
         case "stripuriprefix":
         case "stripUriPrefix": return boolean.class;
+        case "synchronous": return boolean.class;
         case "unmatchedrequesthandling":
         case "unmatchedRequestHandling": return java.lang.String.class;
         case "usebodyhandler":
@@ -187,6 +189,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "returnHttpRequestHeaders": return target.isReturnHttpRequestHeaders();
         case "stripuriprefix":
         case "stripUriPrefix": return target.isStripUriPrefix();
+        case "synchronous": return target.isSynchronous();
         case "unmatchedrequesthandling":
         case "unmatchedRequestHandling": return target.getUnmatchedRequestHandling();
         case "usebodyhandler":

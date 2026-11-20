@@ -37,6 +37,7 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "serverrequestvalidation":
         case "serverRequestValidation": target.setServerRequestValidation(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -57,6 +58,7 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "requestTimeout": return long.class;
         case "serverrequestvalidation":
         case "serverRequestValidation": return boolean.class;
+        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -78,6 +80,7 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "requestTimeout": return target.getRequestTimeout();
         case "serverrequestvalidation":
         case "serverRequestValidation": return target.isServerRequestValidation();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }
