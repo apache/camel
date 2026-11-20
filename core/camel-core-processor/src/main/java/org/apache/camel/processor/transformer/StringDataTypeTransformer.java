@@ -34,8 +34,9 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "text-plain")
 @BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
-                                     description = "A body Camel can convert to a String, which a null body is not"),
-           transformerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String"))
+                                     description = "A body Camel can convert to a String; a null body stays null"),
+           transformerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
+                                      description = "A String, or null for a null body"))
 public class StringDataTypeTransformer extends Transformer {
 
     private static final Transformer DELEGATE = new TypeConverterTransformer(String.class);

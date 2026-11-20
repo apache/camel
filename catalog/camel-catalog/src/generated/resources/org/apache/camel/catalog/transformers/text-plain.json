@@ -14,13 +14,15 @@
       "carriers": [
         "any"
       ],
-      "description": "A body Camel can convert to a String, which a null body is not"
+      "description": "A body Camel can convert to a String; a null body stays null"
     },
     "transformerOut": {
       "carriers": [
-        "text"
+        "text",
+        "null"
       ],
-      "javaType": "java.lang.String"
+      "javaType": "java.lang.String",
+      "description": "A String, or null for a null body"
     }
   }
 }
