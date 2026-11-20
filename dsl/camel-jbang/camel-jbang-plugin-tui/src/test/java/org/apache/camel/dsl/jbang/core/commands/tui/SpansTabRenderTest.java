@@ -208,6 +208,70 @@ class SpansTabRenderTest {
         assertThat(tab.transcriptForTesting().markdownForTesting()).contains(TranscriptOverlay.NO_CONTENT);
     }
 
+    @Test
+    void waterfallLabelsGenAiSpansAndSummarizesTheAgentRun() {
+        spans.get().add(new SpanEntry(
+                "trace0001", "agent", null, "invoke_agent", "INTERNAL", "OK", 0L, 400_000_000L, 400, "route1", null,
+                "camel", Map.of(GenAiAttributes.OPERATION_NAME, "invoke_agent",
+                        GenAiAttributes.AGENT_NAME, "support-agent",
+                        GenAiAttributes.REQUEST_MODEL, "llama3.2")));
+        spans.get().add(new SpanEntry(
+                "trace0001", "chat", "agent", "chat", "CLIENT", "OK", 0L, 300_000_000L, 300, "route1", null,
+                "camel", Map.of(GenAiAttributes.OPERATION_NAME, "chat",
+                        GenAiAttributes.REQUEST_MODEL, "llama3.2",
+                        GenAiAttributes.INPUT_TOKENS, 166L,
+                        GenAiAttributes.OUTPUT_TOKENS, 25L,
+                        GenAiAttributes.FINISH_REASONS, "stop")));
+        spans.get().add(new SpanEntry(
+                "trace0001", "tool", "agent", "execute_tool", "INTERNAL", "OK", 300_000_000L, 310_000_000L, 10,
+                "route1", null, "camel", Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool",
+                        GenAiAttributes.TOOL_NAME, "lookupOrder")));
+        SpansTab tab = new SpansTab(ctx, spans);
+        TuiTestHelper.renderToString(tab, 160, 34);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+
+        assertThat(TuiTestHelper.renderToString(tab, 160, 34))
+                .contains("◆ agent support-agent · llama3.2")
+                .contains("● chat llama3.2 · 166→25 · stop")
+                .contains("⚙ tool lookupOrder")
+                .contains("Steps:  1 model call, 1 tool call")
+                .contains("1. ● chat llama3.2");
+    }
+
+    @Test
+    void waterfallBarsLineUpWhateverTheWidthOfTheLabels() {
+        // GenAI symbols, a CJK route, a flag and a ZWJ emoji: all spans start at 0, so all bars start in one column
+        spans.get().add(new SpanEntry(
+                "trace0001", "root", null, "root", "INTERNAL", "OK", 0L, 400_000_000L, 400,
+                "注文ルート", null, "camel", Map.of("camel.uri", "timer://\uD83C\uDDEB\uD83C\uDDF7")));
+        spans.get().add(new SpanEntry(
+                "trace0001", "agent", "root", "agent", "INTERNAL", "OK", 0L, 300_000_000L, 300,
+                "route1", null, "camel", Map.of(GenAiAttributes.OPERATION_NAME, "invoke_agent",
+                        GenAiAttributes.AGENT_NAME, "\uD83D\uDC69\u200D\uD83D\uDCBB")));
+        spans.get().add(new SpanEntry(
+                "trace0001", "tool", "agent", "tool", "INTERNAL", "OK", 0L, 200_000_000L, 200,
+                "route1", null, "camel", Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool",
+                        GenAiAttributes.TOOL_NAME, "lookupOrder")));
+        SpansTab tab = new SpansTab(ctx, spans);
+        TuiTestHelper.renderToString(tab, 140, 30);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+
+        Rect area = new Rect(0, 0, 140, 30);
+        Buffer buffer = Buffer.empty(area);
+        tab.render(Frame.forTesting(buffer), area);
+
+        List<Integer> barColumns = new ArrayList<>();
+        for (int y = 0; y < buffer.height(); y++) {
+            for (int x = 0; x < buffer.width(); x++) {
+                if ("█".equals(buffer.get(x, y).symbol())) {
+                    barColumns.add(x);
+                    break;
+                }
+            }
+        }
+        assertThat(barColumns).hasSize(3).containsOnly(barColumns.get(0));
+    }
+
     private static String footer(SpansTab tab) {
         List<Span> footerSpans = new ArrayList<>();
         tab.renderFooter(footerSpans);

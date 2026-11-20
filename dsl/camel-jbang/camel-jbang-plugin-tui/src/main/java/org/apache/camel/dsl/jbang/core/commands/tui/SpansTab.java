@@ -33,6 +33,7 @@ import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -494,7 +495,7 @@ class SpansTab extends AbstractTab {
         int labelWidth = 0;
         for (WaterfallNode n : nodes) {
             int indent = n.depth * 2;
-            labelWidth = Math.max(labelWidth, indent + spanLabel(n.span).length());
+            labelWidth = Math.max(labelWidth, indent + CharWidth.of(spanLabel(n.span)));
         }
         labelWidth = Math.min(labelWidth + 2, inner.width() / 3);
 
@@ -530,12 +531,13 @@ class SpansTab extends AbstractTab {
             boolean selected) {
         String indicator = selected ? "▸ " : "  ";
         String indent = "  ".repeat(node.depth);
+        // by display width: a GenAI label starts with a symbol that may take two cells
         String label = indent + spanLabel(node.span);
-        if (label.length() > labelWidth) {
-            label = label.substring(0, labelWidth - 1) + "…";
-        } else {
-            label = String.format("%-" + labelWidth + "s", label);
+        int width = CharWidth.of(label);
+        if (width > labelWidth) {
+            label = CharWidth.substringByWidth(label, labelWidth - 1) + "…";
         }
+        label += " ".repeat(Math.max(0, labelWidth - CharWidth.of(label)));
 
         // Calculate bar offset and width relative to trace timeline
         long spanStart = node.span.startEpochNanos() - traceStart;
@@ -565,6 +567,9 @@ class SpansTab extends AbstractTab {
         } else if (!camelSpan) {
             labelStyle = selected ? Theme.notice().bold() : Theme.notice();
             bandStyle = Theme.notice();
+        } else if (GenAiTranscript.isGenAiSpan(node.span)) {
+            labelStyle = GenAiSpanView.style(node.span, selected);
+            bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
         } else {
             labelStyle = selected ? Style.EMPTY.fg(Theme.accent()).bold() : Style.EMPTY.fg(Theme.accent());
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
@@ -628,6 +633,10 @@ class SpansTab extends AbstractTab {
         }
         if (GenAiTranscript.isGenAiSpan(span)) {
             lines.add(conversationLine(span));
+        }
+        if (GenAiSpanView.isAgentRun(span)) {
+            List<SpanEntry> trace = spans.get().stream().filter(s -> selectedTraceId.equals(s.traceId())).toList();
+            lines.addAll(GenAiSpanView.agentRunLines(GenAiSpanView.agentRun(span, trace)));
         }
 
         // Attributes as individual key: value lines
@@ -911,6 +920,9 @@ class SpansTab extends AbstractTab {
     }
 
     private static String spanLabel(SpanEntry span) {
+        if (GenAiTranscript.isGenAiSpan(span)) {
+            return GenAiSpanView.label(span);
+        }
         String name = span.name();
         Map<String, Object> attrs = span.attributes();
         if (attrs != null) {

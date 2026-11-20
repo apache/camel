@@ -47,6 +47,22 @@ flow. Error spans are always shown regardless of the toggle.
 
 Press **Esc** to return to the trace list.
 
+### AI Agent Runs
+
+GenAI spans get their own labels and colours in the waterfall:
+
+- **◆ agent** — an agent run (`invoke_agent`) with its name and model
+- **● chat** — a model call with its model, input→output tokens and
+  finish reason (`tool_calls` when the model asked for a tool)
+- **⚙ tool** — a tool call (`execute_tool`) with its name and, at level
+  `full`, its arguments
+
+Select an agent run to see its summary in the detail panel: the model,
+the number of model and tool calls, the tokens (input, output, cached),
+how its time splits into model calls, tool calls and the rest, and the
+steps one by one. Agent runs and tool calls are recorded from GenAI
+observability level `detailed` on (`camel.aiObservability.level`).
+
 ### AI Conversations
 
 On a GenAI span (a model call such as `chat`, an agent run `invoke_agent`,
