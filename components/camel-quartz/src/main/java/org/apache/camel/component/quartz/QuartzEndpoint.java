@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -427,11 +428,19 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     scheduler.scheduleJob(jobDetail, trigger);
                 }
             } catch (ObjectAlreadyExistsException ex) {
-                // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
-                if (!(getComponent().isClustered())) {
+                Trigger storedTrigger = scheduler.getTrigger(triggerKey);
+                if (storedTrigger == null && scheduler.checkExists(jobDetail.getKey())) {
+                    // only the job is in the scheduler: Quartz keeps a durable job (durableJob=true) when its trigger
+                    // is removed, as the endpoint does when it stops with deleteJob=true (the route is removed, such as
+                    // by a reload, or CamelContext stops with a persistent job store). Store the job of this endpoint in
+                    // its place (its data names this endpoint and CamelContext), with the trigger
+                    LOG.debug("Job {} is in the scheduler without its trigger. Scheduling it again.", jobDetail.getKey());
+                    scheduler.scheduleJob(jobDetail, Set.of(trigger), true);
+                } else if (!(getComponent().isClustered())) {
                     throw ex;
                 } else {
-                    trigger = scheduler.getTrigger(triggerKey);
+                    // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
+                    trigger = storedTrigger;
                     if (trigger == null) {
                         throw new SchedulerException("Trigger could not be found in quartz scheduler.");
                     }
