@@ -62,9 +62,9 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("jms:queue:DEV.QUEUE.1");
+                        .to("jms:queue:DEV.QUEUE.3");
 
-                from("jms:queue:DEV.QUEUE.1")
+                from("jms:queue:DEV.QUEUE.3")
                         .routeId("consumer")
                         .process(exchange -> exchange.getIn().setBody("Hello there!"))
                         .to("mock:result");
