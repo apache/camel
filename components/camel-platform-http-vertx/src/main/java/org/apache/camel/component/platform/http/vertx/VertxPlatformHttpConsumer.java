@@ -27,9 +27,11 @@ import java.util.regex.Pattern;
 
 import jakarta.activation.DataHandler;
 
+import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.Cookie;
 import io.vertx.core.http.CookieSameSite;
@@ -366,7 +368,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
             }
 
-            vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
+            processExchange(vertx, exchange).onComplete(processExchangeResult -> {
                 if (processExchangeResult.succeeded()) {
                     writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions)
                             .onComplete(writeResponseResult -> {
@@ -425,10 +427,22 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         handleExchangeComplete(exchange);
     }
 
-    private Object processExchange(Exchange exchange) throws Exception {
-        createUoW(exchange);
-        getProcessor().process(exchange);
-        return null;
+    /**
+     * Routes the exchange, starting on a thread of the Vert.x worker pool, as the first steps of the route may block.
+     * The worker thread is not held until the route completes: when the route continues on another thread, such as a
+     * vertx-http producer that completes its exchange on a worker thread of the same Vert.x, a worker thread waiting
+     * for the route could be the one that the other thread needs, and with every worker thread waiting no request would
+     * ever complete. The returned future completes on the context of the request, when the route is done.
+     */
+    private Future<Void> processExchange(Vertx vertx, Exchange exchange) {
+        Context context = vertx.getOrCreateContext();
+        Promise<Void> done = Promise.promise();
+        vertx.executeBlocking(() -> {
+            createUoW(exchange);
+            getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+            return null;
+        }, false).onFailure(done::tryFail);
+        return done.future();
     }
 
     private void configureSecurityHandler(Route route) {

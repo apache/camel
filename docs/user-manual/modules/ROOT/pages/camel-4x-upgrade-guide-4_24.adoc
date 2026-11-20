@@ -1091,6 +1091,12 @@ read. A custom `httpBinding` set on the component is now used by the Rest DSL co
 `ServletRestHttpBinding`. Any other binding set on the component is still used only by `servlet:` routes, as it does
 not map the path placeholders such as `+{id}+` to headers.
 
+=== camel-platform-http-vertx - a route with an asynchronous step no longer holds a worker thread
+
+A `platform-http` route with an asynchronous step, such as a `vertx-http` call, no longer holds a Vert.x worker thread
+while it waits for that step. So the size of the worker pool no longer limits how many requests of such a route are in
+flight at the same time. A route that needs such a limit sets one itself, for example with the Throttle EIP.
+
 === camel-http - authMethod=Bearer and authMethod=NTLM are applied
 
 The endpoint options `authMethod=Bearer` and `authBearerToken` now send the token when the server asks for it. Before,
