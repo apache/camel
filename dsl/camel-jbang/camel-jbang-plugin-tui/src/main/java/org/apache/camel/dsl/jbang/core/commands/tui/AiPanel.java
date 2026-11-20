@@ -292,11 +292,6 @@ class AiPanel {
     private boolean statsView;
     boolean spanRefreshRequested;
 
-    enum AiUsageSource {
-        TUI,
-        ROUTE
-    }
-
     /**
      * One conversation line. For assistant replies {@code elapsedMs} is the wall-clock time of the whole turn,
      * {@code aiMs} the part spent waiting for the model and {@code toolMs} the part spent executing the
@@ -359,24 +354,6 @@ class AiPanel {
                 sb.append(" · ctx ").append(contextPercent).append('%');
             }
             return sb.toString();
-        }
-    }
-
-    record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-            int totalTokens, long latencyMs, String stopReason, Instant timestamp,
-            AiUsageSource source, String routeId, int question) {
-
-        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-                     int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
-            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
-                 AiUsageSource.TUI, null, 0);
-        }
-
-        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-                     int totalTokens, long latencyMs, String stopReason, Instant timestamp,
-                     AiUsageSource source, String routeId) {
-            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
-                 source, routeId, 0);
         }
     }
 
@@ -1891,7 +1868,7 @@ class AiPanel {
                 response.usage().inputTokens(), response.usage().outputTokens(),
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
-                AiUsageSource.TUI, null, questionCounter));
+                AiUsageSource.TUI, null, questionCounter, 0));
         noteMeasuredPrompt(response.usage());
         if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
             // the Ollama tab shows this request with the timings Ollama returned

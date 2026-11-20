@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,14 +47,14 @@ class AiPanelGenAiUsageTest {
     void combinedUsageIncludesRouteGenAiSpans() {
         AiPanel panel = new AiPanel();
         panel.setOtelSpans(spans);
-        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+        panel.recordUsageForTesting(new AiUsageEntry(
                 "gpt-4o-mini", "openai", 10, 5, 15, 1000, "stop", Instant.now()));
 
         spans.set(List.of(routeSpan("route-chat", "gpt-4o", 100, 20)));
 
         assertThat(panel.combinedUsageEntriesForTesting()).hasSize(2);
         assertThat(panel.combinedUsageEntriesForTesting())
-                .anyMatch(entry -> entry.source() == AiPanel.AiUsageSource.ROUTE
+                .anyMatch(entry -> entry.source() == AiUsageSource.ROUTE
                         && "route-chat".equals(entry.routeId()));
     }
 
@@ -62,7 +63,7 @@ class AiPanelGenAiUsageTest {
         AiPanel panel = new AiPanel();
         panel.setOtelSpans(spans);
         panel.open();
-        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+        panel.recordUsageForTesting(new AiUsageEntry(
                 "gpt-4o-mini", "openai", 10, 5, 15, 1000, "stop", Instant.now()));
         spans.set(List.of(routeSpan("orders", "gpt-4o", 50, 10)));
         panel.toggleStatsViewForTesting();
@@ -85,7 +86,7 @@ class AiPanelGenAiUsageTest {
         panel.setOtelSpans(spans);
         panel.open();
         for (int i = 0; i < 12; i++) {
-            panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+            panel.recordUsageForTesting(new AiUsageEntry(
                     "model-" + (char) ('a' + i), "openai", 10, 5, 15, 1000, "stop", Instant.now()));
         }
         panel.toggleStatsViewForTesting();
@@ -136,6 +137,91 @@ class AiPanelGenAiUsageTest {
         assertThat(TuiTestHelper.bufferToString(buffer))
                 .contains("No AI usage data yet")
                 .contains("GenAI observability");
+    }
+
+    @Test
+    void statsViewCountsOnlyTheModelCallsOfAnAgentRun() {
+        AiPanel panel = new AiPanel();
+        panel.setOtelSpans(spans);
+        panel.open();
+        spans.set(agentRunSpans());
+        panel.toggleStatsViewForTesting();
+
+        assertThat(panel.combinedUsageEntriesForTesting()).hasSize(2);
+        String rendered = render(panel, new Rect(0, 0, 140, 24));
+        assertThat(rendered)
+                .contains("integration: 2")
+                .contains("cached: 800")
+                .contains("CACHED")
+                .contains("Agent runs: 1")
+                .contains("model calls: 2")
+                .contains("tool calls: 1")
+                .contains("GenAI level: detailed")
+                .doesNotContain("execute_tool");
+    }
+
+    @Test
+    void statsViewExplainsLevelBasic() {
+        AiPanel panel = new AiPanel();
+        panel.setOtelSpans(spans);
+        panel.open();
+        spans.set(List.of(routeSpan("orders", "gpt-4o", 50, 10)));
+        panel.toggleStatsViewForTesting();
+
+        assertThat(render(panel, new Rect(0, 0, 140, 24)))
+                .contains("GenAI level: basic")
+                .contains("agent runs and tool calls are not traced");
+    }
+
+    @Test
+    void usageSummaryListsAgentRunsAndCachedTokens() {
+        spans.set(agentRunSpans());
+
+        AiUsageStats stats = new AiUsageStats();
+        stats.setOtelSpans(spans);
+        assertThat(stats.summary())
+                .contains("2 request(s) (0 from this panel, 2 from the integration)")
+                .contains("cached 800")
+                .contains("**Agent runs:** 1 (2 model call(s), 1 tool call(s)), **GenAI level:** detailed")
+                .contains("| Model | Reqs | In | Cached | Out | Total | Avg/req |");
+    }
+
+    /** An agent run at level detailed: invoke_agent with two chat calls and a tool call under it. */
+    private static List<SpanEntry> agentRunSpans() {
+        long start = Instant.now().getEpochSecond() * 1_000_000_000L;
+        SpanEntry agent = new SpanEntry(
+                "trace-1", "agent", "", "invoke_agent support", "INTERNAL", "OK", start, start + 3_000_000_000L, 3000,
+                "support", null, "camel",
+                Map.of(GenAiAttributes.OPERATION_NAME, "invoke_agent",
+                        GenAiAttributes.SYSTEM, "openai",
+                        GenAiAttributes.PROVIDER_NAME, "openai",
+                        GenAiAttributes.REQUEST_MODEL, "gpt-4.1",
+                        GenAiAttributes.AGENT_NAME, "support"));
+        SpanEntry tool = new SpanEntry(
+                "trace-1", "tool", "agent", "execute_tool lookupOrder", "INTERNAL", "OK", start, start + 200_000_000L,
+                200, "support", null, "camel",
+                Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool", GenAiAttributes.TOOL_NAME, "lookupOrder"));
+        return List.of(agent,
+                chatSpan("chat1", start, 1000, 100, 0),
+                tool,
+                chatSpan("chat2", start, 1200, 100, 800));
+    }
+
+    private static SpanEntry chatSpan(String spanId, long start, int input, int output, long cached) {
+        Map<String, Object> attrs = new HashMap<>(
+                Map.of(
+                        GenAiAttributes.OPERATION_NAME, "chat",
+                        GenAiAttributes.SYSTEM, "openai",
+                        GenAiAttributes.PROVIDER_NAME, "openai",
+                        GenAiAttributes.REQUEST_MODEL, "gpt-4.1",
+                        GenAiAttributes.INPUT_TOKENS, input,
+                        GenAiAttributes.OUTPUT_TOKENS, output));
+        if (cached > 0) {
+            attrs.put(GenAiAttributes.CACHE_READ_INPUT_TOKENS, cached);
+        }
+        return new SpanEntry(
+                "trace-1", spanId, "agent", "chat gpt-4.1", "CLIENT", "OK", start, start + 1_000_000_000L, 1000,
+                "support", null, "camel", attrs);
     }
 
     private static SpanEntry routeSpan(String routeId, String model, int input, int output) {

@@ -212,6 +212,16 @@ average time per question (and per request in brackets), the model table has an 
 the average per request for that model, and the *Time per question* chart next to the token chart shows the
 two side by side for each question, so you can see whether a slow answer was the model or the tools.
 
+The integration rows count model calls only. At the GenAI observability level `detailed` or `full`
+(`camel.aiObservability.level`), an agent run is recorded as an `invoke_agent` span with one span per model call
+and one per tool call. The view counts its model calls, and a third summary line gives the agent runs, their model
+and tool calls, and the level the spans were recorded at. At the default level `basic` agent runs and tool calls are
+not traced (camel-openai records each model call, camel-langchain4j-agent a whole run as one call), and that line
+tells how to see them. The *CACHED* column shows the input tokens served from the provider's prompt cache, which
+are recorded from level `detailed` on.
+
+image::jbang/camel-tui-ai-usage-agent-runs.png[The AI Usage view of an integration whose agent calls a route tool, at GenAI level detailed]
+
 == What asks first
 
 Camel TUI is a developer tool: the model works on your own machine, with your own integrations, and runs the
