@@ -241,13 +241,14 @@ it used to get the body of the component.
 When no transformer for the type is on the classpath, such as `json` with neither `camel-jackson` nor `camel-jackson3`,
 the message is handed on unchanged, as before, and a WARN is logged once.
 
-=== camel-core - the binary data type keeps a stream cache body
+=== camel-core - the binary data type keeps a stream cache or a file body
 
-The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache as it is, and only
-sets the `Content-Type` header to `application/octet-stream`. Before, it read the stream into a `byte[]`. A stream cache
-is binary already and can be read again, and a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source`
-declares `binary` and gives the object as a stream, which may be large. Any other body, including an `InputStream` that is
-not a stream cache (stream caching turned off), is still converted to a `byte[]`.
+The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache, a `java.io.File`, a
+`Path` or a `WrappedFile` (such as the `GenericFile` of the file and FTP consumers) as it is, and only sets the `Content-Type`
+header to `application/octet-stream`. Before, it read the body into a `byte[]`. These bodies are binary already and can
+be read again, and they may be large: a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source` declares
+`binary` and gives the object as a stream, and a file can be uploaded without reading it into memory. Any other body,
+including an `InputStream` that is not a stream cache (stream caching turned off), is still converted to a `byte[]`.
 
 === camel-kamelet - each Kamelet EIP has a Kamelet route of its own
 

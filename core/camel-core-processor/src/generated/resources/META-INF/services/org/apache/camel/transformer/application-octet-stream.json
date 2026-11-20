@@ -24,9 +24,10 @@
       "carriers": [
         "bytes",
         "stream",
+        "file",
         "null"
       ],
-      "description": "A stream cache body is kept as it is and a null body stays null; any other body becomes a byte array"
+      "description": "A stream cache or a file body is kept as it is and a null body stays null; any other body becomes a byte array"
     }
   }
 }
