@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 
 import org.eclipse.tahu.host.HostApplication;
 import org.eclipse.tahu.host.api.MultiHostApplicationEventHandler;
+import org.eclipse.tahu.host.seq.SequenceReorderManager;
 import org.eclipse.tahu.message.PayloadDecoder;
 import org.eclipse.tahu.message.SparkplugBPayloadDecoder;
 import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
@@ -33,20 +34,10 @@ import org.eclipse.tahu.mqtt.RandomStartupDelay;
 
 public class TahuHostApplication extends HostApplication {
 
-    private final MultiHostApplicationEventHandler eventHandler;
-
     TahuHostApplication(MultiHostApplicationEventHandler eventHandler, String hostId, List<String> sparkplugSubscriptions,
                         List<MqttServerDefinition> serverDefinitions, RandomStartupDelay randomStartupDelay,
                         PayloadDecoder<SparkplugBPayload> payloadDecoder, boolean onlineState) {
         super(eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder, onlineState);
-        this.eventHandler = eventHandler;
-    }
-
-    /**
-     * The handler that Tahu gives the Sparkplug messages and metrics this host application receives to.
-     */
-    public MultiHostApplicationEventHandler getEventHandler() {
-        return eventHandler;
     }
 
     public void startup() {
@@ -54,6 +45,9 @@ public class TahuHostApplication extends HostApplication {
     }
 
     public static final class HostApplicationBuilder {
+
+        // the host applications are built one at a time, as they share the timer of Tahu's SequenceReorderManager
+        private static final Object BUILD_LOCK = new Object();
 
         private String hostId;
         private List<String> sparkplugSubscriptions = List.of(SparkplugMeta.SPARKPLUG_B_TOPIC_PREFIX + "/#");
@@ -120,9 +114,15 @@ public class TahuHostApplication extends HostApplication {
                 MultiHostApplicationEventHandler eventHandler
                         = new MultiTahuHostApplicationEventHandler(onMessageConsumer, onMetricConsumer);
 
-                cachedTahuHostApplication = tahuHostApplication = new TahuHostApplication(
-                        eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder,
-                        onlineState);
+                synchronized (BUILD_LOCK) {
+                    // Tahu's HostApplication constructor starts a new SequenceMonitorTimer thread on the
+                    // SequenceReorderManager singleton without cancelling the one started before: stop it first, so
+                    // that only one runs however many host applications are built (each consumer builds its own)
+                    SequenceReorderManager.getInstance().stop();
+                    cachedTahuHostApplication = tahuHostApplication = new TahuHostApplication(
+                            eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay,
+                            payloadDecoder, onlineState);
+                }
             }
 
             return cachedTahuHostApplication;

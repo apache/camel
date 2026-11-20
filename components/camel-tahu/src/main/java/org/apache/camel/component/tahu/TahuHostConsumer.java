@@ -59,9 +59,11 @@ public class TahuHostConsumer extends DefaultConsumer {
         TahuConfiguration configuration = endpoint.getConfiguration();
 
         // the host application of this consumer: it gives the messages to this consumer, and connects with the servers
-        // and credentials of this endpoint. It is not shared with another consumer of the same host id (such as the
-        // consumer of a route that is reloaded or added again, or of another CamelContext in the same JVM), as it would
-        // keep giving the messages to the consumer that created it, which is stopped by then
+        // and credentials of this endpoint. It is not shared with the consumer created again for the same host id when
+        // the route is restarted, reloaded or removed and added again, as it would keep giving the messages to the
+        // consumer that created it, which is stopped by then. Two consumers in one JVM are still not supported, even
+        // when one of them is not started: Tahu gives the Sparkplug messages of all host applications to the event
+        // handler of the host application built last (its SequenceReorderManager is a singleton)
         List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
         tahuHostApplication = new TahuHostApplication.HostApplicationBuilder()
                 .hostId(hostId)
@@ -69,14 +71,6 @@ public class TahuHostConsumer extends DefaultConsumer {
                 .onMessageConsumer(this::onMessageConsumer)
                 .onMetricConsumer(this::onMetricConsumer)
                 .build();
-
-    }
-
-    /**
-     * The host application of this consumer (for tests).
-     */
-    TahuHostApplication getTahuHostApplication() {
-        return tahuHostApplication;
     }
 
     @Override

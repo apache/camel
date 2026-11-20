@@ -16,99 +16,109 @@
  */
 package org.apache.camel.component.tahu;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit6.CamelTestSupport;
-import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
-import org.eclipse.tahu.message.model.Message;
-import org.eclipse.tahu.message.model.MessageType;
+import org.eclipse.tahu.message.SparkplugBPayloadEncoder;
+import org.eclipse.tahu.message.model.Metric.MetricBuilder;
+import org.eclipse.tahu.message.model.MetricDataType;
 import org.eclipse.tahu.message.model.SparkplugBPayload;
-import org.eclipse.tahu.message.model.Topic;
-import org.eclipse.tahu.mqtt.MqttServerName;
+import org.eclipse.tahu.message.model.SparkplugMeta;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A tahu-host consumer created after another one of the same host id (the consumer of a route that is reloaded or
- * removed and added again, or of another CamelContext in the same JVM) gets the Sparkplug messages of its own host
- * application, with the servers of its own endpoint. The consumers are only initialized: no MQTT server is needed, the
- * messages are given to the handler of the host application as Tahu gives them.
+ * A tahu-host consumer created again for the same host id (the route is restarted, reloaded or removed and added again)
+ * gets the Sparkplug messages through its own host application, and building a host application for each consumer
+ * leaves one SequenceMonitorTimer thread of Tahu running.
  */
-class TahuHostConsumerHostApplicationTest extends CamelTestSupport {
+class TahuHostConsumerHostApplicationTest {
 
-    private static final String URI = TahuConstants.HOST_APP_SCHEME + ":HostAppOfConsumerTest?clientId=client1&servers=";
-
-    @Test
-    void consumerCreatedAgainGetsTheMessages() throws Exception {
-        List<String> first = new CopyOnWriteArrayList<>();
-        List<String> second = new CopyOnWriteArrayList<>();
-
-        TahuHostConsumer consumer = createConsumer(URI + "Mqtt:tcp://localhost:1883", first);
-        // the route of the consumer is reloaded, or removed and added again: a new consumer is created (the old one is
-        // stopped, which needs a connected host application, so it is left alone here)
-        TahuHostConsumer again = createConsumer(URI + "Mqtt:tcp://localhost:1884", second);
-
-        deliver(again, "Node1");
-
-        assertThat(second, contains("G1/Node1"));
-        assertThat(first, is(empty()));
-        // the new host application connects with the servers of the new endpoint
-        assertThat(again.getTahuHostApplication(), not(sameInstance(consumer.getTahuHostApplication())));
-    }
+    private static final String SPARKPLUG_SUBSCRIPTION = "spBv1.0/#";
 
     @Test
-    void consumersOfTwoContextsGetTheirOwnMessages() throws Exception {
-        List<String> first = new CopyOnWriteArrayList<>();
-        List<String> second = new CopyOnWriteArrayList<>();
+    void routeAddedAgainGetsTheMessages() throws Exception {
+        try (FakeMqttBroker broker = new FakeMqttBroker(); CamelContext context = new DefaultCamelContext()) {
+            String from = "tahu-host:AgainHost" + broker.getPort() + "?clientId=AgainHostClient&servers=Fake:tcp://localhost:"
+                          + broker.getPort();
+            context.addRoutes(route(from, "mock:a"));
+            context.start();
+            await().atMost(20, TimeUnit.SECONDS).until(() -> sparkplugSubscriptions(broker) == 1);
 
-        TahuHostConsumer consumer = createConsumer(URI + "Mqtt:tcp://localhost:1883", first);
-        try (CamelContext other = new DefaultCamelContext()) {
-            other.start();
-            TahuHostConsumer otherConsumer = (TahuHostConsumer) other.getEndpoint(URI + "Mqtt:tcp://localhost:1883")
-                    .createConsumer(exchange -> second.add(descriptor(exchange)));
-            ServiceHelper.initService(otherConsumer);
+            // the route is removed and added again with the same endpoint: a new consumer is created
+            context.getRouteController().stopRoute("host");
+            context.removeRoute("host");
+            context.addRoutes(route(from, "mock:b"));
+            await().atMost(20, TimeUnit.SECONDS).until(() -> sparkplugSubscriptions(broker) >= 2);
 
-            deliver(consumer, "Node1");
-            deliver(otherConsumer, "Node2");
+            MockEndpoint b = context.getEndpoint("mock:b", MockEndpoint.class);
+            b.expectedMessageCount(1);
+            b.expectedHeaderReceived(TahuConstants.MESSAGE_TYPE, "NBIRTH");
+            // wait a while after the message for one to the old route too
+            b.setAssertPeriod(500);
+            broker.publish("spBv1.0/AgainGroup/NBIRTH/AgainNode", nbirth());
 
-            assertThat(first, contains("G1/Node1"));
-            assertThat(second, contains("G1/Node2"));
+            // without the fix the new consumer took the host application of the old one from a static map: Tahu gave
+            // the message to the old consumer (or rejected it, as that host application was shut down)
+            MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+            assertEquals(0, context.getEndpoint("mock:a", MockEndpoint.class).getReceivedCounter());
         }
     }
 
-    private TahuHostConsumer createConsumer(String uri, List<String> received) throws Exception {
-        Processor processor = exchange -> received.add(descriptor(exchange));
-        Consumer consumer = context.getEndpoint(uri).createConsumer(processor);
-        // initialized only: starting would connect to the MQTT servers
-        ServiceHelper.initService(consumer);
-        return (TahuHostConsumer) consumer;
+    @Test
+    void oneSequenceMonitorTimerThread() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Endpoint endpoint
+                    = context.getEndpoint("tahu-host:TimerHost?clientId=TimerHostClient&servers=Mqtt:tcp://localhost:1883");
+            for (int i = 0; i < 5; i++) {
+                // a consumer builds its host application when it is created (initialized only: starting would connect)
+                Consumer consumer = endpoint.createConsumer(exchange -> {
+                });
+                ServiceHelper.initService(consumer);
+            }
+
+            // without the fix every host application started a timer thread of its own, and none of them was stopped
+            // (a timer that is cancelled ends its thread right after)
+            await().atMost(20, TimeUnit.SECONDS).until(() -> sequenceMonitorTimerThreads() == 1);
+        }
     }
 
-    private static String descriptor(Exchange exchange) {
-        return exchange.getMessage().getHeader(TahuConstants.EDGE_NODE_DESCRIPTOR, String.class);
+    private static RouteBuilder route(String from, String to) {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(from).routeId("host")
+                        // the exchanges of the messages, not those of each metric
+                        .filter(header(TahuConstants.MESSAGE_TYPE).isNotNull())
+                        .to(to);
+            }
+        };
     }
 
-    /**
-     * Gives an NDATA message to the handler of the host application of the consumer, as Tahu does for a message it
-     * receives.
-     */
-    private static void deliver(TahuHostConsumer consumer, String edgeNode) {
-        EdgeNodeDescriptor descriptor = new EdgeNodeDescriptor("G1", edgeNode);
-        SparkplugBPayload payload = new SparkplugBPayload.SparkplugBPayloadBuilder().setSeq(0L).createPayload();
-        Message message = new Message.MessageBuilder(new Topic("spBv1.0", descriptor, MessageType.NDATA), payload).build();
-        consumer.getTahuHostApplication().getEventHandler().onMessage(new MqttServerName("Mqtt"), descriptor, message);
+    private static long sparkplugSubscriptions(FakeMqttBroker broker) {
+        return broker.getSubscriptions().stream().filter(SPARKPLUG_SUBSCRIPTION::equals).count();
+    }
+
+    private static long sequenceMonitorTimerThreads() {
+        return Thread.getAllStackTraces().keySet().stream()
+                .filter(t -> t.isAlive() && "SequenceMonitorTimer".equals(t.getName())).count();
+    }
+
+    private static byte[] nbirth() throws Exception {
+        SparkplugBPayload payload = new SparkplugBPayload.SparkplugBPayloadBuilder().setTimestamp(new Date()).setSeq(0L)
+                .addMetric(new MetricBuilder(SparkplugMeta.SPARKPLUG_BD_SEQUENCE_NUMBER_KEY, MetricDataType.Int64, 0L)
+                        .createMetric())
+                .createPayload();
+        return new SparkplugBPayloadEncoder().getBytes(payload, false);
     }
 }
