@@ -31,6 +31,7 @@ import com.github.dockerjava.api.model.Ports;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.kudu.client.KuduClient;
+import org.apache.kudu.client.KuduException;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -150,7 +151,7 @@ public class IntegrationKuduConfiguration implements BeforeAllCallback, AfterAll
     private void awaitClusterReady() {
         await().atMost(60, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
-                .ignoreExceptions()
+                .ignoreExceptionsInstanceOf(KuduException.class)
                 .until(() -> kuduClient.listTabletServers().getTabletServersCount() >= 1);
     }
 
