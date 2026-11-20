@@ -49,6 +49,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                    description = "The results of the features enabled (sentiment, entities, keywords and so"
                                                  + " on), with the sentiment score and label and the language in headers too."
                                                  + " Converted to text, it is the JSON of the results"))
+@Deprecated(since = "4.24")
 public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")

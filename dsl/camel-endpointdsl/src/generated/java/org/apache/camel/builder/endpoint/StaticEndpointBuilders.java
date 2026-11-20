@@ -8539,6 +8539,7 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
         return ibmWatsonLanguage("ibm-watson-language", path);
     }
@@ -8561,6 +8562,7 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
         return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

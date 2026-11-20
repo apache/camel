@@ -357,6 +357,7 @@ public interface WatsonLanguageEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default WatsonLanguageHeaderNameBuilder ibmWatsonLanguage() {
             return WatsonLanguageHeaderNameBuilder.INSTANCE;
         }
@@ -377,6 +378,7 @@ public interface WatsonLanguageEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
             return WatsonLanguageEndpointBuilderFactory.endpointBuilder("ibm-watson-language", path);
         }
@@ -399,6 +401,7 @@ public interface WatsonLanguageEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
             return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants used in Camel IBM Watson Language (NLU) module
  */
+@Deprecated(since = "4.24")
 public interface WatsonLanguageConstants {
 
     @Metadata(description = "The operation to perform", javaType = "String")

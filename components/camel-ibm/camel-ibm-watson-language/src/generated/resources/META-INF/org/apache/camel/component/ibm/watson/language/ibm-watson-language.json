@@ -4,7 +4,7 @@
     "name": "ibm-watson-language",
     "title": "IBM Watson Language",
     "description": "Perform natural language processing using IBM Watson Natural Language Understanding",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "4.16.0",
     "label": "ai,cloud",
     "javaType": "org.apache.camel.component.ibm.watson.language.WatsonLanguageComponent",

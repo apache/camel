@@ -144,6 +144,14 @@ The `camel-openstack` components (`openstack-cinder`, `openstack-glance`, `opens
 `openstack-nova` and `openstack-swift`) are deprecated. The openstack4j library they are based on has had no release or
 commit since May 2024, and is based on Jackson 2 with no clear path to Jackson 3.
 
+=== camel-ibm-watson-language - deprecated
+
+The `camel-ibm-watson-language` component is deprecated and will be removed in a future release. IBM deprecated Watson
+Natural Language Understanding, the service this component calls, on 31 July 2026, and removes it from IBM Cloud on
+31 January 2028. IBM recommends migrating to Watson Natural Language Processing in watsonx.ai Studio.
+
+The `ibm-watson-language-sink` Kamelet has been removed from the Kamelet catalog.
+
 === KeyValueRepository and State Store - namespace partitioning on shared backends
 
 In Camel 4.23, `state-store` endpoints stored keys directly into the underlying `KeyValueRepository` without namespacing. When a single `KeyValueRepository` was shared between multiple state stores, the Cache EIP, or repository adapters (such as `KeyValueAggregationRepository` or `KeyValueIdempotentRepository`), operations on one store (such as `clear()`) or key collisions could affect entries of another component or pattern.
