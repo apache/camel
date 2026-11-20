@@ -218,3 +218,9 @@ naming them, when they are set as `additionalProperties`.
 The consumer is ready when all its share consumers are created and subscribed. When a share consumer cannot be created,
 the health check reports it as down, with the error and the `bootstrap.servers`, `group.id`, `client.id`, `route.id`
 and `topic` details.
+
+The `pollOnError` option applies to exceptions only. The Kafka client wraps only a `RuntimeException` of a
+deserializer in a `RecordDeserializationException`. A `java.lang.Error`, such as an `ExceptionInInitializerError` or
+`NoClassDefFoundError` of a deserializer whose classes cannot be loaded, fails every poll the same way. The consumer
+thread then logs the error, closes its share consumer and terminates, and the health check reports it as down. Fix the
+cause (for example, a dependency version), and then restart the route or the application.
