@@ -277,6 +277,15 @@ a route template now has its own copy of the expression, so a template parameter
 route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
 `CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
 
+=== camel-seda - a discarded request-reply message fails at once
+
+When the SEDA producer waits for the reply (`InOut` messages, or `waitForTaskToComplete=Always`) and discards the
+message, because of `discardIfNoConsumers` with no consumer, or `discardWhenFull` with a full queue, the exchange now
+fails at once with a `java.util.concurrent.RejectedExecutionException` (the same exception as for a message discarded
+when the queue is purged). Before, the producer waited for a reply that never came: until the `timeout` (30 seconds by
+default), and then failed with an `ExchangeTimedOutException`, or for ever when the `timeout` was 0 or less. A discarded
+`InOnly` message is still dropped without an error.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:

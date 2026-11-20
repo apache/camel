@@ -33,6 +33,7 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,6 +247,9 @@ public class SedaProducer extends DefaultAsyncProducer {
                 throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else if (endpoint.isDiscardIfNoConsumers()) {
                 LOG.debug("Discard message as no active consumers on endpoint: {}", endpoint);
+                if (!copy) {
+                    discardedWhileWaiting(exchange, "Exchange discarded as the SEDA queue has no consumers");
+                }
                 return;
             }
         }
@@ -280,6 +284,20 @@ public class SedaProducer extends DefaultAsyncProducer {
                 target.getExchangeExtension().handoverCompletions(exchange);
             }
         }
+        if (!added && !copy) {
+            // discarded as the queue is full
+            discardedWhileWaiting(target, "Exchange discarded as the SEDA queue is full");
+        }
+    }
+
+    /**
+     * The producer waits for the reply of the given copy, which is discarded: the copy fails and its on completions are
+     * run (as {@link SedaEndpoint#purgeQueue()} does), so the producer fails at once, instead of waiting for a reply
+     * that never comes, until the timeout, or for ever when there is no timeout.
+     */
+    private static void discardedWhileWaiting(Exchange copy, String reason) {
+        copy.setException(new RejectedExecutionException(reason));
+        UnitOfWorkHelper.doneSynchronizations(copy, copy.getExchangeExtension().handoverCompletions());
     }
 
     /**
