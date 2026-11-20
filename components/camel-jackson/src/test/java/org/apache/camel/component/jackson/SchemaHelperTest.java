@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jackson;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -50,5 +53,46 @@ class SchemaHelperTest {
 
         exchange.getMessage().setBody(new TestPojo());
         assertEquals(TestPojo.class.getName(), SchemaHelper.resolveContentClass(exchange, null));
+    }
+
+    @Test
+    void fileIsNoPojo() {
+        // CAMEL-27302: the binary data type keeps a file body (CAMEL-27267), which is a handle to raw content and is no POJO
+        assertFalse(SchemaHelper.isPojo(TestWrappedFile.class));
+        assertFalse(SchemaHelper.isPojo(File.class));
+        assertFalse(SchemaHelper.isPojo(Path.class));
+    }
+
+    @Test
+    void fileBodyHasNoContentClass() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getMessage().setBody(new TestWrappedFile(new File("target/person.json")));
+
+        assertNull(SchemaHelper.resolveContentClass(exchange, null));
+        assertEquals("fallback", SchemaHelper.resolveContentClass(exchange, "fallback"));
+    }
+
+    private static final class TestWrappedFile implements WrappedFile<File> {
+
+        private final File file;
+
+        TestWrappedFile(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public File getFile() {
+            return file;
+        }
+
+        @Override
+        public Object getBody() {
+            return file;
+        }
+
+        @Override
+        public long getFileLength() {
+            return file.length();
+        }
     }
 }
