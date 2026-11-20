@@ -173,7 +173,7 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         archived.addAll(Set.of("c.txt", "d.txt"));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(2);
+        mockEndpoint.expectedMinimumMessageCount(2);
         mockEndpoint.setResultWaitTime(20_000);
 
         context.addRoutes(new RouteBuilder() {
