@@ -157,7 +157,9 @@ class AiPanelGenAiUsageTest {
                 .contains("model calls: 2")
                 .contains("tool calls: 1")
                 .contains("GenAI level: detailed")
-                .doesNotContain("execute_tool");
+                .doesNotContain("execute_tool")
+                // the panel itself called no tools: its tool time would read as the integration's
+                .doesNotContain("Tool time");
     }
 
     @Test

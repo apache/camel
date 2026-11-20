@@ -222,9 +222,10 @@ final class AiUsageStats {
                 Span.styled(" (" + formatSeconds(totalLatency / requestCount) + " per request)", dimStyle),
                 Span.styled("   AI time: ", dimStyle),
                 Span.styled(formatSeconds(totalLatency), cyanStyle),
-                Span.styled("   Tool time: ", dimStyle),
-                Span.styled(formatSeconds(sessionToolTimeMs), cyanStyle),
-                Span.styled(" (" + sessionToolCalls + " calls)", dimStyle)));
+                // the tools of this panel; the integration's tool calls are on the agent runs line
+                Span.styled(sessionToolCalls > 0 ? "   Tool time: " : "", dimStyle),
+                Span.styled(sessionToolCalls > 0 ? formatSeconds(sessionToolTimeMs) : "", cyanStyle),
+                Span.styled(sessionToolCalls > 0 ? " (" + sessionToolCalls + " calls)" : "", dimStyle)));
         if (activityLine != null) {
             summaryLines.add(activityLine);
         }
