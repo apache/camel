@@ -10611,3 +10611,210 @@ The consumer and the `getObject` operation set this header to the storage class 
 that reads objects from one bucket and uploads them to another now keeps the storage class of each object, where
 before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
 the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
+
+=== Kamelets - removed Kamelets
+
+The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
+
+[cols="2,3",options="header"]
+|===
+| Removed Kamelet | Use instead
+| `twitter-directmessage-source`, `twitter-search-source`, `twitter-timeline-source` | Nothing: the Twitter/X v1.1 API they call is gone or paid-only
+| `chunk-template-action` | `mustache-template-action`, `velocity-template-action`, `freemarker-template-action` or `string-template-action`
+| `djl-image-to-text-action` | Nothing
+| `aws-sts-assume-role-action` | Nothing
+| `kafka-azure-schema-registry-sink`, `kafka-azure-schema-registry-source`, `kafka-batch-azure-schema-registry-source` | The schema registry options of the Kafka Kamelets
+| `dropbox-source`, `dropbox-sink` | The `dropbox` component
+|===
+
+It also removes Kamelets that were little used and did not work well. Use the Camel component instead:
+
+* `kubernetes-pods-source`, `kubernetes-nodes-source`, `kubernetes-namespaces-source`
+* `azure-storage-blob-changefeed-source`
+* `elasticsearch-search-source`, `opensearch-search-source`
+* `cassandra-source`
+* `sap-netweaver-sink`
+* `google-functions-sink`
+* `caffeine-action`
+
+It removes the variants whose options the plain Kamelets now have:
+
+[cols="2,2,3",options="header"]
+|===
+| Removed Kamelet | Use instead | What to change
+| `http-secured-sink`, `http-secured-source` | `http-sink`, `http-source` | Only the name. The login options are the same
+| `jms-pooled-apache-artemis-sink` | `jms-apache-artemis-sink` | Only the name. The plain sink now pools its connections, with the same pool options
+| `jms-pooled-apache-artemis-source` | `jms-apache-artemis-source` | The name, and remove the three pool options
+|===
+
+The demo Kamelets `bitcoin-source`, `chuck-norris-source`, `earthquake-source` and `wttrin-source` are no longer in the
+catalog. They are kept as examples in the `examples/kamelets` directory of the camel-kamelets repository. To run one, use
+`camel run route.yaml --local-kamelet-dir=examples/kamelets`.
+
+It removes the Apicurio Registry Kafka Kamelets, which were deprecated during 4.24. `kafka-source` and `kafka-sink`
+take a schema registry instead:
+
+[cols="3,1,3",options="header"]
+|===
+| Removed Kamelet | Records | Use instead
+| `kafka-not-secured-apicurio-registry-source` | Avro | `kafka-source` with `schemaRegistryVendor: apicurio`, `schemaFormat: avro` and `schemaRegistryUrl`
+| `kafka-apicurio-registry-not-secured-sink`, `kafka-not-secured-apicurio-registry-sink` | Avro | `kafka-sink` with `schemaRegistryVendor: apicurio`, `schemaFormat: avro` and `schemaRegistryUrl`
+| `kafka-apicurio-registry-not-secured-source`, `kafka-not-secured-apicurio-registry-json-source` | JSON Schema | Nothing yet. Use the `kafka` component with the Apicurio serde
+| `kafka-batch-apicurio-registry-source`, `kafka-batch-apicurio-registry-not-secured-source` | Avro, many per message | Nothing yet. Use the `kafka` component with the Apicurio serde, or `kafka-source`, which gives one record per message
+|===
+
+`schemaRegistryVendor: apicurio` uses the serde of Apicurio Registry 3.x, whereas the removed Kamelets used the 2.x serde
+and the `/apis/registry/v2` API. The Kafka Kamelets have no options yet to log in to the registry, such as the Keycloak
+login of `kafka-batch-apicurio-registry-source`.
+
+It removes `mqtt-source` and `mqtt-sink`, the MQTT 3.1.1 Kamelets on the `paho` component, which is deprecated. Use
+`mqtt5-source` and `mqtt5-sink` with a broker that supports MQTT 5, or the `paho` component directly for a broker that
+only speaks MQTT 3.1.1.
+
+The public `KameletPrefixSchemeEnum` of `camel-kamelets-catalog` loses the entries of these Kamelets: `dropbox`, the
+`twitter_*` entries, `azure_storage_blob_changefeed`, `elasticsearch_search`, `google_functions`, the `kubernetes_*`
+entries, `bitcoin`, `chuck_norris`, `wttrin`, `http_secured`, `kafka_apicurio`, `kafka_not_secured` and `mqtt`.
+
+=== Kamelets - renamed options
+
+These Kamelet options had the name of a parameter that the `kamelet:` component takes for itself. Given on a `kamelet:`
+endpoint, they never reached the Kamelet: `location` was read as the place to load the Kamelet from, so the route failed
+to start. Set as `camel.kamelet.<name>.<option>` properties, such as in a Camel K Pipe, they worked, so rename them:
+
+[cols="2,1,1",options="header"]
+|===
+| Kamelet | Old name | New name
+| `google-vertexai-sink` | `location` | `region` (required)
+| `ibm-cos-sink`, `ibm-cos-source` | `location` | `region`
+| `fhir-sink`, `pulsar-sink` | `lazyStartProducer` | `lazyStart`
+|===
+
+With the old name, `google-vertexai-sink` fails at startup because `region` is missing, and the other Kamelets ignore it.
+
+=== Kamelets - Kafka Kamelets require saslAuthType
+
+`kafka-sink`, `kafka-batch-source` and `ceph-event-based-source` have no default for `saslAuthType` any more, as was
+already the case for `kafka-source`. Without the option, the route fails at startup:
+
+[source,text]
+----
+Route template kafka-sink the following mandatory parameters must be provided: saslAuthType
+----
+
+To connect without security, as before, set `saslAuthType: NONE`.
+
+=== Kamelets - messaging sinks no longer wait for a reply
+
+`jms-apache-artemis-sink`, `jms-amqp-10-sink`, `jms-ibm-mq-sink`, `spring-rabbitmq-sink` and `nats-sink` now send a message without waiting for a reply, also when the message expects
+one, such as a message from `webhook-source`. The caller gets its own message back, instead of the answer of a
+receiver.
+
+Other changes to the messaging Kamelets:
+
+* `jms-apache-artemis-sink` pools its connections: it opens one connection to the broker instead of one per message.
+  `jms-apache-artemis-sink` and `jms-apache-artemis-source` have new `username` and `password` options.
+* The body of `nats-source` is a `byte[]` instead of a stream. The `Content-Type` of the sender is kept instead of
+  being set to `application/json`.
+* `mqtt-source` and `mqtt5-source` without a `clientId` connect with a generated client ID instead of `mqtt-source`.
+  This matters only for broker ACLs or monitoring that use that ID.
+* `spring-rabbitmq-source` and `spring-rabbitmq-sink` with `protocol: amqps` check the certificate of the broker
+  against the trust store of Java, and that it names the host in `host`. A broker whose certificate Java does not
+  trust, or that is for another name, no longer connects. Add its CA to the trust store of Java, or give it with the new
+  `sslTruststoreLocation` and `sslTruststorePassword` options. `protocol: amqp`, the default, is unchanged.
+* `pulsar-sink` also takes the message key from a plain `key` header, which `pulsar-source` sets, so a key carries
+  over from one Kamelet to the other. When both are set, the `CamelPulsarProducerMessageKey` header wins. Messages that
+  had a `key` header for another purpose now use it as the Pulsar key.
+
+=== Kamelets - the component headers of the incoming message are removed
+
+The sink and action Kamelets that call a Camel component now remove the headers of that component from the incoming
+message as their first step. A header such as `CamelAwsS3Key`, `CamelJmsDestinationName` or `CamelJiraIssueKey` that
+comes with the message no longer changes what the Kamelet was configured to do. The headers that a Kamelet documents
+as input are kept, and its description names them, for example `CamelKafkaKey`, `CamelPulsarProducerMessageKey` and
+`CamelFileName` for the FTP, SFTP and SCP sinks. A route that set such a header on purpose before a sink must now use
+the option of the Kamelet, or the input header it documents (such as `ce-issueKey` for the Jira sinks or `key` for
+`redis-sink`), or call the Camel component directly.
+
+* `rest-openapi-sink`, `ogcapi-features-action` and `azure-functions-sink` remove the `CamelHttp*` and
+  `CamelRestHttp*` headers, as `http-sink` already did.
+* `http-sink` no longer sends an `Authorization` or `Proxy-Authorization` header that is on the message, such as the
+  one of the caller of `webhook-source`. Log in with the options of the Kamelet. For a token that differs for each
+  message, use the `http` component directly.
+* `azure-functions-sink` sends the function key in the `x-functions-key` header instead of the `code` query
+  parameter, and removes the header after the call. The key is no longer in the address of the request, nor in the
+  logs of a proxy. Azure Functions accepts the key in either place, so the function needs no change, but a gateway in
+  front of it must pass the header on.
+* `rest-openapi-sink`, `ogcapi-features-action` and `azure-functions-sink` no longer send an `Authorization` or
+  `Proxy-Authorization` header that is on the message, and `azure-functions-sink` no longer sends an incoming
+  `x-functions-key`. `rest-openapi-sink` has new `authUsername`, `authPassword` and `authBearerToken` options, and
+  `ogcapi-features-action` the login options of `http-sink`; log in with these instead.
+* The passwords, keys and tokens that a Kamelet puts into the address of an endpoint are passed in `RAW()`, so a value
+  with `&`, `+` or `=` is sent whole. A value that was URL-encoded to work around this, such as `%2B` for `+`, is now
+  sent literally and must be changed back to the plain value.
+
+=== Kamelets - default data types
+
+Some Kamelets now declare a default data type. Camel runs its transformer on every message, so it can change the Java
+type of the body and set the `Content-Type` header:
+
+* `json-serialize-action`, `hoist-field-action`, `jslt-action`, `pdf-action` and `crypto-encrypt-action` give their
+  body as `byte[]`, instead of a stream, a `String` or a `ByteArrayOutputStream`.
+* `jslt-action` sets `Content-Type: application/json`, and `pdf-action` and `crypto-encrypt-action` set
+  `application/octet-stream`. `crypto-decrypt-action` keeps the headers, so after it `Content-Type` is
+  `application/octet-stream`: set it again to the type of the original data when the next step needs it.
+
+A route that reads the body as a `String` or a stream converts it, as Camel does when asked.
+
+More Kamelets declare a default data type where their body is fixed:
+
+* `pulsar-sink` and `mqtt5-sink` (`binary` in) turn the body into `byte[]` before sending, and set
+  `Content-Type: application/octet-stream`. The broker gets the same bytes as before.
+* `value-to-key-action` and `message-timestamp-router-action` (`json` out) give `byte[]` instead of a stream, with
+  `Content-Type: application/json`, also for a message that came without that `Content-Type`.
+* `mariadb-sink`, `mysql-sink`, `sqlserver-sink`, `oracle-database-sink`, `postgresql-sink`, `solr-sink`,
+  `elasticsearch-index-sink` and `opensearch-index-sink` (`json` in) turn their input into JSON bytes and set
+  `Content-Type: application/json`, so they now also accept a `Map` or a `List`. After the SQL, Elasticsearch and
+  OpenSearch sinks, `Content-Type` is `application/json`.
+* `dns-dig-action` and `dns-ip-action` (`text` out) set `Content-Type: text/plain`. `dns-lookup-action` and
+  `nominatim-geocode-action` (`json` out) give the JSON as `byte[]` instead of a stream. `ssh-sink` (`text` in) reads
+  the command as text, and `Content-Type: text/plain` stays on the message after the sink.
+
+The source Kamelets that declare a default output data type now give it to the route that consumes from them (see
+_camel-kamelet - the output data type of a source Kamelet is applied before the consuming route_ above):
+`aws-cloudtrail-source`, `aws-sqs-source` and `azure-storage-queue-source` (`text`); `aws-ddb-streams-source`,
+`azure-cosmosdb-source`, `google-mail-source`, `google-calendar-source`, `google-sheets-source` and `slack-source`
+(`json`); and `azure-eventhubs-source`, `aws-s3-source`, `azure-storage-blob-source`, `azure-storage-files-source`,
+`azure-storage-datalake-source`, `google-storage-source` and `ibm-cos-source` (`binary`, which keeps a stream cache as
+it is).
+
+=== Kamelets - other changes in behaviour
+
+* `ssh-source` passes `pollCommand` as it is written: a command with `+`, `&` or `=` runs unchanged. Before, `+`
+  became a space and `&` broke the startup.
+* `extract-field-action` gives a text, a number or a boolean as the plain value with `Content-Type: text/plain`, such
+  as `ORD-1` instead of `"ORD-1"`, and an object or an array as JSON text with `Content-Type: application/json`,
+  whatever the `Content-Type` of the incoming message. A missing or `null` field gives an empty body and removes
+  `Content-Type`. With `headerOutput`, the body is left exactly as it was. `trimField` is deprecated and ignored. A
+  route that removed the quotes itself, or compared the body with `"ORD-1"`, must change.
+* `solr-source` gives JSON text, with `Content-Type: application/json`, instead of a SolrJ object. A route that read
+  the fields of the object must read the JSON instead, for example with `jsonpath`.
+* The SQL and Cassandra Kamelets send a query with `+` to the database unchanged. A query that worked around this, for
+  example with `%2B`, now sends a literal `%2B`.
+* `google-sheets-source` with `majorDimension=COLUMNS` reads columns.
+* `mongodb-changes-stream-source` sends the whole document for an update, read again from the collection, instead of
+  `null`. Set the new `fullDocument` option to `default` for the old behaviour.
+* `redis-sink` sends a PUBLISH that has no channel header to the channels of the `channels` option (default `one`),
+  instead of failing.
+* The GitHub source Kamelets poll every 60 seconds instead of every 500 milliseconds. Set `delay` to poll more often.
+* The Jira sink Kamelets give an issue the description of the `ce-issueDescription` header when the body is empty.
+* `rest-openapi-sink` with `clientRequestValidation=true` rejects an invalid request instead of sending it.
+* In `mail-sink`, a `ce-to` or `ce-cc` header replaces only its own option. Before, either of them dropped all the
+  recipient options, including bcc.
+* `aws-translate-action` no longer requires `sourceLanguage`. With neither it nor `autodetectSourceLanguage`, the
+  Kamelet starts, and each message fails.
+* `scp-sink` takes a path or a `classpath:` resource in `knownHostsUri`. A `file://` or `http(s)://` value, which
+  never worked, is rejected.
+* `header-matches-filter-action` requires `headerName`, `jira-source` requires `jql`, `salesforce-create-sink`
+  requires `sObjectName` and `fhir-sink` requires `apiName`. These Kamelets could not start without them, and now
+  fail with a clear error. `aws-bedrock-agent-sink` requires `dataSourceId`, and fails at startup without it instead
+  of on every message.
