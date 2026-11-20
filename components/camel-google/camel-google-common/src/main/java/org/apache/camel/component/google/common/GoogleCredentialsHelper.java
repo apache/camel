@@ -163,7 +163,7 @@ public final class GoogleCredentialsHelper {
 
         // Check for OAuth 2.0 credentials first
         if (hasOAuthCredentials(config)) {
-            return createOAuthCredential(config, scopes, transport, factory);
+            return createOAuthCredential(config, transport, factory);
         }
 
         // Check for Service Account credentials
@@ -209,11 +209,12 @@ public final class GoogleCredentialsHelper {
     }
 
     /**
-     * Creates OAuth 2.0 credential from client ID, secret, and tokens.
+     * Creates OAuth 2.0 credential from client ID, secret, and tokens. Scopes are not set here because for OAuth
+     * credentials the granted scopes are fixed at consent time (when the refresh token was obtained) and are not needed
+     * when building or refreshing the credential.
      */
     private static Credential createOAuthCredential(
             GoogleCommonConfiguration config,
-            Collection<String> scopes,
             HttpTransport transport,
             JsonFactory jsonFactory) {
 
@@ -221,7 +222,6 @@ public final class GoogleCredentialsHelper {
                 .setJsonFactory(jsonFactory)
                 .setTransport(transport)
                 .setClientSecrets(config.getClientId(), config.getClientSecret())
-                .setServiceAccountScopes(scopes)
                 .build();
 
         if (ObjectHelper.isNotEmpty(config.getRefreshToken())) {
