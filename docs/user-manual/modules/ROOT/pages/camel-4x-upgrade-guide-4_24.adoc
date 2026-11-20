@@ -3097,6 +3097,15 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-stream - a scanning consumer keeps going after the stream cannot be opened or read
+
+A `stream` consumer with `scanStream=true` no longer ends its reading thread when the stream cannot be opened (for
+example a `stream:http` server that is down or answers 503) or a read fails (the connection is lost). Before, the route
+stayed started but read nothing until it was restarted. Now the first failure in a row goes to the exception handler of
+the consumer (a WARN by default) and the next ones are logged at DEBUG, until data is read again. With `retry=true` the
+stream is opened again, at least one second after the failure (or after `scanStreamDelay`, if longer). In raw mode
+(`readLine=false`) a read that fails is reported in the same way; before, it was ignored.
+
 === camel-cyberark-vault - verifySsl and certificatePath are applied, and getSecret no longer sets the CamelCyberArkVaultSecretValue header
 
 The `verifySsl` and `certificatePath` options of the `cyberark-vault` endpoint, and the
