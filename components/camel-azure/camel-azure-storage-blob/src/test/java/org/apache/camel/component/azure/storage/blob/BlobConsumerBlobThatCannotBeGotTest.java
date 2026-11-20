@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponseBase;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -34,6 +36,7 @@ import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -123,7 +126,7 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderValuesReceivedInAnyOrder(BlobConstants.BLOB_NAME, "a.txt", "c.txt");
 
-        addConsumerRoute("&deleteAfterRead=true&exceptionHandler=#recordErrors");
+        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2&exceptionHandler=#recordErrors");
 
         mock.assertIsSatisfied();
         assertTrue(skippedReported.await(20, TimeUnit.SECONDS), "the skipped blob is reported: " + handled);
@@ -139,7 +142,7 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        addConsumerRoute("&deleteAfterRead=true&pollStrategy=#countPolls");
+        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2&pollStrategy=#countPolls");
 
         // as for a failed listing (expired credentials, no permission to read blobs): the poll fails, so the error
         // handling and the backoff of the scheduled consumer apply
@@ -163,9 +166,13 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         BlobContainerClient containerClient = mock(BlobContainerClient.class);
         when(serviceClient.getBlobContainerClient(anyString())).thenReturn(containerClient);
 
-        PagedIterable<BlobItem> listing = mock(PagedIterable.class);
-        when(listing.stream()).thenAnswer(i -> blobs.stream().map(name -> new BlobItem().setName(name)).toList().stream());
-        when(containerClient.listBlobs(any(), any())).thenReturn(listing);
+        when(containerClient.listBlobs(
+                nullable(ListBlobsOptions.class), nullable(String.class), nullable(Duration.class)))
+                .thenAnswer(i -> new PagedIterable<>(
+                        () -> new PagedResponseBase<Void, BlobItem>(
+                                null, 200, null,
+                                blobs.stream().map(name -> new BlobItem().setName(name)).toList(),
+                                null, null)));
 
         when(containerClient.getBlobClient(anyString())).thenAnswer(i -> blobClient(i.getArgument(0)));
         return serviceClient;

@@ -71,6 +71,8 @@ public class BlobConfiguration implements Cloneable {
     private String prefix;
     @UriParam(label = "common")
     private Integer maxResultsPerPage;
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int maxMessagesPerPoll;
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests;
     @UriParam(defaultValue = "true")
@@ -334,6 +336,17 @@ public class BlobConfiguration implements Cloneable {
 
     public void setMaxResultsPerPage(Integer maxResultsPerPage) {
         this.maxResultsPerPage = maxResultsPerPage;
+    }
+
+    /**
+     * Maximum number of blobs to retrieve during one consumer polling cycle. A value of 0 or less means unlimited.
+     */
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
     /**

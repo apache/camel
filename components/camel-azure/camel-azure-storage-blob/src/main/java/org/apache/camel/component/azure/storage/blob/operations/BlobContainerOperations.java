@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -60,6 +61,28 @@ public class BlobContainerOperations {
                 .filter(x -> x.getName().matches(regex))
                 .collect(Collectors.toCollection(LinkedList<BlobItem>::new));
         return BlobOperationResponse.create(filteredBlobs);
+    }
+
+    /**
+     * Lists one page at a time for the blob consumer.
+     *
+     * <p>
+     * The producer's listBlobs operation deliberately keeps its existing eager List response. The consumer uses this
+     * method to retain the Azure continuation token between polling cycles.
+     * </p>
+     */
+    public PagedIterable<BlobItem> listBlobsPaged(
+            final Exchange exchange, final String continuationToken, final int maxMessagesPerPoll) {
+        final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
+
+        // Avoid fetching a large metadata page when the consumer has a smaller
+        // per-poll limit. Respect an explicitly configured maxResultsPerPage.
+        if (maxMessagesPerPoll > 0 && configurationProxy.getMaxResultsPerPage(exchange) == null) {
+            listBlobOptions.setMaxResultsPerPage(Math.min(maxMessagesPerPoll, 5000));
+        }
+
+        final Duration timeout = configurationProxy.getTimeout(exchange);
+        return client.listBlobsPaged(listBlobOptions, continuationToken, timeout);
     }
 
     public BlobOperationResponse listBlobVersions(final Exchange exchange) {

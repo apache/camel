@@ -123,6 +123,36 @@ YAML::
 ----
 ====
 
+=== Limiting the Number of Blobs per Poll
+
+The consumer supports the `maxMessagesPerPoll` option to limit how many blobs are retrieved in one polling cycle:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("azure-storage-blob://camelazure/container1?maxMessagesPerPoll=10&accessKey=RAW(yourAccessKey)")
+    .to("direct:processBlob");
+----
+====
+
+The default value is `0`, which means unlimited. Set a positive value to bound the number of blob contents retrieved during each poll. The limit counts successfully retrieved blobs. Blobs that are already in progress, no longer exist, or cannot be retrieved do not count towards the limit.
+
+The consumer lists blobs page by page and retains the unprocessed names from the current page for subsequent polls. This allows later blobs to be reached even when earlier blobs remain in the container. `maxResultsPerPage` remains a separate option controlling the Azure listing page size.
+
+NOTE: `maxMessagesPerPoll` limits the number of blobs successfully retrieved for a poll,
+not the number of blob names listed. Blobs skipped because they are already in progress,
+no longer exist, or cannot be retrieved do not count toward the limit. The consumer prepares
+the complete batch before routing its first exchange so Camel's `CamelBatchSize`,
+`CamelBatchIndex` and `CamelBatchComplete` properties describe the exact batch. This is
+bounded prefetch when `maxMessagesPerPoll` is set, not strict just-in-time retrieval immediately
+before each route invocation. The default value `0` means unlimited. When blobs are retained
+(with neither `deleteAfterRead` nor `moveAfterRead`), successive polls continue from the next
+listing page and wrap to the beginning after the end of the listing, so later pages are not
+starved by repeatedly starting at the first page.
+
 === Delete After Read
 
 The consumer supports automatic deletion of blobs after they have been successfully processed. This is useful when you want to ensure that blobs are only processed once.
@@ -169,7 +199,7 @@ YAML::
 
 IMPORTANT: The delete operation is only performed if the Exchange is successfully committed. If processing fails or a rollback occurs, the blob will not be deleted and can be reprocessed on the next poll.
 
-NOTE: When `deleteAfterRead` is set to `false` (the default), the same blobs will be retrieved repeatedly in subsequent polls. In this case, you should use the Idempotent Consumer EIP to filter out duplicates based on the `CamelAzureStorageBlobBlobName` header.
+NOTE: When `deleteAfterRead` is set to `false` (the default), the same blobs will be retrieved repeatedly in subsequent polls. The Idempotent Consumer EIP can filter duplicate exchanges based on the `CamelAzureStorageBlobBlobName` header, but it runs after the consumer has retrieved the blob and therefore does not prevent the Azure read or download itself. Use `maxMessagesPerPoll` to bound the number of blobs retrieved during each poll.
 
 NOTE: A blob is not retrieved again while the exchange of a previous poll is still processing it, for example when the route continues asynchronously (such as `to("seda:...")`). It is retrieved again by a later poll once that exchange is done, unless it was deleted or moved. A blob that was deleted (for example by another consumer) between the listing and its download is skipped.
 

@@ -683,6 +683,38 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of blobs to retrieve during one consumer polling
+         * cycle. A value of 0 or less means unlimited.
+         *
+         * The option is a: <code>int</code> type.
+         *
+         * Default: 0
+         * Group: consumer
+         *
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Maximum number of blobs to retrieve during one consumer polling
+         * cycle. A value of 0 or less means unlimited.
+         *
+         * The option will be converted to a <code>int</code> type.
+         *
+         * Default: 0
+         * Group: consumer
+         *
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
          * Move blobs from the container to a different container after they
          * have been retrieved. To accomplish the operation, the
          * destinationContainer option must be set. The copy blob operation is
