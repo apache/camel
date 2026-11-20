@@ -17,6 +17,7 @@
 package org.apache.camel.processor.transformer;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -49,7 +50,8 @@ public class ByteArrayDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {
         Object body = message.getBody();
-        if (!(body instanceof StreamCache || body instanceof File || body instanceof WrappedFile)) {
+        if (!(body instanceof StreamCache || body instanceof File || body instanceof Path
+                || body instanceof WrappedFile)) {
             DELEGATE.transform(message, from, to);
         }
 

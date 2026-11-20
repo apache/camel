@@ -118,6 +118,19 @@ public class ByteArrayDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepPath(@TempDir Path dir) throws Exception {
+        // a Path is a file too, and is kept the same way
+        Path path = Files.writeString(dir.resolve("test7.txt"), "Test7");
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(path);
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertSame(path, exchange.getMessage().getBody());
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("Test7", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
     void shouldKeepWrappedFile(@TempDir Path dir) throws Exception {
         // a file of the file consumer is kept the same way
         File file = Files.writeString(dir.resolve("test6.txt"), "Test6").toFile();
