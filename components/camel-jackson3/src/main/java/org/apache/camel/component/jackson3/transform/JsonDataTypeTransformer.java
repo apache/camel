@@ -34,7 +34,9 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.StringHelper;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 
 /**
@@ -48,7 +50,8 @@ import tools.jackson.databind.JsonNode;
         Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
                                      description = "A Json object or array as text, bytes or a stream, a Map, a List, a"
                                                    + " JsonNode or a POJO; other text, also a Json number, boolean, null or"
-                                                   + " quoted string, becomes a Json string; bytes and a stream are read as"
+                                                   + " quoted string, becomes a Json string, unless the Content-Type"
+                                                   + " header is application/json, which keeps a Json value as it is; bytes and a stream are read as"
                                                    + " text with the exchange charset, so a payload that is not text must be"
                                                    + " encoded first, such as in Base64, or given a content class; with the"
                                                    + " X-Content-Class exchange property only a Json object or array as text"
@@ -68,10 +71,12 @@ public class JsonDataTypeTransformer extends Transformer {
                 // a Map or a List has no class to write it as: it becomes a Json object or array
                 marshalled = Json.mapper().writeValueAsBytes(body);
             } else if (!hasContentClass && isText(body)) {
-                // read as text with the exchange charset: a Json object or array is kept, and any other text, also a
-                // Json number, boolean, null or quoted string, becomes a Json string
+                // read as text with the exchange charset: a Json object or array is kept, and so is a Json number,
+                // boolean, null or quoted string when the Content-Type says the text is Json; any other text becomes a
+                // Json string
                 String text = message.getMandatoryBody(String.class);
-                marshalled = Json.isJson(text) ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
+                marshalled = Json.isJson(text) || isJsonContent(message) && isJsonValue(text)
+                        ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
             } else {
                 String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), JsonNode.class.getName());
                 Class<?> contentType
@@ -89,6 +94,33 @@ public class JsonDataTypeTransformer extends Transformer {
             }
         } catch (InvalidPayloadException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Json output data type on exchange", message.getExchange(), e);
+        }
+    }
+
+    /**
+     * Whether the Content-Type header says the body is Json (application/json), as a source that gives Json sets it.
+     */
+    private static boolean isJsonContent(Message message) {
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (contentType == null) {
+            return false;
+        }
+        String mediaType = StringHelper.before(contentType, ";", contentType).trim();
+        return MimeType.JSON.type().equalsIgnoreCase(mediaType);
+    }
+
+    /**
+     * Whether the text is one Json value, such as a quoted string, a number, true, false or null.
+     */
+    private static boolean isJsonValue(String text) {
+        if (text.isBlank()) {
+            return false;
+        }
+        try {
+            Json.mapper().readerFor(JsonNode.class).with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS).readValue(text);
+            return true;
+        } catch (JacksonException e) {
+            return false;
         }
     }
 
