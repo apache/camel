@@ -841,7 +841,7 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc1;
-        synchronized (generator) {
+        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPublic())) {
             // initialise for creating an encapsulation and shared secret.
             generator.init(
                     new KEMGenerateSpec(
@@ -873,7 +873,7 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc2;
-        synchronized (generator) {
+        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPrivate())) {
             generator.init(
                     new KEMExtractSpec(
                             keyPair.getPrivate(), payload.getEncapsulation(),
