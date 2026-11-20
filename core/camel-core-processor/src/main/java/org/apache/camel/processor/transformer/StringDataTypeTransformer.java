@@ -33,8 +33,12 @@ import org.apache.camel.spi.Transformer;
  * mechanism. By default, uses UTF-8 charset as encoding.
  */
 @DataTypeTransformer(name = "text-plain")
-@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
-                                     description = "A body Camel can convert to a String; a null body stays null"),
+@BodyTypes(transformerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE,
+        Carrier.NULL },
+                                     description = "Text, bytes, a stream, a file or a value such as a number, and a"
+                                                   + " null body stays null; a Map, a List or an object would become"
+                                                   + " its toString()"),
            transformerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
                                       description = "A String, or null for a null body"))
 public class StringDataTypeTransformer extends Transformer {

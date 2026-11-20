@@ -93,9 +93,10 @@ public class StringDataTypeTransformerTest {
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {
-        // CAMEL-25928: any body Camel converts, as transformerIn says, and the body transformerOut says
+        // CAMEL-25928: a payload or a value, as transformerIn says, and the body transformerOut says
         BodyTypes bodyTypes = StringDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.NULL),
+                List.of(bodyTypes.transformerIn().value()));
         assertEquals(List.of(Carrier.TEXT, Carrier.NULL), List.of(bodyTypes.transformerOut().value()));
         assertEquals(String.class.getCanonicalName(), bodyTypes.transformerOut().javaType());
         for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),

@@ -3000,7 +3000,7 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTransformDataTypeLeavesWhatItsTransformerMakes() {
-        // text-plain makes the parsed data text again, as the body types of the transformer in the catalog say
+        // text-plain takes a payload or a value: parsed data would become its toString(), so it needs a marshal first
         String yaml = """
                 - route:
                     from:
@@ -3012,14 +3012,15 @@ public class TextBodyFlowTest {
                             toType: text/plain
                         - to: file:outbox
                 """;
-        assertThat(lines(yaml)).isEmpty();
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains(
+                        "transformDataType: text/plain needs the body as text, bytes, a stream, a file or a value"));
+        // text-plain makes text, as the body types of the transformer in the catalog say
         String text = """
                 - route:
                     from:
                       uri: file:inbox
                       steps:
-                        - unmarshal:
-                            json: {}
                         - transformDataType:
                             toType: text-plain
                         - setHeader:
@@ -3081,6 +3082,7 @@ public class TextBodyFlowTest {
             Set.of(), Map.of(), null, Map.of(), Map.of(),
             Map.of("my-source", new ProjectFacts.KameletDataTypes(null, "application-octet-stream"),
                     "my-sink", new ProjectFacts.KameletDataTypes("application-octet-stream", null),
+                    "my-text-sink", new ProjectFacts.KameletDataTypes("text-plain", null),
                     "my-action", new ProjectFacts.KameletDataTypes("application-x-struct", "text-plain"),
                     "my-events", new ProjectFacts.KameletDataTypes(null, "aws2-s3:application-cloudevents")));
 
@@ -3118,6 +3120,44 @@ public class TextBodyFlowTest {
                 .satisfies(m -> assertThat(m).contains(
                         "to: the Kamelet my-sink needs the body as text, bytes, a stream or a file (its in data type"
                                                        + " application-octet-stream)"));
+    }
+
+    @Test
+    public void testAKameletTextSinkNeedsText() {
+        // text-plain sends a Map as its toString(): parsed data needs a marshal first
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: kamelet:my-text-sink
+                """;
+        assertThat(lines(yaml, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains(
+                        "to: the Kamelet my-text-sink needs the body as text, bytes, a stream, a file or a value (its in"
+                                                       + " data type text-plain)"));
+        // text is what it takes
+        assertThat(lines(yaml.replace("unmarshal", "marshal"), KAMELETS)).isEmpty();
+    }
+
+    @Test
+    public void testTransformDataTypeTextPlainNeedsText() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: text-plain
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m)
+                        .contains("transformDataType: text-plain needs the body as text, bytes, a stream, a file or a value"));
     }
 
     @Test
