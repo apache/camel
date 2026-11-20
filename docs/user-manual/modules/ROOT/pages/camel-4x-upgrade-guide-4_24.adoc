@@ -2762,6 +2762,16 @@ The actions of `consul:agent` and `consul:status` now set the `CamelConsulResult
 The `FIRE` action of `consul:event` with a message without body failed with a `NullPointerException`. It now fires the
 event without payload.
 
+=== camel-consul - a producer with a key acts on its key, not on the key a consumer received
+
+The `consul:kv` and `consul:event` consumers set the `CamelConsulKey` header to the key (or event name) they received,
+and the producers took the key from that header before their `key` option. So a route from one key to another
+(`from("consul:kv?key=a").to("consul:kv?key=b&action=PUT")`) wrote, deleted or fired the key it came from, and with PUT
+or FIRE looped for ever. A producer that has a `key` now uses it while the header still holds the received key (the
+consumers set the new `CamelConsulReceivedKey` exchange property to that key). A key header set by the route is still
+used, and a producer without `key` still acts on the received key. To act on the received key with a producer that has
+a `key` of its own, remove the `CamelConsulReceivedKey` property before the producer.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
