@@ -429,12 +429,25 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
     /**
      * Routes the exchange, starting on a thread of the Vert.x worker pool, as the first steps of the route may block.
-     * The worker thread is not held until the route completes: when the route continues on another thread, such as a
-     * vertx-http producer that completes its exchange on a worker thread of the same Vert.x, a worker thread waiting
-     * for the route could be the one that the other thread needs, and with every worker thread waiting no request would
-     * ever complete. The returned future completes on the context of the request, when the route is done.
+     * The returned future completes on the context of the request, when the route is done.
+     * <p>
+     * With the endpoint option {@code synchronous=true} the worker thread runs the route with the synchronous
+     * processor, so it is held until the route completes, and the worker pool bounds the requests in flight.
+     * <p>
+     * Otherwise (the default) the route runs with the asynchronous processor, and the worker thread is not held until
+     * the route completes: when the route continues on another thread, such as a vertx-http producer that completes its
+     * exchange on a worker thread of the same Vert.x, a worker thread waiting for the route could be the one that the
+     * other thread needs, and with every worker thread waiting no request would ever complete.
      */
     private Future<Void> processExchange(Vertx vertx, Exchange exchange) {
+        if (getEndpoint().isSynchronous()) {
+            return vertx.executeBlocking(() -> {
+                createUoW(exchange);
+                getProcessor().process(exchange);
+                return null;
+            }, false);
+        }
+
         Context context = vertx.getOrCreateContext();
         Promise<Void> done = Promise.promise();
         vertx.executeBlocking(() -> {

@@ -49,7 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * A platform-http route that calls vertx-http, with one Vert.x for both (a Vert.x in the registry, as in Camel
  * Quarkus): the route must not hold a worker thread of the Vert.x until it completes, as vertx-http completes its
  * exchange on a worker thread of the same Vert.x. With as many requests in flight as worker threads, no request would
- * complete.
+ * complete. This needs the asynchronous mode of the consumer ({@code synchronous=false}, the default); see
+ * {@link VertxPlatformHttpSynchronousTest} for {@code synchronous=true}.
  */
 class VertxPlatformHttpSharedVertxWorkerPoolTest {
 
@@ -95,6 +96,16 @@ class VertxPlatformHttpSharedVertxWorkerPoolTest {
 
     @Test
     void requestsAsManyAsWorkerThreadsComplete() throws Exception {
+        // synchronous=false is the default
+        assertRequestsAsManyAsWorkerThreadsComplete("");
+    }
+
+    @Test
+    void requestsAsManyAsWorkerThreadsCompleteWithSynchronousFalse() throws Exception {
+        assertRequestsAsManyAsWorkerThreadsComplete("?synchronous=false");
+    }
+
+    private void assertRequestsAsManyAsWorkerThreadsComplete(String query) throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
             configuration.setBindPort(port.getPort());
@@ -105,7 +116,7 @@ class VertxPlatformHttpSharedVertxWorkerPoolTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/proxy")
+                    from("platform-http:/proxy" + query)
                             // call the backend uri, not the uri of the request
                             .removeHeaders("CamelHttp*")
                             .to("vertx-http:http://localhost:" + backend.getAddress().getPort() + "/backend");
