@@ -270,6 +270,11 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             checkAeadSupported(PQCSymmetricAlgorithms.toJceName(symmetricKeyAlgorithm));
         }
 
+        if ("CMCE".equals(keyEncapsulationAlgorithm)) {
+            LOG.warn("The CMCE (Classic McEliece) key encapsulation algorithm is deprecated: it is believed to be unsafe"
+                     + " to use and will be removed in a future release. Use MLKEM instead.");
+        }
+
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {
             // Fail fast on an unknown algorithm or provider. The instance is not kept, see getOrCreateKeyGenerator()
             createKeyGenerator(keyEncapsulationAlgorithm);

@@ -33,10 +33,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.interfaces.XMSSPrivateKey;
+import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
