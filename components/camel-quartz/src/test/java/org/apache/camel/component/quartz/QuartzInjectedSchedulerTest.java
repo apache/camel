@@ -22,7 +22,9 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Component;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
@@ -64,10 +66,12 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
     private final List<JobExecutionException> jobFailures = new CopyOnWriteArrayList<>();
     private final List<String> jobsExecuted = new CopyOnWriteArrayList<>();
     private final List<String> warnings = new CopyOnWriteArrayList<>();
+    private final AtomicInteger eventsSeen = new AtomicInteger();
     private final AbstractAppender appender
             = new AbstractAppender("QuartzInjectedScheduler-" + UUID.randomUUID(), null, null, true, Property.EMPTY_ARRAY) {
                 @Override
                 public void append(LogEvent event) {
+                    eventsSeen.incrementAndGet();
                     if (event.getLevel() == Level.WARN) {
                         warnings.add(event.getMessage().getFormattedMessage());
                     }
@@ -130,7 +134,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         assertSame(injected, context.getComponent("quartz", QuartzComponent.class).getScheduler());
         assertEquals(List.of(), jobFailures);
         mock.assertIsSatisfied();
-        assertEquals(1, warningsContaining(injected, RUNNING), warnings::toString);
+        assertEquals(1, warningsContaining(injected, RUNNING), this::captureDiagnostics);
     }
 
     @Test
@@ -146,7 +150,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         assertSame(injected, context.getComponent("quartz", QuartzComponent.class).getScheduler());
         assertTrue(injected.isStarted());
         assertEquals(List.of(), jobFailures);
-        assertEquals(0, warningsContaining(injected, RUNNING), warnings::toString);
+        assertEquals(0, warningsContaining(injected, RUNNING), this::captureDiagnostics);
     }
 
     @Test
@@ -157,7 +161,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
-        assertEquals(0, warningsContaining(scheduler, RUNNING), warnings::toString);
+        assertEquals(0, warningsContaining(scheduler, RUNNING), this::captureDiagnostics);
     }
 
     @Test
@@ -172,8 +176,8 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
 
         assertSame(injected, quartz.getScheduler());
         assertEquals(2, quartz.getScheduler().getMetaData().getThreadPoolSize());
-        assertEquals(1, warningsContaining(injected, IGNORED), warnings::toString);
-        assertEquals(1, warningsContaining(injected, "properties, propertiesFile"), warnings::toString);
+        assertEquals(1, warningsContaining(injected, IGNORED), this::captureDiagnostics);
+        assertEquals(1, warningsContaining(injected, "properties, propertiesFile"), this::captureDiagnostics);
     }
 
     @Test
@@ -187,7 +191,7 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
         context.start();
 
         assertEquals(3, quartz.getScheduler().getMetaData().getThreadPoolSize());
-        assertEquals(0, warningsContaining(quartz.getScheduler(), IGNORED), warnings::toString);
+        assertEquals(0, warningsContaining(quartz.getScheduler(), IGNORED), this::captureDiagnostics);
     }
 
     private Scheduler createScheduler(int threadCount) throws SchedulerException {
@@ -242,6 +246,28 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
     private long warningsContaining(Scheduler scheduler, String text) throws SchedulerException {
         String name = " " + scheduler.getSchedulerName() + " ";
         return warnings.stream().filter(message -> message.contains(name) && message.contains(text)).count();
+    }
+
+    /**
+     * The state of the WARN capture, for the message of a failed assertion: tells whether the appender was attached and
+     * received events, or the WARN was not logged (CAMEL-27281).
+     */
+    private String captureDiagnostics() {
+        Logger logger = componentLogger();
+        return "warnings=" + warnings
+               + ", eventsSeenByAppender=" + eventsSeen.get()
+               + ", appenderStarted=" + appender.isStarted()
+               + ", appenderAttached=" + logger.getAppenders().containsKey(appender.getName())
+               + ", loggerConfig=" + logger.get().getName()
+               + ", additive=" + logger.isAdditive()
+               + ", warnEnabled=" + logger.isWarnEnabled()
+               + ", quartzComponentStatus=" + quartzComponentStatus()
+               + ", thread=" + Thread.currentThread().getName();
+    }
+
+    private String quartzComponentStatus() {
+        Component quartz = context.hasComponent("quartz");
+        return quartz instanceof QuartzComponent qc ? String.valueOf(qc.getStatus()) : "none";
     }
 
     private static Logger componentLogger() {

@@ -200,6 +200,15 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                     if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
                         continue;
                     }
+                    if (!org.apache.camel.http.base.HttpHelper.isValidHeaderName(key)) {
+                        // a message header can have any name, for example a form field mapped to a header by a
+                        // consumer, but it cannot be sent as an HTTP header
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Skipping header {} in the request, as its name is not a valid HTTP header name",
+                                    HttpHelper.sanitizeLog(key));
+                        }
+                        continue;
+                    }
                     Object headerValue = entry.getValue();
 
                     if (headerValue != null) {

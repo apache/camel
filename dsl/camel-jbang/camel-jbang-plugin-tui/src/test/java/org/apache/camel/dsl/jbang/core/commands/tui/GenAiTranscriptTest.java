@@ -137,6 +137,18 @@ class GenAiTranscriptTest {
     }
 
     @Test
+    void messageWithoutARoleStillHasAHeading() {
+        String input = "[{\"role\":\"\",\"parts\":[{\"type\":\"text\",\"content\":\"hello\"}]},"
+                       // a part without a message around it, as in gen_ai.system_instructions
+                       + "{\"type\":\"text\",\"content\":\"instructions\"}]";
+        SpanEntry chat = span("chat", "", attrs("chat", GenAiAttributes.INPUT_MESSAGES, input));
+
+        assertThat(GenAiTranscript.of(chat, List.of(chat)).toMarkdown())
+                .contains("### Message\n\nhello")
+                .contains("### System\n\ninstructions");
+    }
+
+    @Test
     void textThatIsNotJsonIsShownAsItIs() {
         assertThat(GenAiTranscript.parseMessages("not json")).singleElement()
                 .satisfies(turn -> assertThat(turn.parts().get(0).text()).isEqualTo("not json"));
