@@ -126,8 +126,9 @@ to the TUI; the agent then has both servers.
 * *You can see what happened.* The AI log (*F2* -> _AI & MCP_ -> _AI Log_) records the questions, tool calls and
   answers of the panel; the MCP log records the calls agents made through the MCP server.
 * *The same shortcuts open the panel.* *Shift+F8* in the Source editor, the Log tab, the Errors view, the Health
-  tab, and on a failing route or SQL statement writes the question for you ("fix with AI"), as it does on the Timeline,
-  Chaos and Circuit Breaker screens and on a slow route or SQL statement ("explain with AI"), and sends it to whichever provider or agent the panel uses. `/overview`, which
+  tab, and on a failing route or SQL statement writes the question for you ("fix with AI"). On the Timeline, Chaos
+  and Circuit Breaker screens and on a slow route or SQL statement, it writes a question that asks for an explanation
+  ("explain with AI"). The panel sends the question to whichever provider or agent it uses. `/overview`, which
   explains the project, needs a model (way 1); an agent explains it with the `camel_project_overview` and
   `camel_save_project_summary` tools when you ask it to.
 
