@@ -3081,6 +3081,7 @@ public class TextBodyFlowTest {
             Set.of(), Map.of(), null, Map.of(), Map.of(),
             Map.of("my-source", new ProjectFacts.KameletDataTypes(null, "application-octet-stream"),
                     "my-sink", new ProjectFacts.KameletDataTypes("application-octet-stream", null),
+                    "my-filter", new ProjectFacts.KameletDataTypes("application-x-unchanged", "application-x-unchanged"),
                     "my-action", new ProjectFacts.KameletDataTypes("application-x-struct", "text-plain"),
                     "my-events", new ProjectFacts.KameletDataTypes(null, "aws2-s3:application-cloudevents")));
 
@@ -3118,6 +3119,38 @@ public class TextBodyFlowTest {
                 .satisfies(m -> assertThat(m).contains(
                         "to: the Kamelet my-sink needs the body as text, bytes, a stream or a file (its in data type"
                                                        + " application-octet-stream)"));
+    }
+
+    @Test
+    public void testAKameletThatLeavesTheBodyKeepsIt() {
+        // application-x-unchanged takes any body and leaves it: after the Kamelet the body is still parsed data
+        String fields = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - kamelet:
+                            name: my-filter
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(fields, KAMELETS)).isEmpty();
+        String file = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - kamelet:
+                            name: my-filter
+                        - to: file:outbox
+                """;
+        assertThat(lines(file, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
     }
 
     @Test
