@@ -41,9 +41,10 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
              producerOnly = true, category = { Category.CLOUD, Category.MONITORING }, headersClass = Cw2Constants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "putMetricData sends a body that is a MetricDatum of the AWS SDK or a"
-                                                + " collection or an array of them, and one with another element fails; with"
-                                                + " another body the metric comes from the CamelAwsCwMetric* headers or the"
-                                                + " name, value and unit options. The other operations do not use the body"),
+                                                + " collection or an array of them, and an empty one or one with another"
+                                                + " element fails; with another body the metric comes from the"
+                                                + " CamelAwsCwMetric* headers or the name, value and unit options. The other"
+                                                + " operations do not use the body"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "listMetrics", carriers = Carrier.POJO,

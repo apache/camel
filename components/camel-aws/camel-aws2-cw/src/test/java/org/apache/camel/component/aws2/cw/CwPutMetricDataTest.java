@@ -32,6 +32,7 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -92,6 +93,24 @@ public class CwPutMetricDataTest extends CamelTestSupport {
         assertTrue(cause.getMessage().contains("must be a MetricDatum or a collection or an array of MetricDatum"),
                 cause.getMessage());
         assertTrue(cause.getMessage().contains("java.lang.String"), cause.getMessage());
+    }
+
+    @Test
+    public void emptyListFails() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", List.of()));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The body is an empty collection: there is no MetricDatum to put", cause.getMessage());
+        assertNull(cloudWatchClient.getLastPutMetricDataRequest(), "putMetricData must not be called");
+    }
+
+    @Test
+    public void emptyArrayFails() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", new MetricDatum[0]));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The body is an empty array: there is no MetricDatum to put", cause.getMessage());
+        assertNull(cloudWatchClient.getLastPutMetricDataRequest(), "putMetricData must not be called");
     }
 
     @Test
