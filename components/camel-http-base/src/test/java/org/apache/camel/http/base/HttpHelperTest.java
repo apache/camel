@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,7 +96,7 @@ class HttpHelperTest {
     void testSanitizeLog() {
         assertEquals("a_b_c", HttpHelper.sanitizeLog("a\nb\rc"));
         assertEquals("plain", HttpHelper.sanitizeLog("plain"));
-        assertEquals(null, HttpHelper.sanitizeLog(null));
+        assertNull(HttpHelper.sanitizeLog(null));
     }
 
     @Test
