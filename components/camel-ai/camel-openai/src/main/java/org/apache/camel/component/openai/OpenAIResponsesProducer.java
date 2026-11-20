@@ -32,13 +32,16 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiMessages;
 import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolSearchSession;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -169,7 +172,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
         String conversationId = resolveParameter(in, OpenAIConstants.CONVERSATION_ID, config.getConversationId(),
                 String.class);
-        if (ObjectHelper.isNotEmpty(conversationId)) {
+        conversationId = ObjectHelper.isNotEmpty(conversationId) ? conversationId : null;
+        if (conversationId != null) {
             paramsBuilder.conversation(conversationId);
         }
         if (config.isBackground()) {
@@ -226,10 +230,15 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                             "background cannot be combined with automatic tool execution, the tool loop needs each answer. "
                                                        + "Set autoToolExecution=false to handle the function calls in the route");
                 }
-                processToolLoop(exchange, config, params, inputSpec.items(), model,
-                        ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
+                if (GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
+                    processObservedToolLoop(exchange, config, params, inputSpec.items(), model, conversationId);
+                } else {
+                    processToolLoop(exchange, config, params, inputSpec.items(), model,
+                            conversationId);
+                }
             } else {
-                Response response = createResponse(exchange, model, params);
+                Response response = createResponse(exchange, model, params,
+                        conversationId);
                 List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
                 // with autoToolExecution=false the route handles the function calls requested by the model
                 Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
@@ -244,6 +253,40 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                     toolSearch.closeSession(exchange, config);
                 }
             }
+        }
+    }
+
+    /**
+     * Wraps the tool loop in an {@code invoke_agent} span at observability level {@code detailed} or higher. The model
+     * calls and tool calls started inside nest under it, giving tracing backends one agent run per user turn.
+     */
+    private void processObservedToolLoop(
+            Exchange exchange, OpenAIConfiguration config, ResponseCreateParams params, List<ResponseInputItem> input,
+            String model, String conversationId)
+            throws Exception {
+        String routeId = ExchangeHelper.getAtRouteId(exchange);
+        GenAiObservation agentRun = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.INVOKE_AGENT)
+                .agentName(routeId != null ? routeId : "openai")
+                .system("openai")
+                .requestModel(model)
+                .conversationId(conversationId)
+                .componentScheme("openai")
+                .build());
+        agentRun.recordInputMessages(() -> OpenAIResponsesGenAiMessages.input(params));
+        try {
+            processToolLoop(exchange, config, params, input, model,
+                    conversationId);
+            // the model calls carry the token usage; repeating it on the agent run would double-count
+            agentRun.recordSuccess(GenAiUsage.of((Long) null, null,
+                    exchange.getMessage().getHeader(OpenAIConstants.FINISH_REASON, String.class), null));
+            agentRun.recordOutputMessages(() -> new GenAiMessages().text(GenAiMessages.ASSISTANT,
+                    exchange.getMessage().getBody(String.class)));
+        } catch (Exception e) {
+            agentRun.recordError(e);
+            throw e;
+        } finally {
+            agentRun.close();
         }
     }
 
@@ -303,7 +346,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 }
 
                 ResponseCreateParams params = paramsBuilder.build();
-                Response response = createResponse(exchange, model, params);
+                Response response = createResponse(exchange, model, params, conversationId);
                 tokenTracker.addUsage(response);
                 tokenTracker.setHeaders(exchange.getMessage());
                 long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
@@ -392,22 +435,50 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
     }
 
-    private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
-        return observedCall(exchange, model, () -> getEndpoint().getClient().responses().create(params));
+    private Response createResponse(Exchange exchange, String model, ResponseCreateParams params, String conversationId)
+            throws Exception {
+        return observedCall(exchange, model, params, conversationId,
+                () -> getEndpoint().getClient().responses().create(params));
     }
 
-    private Response observedCall(Exchange exchange, String model, ThrowingSupplier<Response, Exception> call)
+    private Response observedCall(
+            Exchange exchange, String model, ResponseCreateParams params, String conversationId,
+            ThrowingSupplier<Response, Exception> call)
             throws Exception {
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
                 .system("openai")
                 .requestModel(model)
                 .componentScheme("openai")
+                .conversationId(conversationId)
+                .requestParameter("temperature", params.temperature().orElse(null))
+                .requestParameter("top_p", params.topP().orElse(null))
+                .requestParameter("max_tokens", params.maxOutputTokens().orElse(null))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        observation.recordInputMessages(() -> OpenAIResponsesGenAiMessages.input(params));
+        observation.recordSystemInstructions(() -> params.instructions().orElse(null));
+        observation.recordToolDefinitions(() -> OpenAIResponsesGenAiMessages.toolDefinitions(params));
         try {
             Response response = call.get();
-            recordResponseSuccess(observation, response);
+            String finishReason = OpenAIResponsesSupport.extractFinishStatus(response)
+                    .map(OpenAIResponsesProducer::mapFinishReason)
+                    .orElse(null);
+            response.usage().ifPresentOrElse(
+                    usage -> {
+                        observation.recordSuccess(GenAiUsage.of(
+                                usage.inputTokens(),
+                                usage.outputTokens(),
+                                finishReason,
+                                OpenAIResponsesSupport.modelName(response.model())));
+                        observation.recordCachedInputTokens(
+                                usage._inputTokensDetails().asKnown()
+                                        .flatMap(d -> d._cachedTokens().asKnown()).orElse(null));
+                    },
+                    () -> observation.recordSuccess(
+                            GenAiUsage.of((Long) null, null, finishReason,
+                                    OpenAIResponsesSupport.modelName(response.model()))));
+            observation.recordOutputMessages(() -> OpenAIResponsesGenAiMessages.output(response, finishReason));
             return response;
         } catch (Exception e) {
             GenAiErrorSupport.apply(exchange, e);
@@ -416,20 +487,6 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         } finally {
             observation.close();
         }
-    }
-
-    private static void recordResponseSuccess(GenAiObservation observation, Response response) {
-        String finishReason = OpenAIResponsesSupport.extractFinishStatus(response)
-                .map(OpenAIResponsesProducer::mapFinishReason)
-                .orElse(null);
-        response.usage().ifPresentOrElse(
-                usage -> observation.recordSuccess(GenAiUsage.of(
-                        usage.inputTokens(),
-                        usage.outputTokens(),
-                        finishReason,
-                        OpenAIResponsesSupport.modelName(response.model()))),
-                () -> observation.recordSuccess(
-                        GenAiUsage.of((Long) null, null, finishReason, OpenAIResponsesSupport.modelName(response.model()))));
     }
 
     private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, Object body)

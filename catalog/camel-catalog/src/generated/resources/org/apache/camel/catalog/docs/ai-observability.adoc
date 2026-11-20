@@ -115,7 +115,9 @@ the agent run and the Camel route tools are still recorded by Camel. The framewo
 that is current when the endpoint is called, which is the route span: they appear next to the agent run, not under it,
 because Camel makes its spans current only while a processor runs.
 * `openai`: the `openai-java` instrumentation of OpenTelemetry (in the OpenTelemetry Java agent) wraps the OpenAI client
-used by `camel-openai` and traces its chat completions and embeddings. When the client is wrapped, those calls are left
+used by `camel-openai` and traces its chat completions and embeddings. The `responses()` operation is not yet
+instrumented by the OpenTelemetry Java agent (as of 2.33.x), so Camel always records its own span for Responses API
+calls. When the client is wrapped, chat completion and embeddings calls are left
 to it, except at level `full`: the instrumentation records the messages as log events, not as span attributes, so Camel
 keeps its own span and logs a warning. Start the JVM with `-Dotel.instrumentation.openai-java.enabled=false` to keep
 only the Camel spans.
