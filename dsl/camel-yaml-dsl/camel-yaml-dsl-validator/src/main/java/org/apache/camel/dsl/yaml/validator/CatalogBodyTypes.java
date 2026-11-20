@@ -88,6 +88,15 @@ final class CatalogBodyTypes {
             return !carriers.isEmpty() && carriers.stream().allMatch(c -> PAYLOAD.contains(c) || "null".equals(c));
         }
 
+        /**
+         * A payload, maybe a value or no body as well, as the text-plain data type takes: a Map or a List would be sent
+         * as its toString().
+         */
+        boolean onlyPayloadOrValue() {
+            return carriers.stream().anyMatch(PAYLOAD::contains)
+                    && carriers.stream().allMatch(c -> PAYLOAD.contains(c) || "null".equals(c) || "value".equals(c));
+        }
+
         /** A Map or a List: an iterator is not one, as it is read once and has no index. */
         boolean data() {
             return !carriers.isEmpty() && DATA.containsAll(carriers);
