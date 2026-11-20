@@ -40,7 +40,8 @@ import static org.mockito.Mockito.when;
 /**
  * The repositories use the CqlSession they are given, which other repositories and cql endpoints can use too: stopping
  * a repository (when its route is removed, or the CamelContext stops) must not close that session, and the repository
- * can be started again with it.
+ * can be started again with it. The same holds for a cql endpoint given a session (session or beanRef); a cql endpoint
+ * closes only the session it creates from its hosts, and creates a new one when it is started again.
  */
 class CassandraRepositoriesSessionTest {
 
@@ -91,6 +92,67 @@ class CassandraRepositoriesSessionTest {
         }
         // the cql endpoint created the session from its hosts, so it closes it (unlike the session of a repository)
         verify(session).close();
+    }
+
+    @Test
+    void testEndpointCreatesANewSessionWhenStartedAgain() throws Exception {
+        CqlSession first = session();
+        CqlSession second = session();
+        CqlSessionBuilder builder = mock(CqlSessionBuilder.class);
+        when(builder.build()).thenReturn(first, second);
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            CassandraComponent component = context.getComponent("cql", CassandraComponent.class);
+            CassandraEndpoint endpoint = new CassandraEndpoint("cql://localhost/ks", component) {
+                @Override
+                protected CqlSessionBuilder createSessionBuilder() {
+                    return builder;
+                }
+            };
+            endpoint.setHosts("localhost");
+            endpoint.start();
+            assertSame(first, endpoint.getSession());
+            endpoint.stop();
+            verify(first).close();
+            // started again, as when its route is added again: the closed session is not used
+            endpoint.start();
+            assertSame(second, endpoint.getSession());
+            endpoint.stop();
+            verify(second).close();
+        }
+    }
+
+    @Test
+    void testEndpointDoesNotCloseTheSessionItIsGiven() throws Exception {
+        CqlSession session = session();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            CassandraComponent component = context.getComponent("cql", CassandraComponent.class);
+            CassandraEndpoint endpoint = new CassandraEndpoint("cql:ks", component);
+            endpoint.setSession(session);
+            endpoint.start();
+            endpoint.stop();
+            verify(session, never()).close();
+            // started again with the same session
+            endpoint.start();
+            assertSame(session, endpoint.getSession());
+            endpoint.stop();
+        }
+        verify(session, never()).close();
+    }
+
+    @Test
+    void testEndpointDoesNotCloseTheSessionItLooksUp() throws Exception {
+        CqlSession session = session();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("mySession", session);
+            context.start();
+            CassandraEndpoint endpoint = context.getEndpoint("cql:bean:mySession", CassandraEndpoint.class);
+            endpoint.start();
+            assertSame(session, endpoint.getSession());
+            endpoint.stop();
+        }
+        verify(session, never()).close();
     }
 
     private static void startStopStart(ServiceSupport repository) {
