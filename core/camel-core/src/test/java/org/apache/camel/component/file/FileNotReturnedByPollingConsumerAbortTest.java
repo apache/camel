@@ -23,8 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * CAMEL-27264: a file exchange that the receive call of the polling consumer cannot return was never started by any
@@ -61,5 +63,17 @@ public class FileNotReturnedByPollingConsumerAbortTest extends ContextTestSuppor
                 "the file must not be left in the in-progress repository");
         assertFileExists(testFile("hello.txt"));
         assertFileNotExists(testFile("error/hello.txt"));
+    }
+
+    @Test
+    public void testExchangeWithoutOnCompletionsDoesNotFail() {
+        Exchange notReturned = context.getEndpoint(fileUri(), FileEndpoint.class).createExchange();
+        IllegalStateException cause = new IllegalStateException("Forced");
+        notReturned.setException(cause);
+        Exchange returned = context.getEndpoint(fileUri(), FileEndpoint.class).createExchange();
+
+        assertDoesNotThrow(() -> GenericFilePollingConsumer.rollbackNotReturned(notReturned, returned));
+
+        assertSame(cause, notReturned.getException(), "the existing exception must be preserved");
     }
 }

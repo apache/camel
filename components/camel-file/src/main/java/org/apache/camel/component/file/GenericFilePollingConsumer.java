@@ -269,8 +269,13 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
                     "Cannot return exchange: {} as the receive call already returns exchange: {}. Its exception is not returned to the caller: {}",
                     exchange.getExchangeId(), returned.getExchangeId(), exchange.getException().getMessage());
         }
+        List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
+        if (completions == null) {
+            // no on-completions of its own, such as a second bridged error whose completions are on its own UoW
+            return;
+        }
         List<Synchronization> others = new ArrayList<>();
-        for (Synchronization onCompletion : exchange.getExchangeExtension().handoverCompletions()) {
+        for (Synchronization onCompletion : completions) {
             if (onCompletion instanceof GenericFileOnCompletion<?> fileCompletion) {
                 fileCompletion.abort(exchange);
             } else {
