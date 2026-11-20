@@ -19,14 +19,15 @@ package org.apache.camel.component.azure.storage.blob;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.azure.core.http.rest.PagedResponse;
 import com.azure.core.util.polling.LongRunningOperationStatus;
 import com.azure.core.util.polling.PollResponse;
 import com.azure.storage.blob.BlobClient;
@@ -58,6 +59,14 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     // blobs whose exchanges are being processed, which a later poll must not consume again
     private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
 
+    // Remaining names from the current Azure listing page. Keeping these across polls
+    // prevents a limited consumer from repeatedly starting with the first page.
+    private final Queue<BlobItem> pendingListedBlobs = new LinkedList<>();
+
+    // Continuation state for the next Azure listing page.
+    private String listingContinuationToken;
+    private boolean listingComplete;
+
     public BlobConsumer(final BlobEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
     }
@@ -65,6 +74,12 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // A restarted route must start a fresh listing pass. The container contents
+        // may have changed while the route was stopped.
+        pendingListedBlobs.clear();
+        listingContinuationToken = null;
+        listingComplete = false;
 
         if (getEndpoint().getConfiguration().isMoveAfterRead()) {
             String destContainer = getEndpoint().getConfiguration().getDestinationContainer();
@@ -125,45 +140,67 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         return exchange;
     }
 
-    @SuppressWarnings("unchecked")
     private Queue<Exchange> createBatchExchangesFromContainer(final BlobContainerClient blobContainerClient)
             throws IOException {
         final BlobContainerClientWrapper containerClientWrapper = new BlobContainerClientWrapper(blobContainerClient);
         final BlobContainerOperations containerOperations
                 = new BlobContainerOperations(getEndpoint().getConfiguration(), containerClientWrapper);
 
-        final List<BlobItem> blobs = (List<BlobItem>) containerOperations.listBlobs(null).getBody();
+        // Start a new pass only after the previous listing and its pending page are exhausted.
+        if (pendingListedBlobs.isEmpty() && listingComplete) {
+            listingContinuationToken = null;
+            listingComplete = false;
+        }
 
-        // okay we have some response from azure so lets mark the consumer as ready
-        forceConsumerAsReady();
+        // A poll that starts in the middle of a listing must not fail merely because
+        // the remaining tail contains only blobs that cannot be retrieved.
+        final boolean fromStartOfListing = pendingListedBlobs.isEmpty()
+                && ObjectHelper.isEmpty(listingContinuationToken);
 
+        // Prepare the complete poll batch before processBatch routes its first exchange.
+        // This deliberately preserves Camel's exact batch size/index/complete contract.
+        // maxMessagesPerPoll limits successful gets (0 means unlimited); this is bounded
+        // prefetch when a limit is set, not strict just-in-time retrieval before each route.
         final Queue<Exchange> exchanges = new LinkedList<>();
-        // the listed blobs that could not be got, other than those that no longer exist, by name
         final Map<String, Exception> failures = new LinkedHashMap<>();
-        // whether at least one listed blob could be got
-        boolean anyGot = false;
-        for (BlobItem blobItem : blobs) {
-            // a failure to get one listed blob (access denied, a blob in the archive tier) does not fail the poll as
-            // long as another listed blob could be got: the blob is skipped, the other listed blobs are consumed, and
-            // a later poll tries it again
-            try {
-                anyGot |= addExchange(blobItem.getName(), blobContainerClient, exchanges, true);
-            } catch (Exception e) {
-                failures.put(blobItem.getName(), e);
+        final int maxMessagesPerPoll = getMaxMessagesPerPoll();
+
+        try {
+            // The limit counts successful gets, not names returned by Azure.
+            // In-progress blobs, deleted blobs (404), and failed gets do not use the limit.
+            while (maxMessagesPerPoll <= 0 || exchanges.size() < maxMessagesPerPoll) {
+                final BlobItem blobItem = nextListedBlob(containerOperations, maxMessagesPerPoll);
+                if (blobItem == null) {
+                    break;
+                }
+
+                try {
+                    addExchange(blobItem.getName(), blobContainerClient, exchanges, true);
+                } catch (Exception e) {
+                    failures.put(blobItem.getName(), e);
+                }
             }
+        } catch (RuntimeException e) {
+            // A listing failure after some blobs were opened must not leak their streams
+            // or leave them marked in progress. Restart listing on the next poll.
+            releaseNotProcessed(exchanges);
+            pendingListedBlobs.clear();
+            listingContinuationToken = null;
+            listingComplete = false;
+            throw e;
         }
 
         if (!failures.isEmpty()) {
-            if (!anyGot) {
-                // none of the listed blobs could be got, so this is not about one blob (expired credentials, no
-                // permission to read blobs, no connection): the poll fails, and the backoff of the scheduled consumer
-                // applies
+            if (exchanges.isEmpty() && fromStartOfListing) {
+                // None of the listed blobs could be got, so this is not about one blob
+                // (expired credentials, no permission, no connection): fail the poll.
                 releaseNotProcessed(exchanges);
                 final Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
                 LOG.warn("None of the listed blobs of container {} could be got ({} failed, the first is {}): the poll fails",
                         getEndpoint().getConfiguration().getContainerName(), failures.size(), first.getKey());
                 rethrow(first.getValue());
             }
+
             for (Map.Entry<String, Exception> failure : failures.entrySet()) {
                 getExceptionHandler().handleException("Error getting blob " + failure.getKey() + " from container "
                                                       + getEndpoint().getConfiguration().getContainerName()
@@ -171,7 +208,42 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
                         failure.getValue());
             }
         }
+
         return exchanges;
+    }
+
+    /**
+     * Returns the next matching blob, fetching only one Azure page when necessary. The unconsumed names in a page
+     * remain queued for the next poll.
+     */
+    private BlobItem nextListedBlob(
+            final BlobContainerOperations containerOperations, final int maxMessagesPerPoll) {
+        while (pendingListedBlobs.isEmpty() && !listingComplete) {
+            final Iterator<PagedResponse<BlobItem>> pages = containerOperations
+                    .listBlobsPaged(null, listingContinuationToken, maxMessagesPerPoll)
+                    .iterableByPage().iterator();
+
+            if (!pages.hasNext()) {
+                listingComplete = true;
+                forceConsumerAsReady();
+                return null;
+            }
+
+            final PagedResponse<BlobItem> page = pages.next();
+            final String regex = getEndpoint().getConfiguration().getRegex();
+
+            for (BlobItem item : page.getValue()) {
+                if (ObjectHelper.isEmpty(regex) || item.getName().matches(regex)) {
+                    pendingListedBlobs.add(item);
+                }
+            }
+
+            listingContinuationToken = page.getContinuationToken();
+            listingComplete = ObjectHelper.isEmpty(listingContinuationToken);
+            forceConsumerAsReady();
+        }
+
+        return pendingListedBlobs.poll();
     }
 
     private static void rethrow(final Exception e) throws IOException {

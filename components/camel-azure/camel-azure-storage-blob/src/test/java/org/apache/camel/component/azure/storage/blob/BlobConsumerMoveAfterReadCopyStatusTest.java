@@ -158,9 +158,10 @@ class BlobConsumerMoveAfterReadCopyStatusTest extends CamelTestSupport {
         when(destination.beginCopy(anyString(), any(Duration.class))).thenReturn(poller);
 
         BlobContainerClient in = mock(BlobContainerClient.class);
-        when(in.listBlobs(any(ListBlobsOptions.class), nullable(Duration.class))).thenAnswer(i -> new PagedIterable<>(
-                () -> new PagedResponseBase<Void, BlobItem>(
-                        null, 200, null, List.of(new BlobItem().setName("a.txt")), null, null)));
+        when(in.listBlobs(any(ListBlobsOptions.class), nullable(String.class), nullable(Duration.class)))
+                .thenAnswer(i -> new PagedIterable<>(
+                        () -> new PagedResponseBase<Void, BlobItem>(
+                                null, 200, null, List.of(new BlobItem().setName("a.txt")), null, null)));
         when(in.getBlobClient("a.txt")).thenReturn(source);
         BlobContainerClient done = mock(BlobContainerClient.class);
         when(done.getBlobClient("a.txt")).thenReturn(destination);

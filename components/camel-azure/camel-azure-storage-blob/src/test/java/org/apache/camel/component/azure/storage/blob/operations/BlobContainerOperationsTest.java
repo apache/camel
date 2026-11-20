@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.azure.storage.blob.operations;
 
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -35,8 +37,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -119,6 +124,43 @@ class BlobContainerOperationsTest {
         assertTrue(items.contains("invoice1.pdf"));
         assertTrue(items.contains("invoice2.pdf"));
         assertTrue(items.contains("invoice5.pdf"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testListBlobsPagedDoesNotReducePageSizeWhenRegexIsSet() {
+        configuration.setRegex(".*\\.pdf");
+
+        final PagedIterable<BlobItem> pagedIterable = mock(PagedIterable.class);
+        when(client.listBlobsPaged(any(), nullable(String.class), nullable(Duration.class)))
+                .thenReturn(pagedIterable);
+
+        final BlobContainerOperations operations = new BlobContainerOperations(configuration, client);
+        operations.listBlobsPaged(null, null, 1);
+
+        final ArgumentCaptor<ListBlobsOptions> optionsCaptor = ArgumentCaptor.forClass(ListBlobsOptions.class);
+        verify(client).listBlobsPaged(
+                optionsCaptor.capture(), nullable(String.class), nullable(Duration.class));
+
+        assertNull(optionsCaptor.getValue().getMaxResultsPerPage(),
+                "regex filtering happens client-side, so the page size must not be reduced to the poll limit");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testListBlobsPagedUsesPollLimitAsPageSizeWithoutRegex() {
+        final PagedIterable<BlobItem> pagedIterable = mock(PagedIterable.class);
+        when(client.listBlobsPaged(any(), nullable(String.class), nullable(Duration.class)))
+                .thenReturn(pagedIterable);
+
+        final BlobContainerOperations operations = new BlobContainerOperations(configuration, client);
+        operations.listBlobsPaged(null, null, 1);
+
+        final ArgumentCaptor<ListBlobsOptions> optionsCaptor = ArgumentCaptor.forClass(ListBlobsOptions.class);
+        verify(client).listBlobsPaged(
+                optionsCaptor.capture(), nullable(String.class), nullable(Duration.class));
+
+        assertEquals(1, optionsCaptor.getValue().getMaxResultsPerPage());
     }
 
     @Test
