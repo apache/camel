@@ -644,11 +644,12 @@ final class OllamaMonitor {
         List<RequestEntry> fresh = new ArrayList<>();
         synchronized (lock) {
             for (SpanEntry span : spans) {
-                if (!GenAiSpanUsageExtractor.isGenAiSpan(span) || span.spanId() == null) {
+                // agent runs and tool calls are not requests to Ollama (observability level detailed)
+                if (!GenAiSpanUsageExtractor.isModelCall(span) || span.spanId() == null) {
                     continue;
                 }
-                Object system = span.attributes().get(GenAiAttributes.SYSTEM);
-                if (system == null || !system.toString().toLowerCase(Locale.ROOT).contains("ollama")) {
+                String system = GenAiSpanUsageExtractor.provider(span.attributes());
+                if (system == null || !system.toLowerCase(Locale.ROOT).contains("ollama")) {
                     continue;
                 }
                 if (!seenSpanIds.add(span.spanId())) {
