@@ -255,7 +255,9 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                 log.warn("Error in a listener of the timeout map for key: {} ({} event). This error is ignored.", key, type,
                         t);
             } catch (Exception t) {
-                // Ignore
+                // nothing else sees an exception of a listener (an evicted entry is no longer in the map): log it
+                log.warn("Exception in a listener of the timeout map for key: {} ({} event). This exception is ignored.",
+                        key, type, t);
             }
         }
     }
