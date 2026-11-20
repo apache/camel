@@ -120,6 +120,20 @@ class VertxMqttConnectionTest {
     }
 
     @Test
+    void aListenerAddedAfterTheFirstFailureHearsOfItOnce() throws Exception {
+        // The first attempt fails before the consumer adds its listener, and the same failure is not reported again
+        broker.reject(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED);
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        await().atMost(WAIT).until(() -> connection.failure() != null && broker.connects() >= 3);
+
+        final List<Throwable> heard = new CopyOnWriteArrayList<>();
+        connection.addFailureListener(heard::add);
+
+        await().during(Duration.ofMillis(300)).atMost(WAIT).until(() -> heard.size() == 1);
+        assertEquals(connection.failure().getMessage(), heard.get(0).getMessage());
+    }
+
+    @Test
     void withoutAutomaticReconnectAFailedConnectFailsTheStart() throws Exception {
         broker.stop();
         final VertxMqttEndpoint endpoint = endpoint("&automaticReconnect=false&connectTimeout=2000");

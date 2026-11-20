@@ -241,13 +241,14 @@ it used to get the body of the component.
 When no transformer for the type is on the classpath, such as `json` with neither `camel-jackson` nor `camel-jackson3`,
 the message is handed on unchanged, as before, and a WARN is logged once.
 
-=== camel-core - the binary data type keeps a stream cache body
+=== camel-core - the binary data type keeps a stream cache or a file body
 
-The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache as it is, and only
-sets the `Content-Type` header to `application/octet-stream`. Before, it read the stream into a `byte[]`. A stream cache
-is binary already and can be read again, and a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source`
-declares `binary` and gives the object as a stream, which may be large. Any other body, including an `InputStream` that is
-not a stream cache (stream caching turned off), is still converted to a `byte[]`.
+The `application-octet-stream` (`binary`) data type transformer keeps a body that is a stream cache, a `java.io.File`, a
+`Path` or a `WrappedFile` (such as the `GenericFile` of the file and FTP consumers) as it is, and only sets the `Content-Type`
+header to `application/octet-stream`. Before, it read the body into a `byte[]`. These bodies are binary already and can
+be read again, and they may be large: a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source` declares
+`binary` and gives the object as a stream, and a file can be uploaded without reading it into memory. Any other body,
+including an `InputStream` that is not a stream cache (stream caching turned off), is still converted to a `byte[]`.
 
 === camel-kamelet - each Kamelet EIP has a Kamelet route of its own
 
@@ -276,6 +277,15 @@ a route template now has its own copy of the expression, so a template parameter
 `+completionSize(simple("{{size}}"))+`, takes the value of that route: before, every route used the value of the first
 route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
 `CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
+
+=== camel-seda - a discarded request-reply message fails at once
+
+When the SEDA producer waits for the reply (`InOut` messages, or `waitForTaskToComplete=Always`) and discards the
+message, because of `discardIfNoConsumers` with no consumer, or `discardWhenFull` with a full queue, the exchange now
+fails at once with a `java.util.concurrent.RejectedExecutionException` (the same exception as for a message discarded
+when the queue is purged). Before, the producer waited for a reply that never came: until the `timeout` (30 seconds by
+default), and then failed with an `ExchangeTimedOutException`, or for ever when the `timeout` was 0 or less. A discarded
+`InOnly` message is still dropped without an error.
 
 === camel-ehcache - shared CacheManager and changed defaults
 
@@ -312,6 +322,14 @@ loaded, external general and parameter entities are not included, entity referen
 nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
+
+=== camel-grpc - a producer with streamRepliesTo fails the exchange of a failed call
+
+A gRPC producer with `streamRepliesTo` and the SIMPLE producer strategy (the default) completed the exchange of a
+call that failed (server not reachable, deadline exceeded, an error status) as a success, unless `forwardOnError=true`
+routed the error to the replies endpoint. The exchange now fails with the error (an `io.grpc.StatusRuntimeException`),
+so the error handler of the route handles it. With `forwardOnError=true` the error is routed to the replies endpoint as
+before, and the exchange completes.
 
 === camel-jaxb - the part class and namespace headers are used only when allowed
 

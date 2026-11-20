@@ -36,45 +36,50 @@ public class FtpsOperations extends FtpOperations {
     @Override
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
             throws GenericFileOperationFailedException {
-        boolean answer = super.connect(configuration, exchange);
+        lock.lock();
+        try {
+            boolean answer = super.connect(configuration, exchange);
 
-        FtpsConfiguration config = (FtpsConfiguration) configuration;
-        if (answer) {
-            try {
-                String execProt = config.getExecProt();
-                Long execPbsz = config.getExecPbsz();
-                // use default values for prop and pbsz, unless told to not do
-                // so
-                if (!config.isDisableSecureDataChannelDefaults()) {
-                    if (ObjectHelper.isEmpty(execProt)) {
-                        execProt = "P";
+            FtpsConfiguration config = (FtpsConfiguration) configuration;
+            if (answer) {
+                try {
+                    String execProt = config.getExecProt();
+                    Long execPbsz = config.getExecPbsz();
+                    // use default values for prop and pbsz, unless told to not do
+                    // so
+                    if (!config.isDisableSecureDataChannelDefaults()) {
+                        if (ObjectHelper.isEmpty(execProt)) {
+                            execProt = "P";
+                        }
+                        if (ObjectHelper.isEmpty(execPbsz)) {
+                            execPbsz = 0L;
+                        }
                     }
-                    if (ObjectHelper.isEmpty(execPbsz)) {
-                        execPbsz = 0L;
-                    }
-                }
 
-                if (execPbsz != null) {
-                    log.debug("FTPClient initializing with execPbsz={}", execPbsz);
-                    getFtpClient().execPBSZ(execPbsz);
-                }
-                if (execProt != null) {
-                    log.debug("FTPClient initializing with execProt={}", execProt);
-                    getFtpClient().execPROT(execProt);
-                }
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(
-                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-            } finally {
-                if (exchange != null) {
-                    // store client reply information after the operation
-                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
-                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                    if (execPbsz != null) {
+                        log.debug("FTPClient initializing with execPbsz={}", execPbsz);
+                        getFtpClient().execPBSZ(execPbsz);
+                    }
+                    if (execProt != null) {
+                        log.debug("FTPClient initializing with execProt={}", execProt);
+                        getFtpClient().execPROT(execProt);
+                    }
+                } catch (IOException e) {
+                    throw new GenericFileOperationFailedException(
+                            client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                } finally {
+                    if (exchange != null) {
+                        // store client reply information after the operation
+                        exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                        exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                    }
                 }
             }
-        }
 
-        return answer;
+            return answer;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
