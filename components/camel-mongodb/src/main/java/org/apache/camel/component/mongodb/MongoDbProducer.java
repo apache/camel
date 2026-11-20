@@ -486,11 +486,10 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson updateCriteria = exchange.getIn().getHeader(CRITERIA, Bson.class);
                 Bson objNew;
                 if (null == updateCriteria) {
-                    @SuppressWarnings("unchecked")
-                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    List<Bson> saveObj = getUpdateCriteriaAndUpdate(exchange);
                     if (saveObj.size() != 2) {
                         throw new CamelMongoDbException(
-                                "MongoDB operation = insert, failed because body is not a List of Document objects with size = 2");
+                                "MongoDB operation = update, failed because body is not a List of Document objects with size = 2");
                     }
 
                     updateCriteria = saveObj.get(0);
@@ -521,6 +520,24 @@ public class MongoDbProducer extends DefaultProducer {
                 throw new CamelMongoDbException("Invalid payload for update", e);
             }
         };
+    }
+
+    /**
+     * The body of an update without the criteria header: a List of the criteria and the update. A byte[] body, such as
+     * JSON text from a Kafka consumer or a file, is read as text first, so that a JSON array converts as it does from a
+     * String.
+     */
+    @SuppressWarnings("unchecked")
+    private static List<Bson> getUpdateCriteriaAndUpdate(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getIn().getBody();
+        if (body instanceof byte[]) {
+            body = exchange.getIn().getBody(String.class);
+        }
+        List<Bson> answer = exchange.getContext().getTypeConverter().tryConvertTo(List.class, exchange, body);
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, List.class);
+        }
+        return answer;
     }
 
     private Function<Exchange, Object> createDoRemove() {
