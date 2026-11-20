@@ -25,8 +25,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HttpHelperTest {
 
@@ -70,5 +72,21 @@ class HttpHelperTest {
         // a + is a literal in a path, and a malformed escape is kept
         assertEquals("a+b c", HttpHelper.decodePathParameter("a+b%20c"));
         assertEquals("100%", HttpHelper.decodePathParameter("100%"));
+    }
+
+    @Test
+    void testIsValidHeaderName() {
+        assertTrue(HttpHelper.isValidHeaderName("Content-Type"));
+        assertTrue(HttpHelper.isValidHeaderName("X-Custom_Header.1"));
+        assertTrue(HttpHelper.isValidHeaderName("!#$%&'*+-.^_`|~"));
+
+        assertFalse(HttpHelper.isValidHeaderName(null));
+        assertFalse(HttpHelper.isValidHeaderName(""));
+        // the text of a form field without =, as sent by curl -d "some text"
+        assertFalse(HttpHelper.isValidHeaderName("Hi, I'm alice@example.com. My order is late"));
+        assertFalse(HttpHelper.isValidHeaderName("a b"));
+        assertFalse(HttpHelper.isValidHeaderName("a:b"));
+        assertFalse(HttpHelper.isValidHeaderName("a\r\nb"));
+        assertFalse(HttpHelper.isValidHeaderName("café"));
     }
 }

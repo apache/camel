@@ -50,6 +50,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -263,16 +264,20 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(body)) {
                 for (String param : body.split("&")) {
-                    String[] pair = param.split("=", 2);
-                    if (pair.length == 2) {
-                        String name = shouldUrlDecodeHeader(configuration, "", pair[0], StandardCharsets.UTF_8);
-                        String value = shouldUrlDecodeHeader(configuration, name, pair[1], StandardCharsets.UTF_8);
-                        if (headerFilterStrategy != null
-                                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                            NettyHttpHelper.appendHeader(headers, name, value);
-                        }
-                    } else {
-                        throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+                    if (param.isEmpty()) {
+                        // an empty field, as in a=1&&b=2, has no name
+                        continue;
+                    }
+                    // a field without = is a name with an empty value, as in the URL-encoded form parser
+                    // of the WHATWG URL standard, which is what browsers and Vert.x do
+                    int pos = param.indexOf('=');
+                    String name = shouldUrlDecodeHeader(configuration, "", pos < 0 ? param : param.substring(0, pos),
+                            StandardCharsets.UTF_8);
+                    String value = pos < 0
+                            ? "" : shouldUrlDecodeHeader(configuration, name, param.substring(pos + 1), StandardCharsets.UTF_8);
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                        NettyHttpHelper.appendHeader(headers, name, value);
                     }
                 }
             }
@@ -568,6 +573,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must use entrySet to ensure case of keys is preserved
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
+            if (!HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field mapped to a header,
+                // but it cannot be sent as an HTTP header, and the route has already run
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping header {} in the response, as its name is not a valid HTTP header name",
+                            key.replaceAll("[\n\r]", "_"));
+                }
+                continue;
+            }
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null, true);

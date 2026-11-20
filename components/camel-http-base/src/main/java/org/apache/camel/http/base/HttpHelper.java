@@ -320,4 +320,27 @@ public final class HttpHelper {
         return false;
     }
 
+    /**
+     * Whether the name can be sent as an HTTP header name: a non-empty token of RFC 9110, made of letters, digits and
+     * {@code !#$%&'*+-.^_`|~}. A message header can have any name, for example one taken from a form field, but an HTTP
+     * server or client refuses, or must not send, a header whose name is not a token.
+     *
+     * @param  name the header name
+     * @return      true if the name is a valid HTTP header name
+     */
+    public static boolean isValidHeaderName(String name) {
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            boolean token = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')
+                    || "!#$%&'*+-.^_`|~".indexOf(ch) >= 0;
+            if (!token) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
