@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -46,6 +47,9 @@ public class KameletProcessor extends BaseProcessorSupport
     private final AsyncProcessor processor;
     private final String parentRouteId;
     private final String parentProcessorId;
+    // an endpoint of this Kamelet EIP only (a prototype endpoint, not the one the uri shares): its own Kamelet route
+    // and its own callback key, so the kamelet:sink of that route continues with the steps of this EIP only
+    private Endpoint endpoint;
     private KameletProducer producer;
     private KameletComponent component;
     private CamelContext camelContext;
@@ -134,7 +138,11 @@ public class KameletProcessor extends BaseProcessorSupport
         // use the scoped API for ScopedValue compatibility on JDK 25+
         Runnable initProducer = () -> {
             try {
-                this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+                // Two Kamelet EIPs with the same name and options, or a to("kamelet:...") with them, would otherwise
+                // share one endpoint, so one Kamelet route and one callback key, and the last EIP registered would
+                // get the messages of the others
+                this.endpoint = camelContext.getCamelContextExtension().getPrototypeEndpoint("kamelet://" + name);
+                this.producer = (KameletProducer) endpoint.createAsyncProducer();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -175,5 +183,7 @@ public class KameletProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processor, producer);
         component.removeKameletEip(producer.getKey());
+        // the endpoint removes the Kamelet route it created for this EIP
+        ServiceHelper.stopAndShutdownService(endpoint);
     }
 }
