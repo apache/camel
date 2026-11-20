@@ -118,6 +118,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     public void setOnCompletions(List<OnCompletionDefinition> onCompletions) {
         this.onCompletions = onCompletions;
+        if (onCompletions != null) {
+            for (OnCompletionDefinition oc : onCompletions) {
+                oc.setRouteConfiguration(this);
+            }
+        }
     }
 
     public List<InterceptDefinition> getIntercepts() {
@@ -126,6 +131,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     public void setIntercepts(List<InterceptDefinition> intercepts) {
         this.intercepts = intercepts;
+        if (intercepts != null) {
+            for (InterceptDefinition i : intercepts) {
+                i.setRouteConfiguration(this);
+            }
+        }
     }
 
     public List<InterceptFromDefinition> getInterceptFroms() {
@@ -134,6 +144,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     public void setInterceptFroms(List<InterceptFromDefinition> interceptFroms) {
         this.interceptFroms = interceptFroms;
+        if (interceptFroms != null) {
+            for (InterceptFromDefinition i : interceptFroms) {
+                i.setRouteConfiguration(this);
+            }
+        }
     }
 
     public List<InterceptSendToEndpointDefinition> getInterceptSendTos() {
@@ -142,6 +157,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     public void setInterceptSendTos(List<InterceptSendToEndpointDefinition> interceptSendTos) {
         this.interceptSendTos = interceptSendTos;
+        if (interceptSendTos != null) {
+            for (InterceptSendToEndpointDefinition i : interceptSendTos) {
+                i.setRouteConfiguration(this);
+            }
+        }
     }
 
     @Override
