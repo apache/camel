@@ -148,9 +148,13 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         final String redelivered = Boolean.toString(exchange.isExternalRedelivered());
         final String ids = ExchangeHelper.logIds(exchange);
 
+        // a new transaction (PROPAGATION_REQUIRES_NEW) inside a transaction of the same template: the outer transaction
+        // already marked the unit of work, and keeps the mark when this one ends
+        final boolean nested
+                = exchange.getUnitOfWork() != null && exchange.getUnitOfWork().isTransactedBy(transactionKey);
         try {
             // mark the beginning of this transaction boundary
-            if (exchange.getUnitOfWork() != null) {
+            if (exchange.getUnitOfWork() != null && !nested) {
                 exchange.getUnitOfWork().beginTransactedBy(transactionKey);
             }
             inflightTransactedExchanges.add(exchange);
@@ -169,7 +173,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         } finally {
             inflightTransactedExchanges.remove(exchange);
             // mark the end of this transaction boundary
-            if (exchange.getUnitOfWork() != null) {
+            if (exchange.getUnitOfWork() != null && !nested) {
                 exchange.getUnitOfWork().endTransactedBy(transactionKey);
             }
         }
