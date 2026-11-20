@@ -488,11 +488,11 @@ public interface AzureStorageBlobComponentBuilderFactory {
         /**
          * Maximum number of blobs to retrieve during one consumer polling
          * cycle. A value of 0 or less means unlimited.
-         *
+         * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         *
+         * 
          * Group: consumer
-         *
+         * 
          * @param maxMessagesPerPoll the value to set
          * @return the dsl builder
          */

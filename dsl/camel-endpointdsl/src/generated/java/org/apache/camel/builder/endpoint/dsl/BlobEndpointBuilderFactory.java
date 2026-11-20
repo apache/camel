@@ -685,12 +685,12 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Maximum number of blobs to retrieve during one consumer polling
          * cycle. A value of 0 or less means unlimited.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 0
          * Group: consumer
-         *
+         * 
          * @param maxMessagesPerPoll the value to set
          * @return the dsl builder
          */
@@ -701,12 +701,12 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Maximum number of blobs to retrieve during one consumer polling
          * cycle. A value of 0 or less means unlimited.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 0
          * Group: consumer
-         *
+         * 
          * @param maxMessagesPerPoll the value to set
          * @return the dsl builder
          */
