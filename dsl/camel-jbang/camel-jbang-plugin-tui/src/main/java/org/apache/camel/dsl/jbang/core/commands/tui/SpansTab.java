@@ -79,6 +79,9 @@ class SpansTab extends AbstractTab {
     private int sortIndex;
     private boolean sortReversed;
     private final FilterField filter = new FilterField(this::filterChanged);
+    private final TranscriptOverlay transcript = new TranscriptOverlay();
+    /** The nodes the waterfall rendered last, for the footer (which renders every frame too). */
+    private List<WaterfallNode> renderedNodes = List.of();
 
     private volatile boolean spanRefreshRequested;
 
@@ -104,12 +107,16 @@ class SpansTab extends AbstractTab {
     @Override
     public void onIntegrationChanged() {
         spanRefreshRequested = true;
+        transcript.close();
         waterfallView = false;
         selectedTraceId = null;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (transcript.isVisible()) {
+            return transcript.handleKey(ke);
+        }
         if (waterfallView) {
             return handleWaterfallKeys(ke);
         }
@@ -194,6 +201,10 @@ class SpansTab extends AbstractTab {
             waterfallScroll = 0;
             return true;
         }
+        if (ke.isChar('t')) {
+            openTranscript();
+            return true;
+        }
         if (ke.isKey(KeyCode.F5)) {
             spanRefreshRequested = true;
             return true;
@@ -209,6 +220,12 @@ class SpansTab extends AbstractTab {
                 syncSelectedListTraceId();
                 return true;
             }
+        }
+        if (waterfallView && transcript.isVisible()) {
+            if (me.kind() == MouseEventKind.SCROLL_UP || me.kind() == MouseEventKind.SCROLL_DOWN) {
+                transcript.scrollBy(me.kind() == MouseEventKind.SCROLL_UP ? -MOUSE_SCROLL_LINES : MOUSE_SCROLL_LINES);
+            }
+            return true;
         }
         if (waterfallView) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -228,6 +245,10 @@ class SpansTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
+        if (transcript.isVisible()) {
+            transcript.close();
+            return true;
+        }
         if (filter.isEditing()) {
             return filter.handleEscape();
         }
@@ -303,6 +324,9 @@ class SpansTab extends AbstractTab {
 
         if (waterfallView && selectedTraceId != null) {
             renderWaterfallView(frame, area);
+            if (transcript.isVisible()) {
+                transcript.render(frame, area);
+            }
         } else {
             renderTraceList(frame, area);
         }
@@ -409,8 +433,10 @@ class SpansTab extends AbstractTab {
 
     private void renderWaterfallView(Frame frame, Rect area) {
         List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+        renderedNodes = nodes;
         if (nodes.isEmpty()) {
             waterfallView = false;
+            transcript.close();
             return;
         }
 
@@ -603,6 +629,9 @@ class SpansTab extends AbstractTab {
             }
             lines.add(Line.from(ctx));
         }
+        if (GenAiTranscript.isGenAiSpan(span)) {
+            lines.add(conversationLine(span));
+        }
 
         // Attributes as individual key: value lines
         if (span.attributes() != null && !span.attributes().isEmpty()) {
@@ -626,11 +655,50 @@ class SpansTab extends AbstractTab {
                 area);
     }
 
+    /** Whether the selected span of the waterfall has a conversation to show with t. */
+    private Line conversationLine(SpanEntry span) {
+        if (GenAiTranscript.hasContent(span)) {
+            return Line.from(
+                    Span.styled(" Conversation: ", Theme.muted()),
+                    Span.styled("t", Theme.label().bold()),
+                    Span.styled(" shows the messages", Theme.muted()));
+        }
+        return Line.from(
+                Span.styled(" Conversation: ", Theme.muted()),
+                Span.styled("recorded at camel.aiObservability.level=full", Theme.muted()));
+    }
+
+    /** Opens the conversation of the selected GenAI span, from the spans of its trace. */
+    private void openTranscript() {
+        List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+        if (waterfallSelected < 0 || waterfallSelected >= nodes.size()) {
+            return;
+        }
+        SpanEntry span = nodes.get(waterfallSelected).span;
+        if (!GenAiTranscript.isGenAiSpan(span)) {
+            return;
+        }
+        List<SpanEntry> trace = spans.get().stream().filter(s -> selectedTraceId.equals(s.traceId())).toList();
+        transcript.open("Conversation · " + spanLabel(span), GenAiTranscript.of(span, trace));
+    }
+
+    /** The overlay with the conversation of a GenAI span (tests). */
+    TranscriptOverlay transcriptForTesting() {
+        return transcript;
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
+        if (waterfallView && transcript.isVisible()) {
+            transcript.renderFooter(spans);
+            return;
+        }
         if (waterfallView) {
             hint(spans, "Esc", "back");
             hint(spans, "F5", "refresh");
+            if (selectedSpanIsGenAi()) {
+                hint(spans, "t", "conversation");
+            }
             hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
             hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
             hintLast(spans, "PgUp/Dn", "page");
@@ -643,6 +711,12 @@ class SpansTab extends AbstractTab {
         hint(spans, "F5", "refresh");
         hint(spans, "Enter", "waterfall");
         filter.renderHint(spans);
+    }
+
+    private boolean selectedSpanIsGenAi() {
+        List<WaterfallNode> nodes = renderedNodes;
+        return waterfallSelected >= 0 && waterfallSelected < nodes.size()
+                && GenAiTranscript.isGenAiSpan(nodes.get(waterfallSelected).span);
     }
 
     private List<TraceSummary> buildTraceSummaries() {

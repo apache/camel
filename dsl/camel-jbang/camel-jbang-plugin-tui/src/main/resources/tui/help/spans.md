@@ -47,6 +47,24 @@ flow. Error spans are always shown regardless of the toggle.
 
 Press **Esc** to return to the trace list.
 
+### AI Conversations
+
+On a GenAI span (a model call such as `chat`, an agent run `invoke_agent`,
+or a tool call `execute_tool`) press **t** to read its conversation: the
+system instructions, the user and assistant messages, and each tool call
+with its arguments and result, shown as formatted text you can scroll.
+An agent run shows the input and output of its last model call, which
+already hold the whole run. Texts cut at `contentMaxLength` are marked
+*(truncated)*.
+
+The messages are only recorded at GenAI observability level `full`:
+
+```
+camel.aiObservability.level = full
+```
+
+At a lower level the detail panel says so. Press **Esc** to close.
+
 Example waterfall for an order-processing integration:
 
 ```
@@ -79,6 +97,7 @@ Example waterfall for an order-processing integration:
 | S | Reverse sort direction |
 | p | Toggle processor spans in waterfall |
 | c | Toggle camel-only (hide 3rd-party agent spans) |
+| t | Show the conversation of a GenAI span (level `full`) |
 | F5 | Refresh span data |
 
 ## Filtering
