@@ -221,6 +221,33 @@ class JsonDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepAJsonSuffixContentType() throws Exception {
+        // CAMEL-27271: a more specific Json media type is kept, and a Json value given as text with it too
+        for (String contentType : List.of("application/fhir+json", "application/geo+json; charset=UTF-8")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+            exchange.getMessage().setBody(Map.of("resourceType", "Patient"));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            JSONAssert.assertEquals("{\"resourceType\":\"Patient\"}", exchange.getMessage().getBody(String.class), true);
+            Assertions.assertEquals(contentType, exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+
+            exchange.getMessage().setBody("\"Hello\"");
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertEquals("\"Hello\"", exchange.getMessage().getBody(String.class));
+            Assertions.assertEquals(contentType, exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        }
+        // any other Content-Type becomes application/json
+        for (String contentType : List.of("text/plain", "application/xml", "application/json; charset=UTF-8")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+            exchange.getMessage().setBody(Map.of("a", 1));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertEquals("application/json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE), contentType);
+        }
+    }
+
+    @Test
     void shouldReadBytesWithTheExchangeCharset() throws Exception {
         // CAMEL-26300: bytes are read as text with the charset of the exchange, and the Json is written in UTF-8
         String json = "{\"name\":\"Jos\u00e9\"}";
