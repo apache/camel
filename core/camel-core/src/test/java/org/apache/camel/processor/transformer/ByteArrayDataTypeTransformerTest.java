@@ -17,12 +17,17 @@
 package org.apache.camel.processor.transformer;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultTransformerRegistry;
@@ -34,6 +39,7 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -99,6 +105,33 @@ public class ByteArrayDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepFile(@TempDir Path dir) throws Exception {
+        // a file is binary already and can be read again: it is kept, so a large file is not read into memory
+        File file = Files.writeString(dir.resolve("test5.txt"), "Test5").toFile();
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(file);
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertSame(file, exchange.getMessage().getBody());
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("Test5", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
+    void shouldKeepWrappedFile(@TempDir Path dir) throws Exception {
+        // a file of the file consumer is kept the same way
+        File file = Files.writeString(dir.resolve("test6.txt"), "Test6").toFile();
+        GenericFile<File> wrapped = FileConsumer.asGenericFile(dir.toString(), file, null, false);
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(wrapped);
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertSame(wrapped, exchange.getMessage().getBody());
+        assertEquals("application/octet-stream", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("Test6", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
     void shouldReadOtherInputStreamToBytes() throws Exception {
         // a stream that is not a stream cache may be read only once: it becomes a byte array every later step can read
         Exchange exchange = new DefaultExchange(camelContext);
@@ -130,7 +163,8 @@ public class ByteArrayDataTypeTransformerTest {
         BodyTypes bodyTypes = ByteArrayDataTypeTransformer.class.getAnnotation(BodyTypes.class);
         assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL),
                 List.of(bodyTypes.transformerIn().value()));
-        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM, Carrier.NULL), List.of(bodyTypes.transformerOut().value()));
+        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL),
+                List.of(bodyTypes.transformerOut().value()));
         for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.getMessage().setBody(body);
