@@ -152,8 +152,11 @@ SNTRU Prime algorithms now derive the secret key with the key derivation functio
 earlier Bouncy Castle releases used the raw shared secret. An encapsulation made with an earlier Camel release gives a
 different secret key when it is extracted with this release, so both sides of an exchange must be upgraded together.
 
-Bouncy Castle deprecated Classic McEliece (`CMCE`), as it is now believed to be unsafe to use, and will remove it in a
-future release. Use `MLKEM` instead.
+==== camel-pqc - CMCE is deprecated
+
+Bouncy Castle deprecated Classic McEliece, as it is now believed to be unsafe to use, and will remove it in a future
+release. The `CMCE` key encapsulation algorithm of the `pqc` component and the `pqc` data format is deprecated too, and
+an endpoint or a data format that uses it logs a WARN at startup. Use `MLKEM` instead.
 
 === camel-observability-services - promoted to Stable
 
