@@ -18,8 +18,6 @@ package org.apache.camel.component.tahu;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -44,8 +42,6 @@ public class TahuHostConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TahuHostConsumer.class);
 
-    private static final ConcurrentMap<String, TahuHostApplication> hostHandlers = new ConcurrentHashMap<>();
-
     @SuppressWarnings("unused")
     private final TahuDefaultEndpoint endpoint;
 
@@ -62,19 +58,19 @@ public class TahuHostConsumer extends DefaultConsumer {
 
         TahuConfiguration configuration = endpoint.getConfiguration();
 
-        tahuHostApplication = hostHandlers.computeIfAbsent(hostId, hId -> {
-            List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
-
-            TahuHostApplication thah = new TahuHostApplication.HostApplicationBuilder()
-                    .hostId(hId)
-                    .serverDefinitions(serverDefinitions)
-                    .onMessageConsumer(this::onMessageConsumer)
-                    .onMetricConsumer(this::onMetricConsumer)
-                    .build();
-
-            return thah;
-        });
-
+        // the host application of this consumer: it gives the messages to this consumer, and connects with the servers
+        // and credentials of this endpoint. It is not shared with the consumer created again for the same host id when
+        // the route is restarted, reloaded or removed and added again, as it would keep giving the messages to the
+        // consumer that created it, which is stopped by then. Two consumers in one JVM are still not supported, even
+        // when one of them is not started: Tahu gives the Sparkplug messages of all host applications to the event
+        // handler of the host application built last (its SequenceReorderManager is a singleton)
+        List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
+        tahuHostApplication = new TahuHostApplication.HostApplicationBuilder()
+                .hostId(hostId)
+                .serverDefinitions(serverDefinitions)
+                .onMessageConsumer(this::onMessageConsumer)
+                .onMetricConsumer(this::onMetricConsumer)
+                .build();
     }
 
     @Override
