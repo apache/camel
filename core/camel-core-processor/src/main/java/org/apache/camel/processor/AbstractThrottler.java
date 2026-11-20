@@ -56,6 +56,9 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
     protected boolean asyncDelayed;
     protected boolean callerRunsWhenRejected = true;
     protected volatile Expression maxRequestsExpression;
+    // without a correlation expression: the last limit the expression gave. The state of the key is removed when it is
+    // idle, and a new state starts from this limit when the expression gives none (such as a header that is absent)
+    private volatile int lastThrottleRate;
     // the asynchronous tasks (asyncDelayed) that are queued in the thread pool and not yet started: a task and
     // doShutdown each claim a task by removing it, so an exchange is processed, or failed when the thread pool is shut
     // down, but never both
@@ -70,6 +73,31 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
         this.rejectExecution = rejectExecution;
         this.correlationExpression = correlation;
         this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxRequestsExpression");
+    }
+
+    /**
+     * The limit to use when the expression gives none for a throttling state that has no limit yet: the last limit,
+     * when there is no correlation expression (the state was removed when it was idle), otherwise none.
+     */
+    Integer previousThrottleRate() {
+        int rate = lastThrottleRate;
+        return correlationExpression == null && rate > 0 ? rate : null;
+    }
+
+    /**
+     * Keeps the limit of the throttling state, without a correlation expression, for {@link #previousThrottleRate()}.
+     */
+    void keepThrottleRate(int rate) {
+        if (correlationExpression == null) {
+            lastThrottleRate = rate;
+        }
+    }
+
+    /**
+     * Forgets the limit kept by {@link #keepThrottleRate(int)}, when the throttling states are cleared.
+     */
+    void clearThrottleRate() {
+        lastThrottleRate = 0;
     }
 
     /**
