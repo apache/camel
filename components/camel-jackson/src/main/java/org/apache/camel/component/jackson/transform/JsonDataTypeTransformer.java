@@ -79,7 +79,7 @@ public class JsonDataTypeTransformer extends Transformer {
                 // boolean, null or quoted string when the Content-Type says the text is Json; any other text becomes a
                 // Json string
                 String text = message.getMandatoryBody(String.class);
-                marshalled = Json.isJson(text) || isJsonContent(message) && isJsonValue(text)
+                marshalled = (Json.isJson(text) || isJsonContent(message) && isJsonValue(text))
                         ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
             } else {
                 String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), JsonNode.class.getName());
