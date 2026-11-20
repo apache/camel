@@ -16,10 +16,13 @@
  */
 package org.apache.camel.processor.idempotent.jpa;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -89,6 +92,25 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
+        final boolean[] duplicate = new boolean[1];
+        try {
+            doAdd(entityManager, messageId, rc, duplicate);
+        } catch (RuntimeException e) {
+            // the insert failed on the unique key of another caller's insert: the transaction could not commit (the
+            // failed flush marked it for rollback), or the constraint violation came at commit
+            if (duplicate[0] || isConstraintViolation(e)) {
+                LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
+                rc[0] = Boolean.FALSE;
+            } else {
+                throw e;
+            }
+        }
+
+        LOG.debug("add {} -> {}", messageId, rc[0]);
+        return rc[0];
+    }
+
+    private void doAdd(EntityManager entityManager, String messageId, Boolean[] rc, boolean[] duplicate) {
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
                 entityManager.joinTransaction();
@@ -112,6 +134,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                     // concurrent insert of the same messageId detected via unique constraint
                     // treat as duplicate rather than failing the exchange
                     LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
+                    duplicate[0] = true;
                     rc[0] = Boolean.FALSE;
                 } else {
                     String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
@@ -127,9 +150,6 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 }
             }
         });
-
-        LOG.debug("add {} -> {}", messageId, rc[0]);
-        return rc[0];
     }
 
     @Override
@@ -307,10 +327,15 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     private static boolean isConstraintViolation(Exception ex) {
         Throwable cause = ex;
         while (cause != null) {
-            if (cause instanceof java.sql.SQLIntegrityConstraintViolationException) {
+            if (cause instanceof SQLIntegrityConstraintViolationException) {
                 return true;
             }
-            if (cause instanceof jakarta.persistence.EntityExistsException) {
+            if (cause instanceof EntityExistsException) {
+                return true;
+            }
+            // drivers such as the PostgreSQL and SQL Server ones report it only with the SQL state class 23
+            if (cause instanceof SQLException sqlException && sqlException.getSQLState() != null
+                    && sqlException.getSQLState().startsWith("23")) {
                 return true;
             }
             cause = cause.getCause();
