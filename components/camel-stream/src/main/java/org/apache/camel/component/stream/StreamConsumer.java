@@ -68,8 +68,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private volatile boolean initialPromptDone;
     private volatile boolean streamOpenedOnStart;
     private final List<String> lines = new CopyOnWriteArrayList<>();
-    // the failures in a row to open or read a scanned stream, only used by the thread that reads
+    // the failures in a row to open or read a scanned stream (reset once data is read again), and whether the scan
+    // must wait before it opens the stream again, only used by the thread that reads
     private int scanFailures;
+    private boolean scanFailedBeforeSleep;
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -105,6 +107,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             streamOpenedOnStart = true;
         }
 
+        scanFailures = 0;
+        scanFailedBeforeSleep = false;
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
                 endpoint.getEndpointUri());
         executor.execute(this);
@@ -208,15 +212,21 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     try {
                         data = is.readAllBytes();
                     } catch (IOException e) {
-                        // ignore
+                        // such as an HTTP connection that is lost: the stream ends here, and is opened again (retry)
+                        scanFailed("Cannot read from the stream", e);
+                        is = null;
                     }
                 }
                 boolean eos = data == null || data.length == 0;
+                if (!eos) {
+                    scanRecovered();
+                }
 
                 if (!eos && isRunAllowed()) {
                     // a scanned stream is never complete
                     index = processRaw(data, index, false);
-                } else if (eos && isRunAllowed() && endpoint.isRetry()) {
+                } else if (eos && isRunAllowed() && endpoint.isRetry() && !scanFailedBeforeSleep) {
+                    // not right after a failure: then the stream is opened again after the sleep below
                     boolean reOpen = true;
                     if (endpoint.isFileWatcher()) {
                         reOpen = watchFileChanged;
@@ -273,6 +283,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     try {
                         line = br.readLine();
                         LOG.trace("Read line: {}", line);
+                        if (line != null) {
+                            scanRecovered();
+                        }
                     } catch (IOException e) {
                         // such as an HTTP connection that is lost: the stream ends here, and is opened again (retry)
                         scanFailed("Cannot read from the stream", e);
@@ -285,7 +298,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     index = processLine(line, false, index);
-                } else if (eos && isRunAllowed() && endpoint.isRetry()) {
+                } else if (eos && isRunAllowed() && endpoint.isRetry() && !scanFailedBeforeSleep) {
+                    // not right after a failure: then the stream is opened again after the sleep below
                     boolean reOpen = true;
                     if (endpoint.isFileWatcher()) {
                         reOpen = watchFileChanged;
@@ -345,12 +359,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
      */
     private <T> T openScannedStream(ScannedStreamOpener<T> opener) throws InterruptedException {
         try {
-            T answer = opener.open();
-            if (answer != null && scanFailures > 0) {
-                LOG.info("Opened the stream of {} again after {} failed attempts", endpoint, scanFailures);
-                scanFailures = 0;
-            }
-            return answer;
+            return opener.open();
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
@@ -365,6 +374,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             return;
         }
         scanFailures++;
+        scanFailedBeforeSleep = true;
         // the stream is opened again only with the retry option, as at the end of the stream
         String next = endpoint.isRetry() ? ", it is opened again" : ", set the retry option to open it again";
         if (scanFailures == 1) {
@@ -375,15 +385,29 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     }
 
     /**
+     * Data was read from the scanned stream: a failure after this is the first one in a row again. The counter is not
+     * reset when the stream is opened, as a server that answers and then drops the connection before any data every
+     * time would otherwise report every failure to the exception handler.
+     */
+    private void scanRecovered() {
+        if (scanFailures > 0) {
+            LOG.info("Reading from the stream of {} again after {} failed attempts", endpoint, scanFailures);
+            scanFailures = 0;
+        }
+    }
+
+    /**
      * Waits before the next scan of the stream: the scan stream delay, and at least one second after the stream could
-     * not be opened or read, so that a server that is down is not asked in a loop.
+     * not be opened or read, so that a server that is down is not asked in a loop. Without retry a stream that failed
+     * is not opened again, and the scan keeps waiting at least one second until it is stopped.
      *
      * @return false if interrupted (the consumer is stopping)
      */
     private boolean sleepBeforeNextScan() {
         long delay = endpoint.getScanStreamDelay();
-        if (scanFailures > 0) {
+        if (scanFailedBeforeSleep || scanFailures > 0 && !endpoint.isRetry()) {
             delay = Math.max(delay, SCAN_FAILURE_DELAY);
+            scanFailedBeforeSleep = false;
         }
         try {
             Thread.sleep(delay);

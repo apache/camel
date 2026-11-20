@@ -24,17 +24,23 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A stream:http consumer with scanStream and retry keeps reading when the HTTP server cannot be reached or the
@@ -42,12 +48,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class StreamHttpScanRetryTest extends CamelTestSupport {
 
+    // the least time between two requests when the one before failed, a bit less than the 1 s the consumer waits
+    private static final long FAILURE_DELAY_MILLIS = 900;
+
     private final AtomicInteger requests = new AtomicInteger();
+    private final List<Long> requestTimes = new CopyOnWriteArrayList<>();
+    private final AtomicInteger handledFailures = new AtomicInteger();
     private final ExecutorService serverThread = Executors.newSingleThreadExecutor();
     private ServerSocket server;
 
     @AfterEach
     void stopServer() throws Exception {
+        // stop the consumer first, so that it does not find the server gone while it is still running
+        context.stop();
         if (server != null) {
             server.close();
         }
@@ -80,6 +93,8 @@ class StreamHttpScanRetryTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         assertFirstBodies(mock, "a");
+        // the stream that could not be opened at the start is not asked again right away
+        assertWaitedAfterFailures(2);
     }
 
     @Test
@@ -92,6 +107,48 @@ class StreamHttpScanRetryTest extends CamelTestSupport {
         startRoute("");
 
         answeredAgain.assertIsSatisfied();
+    }
+
+    @Test
+    void testConnectionLostOnEveryRequest() throws Exception {
+        // every answer is a 200 whose connection is reset before any of the body was sent: every open succeeds and
+        // every read fails, and the scan does not end up in a loop of requests, each one reported
+        serve(List.of("|cut"));
+
+        startRoute("");
+
+        awaitRequests(4);
+        // the first failure in a row goes to the exception handler, the next ones are logged at DEBUG
+        assertEquals(1, handledFailures.get());
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter());
+        assertWaitedAfterFailures(4);
+    }
+
+    @Test
+    void testConnectionLostOnEveryRequestRawMode() throws Exception {
+        // in raw mode the whole body is read at once: the line sent before the reset is lost with it
+        serve(List.of("a\n|cut"));
+
+        startRoute("&readLine=false");
+
+        awaitRequests(4);
+        assertEquals(1, handledFailures.get());
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter());
+        assertWaitedAfterFailures(4);
+    }
+
+    @Test
+    void testConnectionLostAfterDataOnEveryRequest() throws Exception {
+        // every answer sends a line before its connection is reset: each line is routed, and the scan still waits
+        // after each failure (as a line was read, the failure after it is reported again)
+        serve(List.of("a\n|cut"));
+        MockEndpoint mock = expectFirstBodies("a", "a", "a");
+
+        startRoute("");
+
+        assertWaitedAfterFailures(4);
+        mock.assertIsSatisfied();
+        assertFirstBodies(mock, "a", "a", "a");
     }
 
     @Test
@@ -117,6 +174,7 @@ class StreamHttpScanRetryTest extends CamelTestSupport {
             while (!server.isClosed()) {
                 try (Socket socket = server.accept()) {
                     readRequest(socket.getInputStream());
+                    requestTimes.add(System.nanoTime());
                     String answer = answers.get(Math.min(requests.getAndIncrement(), answers.size() - 1));
                     socket.getOutputStream().write(response(answer));
                     socket.getOutputStream().flush();
@@ -172,16 +230,55 @@ class StreamHttpScanRetryTest extends CamelTestSupport {
         }
     }
 
+    /**
+     * Waits for the given number of requests, each one after a request that failed, and checks that the consumer waited
+     * about a second before each of them instead of asking the server again right away.
+     */
+    private void assertWaitedAfterFailures(int count) {
+        awaitRequests(count);
+        for (int i = 1; i < count; i++) {
+            long millis = TimeUnit.NANOSECONDS.toMillis(requestTimes.get(i) - requestTimes.get(i - 1));
+            assertTrue(millis >= FAILURE_DELAY_MILLIS, "request " + (i + 1) + " came " + millis + " ms after the one before");
+        }
+    }
+
+    private void awaitRequests(int count) {
+        await().atMost(20, TimeUnit.SECONDS).until(() -> requestTimes.size() >= count);
+    }
+
     private void startRoute(String options) throws Exception {
         String url = "http://127.0.0.1:" + server.getLocalPort() + "/data.txt";
+        context.getRegistry().bind("countingExceptionHandler", new CountingExceptionHandler());
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("stream:http?scanStream=true&retry=true&scanStreamDelay=50&httpUrl=" + url + options)
+                from("stream:http?scanStream=true&retry=true&scanStreamDelay=50&httpUrl=" + url + options
+                     + "&exceptionHandler=#countingExceptionHandler")
                         .to("mock:result")
                         .filter(body().isEqualTo("b")).to("mock:b");
             }
         });
         context.start();
+    }
+
+    /**
+     * Counts the failures the consumer reports to its exception handler.
+     */
+    private class CountingExceptionHandler implements ExceptionHandler {
+
+        @Override
+        public void handleException(Throwable exception) {
+            handledFailures.incrementAndGet();
+        }
+
+        @Override
+        public void handleException(String message, Throwable exception) {
+            handledFailures.incrementAndGet();
+        }
+
+        @Override
+        public void handleException(String message, Exchange exchange, Throwable exception) {
+            handledFailures.incrementAndGet();
+        }
     }
 }
