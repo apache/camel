@@ -30,6 +30,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson3.SchemaHelper;
 import org.apache.camel.component.jackson3.transform.Json;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -148,6 +149,32 @@ class ProtobufStructDataTypeTransformerTest {
                 .resolveTransformer(new TransformerKey("protobuf-x-struct"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufStructDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    void shouldHandleProtobufBinaryStreamCacheAfterSchemaResolver() throws Exception {
+        // CAMEL-27258: the binary data type keeps a stream cache body, such as the body of an HTTP request; the
+        // schema resolver must not take the stream cache for a POJO and set its class as the content class
+        Exchange exchange = new DefaultExchange(camelContext);
+        byte[] binary = Protobuf.mapper().writer(getSchema()).writeValueAsBytes(new Person("Sheldon", 28));
+        exchange.getMessage().setBody(new InputStreamCache(binary));
+
+        camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-octet-stream"))
+                .transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        Assertions.assertInstanceOf(InputStreamCache.class, exchange.getMessage().getBody());
+
+        ProtobufSchemaResolver schemaResolver = new ProtobufSchemaResolver();
+        schemaResolver.setSchema(new String(
+                ProtobufStructDataTypeTransformer.class.getResourceAsStream("Person.proto").readAllBytes(),
+                StandardCharsets.UTF_8));
+        schemaResolver.process(exchange);
+        Assertions.assertNull(exchange.getProperty(SchemaHelper.CONTENT_CLASS));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonNode body = exchange.getMessage().getBody(JsonNode.class);
+        Assertions.assertEquals("Sheldon", body.get("name").asString());
+        Assertions.assertEquals(28, body.get("age").asInt());
     }
 
     private ProtobufSchema getSchema() throws IOException {

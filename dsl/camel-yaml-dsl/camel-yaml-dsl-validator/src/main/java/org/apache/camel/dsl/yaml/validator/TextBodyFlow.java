@@ -1436,7 +1436,7 @@ final class TextBodyFlow {
             // what the transformer of the in data type of the Kamelet takes
             ProjectFacts.KameletDataTypes types = w.kamelets().get(kamelet);
             CatalogBodyTypes.Answer in = types != null && types.in() != null ? w.bodyTypes().transformerIn(types.in()) : null;
-            return in != null && in.onlyPayload()
+            return in != null && in.onlyPayloadOrValue()
                     ? new Need(
                             name + ": the Kamelet " + kamelet + " needs the body as " + in.inWords() + " (its in data type "
                                + types.in() + ")",
@@ -1445,7 +1445,7 @@ final class TextBodyFlow {
         }
         if ("transformDataType".equals(name)) {
             CatalogBodyTypes.Answer in = w.bodyTypes().transformerIn(value);
-            return in != null && in.onlyPayload()
+            return in != null && in.onlyPayloadOrValue()
                     ? new Need(
                             "transformDataType: " + toTypeOf(value) + " needs the body as " + in.inWords(),
                             "before this step")
