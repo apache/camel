@@ -470,8 +470,13 @@
         <pooled-jms-version>3.2.5</pooled-jms-version>
         <properties-maven-plugin-version>1.3.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.79.0</proto-google-common-protos-version>
-        <protobuf-version>4.35.1</protobuf-version>
+        <!-- the protobuf-java runtime: at least the gencode version of the protobuf classes in the libraries that Camel manages,
+             such as the Apicurio Registry protobuf serdes -->
+        <protobuf-version>4.36.2</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
+        <!-- the protoc that generates the protobuf classes of Camel (the gencode version): at most the lowest protobuf-java
+             runtime of Spring Boot and Quarkus, and at most protobuf-version -->
+        <protoc-version>4.35.1</protoc-version>
         <prowide-version>SRU2025-10.4.1</prowide-version>
         <pubnub-version>14.2.0</pubnub-version>
         <pulsar-version>4.2.4</pulsar-version>
