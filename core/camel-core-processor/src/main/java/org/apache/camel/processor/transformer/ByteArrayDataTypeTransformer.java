@@ -32,12 +32,12 @@ import org.apache.camel.spi.Transformer;
  * read from a bucket, is not read into memory. Any other stream is read into a byte array, as it may be read only once.
  */
 @DataTypeTransformer(name = "application-octet-stream")
-@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
-                                     description = "A body Camel can convert to a byte array: a number or a null body"
-                                                   + " fails"),
-           transformerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM },
-                                      description = "A stream cache body is kept as it is; any other body becomes a"
-                                                    + " byte array"))
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                     description = "A body Camel can convert to a byte array: a number fails, and a null"
+                                                   + " body stays null"),
+           transformerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL },
+                                      description = "A stream cache body is kept as it is and a null body stays null;"
+                                                    + " any other body becomes a byte array"))
 public class ByteArrayDataTypeTransformer extends Transformer {
 
     private static final Transformer DELEGATE = new TypeConverterTransformer(byte[].class);

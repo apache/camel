@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -127,9 +128,9 @@ public class ByteArrayDataTypeTransformerTest {
     void theBodyTypesSayTheBody() throws Exception {
         // CAMEL-25928: a payload, as transformerIn says, and the body transformerOut says
         BodyTypes bodyTypes = ByteArrayDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE),
+        assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL),
                 List.of(bodyTypes.transformerIn().value()));
-        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM), List.of(bodyTypes.transformerOut().value()));
+        assertEquals(List.of(Carrier.BYTES, Carrier.STREAM, Carrier.NULL), List.of(bodyTypes.transformerOut().value()));
         for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.getMessage().setBody(body);
@@ -141,6 +142,11 @@ public class ByteArrayDataTypeTransformerTest {
                 .setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8))));
         transformer.transform(stream.getMessage(), DataType.ANY, DataType.ANY);
         assertInstanceOf(ByteArrayInputStreamCache.class, stream.getMessage().getBody());
+        // a null body stays null, as transformerOut says, and gets the content type
+        Exchange empty = new DefaultExchange(camelContext);
+        transformer.transform(empty.getMessage(), DataType.ANY, DataType.ANY);
+        assertNull(empty.getMessage().getBody());
+        assertEquals("application/octet-stream", empty.getMessage().getHeader(Exchange.CONTENT_TYPE));
         // a number is not a payload
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setBody(5);
