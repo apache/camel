@@ -18,7 +18,9 @@ package org.apache.camel.component.atom;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import com.apptasticsoftware.rssreader.Item;
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ public class ItemUpdatedIdempotentStrategy implements AtomIdempotentStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ItemUpdatedIdempotentStrategy.class);
     private Date lastUpdate;
+    // the ids of the entries routed with the date lastUpdate: another entry with the same date is a new entry
+    private final Set<String> lastUpdateIds = new HashSet<>();
 
     @Override
     public boolean isValidItem(Item item) {
@@ -43,15 +47,35 @@ public class ItemUpdatedIdempotentStrategy implements AtomIdempotentStrategy {
             LOG.debug("No updated time for entry so assuming its valid: entry=[{}]", item);
             return true;
         }
+        String id = idOf(item);
         if (lastUpdate != null) {
             // we need to skip the latest updated entry
-            if (lastUpdate.after(updated) || lastUpdate.equals(updated)) {
+            if (lastUpdate.after(updated)) {
                 LOG.debug("Entry is older than lastupdate=[{}], no valid entry=[{}]", lastUpdate, item);
                 return false;
             }
+            if (lastUpdate.equals(updated)) {
+                // entries published or updated in the same second (or with a date without a time) are told apart by
+                // their id: only an entry already routed with that date is skipped
+                if (id == null || !lastUpdateIds.add(id)) {
+                    LOG.debug("Entry has the same date as lastupdate=[{}] and was routed already, no valid entry=[{}]",
+                            lastUpdate, item);
+                    return false;
+                }
+                return true;
+            }
         }
         lastUpdate = updated;
+        lastUpdateIds.clear();
+        if (id != null) {
+            lastUpdateIds.add(id);
+        }
         return true;
+    }
+
+    private static String idOf(Item item) {
+        // the atom:id of the entry, else its link
+        return item.getGuid().or(item::getLink).orElse(null);
     }
 
     private Date toDate(Optional<String> dateString) {

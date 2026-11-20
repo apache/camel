@@ -110,6 +110,9 @@ YAML::
 
 The default Idempotency strategy uses Atom published and updated timestamps to identify already
 read entries, by filtering all entries older that the _last read_ entry.
+So that no entry is skipped, the consumer routes the entries with this strategy from the oldest to the newest updated
+date (the published date for an entry without an updated date), as with `sortEntries=true`, and an entry with the same
+date as the _last read_ entry is told apart by its id (the `atom:id`, else its link).
 
 The idempotency strategy can be changed by setting the `idempotentStrategy` option. The components support two
 strategies _out-of-the-box_, but custom strategies can be used, by referencing a subclass

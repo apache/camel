@@ -114,4 +114,24 @@ public class ItemUpdatedIdempotentStrategyTest {
         // Second item is invalid because it has the same updated date
         assertFalse(strategy.isValidItem(item2));
     }
+
+    @Test
+    void testEntriesWithEqualDateAndDifferentIds() {
+        Item item1 = Mockito.mock(Item.class);
+        Item item2 = Mockito.mock(Item.class);
+        ItemUpdatedIdempotentStrategy strategy = new ItemUpdatedIdempotentStrategy();
+
+        when(item1.getUpdated()).thenReturn(Optional.of("2023-01-01T00:00:00Z"));
+        when(item1.getGuid()).thenReturn(Optional.of("urn:entry:1"));
+        when(item2.getUpdated()).thenReturn(Optional.of("2023-01-01T00:00:00Z"));
+        when(item2.getGuid()).thenReturn(Optional.of("urn:entry:2"));
+
+        // two entries with the same date are both new
+        assertTrue(strategy.isValidItem(item1));
+        assertTrue(strategy.isValidItem(item2));
+
+        // and both were routed already
+        assertFalse(strategy.isValidItem(item1));
+        assertFalse(strategy.isValidItem(item2));
+    }
 }
