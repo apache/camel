@@ -40,6 +40,9 @@ public class CommitToOffsetManager extends AbstractCommitManager {
         }
 
         saveStateToOffsetRepository(partition, offset, offsetRepository);
+        // saved: forget it, as the other commit managers do after a commit, so a later revoke of the partition (when it
+        // came back after another consumer went on from this offset) does not write it again
+        offsetCache.remove(partition);
     }
 
     @Override
