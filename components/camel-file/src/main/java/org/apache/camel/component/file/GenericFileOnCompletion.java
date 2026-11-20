@@ -112,6 +112,34 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     /**
+     * The file was polled, but cannot be handed to anyone, so it was never started: abort it, and make it available to
+     * be polled again, as {@link GenericFileConsumer} does for a file it cannot begin to process. Unlike a rollback, a
+     * file is not moved by the moveFailed option.
+     *
+     * @param exchange the exchange of the file
+     */
+    void abort(Exchange exchange) {
+        LOG.debug("Aborting file: {} that was not started, using exchange: {}", file, exchange);
+        try {
+            processStrategy.abort(operations, endpoint, exchange, file);
+        } catch (Exception e) {
+            handleException("Error during abort", exchange, e);
+        } finally {
+            endpoint.getInProgressRepository().remove(absoluteFileName);
+            if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.isIdempotentEager()
+                    && endpoint.getIdempotentRepository() != null) {
+                String key = absoluteFileName;
+                if (endpoint.getIdempotentKey() != null) {
+                    key = exchange.getProperty(Exchange.FILE_IDEMPOTENT_KEY, absoluteFileName, String.class);
+                }
+                if (key != null) {
+                    endpoint.getIdempotentRepository().remove(key);
+                }
+            }
+        }
+    }
+
+    /**
      * Strategy when the file was processed and a commit should be executed.
      *
      * @param processStrategy the strategy to perform the commit

@@ -39,15 +39,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * CAMEL-27264: with bridgeErrorHandler, a poll of pollEnrich whose read lock fails delivers a bridged error exchange.
  * The file must then not be polled again by the same receive call, as that exchange cannot be returned and its file
- * would stay in the in-progress repository, skipped by every later poll. An exchange the receive call cannot return is
- * rolled back, so its file is polled again.
+ * would stay in the in-progress repository, skipped by every later poll. A poll is not retried once it delivered an
+ * exchange to the receive call, as a retried poll could only find exchanges it cannot return.
  */
 public class FilePollEnrichBridgeErrorHandlerInProgressTest extends ContextTestSupport {
 
     private final MemoryIdempotentRepository inProgress = new MemoryIdempotentRepository();
     private final FailOnceReadLockStrategy readLock = new FailOnceReadLockStrategy();
-    private final MemoryIdempotentRepository retryInProgress = new MemoryIdempotentRepository();
-    private final FailOnceReadLockStrategy retryReadLock = new FailOnceReadLockStrategy();
+    private final MemoryIdempotentRepository skipRetryInProgress = new MemoryIdempotentRepository();
+    private final FailOnceReadLockStrategy skipRetryReadLock = new FailOnceReadLockStrategy();
 
     @Test
     public void testFileIsReleasedWhenReadLockFailsOnce() {
@@ -72,25 +72,15 @@ public class FilePollEnrichBridgeErrorHandlerInProgressTest extends ContextTestS
     }
 
     @Test
-    public void testFileNotReturnedIsRolledBack() {
-        template.sendBodyAndHeader(fileUri("retry"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+    public void testPollIsNotRetriedWhenErrorWasDelivered() {
+        template.sendBodyAndHeader(fileUri("skipretry"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // the first read lock attempt fails, and the poll strategy retries the poll, which finds the file while the
-        // receive call already returns the bridged error
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:retry", "Start", String.class));
-        assertInstanceOf(IOException.class, e.getCause());
-        assertEquals(2, retryReadLock.attempts.get(), "the retried poll should have found the file");
-
-        // the file the receive call cannot return is rolled back: it stays, and is no longer in progress
-        assertEquals(0, retryInProgress.getCacheSize(), "the file must not be left in the in-progress repository");
-        assertFileExists(testFile("retry/hello.txt"));
-
-        // so the next pollEnrich gets the file
-        String out = template.requestBody("direct:retry", "Start", String.class);
-        assertEquals("Hello World", out);
-        assertFileExists(testFile("retry/.camel/hello.txt"));
-        assertEquals(0, retryInProgress.getCacheSize());
+        // the commit of the poll fails after the bridged error was delivered, and the poll strategy asks to retry,
+        // but a retried poll could only find exchanges the receive call cannot return
+        assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:skipRetry", "Start", String.class));
+        assertEquals(1, skipRetryReadLock.attempts.get(), "the poll should not be retried");
+        assertEquals(0, skipRetryInProgress.getCacheSize(), "the file must not be left in the in-progress repository");
+        assertFileExists(testFile("skipretry/hello.txt"));
     }
 
     @Override
@@ -98,8 +88,8 @@ public class FilePollEnrichBridgeErrorHandlerInProgressTest extends ContextTestS
         Registry registry = super.createCamelRegistry();
         registry.bind("failOnceReadLock", readLock);
         registry.bind("inProgress", inProgress);
-        registry.bind("retryReadLock", retryReadLock);
-        registry.bind("retryInProgress", retryInProgress);
+        registry.bind("skipRetryReadLock", skipRetryReadLock);
+        registry.bind("skipRetryInProgress", skipRetryInProgress);
         registry.bind("retryOncePollStrategy", new RetryOncePollStrategy());
         return registry;
     }
@@ -115,10 +105,10 @@ public class FilePollEnrichBridgeErrorHandlerInProgressTest extends ContextTestS
                                 2000)
                         .convertBodyTo(String.class);
 
-                from("direct:retry")
-                        .pollEnrich(fileUri("retry?exclusiveReadLockStrategy=#retryReadLock&bridgeErrorHandler=true"
-                                            + "&inProgressRepository=#retryInProgress&pollStrategy=#retryOncePollStrategy"
-                                            + "&initialDelay=0&delay=10"),
+                from("direct:skipRetry")
+                        .pollEnrich(fileUri("skipretry?exclusiveReadLockStrategy=#skipRetryReadLock"
+                                            + "&bridgeErrorHandler=true&inProgressRepository=#skipRetryInProgress"
+                                            + "&pollStrategy=#retryOncePollStrategy&initialDelay=0&delay=10"),
                                 2000)
                         .convertBodyTo(String.class);
             }

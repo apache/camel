@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Consumer;
 import org.apache.camel.DynamicPollingConsumer;
@@ -23,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -190,7 +194,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
             } catch (Exception e) {
                 try {
                     boolean retry = pollStrategy.rollback(getConsumer(), getEndpoint(), retryCounter, e);
-                    if (retry) {
+                    if (retry && !isExchangeTakenByThisCall()) {
                         // do not set cause as we retry
                         done = false;
                     } else {
@@ -250,19 +254,30 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
     }
 
     /**
-     * Completes an exchange that the receive call cannot return as failed, so a polled file is rolled back, and removed
-     * from the in-progress repository to be polled again.
+     * Completes an exchange that the receive call cannot return as failed, and aborts its polled file, which was never
+     * started, so it is removed from the in-progress repository and polled again, and is not moved by moveFailed.
+     *
+     * @param exchange the exchange that cannot be returned and will be completed as failed
+     * @param returned the exchange already taken by the receive call
      */
-    private static void rollbackNotReturned(Exchange exchange, Exchange returned) {
+    static void rollbackNotReturned(Exchange exchange, Exchange returned) {
         if (exchange.getException() == null) {
             exchange.setException(new CamelExchangeException(
                     "Rolled back as the receive call already returns exchange: " + returned.getExchangeId(), exchange));
         } else {
             LOG.warn(
-                    "Cannot return exchange: {} as the receive call already returns exchange: {}. Its exception is ignored: {}",
+                    "Cannot return exchange: {} as the receive call already returns exchange: {}. Its exception is not returned to the caller: {}",
                     exchange.getExchangeId(), returned.getExchangeId(), exchange.getException().getMessage());
         }
-        UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
+        List<Synchronization> others = new ArrayList<>();
+        for (Synchronization onCompletion : exchange.getExchangeExtension().handoverCompletions()) {
+            if (onCompletion instanceof GenericFileOnCompletion<?> fileCompletion) {
+                fileCompletion.abort(exchange);
+            } else {
+                others.add(onCompletion);
+            }
+        }
+        UnitOfWorkHelper.doneSynchronizations(exchange, others);
     }
 
     /**
