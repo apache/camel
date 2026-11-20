@@ -17,7 +17,9 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -30,12 +32,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.util.TrustManagerUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The trust manager of the FTPS client that the endpoint creates. The certificate of the test server is self-signed and
@@ -79,6 +83,59 @@ public class FtpsEndpointTrustManagerTest extends CamelTestSupport {
                 = assertInstanceOf(X509TrustManager.class, ((FTPSClient) endpoint.createFtpClient()).getTrustManager());
 
         assertDoesNotThrow(() -> trustManager.checkServerTrusted(chain, "RSA"));
+    }
+
+    @Test
+    public void trustStoreWithoutPasswordIsLoadedWithoutOne() throws Exception {
+        // a JKS store can be read without its password
+        FtpsEndpoint endpoint = context.getEndpoint(
+                "ftps://localhost/dir?ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.type=JKS",
+                FtpsEndpoint.class);
+        X509TrustManager trustManager
+                = assertInstanceOf(X509TrustManager.class, ((FTPSClient) endpoint.createFtpClient()).getTrustManager());
+        assertDoesNotThrow(() -> trustManager.checkServerTrusted(serverCertificateChain(), "RSA"));
+    }
+
+    @Test
+    public void trustStoreOptionsWithoutFileFailWithAClearMessage() {
+        FtpsEndpoint endpoint = context.getEndpoint(
+                "ftps://localhost/dir?ftpClient.trustStore.type=JKS&ftpClient.trustStore.password=password",
+                FtpsEndpoint.class);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::createFtpClient);
+        assertTrue(e.getMessage().startsWith("ftpClient.trustStore.file must be set"), e.getMessage());
+    }
+
+    @Test
+    public void keyStoreOptionsWithoutFileFailWithAClearMessage() {
+        FtpsEndpoint endpoint = context.getEndpoint(
+                "ftps://localhost/dir?ftpClient.keyStore.password=password", FtpsEndpoint.class);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::createFtpClient);
+        assertTrue(e.getMessage().startsWith("ftpClient.keyStore.file must be set"), e.getMessage());
+    }
+
+    @Test
+    public void keyStoreWithoutKeyPasswordUsesTheStorePassword() {
+        FtpsEndpoint endpoint = context.getEndpoint(
+                "ftps://localhost/dir?ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
+                                                    + "&ftpClient.keyStore.password=password",
+                FtpsEndpoint.class);
+        assertDoesNotThrow(endpoint::createFtpClient);
+    }
+
+    @Test
+    public void trustStoreWhoseCertificatesNeedThePasswordFailsWithAClearMessage(@TempDir Path dir) throws Exception {
+        // a PKCS12 trust store protects its certificates with the password, so without it none can be read
+        KeyStore pkcs12 = KeyStore.getInstance("PKCS12");
+        pkcs12.load(null, null);
+        pkcs12.setCertificateEntry("ftpserver", serverCertificateChain()[0]);
+        Path file = dir.resolve("trust.p12");
+        try (OutputStream os = Files.newOutputStream(file)) {
+            pkcs12.store(os, "secret".toCharArray());
+        }
+        FtpsEndpoint endpoint = context.getEndpoint(
+                "ftps://localhost/dir?ftpClient.trustStore.type=PKCS12&ftpClient.trustStore.file=" + file, FtpsEndpoint.class);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::createFtpClient);
+        assertTrue(e.getMessage().contains("set ftpClient.trustStore.password"), e.getMessage());
     }
 
     @Test
