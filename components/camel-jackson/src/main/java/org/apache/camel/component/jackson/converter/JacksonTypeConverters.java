@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.JacksonConstants;
@@ -56,11 +57,12 @@ import org.slf4j.LoggerFactory;
  * {@link CamelContext#getGlobalOptions()}.
  */
 @Converter(generateLoader = true)
-public final class JacksonTypeConverters {
+public final class JacksonTypeConverters implements CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeConverters.class);
 
     private final Lock lock;
     private volatile ObjectMapper defaultMapper;
+    private CamelContext camelContext;
 
     private boolean init;
     private boolean enabled;
@@ -71,39 +73,49 @@ public final class JacksonTypeConverters {
         this.lock = new ReentrantLock();
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     @Converter
     public JsonNode toJsonNode(String text, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.readTree(text);
     }
 
     @Converter
     public JsonNode toJsonNode(byte[] arr, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.readTree(arr);
     }
 
     @Converter
     public JsonNode toJsonNode(InputStream is, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.readTree(is);
     }
 
     @Converter
     public JsonNode toJsonNode(File file, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.readTree(file);
     }
 
     @Converter
     public JsonNode toJsonNode(Reader reader, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.readTree(reader);
     }
 
     @Converter
     public JsonNode toJsonNode(Map map, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.valueToTree(map);
     }
 
@@ -113,7 +125,7 @@ public final class JacksonTypeConverters {
             TextNode tn = (TextNode) node;
             return tn.textValue();
         }
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         // output as string in pretty mode
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
     }
@@ -125,7 +137,7 @@ public final class JacksonTypeConverters {
             return tn.textValue().getBytes(StandardCharsets.UTF_8);
         }
 
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.writeValueAsBytes(node);
     }
 
@@ -137,7 +149,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Map<String, Object> toMap(JsonNode node, Exchange exchange) throws Exception {
-        ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+        ObjectMapper mapper = resolveObjectMapper(exchange);
         return mapper.convertValue(node, new TypeReference<>() {
         });
     }
@@ -228,7 +240,7 @@ public final class JacksonTypeConverters {
         }
 
         if (exchange != null) {
-            ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
+            ObjectMapper mapper = resolveObjectMapper(exchange);
 
             // favor use write/read operations as they are higher level than the
             // convertValue
@@ -301,10 +313,18 @@ public final class JacksonTypeConverters {
         return isString || isNumber;
     }
 
+    private ObjectMapper resolveObjectMapper(Exchange exchange) throws Exception {
+        // a type converter can be called without an exchange, such as by the simple language for ${body[field]}
+        CamelContext context = exchange != null ? exchange.getContext() : this.camelContext;
+        return resolveObjectMapper(context);
+    }
+
     private ObjectMapper resolveObjectMapper(CamelContext camelContext) throws Exception {
-        Set<ObjectMapper> mappers = camelContext.getRegistry().findByType(ObjectMapper.class);
-        if (mappers.size() == 1) {
-            return mappers.iterator().next();
+        if (camelContext != null) {
+            Set<ObjectMapper> mappers = camelContext.getRegistry().findByType(ObjectMapper.class);
+            if (mappers.size() == 1) {
+                return mappers.iterator().next();
+            }
         }
 
         if (defaultMapper == null) {
@@ -312,7 +332,7 @@ public final class JacksonTypeConverters {
             try {
                 if (defaultMapper == null) {
                     ObjectMapper mapper = new ObjectMapper();
-                    if (moduleClassNames != null) {
+                    if (moduleClassNames != null && camelContext != null) {
                         for (Object o : ObjectHelper.createIterable(moduleClassNames)) {
                             Class<Module> type
                                     = camelContext.getClassResolver().resolveMandatoryClass(o.toString(), Module.class);
