@@ -160,6 +160,21 @@ class AiPanelTest {
     }
 
     @Test
+    void usageOfThePanelKeepsTheCachedTokensTheProviderReports() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("ok", new LlmClient.TokenUsage(1000, 50, 1050, 800, 0, 0, 0, 0));
+        panel.setClientForTesting(client);
+        panel.open();
+
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertTrue(panel.usageSummary().contains("cached 800"), panel.usageSummary()));
+    }
+
+    @Test
     void slashInputDoesNotGoToLlm() {
         AiPanel panel = new AiPanel();
         RecordingLlmClient client = new RecordingLlmClient("ok");
@@ -1915,11 +1930,17 @@ class AiPanelTest {
     private static final class RecordingLlmClient extends LlmClient {
 
         private final String response;
+        private final TokenUsage usage;
         private final CountDownLatch answered = new CountDownLatch(1);
         private volatile String lastQuestion;
 
         RecordingLlmClient(String response) {
+            this(response, TokenUsage.EMPTY);
+        }
+
+        RecordingLlmClient(String response, TokenUsage usage) {
             this.response = response;
+            this.usage = usage;
             withModel("test-model");
             withApiType(ApiType.openai);
         }
@@ -1939,7 +1960,7 @@ class AiPanelTest {
                 }
             }
             answered.countDown();
-            return new ChatResponse(response, null, "end_turn", false, TokenUsage.EMPTY);
+            return new ChatResponse(response, null, "end_turn", false, usage);
         }
 
         String lastQuestion() {

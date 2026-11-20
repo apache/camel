@@ -215,10 +215,11 @@ two side by side for each question, so you can see whether a slow answer was the
 The integration rows count model calls only. At the GenAI observability level `detailed` or `full`
 (`camel.aiObservability.level`), an agent run is recorded as an `invoke_agent` span with one span per model call
 and one per tool call. The view counts its model calls, and a third summary line gives the agent runs, their model
-and tool calls, and the level the spans were recorded at. At the default level `basic` agent runs and tool calls are
-not traced (camel-openai records each model call, camel-langchain4j-agent a whole run as one call), and that line
-tells how to see them. The *CACHED* column shows the input tokens served from the provider's prompt cache, which
-are recorded from level `detailed` on.
+and tool calls, and the level the spans were recorded at. At the default level `basic`, agent runs and tool calls
+are not traced: camel-openai records each model call, and camel-langchain4j-agent records a whole run as one call.
+The summary line then tells how to see them. The *CACHED* column shows the input tokens served from the provider's
+prompt cache: for the panel's own requests when the provider reports them, and for the integration from level
+`detailed` on.
 
 image::jbang/camel-tui-ai-usage-agent-runs.png[The AI Usage view of an integration whose agent calls a route tool, at GenAI level detailed]
 

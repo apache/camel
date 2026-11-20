@@ -1868,7 +1868,7 @@ class AiPanel {
                 response.usage().inputTokens(), response.usage().outputTokens(),
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
-                AiUsageSource.TUI, null, questionCounter, 0));
+                AiUsageSource.TUI, null, questionCounter, response.usage().cachedTokens()));
         noteMeasuredPrompt(response.usage());
         if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
             // the Ollama tab shows this request with the timings Ollama returned
