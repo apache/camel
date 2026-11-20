@@ -19,7 +19,9 @@ package org.apache.camel.model;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -604,35 +606,42 @@ public final class RouteDefinitionHelper {
             List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
-        // First process the context-scoped intercepts (passed in from outside the route) — these are marked as
-        // context-scoped so the YAML dumper can emit them as top-level entries.
-        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions,
-                interceptSendToEndpointDefinitions, true);
+        // Build an identity set of the passed-in (context-scoped) intercepts before merging the route's own abstracts.
+        // Using identity (not equals) avoids false positives when two definitions are structurally equal.
+        Set<Object> contextScoped = Collections.newSetFromMap(new IdentityHashMap<>());
+        if (intercepts != null) {
+            contextScoped.addAll(intercepts);
+        }
+        if (interceptFromDefinitions != null) {
+            contextScoped.addAll(interceptFromDefinitions);
+        }
+        if (interceptSendToEndpointDefinitions != null) {
+            contextScoped.addAll(interceptSendToEndpointDefinitions);
+        }
 
-        // Then collect and process the route-scoped intercepts that were declared inline inside the route definition
-        // (the abstracts). These must NOT be marked as context-scoped — they belong to this route only.
-        List<InterceptDefinition> routeIntercepts = null;
-        List<InterceptFromDefinition> routeInterceptFroms = null;
-        List<InterceptSendToEndpointDefinition> routeInterceptSendTos = null;
+        // Merge the route's own inline intercepts (from abstracts) into the shared lists — same as before the fix,
+        // preserving the original single-pass insertion order.
         for (ProcessorDefinition processor : abstracts) {
             if (processor instanceof InterceptSendToEndpointDefinition interceptSendToEndpointDefinition) {
-                if (routeInterceptSendTos == null) {
-                    routeInterceptSendTos = new ArrayList<>();
+                if (interceptSendToEndpointDefinitions == null) {
+                    interceptSendToEndpointDefinitions = new ArrayList<>();
                 }
-                routeInterceptSendTos.add(interceptSendToEndpointDefinition);
+                interceptSendToEndpointDefinitions.add(interceptSendToEndpointDefinition);
             } else if (processor instanceof InterceptFromDefinition interceptFromDefinition) {
-                if (routeInterceptFroms == null) {
-                    routeInterceptFroms = new ArrayList<>();
+                if (interceptFromDefinitions == null) {
+                    interceptFromDefinitions = new ArrayList<>();
                 }
-                routeInterceptFroms.add(interceptFromDefinition);
+                interceptFromDefinitions.add(interceptFromDefinition);
             } else if (processor instanceof InterceptDefinition interceptDefinition) {
-                if (routeIntercepts == null) {
-                    routeIntercepts = new ArrayList<>();
+                if (intercepts == null) {
+                    intercepts = new ArrayList<>();
                 }
-                routeIntercepts.add(interceptDefinition);
+                intercepts.add(interceptDefinition);
             }
         }
-        doInitInterceptors(context, route, upper, routeIntercepts, routeInterceptFroms, routeInterceptSendTos, false);
+
+        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions,
+                interceptSendToEndpointDefinitions, contextScoped);
     }
 
     private static void doInitInterceptors(
@@ -640,12 +649,12 @@ public final class RouteDefinitionHelper {
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
-            boolean contextScoped) {
+            Set<Object> contextScoped) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
-                if (contextScoped) {
+                if (contextScoped.contains(intercept)) {
                     // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                     intercept.setRouteScoped(false);
                     // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
@@ -716,7 +725,7 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
-                    if (contextScoped) {
+                    if (contextScoped.contains(intercept)) {
                         // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                         intercept.setRouteScoped(false);
                     }
@@ -735,7 +744,7 @@ public final class RouteDefinitionHelper {
         if (interceptSendToEndpointDefinitions != null && !interceptSendToEndpointDefinitions.isEmpty()) {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
-                if (contextScoped) {
+                if (contextScoped.contains(intercept)) {
                     // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                     intercept.setRouteScoped(false);
                 }

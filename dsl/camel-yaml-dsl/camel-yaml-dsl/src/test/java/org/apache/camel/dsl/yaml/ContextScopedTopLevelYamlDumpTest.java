@@ -332,7 +332,9 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
     @Test
     void namedRouteConfigurationOnCompletionFiresAfterDumpReload() throws Exception {
         // a named route configuration's onCompletion must still fire at runtime after a dump → reload cycle
-        // this verifies that the dump bookkeeping does not corrupt the runtime routeScoped flag (CAMEL-25135)
+        // this verifies that the dump bookkeeping does not corrupt the runtime routeScoped flag (CAMEL-25135);
+        // note: the route receives the exchange directly (direct:first is the consumer route itself, not an
+        // indirect call through direct:); the full indirect-consumer case is covered by RoutesConfigurationOnCompletionTest
         loadRoutes("""
                 - routeConfiguration:
                     id: myConfig
