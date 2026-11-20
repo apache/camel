@@ -37,7 +37,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.util.IOHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -147,7 +146,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 // the key is often protected with the password of the key store
                 String keyPassword = (String) ftpClientKeyStoreParameters.getOrDefault("keyPassword", password);
 
-                KeyStore keyStore = loadStore(type, file, password, "keyStore");
+                KeyStore keyStore = loadStore(type, file, password);
 
                 KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
                 keyMgrFactory.init(keyStore, toChars(keyPassword));
@@ -163,7 +162,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
                         ? (String) ftpClientTrustStoreParameters.get("algorithm") : TrustManagerFactory.getDefaultAlgorithm();
 
-                KeyStore trustStore = loadStore(type, file, password, "trustStore");
+                KeyStore trustStore = loadStore(type, file, password);
                 if (trustStore.size() == 0) {
                     // without the password, the certificates of a store that protects them (such as a PKCS12 file
                     // made by keytool) cannot be read, and the client would trust no server at all
@@ -206,13 +205,10 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      * Loads a key store or trust store file. Without a password the store is loaded without one, as a store without a
      * password, or a JKS trust store, can be read.
      */
-    private static KeyStore loadStore(String type, String file, String password, String name) throws Exception {
+    private static KeyStore loadStore(String type, String file, String password) throws Exception {
         KeyStore store = KeyStore.getInstance(type);
-        FileInputStream is = new FileInputStream(new File(file));
-        try {
+        try (FileInputStream is = new FileInputStream(new File(file))) {
             store.load(is, toChars(password));
-        } finally {
-            IOHelper.close(is, name, LOG);
         }
         return store;
     }
