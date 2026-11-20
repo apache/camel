@@ -698,6 +698,13 @@ The `cql` producer binds a `Map` body by name: each named marker of the statemen
 takes the value of the `Map` entry of that name. Before, a `Map` body was bound as the value of a single
 marker. To keep that, such as for a column of type `map`, wrap the `Map` in a `List`.
 
+=== camel-cassandraql - the repositories no longer close the session they are given
+
+`CassandraIdempotentRepository`, `CassandraAggregationRepository` and `CassandraKeyValueRepository` (and their `Named`
+variants) no longer close the `CqlSession` they are given when they stop, such as when their route is removed or the
+CamelContext stops. Other repositories and cql endpoints can use the same session, and a repository that is stopped can
+be started again with it. The application closes the session when it is done with it, as for any session it creates.
+
 === camel-mina-sftp - checking whether a file exists takes one lstat request
 
 The `mina-sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,

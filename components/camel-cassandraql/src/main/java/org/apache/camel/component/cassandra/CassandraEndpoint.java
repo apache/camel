@@ -175,7 +175,9 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
             session = createSessionBuilder().build();
         }
 
-        sessionHolder = new CassandraSessionHolder(session);
+        // the endpoint closes its session when it stops, as before: the session it creates from the hosts (and also
+        // a session it was given or looked up with beanRef)
+        sessionHolder = new CassandraSessionHolder(session, false);
 
         sessionHolder.start();
     }
