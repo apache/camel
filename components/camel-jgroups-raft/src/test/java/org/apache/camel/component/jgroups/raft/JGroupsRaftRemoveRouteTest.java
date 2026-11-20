@@ -60,7 +60,7 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
         JGroupsRaftEndpoint c = getMandatoryEndpoint(URI_C, JGroupsRaftEndpoint.class);
         waitForLeader(30, a.getResolvedRaftHandle(), b.getResolvedRaftHandle(), c.getResolvedRaftHandle());
 
-        Exchange first = template.request("direct:a", exchange -> exchange.getIn().setBody("first".getBytes()));
+        Exchange first = requestWhenLeaderKnown("direct:a", exchange -> exchange.getIn().setBody("first".getBytes()));
         assertNull(first.getException());
 
         context.getRouteController().stopRoute("consumerA");
@@ -68,7 +68,7 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
 
         assertTrue(a.getResolvedRaftHandle().channel().isConnected(), "the producer still uses the channel");
         waitForLeader(30, a.getResolvedRaftHandle(), b.getResolvedRaftHandle(), c.getResolvedRaftHandle());
-        Exchange second = template.request("direct:a", exchange -> exchange.getIn().setBody("second".getBytes()));
+        Exchange second = requestWhenLeaderKnown("direct:a", exchange -> exchange.getIn().setBody("second".getBytes()));
         assertNull(second.getException());
         checkHeaders(second);
     }
@@ -95,7 +95,7 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
         assertTrue(handle.channel().isConnected(), "the producer and the re-added consumer use the channel");
         // the kept handle still works with the re-added consumer
         waitForLeader(30, handle, b.getResolvedRaftHandle(), c.getResolvedRaftHandle());
-        Exchange afterReAdd = template.request("direct:a", exchange -> exchange.getIn().setBody("after".getBytes()));
+        Exchange afterReAdd = requestWhenLeaderKnown("direct:a", exchange -> exchange.getIn().setBody("after".getBytes()));
         assertNull(afterReAdd.getException());
         checkHeaders(afterReAdd);
     }
