@@ -2394,6 +2394,24 @@ A failure of the fallback itself is now also caught by the `doCatch` (before, it
 
 To have those steps use the error handler of the route, move them out of the `doTry` block.
 
+=== camel-resilience4j - the timeouts of the asynchronous mode run on a thread pool of their own, and a stopped route keeps its thread pools
+
+A Circuit Breaker with `asynchronous` and `timeoutEnabled` ran its calls and its timeouts on the same thread pool, so a
+timeout could not fire while every thread of that pool was blocked in a call. The thread names and thread counts in
+thread dumps and JMX change:
+
+- Each such Circuit Breaker has one more scheduled thread pool, `CircuitBreakerTimeout`, that runs the timeouts. It has
+  the size of the default thread pool profile (10 threads by default).
+- A thread pool given with `timeoutExecutorService` now runs only the calls, not the timeouts. A thread pool that was
+  sized to cover both can be made smaller.
+- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a `CircuitBreakerTimeout`
+  thread. Keep them non-blocking, or give that thread pool enough threads (see the Resilience4j EIP page).
+- A Circuit Breaker with `timeoutEnabled` (asynchronous or not) keeps the thread pools that Camel created for it while
+  its route is stopped, and shuts them down when the route is removed or the CamelContext stops. Before, stopping the
+  route shut the thread pool of the calls down, and after the route was started again, the calls through the Circuit
+  Breaker no longer ran: in synchronous mode each call timed out (into the fallback, when there is one), and in
+  asynchronous mode the exchange never completed.
+
 === camel-jbang - camel cmd send without a name sends to the integration that runs
 
 `camel cmd send` without an integration name started a Camel of its own, without routes, and sent from there. That is
