@@ -19,23 +19,27 @@ package org.apache.camel.component.mongodb;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.json.JsonParseException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -110,6 +114,22 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void testMalformedByteArrayBodyKeepsTheParseError() {
+        byte[] body = "[{\"name\": }]".getBytes(StandardCharsets.UTF_8);
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:update", body));
+
+        boolean payload = false;
+        boolean found = false;
+        for (Throwable c = e.getCause(); c != null && !found; c = c.getCause()) {
+            payload |= c instanceof InvalidPayloadException;
+            found = c instanceof JsonParseException;
+        }
+        assertTrue(payload, "an InvalidPayloadException should be in the cause chain");
+        assertTrue(found, "the JsonParseException should be in the cause chain");
+    }
+
+    @Test
     void testUpdateBodyOfWrongSizeNamesTheUpdateOperation() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("direct:update", "[{\"name\": \"order-1\"}]"));
@@ -119,7 +139,7 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
     }
 
     private static BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(Document.class, com.mongodb.MongoClientSettings.getDefaultCodecRegistry());
+        return bson.toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry());
     }
 
     @Override
@@ -138,7 +158,7 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
 
         final MongoClient client = mock(MongoClient.class);
         when(client.getDatabase(anyString())).thenReturn(database);
-        when(client.listDatabaseNames()).thenReturn(mock(com.mongodb.client.MongoIterable.class));
+        when(client.listDatabaseNames()).thenReturn(mock(MongoIterable.class));
 
         context.getRegistry().bind("mongoClient", client);
         return context;

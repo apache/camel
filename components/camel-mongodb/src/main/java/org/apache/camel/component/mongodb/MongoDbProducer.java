@@ -533,11 +533,12 @@ public class MongoDbProducer extends DefaultProducer {
         if (body instanceof byte[]) {
             body = exchange.getIn().getBody(String.class);
         }
-        List<Bson> answer = exchange.getContext().getTypeConverter().tryConvertTo(List.class, exchange, body);
-        if (answer == null) {
-            throw new InvalidPayloadException(exchange, List.class);
+        try {
+            return exchange.getContext().getTypeConverter().mandatoryConvertTo(List.class, exchange, body);
+        } catch (Exception e) {
+            // keep the parse error of a malformed JSON array as the cause
+            throw new InvalidPayloadException(exchange, List.class, exchange.getIn(), e);
         }
-        return answer;
     }
 
     private Function<Exchange, Object> createDoRemove() {
