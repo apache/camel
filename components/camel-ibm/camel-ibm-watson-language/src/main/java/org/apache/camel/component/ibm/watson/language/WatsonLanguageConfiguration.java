@@ -22,6 +22,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
+@Deprecated(since = "4.24")
 public class WatsonLanguageConfiguration implements Cloneable {
 
     @UriParam(label = "security", security = "secret")

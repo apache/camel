@@ -19,6 +19,7 @@ package org.apache.camel.component.ibm.watson.language;
 /**
  * IBM Watson Natural Language Understanding Operations
  */
+@Deprecated(since = "4.24")
 public enum WatsonLanguageOperations {
 
     // Natural Language Understanding operations
