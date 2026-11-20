@@ -2302,6 +2302,22 @@ for the other changes.
   for. Before, it returned the replicas of its status, which lags behind until the pods are started or stopped, and
   failed with a `NullPointerException` when the deployment config had no status yet.
 
+=== camel-kubernetes - a stopped cluster view gives up the leadership
+
+When a Kubernetes cluster view stops (its last user, such as a `master:` consumer or a clustered route, releases it, or
+the cluster service stops), the view now reports that the pod is no longer the leader, tells its listeners, and, if the
+leadership of the pod had taken effect, removes the pod from the lease (the `Lease`, or the leader key of the group in
+the `ConfigMap`). Another pod then takes over the leadership on its next check, after the retry period. Before, the
+stopped view kept reporting the pod as leader (`CamelClusterService.isLeader` returned `true`, also once the view was
+used again, until its first lookup), and the lease kept naming the pod, so no other pod could lead the group until this
+pod was no longer ready. A pod that is stopped while it waits to become the leader keeps the lease, as before. If the
+lease cannot be updated, a WARN is logged and the lease is kept until the pod is no longer ready, as before. The stop
+now waits for a check of the lease that is running, and then for the release, each up to the renew deadline
+(`renewDeadlineMillis`, 10 seconds by default), so with an API server that does not answer a stop can take up to about
+twice the renew deadline; the Kubernetes client's own retries (`requestRetryBackoffLimit`, 10 by default) do not make it
+longer. A release that is given up at the renew deadline logs a WARN, and the lease may then be kept until the pod is no
+longer ready.
+
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 
 With an `embeddingModel` and no `CamelLangChain4jEmbeddingsEmbedding` header, ADD and SEARCH now embed a `TextSegment`

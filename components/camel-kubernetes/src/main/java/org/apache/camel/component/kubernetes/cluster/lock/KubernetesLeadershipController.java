@@ -18,19 +18,25 @@ package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.readiness.Readiness;
 import io.fabric8.kubernetes.client.utils.PodStatusUtil;
 import org.apache.camel.CamelContext;
@@ -63,9 +69,11 @@ public class KubernetesLeadershipController implements Service {
 
     private final KubernetesClusterEventHandler eventHandler;
 
-    private State currentState = State.NOT_LEADER;
+    // written by the refreshes, read by releaseLeadership once they have ended
+    private volatile State currentState = State.NOT_LEADER;
 
-    private ScheduledExecutorService serializedExecutor;
+    // set to null by stop, which a refresh running on the executor checks
+    private volatile ScheduledExecutorService serializedExecutor;
 
     private TimedLeaderNotifier leaderNotifier;
 
@@ -105,18 +113,125 @@ public class KubernetesLeadershipController implements Service {
         }
     }
 
+    /**
+     * Stops the refreshes of the leadership status and the leadership events. A refresh that is running is interrupted,
+     * and waited for up to the renew deadline. The lease is not released, see {@link #releaseLeadership()}.
+     */
     @Override
     public void stop() {
         LOG.debug("{} Stopping leadership controller...", logPrefix);
-        if (serializedExecutor != null) {
-            serializedExecutor.shutdownNow();
-        }
+        ScheduledExecutorService executor = serializedExecutor;
         serializedExecutor = null;
+        if (executor != null) {
+            executor.shutdownNow();
+            try {
+                if (!executor.awaitTermination(lockConfiguration.getRenewDeadlineMillis(), TimeUnit.MILLISECONDS)) {
+                    LOG.debug("{} The leadership status refresh did not end within the renew deadline", logPrefix);
+                }
+            } catch (InterruptedException e) {
+                LOG.debug("{} Interrupted while waiting for the leadership status refresh to end", logPrefix);
+                Thread.currentThread().interrupt();
+            }
+        }
 
         if (leaderNotifier != null) {
             leaderNotifier.stop();
         }
         leaderNotifier = null;
+    }
+
+    /**
+     * Releases the leadership after {@link #stop()}: if the leadership of this pod has taken effect and the lease names
+     * this pod, the pod is removed from it, so that another pod can take over the leadership at once instead of when
+     * this pod is no longer ready. The release is given up after the renew deadline. A failure is logged, and the lease
+     * is then kept until this pod is no longer ready (as before).
+     */
+    public void releaseLeadership() {
+        String group = this.lockConfiguration.getGroupName();
+        State state = this.currentState;
+        if (state != State.LEADER && state != State.LOSING_LEADERSHIP && state != State.LEADERSHIP_LOST) {
+            // when becoming leader, the pod waits for the previous leader to give up the leadership: an empty lease
+            // would let another pod take it over with immediate effect while the previous leader may still act as one
+            LOG.debug("{} The leadership for group {} has not taken effect ({}), the lease is not released", logPrefix,
+                    group, state);
+            return;
+        }
+        // the Kubernetes client tries a request again on its own when the API server cannot be reached or answers
+        // with 429 or a server error (by default up to 10 times, with a growing delay), which can take minutes, so the
+        // release runs on its own thread and the stop waits for it up to the renew deadline
+        ExecutorService executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this,
+                "CamelKubernetesLeadershipRelease");
+        try {
+            Future<?> release = executor.submit(this::doReleaseLeadership);
+            release.get(this.lockConfiguration.getRenewDeadlineMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            LOG.warn("{} Unable to release the leadership for group {} within the renew deadline, other pods can take it"
+                     + " over once the current pod is no longer ready",
+                    logPrefix, group);
+        } catch (ExecutionException e) {
+            LOG.warn("{} Unable to release the leadership for group {}: {}", logPrefix, group, e.getCause().toString());
+            LOG.debug("{} Error received while releasing the leadership", logPrefix, e.getCause());
+        } catch (InterruptedException e) {
+            LOG.warn("{} Interrupted while releasing the leadership for group {}", logPrefix, group);
+            Thread.currentThread().interrupt();
+        } finally {
+            camelContext.getExecutorServiceManager().shutdownNow(executor);
+        }
+    }
+
+    private void doReleaseLeadership() {
+        String group = this.lockConfiguration.getGroupName();
+        // a conflict means that the lease was changed in the meantime (such as the renewal of another group in a
+        // shared ConfigMap), so it is read again
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            HasMetadata leaseResource;
+            try {
+                leaseResource = leaseManager.fetchLeaseResource(kubernetesClient,
+                        this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
+                        this.lockConfiguration.getKubernetesResourceName(), group);
+            } catch (Exception e) {
+                if (Thread.currentThread().isInterrupted()) {
+                    // the stop has given up the release (logged by releaseLeadership)
+                    LOG.debug("{} Interrupted while retrieving the lease resource to release the leadership", logPrefix, e);
+                    return;
+                }
+                LOG.warn("{} Unable to retrieve the lease resource {} for group {} to release the leadership: {}",
+                        logPrefix, this.lockConfiguration.getKubernetesResourceName(), group, e.toString());
+                LOG.debug("{} Exception thrown during lease resource lookup", logPrefix, e);
+                return;
+            }
+            String leader = leaseResource != null
+                    ? leaseManager.decodeLeaderInfo(leaseResource, Collections.emptySet(), group).getLeader() : null;
+            if (!this.lockConfiguration.getPodName().equals(leader)) {
+                LOG.debug("{} The lease for group {} does not name the current pod, nothing to release", logPrefix, group);
+                return;
+            }
+            if (Thread.currentThread().isInterrupted()) {
+                // the stop has given up the release (logged by releaseLeadership): do not update the lease afterwards
+                LOG.debug("{} Interrupted before releasing the leadership", logPrefix);
+                return;
+            }
+            try {
+                leaseManager.optimisticDeleteLeaderInfo(kubernetesClient, leaseResource, group);
+                LOG.info("{} Released the leadership for group {}", logPrefix, group);
+                return;
+            } catch (Exception e) {
+                if (attempt < 3 && e instanceof KubernetesClientException kce && kce.getCode() == 409) {
+                    LOG.debug("{} The lease resource for group {} was changed while releasing the leadership, trying again",
+                            logPrefix, group);
+                    continue;
+                }
+                if (Thread.currentThread().isInterrupted()) {
+                    LOG.debug("{} Interrupted while releasing the leadership", logPrefix, e);
+                    return;
+                }
+                LOG.warn("{} Unable to release the leadership for group {}, other pods can take it over once the current"
+                         + " pod is no longer ready: {}",
+                        logPrefix, group, e.toString());
+                LOG.debug("{} Error received while releasing the leadership", logPrefix, e);
+                return;
+            }
+        }
     }
 
     public boolean isDisabled() {
@@ -126,8 +241,13 @@ public class KubernetesLeadershipController implements Service {
     public void setDisabled(boolean disabled) {
         boolean oldState = this.disabled;
         this.disabled = disabled;
-        if (oldState != disabled && serializedExecutor != null) {
-            serializedExecutor.execute(this::refreshStatus);
+        ScheduledExecutorService executor = serializedExecutor;
+        if (oldState != disabled && executor != null) {
+            try {
+                executor.execute(this::refreshStatus);
+            } catch (RejectedExecutionException e) {
+                LOG.debug("{} Cannot refresh the leadership status as the controller is stopping", logPrefix);
+            }
         }
     }
 
@@ -241,8 +361,10 @@ public class KubernetesLeadershipController implements Service {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
-            LOG.warn("Thread interrupted", e);
+            // the controller is stopping (shutdownNow): the leadership has not taken effect, see releaseLeadership
+            LOG.debug("{} Interrupted while waiting to become the leader", logPrefix);
             Thread.currentThread().interrupt();
+            return;
         }
 
         LOG.info("{} Current pod is becoming the new leader now...", logPrefix);
@@ -414,6 +536,11 @@ public class KubernetesLeadershipController implements Service {
     private boolean tryAcquireLeadership() {
         if (this.disabled) {
             LOG.debug("{} Won't try to acquire the leadership because it's disabled...", logPrefix);
+            return false;
+        }
+        if (this.serializedExecutor == null) {
+            // stopping: the lease must not be taken after stop has released it
+            LOG.debug("{} Won't try to acquire the leadership because the controller is stopping", logPrefix);
             return false;
         }
 

@@ -53,6 +53,11 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
     private volatile List<CamelClusterMember> currentMembers = Collections.emptyList();
     private KubernetesLeadershipController controller;
     private boolean disabled;
+    // guards generation and the updates of currentLeader by the leadership events against doStop
+    private final Object leaderLock = new Object();
+    // incremented on every start and stop: the events of a controller belong to the generation of the start that
+    // created it, and are ignored once that generation is over
+    private long generation;
 
     public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster,
                                  KubernetesConfiguration configuration,
@@ -96,15 +101,31 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
     protected void doStart() throws Exception {
         if (controller == null) {
             this.kubernetesClient = KubernetesHelper.getKubernetesClient(configuration);
+            final long gen;
+            synchronized (leaderLock) {
+                gen = ++generation;
+            }
 
             controller = new KubernetesLeadershipController(camelContext, kubernetesClient, this.lockConfiguration, event -> {
                 if (event instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
                     // New leader
                     Optional<String> leader
                             = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
-                    currentLeader = leader.map(this::toMember).orElse(null);
-                    fireLeadershipChangedEvent(currentLeader);
+                    CamelClusterMember newLeader = leader.map(this::toMember).orElse(null);
+                    synchronized (leaderLock) {
+                        if (gen != generation) {
+                            // the view has been stopped
+                            return;
+                        }
+                        currentLeader = newLeader;
+                    }
+                    fireLeadershipChangedEvent(newLeader);
                 } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
+                    synchronized (leaderLock) {
+                        if (gen != generation) {
+                            return;
+                        }
+                    }
                     Set<String> members
                             = KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent.class.cast(event).getData();
                     Set<String> oldMembers = currentMembers.stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
@@ -135,10 +156,30 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
     @Override
     protected void doStop() throws Exception {
         if (controller != null) {
-            controller.stop();
+            KubernetesLeadershipController stopping = controller;
             controller = null;
-            kubernetesClient.close();
-            kubernetesClient = null;
+            synchronized (leaderLock) {
+                generation++;
+            }
+            try {
+                // no more refreshes of the lease, and no more leadership events
+                stopping.stop();
+
+                boolean wasLeader;
+                synchronized (leaderLock) {
+                    wasLeader = localMember.isLeader();
+                    currentLeader = null;
+                }
+                if (wasLeader) {
+                    // tell the listeners that this pod is no longer the leader, before the lease is released and another
+                    // pod can take over the leadership
+                    fireLeadershipChangedEvent((CamelClusterMember) null);
+                }
+                stopping.releaseLeadership();
+            } finally {
+                kubernetesClient.close();
+                kubernetesClient = null;
+            }
         }
     }
 
