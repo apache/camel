@@ -323,6 +323,20 @@ public final class HttpHelper {
     }
 
     /**
+     * Sanitize log: it removes any new line and carriage return in order to avoid third party integrations with logging
+     * system to suffer potential log injection.
+     *
+     * @param  input the log trace
+     * @return       a sanitized log trace
+     */
+    public static String sanitizeLog(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("[\n\r]", "_");
+    }
+
+    /**
      * Decodes a name or a value of an {@code application/x-www-form-urlencoded} body, as the URL-encoded form parser of
      * the WHATWG URL standard does: a {@code +} is a space, and a {@code %} followed by two hex digits is a byte of the
      * text in the given charset. Unlike {@link URLDecoder}, which fails, a {@code %} that is not followed by two hex

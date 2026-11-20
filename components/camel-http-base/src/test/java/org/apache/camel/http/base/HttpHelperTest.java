@@ -92,6 +92,13 @@ class HttpHelperTest {
     }
 
     @Test
+    void testSanitizeLog() {
+        assertEquals("a_b_c", HttpHelper.sanitizeLog("a\nb\rc"));
+        assertEquals("plain", HttpHelper.sanitizeLog("plain"));
+        assertEquals(null, HttpHelper.sanitizeLog(null));
+    }
+
+    @Test
     void testIsValidHeaderName() {
         assertTrue(HttpHelper.isValidHeaderName("Content-Type"));
         assertTrue(HttpHelper.isValidHeaderName("X-Custom_Header.1"));

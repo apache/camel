@@ -589,7 +589,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 // but it cannot be sent as an HTTP header, and the route has already run
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Skipping header {} in the response, as its name is not a valid HTTP header name",
-                            key.replaceAll("[\n\r]", "_"));
+                            HttpHelper.sanitizeLog(key));
                 }
                 continue;
             }
@@ -786,7 +786,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 // but it cannot be sent as an HTTP header
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Skipping header {} in the request, as its name is not a valid HTTP header name",
-                            key.replaceAll("[\n\r]", "_"));
+                            HttpHelper.sanitizeLog(key));
                 }
                 continue;
             }
