@@ -91,6 +91,7 @@
 ** xref:sanitizer.adoc[Sanitizer]
 ** xref:semantic-micrometer.adoc[Semantic Micrometer]
 ** xref:semantic-openai.adoc[Semantic OpenAI]
+** xref:semantic-spring-ai.adoc[Semantic Spring AI]
 ** xref:semantic-typesafe-ai.adoc[Semantic TypeSafe AI]
 ** xref:semantic-wolf-defender.adoc[Semantic Wolf Defender]
 ** xref:shiro.adoc[Shiro]

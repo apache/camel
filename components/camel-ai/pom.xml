@@ -47,6 +47,7 @@
         <module>camel-semantic</module>
         <module>camel-semantic-micrometer</module>
         <module>camel-semantic-openai</module>
+        <module>camel-semantic-spring-ai</module>
         <module>camel-semantic-typesafe-ai</module>
         <module>camel-typesafe-ai</module>
         <module>camel-semantic-wolf-defender</module>

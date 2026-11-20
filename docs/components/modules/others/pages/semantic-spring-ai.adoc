@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-semantic-spring-ai/src/main/docs/semantic-spring-ai.adoc

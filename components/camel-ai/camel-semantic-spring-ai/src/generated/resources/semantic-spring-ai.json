@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "semantic-spring-ai",
+    "title": "Semantic Spring AI",
+    "description": "Assess text, fields and images with a Spring AI decision model through Semantic experts",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic-spring-ai",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}
