@@ -192,7 +192,8 @@ public class KafkaFetchRecords implements Runnable {
 
             safeConsumerClose();
         } catch (VirtualMachineError e) {
-            // left as before: thrown on
+            // left as before: an OutOfMemoryError or StackOverflowError is thrown on as is, as the JVM may not be able
+            // to log it or close the consumer
             throw e;
         } catch (RuntimeException | Error e) {
             // what the poll loop does not handle, such as an Error that a deserializer throws in poll (the Kafka client
