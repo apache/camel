@@ -162,7 +162,8 @@ class JsonPojoDataTypeTransformerTest {
         // CAMEL-25928: Json as text, bytes, a stream, a file or a JsonNode, as transformerIn says, read into the
         // class of the X-Content-Class property, which transformerOut leaves unknown
         BodyTypes bodyTypes = JsonPojoDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
+        Assertions.assertEquals(
+                List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO, Carrier.MAP, Carrier.LIST),
                 List.of(bodyTypes.transformerIn().value()));
         Assertions.assertEquals(List.of(Carrier.UNKNOWN), List.of(bodyTypes.transformerOut().value()));
         String json = "{ \"name\": \"Goofy\", \"age\": 25 }";
@@ -182,6 +183,14 @@ class JsonPojoDataTypeTransformerTest {
         kept.getMessage().setBody(body);
         transformer.transform(kept.getMessage(), DataType.ANY, DataType.ANY);
         Assertions.assertSame(body, kept.getMessage().getBody());
+        // CAMEL-27272: a Map or a List is kept without the X-Content-Class property
+        for (Object data : List.of(Map.of("name", "Goofy"), List.of("Goofy", "Pluto"))) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(data);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertSame(data, exchange.getMessage().getBody());
+            Assertions.assertEquals("application/x-java-object", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        }
         // a Map is no Json
         Exchange other = new DefaultExchange(camelContext);
         other.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
