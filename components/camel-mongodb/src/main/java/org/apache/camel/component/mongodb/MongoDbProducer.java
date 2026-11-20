@@ -486,7 +486,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson updateCriteria = exchange.getIn().getHeader(CRITERIA, Bson.class);
                 Bson objNew;
                 if (null == updateCriteria) {
-                    List<Bson> saveObj = getUpdateCriteriaAndUpdate(exchange);
+                    List<Bson> saveObj = getBsonListBody(exchange);
                     if (saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = update, failed because body is not a List of Document objects with size = 2");
@@ -523,12 +523,12 @@ public class MongoDbProducer extends DefaultProducer {
     }
 
     /**
-     * The body of an update without the criteria header: a List of the criteria and the update. A byte[] body, such as
-     * JSON text from a Kafka consumer or a file, is read as text first, so that a JSON array converts as it does from a
-     * String.
+     * The body as a List of Bson: the criteria and the update of an update or a findOneAndUpdate without the criteria
+     * header, or the pipeline of an aggregate. A byte[] body, such as JSON text from a Kafka consumer or a file, is
+     * read as text first, so that a JSON array converts as it does from a String.
      */
     @SuppressWarnings("unchecked")
-    private static List<Bson> getUpdateCriteriaAndUpdate(Exchange exchange) throws InvalidPayloadException {
+    private static List<Bson> getBsonListBody(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getBody();
         if (body instanceof byte[]) {
             body = exchange.getIn().getBody(String.class);
@@ -561,8 +561,7 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange -> {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
-                @SuppressWarnings("unchecked")
-                List<Bson> query = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                List<Bson> query = getBsonListBody(exchange);
 
                 // Allow body to be a pipeline
                 // @see http://docs.mongodb.org/manual/core/aggregation/
@@ -699,8 +698,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson filter = exchange.getIn().getHeader(CRITERIA, Bson.class);
                 Bson update;
                 if (filter == null) {
-                    @SuppressWarnings("unchecked")
-                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    List<Bson> saveObj = getBsonListBody(exchange);
                     if (saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");

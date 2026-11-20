@@ -17,11 +17,15 @@
 package org.apache.camel.component.mongodb;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.CamelContext;
@@ -41,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -48,10 +53,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * The update operation reads a byte[] body, such as JSON text from a Kafka consumer or a file, as it reads the same
- * text as a String: a JSON array of the criteria and the update, or the update when the criteria are in a header.
+ * The update, findOneAndUpdate and aggregate operations read a byte[] body, such as JSON text from a Kafka consumer or
+ * a file, as they read the same text as a String: a JSON array of the criteria and the update, the update when the
+ * criteria are in a header, or the pipeline.
  */
-class MongoDbProducerUpdateBodyTest extends CamelTestSupport {
+class MongoDbProducerListBodyTest extends CamelTestSupport {
 
     private final MongoCollection<Document> collection = mock(MongoCollection.class);
 
@@ -79,6 +85,31 @@ class MongoDbProducerUpdateBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void testFindOneAndUpdateByteArrayBodyWithCriteriaAndUpdate() {
+        String body = "[{\"name\": \"order-1\"}, {\"$set\": {\"qty\": 3}}]";
+        template.requestBody("direct:findOneAndUpdate", body.getBytes(StandardCharsets.UTF_8));
+
+        ArgumentCaptor<Bson> criteria = ArgumentCaptor.forClass(Bson.class);
+        ArgumentCaptor<Bson> update = ArgumentCaptor.forClass(Bson.class);
+        verify(collection).findOneAndUpdate(criteria.capture(), update.capture(), any(FindOneAndUpdateOptions.class));
+        assertEquals("order-1", toBsonDocument(criteria.getValue()).getString("name").getValue());
+        assertEquals(3, toBsonDocument(update.getValue()).getDocument("$set").getInt32("qty").getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testAggregateByteArrayPipeline() {
+        String body = "[{\"$match\": {\"qty\": 3}}, {\"$limit\": 5}]";
+        template.requestBody("direct:aggregate", body.getBytes(StandardCharsets.UTF_8));
+
+        ArgumentCaptor<List<Bson>> pipeline = ArgumentCaptor.forClass(List.class);
+        verify(collection).aggregate(pipeline.capture());
+        assertEquals(2, pipeline.getValue().size());
+        assertEquals(3, toBsonDocument(pipeline.getValue().get(0)).getDocument("$match").getInt32("qty").getValue());
+        assertEquals(5, toBsonDocument(pipeline.getValue().get(1)).getInt32("$limit").getValue());
+    }
+
+    @Test
     void testUpdateBodyOfWrongSizeNamesTheUpdateOperation() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("direct:update", "[{\"name\": \"order-1\"}]"));
@@ -98,6 +129,9 @@ class MongoDbProducerUpdateBodyTest extends CamelTestSupport {
         when(collection.withWriteConcern(any())).thenReturn(collection);
         when(collection.updateOne(any(Bson.class), any(Bson.class), any(UpdateOptions.class)))
                 .thenReturn(UpdateResult.acknowledged(1, 1L, null));
+        AggregateIterable<Document> aggregation = mock(AggregateIterable.class);
+        when(aggregation.iterator()).thenReturn(mock(MongoCursor.class));
+        when(collection.aggregate(anyList())).thenReturn(aggregation);
 
         final MongoDatabase database = mock(MongoDatabase.class);
         when(database.getCollection(anyString(), eq(Document.class))).thenReturn(collection);
@@ -117,6 +151,10 @@ class MongoDbProducerUpdateBodyTest extends CamelTestSupport {
             public void configure() {
                 from("direct:update")
                         .to("mongodb:mongoClient?database=test&collection=c&operation=update&dynamicity=false");
+                from("direct:findOneAndUpdate")
+                        .to("mongodb:mongoClient?database=test&collection=c&operation=findOneAndUpdate&dynamicity=false");
+                from("direct:aggregate")
+                        .to("mongodb:mongoClient?database=test&collection=c&operation=aggregate&dynamicity=false");
             }
         };
     }
