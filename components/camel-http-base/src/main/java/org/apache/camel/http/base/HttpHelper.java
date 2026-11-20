@@ -16,8 +16,10 @@
  */
 package org.apache.camel.http.base;
 
+import java.io.ByteArrayOutputStream;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -318,6 +320,86 @@ public final class HttpHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Sanitize log: it removes any new line and carriage return in order to avoid third party integrations with logging
+     * system to suffer potential log injection.
+     *
+     * @param  input the log trace
+     * @return       a sanitized log trace
+     */
+    public static String sanitizeLog(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("[\n\r]", "_");
+    }
+
+    /**
+     * Decodes a name or a value of an {@code application/x-www-form-urlencoded} body, as the URL-encoded form parser of
+     * the WHATWG URL standard does: a {@code +} is a space, and a {@code %} followed by two hex digits is a byte of the
+     * text in the given charset. Unlike {@link URLDecoder}, which fails, a {@code %} that is not followed by two hex
+     * digits is kept as it is, as in a text such as {@code 50% off} sent as form data.
+     *
+     * @param  value   the encoded name or value
+     * @param  charset the charset of the encoded bytes
+     * @return         the decoded text
+     */
+    public static String decodeFormComponent(String value, Charset charset) {
+        if (value.indexOf('%') < 0 && value.indexOf('+') < 0) {
+            return value;
+        }
+        StringBuilder answer = new StringBuilder(value.length());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        int i = 0;
+        while (i < value.length()) {
+            char ch = value.charAt(i);
+            if (ch == '%' && i + 2 < value.length() && isHexDigit(value.charAt(i + 1))
+                    && isHexDigit(value.charAt(i + 2))) {
+                // collect consecutive escapes, as a character can take several bytes
+                bytes.write(Character.digit(value.charAt(i + 1), 16) << 4 | Character.digit(value.charAt(i + 2), 16));
+                i += 3;
+                continue;
+            }
+            if (bytes.size() > 0) {
+                answer.append(bytes.toString(charset));
+                bytes.reset();
+            }
+            answer.append(ch == '+' ? ' ' : ch);
+            i++;
+        }
+        if (bytes.size() > 0) {
+            answer.append(bytes.toString(charset));
+        }
+        return answer.toString();
+    }
+
+    private static boolean isHexDigit(char ch) {
+        return Character.digit(ch, 16) >= 0 && ch < 128;
+    }
+
+    /**
+     * Whether the name can be sent as an HTTP header name: a non-empty token of RFC 9110, made of letters, digits and
+     * {@code !#$%&'*+-.^_`|~}. A message header can have any name, for example one taken from a form field, but an HTTP
+     * server or client refuses, or must not send, a header whose name is not a token.
+     *
+     * @param  name the header name
+     * @return      true if the name is a valid HTTP header name
+     */
+    public static boolean isValidHeaderName(String name) {
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            boolean token = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')
+                    || "!#$%&'*+-.^_`|~".indexOf(ch) >= 0;
+            if (!token) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
