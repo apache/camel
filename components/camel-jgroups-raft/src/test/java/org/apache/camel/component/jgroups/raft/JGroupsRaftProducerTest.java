@@ -58,9 +58,9 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
 
         Processor processor = exchange -> exchange.getIn().setBody(MESSAGE.getBytes());
 
-        Exchange res = template.request("direct:start", processor);
-        Exchange res2 = template.request("direct:start2", processor);
-        Exchange res3 = template.request("direct:start3", processor);
+        Exchange res = requestWhenLeaderKnown("direct:start", processor);
+        Exchange res2 = requestWhenLeaderKnown("direct:start2", processor);
+        Exchange res3 = requestWhenLeaderKnown("direct:start3", processor);
 
         assertNotNull(res.getIn().getBody());
         checkHeaders(res);
@@ -73,7 +73,7 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
         checkLeaderAddressHeader(res3);
 
         // a text body is converted to bytes
-        Exchange resText = template.request("direct:start", exchange -> exchange.getIn().setBody(MESSAGE));
+        Exchange resText = requestWhenLeaderKnown("direct:start", exchange -> exchange.getIn().setBody(MESSAGE));
         assertNull(resText.getException());
         assertInstanceOf(byte[].class, resText.getIn().getBody());
         checkHeaders(resText);
