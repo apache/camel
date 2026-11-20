@@ -359,7 +359,7 @@
         <!-- smack 4.4.x asks for jxmpp in the range [1.0.0,1.0.999] -->
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
-        <kafka-version>4.3.2</kafka-version>
+        <kafka-version>4.4.0</kafka-version>
         <keycloak-client-version>26.0.13</keycloak-client-version>
         <keycloak-version>26.8.1</keycloak-version>
         <kubernetes-client-version>8.0.0</kubernetes-client-version>
@@ -374,7 +374,7 @@
         <libphonenumber-version>9.0.42</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
-        <log4j2-version>2.25.5</log4j2-version>
+        <log4j2-version>2.26.1</log4j2-version>
         <logback-version>1.6.6</logback-version>
         <lucene-version>10.6.0</lucene-version>
         <littleproxy-version>2.9.1</littleproxy-version>
