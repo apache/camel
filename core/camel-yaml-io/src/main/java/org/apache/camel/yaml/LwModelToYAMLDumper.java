@@ -165,6 +165,32 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         allContextScoped.addAll(contextScopedInterceptFroms);
         allContextScoped.addAll(contextScopedInterceptSendTos);
         allContextScoped.addAll(contextScopedOnCompletions);
+        // named route configuration intercepts and onCompletions are added to route outputs by initInterceptors/
+        // initOnCompletions but must not be inlined in the route's steps — they belong to the routeConfiguration
+        // block. They are not in the persistent contextScopedIntercepts list (guarded by isFromNamedRouteConfiguration),
+        // so we collect them directly from route outputs using the route-configuration membership check.
+        Consumer<RouteDefinition> collectRouteConfigScopedIntercepts = route -> {
+            for (var output : route.getOutputs()) {
+                if (output instanceof InterceptDefinition i && !containsInstance(allContextScoped, i)
+                        && isInterceptInRouteConfiguration(context, i)) {
+                    allContextScoped.add(i);
+                } else if (output instanceof InterceptFromDefinition i && !containsInstance(allContextScoped, i)
+                        && isInterceptFromInRouteConfiguration(context, i)) {
+                    allContextScoped.add(i);
+                } else if (output instanceof InterceptSendToEndpointDefinition i && !containsInstance(allContextScoped, i)
+                        && isInterceptSendToInRouteConfiguration(context, i)) {
+                    allContextScoped.add(i);
+                } else if (output instanceof OnCompletionDefinition oc && !containsInstance(allContextScoped, oc)
+                        && isOnCompletionInRouteConfiguration(context, oc)) {
+                    allContextScoped.add(oc);
+                }
+            }
+        };
+        if (definition instanceof RoutesDefinition routes) {
+            routes.getRoutes().forEach(collectRouteConfigScopedIntercepts);
+        } else if (definition instanceof RouteDefinition route) {
+            collectRouteConfigScopedIntercepts.accept(route);
+        }
 
         // a global (context-level) errorHandler is set on the CamelContext, not on individual routes; it must be
         // emitted as a top-level entry and not duplicated inside the routes (route.getErrorHandler() is null for it);
