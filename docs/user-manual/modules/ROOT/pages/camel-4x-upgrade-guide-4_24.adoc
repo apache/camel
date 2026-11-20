@@ -322,6 +322,14 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-grpc - a producer with streamRepliesTo fails the exchange of a failed call
+
+A gRPC producer with `streamRepliesTo` and the SIMPLE producer strategy (the default) completed the exchange of a
+call that failed (server not reachable, deadline exceeded, an error status) as a success, unless `forwardOnError=true`
+routed the error to the replies endpoint. The exchange now fails with the error (an `io.grpc.StatusRuntimeException`),
+so the error handler of the route handles it. With `forwardOnError=true` the error is routed to the replies endpoint as
+before, and the exchange completes.
+
 === camel-jaxb - the part class and namespace headers are used only when allowed
 
 The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
