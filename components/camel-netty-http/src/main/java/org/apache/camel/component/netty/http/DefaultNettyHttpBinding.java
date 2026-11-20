@@ -331,6 +331,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     /**
+     * Decodes a name or a value of a form field as a header with {@link #shouldUrlDecodeHeader}. A % that is not
+     * followed by two hex digits, as in a text such as "50% off" sent as form data, is kept as it is, as in the
+     * URL-encoded form parser of the WHATWG URL standard, instead of failing the request.
+     */
+    private String decodeFormField(NettyHttpConfiguration configuration, String headerName, String value) {
+        try {
+            return shouldUrlDecodeHeader(configuration, headerName, value, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return HttpHelper.decodeFormComponent(value, StandardCharsets.UTF_8);
+        }
+    }
+
+    /**
      * Decodes the header if needed to, or returns the header value as is.
      *
      * @param      configuration                the configuration
@@ -344,19 +357,6 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
      * @throws     UnsupportedEncodingException is thrown if error decoding.
      */
     @Deprecated(since = "4.4.0")
-    /**
-     * Decodes a name or a value of a form field as a header with {@link #shouldUrlDecodeHeader}. A % that is not
-     * followed by two hex digits, as in a text such as "50% off" sent as form data, is kept as it is, as in the
-     * URL-encoded form parser of the WHATWG URL standard, instead of failing the request.
-     */
-    private String decodeFormField(NettyHttpConfiguration configuration, String headerName, String value) {
-        try {
-            return shouldUrlDecodeHeader(configuration, headerName, value, StandardCharsets.UTF_8);
-        } catch (IllegalArgumentException e) {
-            return HttpHelper.decodeFormComponent(value, StandardCharsets.UTF_8);
-        }
-    }
-
     protected String shouldUrlDecodeHeader(
             NettyHttpConfiguration configuration, String headerName, Object value, String charset)
             throws UnsupportedEncodingException {
