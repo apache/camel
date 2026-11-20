@@ -81,11 +81,13 @@ public interface OpenFeatureEndpointBuilderFactory {
             return this;
         }
         /**
-         * Deadline in milliseconds for the remote flagd connection.
+         * Deadline in milliseconds. For remote flagd connections this is the
+         * gRPC deadline. For file-based (in-process) providers this controls
+         * the initialization wait timeout (internally used as deadline * 2).
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 500
+         * Default: 5000
          * Group: common
          * 
          * @param deadline the value to set
@@ -96,11 +98,13 @@ public interface OpenFeatureEndpointBuilderFactory {
             return this;
         }
         /**
-         * Deadline in milliseconds for the remote flagd connection.
+         * Deadline in milliseconds. For remote flagd connections this is the
+         * gRPC deadline. For file-based (in-process) providers this controls
+         * the initialization wait timeout (internally used as deadline * 2).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 500
+         * Default: 5000
          * Group: common
          * 
          * @param deadline the value to set
