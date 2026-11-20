@@ -88,7 +88,7 @@ camel dev [options]
 | `--sanitizer` | Add camel-sanitizer, which reports where the processors of the routes break the contract of AsyncProcessor, and with camel.sanitizer.checks=callback,commit,threads also where the commits of the consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod. Not with Quarkus yet |  | boolean
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
-| `--spring-boot-version` | Spring Boot version | 4.1.2 | String
+| `--spring-boot-version` | Spring Boot version | 4.2.0 | String
 | `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components). |  | String
 | `--trace` | Enables trace logging of the routed messages | false | boolean
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean

@@ -71,7 +71,7 @@ camel dependency update [options]
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--scan-routes` | Sync dependencies from route definitions. Only manages org.apache.camel dependencies, preserving non-Camel dependencies. Removes unused Camel dependencies. |  | boolean
 | `--skip-plugins` | Skip plugins during export | false | boolean
-| `--spring-boot-version` | Spring Boot version | 4.1.2 | String
+| `--spring-boot-version` | Spring Boot version | 4.2.0 | String
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean
 | `-h,--help` | Display this help and exit |  | boolean

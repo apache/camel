@@ -109,6 +109,27 @@ when they are set to `true`: a warning by default, and the startup fails with `c
 To keep one of them enabled in production, set `camel.security.insecureDevPolicy=allow`, or add the key to
 `camel.security.allowedProperties`.
 
+=== Spring Boot 4.2
+
+Camel is upgraded to Spring Boot 4.2 and Spring Framework 7.1.
+
+==== camel-spring-rabbitmq-starter - the RabbitMQ connection factory comes from spring-boot-rabbitmq
+
+In Spring Boot 4.2 the RabbitMQ (AMQP 0.9.1) auto-configuration moved from `spring-boot-amqp` to the new
+`spring-boot-rabbitmq` module (`org.springframework.boot.rabbitmq.autoconfigure.RabbitAutoConfiguration`), and
+`spring-boot-starter-amqp` now brings the generic AMQP 1.0 client instead. An application that relied on
+`spring-boot-starter-amqp` for the `ConnectionFactory` of the `spring-rabbitmq` component no longer gets one.
+
+`camel-spring-rabbitmq-starter` now depends on `spring-boot-rabbitmq`, so the `ConnectionFactory` and `AmqpAdmin`
+used by the component are auto-configured from the `+spring.rabbitmq.*+` properties. Remove `spring-boot-starter-amqp`
+if it was only added for that, or replace it with `spring-boot-starter-rabbitmq`.
+
+==== camel-spring-ws - Spring Web Services 5.1
+
+Spring Web Services 5.1 removed the deprecated `WebServiceMessageSender.supports(URI)`.
+A custom `WebServiceMessageSender` configured on the `spring-ws` component must implement
+`supports(URI, WebServiceMessageSender.UriSource)` instead.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.

@@ -56,13 +56,8 @@ public class InMemoryWebServiceMessageSender
     }
 
     @Override
-    public boolean supports(URI uri) {
-        return true;
-    }
-
-    @Override
     public boolean supports(URI uri, WebServiceMessageSender.UriSource uriSource) {
-        return supports(uri);
+        return true;
     }
 
     public WebServiceMessageFactory getMessageFactory() {
