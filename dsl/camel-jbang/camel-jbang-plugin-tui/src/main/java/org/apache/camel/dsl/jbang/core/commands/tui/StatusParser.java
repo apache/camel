@@ -404,6 +404,9 @@ final class StatusParser {
                     if (details != null) {
                         healthDetails(hc, details);
                     }
+                    if (cj.get("stackTrace") instanceof JsonArray trace) {
+                        hc.stackTrace = trace.stream().map(String::valueOf).toList();
+                    }
                     addHealthCheck(info.healthChecks, hc);
                 }
             }
@@ -417,6 +420,9 @@ final class StatusParser {
         hc.lastFailure = epochMillis(details.getString("failure.time"));
         hc.invocations = TuiHelper.objToLong(details.get("invocation.count"));
         hc.failures = TuiHelper.objToLong(details.get("failure.count"));
+        Map<String, String> all = new LinkedHashMap<>();
+        details.forEach((k, v) -> all.put(k, String.valueOf(v)));
+        hc.details = all;
     }
 
     /** A time as the health check details have it (2026-11-09T17:02:42.44+01:00[Europe/Copenhagen]); 0 when not. */
@@ -446,6 +452,8 @@ final class StatusParser {
                 if (!"DOWN".equals(known.state) && hc.state != null && !"UP".equals(hc.state)) {
                     known.state = hc.state;
                     known.message = hc.message != null ? hc.message : known.message;
+                    known.stackTrace = hc.stackTrace;
+                    known.details = hc.details;
                     known.since = hc.since;
                     known.lastUp = hc.lastUp;
                 }
@@ -1424,6 +1432,9 @@ final class StatusParser {
             cb.bulkheadRejectedCalls = TuiHelper.objToLong(bj.get("bulkheadRejectedCalls"));
             Object fr = bj.get("failureRate");
             cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
+            if (bj.get("configuration") instanceof JsonObject conf) {
+                cb.configuration = new LinkedHashMap<>(conf);
+            }
             info.circuitBreakers.add(cb);
         }
     }

@@ -148,6 +148,10 @@ class RoutesTab extends AbstractDiagramTab {
      * Keys in the route table view (sort, top mode, description, open diagram, source, start/stop, suspend/resume).
      */
     private boolean handleTableKeys(KeyEvent ke) {
+        if (!diagram.isShowDiagram() && !sourceViewer.isVisible() && ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiAboutSelectedRoute();
+            return true;
+        }
         // Sort (only when not in diagram)
         if (!diagram.isShowDiagram() && ke.isChar('s')) {
             if (routeTopMode) {
@@ -812,6 +816,49 @@ class RoutesTab extends AbstractDiagramTab {
                     hint(spans, "p", "start");
                 }
             }
+        }
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        String label = aiHintLabel();
+        if (label != null) {
+            hint(spans, "Shift+F8", label);
+        }
+    }
+
+    /** The label of Shift+F8 for the selected route: fix its failures, else explain its time; null when not offered. */
+    String aiHintLabel() {
+        if (ctx.askAiCallback == null || diagram.isShowDiagram() || sourceViewer.isVisible()
+                || gotoNodePopup.isVisible()) {
+            return null;
+        }
+        RouteInfo route = selectedRoute();
+        if (route == null) {
+            return null;
+        }
+        if (RouteAiPrompt.hasFailures(route)) {
+            return "fix with AI";
+        }
+        return route.total > 0 ? "explain with AI" : null;
+    }
+
+    /**
+     * Shift+F8 on a route (CAMEL-25362): fix with AI when its exchanges fail, else explain with AI where its time goes.
+     */
+    private void askAiAboutSelectedRoute() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        RouteInfo route = selectedRoute();
+        if (info == null || route == null || ctx.askAiCallback == null) {
+            return;
+        }
+        if (RouteAiPrompt.hasFailures(route)) {
+            ctx.askAiCallback.ask(RouteAiPrompt.ofFailures(info, route));
+        } else if (route.total > 0) {
+            ctx.askAiCallback.ask(RouteAiPrompt.ofPerformance(info, route));
+        } else if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept("No exchanges in this route yet: ask the AI with F8", false);
         }
     }
 
