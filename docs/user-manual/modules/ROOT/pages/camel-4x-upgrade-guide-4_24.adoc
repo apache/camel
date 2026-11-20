@@ -6901,6 +6901,19 @@ Previously it returned only the first chunk of the event log (at most 500 events
 any sign. A wide `after`/`before` window now returns every event in one list: that is one request per 500 events plus
 one that finds the end of the log, and more memory. Narrow the window when the event log is large.
 
+=== camel-box - the events consumer routes only events, and listens again after the event stream fails
+
+A route that reads from `box:events/listen` no longer gets an exchange with a `null` body at every poll of the consumer
+(every 500 ms by default), besides the events. A route that counted or filtered those exchanges, or used them as a
+heartbeat, gets only the exchanges of the Box events now.
+
+When the event stream fails (such as when Box cannot be reached for a while), the Box SDK stops it for good, and the
+consumer stayed started without receiving any event. The consumer now listens again after 1 second, doubled after each
+failure up to 60 seconds, and back to 1 second once the stream receives events again. It continues from the position
+after the last events it received, or from the `startingPosition` of the endpoint (from now when it has none) when it
+received no event yet. Each failure of the stream still goes to the exception handler of the consumer (a WARN log by
+default).
+
 === camel-aws2-eventbridge - the consumer keeps one target for a queue given with queueUrl
 
 A consumer that uses its own queue (`queueUrl`) added a target with a new random id to the EventBridge rule at every
