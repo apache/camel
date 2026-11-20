@@ -18,6 +18,7 @@ package org.apache.camel.component.jackson;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 
 public class SchemaHelper {
 
@@ -77,6 +78,10 @@ public class SchemaHelper {
     public static boolean isPojo(Class<?> type) {
         if (StreamCache.class.isAssignableFrom(type)) {
             // a stream cache holds the raw content, such as the body of an HTTP request, and is no POJO
+            return false;
+        }
+        if (WrappedFile.class.isAssignableFrom(type)) {
+            // a file from a file, FTP or similar consumer (such as GenericFile) is a handle to raw content, and is no POJO
             return false;
         }
 
