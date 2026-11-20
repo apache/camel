@@ -635,20 +635,6 @@ public final class RouteDefinitionHelper {
         doInitInterceptors(context, route, upper, routeIntercepts, routeInterceptFroms, routeInterceptSendTos, false);
     }
 
-    /**
-     * Returns true when the given definition belongs to a named (non-wildcard) route configuration. Named route
-     * configuration intercepts and onCompletions must NOT be treated as context-scoped by the YAML dumper — they are
-     * already emitted inside their routeConfiguration block and must not be hoisted to top-level entries.
-     */
-    private static boolean isFromNamedRouteConfiguration(ProcessorDefinition<?> def) {
-        RouteConfigurationDefinition rc = def.getRouteConfiguration();
-        if (rc == null) {
-            return false;
-        }
-        String id = rc.getId();
-        return id != null && !id.isBlank() && !"*".equals(id);
-    }
-
     private static void doInitInterceptors(
             CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
             List<InterceptDefinition> intercepts,
@@ -659,7 +645,7 @@ public final class RouteDefinitionHelper {
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
-                if (contextScoped && !isFromNamedRouteConfiguration(intercept)) {
+                if (contextScoped) {
                     // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                     intercept.setRouteScoped(false);
                     // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
@@ -730,7 +716,7 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
-                    if (contextScoped && !isFromNamedRouteConfiguration(intercept)) {
+                    if (contextScoped) {
                         // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                         intercept.setRouteScoped(false);
                     }
@@ -749,7 +735,7 @@ public final class RouteDefinitionHelper {
         if (interceptSendToEndpointDefinitions != null && !interceptSendToEndpointDefinitions.isEmpty()) {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
-                if (contextScoped && !isFromNamedRouteConfiguration(intercept)) {
+                if (contextScoped) {
                     // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
                     intercept.setRouteScoped(false);
                 }
@@ -785,9 +771,7 @@ public final class RouteDefinitionHelper {
             // configurations intentionally keep routeScoped=true (see CAMEL-25135). Instead, track them on the
             // route via a separate transient list that the YAML dumper can read without touching the runtime flag.
             for (OnCompletionDefinition global : completions) {
-                if (!isFromNamedRouteConfiguration(global)) {
-                    route.addContextScopedOnCompletion(global);
-                }
+                route.addContextScopedOnCompletion(global);
                 initParent(global);
             }
         }

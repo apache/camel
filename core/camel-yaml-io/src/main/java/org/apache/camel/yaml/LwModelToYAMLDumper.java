@@ -165,10 +165,10 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         allContextScoped.addAll(contextScopedInterceptFroms);
         allContextScoped.addAll(contextScopedInterceptSendTos);
         allContextScoped.addAll(contextScopedOnCompletions);
-        // named route configuration intercepts and onCompletions are added to route outputs by initInterceptors/
-        // initOnCompletions but must not be inlined in the route's steps — they belong to the routeConfiguration
-        // block. They are not in the persistent contextScopedIntercepts list (guarded by isFromNamedRouteConfiguration),
-        // so we collect them directly from route outputs using the route-configuration membership check.
+        // named route configuration intercepts and onCompletions are recorded in the persistent contextScoped* lists
+        // (and are therefore already in allContextScoped above), so the route-configuration identity check below is a
+        // safety net: it adds any intercept/onCompletion that is still in route outputs and belongs to a route
+        // configuration but was not already collected (e.g. if a future code path skips the persistent-list recording).
         Consumer<RouteDefinition> collectRouteConfigScopedIntercepts = route -> {
             for (var output : route.getOutputs()) {
                 if (output instanceof InterceptDefinition i && !containsInstance(allContextScoped, i)
