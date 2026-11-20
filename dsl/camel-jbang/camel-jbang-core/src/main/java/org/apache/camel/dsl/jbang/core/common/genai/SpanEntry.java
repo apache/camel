@@ -14,13 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.genai;
 
 import java.util.Map;
 
 import org.apache.camel.util.json.JsonObject;
 
-record SpanEntry(
+/**
+ * A span of the span dump of a running integration (the OpenTelemetry dev console, {@code camel cmd span} and the
+ * {@code get_spans} tool), as the Camel TUI and the MCP server read it.
+ *
+ * @param attributes the span attributes, {@code null} when there are none
+ */
+public record SpanEntry(
         String traceId,
         String spanId,
         String parentSpanId,
@@ -35,8 +41,9 @@ record SpanEntry(
         String scopeName,
         Map<String, Object> attributes) {
 
+    /** A span of the dump. */
     @SuppressWarnings("unchecked")
-    static SpanEntry fromJson(JsonObject jo) {
+    public static SpanEntry fromJson(JsonObject jo) {
         Map<String, Object> attrs = null;
         JsonObject attrsObj = jo.getMap("attributes");
         if (attrsObj != null && !attrsObj.isEmpty()) {
@@ -58,15 +65,15 @@ record SpanEntry(
                 attrs);
     }
 
-    boolean isRoot() {
+    public boolean isRoot() {
         return parentSpanId == null || parentSpanId.isEmpty();
     }
 
-    boolean isError() {
+    public boolean isError() {
         return "ERROR".equals(status);
     }
 
-    boolean isCamelSpan() {
+    public boolean isCamelSpan() {
         return scopeName == null || "camel".equals(scopeName);
     }
 }

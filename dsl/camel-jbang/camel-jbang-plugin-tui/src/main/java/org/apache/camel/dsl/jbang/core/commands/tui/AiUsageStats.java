@@ -44,7 +44,9 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiSpanUsageExtractor.GenAiActivity;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans.GenAiActivity;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.formatSeconds;
 
@@ -390,7 +392,7 @@ final class AiUsageStats {
 
     /** The agent runs and tool calls of the integration since the last reset, and its GenAI observability level. */
     GenAiActivity activity() {
-        return GenAiSpanUsageExtractor.activity(otelSpans.get(), usageResetAt);
+        return GenAiSpans.activity(otelSpans.get(), usageResetAt);
     }
 
     /**

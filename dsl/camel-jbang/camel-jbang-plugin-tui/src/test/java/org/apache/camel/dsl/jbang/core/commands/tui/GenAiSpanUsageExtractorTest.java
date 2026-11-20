@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,9 +36,9 @@ class GenAiSpanUsageExtractorTest {
         SpanEntry genAi = span(Map.of(GenAiAttributes.OPERATION_NAME, "chat"));
         SpanEntry other = span(Map.of("http.method", "GET"));
 
-        assertThat(GenAiSpanUsageExtractor.isGenAiSpan(genAi)).isTrue();
-        assertThat(GenAiSpanUsageExtractor.isGenAiSpan(other)).isFalse();
-        assertThat(GenAiSpanUsageExtractor.isGenAiSpan(null)).isFalse();
+        assertThat(GenAiSpans.isGenAiSpan(genAi)).isTrue();
+        assertThat(GenAiSpans.isGenAiSpan(other)).isFalse();
+        assertThat(GenAiSpans.isGenAiSpan(null)).isFalse();
     }
 
     @Test
@@ -100,19 +102,19 @@ class GenAiSpanUsageExtractorTest {
 
     @Test
     void isModelCallLeavesOutAgentRunsAndToolCalls() {
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "chat")))).isTrue();
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "embeddings"))))
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "chat")))).isTrue();
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "embeddings"))))
                 .isTrue();
         // an operation recorded by an AI framework, unknown to the Camel observability, still is a model call
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "text_completion"))))
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "text_completion"))))
                 .isTrue();
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "invoke_agent"))))
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "invoke_agent"))))
                 .isFalse();
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool"))))
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool"))))
                 .isFalse();
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "create_agent"))))
+        assertThat(GenAiSpans.isModelCall(span(Map.of(GenAiAttributes.OPERATION_NAME, "create_agent"))))
                 .isFalse();
-        assertThat(GenAiSpanUsageExtractor.isModelCall(span(Map.of("http.method", "GET")))).isFalse();
+        assertThat(GenAiSpans.isModelCall(span(Map.of("http.method", "GET")))).isFalse();
     }
 
     @Test
@@ -156,7 +158,7 @@ class GenAiSpanUsageExtractorTest {
                 GenAiAttributes.PROVIDER_NAME, "openai",
                 GenAiAttributes.REQUEST_MODEL, "gpt-4.1")));
 
-        GenAiSpanUsageExtractor.GenAiActivity activity = GenAiSpanUsageExtractor.activity(spans, Instant.EPOCH);
+        GenAiSpans.GenAiActivity activity = GenAiSpans.activity(spans, Instant.EPOCH);
 
         assertThat(activity.agentRuns()).isEqualTo(1);
         assertThat(activity.agentModelCalls()).isEqualTo(2);
@@ -179,20 +181,20 @@ class GenAiSpanUsageExtractorTest {
                 "trace-1", "s3", "", "chat", "CLIENT", "OK", 0, 0, 10, null, null, "dev.langchain4j",
                 Map.of(GenAiAttributes.OPERATION_NAME, "chat", GenAiAttributes.PROVIDER_NAME, "openai"));
 
-        assertThat(GenAiSpanUsageExtractor.activity(List.of(basic), Instant.EPOCH).level())
+        assertThat(GenAiSpans.activity(List.of(basic), Instant.EPOCH).level())
                 .isEqualTo(GenAiObservabilityLevel.BASIC);
-        assertThat(GenAiSpanUsageExtractor.activity(List.of(basic, full), Instant.EPOCH).level())
+        assertThat(GenAiSpans.activity(List.of(basic, full), Instant.EPOCH).level())
                 .isEqualTo(GenAiObservabilityLevel.FULL);
         // the spans of an AI framework do not tell the level of the Camel observability
-        assertThat(GenAiSpanUsageExtractor.activity(List.of(framework), Instant.EPOCH).level()).isNull();
-        assertThat(GenAiSpanUsageExtractor.activity(List.of(), Instant.EPOCH).level()).isNull();
+        assertThat(GenAiSpans.activity(List.of(framework), Instant.EPOCH).level()).isNull();
+        assertThat(GenAiSpans.activity(List.of(), Instant.EPOCH).level()).isNull();
     }
 
     @Test
     void activityLeavesOutSpansBeforeTheReset() {
         Instant afterTheRun = Instant.parse("2026-08-13T12:00:01Z");
 
-        GenAiSpanUsageExtractor.GenAiActivity activity = GenAiSpanUsageExtractor.activity(agentRun(), afterTheRun);
+        GenAiSpans.GenAiActivity activity = GenAiSpans.activity(agentRun(), afterTheRun);
 
         assertThat(activity.agentRuns()).isZero();
         assertThat(activity.toolCalls()).isZero();

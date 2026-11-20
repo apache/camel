@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.genai;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,9 +39,9 @@ import org.apache.camel.util.json.Jsoner;
  * An agent run ({@code invoke_agent}) shows the input and output of its last model call: that input already holds the
  * whole conversation of the run, with every tool call and result.
  */
-final class GenAiTranscript {
+public final class GenAiTranscript {
 
-    enum Kind {
+    public enum Kind {
         TEXT,
         REASONING,
         TOOL_CALL,
@@ -52,19 +52,19 @@ final class GenAiTranscript {
      * A part of a message: a text, a tool call with its arguments, or a tool result. {@code id} pairs a tool call with
      * its result.
      */
-    record Part(Kind kind, String text, String toolName, String id) {
+    public record Part(Kind kind, String text, String toolName, String id) {
 
-        Part(Kind kind, String text) {
+        public Part(Kind kind, String text) {
             this(kind, text, null, null);
         }
     }
 
     /** A message: its role (system, user, assistant, tool), its parts, and the finish reason of an output message. */
-    record Turn(String role, List<Part> parts, String finishReason) {
+    public record Turn(String role, List<Part> parts, String finishReason) {
     }
 
     /** The mark {@code GenAiMessages} puts at the end of a text cut at {@code contentMaxLength}. */
-    static final String TRUNCATED = "...[truncated]";
+    public static final String TRUNCATED = "...[truncated]";
 
     private static final List<String> CONTENT_ATTRIBUTES = List.of(
             GenAiAttributes.INPUT_MESSAGES, GenAiAttributes.OUTPUT_MESSAGES, GenAiAttributes.SYSTEM_INSTRUCTIONS,
@@ -77,11 +77,11 @@ final class GenAiTranscript {
         this.turns = List.copyOf(turns);
     }
 
-    List<Turn> turns() {
+    public List<Turn> turns() {
         return turns;
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return turns.isEmpty();
     }
 
@@ -89,7 +89,7 @@ final class GenAiTranscript {
      * The conversation as Markdown: a heading per message, the texts as they are (a model answers in Markdown), and the
      * tool arguments and results as code blocks.
      */
-    String toMarkdown() {
+    public String toMarkdown() {
         StringBuilder sb = new StringBuilder();
         for (Turn turn : turns) {
             sb.append("### ").append(heading(turn)).append("\n\n");
@@ -164,15 +164,9 @@ final class GenAiTranscript {
         }
     }
 
-    /** Whether the span is a GenAI span: a model call, an agent run or a tool call. */
-    static boolean isGenAiSpan(SpanEntry span) {
-        return span != null && span.attributes() != null
-                && span.attributes().containsKey(GenAiAttributes.OPERATION_NAME);
-    }
-
     /** Whether the span carries message content, recorded at observability level {@code full}. */
-    static boolean hasContent(SpanEntry span) {
-        if (!isGenAiSpan(span)) {
+    public static boolean hasContent(SpanEntry span) {
+        if (!GenAiSpans.isGenAiSpan(span)) {
             return false;
         }
         for (String key : CONTENT_ATTRIBUTES) {
@@ -187,8 +181,8 @@ final class GenAiTranscript {
      * The conversation of a GenAI span. {@code traceSpans} are the spans of its trace, where the model calls of an
      * agent run are found.
      */
-    static GenAiTranscript of(SpanEntry span, List<SpanEntry> traceSpans) {
-        if (!isGenAiSpan(span)) {
+    public static GenAiTranscript of(SpanEntry span, List<SpanEntry> traceSpans) {
+        if (!GenAiSpans.isGenAiSpan(span)) {
             return new GenAiTranscript(List.of());
         }
         String operation = String.valueOf(span.attributes().get(GenAiAttributes.OPERATION_NAME));
@@ -248,7 +242,7 @@ final class GenAiTranscript {
         }
         SpanEntry last = null;
         for (SpanEntry s : traceSpans) {
-            if (s != agent && isGenAiSpan(s) && s.attributes().containsKey(GenAiAttributes.INPUT_MESSAGES)
+            if (s != agent && GenAiSpans.isGenAiSpan(s) && s.attributes().containsKey(GenAiAttributes.INPUT_MESSAGES)
                     && !isAgentOrTool(s) && isInside(s, agent.spanId(), byId)
                     && (last == null || s.startEpochNanos() >= last.startEpochNanos())) {
                 last = s;
@@ -301,7 +295,7 @@ final class GenAiTranscript {
      * Parses a {@code gen_ai.*.messages} or {@code gen_ai.system_instructions} attribute. A value that is not a JSON
      * array of messages is shown as one text.
      */
-    static List<Turn> parseMessages(String json) {
+    public static List<Turn> parseMessages(String json) {
         if (json == null || json.isBlank()) {
             return List.of();
         }

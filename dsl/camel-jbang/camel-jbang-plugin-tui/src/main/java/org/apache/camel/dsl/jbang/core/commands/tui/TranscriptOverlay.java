@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiTranscript;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;

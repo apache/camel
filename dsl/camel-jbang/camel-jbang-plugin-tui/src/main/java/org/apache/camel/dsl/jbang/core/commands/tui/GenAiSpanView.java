@@ -17,8 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +25,11 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
-import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns.AgentRun;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns.Step;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 
 /**
  * How the Spans tab shows GenAI spans: a label per span in the waterfall (an agent run, a model call with its tokens
@@ -43,81 +44,34 @@ final class GenAiSpanView {
 
     private static final int MAX_ARGUMENTS = 40;
     private static final int MAX_STEPS = 8;
-    private static final int MAX_PARENT_HOPS = 50;
-
-    /** A model call or tool call of an agent run. */
-    record Step(SpanEntry span, boolean tool, String name, long durationMs, long inputTokens, long outputTokens,
-            long cachedTokens, String finishReason) {
-    }
-
-    /** An agent run with its steps in the order they started. */
-    record AgentRun(String agentName, String model, String provider, String conversationId, long durationMs,
-            List<Step> steps) {
-
-        long modelCalls() {
-            return steps.stream().filter(s -> !s.tool()).count();
-        }
-
-        long toolCalls() {
-            return steps.stream().filter(Step::tool).count();
-        }
-
-        long inputTokens() {
-            return steps.stream().mapToLong(Step::inputTokens).sum();
-        }
-
-        long outputTokens() {
-            return steps.stream().mapToLong(Step::outputTokens).sum();
-        }
-
-        long cachedTokens() {
-            return steps.stream().mapToLong(Step::cachedTokens).sum();
-        }
-
-        long modelMs() {
-            return steps.stream().filter(s -> !s.tool()).mapToLong(Step::durationMs).sum();
-        }
-
-        long toolMs() {
-            return steps.stream().filter(Step::tool).mapToLong(Step::durationMs).sum();
-        }
-    }
 
     private GenAiSpanView() {
-    }
-
-    static boolean isAgentRun(SpanEntry span) {
-        return GenAiOperationName.INVOKE_AGENT.value().equals(operation(span));
-    }
-
-    static boolean isToolCall(SpanEntry span) {
-        return GenAiOperationName.EXECUTE_TOOL.value().equals(operation(span));
     }
 
     /** The waterfall label of a GenAI span. */
     static String label(SpanEntry span) {
         Map<String, Object> attrs = span.attributes();
-        if (isAgentRun(span)) {
-            String model = model(attrs);
-            return AGENT + " agent " + orElse(text(attrs, GenAiAttributes.AGENT_NAME), span.routeId())
+        if (GenAiSpans.isAgentRun(span)) {
+            String model = GenAiSpans.model(attrs);
+            return AGENT + " agent " + orElse(GenAiSpans.text(attrs, GenAiAttributes.AGENT_NAME), span.routeId())
                    + (model != null ? " · " + model : "");
         }
-        if (isToolCall(span)) {
-            String arguments = text(attrs, GenAiAttributes.TOOL_CALL_ARGUMENTS);
-            return TOOL + " tool " + orElse(text(attrs, GenAiAttributes.TOOL_NAME), span.name())
+        if (GenAiSpans.isToolCall(span)) {
+            String arguments = GenAiSpans.text(attrs, GenAiAttributes.TOOL_CALL_ARGUMENTS);
+            return TOOL + " tool " + orElse(GenAiSpans.text(attrs, GenAiAttributes.TOOL_NAME), span.name())
                    + (arguments != null ? " " + oneLine(arguments, MAX_ARGUMENTS) : "");
         }
-        StringBuilder sb = new StringBuilder(MODEL_CALL).append(' ').append(operation(span));
-        String model = model(attrs);
+        StringBuilder sb = new StringBuilder(MODEL_CALL).append(' ').append(GenAiSpans.operation(span));
+        String model = GenAiSpans.model(attrs);
         if (model != null) {
             sb.append(' ').append(model);
         }
-        long in = number(attrs, GenAiAttributes.INPUT_TOKENS);
-        long out = number(attrs, GenAiAttributes.OUTPUT_TOKENS);
+        long in = GenAiSpans.number(attrs, GenAiAttributes.INPUT_TOKENS);
+        long out = GenAiSpans.number(attrs, GenAiAttributes.OUTPUT_TOKENS);
         if (in > 0 || out > 0) {
             sb.append(" · ").append(tokens(in)).append('→').append(tokens(out));
         }
-        String finish = text(attrs, GenAiAttributes.FINISH_REASONS);
+        String finish = GenAiSpans.text(attrs, GenAiAttributes.FINISH_REASONS);
         if (finish != null) {
             sb.append(" · ").append(finish);
         }
@@ -126,54 +80,9 @@ final class GenAiSpanView {
 
     /** The colour of a GenAI span in the waterfall: an agent run, a model call or a tool call. */
     static Style style(SpanEntry span, boolean selected) {
-        Style style = isAgentRun(span) ? Theme.label() : isToolCall(span) ? Theme.warning() : Theme.success();
+        Style style
+                = GenAiSpans.isAgentRun(span) ? Theme.label() : GenAiSpans.isToolCall(span) ? Theme.warning() : Theme.success();
         return selected ? style.bold() : style;
-    }
-
-    /** The agent run with its model and tool calls: the GenAI spans whose nearest agent run is this one. */
-    static AgentRun agentRun(SpanEntry agent, List<SpanEntry> traceSpans) {
-        Map<String, SpanEntry> byId = new HashMap<>();
-        for (SpanEntry s : traceSpans) {
-            if (s.spanId() != null) {
-                byId.put(s.spanId(), s);
-            }
-        }
-        List<Step> steps = new ArrayList<>();
-        traceSpans.stream()
-                .filter(s -> s != agent && GenAiTranscript.isGenAiSpan(s) && !isAgentRun(s))
-                .filter(s -> agent.spanId() != null && agent.spanId().equals(nearestAgentRun(s, byId)))
-                .sorted(Comparator.comparingLong(SpanEntry::startEpochNanos))
-                .forEach(s -> steps.add(step(s)));
-        Map<String, Object> attrs = agent.attributes();
-        return new AgentRun(
-                orElse(text(attrs, GenAiAttributes.AGENT_NAME), agent.routeId()), model(attrs),
-                orElse(text(attrs, GenAiAttributes.PROVIDER_NAME), text(attrs, GenAiAttributes.SYSTEM)),
-                text(attrs, GenAiAttributes.CONVERSATION_ID), agent.durationMs(), steps);
-    }
-
-    private static Step step(SpanEntry span) {
-        Map<String, Object> attrs = span.attributes();
-        if (isToolCall(span)) {
-            return new Step(
-                    span, true, orElse(text(attrs, GenAiAttributes.TOOL_NAME), span.name()), span.durationMs(),
-                    0, 0, 0, null);
-        }
-        return new Step(
-                span, false, operation(span) + (model(attrs) != null ? " " + model(attrs) : ""),
-                span.durationMs(), number(attrs, GenAiAttributes.INPUT_TOKENS),
-                number(attrs, GenAiAttributes.OUTPUT_TOKENS), number(attrs, GenAiAttributes.CACHE_READ_INPUT_TOKENS),
-                text(attrs, GenAiAttributes.FINISH_REASONS));
-    }
-
-    private static String nearestAgentRun(SpanEntry span, Map<String, SpanEntry> byId) {
-        SpanEntry current = span;
-        for (int hops = 0; hops < MAX_PARENT_HOPS && current != null && !current.isRoot(); hops++) {
-            current = byId.get(current.parentSpanId());
-            if (current != null && isAgentRun(current)) {
-                return current.spanId();
-            }
-        }
-        return null;
     }
 
     /** The lines of the detail panel for an agent run: model, steps, tokens, time, and the steps one by one. */
@@ -202,7 +111,7 @@ final class GenAiSpanView {
                 Span.styled(tokens(run.inputTokens()) + " in / " + tokens(run.outputTokens()) + " out / "
                             + tokens(run.cachedTokens()) + " cached",
                         value)));
-        long other = Math.max(0, run.durationMs() - run.modelMs() - run.toolMs());
+        long other = run.otherMs();
         lines.add(Line.from(
                 Span.styled(" Time:   ", muted),
                 Span.styled(duration(run.durationMs()), value),
@@ -260,37 +169,7 @@ final class GenAiSpanView {
         return CharWidth.of(line) > max ? CharWidth.substringByWidth(line, max - 1) + "…" : line;
     }
 
-    private static String operation(SpanEntry span) {
-        return span != null ? text(span.attributes(), GenAiAttributes.OPERATION_NAME) : null;
-    }
-
-    private static String model(Map<String, Object> attrs) {
-        String model = orElse(text(attrs, GenAiAttributes.RESPONSE_MODEL), text(attrs, GenAiAttributes.REQUEST_MODEL));
-        return "unknown".equals(model) ? null : model;
-    }
-
     private static String orElse(String value, String fallback) {
         return value != null ? value : fallback;
-    }
-
-    private static String text(Map<String, Object> attrs, String key) {
-        Object value = attrs != null ? attrs.get(key) : null;
-        if (value == null) {
-            return null;
-        }
-        String text = value.toString();
-        return text.isBlank() ? null : text;
-    }
-
-    private static long number(Map<String, Object> attrs, String key) {
-        Object value = attrs != null ? attrs.get(key) : null;
-        if (value instanceof Number n) {
-            return n.longValue();
-        }
-        try {
-            return value != null ? Long.parseLong(value.toString()) : 0;
-        } catch (NumberFormatException e) {
-            return 0;
-        }
     }
 }

@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestSource;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RunnerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ServerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SlotState;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;

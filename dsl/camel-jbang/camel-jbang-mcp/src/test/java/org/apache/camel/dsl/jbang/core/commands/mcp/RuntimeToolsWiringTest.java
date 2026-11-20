@@ -403,6 +403,14 @@ class RuntimeToolsWiringTest {
 
         Method aiTrace = AiTraceTools.class.getDeclaredMethod("camel_runtime_ai_trace", String.class, String.class);
         assertThat(aiTrace.getParameters()[0].getAnnotation(ToolArg.class).required()).isFalse();
+
+        // the conversation of a run: one argument a model must give, the runId from the trace
+        Method conversation = AiTraceTools.class.getDeclaredMethod("camel_runtime_ai_conversation", String.class,
+                String.class);
+        assertThat(conversation.getParameters()[0].getAnnotation(ToolArg.class).required()).isFalse();
+        assertThat(conversation.getParameters()[1].getAnnotation(ToolArg.class).required()).isTrue();
+        Tool.Annotations hints = conversation.getAnnotation(Tool.class).annotations();
+        assertThat(List.of(hints.readOnlyHint(), hints.destructiveHint())).containsExactly(true, false);
     }
 
     private static List<Boolean> hints(String tool, Class<?>... parameters) throws Exception {

@@ -31,6 +31,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.component.ai.observability.GenAiMessages;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

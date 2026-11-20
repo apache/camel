@@ -28,6 +28,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

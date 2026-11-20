@@ -52,6 +52,10 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiTranscript;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -570,7 +574,7 @@ class SpansTab extends AbstractTab {
         } else if (!camelSpan) {
             labelStyle = selected ? Theme.notice().bold() : Theme.notice();
             bandStyle = Theme.notice();
-        } else if (GenAiTranscript.isGenAiSpan(node.span)) {
+        } else if (GenAiSpans.isGenAiSpan(node.span)) {
             labelStyle = GenAiSpanView.style(node.span, selected);
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
         } else {
@@ -634,12 +638,12 @@ class SpansTab extends AbstractTab {
             }
             lines.add(Line.from(ctx));
         }
-        if (GenAiTranscript.isGenAiSpan(span)) {
+        if (GenAiSpans.isGenAiSpan(span)) {
             lines.add(conversationLine(span));
         }
-        if (GenAiSpanView.isAgentRun(span)) {
+        if (GenAiSpans.isAgentRun(span)) {
             List<SpanEntry> trace = spans.get().stream().filter(s -> selectedTraceId.equals(s.traceId())).toList();
-            lines.addAll(GenAiSpanView.agentRunLines(GenAiSpanView.agentRun(span, trace)));
+            lines.addAll(GenAiSpanView.agentRunLines(GenAiAgentRuns.agentRun(span, trace)));
         }
 
         // Attributes as individual key: value lines
@@ -684,7 +688,7 @@ class SpansTab extends AbstractTab {
             return;
         }
         SpanEntry span = nodes.get(waterfallSelected).span;
-        if (!GenAiTranscript.isGenAiSpan(span)) {
+        if (!GenAiSpans.isGenAiSpan(span)) {
             return;
         }
         List<SpanEntry> trace = spans.get().stream().filter(s -> selectedTraceId.equals(s.traceId())).toList();
@@ -725,7 +729,7 @@ class SpansTab extends AbstractTab {
     private boolean selectedSpanIsGenAi() {
         List<WaterfallNode> nodes = renderedNodes;
         return waterfallSelected >= 0 && waterfallSelected < nodes.size()
-                && GenAiTranscript.isGenAiSpan(nodes.get(waterfallSelected).span);
+                && GenAiSpans.isGenAiSpan(nodes.get(waterfallSelected).span);
     }
 
     private List<TraceSummary> buildTraceSummaries() {
@@ -923,7 +927,7 @@ class SpansTab extends AbstractTab {
     }
 
     private static String spanLabel(SpanEntry span) {
-        if (GenAiTranscript.isGenAiSpan(span)) {
+        if (GenAiSpans.isGenAiSpan(span)) {
             return GenAiSpanView.label(span);
         }
         String name = span.name();
