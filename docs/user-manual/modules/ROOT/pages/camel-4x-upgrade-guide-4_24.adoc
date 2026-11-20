@@ -237,7 +237,10 @@ when it hands it on with `kamelet:sink`. Before, the type was applied only when 
   the type, and an exchange failed at the end when the consuming route left a body that could not be converted to the
   type, such as a `Map` for `binary`. Sources of the Kamelet catalog such as `aws-sqs-source` (`text`), `slack-source`
   (`json`) or `azure-eventhubs-source` (`binary`) now give the first step of the consuming route a `String`, JSON or a
-  `byte[]` with the matching `Content-Type` header, where it used to get the body of the component.
+  `byte[]` with the matching `Content-Type` header, where it used to get the body of the component. A source with the
+  `binary` type keeps a stream body as it is, also an `InputStream` that is not a stream cache (stream caching turned
+  off), and only sets the `Content-Type` header, so a large object or file (such as `aws-s3-source`, or an FTP source
+  with `streamDownload`) is not read into memory, and the consuming route gets the stream as before.
 * For an action or a sink Kamelet called with the Kamelet EIP (`kamelet: name: ...` in YAML, `.kamelet("...")` in
   Java), that was after the steps that follow the EIP had run, so these steps got the body before the type was applied.
   They now get the body of the type, as the steps after a `to("kamelet:...")` already did.
@@ -254,7 +257,8 @@ The `application-octet-stream` (`binary`) data type transformer keeps a body tha
 header to `application/octet-stream`. Before, it read the body into a `byte[]`. These bodies are binary already and can
 be read again, and they may be large: a source Kamelet such as `aws-s3-source` or `azure-storage-blob-source` declares
 `binary` and gives the object as a stream, and a file can be uploaded without reading it into memory. Any other body,
-including an `InputStream` that is not a stream cache (stream caching turned off), is still converted to a `byte[]`.
+including an `InputStream` that is not a stream cache (stream caching turned off), is still converted to a `byte[]`,
+as it may be read only once; only the `binary` output type of a source Kamelet keeps such a stream (see above).
 
 === camel-kamelet - each Kamelet EIP has a Kamelet route of its own
 
