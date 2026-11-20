@@ -136,22 +136,28 @@ Java::
 from("azure-storage-blob://camelazure/container1?maxMessagesPerPoll=10&accessKey=RAW(yourAccessKey)")
     .to("direct:processBlob");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        maxMessagesPerPoll: 10
+        accessKey: "RAW(yourAccessKey)"
+      steps:
+        - to:
+            uri: direct:processBlob
+----
 ====
 
-The default value is `0`, which means unlimited. Set a positive value to bound the number of blob contents retrieved during each poll. The limit counts successfully retrieved blobs. Blobs that are already in progress, no longer exist, or cannot be retrieved do not count towards the limit.
+The default value is `0`, which means unlimited. A positive value limits the number of successfully retrieved blobs in each poll. Blobs skipped because they are already in progress, no longer exist, or cannot be retrieved do not count toward the limit.
 
-The consumer lists blobs page by page and retains the unprocessed names from the current page for subsequent polls. This allows later blobs to be reached even when earlier blobs remain in the container. `maxResultsPerPage` remains a separate option controlling the Azure listing page size.
+The consumer lists blobs page by page and retains unprocessed names from the current page for subsequent polls. The Azure continuation token advances across pages, and the listing wraps to the beginning after the last page. `maxResultsPerPage` independently controls the number of items in each Azure listing page.
 
-NOTE: `maxMessagesPerPoll` limits the number of blobs successfully retrieved for a poll,
-not the number of blob names listed. Blobs skipped because they are already in progress,
-no longer exist, or cannot be retrieved do not count toward the limit. The consumer prepares
-the complete batch before routing its first exchange so Camel's `CamelBatchSize`,
-`CamelBatchIndex` and `CamelBatchComplete` properties describe the exact batch. This is
-bounded prefetch when `maxMessagesPerPoll` is set, not strict just-in-time retrieval immediately
-before each route invocation. The default value `0` means unlimited. When blobs are retained
-(with neither `deleteAfterRead` nor `moveAfterRead`), successive polls continue from the next
-listing page and wrap to the beginning after the end of the listing, so later pages are not
-starved by repeatedly starting at the first page.
+NOTE: The consumer prepares the complete batch before routing its first exchange. This bounded prefetch preserves the exact Camel `CamelBatchSize`, `CamelBatchIndex` and `CamelBatchComplete` properties. It is not strict just-in-time retrieval immediately before each route invocation.
 
 === Delete After Read
 

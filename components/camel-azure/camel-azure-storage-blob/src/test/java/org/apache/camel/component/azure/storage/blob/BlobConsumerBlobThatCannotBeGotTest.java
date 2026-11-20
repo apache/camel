@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.rest.PagedIterable;
@@ -48,13 +49,17 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,6 +74,10 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
     private final CountDownLatch failedPolls = new CountDownLatch(2);
     private final CountDownLatch skippedReported = new CountDownLatch(1);
     private final List<String> handled = new CopyOnWriteArrayList<>();
+    private final CountDownLatch pollFailureObserved = new CountDownLatch(1);
+    private final CountDownLatch tailFailuresReported = new CountDownLatch(2);
+    private final AtomicBoolean failNextContinuationPage = new AtomicBoolean();
+    private final List<BlobInputStream> openedStreams = new CopyOnWriteArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -88,6 +97,7 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
             @Override
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 failedPolls.countDown();
+                pollFailureObserved.countDown();
                 return false;
             }
         });
@@ -112,13 +122,17 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
                 if (message.contains("b.txt")) {
                     skippedReported.countDown();
                 }
+                if (message.contains("c.txt") || message.contains("d.txt")) {
+                    tailFailuresReported.countDown();
+                }
             }
         });
         return context;
     }
 
-    @Test
-    void blobThatCannotBeGotDoesNotBlockTheOtherBlobs() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "&maxMessagesPerPoll=2" })
+    void blobThatCannotBeGotDoesNotBlockTheOtherBlobs(String maxMessagesPerPollOption) throws Exception {
         blobs.add("a.txt");
         blobs.add("b.txt");
         blobs.add("c.txt");
@@ -126,15 +140,17 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderValuesReceivedInAnyOrder(BlobConstants.BLOB_NAME, "a.txt", "c.txt");
 
-        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2&exceptionHandler=#recordErrors");
+        addConsumerRoute("&deleteAfterRead=true" + maxMessagesPerPollOption
+                         + "&exceptionHandler=#recordErrors");
 
         mock.assertIsSatisfied();
         assertTrue(skippedReported.await(20, TimeUnit.SECONDS), "the skipped blob is reported: " + handled);
         assertTrue(blobs.contains("b.txt"), "b.txt stays");
     }
 
-    @Test
-    void pollFailsWhenNoListedBlobCanBeGot() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "&maxMessagesPerPoll=2" })
+    void pollFailsWhenNoListedBlobCanBeGot(String maxMessagesPerPollOption) throws Exception {
         blobs.add("a.txt");
         blobs.add("b.txt");
         archived.add("a.txt");
@@ -142,12 +158,120 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2&pollStrategy=#countPolls");
+        addConsumerRoute("&deleteAfterRead=true" + maxMessagesPerPollOption
+                         + "&pollStrategy=#countPolls");
 
         // as for a failed listing (expired credentials, no permission to read blobs): the poll fails, so the error
         // handling and the backoff of the scheduled consumer apply
         assertTrue(failedPolls.await(20, TimeUnit.SECONDS), "the polls fail");
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void archivedBlobsOnLaterListingPageDoNotFailThePartialPoll() throws Exception {
+        blobs.addAll(List.of("a.txt", "b.txt", "c.txt", "d.txt"));
+        archived.addAll(Set.of("c.txt", "d.txt"));
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(2);
+        mockEndpoint.setResultWaitTime(20_000);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("azure-storage-blob://account/container?serviceClient=#client"
+                     + "&initialDelay=0&delay=1000&maxMessagesPerPoll=2&maxResultsPerPage=2"
+                     + "&pollStrategy=#countPolls&exceptionHandler=#recordErrors")
+                        .routeId("archivedTailPageTest")
+                        .autoStartup(false)
+                        .to("mock:result");
+            }
+        });
+
+        context.getRouteController().startRoute("archivedTailPageTest");
+        try {
+            assertTrue(tailFailuresReported.await(20, TimeUnit.SECONDS),
+                    "the archived blobs on the second page must be reported as skipped: " + handled);
+            mockEndpoint.assertIsSatisfied();
+
+            assertEquals(2L, failedPolls.getCount(),
+                    "a poll starting in the middle of the listing must not fail because its tail is archived");
+        } finally {
+            context.getRouteController().stopRoute("archivedTailPageTest");
+        }
+    }
+
+    @Test
+    void pagedListingRetainsPageRemainderAndWrapsAround() throws Exception {
+        blobs.addAll(List.of("a.txt", "b.txt", "c.txt", "d.txt", "e.txt"));
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMinimumMessageCount(6);
+        mockEndpoint.setResultWaitTime(20_000);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("azure-storage-blob://account/container?serviceClient=#client"
+                     + "&initialDelay=0&delay=100&maxMessagesPerPoll=1&maxResultsPerPage=2")
+                        .routeId("pagedCursorTest")
+                        .autoStartup(false)
+                        .to("mock:result");
+            }
+        });
+
+        context.getRouteController().startRoute("pagedCursorTest");
+        try {
+            mockEndpoint.assertIsSatisfied();
+
+            List<String> firstSixNames = mockEndpoint.getExchanges().stream()
+                    .limit(6)
+                    .map(exchange -> exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class))
+                    .toList();
+
+            assertEquals(List.of("a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "a.txt"),
+                    firstSixNames,
+                    "the consumer must retain the rest of each page, advance the continuation token, and wrap");
+        } finally {
+            context.getRouteController().stopRoute("pagedCursorTest");
+        }
+    }
+
+    @Test
+    void laterPageListingFailureReleasesPreparedExchanges() throws Exception {
+        blobs.addAll(List.of("a.txt", "b.txt", "c.txt", "d.txt"));
+        failNextContinuationPage.set(true);
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(4);
+        mockEndpoint.setResultWaitTime(30_000);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("azure-storage-blob://account/container?serviceClient=#client"
+                     + "&initialDelay=0&delay=5000&maxResultsPerPage=2&pollStrategy=#countPolls")
+                        .routeId("laterPageFailureTest")
+                        .autoStartup(false)
+                        .to("mock:result");
+            }
+        });
+
+        context.getRouteController().startRoute("laterPageFailureTest");
+        try {
+            assertTrue(pollFailureObserved.await(20, TimeUnit.SECONDS),
+                    "the simulated second-page listing failure must fail the first poll");
+            mockEndpoint.assertIsSatisfied();
+
+            assertEquals(1L, failedPolls.getCount(),
+                    "the next poll must restart the listing and successfully route all blobs");
+
+            assertTrue(openedStreams.size() >= 2, "the first page must have opened two streams");
+            verify(openedStreams.get(0)).close();
+            verify(openedStreams.get(1)).close();
+        } finally {
+            context.getRouteController().stopRoute("laterPageFailureTest");
+        }
     }
 
     private void addConsumerRoute(String options) throws Exception {
@@ -168,14 +292,40 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
 
         when(containerClient.listBlobs(
                 nullable(ListBlobsOptions.class), nullable(String.class), nullable(Duration.class)))
-                .thenAnswer(i -> new PagedIterable<>(
-                        () -> new PagedResponseBase<Void, BlobItem>(
-                                null, 200, null,
-                                blobs.stream().map(name -> new BlobItem().setName(name)).toList(),
-                                null, null)));
+                .thenAnswer(i -> {
+                    final List<String> listing = List.copyOf(blobs);
+                    final ListBlobsOptions options = i.getArgument(0);
+                    final String continuationToken = i.getArgument(1);
+
+                    if ("2".equals(continuationToken)
+                            && failNextContinuationPage.compareAndSet(true, false)) {
+                        throw new IllegalStateException("Simulated listing failure on the second page");
+                    }
+
+                    final int pageSize = options != null && options.getMaxResultsPerPage() != null
+                            ? options.getMaxResultsPerPage() : 5000;
+
+                    return new PagedIterable<>(
+                            () -> page(listing, continuationToken, pageSize),
+                            nextToken -> page(listing, nextToken, pageSize));
+                });
 
         when(containerClient.getBlobClient(anyString())).thenAnswer(i -> blobClient(i.getArgument(0)));
         return serviceClient;
+    }
+
+    private PagedResponseBase<Void, BlobItem> page(
+            List<String> listing, String continuationToken, int pageSize) {
+        final int offset = continuationToken == null ? 0 : Integer.parseInt(continuationToken);
+        final List<BlobItem> values = listing.stream()
+                .skip(offset)
+                .limit(pageSize)
+                .map(name -> new BlobItem().setName(name))
+                .toList();
+        final int nextOffset = offset + values.size();
+        final String nextToken = nextOffset < listing.size() ? Integer.toString(nextOffset) : null;
+
+        return new PagedResponseBase<>(null, 200, null, values, nextToken, null);
     }
 
     private BlobClient blobClient(String name) {
@@ -189,6 +339,7 @@ class BlobConsumerBlobThatCannotBeGotTest extends CamelTestSupport {
             }
             BlobInputStream stream = mock(BlobInputStream.class);
             when(stream.getProperties()).thenReturn(mock(BlobProperties.class));
+            openedStreams.add(stream);
             return stream;
         });
         doAnswer(i -> {

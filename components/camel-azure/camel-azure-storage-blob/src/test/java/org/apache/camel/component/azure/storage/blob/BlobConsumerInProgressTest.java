@@ -50,6 +50,8 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -191,8 +193,9 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    @Test
-    void deletedBlobIsSkipped() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "&maxMessagesPerPoll=2" })
+    void deletedBlobIsSkipped(String maxMessagesPerPollOption) throws Exception {
         blobs.add("a.txt");
         blobs.add("b.txt");
         blobs.add("c.txt");
@@ -200,7 +203,9 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderValuesReceivedInAnyOrder(BlobConstants.BLOB_NAME, "a.txt", "c.txt");
 
-        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2&pollStrategy=#countPolls", "mock:result");
+        addConsumerRoute("&deleteAfterRead=true" + maxMessagesPerPollOption
+                         + "&pollStrategy=#countPolls",
+                "mock:result");
 
         mock.assertIsSatisfied();
         assertEquals(2, mock.getExchanges().size());

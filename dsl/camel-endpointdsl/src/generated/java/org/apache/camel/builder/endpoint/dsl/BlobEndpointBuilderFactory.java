@@ -383,10 +383,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -400,10 +399,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1929,10 +1927,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1946,10 +1943,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3130,10 +3126,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3147,10 +3142,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

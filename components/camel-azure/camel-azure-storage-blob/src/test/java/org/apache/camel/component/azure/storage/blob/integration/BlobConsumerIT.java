@@ -19,6 +19,8 @@ package org.apache.camel.component.azure.storage.blob.integration;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -266,32 +268,37 @@ class BlobConsumerIT extends Base {
             });
         }
 
-        mockEndpoint.assertIsSatisfied();
+        context().getRouteController().startRoute("limitedBlobTest");
+        try {
+            mockEndpoint.assertIsSatisfied();
 
-        java.util.List<Integer> completedBatchSizes = mockEndpoint.getExchanges().stream()
-                .filter(exchange -> Boolean.TRUE.equals(
-                        exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE)))
-                .map(exchange -> (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_SIZE))
-                .toList();
+            List<Integer> completedBatchSizes = mockEndpoint.getExchanges().stream()
+                    .filter(exchange -> Boolean.TRUE.equals(
+                            exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE)))
+                    .map(exchange -> (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_SIZE))
+                    .toList();
 
-        assertEquals(java.util.List.of(2, 2, 1), completedBatchSizes,
-                "five blobs with a limit of two must be routed as batches of 2, 2 and 1");
+            assertEquals(List.of(2, 2, 1), completedBatchSizes,
+                    "five blobs with a limit of two must be routed as batches of 2, 2 and 1");
 
-        long uniqueBlobNames = mockEndpoint.getExchanges().stream()
-                .map(exchange -> exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class))
-                .filter(java.util.Objects::nonNull)
-                .distinct()
-                .count();
-        assertEquals(5L, uniqueBlobNames, "continuation across pages must not lose or duplicate blobs");
+            long uniqueBlobNames = mockEndpoint.getExchanges().stream()
+                    .map(exchange -> exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .count();
+            assertEquals(5L, uniqueBlobNames, "continuation across pages must not lose or duplicate blobs");
 
-        for (Exchange exchange : mockEndpoint.getExchanges()) {
-            Integer batchSize = (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_SIZE);
-            Integer batchIndex = (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_INDEX);
-            assertNotNull(batchSize);
-            assertNotNull(batchIndex);
-            assertTrue(batchIndex >= 0 && batchIndex < batchSize);
-            assertEquals(batchIndex == batchSize - 1,
-                    Boolean.TRUE.equals(exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE)));
+            for (Exchange exchange : mockEndpoint.getExchanges()) {
+                Integer batchSize = (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_SIZE);
+                Integer batchIndex = (Integer) exchange.getProperty(ExchangePropertyKey.BATCH_INDEX);
+                assertNotNull(batchSize);
+                assertNotNull(batchIndex);
+                assertTrue(batchIndex >= 0 && batchIndex < batchSize);
+                assertEquals(batchIndex == batchSize - 1,
+                        Boolean.TRUE.equals(exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE)));
+            }
+        } finally {
+            context().getRouteController().stopRoute("limitedBlobTest");
         }
     }
 
@@ -335,6 +342,21 @@ class BlobConsumerIT extends Base {
             final String firstName = exchanges.get(0).getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
             final String wrappedName = exchanges.get(5).getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
             assertEquals(firstName, wrappedName, "After the last page, the listing must wrap to its first blob");
+        } finally {
+            context().getRouteController().stopRoute("retainedBlobCursorTest");
+        }
+
+        mockEndpoint.reset();
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(30_000);
+
+        context().getRouteController().startRoute("retainedBlobCursorTest");
+        try {
+            mockEndpoint.assertIsSatisfied();
+            String restartedBlobName = mockEndpoint.getExchanges().get(0).getIn()
+                    .getHeader(BlobConstants.BLOB_NAME, String.class);
+            assertEquals("wrap-00", restartedBlobName,
+                    "restarting the route must reset the listing cursor to the first page");
         } finally {
             context().getRouteController().stopRoute("retainedBlobCursorTest");
         }
@@ -389,7 +411,8 @@ class BlobConsumerIT extends Base {
                         .to("mock:resultPrefix");
 
                 from("azure-storage-blob://cameldev/" + limitedContainerName
-                     + "?maxMessagesPerPoll=2&maxResultsPerPage=2&deleteAfterRead=true&initialDelay=5000&delay=100")
+                     + "?maxMessagesPerPoll=2&maxResultsPerPage=2&deleteAfterRead=true&initialDelay=0&delay=100")
+                        .routeId("limitedBlobTest").autoStartup(false)
                         .to("mock:resultLimited");
                 from("azure-storage-blob://cameldev/" + retainedContainerName
                      + "?maxMessagesPerPoll=2&maxResultsPerPage=2&delay=250&initialDelay=0")

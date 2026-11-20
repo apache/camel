@@ -77,7 +77,9 @@ public class BlobContainerOperations {
 
         // Avoid fetching a large metadata page when the consumer has a smaller
         // per-poll limit. Respect an explicitly configured maxResultsPerPage.
-        if (maxMessagesPerPoll > 0 && configurationProxy.getMaxResultsPerPage(exchange) == null) {
+        if (maxMessagesPerPoll > 0
+                && configurationProxy.getMaxResultsPerPage(exchange) == null
+                && ObjectHelper.isEmpty(configurationProxy.getRegex(exchange))) {
             listBlobOptions.setMaxResultsPerPage(Math.min(maxMessagesPerPoll, 5000));
         }
 

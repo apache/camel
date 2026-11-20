@@ -75,6 +75,12 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
+        // A restarted route must start a fresh listing pass. The container contents
+        // may have changed while the route was stopped.
+        pendingListedBlobs.clear();
+        listingContinuationToken = null;
+        listingComplete = false;
+
         if (getEndpoint().getConfiguration().isMoveAfterRead()) {
             String destContainer = getEndpoint().getConfiguration().getDestinationContainer();
             if (ObjectHelper.isEmpty(destContainer)) {
@@ -146,6 +152,11 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             listingComplete = false;
         }
 
+        // A poll that starts in the middle of a listing must not fail merely because
+        // the remaining tail contains only blobs that cannot be retrieved.
+        final boolean fromStartOfListing = pendingListedBlobs.isEmpty()
+                && ObjectHelper.isEmpty(listingContinuationToken);
+
         // Prepare the complete poll batch before processBatch routes its first exchange.
         // This deliberately preserves Camel's exact batch size/index/complete contract.
         // maxMessagesPerPoll limits successful gets (0 means unlimited); this is bounded
@@ -180,7 +191,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         }
 
         if (!failures.isEmpty()) {
-            if (exchanges.isEmpty()) {
+            if (exchanges.isEmpty() && fromStartOfListing) {
                 // None of the listed blobs could be got, so this is not about one blob
                 // (expired credentials, no permission, no connection): fail the poll.
                 releaseNotProcessed(exchanges);
@@ -228,7 +239,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             }
 
             listingContinuationToken = page.getContinuationToken();
-            listingComplete = listingContinuationToken == null;
+            listingComplete = ObjectHelper.isEmpty(listingContinuationToken);
             forceConsumerAsReady();
         }
 
