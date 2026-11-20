@@ -604,43 +604,54 @@ public final class RouteDefinitionHelper {
             List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
-        // move the abstracts interceptors into the dedicated list
+        // First process the context-scoped intercepts (passed in from outside the route) — these are marked as
+        // context-scoped so the YAML dumper can emit them as top-level entries.
+        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions,
+                interceptSendToEndpointDefinitions, true);
+
+        // Then collect and process the route-scoped intercepts that were declared inline inside the route definition
+        // (the abstracts). These must NOT be marked as context-scoped — they belong to this route only.
+        List<InterceptDefinition> routeIntercepts = null;
+        List<InterceptFromDefinition> routeInterceptFroms = null;
+        List<InterceptSendToEndpointDefinition> routeInterceptSendTos = null;
         for (ProcessorDefinition processor : abstracts) {
             if (processor instanceof InterceptSendToEndpointDefinition interceptSendToEndpointDefinition) {
-                if (interceptSendToEndpointDefinitions == null) {
-                    interceptSendToEndpointDefinitions = new ArrayList<>();
+                if (routeInterceptSendTos == null) {
+                    routeInterceptSendTos = new ArrayList<>();
                 }
-                interceptSendToEndpointDefinitions.add(interceptSendToEndpointDefinition);
+                routeInterceptSendTos.add(interceptSendToEndpointDefinition);
             } else if (processor instanceof InterceptFromDefinition interceptFromDefinition) {
-                if (interceptFromDefinitions == null) {
-                    interceptFromDefinitions = new ArrayList<>();
+                if (routeInterceptFroms == null) {
+                    routeInterceptFroms = new ArrayList<>();
                 }
-                interceptFromDefinitions.add(interceptFromDefinition);
+                routeInterceptFroms.add(interceptFromDefinition);
             } else if (processor instanceof InterceptDefinition interceptDefinition) {
-                if (intercepts == null) {
-                    intercepts = new ArrayList<>();
+                if (routeIntercepts == null) {
+                    routeIntercepts = new ArrayList<>();
                 }
-                intercepts.add(interceptDefinition);
+                routeIntercepts.add(interceptDefinition);
             }
         }
-
-        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        doInitInterceptors(context, route, upper, routeIntercepts, routeInterceptFroms, routeInterceptSendTos, false);
     }
 
     private static void doInitInterceptors(
             CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
-            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+            boolean contextScoped) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
-                // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
-                intercept.setRouteScoped(false);
-                // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
-                // from route.getOutputs() during context.start(), so the YAML dumper needs another way to find it
-                route.addContextScopedIntercept(intercept);
+                if (contextScoped) {
+                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                    intercept.setRouteScoped(false);
+                    // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
+                    // from route.getOutputs() during context.start(), so the YAML dumper needs another way to find it
+                    route.addContextScopedIntercept(intercept);
+                }
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -705,8 +716,10 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
-                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
-                    intercept.setRouteScoped(false);
+                    if (contextScoped) {
+                        // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                        intercept.setRouteScoped(false);
+                    }
                     // init the parent
                     initParent(intercept);
                     // add as first output so intercept is handled before the
@@ -722,8 +735,10 @@ public final class RouteDefinitionHelper {
         if (interceptSendToEndpointDefinitions != null && !interceptSendToEndpointDefinitions.isEmpty()) {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
-                // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
-                intercept.setRouteScoped(false);
+                if (contextScoped) {
+                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                    intercept.setRouteScoped(false);
+                }
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual

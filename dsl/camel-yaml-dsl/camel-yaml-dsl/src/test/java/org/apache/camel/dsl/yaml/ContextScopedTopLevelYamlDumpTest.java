@@ -266,9 +266,10 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
                 - routeConfiguration:
                     id: myConfig
                     intercept:
-                      steps:
-                        - log:
-                            message: "intercepted via config"
+                      - intercept:
+                          steps:
+                            - log:
+                                message: "intercepted via config"
                 - route:
                     id: first
                     routeConfigurationId: myConfig
@@ -282,6 +283,34 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
         // when dumping only routes, the route configuration's intercept must NOT be hoisted to a top-level
         // entry — it belongs to the named routeConfiguration, not to the top-level route scope
         assertThat(yaml).doesNotContain("- intercept:");
+        assertThat(yaml).contains("id: first");
+    }
+
+    @Test
+    void namedRouteConfigurationOnCompletionIsNotDumpedAsTopLevel() throws Exception {
+        // a named route configuration's onCompletion must NOT be emitted as a top-level entry — it already
+        // appears inside the routeConfiguration block and must not be duplicated as a top-level onCompletion
+        loadRoutes("""
+                - routeConfiguration:
+                    id: myConfig
+                    onCompletion:
+                      - onCompletion:
+                          steps:
+                            - log:
+                                message: "completed via config"
+                - route:
+                    id: first
+                    routeConfigurationId: myConfig
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+                """);
+        String yaml = dumpRoutes();
+
+        // when dumping only routes, the route configuration's onCompletion must NOT be hoisted to a top-level
+        // entry — it belongs to the named routeConfiguration, not to the top-level route scope
+        assertThat(yaml).doesNotContain("- onCompletion:");
         assertThat(yaml).contains("id: first");
     }
 
