@@ -228,16 +228,22 @@ This is what `xml` binding already did without its XML data format. Add the JSON
 (or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
 neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
-=== camel-kamelet - the output data type of a source Kamelet is applied before the consuming route
+=== camel-kamelet - the output data type of a Kamelet is applied when it hands the message on
 
-A source Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
-when it hands it on with `kamelet:sink`, so the route that consumes from the Kamelet gets it. Before, the type was
-applied only when the route of the Kamelet completed, after the consuming route had run: the consuming route never saw
-it, and an exchange failed at the end when the consuming route left a body that could not be converted to the type, such
-as a `Map` for `binary`. This applies to Kamelets labelled `camel.apache.org/kamelet.type: source`, such as
-`aws-sqs-source` (`text`), `slack-source` (`json`) or `azure-eventhubs-source` (`binary`) of the Kamelet catalog: the
-first step of the consuming route now gets a `String`, JSON or a `byte[]` with the matching `Content-Type` header, where
-it used to get the body of the component.
+A Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
+when it hands it on with `kamelet:sink`. Before, the type was applied only when the route of the Kamelet completed:
+
+* For a source Kamelet, that was after the route that consumes from the Kamelet had run: the consuming route never saw
+  the type, and an exchange failed at the end when the consuming route left a body that could not be converted to the
+  type, such as a `Map` for `binary`. Sources of the Kamelet catalog such as `aws-sqs-source` (`text`), `slack-source`
+  (`json`) or `azure-eventhubs-source` (`binary`) now give the first step of the consuming route a `String`, JSON or a
+  `byte[]` with the matching `Content-Type` header, where it used to get the body of the component.
+* For an action or a sink Kamelet called with the Kamelet EIP (`kamelet: name: ...` in YAML, `.kamelet("...")` in
+  Java), that was after the steps that follow the EIP had run, so these steps got the body before the type was applied.
+  They now get the body of the type, as the steps after a `to("kamelet:...")` already did.
+
+The message also gets the type as its data type, so the input data type of the next Kamelet is converted from it.
+A message that does not reach `kamelet:sink`, such as one an action Kamelet filters out, no longer gets the type.
 When no transformer for the type is on the classpath, such as `json` with neither `camel-jackson` nor `camel-jackson3`,
 the message is handed on unchanged, as before, and a WARN is logged once.
 

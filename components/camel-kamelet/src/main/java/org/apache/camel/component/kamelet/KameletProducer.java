@@ -26,6 +26,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.processor.transformer.DataTypeProcessor;
 import org.apache.camel.processor.transformer.TypeConverterTransformer;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -50,9 +51,10 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     private final boolean sink;
     private String routeId;
     boolean registerKamelets;
-    // the output data type of the source Kamelet whose route sends to this kamelet:sink, looked up on the first message
-    private volatile Processor sourceOutputType;
-    private volatile boolean sourceOutputTypeResolved;
+    // the output data type of the Kamelet whose route sends to this kamelet:sink, looked up on the first message
+    private volatile Processor outputType;
+    private volatile DataType outputDataType;
+    private volatile boolean outputTypeResolved;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -89,19 +91,12 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                 // with producer and consumers linked together via the component
 
                 if (sink) {
-                    // a source Kamelet gives the message its output data type when it hands it on, so the consuming
-                    // route gets it (as an output type of the route, it would be applied only after the consuming route)
-                    Processor outputType = sourceOutputType(exchange);
-                    if (outputType != null) {
-                        try {
-                            outputType.process(exchange);
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
-                        if (exchange.getException() != null) {
-                            callback.done(true);
-                            return true;
-                        }
+                    // a Kamelet gives the message its output data type when it hands it on, so the consuming route of
+                    // a source, or the steps after a Kamelet EIP, get it (as an output type of the route, it would be
+                    // applied only after them, as they run inside the route of the Kamelet)
+                    if (!applyOutputType(exchange)) {
+                        callback.done(true);
+                        return true;
                     }
                     // when calling a kamelet:sink then lookup any waiting processor
                     // from the Kamelet EIP to continue routing
@@ -149,26 +144,52 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     }
 
     /**
-     * The output data type of the source Kamelet whose route the exchange is in, from the route property that the
-     * Kamelet YAML loader sets, or null when it has none. The outcome is looked up once and kept.
+     * Applies the output data type of the Kamelet whose route the exchange is in, if it has one, and sets it as the
+     * data type of the message, as the output type of a route does.
+     *
+     * @return false when the exchange failed
      */
-    private Processor sourceOutputType(Exchange exchange) {
-        if (!sourceOutputTypeResolved) {
+    private boolean applyOutputType(Exchange exchange) {
+        Processor processor = outputType(exchange);
+        if (processor == null) {
+            return true;
+        }
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            return false;
+        }
+        if (exchange.getMessage() instanceof DataTypeAware message) {
+            message.setDataType(outputDataType);
+        }
+        return true;
+    }
+
+    /**
+     * The output data type of the Kamelet whose route the exchange is in, from the route property that the Kamelet YAML
+     * loader sets, or null when it has none. The outcome is looked up once and kept.
+     */
+    private Processor outputType(Exchange exchange) {
+        if (!outputTypeResolved) {
             synchronized (this) {
-                if (!sourceOutputTypeResolved) {
+                if (!outputTypeResolved) {
                     Route route = ExchangeHelper.getRoute(exchange);
-                    Object type = route != null ? route.getProperties().get(Kamelet.SOURCE_OUTPUT_TYPE_PROPERTY) : null;
+                    Object type = route != null ? route.getProperties().get(Kamelet.OUTPUT_TYPE_PROPERTY) : null;
                     if (type != null) {
-                        sourceOutputType = createSourceOutputType(route, type.toString());
+                        outputDataType = new DataType(type.toString());
+                        outputType = createOutputType(route, type.toString());
                     }
-                    sourceOutputTypeResolved = true;
+                    outputTypeResolved = true;
                 }
             }
         }
-        return sourceOutputType;
+        return outputType;
     }
 
-    private Processor createSourceOutputType(Route route, String type) {
+    private Processor createOutputType(Route route, String type) {
         DataTypeProcessor processor = new DataTypeProcessor(null, type);
         processor.setCamelContext(getEndpoint().getCamelContext());
         try {
@@ -182,7 +203,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                 TypeConverterTransformer converter = new TypeConverterTransformer(dataType);
                 return exchange -> converter.transform(exchange.getMessage(), DataType.ANY, dataType);
             }
-            LOG.warn("The source Kamelet of route {} declares the output data type {}, but no transformer for it is on"
+            LOG.warn("The Kamelet of route {} declares the output data type {}, but no transformer for it is on"
                      + " the classpath, so messages are handed on unchanged: {}",
                     route.getRouteId(), type, e.getMessage());
             return null;
@@ -191,9 +212,10 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(sourceOutputType);
-        sourceOutputType = null;
-        sourceOutputTypeResolved = false;
+        ServiceHelper.stopService(outputType);
+        outputType = null;
+        outputDataType = null;
+        outputTypeResolved = false;
         super.doStop();
     }
 
