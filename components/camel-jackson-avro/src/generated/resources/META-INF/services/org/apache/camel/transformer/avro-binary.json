@@ -19,14 +19,16 @@
         "file",
         "pojo"
       ],
-      "description": "Needs the Avro schema in the X-Content-Schema exchange property: a Json object or array as text, Avro binary, a JsonNode or a POJO; a Map or a null body fail"
+      "description": "Needs the Avro schema in the X-Content-Schema exchange property: a Json object or array as text, Avro binary, a JsonNode or a POJO; a Map or a null body fail. Bytes or a stream with the Content-Type application\/avro or avro\/binary are Avro binary already, and are kept as they are, without the schema"
     },
     "transformerOut": {
       "carriers": [
-        "bytes"
+        "bytes",
+        "stream"
       ],
       "javaType": "byte[]",
-      "format": "binary"
+      "format": "binary",
+      "description": "Avro binary as bytes; a body that is Avro binary already is kept, also a stream, with its Content-Type"
     }
   }
 }

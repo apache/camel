@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,12 +52,15 @@ import org.apache.camel.util.StringHelper;
                                      description = "A Json object or array as text, bytes or a stream, a Map, a List, a"
                                                    + " JsonNode or a POJO; other text, also a Json number, boolean, null or"
                                                    + " quoted string, becomes a Json string, unless the Content-Type"
-                                                   + " header is application/json, which keeps a Json value as it is; bytes and a stream are read as"
+                                                   + " header is application/json or a +json media type, which keeps a Json"
+                                                   + " value as it is; bytes and a stream are read as"
                                                    + " text with the exchange charset, so a payload that is not text must be"
                                                    + " encoded first, such as in Base64, or given a content class; with the"
                                                    + " X-Content-Class exchange property only a Json object or array as text"
                                                    + " or a body of that class; a null body becomes null"),
-           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
+           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json",
+                                      description = "Json as bytes, with the Content-Type application/json, or the +json"
+                                                    + " media type the message had, such as application/fhir+json"))
 public class JsonDataTypeTransformer extends Transformer {
 
     @Override
@@ -75,7 +79,7 @@ public class JsonDataTypeTransformer extends Transformer {
                 // boolean, null or quoted string when the Content-Type says the text is Json; any other text becomes a
                 // Json string
                 String text = message.getMandatoryBody(String.class);
-                marshalled = (Json.isJson(text) || isJsonContent(message) && isJsonValue(text))
+                marshalled = (Json.isJson(text) || (isJsonContent(message) && isJsonValue(text)))
                         ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
             } else {
                 String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), JsonNode.class.getName());
@@ -86,7 +90,10 @@ public class JsonDataTypeTransformer extends Transformer {
             }
             message.setBody(marshalled);
 
-            message.setHeader(Exchange.CONTENT_TYPE, MimeType.JSON.type());
+            if (!isJsonSuffixType(mediaType(message))) {
+                // a more specific Json media type, such as application/fhir+json, is kept
+                message.setHeader(Exchange.CONTENT_TYPE, MimeType.JSON.type());
+            }
 
             String contentSchema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, String.class);
             if (contentSchema != null) {
@@ -98,15 +105,30 @@ public class JsonDataTypeTransformer extends Transformer {
     }
 
     /**
-     * Whether the Content-Type header says the body is Json (application/json), as a source that gives Json sets it.
+     * Whether the Content-Type header says the body is Json, as a source that gives Json sets it: application/json, or
+     * a Json media type such as application/fhir+json.
      */
     private static boolean isJsonContent(Message message) {
+        String mediaType = mediaType(message);
+        return MimeType.JSON.type().equals(mediaType) || isJsonSuffixType(mediaType);
+    }
+
+    /**
+     * Whether the media type is a more specific Json media type, with the +json suffix, such as application/fhir+json.
+     */
+    private static boolean isJsonSuffixType(String mediaType) {
+        return mediaType != null && mediaType.startsWith("application/") && mediaType.endsWith("+json");
+    }
+
+    /**
+     * The media type of the Content-Type header in lower case, without its parameters, or null when there is none.
+     */
+    private static String mediaType(Message message) {
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType == null) {
-            return false;
+            return null;
         }
-        String mediaType = StringHelper.before(contentType, ";", contentType).trim();
-        return MimeType.JSON.type().equalsIgnoreCase(mediaType);
+        return StringHelper.before(contentType, ";", contentType).trim().toLowerCase(Locale.ROOT);
     }
 
     /**

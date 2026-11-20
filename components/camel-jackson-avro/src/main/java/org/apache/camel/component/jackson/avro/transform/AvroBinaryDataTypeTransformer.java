@@ -36,6 +36,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Data type uses Jackson Avro data format to marshal given JsonNode in Exchange body to a binary (byte array)
@@ -45,14 +46,23 @@ import org.apache.camel.spi.Transformer;
 @DataTypeTransformer(name = "avro-binary",
                      description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
 @BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                     description = "Needs the Avro schema in the X-Content-Schema exchange property: a Json"
-                                                   + " object or array as text, Avro binary, a JsonNode or a POJO; a Map or a"
-                                                   + " null body fail"),
-           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "binary"))
+                                     description = "Needs the Avro schema in the X-Content-Schema exchange property: a"
+                                                   + " Json object or array as text, Avro binary, a JsonNode or a POJO; a"
+                                                   + " Map or a null body fail. Bytes or a stream with the Content-Type"
+                                                   + " application/avro or avro/binary are Avro binary already, and are kept as"
+                                                   + " they are, without the schema"),
+           transformerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM }, javaType = "byte[]", format = "binary",
+                                      description = "Avro binary as bytes; a body that is Avro binary already is kept,"
+                                                    + " also a stream, with its Content-Type"))
 public class AvroBinaryDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
+        if (isAvroBinary(message)) {
+            // Avro binary already, as a marshal to Avro leaves it: kept as it is, with its Content-Type
+            return;
+        }
+
         AvroSchema schema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, AvroSchema.class);
 
         if (schema == null) {
@@ -94,6 +104,20 @@ public class AvroBinaryDataTypeTransformer extends Transformer {
 
         return Avro.mapper().reader().forType(JsonNode.class).with(schema)
                 .readValue(getBodyAsStream(message));
+    }
+
+    /**
+     * Whether the body is Avro binary already: bytes or a stream with the Content-Type {@code application/avro} or
+     * {@code avro/binary}, as a marshal to Avro and this data type set it.
+     */
+    private static boolean isAvroBinary(Message message) {
+        Object body = message.getBody();
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (!(body instanceof byte[] || body instanceof InputStream) || contentType == null) {
+            return false;
+        }
+        String mediaType = StringHelper.before(contentType, ";", contentType).trim();
+        return MimeType.AVRO.type().equalsIgnoreCase(mediaType) || MimeType.AVRO_BINARY.type().equalsIgnoreCase(mediaType);
     }
 
     private InputStream getBodyAsStream(Message message) throws InvalidPayloadException {
