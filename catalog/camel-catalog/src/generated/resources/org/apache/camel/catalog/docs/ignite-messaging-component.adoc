@@ -43,3 +43,10 @@ The producer sends the body to the `orders` topic, and the consumer receives the
         - log:
             message: "Received: ${body}"
 ----
+
+The consumer sets the `CamelIgniteMessagingTopic` header to the topic it received a message on. While the header still
+holds that topic, the producer sends to the topic of its endpoint, so a route from one topic to another sends each
+message to the second topic, not back to the first one. A topic header set by the route is used. To send a received
+message back to its topic through the header, remove the `CamelIgniteMessagingReceivedTopic` exchange property (which
+the consumer sets to the received topic) before the producer, such as with
+`.removeProperty(IgniteConstants.IGNITE_MESSAGING_RECEIVED_TOPIC)`.

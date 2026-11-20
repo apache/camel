@@ -8772,6 +8772,16 @@ the element for `ADD`, `CONTAINS`, `REMOVE` and `RETAIN_ALL` of `ignite-queue` a
 `PUT` of `ignite-queue`. Before, these failed with a `NullPointerException`. The `GET`, `GET_AND_INCREMENT` and
 `INCREMENT_AND_GET` operations of `ignite-idgen` no longer fail on a body that is not a number, as they do not use it.
 
+=== camel-ignite - a route from one ignite-messaging topic to another sends to the topic of the producer
+
+The `ignite-messaging` producer sent to the topic named in the `CamelIgniteMessagingTopic` header, which the
+`ignite-messaging` consumer sets to the topic it received the message on. So a route from one topic to another
+(`from("ignite-messaging:orders").to("ignite-messaging:audit")`) sent each message back to the first topic, where the
+consumer received it again, for ever. The producer now sends to the topic of its endpoint while the header still holds
+the topic the message was received on (the consumer sets the new `CamelIgniteMessagingReceivedTopic` exchange property to
+that topic); a topic header set by the route is still used. To send a received message back to its topic through the
+header, remove the `CamelIgniteMessagingReceivedTopic` property before the producer.
+
 === camel-couchbase - the document id, the operation option and the bodies of CCB_PUT
 
 The `couchbase` producer now uses the `key` option as the document id when the message has no `CamelCouchbaseId`

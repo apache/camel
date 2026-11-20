@@ -65,6 +65,10 @@ public final class IgniteConstants {
                             "(consumer) It also carries the topic on which a message was received.",
               javaType = "String", applicableFor = SCHEME_MESSAGING)
     public static final String IGNITE_MESSAGING_TOPIC = "CamelIgniteMessagingTopic";
+    // exchange property the consumer sets to the topic a message was received on, so that the producer can tell the topic
+    // header the consumer sets apart from a topic chosen by the route. A route that wants to send a received message back
+    // to its topic with the header removes the property.
+    public static final String IGNITE_MESSAGING_RECEIVED_TOPIC = "CamelIgniteMessagingReceivedTopic";
     @Metadata(label = "consumer",
               description = "This header is filled in with the UUID of the subscription when a message arrives.",
               javaType = "java.util.UUID", applicableFor = SCHEME_MESSAGING)

@@ -66,7 +66,15 @@ public class IgniteMessagingProducer extends DefaultAsyncProducer {
     }
 
     private String topicFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic(), String.class);
+        String topic = exchange.getIn().getHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, String.class);
+        // a header still holding the topic an ignite-messaging consumer received the message on describes that
+        // message, it is not a topic chosen by the route: a route from one topic to another must not send the message
+        // back to the topic it came from (where the consumer receives it again)
+        if (topic == null
+                || topic.equals(exchange.getProperty(IgniteConstants.IGNITE_MESSAGING_RECEIVED_TOPIC, String.class))) {
+            return endpoint.getTopic();
+        }
+        return topic;
     }
 
 }
