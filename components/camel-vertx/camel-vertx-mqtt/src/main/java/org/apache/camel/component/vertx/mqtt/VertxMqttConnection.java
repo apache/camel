@@ -596,14 +596,23 @@ final class VertxMqttConnection {
     }
 
     /**
-     * @param listener told of a failure of the connection or the subscription, once while it fails the same way
+     * @param listener told of a failure of the connection or the subscription, once while it fails the same way. A
+     *                 listener added while the connection fails is told of that failure at once: the first attempt may
+     *                 have failed before the listener was added, and the same failure is not reported again.
      */
     void addFailureListener(final Consumer<Throwable> listener) {
-        failureListeners.add(listener);
+        // On the context of the connection, in order with report(): no failure is missed or told twice
+        context.runOnContext(v -> {
+            failureListeners.add(listener);
+            final Throwable current = failure;
+            if (current != null) {
+                listener.accept(current);
+            }
+        });
     }
 
     void removeFailureListener(final Consumer<Throwable> listener) {
-        failureListeners.remove(listener);
+        context.runOnContext(v -> failureListeners.remove(listener));
     }
 
     /**
