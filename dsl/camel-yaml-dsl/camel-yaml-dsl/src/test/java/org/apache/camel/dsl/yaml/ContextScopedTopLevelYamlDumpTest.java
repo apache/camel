@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml;
 
 import java.util.List;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -258,8 +259,9 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
                 .isInstanceOf(DeadLetterChannelDefinition.class);
     }
 
-    @Test
-    void namedRouteConfigurationInterceptIsNotDumpedAsTopLevel() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void namedRouteConfigurationInterceptIsNotDumpedAsTopLevel(boolean started) throws Exception {
         // a named route configuration's intercept must NOT be emitted as a top-level entry — it already
         // appears inside the routeConfiguration block and must not be duplicated as a top-level intercept
         loadRoutes("""
@@ -278,7 +280,13 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
                       steps:
                         - to: mock:first
                 """);
+        if (started) {
+            context.start();
+        }
         String yaml = dumpRoutes();
+        if (started) {
+            context.stop();
+        }
 
         // when dumping only routes, the route configuration's intercept must NOT be hoisted to a top-level
         // entry — it belongs to the named routeConfiguration, not to the top-level route scope
@@ -286,8 +294,9 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
         assertThat(yaml).contains("id: first");
     }
 
-    @Test
-    void namedRouteConfigurationOnCompletionIsNotDumpedAsTopLevel() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void namedRouteConfigurationOnCompletionIsNotDumpedAsTopLevel(boolean started) throws Exception {
         // a named route configuration's onCompletion must NOT be emitted as a top-level entry — it already
         // appears inside the routeConfiguration block and must not be duplicated as a top-level onCompletion
         loadRoutes("""
@@ -306,12 +315,63 @@ class ContextScopedTopLevelYamlDumpTest extends YamlTestSupport {
                       steps:
                         - to: mock:first
                 """);
+        if (started) {
+            context.start();
+        }
         String yaml = dumpRoutes();
+        if (started) {
+            context.stop();
+        }
 
         // when dumping only routes, the route configuration's onCompletion must NOT be hoisted to a top-level
         // entry — it belongs to the named routeConfiguration, not to the top-level route scope
         assertThat(yaml).doesNotContain("- onCompletion:");
         assertThat(yaml).contains("id: first");
+    }
+
+    @Test
+    void namedRouteConfigurationOnCompletionFiresAfterDumpReload() throws Exception {
+        // a named route configuration's onCompletion must still fire at runtime after a dump → reload cycle
+        // this verifies that the dump bookkeeping does not corrupt the runtime routeScoped flag (CAMEL-25135)
+        loadRoutes("""
+                - routeConfiguration:
+                    id: myConfig
+                    onCompletion:
+                      - onCompletion:
+                          steps:
+                            - to: mock:completion
+                - route:
+                    id: first
+                    routeConfigurationId: myConfig
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:result
+                """);
+        context.start();
+
+        // first run: verify onCompletion fires
+        withMock("mock:completion", mock -> mock.expectedMessageCount(1));
+        withMock("mock:result", mock -> mock.expectedBodiesReceived("Hello World"));
+        withTemplate(t -> t.to("direct:first").withBody("Hello World").send());
+        MockEndpoint.assertIsSatisfied(context);
+
+        // dump → reload cycle must preserve runtime behaviour
+        String dumped = dumpRoutes();
+        context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
+        // reload the dumped routes — the named routeConfiguration was not part of the dump
+        // (dumpRoutes only dumps routes, not routeConfigurations) so the existing config remains
+        loadRoutes(dumped);
+
+        // second run: onCompletion must still fire after reload
+        context.getEndpoint("mock:completion", MockEndpoint.class).reset();
+        context.getEndpoint("mock:result", MockEndpoint.class).reset();
+        withMock("mock:completion", mock -> mock.expectedMessageCount(1));
+        withMock("mock:result", mock -> mock.expectedBodiesReceived("Bye World"));
+        withTemplate(t -> t.to("direct:first").withBody("Bye World").send());
+        MockEndpoint.assertIsSatisfied(context);
+
+        context.stop();
     }
 
     private String dumpRoutes() throws Exception {
