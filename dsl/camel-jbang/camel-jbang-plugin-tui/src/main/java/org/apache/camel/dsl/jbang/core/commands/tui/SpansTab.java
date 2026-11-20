@@ -80,6 +80,8 @@ class SpansTab extends AbstractTab {
     private boolean sortReversed;
     private final FilterField filter = new FilterField(this::filterChanged);
     private final TranscriptOverlay transcript = new TranscriptOverlay();
+    /** The nodes the waterfall rendered last, for the footer (which renders every frame too). */
+    private List<WaterfallNode> renderedNodes = List.of();
 
     private volatile boolean spanRefreshRequested;
 
@@ -431,6 +433,7 @@ class SpansTab extends AbstractTab {
 
     private void renderWaterfallView(Frame frame, Rect area) {
         List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+        renderedNodes = nodes;
         if (nodes.isEmpty()) {
             waterfallView = false;
             transcript.close();
@@ -711,7 +714,7 @@ class SpansTab extends AbstractTab {
     }
 
     private boolean selectedSpanIsGenAi() {
-        List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+        List<WaterfallNode> nodes = renderedNodes;
         return waterfallSelected >= 0 && waterfallSelected < nodes.size()
                 && GenAiTranscript.isGenAiSpan(nodes.get(waterfallSelected).span);
     }

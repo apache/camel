@@ -114,7 +114,7 @@ final class GenAiTranscript {
     }
 
     private static String heading(Turn turn) {
-        String role = turn.role() != null ? turn.role() : "message";
+        String role = turn.role() != null && !turn.role().isEmpty() ? turn.role() : "message";
         String heading = Character.toUpperCase(role.charAt(0)) + role.substring(1);
         if (GenAiMessages.TOOL.equals(role)) {
             String name = turn.parts().isEmpty() ? null : turn.parts().get(0).toolName();
