@@ -1762,10 +1762,15 @@ public class SftpOperations
         try {
             if (isConnected()) {
                 try {
-                    session.sendKeepAliveMsg();
+                    // Use a round-trip SFTP operation (realpath) rather than the JSch keep-alive
+                    // write (sendKeepAliveMsg), which is fire-and-forget and returns true even when
+                    // the server has closed the connection but the kernel has not yet delivered the
+                    // TCP RST to the JSch reader thread. A realpath request waits for the server's
+                    // response, so it reliably detects a stale session after a server restart.
+                    channel.realpath(".");
                     return true;
                 } catch (Exception e) {
-                    LOG.debug("SFTP session was closed. Ignoring this exception.", e);
+                    LOG.debug("SFTP session noop failed. Ignoring this exception.", e);
                     return false;
                 }
             }
