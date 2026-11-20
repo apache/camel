@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import io.vertx.core.Context;
+import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
@@ -236,55 +238,58 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // from("knative:event/my.event")
         //        .to("http://{{env:PROJECT}}.{{env:NAMESPACE}}.svc.cluster.local/service");
         //
+        // The route runs with the asynchronous processor: the worker thread is free once the route
+        // continues on another thread, so a route that calls an asynchronous producer on the same
+        // Vert.x (such as vertx-http in Camel Quarkus) does not exhaust the worker pool.
+        Context context = routingContext.vertx().getOrCreateContext();
+        Promise<Void> done = Promise.promise();
         routingContext.vertx().executeBlocking(() -> {
             createUoW(exchange);
-            getAsyncProcessor().process(exchange);
+            getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
             return null;
-        },
-                false)
-                .onComplete(result -> {
+        }, false).onFailure(done::tryFail);
+        done.future().onComplete(result -> {
+            try {
+                Throwable failure = null;
+
+                if (result.succeeded()) {
                     try {
-                        Throwable failure = null;
+                        HttpServerResponse response = toHttpResponse(request, exchange.getMessage());
+                        Buffer body = null;
+                        if (request.response().getStatusCode() != 204 && configuration.isReply()) {
+                            body = computeResponseBody(exchange.getMessage());
 
-                        if (result.succeeded()) {
-                            try {
-                                HttpServerResponse response = toHttpResponse(request, exchange.getMessage());
-                                Buffer body = null;
-
-                                if (request.response().getStatusCode() != 204 && configuration.isReply()) {
-                                    body = computeResponseBody(exchange.getMessage());
-
-                                    String contentType = MessageHelper.getContentType(exchange.getMessage());
-                                    if (contentType != null) {
-                                        response.putHeader(Exchange.CONTENT_TYPE, contentType);
-                                    }
-                                }
-
-                                if (body != null) {
-                                    request.response().end(body);
-                                } else {
-                                    // 204 tells the caller that the event has been delivered: a failed exchange
-                                    // without reply keeps its error status, so that the event is sent again
-                                    if (!exchange.isFailed()) {
-                                        request.response().setStatusCode(204);
-                                    }
-                                    request.response().end();
-                                }
-                            } catch (Exception e) {
-                                failure = e;
+                            String contentType = MessageHelper.getContentType(exchange.getMessage());
+                            if (contentType != null) {
+                                response.putHeader(Exchange.CONTENT_TYPE, contentType);
                             }
-                        } else if (result.failed()) {
-                            failure = result.cause();
                         }
 
-                        if (failure != null) {
-                            getExceptionHandler().handleException(failure);
-                            routingContext.fail(failure);
+                        if (body != null) {
+                            request.response().end(body);
+                        } else {
+                            // 204 tells the caller that the event has been delivered: a failed exchange
+                            // without reply keeps its error status, so that the event is sent again
+                            if (!exchange.isFailed()) {
+                                request.response().setStatusCode(204);
+                            }
+                            request.response().end();
                         }
-                    } finally {
-                        doneUoW(exchange);
+                    } catch (Exception e) {
+                        failure = e;
                     }
-                });
+                } else if (result.failed()) {
+                    failure = result.cause();
+                }
+
+                if (failure != null) {
+                    getExceptionHandler().handleException(failure);
+                    routingContext.fail(failure);
+                }
+            } finally {
+                doneUoW(exchange);
+            }
+        });
     }
 
     private Message toMessage(HttpServerRequest request, Exchange exchange) {
