@@ -64,7 +64,7 @@ public class AiToolEndpoint extends DefaultEndpoint {
     public Producer createProducer() {
         throw new UnsupportedOperationException(
                 "ai-tool does not support producer mode. "
-                                                + "Use a framework-specific component (langchain4j-tools, spring-ai-chat, openai) "
+                                                + "Use a framework-specific component (langchain4j-agent, spring-ai-chat, openai) "
                                                 + "with a matching tags parameter to invoke tools.");
     }
 
