@@ -20,10 +20,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -2267,6 +2270,59 @@ public class CamelCatalogTest {
         Assertions.assertNotNull(chaos);
         Assertions.assertFalse(chaos.getCollection("faults").isEmpty());
         Assertions.assertFalse(chaos.getCollection("recipes").isEmpty());
+    }
+
+    @Test
+    public void patternRecipesResource() throws Exception {
+        String json = catalog.patternRecipesJSon();
+        assertNotNull(json, "Pattern recipes must be available through CamelCatalog");
+
+        JsonObject patternRecipes = JsonMapper.deserialize(json);
+        assertNotNull(patternRecipes);
+        assertEquals("1", String.valueOf(patternRecipes.get("schemaVersion")));
+        assertNotNull(patternRecipes.getString("description"));
+
+        Collection<?> recipes = patternRecipes.getCollection("recipes");
+        assertNotNull(recipes);
+        assertFalse(recipes.isEmpty(), "The recipes catalog must not be empty");
+
+        Set<String> ids = new HashSet<>();
+        for (Object value : recipes) {
+            assertTrue(value instanceof JsonObject, "Each recipe must be a JSON object");
+
+            JsonObject recipe = (JsonObject) value;
+            String id = recipe.getString("id");
+
+            assertNotNull(id, "Each recipe must have an id");
+            assertTrue(ids.add(id), "Duplicate recipe id: " + id);
+            assertNotNull(recipe.getString("name"), id + " needs a name");
+            assertNotNull(recipe.getString("problem"), id + " needs a problem statement");
+
+            assertNotNull(recipe.getCollection("components"), id + " needs components");
+            assertNotNull(recipe.getCollection("eips"), id + " needs EIPs");
+            assertNotNull(recipe.getCollection("recommendedOptions"), id + " needs recommendedOptions");
+            assertNotNull(recipe.getCollection("pitfalls"), id + " needs pitfalls");
+            assertNotNull(recipe.getCollection("examples"), id + " needs examples");
+
+            JsonObject route = recipe.getJsonObject("exampleRoute");
+            assertNotNull(route, id + " needs exampleRoute");
+            assertEquals("yaml", route.getString("dsl"), id + " must use YAML DSL");
+
+            String source = route.getString("source");
+            assertNotNull(source, id + " needs YAML source");
+            assertFalse(source.isBlank(), id + " YAML source must not be empty");
+            Collection<?> referenceDocs = recipe.getCollection("referenceDocs");
+            if (referenceDocs != null) {
+                for (Object reference : referenceDocs) {
+                    assertTrue(reference instanceof String, id + " reference docs must be catalog names");
+                    String name = (String) reference;
+                    assertFalse(name.startsWith("http"),
+                            id + " reference docs must be version-neutral catalog names");
+                    assertTrue(catalog.eipModel(name) != null || catalog.componentModel(name) != null,
+                            id + " reference doc must resolve through camel_catalog_doc: " + name);
+                }
+            }
+        }
     }
 
     @Test

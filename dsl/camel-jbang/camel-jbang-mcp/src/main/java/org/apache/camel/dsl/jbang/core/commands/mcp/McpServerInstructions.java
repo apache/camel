@@ -45,7 +45,8 @@ public class McpServerInstructions implements InitialResponseInfo {
 
     /** The tool names the text maps questions to; a test checks that each one is an {@code @Tool} method. */
     static final List<String> MAPPED_TOOLS = List.of(
-            "camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_catalog_examples",
+            "camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample",
+            "camel_catalog_examples",
             "camel_dependency_for_class", "camel_validate_source", "camel_run", "camel_get_log", "camel_get_errors",
             "camel_project_overview");
 

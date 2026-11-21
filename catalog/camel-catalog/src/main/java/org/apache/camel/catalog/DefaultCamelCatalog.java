@@ -569,6 +569,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String patternRecipesJSon() {
+        return cache(BASE_RESOURCE_DIR + "/patterns/recipes.json", this::loadResource);
+    }
+
+    @Override
     public String listModelsAsJson() {
         return cache(LIST_MODELS_AS_JSON, () -> JsonMapper.serialize(findModelNames().stream()
                 .map(this::modelJSonSchema)
