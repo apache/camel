@@ -86,8 +86,9 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     boolean sendNoop() throws GenericFileOperationFailedException;
 
     /**
-     * Whether the server completed a command on this connection so recently that a noop before the next upload would
-     * not tell more about whether the connection works.
+     * Whether the server completed an operation on this connection so recently that a noop before the next upload would
+     * not show anything new about the connection. The default returns <tt>false</tt>, so the producer always sends the
+     * noop.
      *
      * @return <tt>true</tt> if the producer can skip the noop before the next upload
      * @since  4.24

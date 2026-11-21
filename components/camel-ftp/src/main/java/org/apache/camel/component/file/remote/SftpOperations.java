@@ -114,18 +114,21 @@ public class SftpOperations
      */
     private String restoreDirectory;
     /**
-     * The directory, relative to {@link #restoreDirectory}, that a stepwise operation changed into, or {@code null}
-     * when that change failed half way.
+     * The directory part of the file name (relative to {@link #restoreDirectory}, or absolute) that a stepwise upload
+     * or download changed into. {@code null} when the connection is not in such a directory, also when the change
+     * failed half way.
      */
     private String stepwiseDirectory;
     /**
-     * Whether a stepwise upload, download or delete runs: the operations that it calls, such as the existence check or
-     * the move of an existing file, use names relative to the directory of the file and must not change back.
+     * Whether an upload or a download runs, with or without stepwise: the operations that it calls, such as the
+     * existence check or the move of an existing file, use names relative to the directory of the file and must not
+     * change back.
      */
     private boolean inStepwiseOperation;
     /**
-     * The directories that autoCreate checked or created on this connection, by the directory they are relative to, so
-     * that the next upload into them does not check again.
+     * The directories that a file was uploaded into on this connection, as absolute paths (see
+     * {@link #builtDirectoryKey(String)}), so that autoCreate does not check them again before the next upload. Only an
+     * upload adds a directory: the moves of a consumer check their directory each time.
      */
     private final Set<String> builtDirectories = new HashSet<>();
 
@@ -949,9 +952,6 @@ public class SftpOperations
                 throw operationFailed("Cannot build directory: " + directory, e);
             }
 
-            if (success) {
-                builtDirectories.add(key);
-            }
             return success;
         } finally {
             lock.unlock();
@@ -1529,19 +1529,27 @@ public class SftpOperations
 
             LOG.trace("storeFile({})", name);
 
+            String directory = FileUtil.onlyPath(name);
+            boolean answer;
             try {
-                return storeFileInItsDirectory(name, exchange);
+                answer = storeFileInItsDirectory(name, exchange);
             } catch (GenericFileOperationFailedException e) {
-                String directory = FileUtil.onlyPath(name);
-                if (e.getCode() != ChannelSftp.SSH_FX_NO_SUCH_FILE || !forgetBuiltDirectory(directory, exchange)) {
+                boolean missing;
+                try {
+                    missing = e.getCode() == ChannelSftp.SSH_FX_NO_SUCH_FILE && isBuiltDirectoryMissing(directory, exchange);
+                } catch (RuntimeException checkFailure) {
+                    e.addSuppressed(checkFailure);
                     throw e;
                 }
-                // the directory was removed since autoCreate checked it on this connection
-                LOG.debug("Cannot store file: {} as directory: {} is missing. Creating the directory again.", name,
-                        directory);
-                buildDirectory(directory, false);
-                return storeFileInItsDirectory(name, exchange);
+                if (!missing) {
+                    throw e;
+                }
+                answer = storeFileInBuiltDirectoryAgain(name, directory, exchange, e);
             }
+            if (answer) {
+                rememberBuiltDirectory(directory);
+            }
+            return answer;
         } finally {
             lock.unlock();
         }
@@ -1557,20 +1565,60 @@ public class SftpOperations
         }
     }
 
+    private boolean storeFileInBuiltDirectoryAgain(
+            String name, String directory, Exchange exchange, GenericFileOperationFailedException failure) {
+        LOG.info("Cannot store file: {} as directory: {}, where a file was stored before on this connection, was removed"
+                 + " since ({}). Creating the directory again and storing the file once more.",
+                name, directory, failure.getMessage());
+        try {
+            if (!buildDirectory(directory, false)) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot store file: " + name + " as directory: " + directory
+                                                              + " was removed and cannot be created again");
+            }
+            return storeFileInItsDirectory(name, exchange);
+        } catch (GenericFileOperationFailedException retryFailure) {
+            retryFailure.addSuppressed(failure);
+            throw retryFailure;
+        }
+    }
+
     /**
-     * Forgets that autoCreate checked or created the directory of a file whose upload failed as the directory is
-     * missing, so that it is created again. Returns whether the upload can be tried again: the directory was known, the
-     * body is not a stream that the failed upload may have read, and the upload does not append.
+     * Records that a file was stored in a directory, so that autoCreate does not check it again on this connection.
      */
-    private boolean forgetBuiltDirectory(String directory, Exchange exchange) {
+    private void rememberBuiltDirectory(String directory) {
+        if (directory != null) {
+            builtDirectories.add(builtDirectoryKey(endpoint.getConfiguration().normalizePath(directory)));
+        }
+    }
+
+    /**
+     * Whether an upload failed as the directory where a file was stored before on this connection was removed since,
+     * and can be tried again once the directory is created again: autoCreate is enabled, the body can be read again,
+     * and the upload does not append (it could append twice). Changes back to the directory where the operations
+     * started, forgets the directory so that the next upload checks it, and asks the server whether the directory
+     * exists, as the same status can come from a step after the upload, such as the chmod of the file.
+     */
+    private boolean isBuiltDirectoryMissing(String directory, Exchange exchange) {
         if (directory == null || !endpoint.isAutoCreate()) {
             return false;
         }
         changeBackToRestoreDirectory();
-        boolean known = builtDirectories.remove(builtDirectoryKey(endpoint.getConfiguration().normalizePath(directory)));
-        // a second append could append twice
-        return known && !(exchange.getIn().getBody() instanceof InputStream)
-                && endpoint.getFileExist() != GenericFileExist.Append;
+        directory = endpoint.getConfiguration().normalizePath(directory);
+        boolean known = builtDirectories.remove(builtDirectoryKey(directory));
+        if (!known || !FtpUtils.isBodyReadableAgain(exchange.getIn().getBody())
+                || endpoint.getFileExist() == GenericFileExist.Append) {
+            return false;
+        }
+        try {
+            channel.stat(quotePathForJsch(directory));
+            return false;
+        } catch (SftpException e) {
+            if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+                return true;
+            }
+            throw operationFailed("Cannot get the attributes of: " + directory, e);
+        }
     }
 
     /**
@@ -1720,6 +1768,9 @@ public class SftpOperations
         try {
             // normalize the name as the store does, so the file that is checked is the one that is stored
             name = endpoint.getConfiguration().normalizePath(name);
+            // the read lock of the consumer checks a file by its name relative to the starting directory, after the
+            // download of the previous file left the connection in the directory of that file
+            leaveStepwiseDirectory();
             SftpATTRS attrs;
             try {
                 attrs = lstat(name);

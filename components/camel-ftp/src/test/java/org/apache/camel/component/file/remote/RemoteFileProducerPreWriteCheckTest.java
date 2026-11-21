@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -163,6 +164,39 @@ class RemoteFileProducerPreWriteCheckTest {
         verify(operations, never()).sendNoop();
         // Assert: connect should NOT be called
         verify(operations, never()).connect(any(RemoteFileConfiguration.class), any(Exchange.class));
+    }
+
+    /**
+     * Test that the noop before an upload is skipped when the connection completed a command a moment ago, such as the
+     * previous upload (CAMEL-26657): it would not tell more about whether the connection works.
+     */
+    @Test
+    void testRecentlyUsedConnectionSkipsNoop() throws Exception {
+        when(configuration.isSendNoop()).thenReturn(true);
+        simulateLoggedIn();
+        when(operations.isRecentlyUsed()).thenReturn(true);
+
+        producer.preWriteCheck(exchange);
+
+        verify(operations, never()).sendNoop();
+        verify(operations, never()).connect(any(RemoteFileConfiguration.class), any(Exchange.class));
+    }
+
+    /**
+     * Test that the health check sends a noop also when the connection was used a moment ago: it must find out whether
+     * the server still answers (CAMEL-26657).
+     */
+    @Test
+    void testHealthCheckSendsNoopOnRecentlyUsedConnection() throws Exception {
+        when(configuration.isSendNoop()).thenReturn(true);
+        simulateLoggedIn();
+        // the health check does not ask, so the stub may be unused
+        lenient().when(operations.isRecentlyUsed()).thenReturn(true);
+        when(operations.sendNoop()).thenReturn(true);
+
+        producer.doPreWriteCheck(exchange, true);
+
+        verify(operations, times(1)).sendNoop();
     }
 
     /**

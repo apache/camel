@@ -498,17 +498,23 @@ a missing header or session id gave `-32601` and an unknown session `-32603`.
 No option or default changes. With the default `stepwise=true`, an upload, a download or (ftp) a delete no longer
 changes back to the directory it started from after each file: the connection stays in the directory of the file, so the
 next file in that directory needs no change of directory. The connection changes back before an operation that uses
-names relative to the starting directory (a rename, a listing, an existence check, a site command, or another
-directory). The ftp component no longer sends `PWD` for each file: the current directory is asked for once per
-connection.
+names relative to the starting directory, such as a rename, a listing, an existence check, a read lock check, a site
+command, (sftp) a delete, or an upload or download into another directory. The ftp component asks for the current
+directory only when the connection does not know it, usually once per connection, instead of sending `PWD` for each
+file.
 
-With the default `autoCreate=true`, the producer checks or creates a directory once per connection, not before every
-upload. When a directory is removed while the connection is open, the upload into it fails, and the directory is created
-again and the upload tried once more, unless the message body is a stream.
+With the default `autoCreate=true`, the producer no longer checks that a directory exists before each upload into a
+directory where it already stored a file on the same connection. When such a directory is removed while the connection
+is open, the first attempt to upload into it fails; the producer then creates the directory again and uploads the file
+once more, and logs this at INFO level. It does not try again when the message body is a stream or a reader, or with
+`fileExist=Append`: that upload fails, and the next one checks the directory. The directories that a consumer moves
+files into (`move`, `preMove`, `moveFailed`) are still checked each time.
 
-With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed an
-upload, a download or a `NOOP` on that connection less than a second before. The consumer still sends one before each
-poll.
+With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed
+an upload, a download or a `NOOP` on that connection less than a second before. A connection that the server closed
+within that second is then found by the upload, which fails, instead of by the `NOOP`, after which the producer would
+have connected again; the next upload connects again. The consumer still sends a `NOOP` before each poll, and the
+health check before each check.
 
 The absolute paths that the SFTP server sees do not change. The FTP server sees fewer `CWD` and `PWD` commands, and its
 current directory between two uploads is the directory of the last file, not the starting directory. `FtpOperations`

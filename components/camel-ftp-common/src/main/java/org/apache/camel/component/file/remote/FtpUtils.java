@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
 import org.apache.camel.Component;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,6 +153,19 @@ public final class FtpUtils {
             absoluteFileName = "/" + absoluteFileName;
         }
         return absoluteFileName;
+    }
+
+    /**
+     * Whether an upload can read the message body again after a failed attempt: the body is not a stream or a reader
+     * that the failed attempt may have read, but data or a local file.
+     *
+     * @param  body the message body
+     * @return      <tt>true</tt> for no body, a byte array, a text, or a local file
+     * @since       4.24
+     */
+    public static boolean isBodyReadableAgain(Object body) {
+        return body == null || body instanceof byte[] || body instanceof CharSequence || body instanceof File
+                || body instanceof Path || body instanceof GenericFile<?> file && file.getFile() instanceof File;
     }
 
 }

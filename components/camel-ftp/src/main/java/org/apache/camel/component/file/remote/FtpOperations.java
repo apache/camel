@@ -96,18 +96,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
      */
     private String restoreDirectory;
     /**
-     * The directory, relative to {@link #restoreDirectory}, that a stepwise operation changed into, or {@code null}
-     * when that change failed half way.
+     * The directory part of the file name (relative to {@link #restoreDirectory}, or absolute) that a stepwise upload,
+     * download or delete changed into. {@code null} when the connection is not in such a directory, also when the
+     * change failed half way.
      */
     private String stepwiseDirectory;
     /**
-     * Whether a stepwise upload, download or delete runs: the operations that it calls, such as the existence check or
-     * the move of an existing file, use names relative to the directory of the file and must not change back.
+     * Whether an upload, a download or a delete runs, with or without stepwise: the operations that it calls, such as
+     * the existence check or the move of an existing file, use names relative to the directory of the file and must not
+     * change back.
      */
     private boolean inStepwiseOperation;
     /**
-     * The directories that autoCreate checked or created on this connection, by the directory they are relative to, so
-     * that the next upload into them does not check again.
+     * The directories that a file was uploaded into on this connection, as absolute paths (see
+     * {@link #builtDirectoryKey(String)}), so that autoCreate does not check them again before the next upload. Only an
+     * upload adds a directory: the moves of a consumer check their directory each time.
      */
     private final Set<String> builtDirectories = new HashSet<>();
     /**
@@ -532,9 +535,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     changeCurrentDirectory(originalDirectory);
                 }
 
-                if (success) {
-                    builtDirectories.add(key);
-                }
                 return success;
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
@@ -820,19 +820,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             boolean answer;
             try {
+                GenericFileOperationFailedException failure = null;
                 try {
                     answer = storeFileInItsDirectory(name, exchange);
                 } catch (GenericFileOperationFailedException e) {
-                    // the change into a directory that autoCreate checked before failed: it was removed since
-                    if (!FTPReply.isNegativePermanent(e.getCode()) || !isBuiltDirectoryMissing(name, exchange)) {
-                        throw e;
-                    }
-                    answer = storeFileInBuiltDirectoryAgain(name, exchange);
+                    failure = e;
+                    answer = false;
                 }
-                if (!answer && FTPReply.isNegativePermanent(client.getReplyCode())
-                        && isBuiltDirectoryMissing(name, exchange)) {
-                    // the server refused the upload into a directory that autoCreate checked before
-                    answer = storeFileInBuiltDirectoryAgain(name, exchange);
+                if (!answer) {
+                    // the reply to the change of directory or to STOR, not to a SITE CHMOD that may follow it
+                    int code = failure != null ? failure.getCode() : storeReplyCode(exchange);
+                    if (FTPReply.isNegativePermanent(code) && isBuiltDirectoryMissing(name, exchange, failure)) {
+                        answer = storeFileInBuiltDirectoryAgain(name, exchange, failure);
+                    } else if (failure != null) {
+                        throw failure;
+                    }
+                }
+                if (answer) {
+                    rememberBuiltDirectory(FileUtil.onlyPath(name));
                 }
             } catch (GenericFileOperationFailedException e) {
                 clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
@@ -954,18 +959,65 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    private boolean storeFileInBuiltDirectoryAgain(String name, Exchange exchange) {
+    private boolean storeFileInBuiltDirectoryAgain(
+            String name, Exchange exchange, GenericFileOperationFailedException failure) {
         String directory = FileUtil.onlyPath(name);
-        log.debug("Cannot store file: {} as directory: {} is missing. Creating the directory again.", name, directory);
-        buildDirectory(directory, false);
-        return storeFileInItsDirectory(name, exchange);
+        String reason = failure != null
+                ? failure.getMessage() : exchange.getIn().getHeader(FtpConstants.FTP_REPLY_STRING, String.class);
+        log.info("Cannot store file: {} as directory: {}, where a file was stored before on this connection, was removed"
+                 + " since ({}). Creating the directory again and storing the file once more.",
+                name, directory, reason);
+        try {
+            if (!buildDirectory(directory, false)) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot store file: " + name + " as directory: " + directory
+                                                              + " was removed and cannot be created again");
+            }
+            return storeFileInItsDirectory(name, exchange);
+        } catch (GenericFileOperationFailedException retryFailure) {
+            if (failure != null) {
+                retryFailure.addSuppressed(failure);
+            }
+            throw retryFailure;
+        }
+    }
+
+    private int storeReplyCode(Exchange exchange) {
+        Integer code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, Integer.class);
+        return code != null ? code : client.getReplyCode();
     }
 
     /**
-     * Whether an upload failed as the directory that autoCreate checked or created before on this connection was
-     * removed since, and can be tried again once the directory is created again: the body is not a stream that the
-     * failed upload may have read, and the upload does not append (it could append twice). The directory is forgotten,
-     * so that the next upload checks it.
+     * Records that a file was stored in a directory, so that autoCreate does not check it again on this connection.
+     */
+    private void rememberBuiltDirectory(String directory) {
+        if (directory != null) {
+            builtDirectories.add(builtDirectoryKey(endpoint.getConfiguration().normalizePath(directory)));
+        }
+    }
+
+    /**
+     * As {@link #isBuiltDirectoryMissing(String, Exchange)}, but a failure of the check is added to the failure of the
+     * upload, which is thrown, so that the reason of the failed upload is kept.
+     */
+    private boolean isBuiltDirectoryMissing(String name, Exchange exchange, GenericFileOperationFailedException failure) {
+        try {
+            return isBuiltDirectoryMissing(name, exchange);
+        } catch (RuntimeException checkFailure) {
+            if (failure == null) {
+                throw checkFailure;
+            }
+            failure.addSuppressed(checkFailure);
+            throw failure;
+        }
+    }
+
+    /**
+     * Whether an upload failed as the directory where a file was stored before on this connection was removed since,
+     * and can be tried again once the directory is created again: autoCreate is enabled, the body can be read again,
+     * and the upload does not append (it could append twice). Changes back to the directory where the operations
+     * started, forgets the directory so that the next upload checks it, and sends a CWD to check that the directory is
+     * missing, as the server gives no specific reply for it.
      */
     private boolean isBuiltDirectoryMissing(String name, Exchange exchange) {
         String directory = FileUtil.onlyPath(name);
@@ -975,7 +1027,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         changeBackToRestoreDirectory();
         directory = endpoint.getConfiguration().normalizePath(directory);
         boolean known = builtDirectories.remove(builtDirectoryKey(directory));
-        if (!known || exchange.getIn().getBody() instanceof InputStream
+        if (!known || !FtpUtils.isBodyReadableAgain(exchange.getIn().getBody())
                 || endpoint.getFileExist() == GenericFileExist.Append) {
             return false;
         }
@@ -1444,12 +1496,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     /**
      * The FTP client, in the directory where the operations started: a stepwise upload, download or delete stays in the
-     * directory of its file until another operation needs it, so this changes back first.
+     * directory of its file until another operation needs the starting directory, so this changes back first. The next
+     * upload, download or delete may change directory again. As the caller can change directory with the client, the
+     * current directory is asked for again when an operation needs it.
      */
     public FTPClient getClient() {
         lock.lock();
         try {
             leaveStepwiseDirectory();
+            workingDirectory = null;
             return client;
         } finally {
             lock.unlock();
