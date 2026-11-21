@@ -68,14 +68,15 @@ import org.apache.camel.util.json.JsonObject;
                    description = "Checks the dependencies for known vulnerabilities (CVEs) with OSV.dev and the Apache Camel security advisories",
                    generateHelp = true,
                    footer = {
-                           "Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a CI job fails.",
+                           "Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a CI job fails,",
+                           "and with --fail-on-error also when OSV.dev or the OSV database could not be used.",
                            "",
                            "Examples:",
                            "  camel dependency audit",
                            "  camel dependency audit --by-artifact",
                            "  camel dependency audit --integration=my-app",
                            "  camel dependency audit --severity=high --fail-on=critical",
-                           "  camel dependency audit --osv-database",
+                           "  camel dependency audit --osv-database --fail-on-error",
                            "  camel dependency audit --osv-database-url=https://nexus.corp.com/repository/osv/Maven/all.zip",
                            "  camel dependency audit --json" })
 public class DependencyAudit extends DependencyList {
@@ -104,6 +105,11 @@ public class DependencyAudit extends DependencyList {
     @Option(name = "offline", hasValue = false,
             description = "Checks the Apache Camel security advisories of the catalog only, without OSV.dev")
     boolean offline;
+
+    @Option(name = "fail-on-error", hasValue = false,
+            description = "Exits 1 when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database),"
+                          + " instead of checking the Apache Camel security advisories only")
+    boolean failOnError;
 
     @Option(name = "osv-database", hasValue = false,
             description = "Checks with the offline OSV database instead of the OSV.dev API: the export of all the Maven vulnerabilities of OSV.dev,"
@@ -353,7 +359,7 @@ public class DependencyAudit extends DependencyList {
                                      + " dependencies of the " + source + counts(findings) + databaseNote() + below);
             }
         }
-        return failed(result.findings()) ? CliExitCode.FAILURE : CliExitCode.OK;
+        return failed(result) ? CliExitCode.FAILURE : CliExitCode.OK;
     }
 
     /**
@@ -371,7 +377,7 @@ public class DependencyAudit extends DependencyList {
         doc.put("vulnerableArtifacts", artifacts.size());
         doc.put("severity", severity);
         doc.put("failOn", failOn);
-        doc.put("failed", failed(result.findings()));
+        doc.put("failed", failed(result));
         if (result.osvError() != null) {
             doc.put("osvError", result.osvError());
         }
@@ -406,6 +412,14 @@ public class DependencyAudit extends DependencyList {
             return "";
         }
         return " (offline OSV database, updated " + database.updated().toString().substring(0, 10) + ")";
+    }
+
+    /**
+     * Whether the command exits with 1: a vulnerability at or above --fail-on, or (--fail-on-error) the JARs could not
+     * be checked with OSV.dev or the OSV database.
+     */
+    boolean failed(CveAudit.Result result) {
+        return failed(result.findings()) || failOnError && result.osvError() != null;
     }
 
     /** Whether a vulnerability at or above --fail-on was found (of all of them, not only those listed). */

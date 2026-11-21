@@ -477,6 +477,13 @@ fixes all of them, which is what to upgrade. Press `/` to filter the rows by CVE
 of the chain. Results are cached globally -- switching integrations that share JARs is instant. When OSV.dev cannot
 be reached, the title says so and only the Camel advisories were checked; press `r` to scan again.
 
+By default the coordinates of the JARs are sent to the OSV.dev API. With *OSV Database* in the
+xref:camel-jbang-tui-settings.adoc[Settings] set to `default`, the tab uses the offline OSV database instead, as
+`camel dependency audit --osv-database` does: the export of all the Maven vulnerabilities of OSV.dev, downloaded once a
+day into `~/.camel/osv` and matched locally, so no coordinates leave the machine. The title then says
+`offline OSV database, updated <date>`. A URL downloads the export from a mirror, such as the repository manager of
+the company, and a path reads a ZIP file on disk.
+
 === Kafka
 
 The Kafka tab (under More > Data) provides a dedicated view for Kafka consumers and their connectivity

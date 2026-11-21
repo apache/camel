@@ -229,6 +229,12 @@ what you change lasts for that session only, so your own settings are left as th
 | Port of the proxy host.
 | `8080`
 
+| OSV Database | `camel.tui.osvDatabase`
+| Where the xref:camel-jbang-tui-observe.adoc#_cve_audit[CVE Audit] gets the vulnerabilities from. Empty for the
+  OSV.dev API; `default` for the offline OSV database (the export of OSV.dev, downloaded once a day and matched
+  locally, so no coordinates leave the machine); a URL to download that export from a mirror; or a ZIP file on disk.
+|
+
 | Shell History | `camel.tui.shell.history`
 | How many commands the embedded shell remembers (see <<_input_history,Input history>>).
 | `100`

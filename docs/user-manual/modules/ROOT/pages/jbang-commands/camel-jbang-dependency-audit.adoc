@@ -33,6 +33,7 @@ camel dependency audit [options]
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fail-on` | Exits 1 when a vulnerability at or above this severity is found: critical, high, medium, low or none | low | String
+| `--fail-on-error` | Exits 1 when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database), instead of checking the Apache Camel security advisories only |  | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version |  | String
 | `--groovy-pre-compiled` | Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main) | false | boolean
