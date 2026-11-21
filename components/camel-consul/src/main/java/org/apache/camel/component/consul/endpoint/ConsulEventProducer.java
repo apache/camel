@@ -34,7 +34,7 @@ public final class ConsulEventProducer extends AbstractConsulProducer<EventClien
 
     @InvokeOnHeader(ConsulEventActions.FIRE)
     protected void fire(Message message) throws Exception {
-        String name = getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class);
+        String name = getMandatoryKey(message);
         EventOptions options = message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class);
         String payload = message.getBody(String.class);
 
@@ -49,7 +49,7 @@ public final class ConsulEventProducer extends AbstractConsulProducer<EventClien
     @InvokeOnHeader(ConsulEventActions.LIST)
     protected void list(Message message) throws Exception {
         setBodyAndResult(message,
-                getClient().listEvents(message.getHeader(ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                getClient().listEvents(getKey(message),
                         message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)));
     }
 }

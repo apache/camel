@@ -2762,6 +2762,24 @@ The actions of `consul:agent` and `consul:status` now set the `CamelConsulResult
 The `FIRE` action of `consul:event` with a message without body failed with a `NullPointerException`. It now fires the
 event without payload.
 
+=== camel-consul - a producer with a key acts on its key, not on the key a consumer received
+
+The `consul:kv` and `consul:event` consumers set the `CamelConsulKey` header to the key (or event name) they received,
+and the producers took the key from that header before their `key` option. So a route from one key to another
+(`from("consul:kv?key=a").to("consul:kv?key=b&action=PUT")`) wrote, deleted or fired the key it came from, and with PUT
+or FIRE looped for ever. A producer that has a `key` now uses it while the header still holds the received key (the
+consumers set the new `CamelConsulReceivedKey` exchange property to that key). A key header set by the route is still
+used, and a producer without `key` still acts on the received key. To act on the received key with a producer that has
+a `key` of its own, remove the `CamelConsulReceivedKey` property before the producer.
+
+*Breaking change:* a producer behind a `recursive=true` watch whose `key` is the watched folder now acts on that key,
+not on each key the watch returns. For example,
+`from("consul:kv?key=jobs&recursive=true").to("consul:kv?key=jobs&action=DELETE_KEYS")` deleted each key the watch
+returned (such as `jobs/1`) after processing it, and now deletes every key that starts with `jobs` on the first message
+(at route start if the folder has keys, with the default `firstIndex`), including keys added after the watch read them,
+and again on each later message. The same applies to the other actions (`DELETE_KEY`, `GET_VALUE`, `LOCK`, ...). Remove
+`key` from such a producer to keep acting on the received key.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
