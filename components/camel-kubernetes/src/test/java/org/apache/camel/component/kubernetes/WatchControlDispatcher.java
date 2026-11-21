@@ -23,6 +23,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.fabric8.kubernetes.api.model.Status;
 import io.fabric8.kubernetes.api.model.StatusBuilder;
@@ -41,6 +44,7 @@ import io.fabric8.mockwebserver.http.WebSocketListener;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A Kubernetes mock server dispatcher in CRUD mode that lets a test fail the next requests for a kind of resources,
@@ -55,8 +59,12 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     private final String resourcesPath;
     private final Queue<Integer> failures = new ConcurrentLinkedQueue<>();
     private final AtomicInteger watches = new AtomicInteger();
-    private final Semaphore openWatches = new Semaphore(0);
-    private final Semaphore closedWatches = new Semaphore(0);
+    private final Lock watchLock = new ReentrantLock();
+    private final Condition watchOpened = watchLock.newCondition();
+    private final Condition watchClosed = watchLock.newCondition();
+    // totalOpenWatches and totalClosedWatches count watches cumulatively, guarded by watchLock
+    private int totalOpenWatches;
+    private int totalClosedWatches;
     private final Semaphore listRequests = new Semaphore(0);
     private final CompletableFuture<WebSocket> heldWatch = new CompletableFuture<>();
     private volatile boolean holdFirstWatch;
@@ -114,20 +122,42 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     }
 
     /**
-     * Waits until the given number of watches of the resources have been opened in total.
+     * Waits until the given cumulative number of watches of the resources have been opened in total.
      */
     public void awaitOpenWatches(int count) throws InterruptedException {
-        // the permits are released once per open watch
-        assertTrue(openWatches.tryAcquire(count, 20, TimeUnit.SECONDS), "watch " + count + " was not opened");
-        openWatches.release(count);
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+        watchLock.lock();
+        try {
+            while (totalOpenWatches < count) {
+                long remaining = deadline - System.nanoTime();
+                if (remaining <= 0) {
+                    fail("watch " + count + " was not opened (only " + totalOpenWatches + " so far)");
+                }
+                watchOpened.await(remaining, TimeUnit.NANOSECONDS);
+            }
+        } finally {
+            watchLock.unlock();
+        }
     }
 
     /**
-     * Waits until the given number of watches of the CRUD dispatcher (not the held one) have been closed in total.
+     * Waits until the given cumulative number of watches of the CRUD dispatcher (not the held one) have been closed in
+     * total.
      */
     public void awaitClosedWatches(int count) throws InterruptedException {
-        assertTrue(closedWatches.tryAcquire(count, 20, TimeUnit.SECONDS), "watch " + count + " was not closed");
-        closedWatches.release(count);
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+        watchLock.lock();
+        try {
+            while (totalClosedWatches < count) {
+                long remaining = deadline - System.nanoTime();
+                if (remaining <= 0) {
+                    fail("watch " + count + " was not closed (only " + totalClosedWatches + " so far)");
+                }
+                watchClosed.await(remaining, TimeUnit.NANOSECONDS);
+            }
+        } finally {
+            watchLock.unlock();
+        }
     }
 
     /**
@@ -192,7 +222,18 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
                 @Override
                 public void onOpen(WebSocket webSocket, Response response) {
                     heldWatch.complete(webSocket);
-                    openWatches.release();
+                    signalWatchOpened();
+                }
+
+                @Override
+                public void onClosing(WebSocket webSocket, int code, String reason) {
+                    signalWatchClosed();
+                }
+
+                @Override
+                public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+                    // a watch the client drops without a close frame
+                    signalWatchClosed();
                 }
             });
         }
@@ -202,6 +243,26 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
             response.withWebSocketUpgrade(new OpenSignalingListener(listener));
         }
         return response;
+    }
+
+    private void signalWatchOpened() {
+        watchLock.lock();
+        try {
+            totalOpenWatches++;
+            watchOpened.signalAll();
+        } finally {
+            watchLock.unlock();
+        }
+    }
+
+    private void signalWatchClosed() {
+        watchLock.lock();
+        try {
+            totalClosedWatches++;
+            watchClosed.signalAll();
+        } finally {
+            watchLock.unlock();
+        }
     }
 
     /**
@@ -224,7 +285,7 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         public void onOpen(WebSocket webSocket, Response response) {
             delegate.onOpen(webSocket, response);
             lastOpenWatch = webSocket;
-            openWatches.release();
+            signalWatchOpened();
         }
 
         @Override
@@ -247,10 +308,11 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
             delegate.onPing(webSocket, bytes);
         }
 
+        // onClosing and onFailure are mutually exclusive in OkHttp — only one fires per connection
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             delegate.onClosing(webSocket, code, reason);
-            closedWatches.release();
+            signalWatchClosed();
         }
 
         @Override
@@ -262,7 +324,7 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             delegate.onFailure(webSocket, t, response);
             // a watch the client drops without a close frame
-            closedWatches.release();
+            signalWatchClosed();
         }
     }
 }
