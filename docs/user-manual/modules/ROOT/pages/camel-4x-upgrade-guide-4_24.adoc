@@ -6377,6 +6377,19 @@ older entry was updated after newer ones were published.
 Routes using `sortEntries=true` with `idempotent=false` get the entries in this order too: the entry that was updated
 first is routed first, where the entry that was published last was routed first before.
 
+=== camel-atom - the default idempotent strategy routes every new entry of a feed
+
+The default options are `idempotent=true` with the default strategy, which skips an entry that is not newer than the
+one routed before it, and `sortEntries=false`. With them, the `atom` consumer routed the entries in the order of the
+feed reader: the newest published first, from the end. An entry that was updated after newer entries were published (an
+edited post) was routed first, and the newer entries were then skipped for good. An entry with the same date as the one
+routed before it (published in the same second) was skipped for good too.
+
+With the default strategy the entries are now routed by their updated date, as with `sortEntries=true`, and an entry
+with the same date as the last routed one is routed when its id (the `atom:id`, else its link) differs. Routes with
+the default strategy get an edited entry after the entries published before the edit. Routes with `idempotent=false`
+or another strategy keep the order of the feed.
+
 === camel-opensearch - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
