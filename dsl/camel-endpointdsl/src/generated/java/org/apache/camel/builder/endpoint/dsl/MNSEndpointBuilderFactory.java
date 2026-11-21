@@ -1645,7 +1645,8 @@ public interface MNSEndpointBuilderFactory {
             return "CamelAlibabaMnsPriority";
         }
         /**
-         * The tag of the message for publishMessage.
+         * The tag of the message for publishMessage. Simple Message Queue
+         * accepts at most 16 characters.
          * 
          * The option is a: {@code String} type.
          * 
