@@ -506,6 +506,29 @@ the same HTTP status as before, and a body that is a JSON-RPC error response wit
 code is `-32700` (parse error) for a message that cannot be parsed, and `-32600` (invalid request) otherwise; before,
 a missing header or session id gave `-32601` and an unknown session `-32603`.
 
+=== camel-ftp, camel-sftp - fewer directory changes with stepwise and autoCreate
+
+No option or default changes. With the default `stepwise=true`, an upload, a download or (ftp) a delete no longer
+changes back to the directory it started from after each file: the connection stays in the directory of the file, so the
+next file in that directory needs no change of directory. The connection changes back before an operation that uses
+names relative to the starting directory (a rename, a listing, an existence check, a site command, or another
+directory). The ftp component no longer sends `PWD` for each file: the current directory is asked for once per
+connection.
+
+With the default `autoCreate=true`, the producer checks or creates a directory once per connection, not before every
+upload. When a directory is removed while the connection is open, the upload into it fails, and the directory is created
+again and the upload tried once more, unless the message body is a stream.
+
+With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed an
+upload, a download or a `NOOP` on that connection less than a second before. The consumer still sends one before each
+poll.
+
+The absolute paths that the SFTP server sees do not change. The FTP server sees fewer `CWD` and `PWD` commands, and its
+current directory between two uploads is the directory of the last file, not the starting directory. `FtpOperations`
+`getClient()` changes back to the starting directory before it returns the client; code that keeps the `FTPClient` (for
+example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
+must change directory itself.
+
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.

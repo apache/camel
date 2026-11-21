@@ -33,8 +33,10 @@ import java.security.KeyPair;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -104,6 +106,28 @@ public class SftpOperations
     private final Lock lock = new ReentrantLock();
     // whether connect, with its reconnect attempts, holds the lock
     private volatile boolean connecting;
+    /**
+     * The directory to change back to before an operation that uses names relative to the directory where the
+     * operations started: a stepwise upload or download stays in the directory of its file, so that the next file in
+     * that directory needs no change of directory. {@code null} when there is nothing to change back. JSch keeps the
+     * current directory on the client and sends absolute paths, but checks every change of directory with the server.
+     */
+    private String restoreDirectory;
+    /**
+     * The directory, relative to {@link #restoreDirectory}, that a stepwise operation changed into, or {@code null}
+     * when that change failed half way.
+     */
+    private String stepwiseDirectory;
+    /**
+     * Whether a stepwise upload, download or delete runs: the operations that it calls, such as the existence check or
+     * the move of an existing file, use names relative to the directory of the file and must not change back.
+     */
+    private boolean inStepwiseOperation;
+    /**
+     * The directories that autoCreate checked or created on this connection, by the directory they are relative to, so
+     * that the next upload into them does not check again.
+     */
+    private final Set<String> builtDirectories = new HashSet<>();
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
@@ -188,6 +212,8 @@ public class SftpOperations
             }
 
             configureBulkRequests();
+            // a new channel starts in the login directory
+            resetDirectoryState();
 
             return true;
         } finally {
@@ -710,6 +736,7 @@ public class SftpOperations
                 channel.disconnect();
             }
         } finally {
+            resetDirectoryState();
             lock.unlock();
         }
     }
@@ -810,6 +837,7 @@ public class SftpOperations
             // ensure these
             session = null;
             channel = null;
+            resetDirectoryState();
             lock.unlock();
         }
     }
@@ -828,6 +856,7 @@ public class SftpOperations
             name = endpoint.getConfiguration().normalizePath(name);
             LOG.debug("Deleting file: {}", name);
             reconnectIfNecessary(null);
+            leaveStepwiseDirectory();
             channel.rm(quotePathForJsch(name));
             return true;
         } catch (SftpException e) {
@@ -844,6 +873,7 @@ public class SftpOperations
         try {
             LOG.debug("Renaming file: {} to: {}", from, to);
             reconnectIfNecessary(null);
+            leaveStepwiseDirectory();
             // make use of the '/' separator because JSch expects this
             // as the file separator even on Windows
             to = FileUtil.compactPath(to, '/');
@@ -865,6 +895,12 @@ public class SftpOperations
             directory = endpoint.getConfiguration().normalizePath(directory);
 
             LOG.trace("buildDirectory({},{})", directory, absolute);
+            String key = builtDirectoryKey(directory);
+            if (builtDirectories.contains(key)) {
+                LOG.trace("Directory {} was checked or created before on this connection", directory);
+                return true;
+            }
+            leaveStepwiseDirectory();
             // ignore absolute as all dirs are relative with FTP
             boolean success = false;
 
@@ -913,6 +949,9 @@ public class SftpOperations
                 throw operationFailed("Cannot build directory: " + directory, e);
             }
 
+            if (success) {
+                builtDirectories.add(key);
+            }
             return success;
         } finally {
             lock.unlock();
@@ -962,14 +1001,85 @@ public class SftpOperations
         lock.lock();
         try {
             LOG.trace("getCurrentDirectory()");
-            String answer = channel.pwd();
+            leaveStepwiseDirectory();
+            String answer = pwd();
             LOG.trace("Current dir: {}", answer);
             return answer;
-        } catch (SftpException e) {
-            throw operationFailed("Cannot get current directory", e);
         } finally {
             lock.unlock();
         }
+    }
+
+    private String pwd() {
+        try {
+            // JSch keeps the current directory on the client: this sends nothing
+            return channel.pwd();
+        } catch (SftpException e) {
+            throw operationFailed("Cannot get current directory", e);
+        }
+    }
+
+    /**
+     * Changes into the directory of a stepwise upload or download, unless a previous one left the connection there, and
+     * remembers the directory to change back to. When the change fails half way, the next operation changes back.
+     */
+    private void changeToStepwiseDirectory(String path) {
+        if (restoreDirectory != null && path.equals(stepwiseDirectory)) {
+            LOG.trace("Already in directory: {}", path);
+            return;
+        }
+        changeBackToRestoreDirectory();
+        restoreDirectory = pwd();
+        changeCurrentDirectory(path);
+        stepwiseDirectory = path;
+    }
+
+    /**
+     * Changes back to the directory where a stepwise upload or download started, before an operation that uses names
+     * relative to it. Does nothing while a stepwise operation runs, as the operations it calls use names relative to
+     * the directory of its file.
+     */
+    private void leaveStepwiseDirectory() {
+        if (!inStepwiseOperation) {
+            changeBackToRestoreDirectory();
+        }
+    }
+
+    private void changeBackToRestoreDirectory() {
+        String directory = restoreDirectory;
+        if (directory == null) {
+            return;
+        }
+        restoreDirectory = null;
+        stepwiseDirectory = null;
+        try {
+            // one change to the absolute path that JSch gave, not up one directory at a time, as the directory that the
+            // connection is in may have been removed
+            LOG.trace("Changing back to directory: {}", directory);
+            doChangeDirectory(directory);
+        } catch (RuntimeException e) {
+            // the next operation tries again
+            restoreDirectory = directory;
+            throw e;
+        }
+    }
+
+    private void resetDirectoryState() {
+        restoreDirectory = null;
+        stepwiseDirectory = null;
+        builtDirectories.clear();
+    }
+
+    /**
+     * The key of a directory that autoCreate checked or created: a relative directory is relative to the directory that
+     * a relative name resolves against, once the connection changed back from a stepwise operation.
+     */
+    private String builtDirectoryKey(String directory) {
+        if (FileUtil.hasLeadingSeparator(directory)) {
+            return directory;
+        }
+        String base = !inStepwiseOperation && restoreDirectory != null ? restoreDirectory : pwd();
+        return base + "/" + directory;
     }
 
     @Override
@@ -980,6 +1090,7 @@ public class SftpOperations
             if (ObjectHelper.isEmpty(path)) {
                 return;
             }
+            leaveStepwiseDirectory();
 
             // must compact path so SFTP server can traverse correctly, make use of
             // the '/'
@@ -1105,6 +1216,7 @@ public class SftpOperations
                 // list current directory if file path is not given
                 path = ".";
             }
+            leaveStepwiseDirectory();
 
             Vector<?> files = channel.ls(quotePathForJsch(path));
 
@@ -1124,6 +1236,7 @@ public class SftpOperations
         String dir = ObjectHelper.isEmpty(path) ? "." : path;
         try {
             LOG.trace("Listing remote files from path {} one at a time", dir);
+            leaveStepwiseDirectory();
             RuntimeException[] failure = { null };
             channel.ls(quotePathForJsch(dir), entry -> {
                 try {
@@ -1170,6 +1283,7 @@ public class SftpOperations
     public boolean isSymbolicLink(String path) throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            leaveStepwiseDirectory();
             return channel.lstat(quotePathForJsch(path)).isLink();
         } catch (SftpException e) {
             throw operationFailed("Cannot get the attributes of: " + path, e);
@@ -1182,6 +1296,7 @@ public class SftpOperations
     public String readSymbolicLink(String path) throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            leaveStepwiseDirectory();
             return channel.readlink(quotePathForJsch(path));
         } catch (SftpException e) {
             throw operationFailed("Cannot read the symbolic link: " + path, e);
@@ -1243,6 +1358,7 @@ public class SftpOperations
         lock.lock();
         try {
             LOG.trace("retrieveFile({})", name);
+            inStepwiseOperation = true;
             if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
                 // local work directory is configured so we should store file
                 // content as files in this local directory
@@ -1252,6 +1368,7 @@ public class SftpOperations
                 return retrieveFileToStreamInBody(name, exchange);
             }
         } finally {
+            inStepwiseOperation = false;
             lock.unlock();
         }
     }
@@ -1276,29 +1393,12 @@ public class SftpOperations
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        String currentDir = null;
-        boolean retrieved = false;
         try {
             GenericFile<ChannelSftp.LsEntry> target
                     = (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
-            String remoteName = name;
-            if (endpoint.getConfiguration().isStepwise()) {
-                // remember current directory
-                currentDir = getCurrentDirectory();
-
-                // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using
-                // absolute path)
-                String path = FileUtil.onlyPath(name);
-                if (path != null) {
-                    changeCurrentDirectory(path);
-                }
-                // remote name is now only the file name as we just changed
-                // directory
-                remoteName = FileUtil.stripPath(name);
-            }
+            String remoteName = changeToDirectoryOf(name);
 
             // use input stream which works with Apache SSHD used for testing
             InputStream is = channel.get(quotePathForJsch(remoteName));
@@ -1317,16 +1417,12 @@ public class SftpOperations
             }
 
             createResultHeadersFromExchange(null, exchange);
-            retrieved = true;
             return true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             throw operationFailed("Cannot retrieve file: " + name, e);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
-        } finally {
-            // change back to current directory if we changed directory
-            changeBackToDirectory(currentDir, retrieved);
         }
     }
 
@@ -1382,31 +1478,13 @@ public class SftpOperations
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
         }
-        String currentDir = null;
-        boolean retrieved = false;
         try {
             // store the java.io.File handle as the body
             file.setBody(local);
 
-            String remoteName = name;
-            if (endpoint.getConfiguration().isStepwise()) {
-                // remember current directory
-                currentDir = getCurrentDirectory();
-
-                // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using
-                // absolute path)
-                String path = FileUtil.onlyPath(name);
-                if (path != null) {
-                    changeCurrentDirectory(path);
-                }
-                // remote name is now only the file name as we just changed
-                // directory
-                remoteName = FileUtil.stripPath(name);
-            }
+            String remoteName = changeToDirectoryOf(name);
 
             channel.get(quotePathForJsch(remoteName), os);
-            retrieved = true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
@@ -1422,8 +1500,6 @@ public class SftpOperations
             throw operationFailed("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
-            // change back to current directory if we changed directory
-            changeBackToDirectory(currentDir, retrieved);
         }
 
         createResultHeadersFromExchange(null, exchange);
@@ -1453,62 +1529,63 @@ public class SftpOperations
 
             LOG.trace("storeFile({})", name);
 
-            boolean answer;
-            String currentDir = null;
-            String path = FileUtil.onlyPath(name);
-            String targetName = name;
-
-            if (path != null && endpoint.getConfiguration().isStepwise()) {
-                // must remember current dir so we stay in that directory after
-                // the write
-                currentDir = getCurrentDirectory();
-
-                // change to path of name
-                changeCurrentDirectory(path);
-
-                // the target name should be without path, as we have changed
-                // directory
-                targetName = FileUtil.stripPath(name);
-            }
-
-            boolean stored = false;
             try {
-                // store the file
-                answer = doStoreFile(name, targetName, exchange);
-                stored = true;
-            } finally {
-                // change back to current directory if we changed directory
-                changeBackToDirectory(currentDir, stored);
+                return storeFileInItsDirectory(name, exchange);
+            } catch (GenericFileOperationFailedException e) {
+                String directory = FileUtil.onlyPath(name);
+                if (e.getCode() != ChannelSftp.SSH_FX_NO_SUCH_FILE || !forgetBuiltDirectory(directory, exchange)) {
+                    throw e;
+                }
+                // the directory was removed since autoCreate checked it on this connection
+                LOG.debug("Cannot store file: {} as directory: {} is missing. Creating the directory again.", name,
+                        directory);
+                buildDirectory(directory, false);
+                return storeFileInItsDirectory(name, exchange);
             }
-
-            return answer;
         } finally {
             lock.unlock();
         }
     }
 
-    /**
-     * Changes back to the directory that a stepwise operation started in, also when the operation failed, so that the
-     * next operation does not start in the directory of the file. When the operation failed, a failure to change back
-     * is only logged, so that it does not hide why the operation failed.
-     *
-     * @param directory the directory to change back to, or {@code null} if the operation did not change directory
-     * @param succeeded whether the operation succeeded
-     */
-    private void changeBackToDirectory(String directory, boolean succeeded) {
-        if (directory == null) {
-            return;
-        }
-        if (succeeded) {
-            changeCurrentDirectory(directory);
-            return;
-        }
+    private boolean storeFileInItsDirectory(String name, Exchange exchange) {
+        inStepwiseOperation = true;
         try {
-            changeCurrentDirectory(directory);
-        } catch (GenericFileOperationFailedException e) {
-            LOG.debug("Cannot change back to directory: {} after a failed operation due to: {}", directory, e.getMessage(),
-                    e);
+            String targetName = changeToDirectoryOf(name);
+            return doStoreFile(name, targetName, exchange);
+        } finally {
+            inStepwiseOperation = false;
         }
+    }
+
+    /**
+     * Forgets that autoCreate checked or created the directory of a file whose upload failed as the directory is
+     * missing, so that it is created again. Returns whether the upload can be tried again: the directory was known, the
+     * body is not a stream that the failed upload may have read, and the upload does not append.
+     */
+    private boolean forgetBuiltDirectory(String directory, Exchange exchange) {
+        if (directory == null || !endpoint.isAutoCreate()) {
+            return false;
+        }
+        changeBackToRestoreDirectory();
+        boolean known = builtDirectories.remove(builtDirectoryKey(endpoint.getConfiguration().normalizePath(directory)));
+        // a second append could append twice
+        return known && !(exchange.getIn().getBody() instanceof InputStream)
+                && endpoint.getFileExist() != GenericFileExist.Append;
+    }
+
+    /**
+     * Changes into the directory of a file for a stepwise upload or download, as some servers cannot use a path in the
+     * name of the file, unless the connection is already there, and returns the name relative to it. Without stepwise,
+     * or for a file without a path, changes back to the directory where the operations started and returns the name.
+     */
+    private String changeToDirectoryOf(String name) {
+        String path = FileUtil.onlyPath(name);
+        if (path == null || !endpoint.getConfiguration().isStepwise()) {
+            changeBackToRestoreDirectory();
+            return name;
+        }
+        changeToStepwiseDirectory(path);
+        return FileUtil.stripPath(name);
     }
 
     private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
@@ -1600,6 +1677,7 @@ public class SftpOperations
         lock.lock();
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
         try {
+            leaveStepwiseDirectory();
             channel.put(bis, quotePathForJsch(name));
             return true;
         } catch (SftpException e) {
@@ -1615,6 +1693,7 @@ public class SftpOperations
         lock.lock();
         try {
             LOG.trace("existsFile({})", name);
+            leaveStepwiseDirectory();
             if (endpoint.isFastExistsCheck()) {
                 return fastExistsFile(name);
             }
