@@ -215,6 +215,8 @@ public class KubernetesLeadershipController implements Service {
             LOG.warn("{} Interrupted while releasing the leadership for group {}", logPrefix, group);
             Thread.currentThread().interrupt();
         } finally {
+            // shutdownNow interrupts a release that is still blocked in an API call; its termination is not awaited, as
+            // the time for the stop is used up by then
             camelContext.getExecutorServiceManager().shutdownNow(executor);
         }
     }
