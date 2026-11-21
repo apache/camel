@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +26,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.SecurityAdvisoryHelper;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
 /**
@@ -46,22 +45,9 @@ import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 @ApplicationScoped
 public class AdvisoryService {
 
-    static final String SECURITY_PAGE_URL = "https://camel.apache.org/security/";
+    static final String SECURITY_PAGE_URL = SecurityAdvisoryHelper.SECURITY_PAGE_URL;
 
     private static final Pattern CVE_ID = Pattern.compile("CVE-(\\d{4})-(\\d+)");
-
-    // Version range grammars used by the advisory "affected" prose, in the order they are consumed:
-    // "4.10.0 before 4.10.2" / "4.10.0 up to but not including 4.10.2" -> affected range [from, to)
-    private static final Pattern RANGE_EXCLUSIVE = Pattern.compile(
-            "(\\d+(?:\\.\\d+){1,3})\\s+(?:before|up to but not including)\\s+(\\d+(?:\\.\\d+){1,3})");
-    // "2.9.0 up to 2.9.7" / "2.9.0 through 2.9.7" / "2.9.0 to 2.9.7" -> affected range [from, to]
-    private static final Pattern RANGE_INCLUSIVE = Pattern.compile(
-            "(\\d+(?:\\.\\d+){1,3})\\s+(?:up to|through|to)\\s+(\\d+(?:\\.\\d+){1,3})");
-    // "prior to 2.24.0" / "before 2.24.0" without a starting version -> everything below is affected
-    private static final Pattern BELOW = Pattern.compile(
-            "(?:prior to|before|until)\\s+(\\d+(?:\\.\\d+){1,3})");
-    // a remaining bare version is an exactly affected release, e.g. the trailing "2.12.0" in CVE-2013-4330
-    private static final Pattern VERSION_TOKEN = Pattern.compile("\\d+(?:\\.\\d+){1,3}");
 
     private final CamelCatalog catalog;
 
@@ -117,14 +103,7 @@ public class AdvisoryService {
      * components at all.
      */
     static boolean matchesComponent(SecurityAdvisoryModel advisory, String component) {
-        if (component == null || component.isBlank()) {
-            return true;
-        }
-        String name = component.trim().toLowerCase(Locale.ROOT);
-        if (!name.startsWith("camel-")) {
-            name = "camel-" + name;
-        }
-        return advisory.getComponents() != null && advisory.getComponents().contains(name);
+        return SecurityAdvisoryHelper.namesComponent(advisory, component);
     }
 
     static boolean matchesSeverity(SecurityAdvisoryModel advisory, String severity) {
@@ -140,50 +119,7 @@ public class AdvisoryService {
      * must then fall back to the prose itself.
      */
     static Boolean affectsVersion(String affected, String version) {
-        if (affected == null || affected.isBlank() || version == null || version.isBlank()) {
-            return null;
-        }
-        // strip qualifiers such as -SNAPSHOT or vendor suffixes before comparing
-        String plainVersion = version.trim();
-        int dash = plainVersion.indexOf('-');
-        if (dash > 0) {
-            plainVersion = plainVersion.substring(0, dash);
-        }
-
-        boolean parsedAny = false;
-        boolean affectedHit = false;
-        String text = affected;
-
-        Matcher matcher = RANGE_EXCLUSIVE.matcher(text);
-        while (matcher.find()) {
-            parsedAny = true;
-            affectedHit |= VersionHelper.isBetween(plainVersion, matcher.group(1), matcher.group(2));
-        }
-        text = matcher.replaceAll(" ");
-
-        matcher = RANGE_INCLUSIVE.matcher(text);
-        while (matcher.find()) {
-            parsedAny = true;
-            affectedHit |= VersionHelper.isGE(plainVersion, matcher.group(1))
-                    && VersionHelper.isLE(plainVersion, matcher.group(2));
-        }
-        text = matcher.replaceAll(" ");
-
-        matcher = BELOW.matcher(text);
-        while (matcher.find()) {
-            parsedAny = true;
-            affectedHit |= VersionHelper.compare(plainVersion, matcher.group(1)) < 0;
-        }
-        text = matcher.replaceAll(" ");
-
-        matcher = VERSION_TOKEN.matcher(text);
-        while (matcher.find()) {
-            parsedAny = true;
-            affectedHit |= VersionHelper.compare(plainVersion, matcher.group()) == 0
-                    && plainVersion.length() == matcher.group().length();
-        }
-
-        return parsedAny ? affectedHit : null;
+        return SecurityAdvisoryHelper.affectsVersion(affected, version);
     }
 
     private static long cveOrdinal(String cve) {
@@ -194,18 +130,23 @@ public class AdvisoryService {
         return 0;
     }
 
-    /** Flattened advisory returned by MCP tools, with the optional per-version verdict. */
+    /**
+     * Flattened advisory returned by MCP tools, with the optional per-version verdict, and the Camel release that fixes
+     * it for that version ({@code upgradeTo}: the fixed release of the same line when there is one).
+     */
     public record AdvisoryView(
             String cve, String severity, String summary, String affected, String fixed,
-            String mitigation, String url, List<String> components, Boolean affectsGivenVersion) {
+            String mitigation, String url, List<String> components, Boolean affectsGivenVersion, String upgradeTo) {
 
         static AdvisoryView of(SecurityAdvisoryModel advisory, String camelVersion) {
-            Boolean affects = camelVersion == null || camelVersion.isBlank()
-                    ? null : affectsVersion(advisory.getAffected(), camelVersion);
+            boolean given = camelVersion != null && !camelVersion.isBlank();
+            Boolean affects = given ? affectsVersion(advisory.getAffected(), camelVersion) : null;
+            String upgradeTo = given
+                    ? SecurityAdvisoryHelper.upgradeTo(advisory.getAffected(), advisory.getFixed(), camelVersion) : null;
             return new AdvisoryView(
                     advisory.getCve(), advisory.getSeverity(), advisory.getSummary(), advisory.getAffected(),
                     advisory.getFixed(), advisory.getMitigation(), advisory.getUrl(), advisory.getComponents(),
-                    affects);
+                    affects, upgradeTo);
         }
     }
 
