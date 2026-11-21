@@ -75,6 +75,29 @@ own client and connection pool, and closes it when it stops (for example when it
 the CamelContext stops). The endpoint never closes a client it did not create. To share one client between endpoints,
 bind a `MongoClient` and have the endpoints use it instead of `connectionUriString` or `hosts`.
 
+=== Client options
+
+The client options of the endpoint (`replicaSet`, `readPreference`, `readPreferenceTags`, `maxStalenessSeconds`,
+`appName`, `compressors`, `zlibCompressionLevel`, `connectTimeoutMS`, `socketTimeoutMS`, `serverSelectionTimeoutMS`,
+`localThresholdMS`, `heartbeatFrequencyMS`, `maxIdleTimeMS`, `maxLifeTimeMS`, `minPoolSize`, `maxPoolSize`,
+`maxConnecting`, `waitQueueTimeoutMS`, `srvServiceName`, `srvMaxHosts`, `retryWrites`, `retryReads`, `directConnection`
+and `loadBalanced`) configure the client the endpoint creates from `hosts` or `connectionUriString`. For example, a
+tailable consumer that reads from the secondaries of a replica set:
+
+----
+mongodb:dummy?hosts=host1:27017,host2:27017,host3:27017&replicaSet=rs0&readPreference=SECONDARY&database=shop&collection=events&consumerType=tailable&tailTrackIncreasingField=seq
+----
+
+An option is applied only when its value differs from its default, and then it overrides the same option in
+`connectionUriString`. An option left at its default keeps the value of the connection string, so
+`connectionUriString=RAW(mongodb://host/?readPreference=nearest)` reads from the nearest member. The read preference is
+made of `readPreference`, `readPreferenceTags` and `maxStalenessSeconds` together: when any of them is set, the three
+replace the read preference of the connection string.
+
+These options cannot change a `MongoClient` the endpoint did not create (set with `mongoConnection`, on the component,
+or from the registry). Configure such a client with its own `MongoClientSettings`. In that case the endpoint logs a WARN
+that lists the options it does not use.
+
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

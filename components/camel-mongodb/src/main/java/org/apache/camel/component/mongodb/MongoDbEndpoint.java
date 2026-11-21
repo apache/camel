@@ -21,20 +21,26 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
 import javax.net.ssl.SSLContext;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCompressor;
 import com.mongodb.ReadPreference;
+import com.mongodb.Tag;
+import com.mongodb.TagSet;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.FullDocument;
+import com.mongodb.connection.ClusterConnectionMode;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -127,6 +133,15 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
+    // the defaults of the client options, the same as the defaults of the MongoDB driver
+    private static final int DEFAULT_SERVER_SELECTION_TIMEOUT_MS = 30000;
+    private static final int DEFAULT_LOCAL_THRESHOLD_MS = 15;
+    private static final int DEFAULT_CONNECT_TIMEOUT_MS = 10000;
+    private static final int DEFAULT_MAX_POOL_SIZE = 100;
+    private static final int DEFAULT_MAX_CONNECTING = 2;
+    private static final int DEFAULT_WAIT_QUEUE_TIMEOUT_MS = 120000;
+    private static final int DEFAULT_MAX_STALENESS_SECONDS = -1;
+
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
@@ -183,9 +198,9 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private MongoDbOutputType outputType;
     //Server Selection Configuration
     @UriParam(label = "advanced", defaultValue = "30000")
-    private Integer serverSelectionTimeoutMS = 30000;
+    private Integer serverSelectionTimeoutMS = DEFAULT_SERVER_SELECTION_TIMEOUT_MS;
     @UriParam(label = "advanced", defaultValue = "15")
-    private Integer localThresholdMS = 15;
+    private Integer localThresholdMS = DEFAULT_LOCAL_THRESHOLD_MS;
     //Server Monitoring Configuration
     @UriParam(label = "advanced")
     private Integer heartbeatFrequencyMS;
@@ -200,7 +215,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced", defaultValue = "10000")
-    private Integer connectTimeoutMS = 10000;
+    private Integer connectTimeoutMS = DEFAULT_CONNECT_TIMEOUT_MS;
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer socketTimeoutMS = 0;
     @UriParam(label = "advanced", defaultValue = "0")
@@ -211,11 +226,11 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer minPoolSize = 0;
     @UriParam(label = "advanced", defaultValue = "100")
-    private Integer maxPoolSize = 100;
+    private Integer maxPoolSize = DEFAULT_MAX_POOL_SIZE;
     @UriParam(label = "advanced", defaultValue = "2")
-    private Integer maxConnecting = 2;
+    private Integer maxConnecting = DEFAULT_MAX_CONNECTING;
     @UriParam(label = "advanced", defaultValue = "120000")
-    private Integer waitQueueTimeoutMS = 120000;
+    private Integer waitQueueTimeoutMS = DEFAULT_WAIT_QUEUE_TIMEOUT_MS;
     //Write concern
     @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
               enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
@@ -228,7 +243,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(label = "advanced")
     private String readPreferenceTags;
     @UriParam(label = "advanced", defaultValue = "-1")
-    private Integer maxStalenessSeconds = -1;
+    private Integer maxStalenessSeconds = DEFAULT_MAX_STALENESS_SECONDS;
     //Server Handshake configuration
     @UriParam(label = "advanced")
     private String appName;
@@ -508,6 +523,15 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
         } else {
             LOG.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
         }
+        if (createdMongoConnection == null) {
+            List<String> ignored = getClientOptionsSet();
+            if (!ignored.isEmpty()) {
+                LOG.warn("The options {} of {} are not used: they apply only to a client the endpoint creates from hosts"
+                         + " or connectionUriString, not to a MongoClient set with mongoConnection, on the component or"
+                         + " from the registry. Configure that MongoClient instead.",
+                        ignored, getEndpointBaseUri());
+            }
+        }
         super.doStart();
     }
 
@@ -566,8 +590,9 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             connectionUri = String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions);
         }
 
+        ConnectionString connectionString = new ConnectionString(connectionUri);
         MongoClientSettings.Builder builder = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(connectionUri));
+                .applyConnectionString(connectionString);
 
         SSLContext sslContext = createSslContext();
         if (tls || sslContext != null || tlsAllowInvalidHostnames) {
@@ -583,7 +608,198 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
                 }
             });
         }
+        applyClientOptions(builder, connectionString);
         return builder.build();
+    }
+
+    /**
+     * Applies the client options of the endpoint (replicaSet, readPreference, the timeouts, the pool sizes, appName,
+     * compressors and so on) on top of the connection string. An option is applied only when its value differs from its
+     * default, so the same option in connectionUriString is kept when the endpoint does not change it.
+     */
+    private void applyClientOptions(MongoClientSettings.Builder builder, ConnectionString connectionString) {
+        builder.applyToClusterSettings(cluster -> {
+            if (isSet(replicaSet, null)) {
+                cluster.requiredReplicaSetName(replicaSet);
+            }
+            if (isSet(serverSelectionTimeoutMS, DEFAULT_SERVER_SELECTION_TIMEOUT_MS)) {
+                cluster.serverSelectionTimeout(serverSelectionTimeoutMS, TimeUnit.MILLISECONDS);
+            }
+            if (isSet(localThresholdMS, DEFAULT_LOCAL_THRESHOLD_MS)) {
+                cluster.localThreshold(localThresholdMS, TimeUnit.MILLISECONDS);
+            }
+            if (isSet(srvServiceName, null)) {
+                cluster.srvServiceName(srvServiceName);
+            }
+            if (isSet(srvMaxHosts, null)) {
+                cluster.srvMaxHosts(srvMaxHosts);
+            }
+            if (loadBalanced) {
+                cluster.mode(ClusterConnectionMode.LOAD_BALANCED);
+            } else if (directConnection) {
+                cluster.mode(ClusterConnectionMode.SINGLE);
+            }
+        });
+        if (isSet(heartbeatFrequencyMS, null)) {
+            builder.applyToServerSettings(
+                    server -> server.heartbeatFrequency(heartbeatFrequencyMS, TimeUnit.MILLISECONDS));
+        }
+        builder.applyToSocketSettings(socket -> {
+            if (isSet(connectTimeoutMS, DEFAULT_CONNECT_TIMEOUT_MS)) {
+                socket.connectTimeout(connectTimeoutMS, TimeUnit.MILLISECONDS);
+            }
+            if (isSet(socketTimeoutMS, 0)) {
+                socket.readTimeout(socketTimeoutMS, TimeUnit.MILLISECONDS);
+            }
+        });
+        builder.applyToConnectionPoolSettings(pool -> {
+            if (isSet(maxIdleTimeMS, 0)) {
+                pool.maxConnectionIdleTime(maxIdleTimeMS, TimeUnit.MILLISECONDS);
+            }
+            if (isSet(maxLifeTimeMS, 0)) {
+                pool.maxConnectionLifeTime(maxLifeTimeMS, TimeUnit.MILLISECONDS);
+            }
+            if (isSet(minPoolSize, 0)) {
+                pool.minSize(minPoolSize);
+            }
+            if (isSet(maxPoolSize, DEFAULT_MAX_POOL_SIZE)) {
+                pool.maxSize(maxPoolSize);
+            }
+            if (isSet(maxConnecting, DEFAULT_MAX_CONNECTING)) {
+                pool.maxConnecting(maxConnecting);
+            }
+            if (isSet(waitQueueTimeoutMS, DEFAULT_WAIT_QUEUE_TIMEOUT_MS)) {
+                pool.maxWaitTime(waitQueueTimeoutMS, TimeUnit.MILLISECONDS);
+            }
+        });
+        if (isReadPreferenceSet()) {
+            builder.readPreference(createReadPreference());
+        }
+        if (isSet(appName, null)) {
+            builder.applicationName(appName);
+        }
+        if (isSet(compressors, null) || isSet(zlibCompressionLevel, null)) {
+            List<MongoCompressor> list = isSet(compressors, null)
+                    ? createCompressors(compressors) : connectionString.getCompressorList();
+            if (isSet(zlibCompressionLevel, null)) {
+                list = list.stream()
+                        .map(c -> "zlib".equals(c.getName())
+                                ? c.withProperty(MongoCompressor.LEVEL, zlibCompressionLevel) : c)
+                        .toList();
+            }
+            builder.compressorList(list);
+        }
+        if (!retryWrites) {
+            builder.retryWrites(false);
+        }
+        if (!retryReads) {
+            builder.retryReads(false);
+        }
+    }
+
+    private static boolean isSet(Object value, Object defaultValue) {
+        return value != null && !value.equals(defaultValue);
+    }
+
+    private boolean isReadPreferenceSet() {
+        return (readPreference != null && !"PRIMARY".equalsIgnoreCase(readPreference)) || isSet(readPreferenceTags, null)
+                || isSet(maxStalenessSeconds, DEFAULT_MAX_STALENESS_SECONDS);
+    }
+
+    /**
+     * The read preference made of the readPreference, readPreferenceTags and maxStalenessSeconds options.
+     */
+    ReadPreference createReadPreference() {
+        String name = getReadPreferenceBean().getName();
+        List<TagSet> tagSets = parseReadPreferenceTags(readPreferenceTags);
+        if (isSet(maxStalenessSeconds, DEFAULT_MAX_STALENESS_SECONDS)) {
+            return ReadPreference.valueOf(name, tagSets, maxStalenessSeconds, TimeUnit.SECONDS);
+        }
+        return tagSets.isEmpty() ? ReadPreference.valueOf(name) : ReadPreference.valueOf(name, tagSets);
+    }
+
+    /**
+     * Parses tag sets separated by semicolons, each a comma separated list of colon separated key-value pairs, for
+     * example {@code dc:ny,rack:1;dc:ny;} (an empty tag set matches any member). Each tag set may also be written as
+     * {@code readPreferenceTags=dc:ny}, as in a connection string.
+     */
+    static List<TagSet> parseReadPreferenceTags(String value) {
+        List<TagSet> answer = new ArrayList<>();
+        if (ObjectHelper.isEmpty(value)) {
+            return answer;
+        }
+        for (String part : value.split(";", -1)) {
+            String tagSet = part.trim();
+            if (tagSet.startsWith("readPreferenceTags=")) {
+                tagSet = tagSet.substring("readPreferenceTags=".length()).trim();
+            }
+            List<Tag> tags = new ArrayList<>();
+            if (!tagSet.isEmpty()) {
+                for (String pair : tagSet.split(",")) {
+                    int pos = pair.indexOf(':');
+                    if (pos <= 0) {
+                        throw new IllegalArgumentException(
+                                "The tag " + pair + " in readPreferenceTags must be written as key:value");
+                    }
+                    tags.add(new Tag(pair.substring(0, pos).trim(), pair.substring(pos + 1).trim()));
+                }
+            }
+            answer.add(new TagSet(tags));
+        }
+        return answer;
+    }
+
+    private static List<MongoCompressor> createCompressors(String value) {
+        List<MongoCompressor> answer = new ArrayList<>();
+        for (String name : value.split(",")) {
+            switch (name.trim().toLowerCase(Locale.ROOT)) {
+                case "zlib" -> answer.add(MongoCompressor.createZlibCompressor());
+                case "snappy" -> answer.add(MongoCompressor.createSnappyCompressor());
+                case "zstd" -> answer.add(MongoCompressor.createZstdCompressor());
+                default -> throw new IllegalArgumentException(
+                        "Unsupported compressor " + name + " in compressors, use zlib, snappy or zstd");
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The client options set on this endpoint, which are applied only to a client the endpoint creates from hosts or
+     * connectionUriString.
+     */
+    List<String> getClientOptionsSet() {
+        List<String> answer = new ArrayList<>();
+        addIfSet(answer, "replicaSet", replicaSet, null);
+        addIfSet(answer, "serverSelectionTimeoutMS", serverSelectionTimeoutMS, DEFAULT_SERVER_SELECTION_TIMEOUT_MS);
+        addIfSet(answer, "localThresholdMS", localThresholdMS, DEFAULT_LOCAL_THRESHOLD_MS);
+        addIfSet(answer, "heartbeatFrequencyMS", heartbeatFrequencyMS, null);
+        addIfSet(answer, "srvServiceName", srvServiceName, null);
+        addIfSet(answer, "srvMaxHosts", srvMaxHosts, null);
+        addIfSet(answer, "loadBalanced", loadBalanced, false);
+        addIfSet(answer, "directConnection", directConnection, false);
+        addIfSet(answer, "connectTimeoutMS", connectTimeoutMS, DEFAULT_CONNECT_TIMEOUT_MS);
+        addIfSet(answer, "socketTimeoutMS", socketTimeoutMS, 0);
+        addIfSet(answer, "maxIdleTimeMS", maxIdleTimeMS, 0);
+        addIfSet(answer, "maxLifeTimeMS", maxLifeTimeMS, 0);
+        addIfSet(answer, "minPoolSize", minPoolSize, 0);
+        addIfSet(answer, "maxPoolSize", maxPoolSize, DEFAULT_MAX_POOL_SIZE);
+        addIfSet(answer, "maxConnecting", maxConnecting, DEFAULT_MAX_CONNECTING);
+        addIfSet(answer, "waitQueueTimeoutMS", waitQueueTimeoutMS, DEFAULT_WAIT_QUEUE_TIMEOUT_MS);
+        if (isReadPreferenceSet()) {
+            answer.add("readPreference");
+        }
+        addIfSet(answer, "appName", appName, null);
+        addIfSet(answer, "compressors", compressors, null);
+        addIfSet(answer, "zlibCompressionLevel", zlibCompressionLevel, null);
+        addIfSet(answer, "retryWrites", retryWrites, true);
+        addIfSet(answer, "retryReads", retryReads, true);
+        return answer;
+    }
+
+    private static void addIfSet(List<String> answer, String name, Object value, Object defaultValue) {
+        if (isSet(value, defaultValue)) {
+            answer.add(name);
+        }
     }
 
     private SSLContext createSslContext() {
@@ -923,8 +1139,13 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     public ReadPreference getReadPreferenceBean() {
+        if (readPreference == null) {
+            return ReadPreference.primary();
+        }
+        // PRIMARY_PREFERRED and SECONDARY_PREFERRED are the documented values, the driver knows them without the
+        // underscore (primaryPreferred, secondaryPreferred), case-insensitive
         // will throw an IllegalArgumentException if the input is incorrect
-        return ReadPreference.valueOf(getReadPreference());
+        return ReadPreference.valueOf(readPreference.replace("_", ""));
     }
 
     public String getUsername() {
@@ -1158,10 +1379,11 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     /**
      * A representation of a tag set as a comma-separated list of colon-separated key-value pairs, e.g. "dc:ny,rack:1".
-     * Spaces are stripped from the beginning and end of all keys and values. To specify a list of tag sets, using
-     * multiple readPreferenceTags, e.g., readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags=
-     * Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using
-     * multiple readPreferenceTags.
+     * Spaces are stripped from the beginning and end of all keys and values. To specify a list of tag sets, separate
+     * them with semicolons, e.g. "dc:ny,rack:1;dc:ny;" (the form
+     * "dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags=" of a connection string is accepted too). Note the
+     * empty tag set at the end, which means match any secondary as a last resort. Order matters when using multiple tag
+     * sets. The tag sets need a readPreference other than PRIMARY.
      */
     public void setReadPreferenceTags(String readPreferenceTags) {
         this.readPreferenceTags = readPreferenceTags;

@@ -1279,8 +1279,13 @@ public interface MongoDbEndpointBuilderFactory {
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
          * stripped from the beginning and end of all keys and values. To
-         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
-         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * specify a list of tag sets, separate them with semicolons, e.g.
+         * dc:ny,rack:1;dc:ny; (the form
+         * dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= of a
+         * connection string is accepted too). Note the empty tag set at the
+         * end, which means match any secondary as a last resort. Order matters
+         * when using multiple tag sets. The tag sets need a readPreference
+         * other than PRIMARY.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2559,8 +2564,13 @@ public interface MongoDbEndpointBuilderFactory {
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
          * stripped from the beginning and end of all keys and values. To
-         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
-         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * specify a list of tag sets, separate them with semicolons, e.g.
+         * dc:ny,rack:1;dc:ny; (the form
+         * dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= of a
+         * connection string is accepted too). Note the empty tag set at the
+         * end, which means match any secondary as a last resort. Order matters
+         * when using multiple tag sets. The tag sets need a readPreference
+         * other than PRIMARY.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3797,8 +3807,13 @@ public interface MongoDbEndpointBuilderFactory {
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
          * stripped from the beginning and end of all keys and values. To
-         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
-         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * specify a list of tag sets, separate them with semicolons, e.g.
+         * dc:ny,rack:1;dc:ny; (the form
+         * dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= of a
+         * connection string is accepted too). Note the empty tag set at the
+         * end, which means match any secondary as a last resort. Order matters
+         * when using multiple tag sets. The tag sets need a readPreference
+         * other than PRIMARY.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
