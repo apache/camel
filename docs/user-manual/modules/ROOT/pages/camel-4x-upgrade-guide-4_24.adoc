@@ -7474,6 +7474,29 @@ server must accept TLS connections, and its certificate must be trusted by the J
 When none of these options is set, the TLS settings of `connectionUriString` (for example `?tls=true`) are used as
 before.
 
+=== camel-mongodb - readPreference and the other client options are applied
+
+The client options of the `mongodb` endpoint were not used: `replicaSet`, `readPreference`, `readPreferenceTags`,
+`maxStalenessSeconds`, `appName`, `compressors`, `zlibCompressionLevel`, `connectTimeoutMS`, `socketTimeoutMS`,
+`serverSelectionTimeoutMS`, `localThresholdMS`, `heartbeatFrequencyMS`, `maxIdleTimeMS`, `maxLifeTimeMS`,
+`minPoolSize`, `maxPoolSize`, `maxConnecting`, `waitQueueTimeoutMS`, `srvServiceName`, `srvMaxHosts`, `retryWrites`,
+`retryReads`, `directConnection` and `loadBalanced`. They are now applied to the client the endpoint creates from `hosts`
+or `connectionUriString`. An endpoint that set one of them now gets that behaviour: for example, with
+`readPreference=SECONDARY` it reads from a secondary (and fails to read when the replica set has none), and with
+`replicaSet` and a single host in `hosts` the driver discovers the other members of the replica set.
+
+An option is applied only when its value differs from its default, and then it overrides the same option in
+`connectionUriString`. An option left at its default keeps the value of the connection string, as before.
+
+As the options are now read, an invalid value (for example an unknown `readPreference` or `compressors` value, or
+`readPreferenceTags` with the `PRIMARY` read preference) makes the endpoint fail to start. The documented
+`readPreference` values `PRIMARY_PREFERRED` and `SECONDARY_PREFERRED` are accepted, as are the driver names
+`primaryPreferred` and `secondaryPreferred`.
+
+The options cannot change a `MongoClient` the endpoint did not create (set with `mongoConnection`, on the component, or
+from the registry). Such an endpoint now logs a WARN that lists the options it does not use; configure them on the
+`MongoClient` instead.
+
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
