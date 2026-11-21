@@ -681,6 +681,32 @@ class CveAuditTab extends AbstractTableTab {
         });
     }
 
+    /** The vulnerabilities of one JAR, for the CVES column of the Maven Dependencies tab (CAMEL-27351). */
+    record CveCount(int cves, String severity, String fix) {
+    }
+
+    /**
+     * The vulnerabilities of the last scan, by {@code groupId:artifactId:version}; null when the selected integration
+     * is not scanned (yet).
+     */
+    Map<String, CveCount> cveCounts() {
+        String pid = ctx.selectedPid;
+        if (!dataLoaded || pid == null || !pid.equals(lastPid)) {
+            return null;
+        }
+        Map<String, CveCount> result = new HashMap<>();
+        for (CveArtifact a : allRows) {
+            String fix = a.fix() == null ? null : a.camelRelease() ? "Camel " + a.fix() : a.fix();
+            result.put(a.gav(), new CveCount(a.cves().size(), a.severity(), fix));
+        }
+        return result;
+    }
+
+    /** Scans the selected integration in the background, unless it is scanned already. */
+    void scanInBackground() {
+        onTabSelected();
+    }
+
     /** Shows the vulnerabilities as a scan sets them, without the render thread; for tests. */
     void showForTesting(List<CveFinding> groups) {
         allGroups = groups;
