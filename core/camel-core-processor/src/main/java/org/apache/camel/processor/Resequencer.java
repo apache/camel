@@ -26,6 +26,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -90,6 +91,13 @@ public class Resequencer extends BaseProcessorSupport
     private BatchSender sender;
     // the sender of the last start, which may still be delivering an exchange when the route is started again
     private BatchSender stoppedSender;
+    // the exchanges waiting for the current batch to complete; like the collection, they are kept when the route is
+    // stopped, so the sender of the next start delivers them (the callers were already told that they succeeded)
+    private final Queue<Exchange> queue = new LinkedList<>();
+    private final Lock queueLock = new ReentrantLock();
+    private final Condition exchangeEnqueuedCondition = queueLock.newCondition();
+    private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
+    private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<>();
 
     public Resequencer(CamelContext camelContext, Processor processor, Expression expression) {
         this(camelContext, processor, createSet(expression, false, false), expression);
@@ -389,7 +397,10 @@ public class Resequencer extends BaseProcessorSupport
             }
 
             // validate that the exchange can be used
-            if (!isValid(exchange)) {
+            if (!isRunAllowed()) {
+                // no sender would deliver the exchange unless the route is started again
+                throw new RejectedExecutionException("Resequencer is stopped: " + this);
+            } else if (!isValid(exchange)) {
                 if (isIgnoreInvalidExchanges()) {
                     LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
                 } else {
@@ -397,7 +408,7 @@ public class Resequencer extends BaseProcessorSupport
                 }
             } else {
                 // exchange is valid so enqueue the exchange
-                sender.enqueueExchange(exchange);
+                enqueueExchange(exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -423,21 +434,41 @@ public class Resequencer extends BaseProcessorSupport
     }
 
     /**
+     * Queues a copy of the exchange for the current batch. The queue is shared by the senders of all starts.
+     */
+    private void enqueueExchange(Exchange exchange) {
+        LOG.debug("Received exchange to be batched: {}", exchange);
+        queueLock.lock();
+        try {
+            // pre test whether the completion predicate matched
+            if (completionPredicate != null) {
+                boolean matches = completionPredicate.matches(exchange);
+                if (matches) {
+                    LOG.trace("Exchange matched completion predicate: {}", exchange);
+                    // add this exchange to the list of exchanges which marks the batch as complete
+                    completionPredicateMatched.add(exchange.getExchangeId());
+                }
+            }
+            // need to make defensive copy that are put on the sequencer queue
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
+            queue.add(copy);
+            exchangeEnqueued.set(true);
+            exchangeEnqueuedCondition.signal();
+        } finally {
+            queueLock.unlock();
+        }
+    }
+
+    /**
      * Sender thread for queued-up exchanges.
      */
     private class BatchSender extends Thread {
 
-        private final Queue<Exchange> queue;
-        private final Lock queueLock = new ReentrantLock();
-        private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
-        private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<>();
-        private final Condition exchangeEnqueuedCondition = queueLock.newCondition();
         private volatile boolean cancelled;
         private BatchSender previous;
 
         BatchSender(BatchSender previous) {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
-            this.queue = new LinkedList<>();
             this.previous = previous;
         }
 
@@ -585,29 +616,6 @@ public class Resequencer extends BaseProcessorSupport
             // also end on a flag, as the processing may clear the interrupt status
             cancelled = true;
             interrupt();
-        }
-
-        public void enqueueExchange(Exchange exchange) {
-            LOG.debug("Received exchange to be batched: {}", exchange);
-            queueLock.lock();
-            try {
-                // pre test whether the completion predicate matched
-                if (completionPredicate != null) {
-                    boolean matches = completionPredicate.matches(exchange);
-                    if (matches) {
-                        LOG.trace("Exchange matched completion predicate: {}", exchange);
-                        // add this exchange to the list of exchanges which marks the batch as complete
-                        completionPredicateMatched.add(exchange.getExchangeId());
-                    }
-                }
-                // need to make defensive copy that are put on the sequencer queue
-                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
-                queue.add(copy);
-                exchangeEnqueued.set(true);
-                exchangeEnqueuedCondition.signal();
-            } finally {
-                queueLock.unlock();
-            }
         }
 
         private void sendExchanges() {
