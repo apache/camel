@@ -18,14 +18,16 @@ package org.apache.camel.tooling.maven;
 
 /**
  * The proxy of the Maven settings to reach a URL through, with the username and password of the proxy (decrypted with
- * the settings-security.xml), or null ones when it needs no login.
+ * the settings-security.xml), or null ones when it needs no login, and the hosts to reach without it.
  *
- * @param host     the host of the proxy
- * @param port     the port of the proxy
- * @param username the username, or null
- * @param password the password, or null
+ * @param host          the host of the proxy
+ * @param port          the port of the proxy
+ * @param username      the username, or null
+ * @param password      the password, or null
+ * @param nonProxyHosts the {@code nonProxyHosts} of the proxy as the settings write them
+ *                      ({@code localhost|*.corp.com}), or null
  */
-public record MavenProxy(String host, int port, String username, String password) {
+public record MavenProxy(String host, int port, String username, String password, String nonProxyHosts) {
 
     /** The proxy as {@code host:port}, without the password. */
     @Override

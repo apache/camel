@@ -64,6 +64,7 @@ public class MavenDownloaderProxyTest {
             assertEquals("scott", proxy.username());
             assertEquals("tiger", proxy.password());
             assertEquals("scott@proxy.corp.com:3128", proxy.toString());
+            assertEquals("localhost|*.corp.com", proxy.nonProxyHosts());
 
             // the hosts of nonProxyHosts are reached directly
             assertNull(downloader.proxyFor("https://nexus.corp.com/repository/osv/"));
