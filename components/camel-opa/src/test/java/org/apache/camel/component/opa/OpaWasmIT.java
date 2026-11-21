@@ -178,7 +178,7 @@ public class OpaWasmIT extends CamelTestSupport {
         context.getRegistry().bind("domainInput", ExpressionBuilder.bodyExpression());
         Map<String, Object> input = Map.of("headers", Map.of("user", "alice"));
 
-        Exchange out = template.request(wasm("authz/allow") + "&inputExpression=#domainInput",
+        Exchange out = template.request(wasm("authz/allow") + "&inputExpression=#domainInput&asyncProcessing=true",
                 e -> e.getMessage().setBody(input));
 
         assertThat(out.getException()).isNull();

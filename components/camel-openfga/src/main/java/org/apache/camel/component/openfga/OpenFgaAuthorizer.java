@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -36,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.support.security.AuthorizationAsyncExecutor;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,6 +261,81 @@ public class OpenFgaAuthorizer {
         return permitted;
     }
 
+    /** Captures this check once; running the returned action submits the SDK future without waiting for its result. */
+    public AuthorizationAsyncExecutor.Action prepareCheckAsync(Exchange exchange, AuthorizationAsyncExecutor executor) {
+        clearDecisionHeaders(exchange);
+        String resolvedUser = resolveUser(exchange);
+        String resolvedRelation = resolveRelation(exchange);
+        String resolvedObject = resolveObject(exchange);
+        if (resolvedUser == null || resolvedRelation == null || resolvedObject == null) {
+            return () -> CompletableFuture.completedFuture(false);
+        }
+        List<ClientTupleKey> contextual = resolveContextualTuples(exchange);
+        if (contextual == null) {
+            return () -> CompletableFuture.completedFuture(false);
+        }
+        ClientCheckRequest request
+                = new ClientCheckRequest().user(resolvedUser).relation(resolvedRelation)._object(resolvedObject);
+        if (!contextual.isEmpty()) {
+            request.contextualTuples(contextual);
+        }
+        if (conditionContext != null && !conditionContext.isEmpty()) {
+            request.context(AuthorizationAsyncExecutor.snapshotValue(conditionContext));
+        }
+        var options = checkOptions();
+        return () -> awaitAsync(executor, exchange, "check " + resolvedRelation + " on " + resolvedObject,
+                () -> client.check(request, options)).handle((response, error) -> {
+                    if (error != null) {
+                        Throwable failure
+                                = error instanceof CompletionException && error.getCause() != null
+                                        ? error.getCause() : error;
+                        if (failOpen && isDecisionPointUnavailable(failure)) {
+                            LOG.warn(
+                                    "Could not ask OpenFGA whether {} has {} on {}; allowing the exchange to proceed because failOpen is enabled. Reason: {}",
+                                    resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
+                            setDecision(exchange, true);
+                            exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
+                            return true;
+                        }
+                        if (failOpen) {
+                            LOG.warn(
+                                    "failOpen is enabled but does not cover this failure: OpenFGA has not established whether {} has {} on {}, and the failure is not an unreachable decision point. Reason: {}",
+                                    resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
+                        }
+                        throw new CompletionException(failure);
+                    }
+                    boolean allowed = Boolean.TRUE.equals(response.getAllowed());
+                    setDecision(exchange, allowed);
+                    if (!allowed) {
+                        exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "denied");
+                    }
+                    return allowed;
+                });
+    }
+
+    <T> CompletableFuture<T> awaitAsync(
+            AuthorizationAsyncExecutor executor, Exchange exchange, String what, CallSupplier<T> call) {
+        return awaitAsync(executor, exchange, what, call, awaitTimeoutMillis);
+    }
+
+    <T> CompletableFuture<T> awaitAsync(
+            AuthorizationAsyncExecutor executor, Exchange exchange, String what, CallSupplier<T> call, long timeout) {
+        try {
+            return executor.bound(call.get(), timeout).handle((response, failure) -> {
+                if (failure != null) {
+                    Throwable cause = failure instanceof CompletionException && failure.getCause() != null
+                            ? failure.getCause() : failure;
+                    throw new CompletionException(
+                            new OpenFgaEvaluationException("OpenFGA failed to " + what, exchange, cause));
+                }
+                return response;
+            });
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(
+                    new OpenFgaEvaluationException("Could not build the OpenFGA request to " + what, exchange, e));
+        }
+    }
+
     /**
      * Whether a failure means OpenFGA could not answer, which is the only thing {@code failOpen} is for.
      * <p/>
@@ -426,7 +503,12 @@ public class OpenFgaAuthorizer {
         }
     }
 
-    static void clearDecisionHeaders(Exchange exchange) {
+    /**
+     * Clears component-owned decision outputs before a producer or policy starts a new authorization attempt.
+     *
+     * @param exchange the exchange whose previous decision must not survive rejection or cancellation
+     */
+    public static void clearDecisionHeaders(Exchange exchange) {
         Message message = exchange.getMessage();
         message.removeHeader(OpenFgaConstants.ALLOWED);
         // as worth spoofing as the verdict itself: left in place, a sender could preload it false and make a

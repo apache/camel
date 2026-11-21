@@ -452,7 +452,8 @@ public abstract class OpaPolicyEvaluator {
         return current;
     }
 
-    private static void clearDecisionHeaders(Exchange exchange) {
+    /** Clears every decision output before a new authorization attempt, including rejected asynchronous work. */
+    public static void clearDecisionHeaders(Exchange exchange) {
         Message message = exchange.getMessage();
         message.removeHeader(OpaConstants.DECISION_ALLOW);
         message.removeHeader(OpaConstants.DECISION);
