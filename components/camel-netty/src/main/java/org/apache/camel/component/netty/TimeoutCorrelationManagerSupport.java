@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import io.netty.channel.Channel;
@@ -186,7 +187,7 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
             stopWorkerPool = true;
         }
 
-        map = new DefaultTimeoutMap<>(scheduledExecutorService, timeoutChecker);
+        map = new CorrelationTimeoutMap(scheduledExecutorService, timeoutChecker);
         map.addListener(this::onEviction);
 
         ServiceHelper.startService(map);
@@ -220,15 +221,33 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
         }
     }
 
+    /**
+     * The timeout map of the pending requests. When it stops (the producer stops), the requests still waiting for a
+     * reply are evicted, so they complete as if they timed out: the worker pool runs them before it is shut down.
+     */
+    private static final class CorrelationTimeoutMap extends DefaultTimeoutMap<String, NettyCamelState> {
+
+        CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+            super(executor, requestMapPollTimeMillis);
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            drainAndEvictAll();
+            super.doStop();
+        }
+    }
+
     private void onEviction(Type type, String key, NettyCamelState value) {
         if (type != Type.Evict) {
             return;
         }
 
-        workerPool.submit(() -> {
+        Runnable task = () -> {
             Exchange exchange = value.getExchange();
             AsyncCallback callback = value.getCallback();
-            // the exchange may have been completed meanwhile (the write failed), then it must not be touched
+            // the exchange may have been completed meanwhile (the write failed, or this task already ran), then it
+            // must not be touched
             if (exchange != null && callback != null && value.markDone()) {
                 timeoutLogger.log("Timeout of correlation id: " + key);
                 Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
@@ -239,6 +258,22 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
                 }
                 callback.done(false);
             }
-        });
+        };
+        ExecutorService pool = workerPool;
+        if (pool != null) {
+            try {
+                pool.submit(task);
+            } catch (RejectedExecutionException e) {
+                LOG.debug("The worker pool rejected the timeout of correlation id: {}. Running it in this thread.", key);
+                task.run();
+                return;
+            }
+        }
+        if (pool == null || pool.isShutdown()) {
+            // the manager is stopping (an entry the purge task evicted while the producer stopped): the pool may have
+            // discarded the task, as its CallerRuns policy drops the tasks of a shut-down pool, so run it here as well;
+            // it completes the exchange at most once
+            task.run();
+        }
     }
 }
