@@ -29,21 +29,16 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
@@ -599,13 +594,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
      * the binding.
      */
     private static final class StreamedReply extends OutboundStreamHttpResponse {
-        private final OutboundStreamHttpResponse reply;
         private boolean closed;
         private InputStream requestStream;
 
         StreamedReply(OutboundStreamHttpResponse reply) {
-            super(InputStream.nullInputStream(), reply);
-            this.reply = reply;
+            super(reply);
         }
 
         /**
@@ -622,31 +615,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         @Override
-        public HttpVersion protocolVersion() {
-            return reply.protocolVersion();
-        }
-
-        @Override
-        public HttpResponseStatus status() {
-            return reply.status();
-        }
-
-        @Override
-        public HttpHeaders headers() {
-            return reply.headers();
-        }
-
-        @Override
-        public DefaultHttpResponse getResponse() {
-            return reply.getResponse();
-        }
-
-        @Override
-        public boolean isEndOfInput() throws Exception {
-            return reply.isEndOfInput();
-        }
-
-        @Override
         public void close() throws Exception {
             InputStream stream;
             synchronized (this) {
@@ -655,31 +623,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 requestStream = null;
             }
             try {
-                reply.close();
+                super.close();
             } finally {
                 IOHelper.close(stream);
             }
-        }
-
-        @Override
-        @Deprecated
-        public HttpContent readChunk(ChannelHandlerContext ctx) throws Exception {
-            return reply.readChunk(ctx);
-        }
-
-        @Override
-        public HttpContent readChunk(ByteBufAllocator allocator) throws Exception {
-            return reply.readChunk(allocator);
-        }
-
-        @Override
-        public long length() {
-            return reply.length();
-        }
-
-        @Override
-        public long progress() {
-            return reply.progress();
         }
     }
 }
