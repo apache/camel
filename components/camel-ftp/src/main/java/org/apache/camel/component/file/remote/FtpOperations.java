@@ -25,9 +25,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
@@ -63,6 +66,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
      * How long a disconnect waits at most for the reply to QUIT (soTimeout when it is shorter).
      */
     private static final int QUIT_REPLY_TIMEOUT = 2000;
+    /**
+     * How long after the server completed an upload, a download or a noop the producer does not send a noop before the
+     * next upload, as the connection was just seen working.
+     */
+    private static final long RECENTLY_USED_NANOS = TimeUnit.SECONDS.toNanos(1);
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
@@ -76,6 +84,36 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
      * file. Each operation holds this lock, so that the commands and replies of two operations do not mix.
      */
     protected final ReentrantLock lock = new ReentrantLock();
+    /**
+     * The current directory of the connection, as the server gave it to PWD or as an absolute change of directory set
+     * it, so that a stepwise operation does not ask for it each time. {@code null} when unknown.
+     */
+    private String workingDirectory;
+    /**
+     * The directory to change back to before an operation that uses names relative to the directory where the
+     * operations started: a stepwise upload, download or delete stays in the directory of its file, so that the next
+     * file in that directory needs no change of directory. {@code null} when there is nothing to change back.
+     */
+    private String restoreDirectory;
+    /**
+     * The directory, relative to {@link #restoreDirectory}, that a stepwise operation changed into, or {@code null}
+     * when that change failed half way.
+     */
+    private String stepwiseDirectory;
+    /**
+     * Whether a stepwise upload, download or delete runs: the operations that it calls, such as the existence check or
+     * the move of an existing file, use names relative to the directory of the file and must not change back.
+     */
+    private boolean inStepwiseOperation;
+    /**
+     * The directories that autoCreate checked or created on this connection, by the directory they are relative to, so
+     * that the next upload into them does not check again.
+     */
+    private final Set<String> builtDirectories = new HashSet<>();
+    /**
+     * When the server last completed an upload, a download or a noop ({@link System#nanoTime()}), or 0.
+     */
+    private volatile long lastCompletedNanos;
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
@@ -117,6 +155,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            // a new connection starts in the login directory
+            resetConnectionState();
             client.setCopyStreamListener(clientActivityListener);
 
             try {
@@ -329,6 +369,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public void disconnect() throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            resetConnectionState();
             try {
                 doDisconnect();
             } catch (GenericFileOperationFailedException e) {
@@ -413,37 +454,19 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             checkName(name);
 
             boolean result;
-            String target = name;
-            String currentDir = null;
-
             try {
                 reconnectIfNecessary(null);
-                if (endpoint.getConfiguration().isStepwise()) {
-                    // remember current directory
-                    currentDir = getCurrentDirectory();
-                    target = FileUtil.stripPath(name);
-
-                    try {
-                        changeCurrentDirectory(FileUtil.onlyPath(name));
-                    } catch (GenericFileOperationFailedException e) {
-                        // we could not change directory, try to change back before
-                        changeCurrentDirectory(currentDir);
-                        throw e;
-                    }
-                }
+                inStepwiseOperation = true;
+                String target = changeToDirectoryOf(name);
 
                 // delete the file
                 log.trace("Client deleteFile: {}", target);
                 result = client.deleteFile(target);
-
-                // change back to previous directory
-                if (currentDir != null) {
-                    changeCurrentDirectory(currentDir);
-                }
-
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
                         client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            } finally {
+                inStepwiseOperation = false;
             }
 
             return result;
@@ -461,6 +484,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             checkName(to);
             try {
                 reconnectIfNecessary(null);
+                leaveStepwiseDirectory();
                 return client.rename(from, to);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
@@ -480,11 +504,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             checkName(directory);
 
             log.trace("buildDirectory({})", directory);
+            String key = builtDirectoryKey(directory);
+            if (builtDirectories.contains(key)) {
+                log.trace("Directory {} was checked or created before on this connection", directory);
+                return true;
+            }
+            leaveStepwiseDirectory();
             try {
-                String originalDirectory = client.printWorkingDirectory();
+                String originalDirectory = getCurrentDirectory();
 
                 boolean success;
                 // maybe the full directory already exists
+                workingDirectory = null;
                 success = client.changeWorkingDirectory(directory);
                 if (!success) {
                     log.trace("Trying to build remote directory: {}", directory);
@@ -501,6 +532,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     changeCurrentDirectory(originalDirectory);
                 }
 
+                if (success) {
+                    builtDirectories.add(key);
+                }
                 return success;
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
@@ -523,6 +557,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             clientActivityListener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
 
             boolean answer;
+            inStepwiseOperation = true;
             try {
                 log.trace("retrieveFile({})", name);
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
@@ -536,9 +571,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             } catch (GenericFileOperationFailedException e) {
                 clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
                 throw e;
+            } finally {
+                inStepwiseOperation = false;
             }
 
             if (answer) {
+                lastCompletedNanos = System.nanoTime();
                 clientActivityListener.onDownloadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
             }
             return answer;
@@ -594,23 +632,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             org.apache.camel.util.ObjectHelper.notNull(target,
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
-            String remoteName = name;
-            String currentDir = null;
-            if (endpoint.getConfiguration().isStepwise()) {
-                // remember current directory
-                currentDir = getCurrentDirectory();
-
-                // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using
-                // absolute path)
-                String path = FileUtil.onlyPath(name);
-                if (path != null) {
-                    changeCurrentDirectory(path);
-                }
-                // remote name is now only the file name as we just changed
-                // directory
-                remoteName = FileUtil.stripPath(name);
-            }
+            String remoteName = changeToDirectoryOf(name);
 
             log.trace("Client retrieveFile: {}", remoteName);
             if (endpoint.getConfiguration().isStreamDownload()) {
@@ -633,11 +655,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // store client reply information after the operation
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
-
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
 
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -725,23 +742,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // store the java.io.File handle as the body
             target.setBody(local);
 
-            String remoteName = name;
-            String currentDir = null;
-            if (endpoint.getConfiguration().isStepwise()) {
-                // remember current directory
-                currentDir = getCurrentDirectory();
-
-                // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using
-                // absolute path)
-                String path = FileUtil.onlyPath(name);
-                if (path != null) {
-                    changeCurrentDirectory(path);
-                }
-                // remote name is now only the file name as we just changed
-                // directory
-                remoteName = FileUtil.stripPath(name);
-            }
+            String remoteName = changeToDirectoryOf(name);
 
             // the file exists so lets try to resume the download
             if (resumeDownload && existingSize > 0) {
@@ -757,11 +758,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // store client reply information after the operation
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
-
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
 
         } catch (IOException e) {
             log.trace("Error occurred during retrieving file: {} to local directory.", name);
@@ -823,30 +819,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             log.trace("storeFile({})", name);
 
             boolean answer;
-            String currentDir = null;
-            String path = FileUtil.onlyPath(name);
-            String targetName = name;
-
             try {
-                if (path != null && endpoint.getConfiguration().isStepwise()) {
-                    // must remember current dir so we stay in that directory after
-                    // the write
-                    currentDir = getCurrentDirectory();
-
-                    // change to path of name
-                    changeCurrentDirectory(path);
-
-                    // the target name should be without path, as we have changed
-                    // directory
-                    targetName = FileUtil.stripPath(name);
+                try {
+                    answer = storeFileInItsDirectory(name, exchange);
+                } catch (GenericFileOperationFailedException e) {
+                    // the change into a directory that autoCreate checked before failed: it was removed since
+                    if (!FTPReply.isNegativePermanent(e.getCode()) || !isBuiltDirectoryMissing(name, exchange)) {
+                        throw e;
+                    }
+                    answer = storeFileInBuiltDirectoryAgain(name, exchange);
                 }
-
-                // store the file
-                answer = doStoreFile(name, targetName, exchange);
-
-                // change back to current directory if we changed directory
-                if (currentDir != null) {
-                    changeCurrentDirectory(currentDir);
+                if (!answer && FTPReply.isNegativePermanent(client.getReplyCode())
+                        && isBuiltDirectoryMissing(name, exchange)) {
+                    // the server refused the upload into a directory that autoCreate checked before
+                    answer = storeFileInBuiltDirectoryAgain(name, exchange);
                 }
             } catch (GenericFileOperationFailedException e) {
                 clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
@@ -854,6 +840,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             if (answer) {
+                lastCompletedNanos = System.nanoTime();
                 clientActivityListener.onUploadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
             }
 
@@ -861,7 +848,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 Integer code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, Integer.class);
                 String status = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_STRING, String.class);
                 if (code != null && status != null) {
-                    throw new GenericFileOperationFailedException(code, status, "Error writing file [" + targetName + "]");
+                    throw new GenericFileOperationFailedException(
+                            code, status, "Error writing file [" + targetNameOf(name) + "]");
                 }
             }
 
@@ -957,11 +945,156 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    private boolean storeFileInItsDirectory(String name, Exchange exchange) {
+        inStepwiseOperation = true;
+        try {
+            return doStoreFile(name, changeToDirectoryOf(name), exchange);
+        } finally {
+            inStepwiseOperation = false;
+        }
+    }
+
+    private boolean storeFileInBuiltDirectoryAgain(String name, Exchange exchange) {
+        String directory = FileUtil.onlyPath(name);
+        log.debug("Cannot store file: {} as directory: {} is missing. Creating the directory again.", name, directory);
+        buildDirectory(directory, false);
+        return storeFileInItsDirectory(name, exchange);
+    }
+
+    /**
+     * Whether an upload failed as the directory that autoCreate checked or created before on this connection was
+     * removed since, and can be tried again once the directory is created again: the body is not a stream that the
+     * failed upload may have read, and the upload does not append (it could append twice). The directory is forgotten,
+     * so that the next upload checks it.
+     */
+    private boolean isBuiltDirectoryMissing(String name, Exchange exchange) {
+        String directory = FileUtil.onlyPath(name);
+        if (directory == null || !endpoint.isAutoCreate()) {
+            return false;
+        }
+        changeBackToRestoreDirectory();
+        directory = endpoint.getConfiguration().normalizePath(directory);
+        boolean known = builtDirectories.remove(builtDirectoryKey(directory));
+        if (!known || exchange.getIn().getBody() instanceof InputStream
+                || endpoint.getFileExist() == GenericFileExist.Append) {
+            return false;
+        }
+        // the server gives no specific reply for a missing directory, so check that it is missing
+        String original = currentDirectory();
+        try {
+            workingDirectory = null;
+            if (client.changeWorkingDirectory(directory)) {
+                changeCurrentDirectory(original);
+                return false;
+            }
+            workingDirectory = original;
+            return true;
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(
+                    client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
+    private String targetNameOf(String name) {
+        return endpoint.getConfiguration().isStepwise() ? FileUtil.stripPath(name) : name;
+    }
+
+    /**
+     * Changes into the directory of a file for a stepwise upload, download or delete, as some servers cannot use a path
+     * in the name of the file, unless the connection is already there, and returns the name relative to it. Without
+     * stepwise, or for a file without a path, changes back to the directory where the operations started and returns
+     * the name.
+     */
+    private String changeToDirectoryOf(String name) {
+        String path = FileUtil.onlyPath(name);
+        if (path == null || !endpoint.getConfiguration().isStepwise()) {
+            changeBackToRestoreDirectory();
+            return name;
+        }
+        changeToStepwiseDirectory(path);
+        return FileUtil.stripPath(name);
+    }
+
+    /**
+     * Changes into the directory of a stepwise operation, unless a previous one left the connection there, and
+     * remembers the directory to change back to. When the change fails half way, the next operation changes back.
+     */
+    private void changeToStepwiseDirectory(String path) {
+        if (restoreDirectory != null && path.equals(stepwiseDirectory)) {
+            log.trace("Already in directory: {}", path);
+            return;
+        }
+        changeBackToRestoreDirectory();
+        restoreDirectory = currentDirectory();
+        changeCurrentDirectory(path);
+        stepwiseDirectory = path;
+    }
+
+    /**
+     * Changes back to the directory where a stepwise operation started, before an operation that uses names relative to
+     * it. Does nothing while a stepwise operation runs, as the operations it calls use names relative to the directory
+     * of its file.
+     */
+    private void leaveStepwiseDirectory() {
+        if (!inStepwiseOperation) {
+            changeBackToRestoreDirectory();
+        }
+    }
+
+    private void changeBackToRestoreDirectory() {
+        String directory = restoreDirectory;
+        if (directory == null) {
+            return;
+        }
+        restoreDirectory = null;
+        stepwiseDirectory = null;
+        try {
+            changeCurrentDirectory(directory);
+        } catch (RuntimeException e) {
+            // the next operation tries again
+            restoreDirectory = directory;
+            throw e;
+        }
+    }
+
+    private void resetConnectionState() {
+        workingDirectory = null;
+        restoreDirectory = null;
+        stepwiseDirectory = null;
+        builtDirectories.clear();
+        lastCompletedNanos = 0;
+    }
+
+    /**
+     * The key of a directory that autoCreate checked or created: a relative directory is relative to the directory that
+     * a relative name resolves against, once the connection changed back from a stepwise operation.
+     */
+    private String builtDirectoryKey(String directory) {
+        if (FileUtil.hasLeadingSeparator(directory)) {
+            return directory;
+        }
+        String base = !inStepwiseOperation && restoreDirectory != null ? restoreDirectory : currentDirectory();
+        return base + "/" + directory;
+    }
+
+    private String currentDirectory() {
+        if (workingDirectory == null) {
+            try {
+                workingDirectory = client.printWorkingDirectory();
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(
+                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            }
+        }
+        return workingDirectory;
+    }
+
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
         lock.lock();
         try {
             checkName(name);
+            leaveStepwiseDirectory();
             ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
             try {
                 return client.storeFile(name, bis);
@@ -982,6 +1115,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             log.trace("existsFile({})", name);
             checkName(name);
+            leaveStepwiseDirectory();
             if (endpoint.isFastExistsCheck()) {
                 return fastExistsFile(name);
             }
@@ -1035,14 +1169,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         lock.lock();
         try {
             log.trace("getCurrentDirectory()");
-            try {
-                String answer = client.printWorkingDirectory();
-                log.trace("Current dir: {}", answer);
-                return answer;
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(
-                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-            }
+            leaveStepwiseDirectory();
+            String answer = currentDirectory();
+            log.trace("Current dir: {}", answer);
+            return answer;
         } finally {
             lock.unlock();
         }
@@ -1057,40 +1187,50 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 return;
             }
             checkName(path);
+            leaveStepwiseDirectory();
 
             // must compact path so FTP server can traverse correctly
             // use the ftp utils implementation of the compact path
             path = FtpUtils.compactPath(path);
 
-            // not stepwise should change directory in one operation
-            if (!endpoint.getConfiguration().isStepwise()) {
-                doChangeDirectory(path);
-                return;
-            }
-
-            // if it starts with the root path then a little special handling for
-            // that
+            workingDirectory = null;
+            changeDirectory(path);
             if (FileUtil.hasLeadingSeparator(path)) {
-                // change to root path
-                doChangeDirectory(path.substring(0, 1));
-                path = path.substring(1);
-            }
-
-            // split into multiple dirs
-            final String[] dirs = path.split("/|\\\\");
-
-            if (dirs == null || dirs.length == 0) {
-                // path was just a relative single path
-                doChangeDirectory(path);
-                return;
-            }
-
-            // there are multiple dirs so do this in chunks
-            for (String dir : dirs) {
-                doChangeDirectory(dir);
+                // the server is now in that directory, so a stepwise operation does not ask for it
+                workingDirectory = path;
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    private void changeDirectory(String path) {
+        // not stepwise should change directory in one operation
+        if (!endpoint.getConfiguration().isStepwise()) {
+            doChangeDirectory(path);
+            return;
+        }
+
+        // if it starts with the root path then a little special handling for
+        // that
+        if (FileUtil.hasLeadingSeparator(path)) {
+            // change to root path
+            doChangeDirectory(path.substring(0, 1));
+            path = path.substring(1);
+        }
+
+        // split into multiple dirs
+        final String[] dirs = path.split("/|\\\\");
+
+        if (dirs == null || dirs.length == 0) {
+            // path was just a relative single path
+            doChangeDirectory(path);
+            return;
+        }
+
+        // there are multiple dirs so do this in chunks
+        for (String dir : dirs) {
+            doChangeDirectory(dir);
         }
     }
 
@@ -1136,6 +1276,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            leaveStepwiseDirectory();
+            workingDirectory = null;
             try {
                 client.changeToParentDirectory();
             } catch (IOException e) {
@@ -1152,6 +1294,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         lock.lock();
         try {
             log.trace("Listing remote files");
+            leaveStepwiseDirectory();
             clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
             try {
                 return checkListing(client.listFiles(), "the current directory");
@@ -1177,6 +1320,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 path = ".";
             }
             checkName(path);
+            leaveStepwiseDirectory();
 
             try {
                 return checkListing(client.listFiles(path), "directory: " + path);
@@ -1218,7 +1362,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             log.trace("sendNoOp");
             try {
-                return client.sendNoOp();
+                boolean answer = client.sendNoOp();
+                if (answer) {
+                    lastCompletedNanos = System.nanoTime();
+                }
+                return answer;
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
                         client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -1233,6 +1381,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         lock.lock();
         try {
             log.trace("sendSiteCommand({})", command);
+            leaveStepwiseDirectory();
             try {
                 return client.sendSiteCommand(command);
             } catch (IOException e) {
@@ -1293,8 +1442,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return success;
     }
 
+    /**
+     * The FTP client, in the directory where the operations started: a stepwise upload, download or delete stays in the
+     * directory of its file until another operation needs it, so this changes back first.
+     */
     public FTPClient getClient() {
-        return client;
+        lock.lock();
+        try {
+            leaveStepwiseDirectory();
+            return client;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isRecentlyUsed() {
+        long last = lastCompletedNanos;
+        return last != 0 && System.nanoTime() - last < RECENTLY_USED_NANOS;
     }
 
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {

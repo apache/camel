@@ -86,6 +86,17 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     boolean sendNoop() throws GenericFileOperationFailedException;
 
     /**
+     * Whether the server completed a command on this connection so recently that a noop before the next upload would
+     * not tell more about whether the connection works.
+     *
+     * @return <tt>true</tt> if the producer can skip the noop before the next upload
+     * @since  4.24
+     */
+    default boolean isRecentlyUsed() {
+        return false;
+    }
+
+    /**
      * Sends a site command to the remote server
      *
      * @param  command                             the command
