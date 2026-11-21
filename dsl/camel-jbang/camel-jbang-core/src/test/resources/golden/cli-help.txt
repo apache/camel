@@ -38,7 +38,8 @@ Actions:
 
 Development:
     init        Creates a new Camel integration
-    export      Export to other runtimes (Camel Main, Spring Boot, or Quarkus)
+    export      Export to other runtimes (Camel Main, Spring Boot, Tomcat WAR,
+                or Quarkus)
     debug       Debug local Camel integration
     eval        Evaluate Camel expressions and scripts (use eval --help to see
                 sub commands)
@@ -2482,7 +2483,7 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -2702,7 +2703,7 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -2907,7 +2908,7 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -3380,7 +3381,7 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -4079,7 +4080,7 @@ Examples:
   camel explain hello.yaml --api-type=anthropic
 
 == camel export --help
-Export to other runtimes (Camel Main, Spring Boot, or Quarkus)
+Export to other runtimes (Camel Main, Spring Boot, Tomcat WAR, or Quarkus)
 Usage: camel export [-hy] [--dep=<dep>] [--runtime=<runtime>] [--name=<name>]
                      [--port=<port>] [--management-port=<management-port>]
                      [--gav=<gav>] [--parent-pom=<parent-pom>]
@@ -4115,7 +4116,7 @@ Options:
   -h, --help                Display this help and exit
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -6348,7 +6349,7 @@ Options:
                             Default: json
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port

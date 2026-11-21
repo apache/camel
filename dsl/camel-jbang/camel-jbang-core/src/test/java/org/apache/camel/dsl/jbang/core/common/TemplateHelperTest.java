@@ -339,6 +339,7 @@ class TemplateHelperTest {
         model.put("Repositories", List.of());
         model.put("Dependencies", List.of());
         model.put("JibMavenPluginVersion", "3.5.2");
+        model.put("Tomcat", false);
 
         String result = TemplateHelper.processTemplate("spring-boot-pom.ftl", model);
 
