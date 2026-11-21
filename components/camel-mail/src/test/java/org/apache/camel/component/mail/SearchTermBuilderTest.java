@@ -113,6 +113,39 @@ public class SearchTermBuilderTest {
     }
 
     @Test
+    public void testSearchTermReceivedLast24Hours() throws Exception {
+        SearchTermBuilder build = new SearchTermBuilder();
+        long offset = -1 * (24 * 60 * 60 * 1000L);
+        SearchTerm st = build.receivedNow(Comparison.GE, offset).build();
+
+        assertNotNull(st);
+
+        JavaMailSender sender = new DefaultJavaMailSender();
+        long twoDays = 2 * 24 * 60 * 60 * 1000L;
+        Date now = new Date();
+        Date twoDaysAgo = new Date(now.getTime() - twoDays);
+
+        // sent 2 days ago, received now
+        MimeMessage msg = newMessageReceivedAt(sender, now);
+        msg.setSentDate(twoDaysAgo);
+        assertTrue(st.match(msg), "Should match message as it was received now");
+
+        // sent now, received 2 days ago
+        MimeMessage msg2 = newMessageReceivedAt(sender, twoDaysAgo);
+        msg2.setSentDate(now);
+        assertFalse(st.match(msg2), "Should not match message as it was received too long ago");
+    }
+
+    private static MimeMessage newMessageReceivedAt(JavaMailSender sender, Date receivedDate) {
+        return new MimeMessage(sender.getSession()) {
+            @Override
+            public Date getReceivedDate() {
+                return receivedDate;
+            }
+        };
+    }
+
+    @Test
     public void testComparison() {
         assertEquals(1, Comparison.LE.asNum());
         assertEquals(2, Comparison.LT.asNum());
