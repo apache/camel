@@ -317,6 +317,54 @@ The JDK does not send a username and password to a proxy with Basic authenticati
 property is set already. When OSV.dev cannot be reached, the command checks the Apache Camel security advisories only,
 and says why.
 
+== Checking for outdated dependencies
+
+List the dependencies with a newer release, and those whose version does not fit the Camel version:
+
+[source,bash]
+----
+camel dependency outdated
+Camel 4.24.0-SNAPSHOT (not released)
+
+ ARTIFACT                         VERSION  CAMEL  STATUS    NEWER  LATEST
+ org.apache.commons:commons-text  1.9                              1.15.0
+ org.snakeyaml:snakeyaml-engine   2.9      3.2    override         3.2 (major)
+ org.yaml:snakeyaml               1.33                             2.7 (major)
+
+3 of 8 dependencies of the project to look at (1 override, 3 with a newer release)
+----
+
+The first line tells where the Camel version stands, from the known releases in the Camel catalog. On Camel 4.18.1 it
+reads:
+
+[source,text]
+----
+Camel 4.18.1 LTS, end of life 2027-02-16 · newer on this line: 4.18.5 · latest LTS: 4.22.2 · latest: 4.23.0
+----
+
+The Camel JARs move together, so they are not listed with newer versions of their own: upgrade Camel instead.
+
+* *CAMEL* is the version the Camel dependencies bring of the library; empty when Camel does not bring it.
+* *STATUS* is `override` when the project declares another version than the one Camel brings, `conflict` when the JAR
+  is loaded in more than one version or in another version than declared (with `--integration`), `mixed` for a Camel
+  JAR of another Camel version, and `managed` when it is the version Camel brings.
+* *NEWER* is the latest release of the same major.minor line, and *LATEST* the latest release, marked `(major)` when it
+  is another major version. A version newer than the one Camel brings, or another major version, may not work with
+  this Camel version.
+
+The newer versions come from the Maven repositories of your Maven settings (Maven Central, mirrors). The options:
+
+* `--integration=<name or pid>` checks the JARs a running integration loaded, which finds the ones loaded twice.
+* `--transitive` also lists the dependencies the declared ones bring in, with the one that brings each (VIA).
+* `--all` lists all dependencies, not only those with something to report.
+* `--offline` does not look up newer versions: only the versions Camel brings.
+* `--json` prints one JSON document, for a script or an AI agent.
+
+The command exits with 1 when a dependency is outdated, so a CI job fails. `--fail-on` sets what counts: `any` (the
+default) a status to act on or any newer release, `patch` a status to act on or a newer release of the same line,
+`status` only a status to act on, and `none` never. The Maven Dependencies screen of the
+xref:camel-jbang-tui.adoc[Camel TUI] shows the same, with the CVEs of each dependency.
+
 === Copying dependency JARs
 
 Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,

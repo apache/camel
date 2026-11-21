@@ -353,6 +353,10 @@ class TabRegistry {
                 diagramTab.openRoute(target.routeId());
             }
         };
+        mavenDependenciesTab.setCveAudit(cveAuditTab, term -> {
+            selectMoreTab(moreTabIndex("CVE Audit"));
+            cveAuditTab.setFilter(term);
+        });
         sqlTraceTab.setEditSqlAction(sql -> {
             selectMoreTab(moreTabIndex("SQL Query"));
             sqlQueryTab.setInputValue("sql", sql);
