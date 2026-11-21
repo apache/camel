@@ -322,50 +322,62 @@ public class NettyProducer extends DefaultAsyncProducer {
             });
         }
 
-        // Get appropriate correlation manager.
-        // If we reuse channel then get it from channel. CORRELATION_MANAGER_ATTR should be set at this point.
-        // Otherwise use correlation manager for this producer.
-        final NettyCamelStateCorrelationManager channelCorrelationManager
-                = Optional.ofNullable(channel.attr(CORRELATION_MANAGER_ATTR).get()).orElse(correlationManager);
+        // the request is not sent if setting it up fails (such as an invalid request timeout header, a missing correlation
+        // id, or a pipeline without a handler)
+        final NettyCamelState state;
+        try {
+            // Get appropriate correlation manager.
+            // If we reuse channel then get it from channel. CORRELATION_MANAGER_ATTR should be set at this point.
+            // Otherwise use correlation manager for this producer.
+            final NettyCamelStateCorrelationManager channelCorrelationManager
+                    = Optional.ofNullable(channel.attr(CORRELATION_MANAGER_ATTR).get()).orElse(correlationManager);
 
-        if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
-            long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
-            ChannelHandler oldHandler = channel.pipeline().get("timeout");
-            ReadTimeoutHandler newHandler = new ReadTimeoutHandler(timeoutInMs, TimeUnit.MILLISECONDS);
-            if (oldHandler == null) {
-                channel.pipeline().addBefore("handler", "timeout", newHandler);
+            if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
+                long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
+                ChannelHandler oldHandler = channel.pipeline().get("timeout");
+                ReadTimeoutHandler newHandler = new ReadTimeoutHandler(timeoutInMs, TimeUnit.MILLISECONDS);
+                if (oldHandler == null) {
+                    channel.pipeline().addBefore("handler", "timeout", newHandler);
+                } else {
+                    channel.pipeline().replace(oldHandler, "timeout", newHandler);
+                }
+            } else if (configuration.isSync() && configuration.getRequestTimeout() > 0
+                    && channel.pipeline().get("timeout") == null) {
+                // the reply to the previous request on this channel removed the timeout (ClientChannelHandler), and only a
+                // borrow from the producer pool adds it again (activateObject): a channel that is used again without a
+                // borrow (producerPoolEnabled=false, or reuseChannel=true) needs it added here, or the request never times out
+                LOG.trace("Adding the request timeout of {} millis to channel: {}", configuration.getRequestTimeout(),
+                        channel);
+                try {
+                    channel.pipeline().addBefore("handler", "timeout",
+                            new ReadTimeoutHandler(configuration.getRequestTimeout(), TimeUnit.MILLISECONDS));
+                } catch (IllegalArgumentException e) {
+                    // another request on this shared channel (producerPoolEnabled=false) added it meanwhile
+                    LOG.trace("The request timeout was added to channel: {} meanwhile", channel);
+                }
+            }
+
+            //This will refer to original callback since netty will release body by itself
+            final AsyncCallback producerCallback;
+
+            if (configuration.isReuseChannel()) {
+                // use callback as-is because we should not put it back in the pool as NettyProducerCallback would do
+                // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
+                producerCallback = callback.getOriginalCallback();
             } else {
-                channel.pipeline().replace(oldHandler, "timeout", newHandler);
+                producerCallback = new NettyProducerCallback(channelFuture, callback.getOriginalCallback());
             }
-        } else if (configuration.isSync() && configuration.getRequestTimeout() > 0
-                && channel.pipeline().get("timeout") == null) {
-            // the reply to the previous request on this channel removed the timeout (ClientChannelHandler), and only a
-            // borrow from the producer pool adds it again (activateObject): a channel that is used again without a
-            // borrow (producerPoolEnabled=false, or reuseChannel=true) needs it added here, or the request never times out
-            LOG.trace("Adding the request timeout of {} millis to channel: {}", configuration.getRequestTimeout(), channel);
-            try {
-                channel.pipeline().addBefore("handler", "timeout",
-                        new ReadTimeoutHandler(configuration.getRequestTimeout(), TimeUnit.MILLISECONDS));
-            } catch (IllegalArgumentException e) {
-                // another request on this shared channel (producerPoolEnabled=false) added it meanwhile
-                LOG.trace("The request timeout was added to channel: {} meanwhile", channel);
+
+            // setup state as attachment on the channel, so we can access the state later when needed
+            state = new NettyCamelState(producerCallback, exchange);
+            channelCorrelationManager.putState(channel, state);
+        } catch (RuntimeException e) {
+            if (!configuration.isReuseChannel()) {
+                // with reuseChannel the channel is left to the on-completion of the exchange
+                discardChannel(channelFuture);
             }
+            throw e;
         }
-
-        //This will refer to original callback since netty will release body by itself
-        final AsyncCallback producerCallback;
-
-        if (configuration.isReuseChannel()) {
-            // use callback as-is because we should not put it back in the pool as NettyProducerCallback would do
-            // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
-            producerCallback = callback.getOriginalCallback();
-        } else {
-            producerCallback = new NettyProducerCallback(channelFuture, callback.getOriginalCallback());
-        }
-
-        // setup state as attachment on the channel, so we can access the state later when needed
-        final NettyCamelState state = new NettyCamelState(producerCallback, exchange);
-        channelCorrelationManager.putState(channel, state);
         // here we need to setup the remote address information here
         InetSocketAddress remoteAddress = null;
         if (!isTcp()) {
@@ -591,6 +603,25 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating connector to address: {}", configuration.getAddress());
             }
+        }
+    }
+
+    /**
+     * Gives a borrowed channel back to the pool when its request could not be set up: the request timeout that
+     * activating the channel added would otherwise fire on the idle channel, and the pipeline may have been changed, so
+     * a channel of the producer pool is closed and removed from the pool.
+     */
+    private void discardChannel(ChannelFuture channelFuture) {
+        if (!configuration.isProducerPoolEnabled()) {
+            // the shared channel is used by the other requests too
+            releaseChannel(channelFuture);
+            return;
+        }
+        try {
+            LOG.trace("Invalidating channel from pool {}", channelFuture.channel());
+            pool.invalidateObject(channelFuture);
+        } catch (Exception e) {
+            LOG.warn("Error invalidating channel in pool {}. This exception will be ignored.", channelFuture.channel(), e);
         }
     }
 
