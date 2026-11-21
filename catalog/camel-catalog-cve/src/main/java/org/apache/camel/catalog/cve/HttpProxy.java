@@ -158,12 +158,14 @@ public record HttpProxy(String host, int port, String username, String password,
 
     /**
      * The authenticator for an HTTP client that logs in to this proxy, and answers no server; null when the proxy needs
-     * no login.
+     * no login. Calls {@link #allowBasicTunneling()}, so an HTTP client built with it can log in with Basic
+     * authentication when it tunnels HTTPS: get the authenticator before the client is built.
      */
     public Authenticator authenticator() {
         if (!hasCredentials()) {
             return null;
         }
+        allowBasicTunneling();
         char[] secret = password != null ? password.toCharArray() : new char[0];
         return new Authenticator() {
             @Override

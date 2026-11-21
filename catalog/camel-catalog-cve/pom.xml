@@ -71,4 +71,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- the JDK reads jdk.http.auth.tunneling.disabledSchemes once, when the first HTTP client of
+                         the JVM is used: OsvClientProxyTest needs a JVM whose HTTP clients did not run yet -->
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

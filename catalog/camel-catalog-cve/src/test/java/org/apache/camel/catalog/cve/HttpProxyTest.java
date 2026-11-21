@@ -52,6 +52,8 @@ class HttpProxyTest {
         assertThat(proxy.password()).isEqualTo("p@ss+w:rd");
         assertThat(proxy.hasCredentials()).isTrue();
         assertThat(proxy.authenticator()).isNotNull();
+        // the authenticator lets the JDK log in with Basic when it tunnels HTTPS (this test runs in its own JVM)
+        assertThat(System.getProperty(HttpProxy.TUNNELING_DISABLED_SCHEMES)).isEmpty();
         // the password is never printed
         assertThat(proxy).hasToString("scott@proxy:8080");
     }
