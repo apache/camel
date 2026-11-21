@@ -176,9 +176,12 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     }
 
     /**
-     * Whether the message id is in the repository, read in a new transaction after the one of the insert, or in the
-     * caller's transaction when there is one, with a new EntityManager unless the EntityManager is shared (then the
-     * EntityManager of that transaction).
+     * Whether the message id is in the repository.
+     * <p>
+     * Without a caller's transaction, it is read in a new transaction, after the transaction of the insert ended.
+     * <p>
+     * In a caller's transaction, it is read in that transaction: with the EntityManager of that transaction when the
+     * EntityManager is shared, otherwise with a new EntityManager.
      */
     private boolean isStored(String messageId) {
         final EntityManager entityManager
