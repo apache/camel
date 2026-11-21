@@ -84,13 +84,19 @@ class GenAiTraceReportTest {
     void newestFiveRunsAreShown() {
         JsonObject[] runs = new JsonObject[7];
         for (int i = 0; i < runs.length; i++) {
-            runs[i] = run(String.valueOf(100 - i), "support");
+            runs[i] = detailed(run(String.valueOf(100 - i), "support"));
         }
 
         GenAi genAi = GenAiTraceReport.genAi(console("detailed", runs), "*");
 
         assertThat(genAi.agentRuns()).extracting(Run::runId).containsExactly("100", "99", "98", "97", "96");
         assertThat(genAi.moreRuns()).isEqualTo("+2 more runs");
+        // at level detailed the console records no content: no question, no answer, no tool arguments or results
+        assertThat(genAi.level()).isEqualTo("detailed");
+        assertThat(genAi.agentRuns().get(0).question()).isNull();
+        assertThat(genAi.agentRuns().get(0).answer()).isNull();
+        assertThat(genAi.agentRuns().get(0).steps().get(1).arguments()).isNull();
+        assertThat(genAi.agentRuns().get(0).steps().get(1).result()).isNull();
     }
 
     @Test
@@ -167,7 +173,7 @@ class GenAiTraceReportTest {
         assertThat(total).isLessThanOrEqualTo(GenAiTraceReport.MAX_CONVERSATION);
         assertThat(conversation.messages())
                 .allSatisfy(m -> assertThat(m.text()).hasSizeLessThanOrEqualTo(GenAiTraceReport.MAX_MESSAGE));
-        assertThat(conversation.cut()).contains("more message parts not shown");
+        assertThat(conversation.cut()).isEqualTo("4 more message parts not shown (6000 characters in all)");
     }
 
     @Test
@@ -274,6 +280,15 @@ class GenAiTraceReportTest {
         content(second).put("outputMessages", messages(reply));
 
         run.put("steps", new JsonArray(List.of(first, tool, second)));
+        return run;
+    }
+
+    /** A run as the console answers at level detailed: without its question, answer and content. */
+    private static JsonObject detailed(JsonObject run) {
+        run.remove("question");
+        run.remove("answer");
+        run.remove("content");
+        steps(run).forEach(step -> step.remove("content"));
         return run;
     }
 
