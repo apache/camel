@@ -81,7 +81,7 @@ public class SslAwareMongoClient implements MongoClient {
 
     /**
      * The settings of the client: the hosts, the credentials (authenticated against the admin database), TLS and the
-     * read preference.
+     * read preference. Package-private so the unit tests can check the settings without creating a client.
      */
     MongoClientSettings createSettings() {
         // the username and password are percent-encoded, so characters such as @ : / ? % reach the server as they are

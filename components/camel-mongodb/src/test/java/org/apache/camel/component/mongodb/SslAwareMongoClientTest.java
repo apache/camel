@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.mongodb.MongoClientSettings;
@@ -31,14 +32,21 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The settings of the client the MongoDB Kamelets create as a bean: the read preference, and the credentials with
  * characters a connection string must percent-encode.
  */
 class SslAwareMongoClientTest {
+
+    private static final List<ServerAddress> HOSTS
+            = List.of(new ServerAddress("host1", 27017), new ServerAddress("host2", 27017));
 
     private static SslAwareMongoClient client(String username, String password) {
         SslAwareMongoClient client = new SslAwareMongoClient();
@@ -53,7 +61,7 @@ class SslAwareMongoClientTest {
     void readPreferenceNotSetIsPrimary() {
         MongoClientSettings settings = client(null, null).createSettings();
 
-        assertThat(settings.getReadPreference()).isEqualTo(ReadPreference.primary());
+        assertEquals(ReadPreference.primary(), settings.getReadPreference());
     }
 
     @ParameterizedTest
@@ -62,7 +70,7 @@ class SslAwareMongoClientTest {
         SslAwareMongoClient client = client(null, null);
         client.setReadPreference(value);
 
-        assertThat(client.createSettings().getReadPreference()).isEqualTo(ReadPreference.primary());
+        assertEquals(ReadPreference.primary(), client.createSettings().getReadPreference());
     }
 
     @ParameterizedTest
@@ -78,7 +86,7 @@ class SslAwareMongoClientTest {
         SslAwareMongoClient client = client(null, null);
         client.setReadPreference(value);
 
-        assertThat(client.createSettings().getReadPreference()).isEqualTo(ReadPreference.valueOf(driverName));
+        assertEquals(ReadPreference.valueOf(driverName), client.createSettings().getReadPreference());
     }
 
     @Test
@@ -87,7 +95,7 @@ class SslAwareMongoClientTest {
         client.setReadPreference("SECONDARY_PREFERRED");
         try {
             // creating the client does not connect to the hosts
-            assertThat(client.getReadPreference()).isEqualTo(ReadPreference.secondaryPreferred());
+            assertEquals(ReadPreference.secondaryPreferred(), client.getReadPreference());
         } finally {
             client.close();
         }
@@ -108,9 +116,9 @@ class SslAwareMongoClientTest {
         }
 
         MongoClientSettings settings = client.createSettings();
-        assertThat(settings.getReadPreference()).isEqualTo(ReadPreference.secondaryPreferred());
-        assertThat(settings.getCredential().getPassword()).isEqualTo("t@ger:/?%".toCharArray());
-        assertThat(settings.getSslSettings().isEnabled()).isFalse();
+        assertEquals(ReadPreference.secondaryPreferred(), settings.getReadPreference());
+        assertArrayEquals("t@ger:/?%".toCharArray(), settings.getCredential().getPassword());
+        assertFalse(settings.getSslSettings().isEnabled());
     }
 
     @Test
@@ -118,27 +126,26 @@ class SslAwareMongoClientTest {
         SslAwareMongoClient client = client(null, null);
         client.setReadPreference("SOMEWHERE");
 
-        assertThatThrownBy(client::createSettings).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("SOMEWHERE");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, client::createSettings);
+        assertTrue(e.getMessage().contains("SOMEWHERE"), e.getMessage());
     }
 
     @Test
     void noUsernameHasNoCredential() {
         MongoClientSettings settings = client(null, null).createSettings();
 
-        assertThat(settings.getCredential()).isNull();
-        assertThat(settings.getClusterSettings().getHosts())
-                .containsExactly(new ServerAddress("host1", 27017), new ServerAddress("host2", 27017));
+        assertNull(settings.getCredential());
+        assertEquals(HOSTS, settings.getClusterSettings().getHosts());
     }
 
     @Test
     void credentialIsAuthenticatedAgainstTheAdminDatabase() {
         MongoCredential credential = client("scott", "tiger").createSettings().getCredential();
 
-        assertThat(credential.getUserName()).isEqualTo("scott");
-        assertThat(credential.getPassword()).isEqualTo("tiger".toCharArray());
-        assertThat(credential.getSource()).isEqualTo("admin");
-        assertThat(credential.getAuthenticationMechanism()).isNull();
+        assertEquals("scott", credential.getUserName());
+        assertArrayEquals("tiger".toCharArray(), credential.getPassword());
+        assertEquals("admin", credential.getSource());
+        assertNull(credential.getAuthenticationMechanism());
     }
 
     @ParameterizedTest
@@ -146,16 +153,15 @@ class SslAwareMongoClientTest {
     void passwordIsGivenAsIs(String password) {
         MongoClientSettings settings = client("scott", password).createSettings();
 
-        assertThat(settings.getCredential().getPassword()).isEqualTo(password.toCharArray());
-        assertThat(settings.getClusterSettings().getHosts())
-                .containsExactly(new ServerAddress("host1", 27017), new ServerAddress("host2", 27017));
+        assertArrayEquals(password.toCharArray(), settings.getCredential().getPassword());
+        assertEquals(HOSTS, settings.getClusterSettings().getHosts());
     }
 
     @Test
     void usernameIsGivenAsIs() {
         MongoCredential credential = client("us@er:/?%41", "tiger").createSettings().getCredential();
 
-        assertThat(credential.getUserName()).isEqualTo("us@er:/?%41");
-        assertThat(credential.getPassword()).isEqualTo("tiger".toCharArray());
+        assertEquals("us@er:/?%41", credential.getUserName());
+        assertArrayEquals("tiger".toCharArray(), credential.getPassword());
     }
 }

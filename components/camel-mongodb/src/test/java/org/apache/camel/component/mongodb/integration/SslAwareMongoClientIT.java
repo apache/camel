@@ -26,8 +26,8 @@ import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The client the MongoDB Kamelets create as a bean: it logs in with a password that has characters a connection string
@@ -80,16 +80,16 @@ public class SslAwareMongoClientIT extends AbstractMongoDbITSupport {
 
         Long count = template.requestBody(endpoint, "{}", Long.class);
 
-        assertThat(count).isEqualTo(1L);
-        assertThat(endpoint.getMongoCollection().getReadPreference()).isEqualTo(ReadPreference.secondaryPreferred());
+        assertEquals(1L, count);
+        assertEquals(ReadPreference.secondaryPreferred(), endpoint.getMongoCollection().getReadPreference());
     }
 
     @Test
     void wrongPasswordFailsToLogIn() {
         // the server checks the credentials, so the test above logged in with the password as it is
         try (SslAwareMongoClient client = client("p@ss:w/o?r%d A")) {
-            assertThatThrownBy(() -> client.getDatabase(dbName).getCollection(testCollectionName).countDocuments())
-                    .isInstanceOf(MongoSecurityException.class);
+            assertThrows(MongoSecurityException.class,
+                    () -> client.getDatabase(dbName).getCollection(testCollectionName).countDocuments());
         }
     }
 }
