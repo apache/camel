@@ -304,7 +304,9 @@ public class AuditMojo extends AbstractMojo {
         if (repositorySystemSession != null) {
             MavenProxy maven = new MavenDownloaderImpl(repositorySystem, repositorySystemSession).proxyFor(url);
             if (maven != null) {
-                return new HttpProxy(maven.host(), maven.port(), maven.username(), maven.password(), null);
+                return new HttpProxy(
+                        maven.host(), maven.port(), maven.username(), maven.password(),
+                        HttpProxy.splitHosts(maven.nonProxyHosts()));
             }
         }
         return HttpProxy.fromEnvironment(System.getenv());
