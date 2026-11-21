@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common.outdated;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +42,9 @@ import org.apache.camel.tooling.maven.MavenGav;
  */
 public final class DependencyCheck {
 
+    // how long the lookups of the available versions take at most, all together
+    private static final Duration LOOKUP_TIMEOUT = Duration.ofSeconds(60);
+
     private DependencyCheck() {
     }
 
@@ -59,10 +63,7 @@ public final class DependencyCheck {
             Map<String, ? extends Collection<String>> loaded) {
         for (DependencyRow row : rows) {
             Collection<String> versions = loaded != null ? loaded.get(row.ga()) : null;
-            row.loadedVersions().clear();
-            if (versions != null) {
-                row.loadedVersions().addAll(new TreeSet<>(versions));
-            }
+            row.setLoadedVersions(versions);
             if (row.camel()) {
                 row.setCamelVersion(camelVersion);
             } else {
@@ -140,6 +141,11 @@ public final class DependencyCheck {
      */
     public static Map<String, List<String>> availableVersions(
             MavenDownloader downloader, Collection<String> gas, AtomicReference<String> error) {
+        return availableVersions(downloader, gas, error, LOOKUP_TIMEOUT);
+    }
+
+    static Map<String, List<String>> availableVersions(
+            MavenDownloader downloader, Collection<String> gas, AtomicReference<String> error, Duration timeout) {
         Map<String, List<String>> result = new ConcurrentHashMap<>();
         ExecutorService pool = Executors.newFixedThreadPool(Math.max(1, Math.min(8, gas.size())), r -> {
             Thread t = new Thread(r, "CamelDependencyVersions");
@@ -168,19 +174,31 @@ public final class DependencyCheck {
                     }
                 }));
             }
+            // one deadline for all the lookups, not one per lookup
+            long deadline = System.nanoTime() + timeout.toNanos();
             for (Future<?> f : futures) {
                 try {
-                    f.get(60, TimeUnit.SECONDS);
+                    f.get(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
                 } catch (Exception e) {
                     if (error != null) {
                         error.compareAndSet(null, "timeout looking up the available versions");
                     }
                 }
             }
+            // a copy: a lookup that ends after the deadline does not change the answer
+            return Map.copyOf(result);
         } finally {
+            // the TUI looks the versions up again and again: the lookups stop before the next one starts
             pool.shutdownNow();
+            try {
+                pool.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-        return result;
     }
 
     /**

@@ -16,16 +16,28 @@
  */
 package org.apache.camel.dsl.jbang.core.common.outdated;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.tooling.maven.MavenDownloader;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * CAMEL-27351: the version picking, the Camel release summary and the status of the dependencies.
@@ -195,5 +207,44 @@ class DependencyCheckTest {
                 "/home/me/.m2/repository/org/yaml/snakeyaml/2.5/other-2.5.jar"));
         assertThat(loaded).containsOnlyKeys("org.yaml:snakeyaml", "org.apache.commons:commons-text");
         assertThat(loaded.get("org.yaml:snakeyaml")).containsExactly("1.33", "2.5");
+    }
+
+    @Test
+    void theLookupsStopAtTheDeadline() throws Exception {
+        CountDownLatch slowEnded = new CountDownLatch(1);
+        MavenDownloader downloader = mock(MavenDownloader.class);
+        when(downloader.resolveAvailableVersions(eq("org.yaml"), eq("snakeyaml"), any(), anyBoolean()))
+                .thenReturn(List.of(MavenGav.fromCoordinates("org.yaml", "snakeyaml", "2.5", null, null)));
+        when(downloader.resolveAvailableVersions(eq("org.slow"), eq("slow"), any(), anyBoolean())).thenAnswer(i -> {
+            try {
+                // until it is interrupted
+                new CountDownLatch(1).await();
+            } catch (InterruptedException e) {
+                // a lookup takes a while to stop, as a download does
+                new CountDownLatch(1).await(300, TimeUnit.MILLISECONDS);
+            } finally {
+                slowEnded.countDown();
+            }
+            return List.of();
+        });
+        AtomicReference<String> error = new AtomicReference<>();
+
+        Map<String, List<String>> found = DependencyCheck.availableVersions(
+                downloader, List.of("org.yaml:snakeyaml", "org.slow:slow"), error, Duration.ofMillis(200));
+
+        assertThat(found).containsOnlyKeys("org.yaml:snakeyaml");
+        assertThat(found.get("org.yaml:snakeyaml")).containsExactly("2.5");
+        assertThat(error.get()).isEqualTo("timeout looking up the available versions");
+        // the lookup past the deadline has ended when the method returns
+        assertThat(slowEnded.getCount()).isZero();
+    }
+
+    @Test
+    void theLoadedVersionsCannotBeChangedFromOutside() {
+        List<DependencyRow> rows = List.of(new DependencyRow("org.yaml", "snakeyaml", "1.33", false, null));
+        DependencyCheck.classify(rows, "4.18.1", Map.of(), Map.of("org.yaml:snakeyaml", Set.of("2.5", "1.33")));
+
+        assertThat(rows.get(0).loadedVersions()).containsExactly("1.33", "2.5");
+        assertThatThrownBy(() -> rows.get(0).loadedVersions().clear()).isInstanceOf(UnsupportedOperationException.class);
     }
 }

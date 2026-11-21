@@ -17,8 +17,11 @@
 package org.apache.camel.dsl.jbang.core.common.outdated;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -128,7 +131,14 @@ public final class DependencyRow {
 
     /** The versions of this artifact on the classpath of the running integration; empty when not known. */
     public List<String> loadedVersions() {
-        return loadedVersions;
+        return Collections.unmodifiableList(loadedVersions);
+    }
+
+    void setLoadedVersions(Collection<String> versions) {
+        loadedVersions.clear();
+        if (versions != null) {
+            loadedVersions.addAll(new TreeSet<>(versions));
+        }
     }
 
     /** The latest release of the same major.minor line, when newer; null when there is none or not checked. */
