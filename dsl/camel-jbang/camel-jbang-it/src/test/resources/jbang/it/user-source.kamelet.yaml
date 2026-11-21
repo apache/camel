@@ -43,7 +43,6 @@ spec:
       mediaType: application/json
   dependencies:
     - "camel:timer"
-    - "camel:http"
     - "camel:kamelet"
   template:
     from:
@@ -51,5 +50,7 @@ spec:
       parameters:
         period: "{{period}}"
       steps:
-        - to: https://random-data-api.com/api/v2/users
+        # a fixed body, so the test does not depend on an external host
+        - setBody:
+            constant: '{"id": 1, "first_name": "Camel", "last_name": "Rider"}'
         - to: "kamelet:sink"
