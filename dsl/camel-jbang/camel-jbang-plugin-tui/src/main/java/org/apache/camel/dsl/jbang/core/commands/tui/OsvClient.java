@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 /**
  * Lightweight HTTP client for the OSV.dev vulnerability database. Uses the batch query endpoint for efficiency and
@@ -44,8 +45,58 @@ class OsvClient {
     private static final ConcurrentHashMap<String, List<Vulnerability>> CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Vulnerability> VULN_DETAIL_CACHE = new ConcurrentHashMap<>();
 
+    // why the last query got no answer from OSV.dev; null when it got one
+    private volatile String lastError;
+
+    /**
+     * A vulnerability of OSV.dev. {@code fixedVersions} are the fixed versions of every package and range of it, and
+     * {@code ranges} the affected ranges per package, to tell which version fixes an installed one
+     * ({@link #nearestFix(String, String)}).
+     */
     record Vulnerability(String id, String summary, String details, String severity, String cvssVector,
-            String published, List<String> aliases, List<String> fixedVersions) {
+            String published, List<String> aliases, List<String> fixedVersions, List<AffectedRange> ranges) {
+
+        Vulnerability(String id, String summary, String details, String severity, String cvssVector,
+                      String published, List<String> aliases, List<String> fixedVersions) {
+            this(id, summary, details, severity, cvssVector, published, aliases, fixedVersions, List.of());
+        }
+
+        /**
+         * The version that fixes the given version of the package ({@code groupId:artifactId}): the end of the range
+         * the version is in, else the lowest fixed version above it (of a later line, when the line of the version has
+         * no fix). Null when no fixed version above it is known.
+         */
+        String nearestFix(String packageName, String installed) {
+            if (installed == null) {
+                return null;
+            }
+            ComparableVersion version = new ComparableVersion(installed);
+            ComparableVersion lowestAbove = null;
+            for (AffectedRange r : ranges) {
+                if (!r.packageName().equals(packageName) || r.fixed() == null) {
+                    continue;
+                }
+                ComparableVersion fixed = new ComparableVersion(r.fixed());
+                if (version.compareTo(fixed) >= 0) {
+                    continue;
+                }
+                if (r.introduced() == null || version.compareTo(new ComparableVersion(r.introduced())) >= 0) {
+                    // the range the version is in
+                    return r.fixed();
+                }
+                if (lowestAbove == null || fixed.compareTo(lowestAbove) < 0) {
+                    lowestAbove = fixed;
+                }
+            }
+            return lowestAbove != null ? lowestAbove.toString() : null;
+        }
+    }
+
+    /**
+     * An affected range of a package ({@code groupId:artifactId}): from {@code introduced} (null for all earlier
+     * versions) to {@code fixed}, or to {@code lastAffected} when no version fixes it.
+     */
+    record AffectedRange(String packageName, String introduced, String fixed, String lastAffected) {
     }
 
     /**
@@ -71,6 +122,7 @@ class OsvClient {
             }
         }
 
+        lastError = null;
         if (uncached.isEmpty()) {
             return result;
         }
@@ -104,7 +156,9 @@ class OsvClient {
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() != 200) {
+                lastError = "OSV.dev answered with HTTP status " + response.statusCode();
+            } else {
                 success = true;
                 JsonObject body = (JsonObject) Jsoner.deserialize(response.body());
                 JsonArray results = (JsonArray) body.get("results");
@@ -150,8 +204,11 @@ class OsvClient {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            lastError = "The query to OSV.dev was interrupted";
         } catch (Exception e) {
-            // network errors — return whatever we have from cache; leave entries uncached for retry
+            // network errors: return whatever we have from cache; leave entries uncached for retry
+            lastError = "OSV.dev could not be reached: "
+                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
         }
 
         if (success) {
@@ -198,6 +255,11 @@ class OsvClient {
         }
     }
 
+    /** Why the last query got no answer from OSV.dev, so its JARs are not checked; null when it got one. */
+    String lastError() {
+        return lastError;
+    }
+
     void clearCache() {
         CACHE.clear();
         VULN_DETAIL_CACHE.clear();
@@ -223,7 +285,54 @@ class OsvClient {
         String cvssVector = extractCvssVector(vuln);
         List<String> aliases = extractAliases(vuln);
         List<String> fixedVersions = extractFixedVersions(vuln);
-        return new Vulnerability(id, summary, details, severity, cvssVector, published, aliases, fixedVersions);
+        List<AffectedRange> ranges = extractRanges(vuln);
+        return new Vulnerability(
+                id, summary, details, severity, cvssVector, published, aliases, fixedVersions, ranges);
+    }
+
+    /** The affected ranges of the Maven packages, from the ordered events (introduced, then fixed or last_affected). */
+    static List<AffectedRange> extractRanges(JsonObject vuln) {
+        JsonArray affected = (JsonArray) vuln.get("affected");
+        if (affected == null) {
+            return Collections.emptyList();
+        }
+        List<AffectedRange> result = new ArrayList<>();
+        for (Object a : affected) {
+            JsonObject aff = (JsonObject) a;
+            JsonObject pkg = (JsonObject) aff.get("package");
+            String name = pkg != null ? getString(pkg, "name") : null;
+            JsonArray ranges = (JsonArray) aff.get("ranges");
+            if (name == null || ranges == null) {
+                continue;
+            }
+            for (Object r : ranges) {
+                JsonArray events = (JsonArray) ((JsonObject) r).get("events");
+                if (events == null) {
+                    continue;
+                }
+                String introduced = null;
+                boolean open = false;
+                for (Object e : events) {
+                    JsonObject event = (JsonObject) e;
+                    if (event.containsKey("introduced")) {
+                        String v = getString(event, "introduced");
+                        introduced = "0".equals(v) ? null : v;
+                        open = true;
+                    } else if (event.containsKey("fixed") && open) {
+                        result.add(new AffectedRange(name, introduced, getString(event, "fixed"), null));
+                        open = false;
+                    } else if (event.containsKey("last_affected") && open) {
+                        result.add(new AffectedRange(name, introduced, null, getString(event, "last_affected")));
+                        open = false;
+                    }
+                }
+                if (open) {
+                    // affected from introduced on, with no fix yet
+                    result.add(new AffectedRange(name, introduced, null, null));
+                }
+            }
+        }
+        return result;
     }
 
     private List<String> extractFixedVersions(JsonObject vuln) {
@@ -256,16 +365,23 @@ class OsvClient {
         return fixed;
     }
 
+    /** The CVSS vector: a CVSS 3 one when there is one (it can be scored), else the first. */
     static String extractCvssVector(JsonObject vuln) {
         JsonArray severityArr = (JsonArray) vuln.get("severity");
-        if (severityArr != null && !severityArr.isEmpty()) {
-            JsonObject first = (JsonObject) severityArr.get(0);
-            String score = getString(first, "score");
-            if (score != null && score.startsWith("CVSS:")) {
+        if (severityArr == null) {
+            return null;
+        }
+        String first = null;
+        for (Object o : severityArr) {
+            String score = getString((JsonObject) o, "score");
+            if (score != null && score.startsWith("CVSS:3")) {
                 return score;
             }
+            if (first == null && score != null && score.startsWith("CVSS:")) {
+                first = score;
+            }
         }
-        return null;
+        return first;
     }
 
     static String extractSeverity(JsonObject vuln) {
@@ -277,14 +393,11 @@ class OsvClient {
                 return sev.toUpperCase();
             }
         }
-        // fall back to severity array with CVSS score
-        JsonArray severityArr = (JsonArray) vuln.get("severity");
-        if (severityArr != null && !severityArr.isEmpty()) {
-            JsonObject first = (JsonObject) severityArr.get(0);
-            String score = getString(first, "score");
-            if (score != null) {
-                return cvssToSeverity(score);
-            }
+        // fall back to the CVSS vector: the score of a CVSS 3 vector, else a guess from the vector
+        String vector = extractCvssVector(vuln);
+        if (vector != null) {
+            Double score = CvssScore.baseScore(vector);
+            return score != null ? CvssScore.severity(score) : cvssToSeverity(vector);
         }
         return "UNKNOWN";
     }

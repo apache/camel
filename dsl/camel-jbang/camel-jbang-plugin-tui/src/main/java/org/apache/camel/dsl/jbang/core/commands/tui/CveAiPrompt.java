@@ -17,48 +17,63 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.ArtifactRow;
+import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.VulnGroup;
 
 /**
- * The question the AI panel is opened with to explain a vulnerability (Shift+F8 on the CVE Audit tab, CAMEL-25362): its
- * severity, the artifacts it affects and the dependency that brings each in, the versions that fix it, and its
- * description. A vulnerable library is not always reachable from the routes, and the fix may be a Camel upgrade, so the
- * AI is asked to explain and suggest, not to change the files on its own. It is put in the input of the panel, for the
- * user to send with Enter or change first.
+ * The question the AI panel is opened with to explain a vulnerability (Shift+F8 on the CVE Audit tab, CAMEL-25362), or
+ * the vulnerabilities of a JAR when the tab is grouped by artifact: the severity, the artifacts with the version that
+ * fixes each and the chain that brings each in, whether the routes use them, the Camel advisory, and the change that
+ * fixes each (CAMEL-27328): the version to declare, or the Camel release to upgrade to. A vulnerable library is not
+ * always reachable from the routes, so the AI is asked to explain and offer the change, not to make it on its own. It
+ * is put in the input of the panel, for the user to send with Enter or change first.
  */
 final class CveAiPrompt {
 
     /** The description of a vulnerability can be long: its start says what it is. */
     static final int MAX_DETAILS = 1500;
 
+    private static final String TAIL = "Tell whether the integration is affected: does it use the vulnerable part of"
+                                       + " the library, from its routes and configuration? Then offer the change that"
+                                       + " fixes it, from the suggested changes above. After a change, tui_get_table"
+                                       + " on the Classpath tab tells whether only the fixed version is on the"
+                                       + " classpath, and tui_get_table on the CVE Audit tab has the vulnerabilities."
+                                       + " Make no changes to the files unless I agree.";
+
     private CveAiPrompt() {
     }
 
-    static String of(IntegrationInfo info, CveAuditTab.VulnGroup group) {
+    static String of(IntegrationInfo info, VulnGroup group) {
         StringBuilder sb = new StringBuilder();
-        String name = info != null ? info.name != null ? info.name : info.pid : null;
-        sb.append("Explain the vulnerability ").append(group.canonicalId).append(" (")
-                .append(group.severity != null ? group.severity : "UNKNOWN");
+        sb.append("Explain the vulnerability ").append(group.canonicalId).append(" (").append(severity(group));
         if (group.cvssVector != null) {
             sb.append(", ").append(group.cvssVector);
         }
-        sb.append(") in the dependencies of the running integration").append(name != null ? " " + name : "");
+        sb.append(") in the dependencies of the running integration").append(name(info));
         if (group.summary != null && !group.summary.isBlank()) {
             sb.append(": ").append(group.summary.strip());
         }
         sb.append(".\n");
         List<String> affected = new ArrayList<>();
         for (String gav : group.affectedGavs) {
-            String parent = group.gavParents.get(gav);
-            affected.add(parent != null ? gav + " (via " + parent + ")" : gav);
+            String fix = group.fixFor.get(gav);
+            affected.add(gav + (fix != null ? ", fixed in " + fix : ", no fixed version known") + origin(group, gav));
         }
         if (!affected.isEmpty()) {
-            sb.append("It affects: ").append(String.join(", ", affected)).append(".\n");
+            sb.append("It affects: ").append(String.join("; ", affected)).append(".\n");
         }
-        if (!group.fixedVersions.isEmpty()) {
-            sb.append("Fixed in: ").append(String.join(", ", group.fixedVersions)).append(".\n");
-        } else {
+        if (group.usedByRoutes != null) {
+            sb.append("Used by the routes: ").append(CveDetail.usageText(group.usedBy.values())).append(".\n");
+        }
+        appendCamelAdvisory(sb, group);
+        if (group.fixedVersions.isEmpty() && group.fixFor.isEmpty()) {
             sb.append("No fixed version is known.\n");
+        } else if (group.fixedVersions.size() > 1) {
+            sb.append("Fixed versions of all lines: ").append(String.join(", ", group.fixedVersions)).append(".\n");
         }
         List<String> aliases = group.aliases.stream().filter(a -> !a.equals(group.canonicalId)).toList();
         if (!aliases.isEmpty()) {
@@ -72,12 +87,110 @@ final class CveAiPrompt {
             sb.append("Its description:\n").append(details.length() > MAX_DETAILS
                     ? details.substring(0, MAX_DETAILS) + "..." : details).append('\n');
         }
-        sb.append("Tell whether the integration is affected: does it use the vulnerable part of the library, from its")
-                .append(" routes and configuration? Then say how to fix it: when the project declares the artifact")
-                .append(" itself (//DEPS, camel.jbang.dependencies or --dep), a fixed version to use; when it comes")
-                .append(" with a Camel component (via camel-...), whether a newer Camel version has the fix, or how to")
-                .append(" use a fixed version meanwhile. tui_get_table on the CVE Audit tab has the vulnerabilities.")
-                .append(" Make no changes to the files unless I agree.");
+        Set<String> changes = new LinkedHashSet<>();
+        for (String gav : group.affectedGavs) {
+            boolean camelRelease = group.camelAdvisory != null && gav.startsWith(CveScan.CAMEL_GROUP_ID + ":");
+            changes.add(change(gav, group.fixFor.get(gav), group.declared.contains(gav), group.gavVia.get(gav),
+                    camelRelease));
+        }
+        appendChanges(sb, changes);
+        sb.append(TAIL);
         return sb.toString();
+    }
+
+    static String ofArtifact(IntegrationInfo info, ArtifactRow row) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Explain the vulnerabilities of ").append(row.gav).append(", a dependency of the running integration")
+                .append(name(info)).append(": ").append(row.cves.size()).append(row.cves.size() == 1 ? " CVE" : " CVEs")
+                .append(", the worst ").append(row.severity);
+        if (row.score != null) {
+            sb.append(" ").append(CvssScore.format(row.score));
+        }
+        sb.append(".\n");
+        for (VulnGroup g : row.cves) {
+            String fix = g.fixFor.get(row.gav);
+            sb.append("- ").append(g.canonicalId).append(" (").append(severity(g)).append(")");
+            if (g.summary != null && !g.summary.isBlank()) {
+                sb.append(": ").append(g.summary.strip());
+            }
+            sb.append(fix != null ? ", fixed in " + fix : ", no fixed version known").append(".\n");
+        }
+        if (row.via != null) {
+            sb.append("It comes in via ").append(row.via).append(".\n");
+        } else if (row.declared) {
+            sb.append("The project declares it itself.\n");
+        }
+        if (row.usage != null) {
+            sb.append("Used by the routes: ").append(CveDetail.usageText(List.of(row.usage))).append(".\n");
+        }
+        if (row.fix != null) {
+            sb.append(row.camelRelease ? "Camel " : "Version ").append(row.fix).append(" fixes all of them.\n");
+        } else {
+            sb.append("No version is known to fix all of them.\n");
+        }
+        appendChanges(sb, Set.of(change(row.gav, row.fix, row.declared, row.via, row.camelRelease)));
+        sb.append(TAIL);
+        return sb.toString();
+    }
+
+    private static void appendCamelAdvisory(StringBuilder sb, VulnGroup group) {
+        if (group.camelAdvisory == null) {
+            return;
+        }
+        sb.append("Apache Camel advisory: ");
+        if (group.camelAdvisory.upgradeTo() != null) {
+            sb.append("upgrade to Camel ").append(group.camelAdvisory.upgradeTo()).append("; ");
+        }
+        sb.append("fixed in ").append(group.camelAdvisory.fixed()).append(".");
+        if (group.camelAdvisory.mitigation() != null && !group.camelAdvisory.mitigation().isBlank()) {
+            sb.append(" Mitigation: ").append(group.camelAdvisory.mitigation().strip());
+        }
+        sb.append("\n");
+    }
+
+    private static void appendChanges(StringBuilder sb, Set<String> changes) {
+        sb.append("Suggested changes:\n");
+        for (String change : changes) {
+            sb.append("- ").append(change).append("\n");
+        }
+    }
+
+    /** The change that fixes a JAR, from how it comes onto the classpath. */
+    static String change(String gav, String fix, boolean declared, String via, boolean camelRelease) {
+        String ga = CveScan.ga(gav);
+        if (fix == null) {
+            return ga + ": no fixed version is known; mitigate it (configuration, or not using the vulnerable"
+                   + " feature) or replace the library";
+        }
+        if (camelRelease) {
+            return ga + ": upgrade Camel to " + fix + " (the Camel version the integration runs with, such as"
+                   + " camel.jbang.camel-version)";
+        }
+        if (declared) {
+            return ga + ": use " + ga + ":" + fix + " where the project declares it (//DEPS,"
+                   + " camel.jbang.dependencies or --dep)";
+        }
+        return ga + ": declare " + ga + ":" + fix + " in the project (camel.jbang.dependencies or //DEPS) to use the"
+               + " fixed version instead of the one " + (via != null ? via : "the runtime") + " brings in, or upgrade"
+               + " Camel when a newer release brings a fixed version";
+    }
+
+    private static String origin(VulnGroup group, String gav) {
+        String via = group.gavVia.get(gav);
+        if (via != null) {
+            return " (via " + via + ")";
+        }
+        return group.declared.contains(gav) ? " (declared by the project)" : "";
+    }
+
+    private static String severity(VulnGroup group) {
+        String sev = group.severity != null ? group.severity : "UNKNOWN";
+        Double score = group.score();
+        return score != null ? sev + " " + CvssScore.format(score) : sev;
+    }
+
+    private static String name(IntegrationInfo info) {
+        String name = info != null ? info.name != null ? info.name : info.pid : null;
+        return name != null ? " " + name : "";
     }
 }
