@@ -469,7 +469,7 @@ public class DependencyAudit extends DependencyList {
      * be checked with OSV.dev or the OSV database.
      */
     boolean failed(CveAudit.Result result) {
-        return failed(result.findings()) || failOnError && result.osvError() != null;
+        return failed(result.findings()) || (failOnError && result.osvError() != null);
     }
 
     /** Whether a vulnerability at or above --fail-on was found (of all of them, not only those listed). */
