@@ -31,7 +31,6 @@ import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
-import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.jboss.logging.Logger;
@@ -48,9 +47,6 @@ import org.jboss.logging.Logger;
 public class AiTraceTools {
 
     private static final Logger LOG = Logger.getLogger(AiTraceTools.class);
-
-    /** The spans read for the GenAI part: an agent run with its route steps takes some 20 spans. */
-    private static final int SPAN_LIMIT = 1000;
 
     private static final String NAME_OR_PID_DESC
             = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
@@ -74,10 +70,11 @@ public class AiTraceTools {
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Trace how a running Camel application used AI. Starts with the GenAI spans "
-                        + "(camel run --observe): a summary line, the model calls per model with their tokens, "
-                        + "and the newest agent runs with each model call and tool call (name, time, tokens, and "
-                        + "at camel.aiObservability.level=full the question, tool arguments and results). "
+          description = "Trace how a running Camel application used AI. Starts with the GenAI calls of the "
+                        + "genai dev console (camel-ai-observability): a summary line, the model calls per model "
+                        + "with their tokens, and the newest agent runs with each model call and tool call (name, "
+                        + "time, tokens, and at camel.aiObservability.level=full the question, the answer, tool "
+                        + "arguments and results). "
                         + "Then token usage, model IDs, guardrail outcomes, completion reasons and per-component "
                         + "latency of the AI components (Bedrock, LangChain4j, Docling, Textract, OpenAI, KServe, "
                         + "DJL, TensorFlow Serving, HuggingFace) from the message history and processor "
@@ -103,10 +100,11 @@ public class AiTraceTools {
             List<AiHeaderInfo> aiHeaders = extractAiHeaders(history);
             List<AiProcessorStat> aiProcessorStats = extractAiProcessorStats(topProcessors);
             AiTraceSummary summary = buildSummary(aiComponents, aiHeaders, aiProcessorStats);
-            List<SpanEntry> spans = loadSpans(ctx);
+            JsonObject genAi = loadGenAi(ctx, Map.of(
+                    "limit", String.valueOf(GenAiTraceReport.CONSOLE_LIMIT), "content", "true"));
 
             return new AiTraceResult(
-                    GenAiTraceReport.summary(spans, filter), GenAiTraceReport.genAi(spans, filter),
+                    GenAiTraceReport.summary(genAi, filter), GenAiTraceReport.genAi(genAi, filter),
                     p.name(), p.pid(),
                     aiComponents.isEmpty() ? null : aiComponents,
                     aiHeaders.isEmpty() ? null : aiHeaders,
@@ -134,32 +132,31 @@ public class AiTraceTools {
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
         ToolContext ctx = new ToolContext();
         ctx.selectProcess(p.pid());
-        List<SpanEntry> spans = loadSpans(ctx);
-        if (spans.isEmpty()) {
-            throw new ToolCallException(GenAiTraceReport.NO_SPANS, null);
+        JsonObject answer = loadGenAi(ctx, Map.of("id", runId));
+        if (!GenAiTraceReport.hasConsole(answer)) {
+            throw new ToolCallException(GenAiTraceReport.NO_CONSOLE, null);
         }
-        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(spans, runId);
+        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(answer, runId);
         if (conversation == null) {
             throw new ToolCallException(
-                    "No GenAI span with runId " + runId + ": camel_runtime_ai_trace lists the runIds of the newest "
-                                        + "agent runs, and older spans may have left the span dump.",
+                    "No GenAI call with runId " + runId + ": camel_runtime_ai_trace lists the runIds of the newest "
+                                        + "agent runs, and the console keeps the newest 50 runs only.",
                     null);
         }
         return conversation;
     }
 
     /**
-     * The spans of the span dump, or none when tracing is off or the dump cannot be read: the GenAI part of the trace
-     * then says how to turn it on. Not passed through {@link McpToolNames}, as the spans carry the messages of the
-     * models as they were.
+     * The answer of the genai dev console, or {@code null} when it cannot be read: the GenAI part of the trace then
+     * says how to turn it on. Not passed through {@link McpToolNames}, as it carries the messages of the models as they
+     * were.
      */
-    List<SpanEntry> loadSpans(ToolContext ctx) {
+    JsonObject loadGenAi(ToolContext ctx, Map<String, String> args) {
         try {
-            Object result = ToolRegistry.execute("get_spans", ctx, Map.of("limit", String.valueOf(SPAN_LIMIT)));
-            return GenAiTraceReport.spans(RuntimeTools.toJsonObject(result));
+            return RuntimeTools.toJsonObject(ToolRegistry.execute("get_genai", ctx, args));
         } catch (Exception e) {
-            LOG.debugf("The span dump cannot be read (%s): the trace shows no GenAI spans", e.getMessage());
-            return List.of();
+            LOG.debugf("The genai dev console cannot be read (%s): the trace shows no GenAI calls", e.getMessage());
+            return null;
         }
     }
 

@@ -17,239 +17,340 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.component.ai.observability.GenAiAttributes;
-import org.apache.camel.component.ai.observability.GenAiMessages;
-import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
+import org.apache.camel.dsl.jbang.core.commands.mcp.GenAiTraceReport.Conversation;
+import org.apache.camel.dsl.jbang.core.commands.mcp.GenAiTraceReport.GenAi;
+import org.apache.camel.dsl.jbang.core.commands.mcp.GenAiTraceReport.Message;
+import org.apache.camel.dsl.jbang.core.commands.mcp.GenAiTraceReport.Run;
+import org.apache.camel.dsl.jbang.core.commands.mcp.GenAiTraceReport.RunStep;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
+/**
+ * CAMEL-27312: the GenAI part of camel_runtime_ai_trace and camel_runtime_ai_conversation, from answers shaped as the
+ * genai dev console of camel-ai-observability gives them.
+ */
 class GenAiTraceReportTest {
-
-    private static final String QUESTION
-            = "Order ORD-1003 has a Camel cap in it: is the order paid, and is the cap in stock?";
 
     @Test
     void summaryComesFirstAndFitsInWhatAChatHistoryKeeps() {
-        String summary = GenAiTraceReport.summary(run("run1", 1000, true), "*");
+        String summary = GenAiTraceReport.summary(console("full", run("7", "support")), "*");
 
-        assertThat(summary).isEqualTo(
-                "GenAI level=full: 1 agent run, 2 model calls (granite4:3b), 2 tool calls; runs newest first. "
-                                      + "camel_runtime_ai_conversation with a runId shows the messages of a run.");
-        assertThat(summary.length()).isLessThan(400);
+        assertThat(summary).isEqualTo("GenAI level=full: 1 agent run, 2 model calls (granite4:3b), 1 tool call; "
+                                      + "runs newest first. camel_runtime_ai_conversation with a runId shows the "
+                                      + "messages of a run.");
+        assertThat(summary.length()).isLessThan(300);
     }
 
     @Test
     void agentRunHasItsQuestionAndItsStepsInOrder() {
-        List<SpanEntry> spans = run("run1", 1000, true);
-
-        GenAiTraceReport.GenAi genAi = GenAiTraceReport.genAi(spans, null);
+        GenAi genAi = GenAiTraceReport.genAi(console("full", run("7", "support")), "*");
 
         assertThat(genAi.level()).isEqualTo("full");
-        assertThat(genAi.modelCalls()).singleElement().satisfies(m -> {
-            assertThat(m.model()).isEqualTo("granite4:3b");
-            assertThat(m.calls()).isEqualTo(2);
-            assertThat(m.inputTokens()).isEqualTo(694);
-            assertThat(m.cachedTokens()).isEqualTo(585);
-            assertThat(m.finishReasons()).isEqualTo("tool_calls,stop");
+        assertThat(genAi.modelCalls()).singleElement().satisfies(model -> {
+            assertThat(model.model()).isEqualTo("granite4:3b");
+            assertThat(model.calls()).isEqualTo(2);
+            assertThat(model.cachedTokens()).isEqualTo(270);
+            assertThat(model.avgMs()).isEqualTo(130);
+            assertThat(model.failed()).isNull();
         });
-        GenAiTraceReport.Run run = genAi.agentRuns().get(0);
-        assertThat(run.runId()).isEqualTo("run1");
-        assertThat(run.question()).isEqualTo(QUESTION);
-        assertThat(run.exchangeId()).isEqualTo("EX-run1");
-        assertThat(run.routeId()).isEqualTo("customer-questions");
-        assertThat(run.steps()).extracting(GenAiTraceReport.RunStep::step)
-                .containsExactly("model call", "tool call", "tool call", "model call");
-        assertThat(run.steps().get(1)).satisfies(step -> {
-            assertThat(step.name()).isEqualTo("order_status");
-            assertThat(step.arguments()).isEqualTo("{\"orderId\":\"ORD-1003\"}");
-            assertThat(step.result()).isEqualTo("Order ORD-1003 for customer C-134 in US is pending with 3 line(s)");
-            assertThat(step.inputTokens()).isNull();
-        });
+        Run run = genAi.agentRuns().get(0);
+        assertThat(run.runId()).isEqualTo("7");
+        assertThat(run.question()).isEqualTo("Is the Camel cap in stock?");
+        assertThat(run.answer()).isEqualTo("No, it is sold out.");
+        assertThat(run.agent()).isEqualTo("support");
+        assertThat(run.start()).isEqualTo("2026-11-21T10:00:00Z");
+        assertThat(run.running()).isNull();
+        assertThat(run.inputTokens()).isEqualTo(700);
+        assertThat(run.cachedTokens()).isEqualTo(270);
+        assertThat(run.steps()).extracting(RunStep::step).containsExactly("model call", "tool call", "model call");
+        RunStep tool = run.steps().get(1);
+        assertThat(tool.name()).isEqualTo("execute_tool lookupStock");
+        assertThat(tool.arguments()).isEqualTo("{\"sku\":\"CAMEL-CAP\"}");
+        assertThat(tool.result()).hasSize(GenAiTraceReport.MAX_STEP_TEXT).endsWith("...");
+        assertThat(run.steps().get(0).finishReason()).isEqualTo("tool_calls");
+        assertThat(run.steps().get(2).cachedTokens()).isNull();
         assertThat(genAi.moreRuns()).isNull();
     }
 
     @Test
     void newestFiveRunsAreShown() {
-        List<SpanEntry> spans = new ArrayList<>();
-        for (int i = 1; i <= 7; i++) {
-            spans.addAll(run("run" + i, i * 10_000, false));
+        JsonObject[] runs = new JsonObject[7];
+        for (int i = 0; i < runs.length; i++) {
+            runs[i] = detailed(run(String.valueOf(100 - i), "support"));
         }
 
-        GenAiTraceReport.GenAi genAi = GenAiTraceReport.genAi(spans, "*");
+        GenAi genAi = GenAiTraceReport.genAi(console("detailed", runs), "*");
 
-        assertThat(genAi.level()).isEqualTo("detailed");
-        assertThat(genAi.agentRuns()).extracting(GenAiTraceReport.Run::runId)
-                .containsExactly("run7", "run6", "run5", "run4", "run3");
+        assertThat(genAi.agentRuns()).extracting(Run::runId).containsExactly("100", "99", "98", "97", "96");
         assertThat(genAi.moreRuns()).isEqualTo("+2 more runs");
-        // level detailed records no messages: no question, no tool arguments
+        // at level detailed the console records no content: no question, no answer, no tool arguments or results
+        assertThat(genAi.level()).isEqualTo("detailed");
         assertThat(genAi.agentRuns().get(0).question()).isNull();
+        assertThat(genAi.agentRuns().get(0).answer()).isNull();
         assertThat(genAi.agentRuns().get(0).steps().get(1).arguments()).isNull();
-        assertThat(GenAiTraceReport.summary(spans, "*"))
-                .startsWith("GenAI level=detailed: 7 agent runs, 14 model calls (granite4:3b), 14 tool calls")
-                .endsWith("The messages need camel.aiObservability.level=full.");
+        assertThat(genAi.agentRuns().get(0).steps().get(1).result()).isNull();
     }
 
     @Test
-    void summarySaysWhatToDoAtLevelBasicOrWithoutSpans() {
-        SpanEntry chat = span("chat", null, "orders", 0, 100,
-                attrs("chat", GenAiAttributes.SYSTEM, "openai", GenAiAttributes.REQUEST_MODEL, "gpt-4.1"));
+    void summarySaysWhatToDoAtLevelBasicOrWithoutTheConsole() {
+        JsonObject basic = console("basic");
+        basic.put("modelCalls", 3L);
+        assertThat(GenAiTraceReport.summary(basic, "*")).isEqualTo(
+                "GenAI level=basic: 3 model calls (granite4:3b). Agent runs and tool calls are not traced: set "
+                                                                   + "camel.aiObservability.level=detailed.");
 
-        assertThat(GenAiTraceReport.summary(List.of(chat), "*"))
-                .isEqualTo("GenAI level=basic: 1 model call (gpt-4.1). Agent runs and tool calls are not traced: "
-                           + "set camel.aiObservability.level=detailed.");
-        assertThat(GenAiTraceReport.summary(List.of(), "*")).isEqualTo(GenAiTraceReport.NO_SPANS);
-        assertThat(GenAiTraceReport.genAi(List.of(), "*")).isNull();
+        JsonObject absent = new JsonObject(Map.of("enabled", false));
+        assertThat(GenAiTraceReport.summary(absent, "*")).isEqualTo(GenAiTraceReport.NO_CONSOLE);
+        assertThat(GenAiTraceReport.summary(null, "*")).isEqualTo(GenAiTraceReport.NO_CONSOLE);
+        assertThat(GenAiTraceReport.genAi(absent, "*")).isNull();
+
+        JsonObject off = console("detailed");
+        off.put("recording", false);
+        off.put("modelCalls", 0L);
+        off.put("agentRuns", 0L);
+        assertThat(GenAiTraceReport.summary(off, "*")).isEqualTo(GenAiTraceReport.NOT_RECORDING);
+        assertThat(GenAiTraceReport.genAi(off, "*")).isNull();
     }
 
     @Test
     void routeFilterKeepsTheRunsOfThatRoute() {
-        assertThat(GenAiTraceReport.genAi(run("run1", 1000, true), "other-route").agentRuns()).isNull();
-        assertThat(GenAiTraceReport.genAi(run("run1", 1000, true), "customer-questions").agentRuns()).hasSize(1);
-    }
+        JsonObject console = console("detailed", run("9", "billing"), run("8", "support"));
 
-    @Test
-    void spansAreReadFromTheDump() {
-        JsonObject span = new JsonObject();
-        span.put("traceId", "t1");
-        span.put("spanId", "s1");
-        span.put("name", "chat");
-        JsonObject attributes = new JsonObject();
-        attributes.put(GenAiAttributes.OPERATION_NAME, "chat");
-        span.put("attributes", attributes);
-        JsonObject dump = new JsonObject();
-        dump.put("enabled", true);
-        dump.put("spans", new JsonArray(List.of(span)));
-
-        assertThat(GenAiTraceReport.spans(dump)).singleElement()
-                .satisfies(s -> assertThat(s.attributes()).containsEntry(GenAiAttributes.OPERATION_NAME, "chat"));
-        dump.put("enabled", false);
-        assertThat(GenAiTraceReport.spans(dump)).isEmpty();
-        assertThat(GenAiTraceReport.spans(null)).isEmpty();
+        assertThat(GenAiTraceReport.genAi(console, "support").agentRuns()).extracting(Run::runId).containsExactly("8");
+        assertThat(GenAiTraceReport.summary(console, "support"))
+                .contains("(all routes; the runs below are of route support)");
     }
 
     @Test
     void conversationListsTheMessagesOfTheRunInOrder() {
-        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(run("run1", 1000, true), "run1");
+        Conversation conversation = GenAiTraceReport.conversation(answer(run("7", "support")), "7");
 
         assertThat(conversation.level()).isEqualTo("full");
-        assertThat(conversation.summary()).startsWith("GenAI level=full: 7 message parts of run run1.");
-        assertThat(conversation.messages())
-                .extracting(m -> m.role() + ":" + m.type() + (m.tool() != null ? ":" + m.tool() : ""))
-                .containsExactly("system:text", "user:text", "assistant:tool call:order_status",
-                        "assistant:tool call:stock_level", "tool:tool result:order_status",
-                        "tool:tool result:stock_level", "assistant:text");
-        assertThat(conversation.messages().get(6).text())
-                .isEqualTo("Your order ORD-1003 is still pending and the Camel cap is currently out of stock.");
-        assertThat(conversation.cut()).isNull();
+        assertThat(conversation.agent()).isEqualTo("support");
+        assertThat(conversation.messages()).extracting(Message::role, Message::type).containsExactly(
+                tuple("system", "text"), tuple("user", "text"), tuple("assistant", "tool call"),
+                tuple("tool", "tool result"), tuple("assistant", "text"));
+        assertThat(conversation.messages().get(2).tool()).isEqualTo("lookupStock");
+        assertThat(conversation.messages().get(2).text()).isEqualTo("{\"sku\":\"CAMEL-CAP\"}");
+        assertThat(conversation.messages().get(4).finishReason()).isEqualTo("stop");
+        assertThat(conversation.summary()).startsWith("GenAI level=full: 5 message parts of run 7.");
+    }
+
+    @Test
+    void conversationOfARunWithItsInputOnTheRun() {
+        // as camel-openai records it: the input of the run on the run itself
+        JsonObject run = run("7", "support");
+        content(run).put("inputMessages", messages(
+                message("system", text("You answer the customers.")), message("user", text("Where is my order?"))));
+        content(steps(run).get(0)).remove("inputMessages");
+
+        Conversation conversation = GenAiTraceReport.conversation(answer(run), "7");
+
+        assertThat(conversation.messages()).extracting(Message::text)
+                .startsWith("You answer the customers.", "Where is my order?");
+    }
+
+    @Test
+    void conversationTakesTheAnswerOfTheRunWhenItsModelCallsHaveNone() {
+        // the answer recorded on the agent run, not on its model calls
+        JsonObject run = run("7", "support");
+        List<JsonObject> steps = steps(run);
+        content(steps.get(0)).remove("outputMessages");
+        content(steps.get(2)).remove("outputMessages");
+        content(run).put("outputMessages", messages(message("assistant", text("No, it is sold out."))));
+
+        Conversation conversation = GenAiTraceReport.conversation(answer(run), "7");
+
+        assertThat(conversation.messages()).extracting(Message::role, Message::type).containsExactly(
+                tuple("system", "text"), tuple("user", "text"), tuple("tool", "tool result"),
+                tuple("assistant", "text"));
+        assertThat(conversation.messages().get(3).text()).isEqualTo("No, it is sold out.");
     }
 
     @Test
     void conversationIsCapped() {
-        String longAnswer = "x".repeat(GenAiTraceReport.MAX_MESSAGE * 2);
-        List<SpanEntry> spans = new ArrayList<>();
-        SpanEntry agent = span("run1", "route1", "customer-questions", 0, 1000,
-                attrs("invoke_agent", GenAiAttributes.REQUEST_MODEL, "granite4:3b"));
-        GenAiMessages input = new GenAiMessages();
+        JsonObject run = run("7", "support");
+        JsonArray output = new JsonArray();
         for (int i = 0; i < 10; i++) {
-            input.text(GenAiMessages.USER, "question " + i + " " + longAnswer);
+            output.add(message("assistant", text("x".repeat(2000))));
         }
-        spans.add(agent);
-        spans.add(span("chat1", "run1", "customer-questions", 10, 100,
-                attrs("chat", GenAiAttributes.REQUEST_MODEL, "granite4:3b",
-                        GenAiAttributes.INPUT_MESSAGES, input.toJson(8192))));
+        content(steps(run).get(2)).put("outputMessages", output);
 
-        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(spans, "run1");
+        Conversation conversation = GenAiTraceReport.conversation(answer(run), "7");
 
-        assertThat(conversation.messages()).allSatisfy(m -> assertThat(m.text().length())
-                .isLessThanOrEqualTo(GenAiTraceReport.MAX_MESSAGE));
-        assertThat(conversation.messages().stream().mapToInt(m -> m.text().length()).sum())
-                .isLessThanOrEqualTo(GenAiTraceReport.MAX_CONVERSATION);
-        assertThat(conversation.messages().get(0).text()).endsWith("...");
+        int total = conversation.messages().stream().mapToInt(m -> m.text() != null ? m.text().length() : 0).sum();
+        assertThat(total).isLessThanOrEqualTo(GenAiTraceReport.MAX_CONVERSATION);
+        assertThat(conversation.messages())
+                .allSatisfy(m -> assertThat(m.text()).hasSizeLessThanOrEqualTo(GenAiTraceReport.MAX_MESSAGE));
         assertThat(conversation.cut()).isEqualTo("4 more message parts not shown (6000 characters in all)");
     }
 
     @Test
     void conversationOfARunWithoutMessagesSaysTheLevel() {
-        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(run("run1", 1000, false), "run1");
+        JsonObject run = run("7", "support");
+        run.remove("content");
+        steps(run).forEach(step -> step.remove("content"));
+        JsonObject answer = answer(run);
+        answer.put("level", "detailed");
+
+        Conversation conversation = GenAiTraceReport.conversation(answer, "7");
 
         assertThat(conversation.messages()).isNull();
-        assertThat(conversation.summary()).isEqualTo("GenAI level=detailed: no messages for run run1. "
-                                                     + "The messages are recorded at camel.aiObservability.level=full only.");
-        assertThat(GenAiTraceReport.conversation(run("run1", 1000, false), "nope")).isNull();
+        assertThat(conversation.summary()).isEqualTo("GenAI level=detailed: no messages for run 7. The messages are "
+                                                     + "recorded at camel.aiObservability.level=full only.");
+        assertThat(GenAiTraceReport.conversation(new JsonObject(Map.of("level", "full", "error", "No call")), "1"))
+                .isNull();
     }
 
-    /**
-     * The agent run of question 3 of the ai/agent-tools example: a route span, the agent run, a model call asking for
-     * two tools, the two tool calls, and the model call that answers. {@code full} adds the messages.
-     */
-    private static List<SpanEntry> run(String id, long startMs, boolean full) {
-        List<SpanEntry> spans = new ArrayList<>();
-        spans.add(new SpanEntry(
-                "trace-" + id, "route-" + id, null, "file://questions", "INTERNAL", "OK",
-                startMs * 1_000_000L, (startMs + 1010) * 1_000_000L, 1010, "customer-questions", null, "camel",
-                Map.of("exchangeId", "EX-" + id)));
-        spans.add(span(id, "route-" + id, "customer-questions", startMs + 2, 1002,
-                attrs("invoke_agent", GenAiAttributes.AGENT_NAME, "customer-questions",
-                        GenAiAttributes.REQUEST_MODEL, "granite4:3b", GenAiAttributes.PROVIDER_NAME, "openai")));
-        Map<String, Object> chat1 = attrs("chat", GenAiAttributes.REQUEST_MODEL, "granite4:3b",
-                GenAiAttributes.PROVIDER_NAME, "openai", GenAiAttributes.FINISH_REASONS, "tool_calls");
-        chat1.put(GenAiAttributes.INPUT_TOKENS, 300L);
-        chat1.put(GenAiAttributes.OUTPUT_TOKENS, 47L);
-        chat1.put(GenAiAttributes.CACHE_READ_INPUT_TOKENS, 271L);
-        Map<String, Object> chat2 = attrs("chat", GenAiAttributes.REQUEST_MODEL, "granite4:3b",
-                GenAiAttributes.PROVIDER_NAME, "openai", GenAiAttributes.FINISH_REASONS, "stop");
-        chat2.put(GenAiAttributes.INPUT_TOKENS, 394L);
-        chat2.put(GenAiAttributes.OUTPUT_TOKENS, 20L);
-        chat2.put(GenAiAttributes.CACHE_READ_INPUT_TOKENS, 314L);
-        Map<String, Object> tool1 = attrs("execute_tool", GenAiAttributes.TOOL_NAME, "order_status");
-        Map<String, Object> tool2 = attrs("execute_tool", GenAiAttributes.TOOL_NAME, "stock_level");
-        if (full) {
-            chat2.put(GenAiAttributes.INPUT_MESSAGES, new GenAiMessages()
-                    .text(GenAiMessages.SYSTEM, "You answer the customers of a web shop.")
-                    .text(GenAiMessages.USER, QUESTION)
-                    .text(GenAiMessages.ASSISTANT, null)
-                    .toolCall("c1", "order_status", "{\"orderId\":\"ORD-1003\"}")
-                    .toolCall("c2", "stock_level", "{\"sku\":\"CAMEL-CAP\"}")
-                    .toolResult("c1", "Order ORD-1003 for customer C-134 in US is pending with 3 line(s)")
-                    .toolResult("c2", "0 CAMEL-CAP in stock")
-                    .toJson(8192));
-            chat2.put(GenAiAttributes.OUTPUT_MESSAGES, new GenAiMessages()
-                    .text(GenAiMessages.ASSISTANT,
-                            "Your order ORD-1003 is still pending and the Camel cap is currently out of stock.")
-                    .finishReason("stop")
-                    .toJson(8192));
-            tool1.put(GenAiAttributes.TOOL_CALL_ARGUMENTS, "{\"orderId\":\"ORD-1003\"}");
-            tool1.put(GenAiAttributes.TOOL_CALL_RESULT, "Order ORD-1003 for customer C-134 in US is pending with 3 line(s)");
-            tool2.put(GenAiAttributes.TOOL_CALL_ARGUMENTS, "{\"sku\":\"CAMEL-CAP\"}");
-            tool2.put(GenAiAttributes.TOOL_CALL_RESULT, "0 CAMEL-CAP in stock");
+    @Test
+    void theAnswerOfTheConsoleIsReadAsTheGenAiActionWritesIt() throws Exception {
+        // the action output file is JSON text, read back into maps and lists
+        JsonObject console = (JsonObject) Jsoner.deserialize(console("full", run("7", "support")).toJson());
+        JsonObject answer = (JsonObject) Jsoner.deserialize(answer(run("7", "support")).toJson());
+
+        assertThat(GenAiTraceReport.genAi(console, "*").agentRuns().get(0).steps()).hasSize(3);
+        assertThat(GenAiTraceReport.conversation(answer, "7").messages()).hasSize(5);
+    }
+
+    // ---- the answers of the genai console ----
+
+    private static JsonObject console(String level, JsonObject... calls) {
+        JsonObject console = new JsonObject();
+        console.put("recording", true);
+        console.put("level", level);
+        console.put("modelCalls", 2L * calls.length);
+        console.put("agentRuns", (long) calls.length);
+        console.put("toolCalls", (long) calls.length);
+        console.put("errors", 0L);
+        JsonObject model = new JsonObject();
+        model.put("provider", "ollama");
+        model.put("model", "granite4:3b");
+        model.put("calls", 2L);
+        model.put("errors", 0L);
+        model.put("inputTokens", 700L);
+        model.put("outputTokens", 60L);
+        model.put("cachedInputTokens", 270L);
+        model.put("durationMs", 260L);
+        console.put("models", new JsonArray(List.of(model)));
+        console.put("calls", new JsonArray(List.of((Object[]) calls)));
+        console.put("moreCalls", 0L);
+        return console;
+    }
+
+    private static JsonObject answer(JsonObject call) {
+        JsonObject answer = new JsonObject();
+        answer.put("level", "full");
+        answer.put("call", call);
+        return answer;
+    }
+
+    private static JsonObject run(String id, String routeId) {
+        JsonObject run = call(id, null, "invoke_agent", "invoke_agent support", 300);
+        run.put("agentName", "support");
+        run.put("model", "granite4:3b");
+        run.put("routeId", routeId);
+        run.put("exchangeId", "EX-" + id);
+        run.put("timestamp", 1795255200000L);
+        run.put("modelCalls", 2);
+        run.put("toolCalls", 1);
+        run.put("inputTokens", 700L);
+        run.put("outputTokens", 60L);
+        run.put("cachedInputTokens", 270L);
+        run.put("question", "Is the Camel cap in stock?");
+        run.put("answer", "No, it is sold out.");
+
+        JsonObject first = call(id + "1", id, "chat", "chat granite4:3b", 120);
+        first.put("inputTokens", 300L);
+        first.put("cachedInputTokens", 270L);
+        first.put("finishReason", "tool_calls");
+        content(first).put("systemInstructions", new JsonArray(List.of(text("You answer the customers."))));
+        content(first).put("inputMessages", messages(message("user", text("Is the Camel cap in stock?"))));
+        JsonObject toolCall = new JsonObject();
+        toolCall.put("type", "tool_call");
+        toolCall.put("name", "lookupStock");
+        toolCall.put("arguments", new JsonObject(Map.of("sku", "CAMEL-CAP")));
+        // a model gives an empty text beside its tool calls
+        JsonObject toolCallMessage = message("assistant", text(""));
+        JsonArray parts = toolCallMessage.getCollection("parts");
+        parts.add(toolCall);
+        content(first).put("outputMessages", messages(toolCallMessage));
+
+        JsonObject tool = call(id + "2", id, "execute_tool", "execute_tool lookupStock", 5);
+        tool.put("toolName", "lookupStock");
+        content(tool).put("toolArguments", "{\"sku\":\"CAMEL-CAP\"}");
+        content(tool).put("toolResult", "0 CAMEL-CAP in stock " + "x".repeat(300));
+
+        JsonObject second = call(id + "3", id, "chat", "chat granite4:3b", 140);
+        second.put("inputTokens", 400L);
+        second.put("finishReason", "stop");
+        JsonObject reply = message("assistant", text("No, it is sold out."));
+        reply.put("finish_reason", "stop");
+        content(second).put("inputMessages", messages(message("user", text("Is the Camel cap in stock?"))));
+        content(second).put("outputMessages", messages(reply));
+
+        run.put("steps", new JsonArray(List.of(first, tool, second)));
+        return run;
+    }
+
+    /** A run as the console answers at level detailed: without its question, answer and content. */
+    private static JsonObject detailed(JsonObject run) {
+        run.remove("question");
+        run.remove("answer");
+        run.remove("content");
+        steps(run).forEach(step -> step.remove("content"));
+        return run;
+    }
+
+    private static JsonObject call(String id, String parentId, String operation, String name, long ms) {
+        JsonObject call = new JsonObject();
+        call.put("id", id);
+        if (parentId != null) {
+            call.put("parentId", parentId);
         }
-        spans.add(span(id + "-chat1", id, "customer-questions", startMs + 3, 615, chat1));
-        spans.add(span(id + "-tool1", id, "customer-questions", startMs + 620, 4, tool1));
-        spans.add(span(id + "-tool2", id, "customer-questions", startMs + 625, 2, tool2));
-        spans.add(span(id + "-chat2", id, "customer-questions", startMs + 630, 378, chat2));
-        return spans;
+        call.put("operation", operation);
+        call.put("name", name);
+        call.put("running", false);
+        call.put("durationMs", ms);
+        call.put("content", new JsonObject());
+        return call;
     }
 
-    private static Map<String, Object> attrs(String operation, String... keyValues) {
-        Map<String, Object> attrs = new HashMap<>();
-        attrs.put(GenAiAttributes.OPERATION_NAME, operation);
-        for (int i = 0; i < keyValues.length; i += 2) {
-            attrs.put(keyValues[i], keyValues[i + 1]);
+    private static List<JsonObject> steps(JsonObject run) {
+        List<JsonObject> steps = new ArrayList<>();
+        JsonArray array = run.getCollection("steps");
+        for (Object step : array) {
+            steps.add((JsonObject) step);
         }
-        return attrs;
+        return steps;
     }
 
-    private static SpanEntry span(
-            String spanId, String parentSpanId, String routeId, long startMs, long ms, Map<String, Object> attributes) {
-        return new SpanEntry(
-                "trace-1", spanId, parentSpanId, spanId, "INTERNAL", "OK", startMs * 1_000_000L,
-                (startMs + ms) * 1_000_000L, ms, routeId, null, "camel", attributes);
+    private static JsonObject content(JsonObject call) {
+        return call.getMap("content");
+    }
+
+    private static JsonArray messages(JsonObject... messages) {
+        return new JsonArray(List.of((Object[]) messages));
+    }
+
+    private static JsonObject message(String role, JsonObject part) {
+        JsonObject message = new JsonObject();
+        message.put("role", role);
+        message.put("parts", new JsonArray(List.of(part)));
+        return message;
+    }
+
+    private static JsonObject text(String text) {
+        JsonObject part = new JsonObject();
+        part.put("type", "text");
+        part.put("content", text);
+        return part;
     }
 }
