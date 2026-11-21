@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
+import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.dsl.jbang.core.common.OsvProxy;
 
 /**
  * User-facing preferences for the Camel TUI, persisted under {@code camel.tui.*} keys in the CLI user configuration
@@ -363,10 +363,16 @@ final class TuiSettings {
         }
     }
 
+    // the proxy of the Maven settings or of HTTPS_PROXY, looked up once: reading the settings builds a resolver session
+    private static HttpProxy fallbackProxy;
+    private static boolean fallbackResolved;
+
     /**
-     * Returns a {@link ProxySelector} based on the configured proxy settings, falling back to the JVM default.
+     * The proxy to reach the internet through (OSV.dev of the CVE Audit screen, the documentation): the Proxy Host and
+     * Proxy Port of the settings, else the active proxy of the Maven settings ({@code ~/.m2/settings.xml}, with its
+     * username and password), else {@code HTTPS_PROXY}; null for the proxy settings of the JVM.
      */
-    static ProxySelector proxySelector() {
+    static HttpProxy httpProxy() {
         TuiSettings s = load();
         String host = s.getProxyHost();
         if (host != null && !host.isEmpty()) {
@@ -379,9 +385,17 @@ final class TuiSettings {
                     // use default port
                 }
             }
-            return ProxySelector.of(new InetSocketAddress(host, port));
+            return new HttpProxy(host, port);
         }
-        return ProxySelector.getDefault();
+        return fallbackProxy();
+    }
+
+    private static synchronized HttpProxy fallbackProxy() {
+        if (!fallbackResolved) {
+            fallbackProxy = OsvProxy.resolve(null, null, System.getenv());
+            fallbackResolved = true;
+        }
+        return fallbackProxy;
     }
 
     private static String trimToNull(String value) {
