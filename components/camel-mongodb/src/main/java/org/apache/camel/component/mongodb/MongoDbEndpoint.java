@@ -1142,10 +1142,19 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
         if (readPreference == null) {
             return ReadPreference.primary();
         }
+        return toReadPreference(readPreference);
+    }
+
+    /**
+     * The read preference of a readPreference value: PRIMARY, PRIMARY_PREFERRED, SECONDARY, SECONDARY_PREFERRED,
+     * NEAREST, or a driver name such as secondaryPreferred.
+     *
+     * @throws IllegalArgumentException if the value is unknown
+     */
+    static ReadPreference toReadPreference(String name) {
         // PRIMARY_PREFERRED and SECONDARY_PREFERRED are the documented values, the driver knows them without the
         // underscore (primaryPreferred, secondaryPreferred), case-insensitive
-        // will throw an IllegalArgumentException if the input is incorrect
-        return ReadPreference.valueOf(readPreference.replace("_", ""));
+        return ReadPreference.valueOf(name.replace("_", ""));
     }
 
     public String getUsername() {
