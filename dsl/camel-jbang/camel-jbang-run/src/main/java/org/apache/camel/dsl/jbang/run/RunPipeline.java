@@ -533,6 +533,9 @@ public class RunPipeline {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
+            // every transform run names its context transform: two at the same time in one JVM (such as the MCP
+            // server) would register the same JMX names, and it only dumps the routes to files
+            main.addInitialProperty("camel.main.jmxEnabled", "false");
         } else if (request.transformMessageRun) {
             // do not start any routes
             main.addInitialProperty("camel.main.autoStartup", "false");
