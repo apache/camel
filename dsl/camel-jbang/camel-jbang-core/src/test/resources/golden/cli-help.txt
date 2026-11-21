@@ -2405,6 +2405,7 @@ Usage: camel dependency audit [-hy] [--integration=<integration>]
                                [--by-artifact] [--json] [--severity=<severity>]
                                [--fail-on=<fail-on>] [--offline]
                                [--fail-on-error] [--osv-database]
+                               [--advisories-url=<advisories-url>]
                                [--osv-database-url=<osv-database-url>]
                                [--output=<output>] [--dep=<dep>]
                                [--runtime=<runtime>] [--name=<name>]
@@ -2460,7 +2461,8 @@ Options:
                             none
                             Default: low
       --offline             Checks the Apache Camel security advisories of the
-                            catalog only, without OSV.dev
+                            catalog only, without OSV.dev and without checking
+                            the advisories online
       --fail-on-error       Exits 1 when the dependencies could not be checked
                             with OSV.dev or the OSV database (not reachable, no
                             database), instead of checking the Apache Camel
@@ -2470,6 +2472,14 @@ Options:
                             vulnerabilities of OSV.dev, downloaded once a day
                             and matched locally, so no coordinates of the
                             project leave the machine
+      --advisories-url=<advisories-url>
+                            Where the Apache Camel security advisories are
+                            checked online, once a day, and merged with those of
+                            the catalog: the GitHub contents API of
+                            camel-website (default:
+                            https://api.github.com/repos/apache/camel-website/contents/content/security),
+                            a mirror of it, or the URL or file of a JSON array
+                            in the format of the catalog
       --osv-database-url=<osv-database-url>
                             Where the offline OSV database is downloaded from,
                             such as a mirror on the repository manager of the
