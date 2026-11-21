@@ -40,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -645,10 +647,10 @@ final class OllamaMonitor {
         synchronized (lock) {
             for (SpanEntry span : spans) {
                 // agent runs and tool calls are not requests to Ollama (observability level detailed)
-                if (!GenAiSpanUsageExtractor.isModelCall(span) || span.spanId() == null) {
+                if (!GenAiSpans.isModelCall(span) || span.spanId() == null) {
                     continue;
                 }
-                String system = GenAiSpanUsageExtractor.provider(span.attributes());
+                String system = GenAiSpans.provider(span.attributes());
                 if (system == null || !system.toLowerCase(Locale.ROOT).contains("ollama")) {
                     continue;
                 }

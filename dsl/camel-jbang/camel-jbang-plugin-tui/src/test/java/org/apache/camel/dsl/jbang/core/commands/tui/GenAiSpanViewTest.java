@@ -26,8 +26,10 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiSpanView.AgentRun;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiSpanView.Step;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns.AgentRun;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiAgentRuns.Step;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +74,7 @@ class GenAiSpanViewTest {
 
     @Test
     void agentRunHasItsStepsInOrder() {
-        AgentRun run = GenAiSpanView.agentRun(agent(), trace());
+        AgentRun run = GenAiAgentRuns.agentRun(agent(), trace());
 
         assertThat(run.agentName()).isEqualTo("support-agent");
         assertThat(run.model()).isEqualTo("llama3.2");
@@ -96,13 +98,13 @@ class GenAiSpanViewTest {
         spans.add(inner);
         spans.add(innerChat);
 
-        assertThat(GenAiSpanView.agentRun(agent(), spans).steps()).hasSize(3);
-        assertThat(GenAiSpanView.agentRun(inner, spans).steps()).extracting(Step::span).containsExactly(innerChat);
+        assertThat(GenAiAgentRuns.agentRun(agent(), spans).steps()).hasSize(3);
+        assertThat(GenAiAgentRuns.agentRun(inner, spans).steps()).extracting(Step::span).containsExactly(innerChat);
     }
 
     @Test
     void agentRunLinesShowStepsTokensAndTime() {
-        String text = text(GenAiSpanView.agentRunLines(GenAiSpanView.agentRun(agent(), trace())));
+        String text = text(GenAiSpanView.agentRunLines(GenAiAgentRuns.agentRun(agent(), trace())));
 
         assertThat(text)
                 .contains("Agent:  support-agent  Model: llama3.2 (openai)  Conversation id: conv-1")

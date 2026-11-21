@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -38,6 +39,9 @@ import org.apache.camel.spi.annotations.DslArg;
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
+
+    @XmlTransient
+    private boolean routeScoped = true;
 
     @XmlAttribute(required = true)
     @DslArg
@@ -61,6 +65,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     protected InterceptSendToEndpointDefinition(InterceptSendToEndpointDefinition source) {
         super(source);
+        this.routeScoped = source.routeScoped;
         this.uri = source.uri;
         this.skipSendToOriginalEndpoint = source.skipSendToOriginalEndpoint;
         this.afterUri = source.afterUri;
@@ -74,6 +79,14 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @Override
     public InterceptSendToEndpointDefinition copyDefinition() {
         return new InterceptSendToEndpointDefinition(this);
+    }
+
+    public boolean isRouteScoped() {
+        return routeScoped;
+    }
+
+    public void setRouteScoped(boolean routeScoped) {
+        this.routeScoped = routeScoped;
     }
 
     @Override

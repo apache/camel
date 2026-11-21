@@ -458,6 +458,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionBrowseTask(root);
             } else if ("span".equals(action)) {
                 doActionSpanTask(root);
+            } else if ("genai".equals(action)) {
+                doActionGenAiTask(root);
             } else if ("receive".equals(action)) {
                 doActionReceiveTask(root);
             } else if ("readme".equals(action)) {
@@ -1247,6 +1249,26 @@ public class LocalCliConnector extends ServiceSupport
             }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             writeOutput(json);
+        } else {
+            JsonObject json = new JsonObject();
+            json.put("enabled", false);
+            writeOutput(json);
+        }
+    }
+
+    private void doActionGenAiTask(JsonObject root) throws IOException {
+        // the genai console of camel-ai-observability: the GenAI calls, recorded without a tracer
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("genai");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            for (String key : new String[] { "limit", "id", "content" }) {
+                String value = root.getString(key);
+                if (value != null) {
+                    params.put(key, value);
+                }
+            }
+            writeOutput((JsonObject) dc.call(DevConsole.MediaType.JSON, params));
         } else {
             JsonObject json = new JsonObject();
             json.put("enabled", false);

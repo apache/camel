@@ -197,6 +197,77 @@ messages.
 * Session and user ids set as OpenTelemetry baggage (for example through `CamelBaggage_` exchange properties) are sent
 to every downstream service that propagates baggage, including the LLM provider when its HTTP client is instrumented.
 
+== GenAI dev console
+
+The `genai` dev console shows the GenAI calls of the running application, without a tracer or a metrics backend:
+
+* the totals since start: the model calls per provider and model (calls, failed calls, input, output and cached input
+tokens, time), the agent runs and the tool calls
+* the newest top-level calls (agent runs, and model calls outside a run), newest first, each agent run with its model
+calls and tool calls in the order they started
+* the observability level in use
+
+The calls are recorded while the dev console is enabled (`camel.main.devConsoleEnabled=true`), which the dev profile
+does (for example with `camel run`). Without it nothing is recorded, as in production by default. The console keeps the
+newest 50 top-level calls, and 200 steps per call. Agent runs and tool calls are only there from level `detailed`, as
+the producers observe them from that level.
+
+[width="100%",cols="15%,15%,70%",options="header"]
+|===
+| Option | Default | Description
+| `limit` | 20 | The number of the newest top-level calls to list.
+| `content` | `false` | Whether to add the message content to the listed calls, with the first user message
+(`question`) and the last assistant message (`answer`) of each run.
+| `id` | | The id of one call (an agent run, a model call or a tool call) to answer with, with its content.
+|===
+
+The content (`systemInstructions`, `toolDefinitions`, `inputMessages`, `outputMessages`, `toolArguments` and
+`toolResult`) is only recorded at level `full`, capped at `camel.aiObservability.contentMaxLength` as on the spans, and
+only in the answer when asked with `content` or `id`. The messages are in the GenAI messages format of the spans.
+
+Over HTTP the console is on the management server (`camel run --console`), as text or as JSON:
+
+[source,bash]
+----
+curl http://localhost:8080/q/dev/genai
+curl -H 'Accept: application/json' 'http://localhost:8080/q/dev/genai?id=7'
+----
+
+An agent run in the JSON answer, shortened:
+
+[source,json]
+----
+{
+  "id": "7",
+  "operation": "invoke_agent",
+  "name": "invoke_agent support",
+  "agentName": "support",
+  "provider": "ollama",
+  "model": "granite4:3b",
+  "routeId": "support",
+  "running": false,
+  "durationMs": 2310,
+  "modelCalls": 2,
+  "toolCalls": 1,
+  "inputTokens": 700,
+  "outputTokens": 60,
+  "cachedInputTokens": 270,
+  "modelMs": 2240,
+  "toolMs": 5,
+  "steps": [
+    { "id": "8", "parentId": "7", "operation": "chat", "name": "chat granite4:3b", "durationMs": 1180,
+      "inputTokens": 300, "outputTokens": 40, "cachedInputTokens": 270, "finishReason": "tool_calls" },
+    { "id": "9", "parentId": "7", "operation": "execute_tool", "name": "execute_tool lookupStock", "toolName": "lookupStock",
+      "durationMs": 5 },
+    { "id": "10", "parentId": "7", "operation": "chat", "name": "chat granite4:3b", "durationMs": 1060,
+      "inputTokens": 400, "outputTokens": 20, "finishReason": "stop" }
+  ]
+}
+----
+
+The steps are a flat list: `parentId` is the call a step was made in, such as the tool call for a model call made by
+the route of a tool.
+
 == Camel TUI integration
 
 When monitoring a running integration with `camel tui` and observability enabled, the AI panel usage view

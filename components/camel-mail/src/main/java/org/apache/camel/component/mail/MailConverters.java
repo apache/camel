@@ -50,7 +50,7 @@ import org.eclipse.angus.mail.imap.SortTerm;
 @Converter(generateLoader = true)
 public final class MailConverters {
 
-    private static final String NOW_DATE_FORMAT = "yyyy-MM-dd HH:mm:SS";
+    private static final String NOW_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     // the now syntax: "now-24h" or "now - 24h" = the last 24 hours etc.
     private static final Pattern NOW_PATTERN = Pattern.compile("now\\s?(\\+|\\-)\\s?(.*)");
 

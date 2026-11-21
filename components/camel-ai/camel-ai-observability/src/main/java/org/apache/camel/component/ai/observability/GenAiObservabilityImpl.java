@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -61,10 +62,12 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
         GenAiMicrometerObservationBackend observationBackend = resolved.observation();
         Tracer tracer = camelContext.hasService(Tracer.class);
         GenAiMetricsBackend metricsBackend = resolved.metrics();
-        if (!observationBackend.isAvailable() && tracer == null && !metricsBackend.isAvailable()) {
+        // the genai dev console records the calls without a tracer
+        GenAiRecorder recorder = GenAiRecorder.isRecording(camelContext) ? GenAiRecorder.get(camelContext) : null;
+        if (!observationBackend.isAvailable() && tracer == null && !metricsBackend.isAvailable() && recorder == null) {
             return NOOP;
         }
-        return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend, observationBackend);
+        return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend, observationBackend, recorder);
     }
 
     /**
@@ -138,6 +141,8 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
         private static final Set<String> LOW_CARDINALITY_KEYS = Set.of(
                 GenAiAttributes.OPERATION_NAME, GenAiAttributes.SYSTEM, GenAiAttributes.REQUEST_MODEL,
                 GenAiAttributes.CAMEL_COMPONENT);
+        // the content attributes (recorded at level full) and their names in the genai dev console
+        private static final Map<String, String> CONTENT_KEYS = contentKeys();
 
         private final Exchange exchange;
         private final Tracer tracer;
@@ -149,18 +154,22 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
         // attributes decided while the call runs, applied when it ends
         private final Map<String, Object> endAttributes = new LinkedHashMap<>();
         private final GenAiObservationContext context;
+        private final GenAiRecorder recorder;
+        private final GenAiRecorder.Call call;
         private Span span;
         private boolean pushed;
         private GenAiUsage usage;
         private Throwable error;
+        private Long cachedInputTokens;
         private boolean closed;
 
         private DefaultGenAiObservation(
                                         Exchange exchange, GenAiObservationContext context, Tracer tracer,
                                         GenAiMetricsBackend metricsBackend,
-                                        GenAiMicrometerObservationBackend observationBackend) {
+                                        GenAiMicrometerObservationBackend observationBackend, GenAiRecorder recorder) {
             this.exchange = exchange;
             this.context = context;
+            this.recorder = recorder;
             this.tracer = tracer;
             this.metricsBackend = metricsBackend;
             this.level = GenAiObservability.level(exchange.getContext());
@@ -178,6 +187,28 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
             if (this.micrometerObservation == null) {
                 startSpan(parentObservation);
             }
+            this.call = recorder != null ? startCall(parentObservation) : null;
+        }
+
+        private GenAiRecorder.Call startCall(DefaultGenAiObservation parentObservation) {
+            GenAiRecorder.Call parentCall = parentObservation != null && parentObservation.call != null
+                    ? parentObservation.call : GenAiRecorder.active(exchange);
+            GenAiRecorder.Call started = recorder.start(context, exchange, parentCall);
+            if (isAgentOrTool()) {
+                GenAiRecorder.push(exchange, started);
+            }
+            return started;
+        }
+
+        private static Map<String, String> contentKeys() {
+            Map<String, String> keys = new LinkedHashMap<>();
+            keys.put(GenAiAttributes.SYSTEM_INSTRUCTIONS, "systemInstructions");
+            keys.put(GenAiAttributes.TOOL_DEFINITIONS, "toolDefinitions");
+            keys.put(GenAiAttributes.INPUT_MESSAGES, "inputMessages");
+            keys.put(GenAiAttributes.OUTPUT_MESSAGES, "outputMessages");
+            keys.put(GenAiAttributes.TOOL_CALL_ARGUMENTS, "toolArguments");
+            keys.put(GenAiAttributes.TOOL_CALL_RESULT, "toolResult");
+            return Collections.unmodifiableMap(keys);
         }
 
         private boolean isAgentOrTool() {
@@ -240,6 +271,7 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
 
         @Override
         public void recordCachedInputTokens(Long cachedInputTokens) {
+            this.cachedInputTokens = cachedInputTokens;
             if (cachedInputTokens != null && level.includes(GenAiObservabilityLevel.DETAILED)) {
                 endAttributes.put(GenAiAttributes.CACHE_READ_INPUT_TOKENS, cachedInputTokens);
             }
@@ -321,6 +353,21 @@ public final class GenAiObservabilityImpl implements GenAiObservationFactory {
                 closeSpan(endAttributes());
             }
             recordMetrics();
+            endCall();
+        }
+
+        private void endCall() {
+            if (call == null) {
+                return;
+            }
+            GenAiRecorder.pop(exchange, call);
+            Map<String, String> content = new LinkedHashMap<>();
+            CONTENT_KEYS.forEach((attribute, key) -> {
+                if (endAttributes.get(attribute) instanceof String value) {
+                    content.put(key, value);
+                }
+            });
+            recorder.end(call, usage, cachedInputTokens, error, content, (System.nanoTime() - startNanos) / 1_000_000);
         }
 
         private Map<String, Object> endAttributes() {
