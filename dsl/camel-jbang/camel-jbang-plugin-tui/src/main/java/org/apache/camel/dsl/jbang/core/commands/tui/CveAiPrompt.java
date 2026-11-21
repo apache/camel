@@ -21,10 +21,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
-import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
-import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
-import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.CvssScore;
 
 /**
  * The question the AI panel is opened with to explain a vulnerability (Shift+F8 on the CVE Audit tab, CAMEL-25362), or

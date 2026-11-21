@@ -43,6 +43,7 @@
         <module>camel-catalog-console</module>
         <module>camel-catalog-maven</module>
         <module>camel-catalog-suggest</module>
+        <module>camel-catalog-cve</module>
         <!-- tooling that depends on catalog -->
         <module>camel-route-parser</module>
         <module>camel-report-maven-plugin</module>

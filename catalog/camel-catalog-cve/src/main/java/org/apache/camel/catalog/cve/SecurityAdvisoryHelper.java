@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.run.common;
+package org.apache.camel.catalog.cve;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,29 +85,29 @@ public final class SecurityAdvisoryHelper {
         Matcher matcher = RANGE_EXCLUSIVE.matcher(text);
         while (matcher.find()) {
             parsedAny = true;
-            affectedHit |= VersionHelper.isBetween(plainVersion, matcher.group(1), matcher.group(2));
+            affectedHit |= AdvisoryVersions.isBetween(plainVersion, matcher.group(1), matcher.group(2));
         }
         text = matcher.replaceAll(" ");
 
         matcher = RANGE_INCLUSIVE.matcher(text);
         while (matcher.find()) {
             parsedAny = true;
-            affectedHit |= VersionHelper.isGE(plainVersion, matcher.group(1))
-                    && VersionHelper.isLE(plainVersion, matcher.group(2));
+            affectedHit |= AdvisoryVersions.isGE(plainVersion, matcher.group(1))
+                    && AdvisoryVersions.isLE(plainVersion, matcher.group(2));
         }
         text = matcher.replaceAll(" ");
 
         matcher = BELOW.matcher(text);
         while (matcher.find()) {
             parsedAny = true;
-            affectedHit |= VersionHelper.compare(plainVersion, matcher.group(1)) < 0;
+            affectedHit |= AdvisoryVersions.compare(plainVersion, matcher.group(1)) < 0;
         }
         text = matcher.replaceAll(" ");
 
         matcher = VERSION_TOKEN.matcher(text);
         while (matcher.find()) {
             parsedAny = true;
-            affectedHit |= VersionHelper.compare(plainVersion, matcher.group()) == 0
+            affectedHit |= AdvisoryVersions.compare(plainVersion, matcher.group()) == 0
                     && plainVersion.length() == matcher.group().length();
         }
 
@@ -131,7 +131,7 @@ public final class SecurityAdvisoryHelper {
         Matcher matcher = VERSION_TOKEN.matcher(fixed);
         while (matcher.find()) {
             String candidate = matcher.group();
-            if (VersionHelper.compare(candidate, plainVersion) > 0
+            if (AdvisoryVersions.compare(candidate, plainVersion) > 0
                     && !Boolean.TRUE.equals(affectsVersion(affected, candidate))) {
                 above.add(candidate);
             }
@@ -140,10 +140,10 @@ public final class SecurityAdvisoryHelper {
         String lowest = null;
         for (String candidate : above) {
             if (line != null && line.equals(majorMinor(candidate))
-                    && (sameLine == null || VersionHelper.compare(candidate, sameLine) < 0)) {
+                    && (sameLine == null || AdvisoryVersions.compare(candidate, sameLine) < 0)) {
                 sameLine = candidate;
             }
-            if (lowest == null || VersionHelper.compare(candidate, lowest) < 0) {
+            if (lowest == null || AdvisoryVersions.compare(candidate, lowest) < 0) {
                 lowest = candidate;
             }
         }
