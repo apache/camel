@@ -69,6 +69,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 

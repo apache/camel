@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.genai;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +22,9 @@ import java.util.Map;
 
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.component.ai.observability.GenAiMessages;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiTranscript.Kind;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiTranscript.Part;
-import org.apache.camel.dsl.jbang.core.commands.tui.GenAiTranscript.Turn;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiTranscript.Kind;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiTranscript.Part;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiTranscript.Turn;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -129,10 +129,10 @@ class GenAiTranscriptTest {
         SpanEntry basic = span("chat", "", attrs("chat", GenAiAttributes.REQUEST_MODEL, "llama3.2"));
         SpanEntry route = span("route", "", Map.of("camel.uri", "timer:ask"));
 
-        assertThat(GenAiTranscript.isGenAiSpan(basic)).isTrue();
+        assertThat(GenAiSpans.isGenAiSpan(basic)).isTrue();
         assertThat(GenAiTranscript.hasContent(basic)).isFalse();
         assertThat(GenAiTranscript.of(basic, List.of(basic)).isEmpty()).isTrue();
-        assertThat(GenAiTranscript.isGenAiSpan(route)).isFalse();
+        assertThat(GenAiSpans.isGenAiSpan(route)).isFalse();
         assertThat(GenAiTranscript.of(route, List.of(route)).isEmpty()).isTrue();
     }
 

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
