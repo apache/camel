@@ -18,6 +18,8 @@
 package org.apache.camel.dsl.jbang.core.commands.test;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
@@ -220,6 +222,38 @@ class TestPluginTest {
             Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
                     "Should still include default citrus-junit-jupiter dependency");
         } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectDependenciesWhenTheContextClassLoaderCannotSeeCitrus() throws IOException {
+        // camel export and camel dependency list run with the class loader of the CLI as the context class loader,
+        // which cannot see the citrus-jbang JAR of the plugin, where the code analyzer has its catalog (CAMEL-27341)
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("cli-loader.citrus.it.yaml");
+        Thread thread = Thread.currentThread();
+        ClassLoader tccl = thread.getContextClassLoader();
+        try (URLClassLoader cli = new URLClassLoader(new URL[0], null)) {
+            Files.writeString(yamlFile, """
+                    name: cli-loader
+                    actions:
+                      - send:
+                          endpoint: "kafka:myTopic"
+                    """);
+            Assertions.assertNull(cli.getResource("citrus-catalog/citrus/citrus-catalog-aggregate-endpoints.json"),
+                    "The class loader of the test must not see the catalog of the code analyzer");
+
+            thread.setContextClassLoader(cli);
+            Set<String> deps = new TestPluginExporter().getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-kafka:${citrus.version}"),
+                    "Should auto-detect citrus-kafka from kafka endpoint");
+            Assertions.assertSame(cli, thread.getContextClassLoader(), "Should restore the context class loader");
+        } finally {
+            thread.setContextClassLoader(tccl);
             Files.deleteIfExists(yamlFile);
             Files.deleteIfExists(testDir);
         }
