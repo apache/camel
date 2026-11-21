@@ -773,9 +773,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -791,9 +791,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -1144,9 +1144,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -1162,9 +1162,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -1408,9 +1408,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -1426,9 +1426,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of
-         * its accessKey and secretKey is used when the option of the same name
-         * is not set.
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey and its secretKey are each used when the option of the same
+         * name is not set.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.

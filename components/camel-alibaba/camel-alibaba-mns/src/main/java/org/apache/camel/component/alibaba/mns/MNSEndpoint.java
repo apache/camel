@@ -94,8 +94,8 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
               label = "security")
     private String secretKey;
 
-    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of"
-                            + " its accessKey and secretKey is used when the option of the same name is not set.",
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Its"
+                            + " accessKey and its secretKey are each used when the option of the same name is not set.",
               displayName = "Service Keys",
               security = "secret", label = "security")
     private ServiceKeys serviceKeys;
