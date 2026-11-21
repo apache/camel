@@ -18,7 +18,7 @@ package org.apache.camel.catalog.cve;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -234,11 +234,10 @@ public final class OnlineAdvisories {
         result.values().stream().sorted(Comparator.comparingLong(OnlineAdvisories::cveOrdinal))
                 .forEach(a -> arr.add(JsonMapper.asJsonObject(a)));
         write(cached, Jsoner.prettyPrint(Jsoner.serialize(arr), 4));
-        Path tmp = Files.createTempFile(shas.getParent(), shas.getFileName().toString(), ".tmp");
-        try (Writer w = Files.newBufferedWriter(tmp)) {
-            newShas.store(w, "the sha of the advisories of " + url);
-        }
-        move(tmp, shas);
+        StringWriter w = new StringWriter();
+        newShas.store(w, "the sha of the advisories of " + url);
+        // write() leaves no temporary file behind when the write or move fails
+        write(shas, w.toString());
     }
 
     private static String get(HttpClient client, String url) throws IOException, InterruptedException {
