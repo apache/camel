@@ -200,6 +200,20 @@ Complete the following steps to create a new Camel release:
   $ git checkout BRANCH_NAME
   $ git checkout -b release/NEW-VERSION
 
+. Make sure the catalog has the latest Apache Camel security advisories and known releases of camel-website, as the
+  release ships them (the CVE audit of the Camel CLI and the Camel Maven plugins reads them). Run the
+  https://github.com/apache/camel/actions/workflows/sync-catalog-website.yml[Sync catalog with camel-website] workflow
+  (*Run workflow*) and merge the PR it opens for the branch, if any, before you go on. It also runs every Monday. Or sync
+  locally and commit the changes:
+
+
+  $ ./mvnw -Dquickly install -pl tooling/maven/camel-package-maven-plugin -am
+  $ ./mvnw -pl catalog/camel-catalog camel-package:update-security-advisories camel-package:update-camel-releases
+
+
+* On an LTS branch older than 4.24, run only `camel-package:update-camel-releases`: those branches have no
+  advisories in the catalog.
+
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
 
 

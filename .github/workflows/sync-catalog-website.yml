@@ -1,0 +1,111 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Sync catalog with camel-website
+
+# The catalog ships the Apache Camel security advisories and the known releases, generated from the
+# camel-website repository (content/security, content/releases) by the update-security-advisories and
+# update-camel-releases goals. This workflow runs them every week, and before a release on demand, and opens
+# a PR when something changed, so a release never ships stale lists (CAMEL-27347). Like generate-sbom.yml it
+# lives on main only and checks out each branch of the matrix in turn; the LTS branches have no advisories.
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+  - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+jobs:
+  sync:
+    if: github.repository == 'apache/camel'
+    permissions:
+      contents: write
+      pull-requests: write # to create a PR (peter-evans/create-pull-request)
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - branch: 'main'
+            goals: 'camel-package:update-security-advisories camel-package:update-camel-releases'
+          - branch: 'camel-4.22.x'
+            goals: 'camel-package:update-camel-releases'
+          - branch: 'camel-4.18.x'
+            goals: 'camel-package:update-camel-releases'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ matrix.branch }}
+          persist-credentials: false
+      - name: Set up JDK 21
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Count the entries before the sync
+        run: |
+          for f in $(git ls-files 'catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/advisories/*.json' 'catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/releases/*.json'); do
+            echo "$f $(jq length "$f")"
+          done > "$RUNNER_TEMP/before.txt"
+          cat "$RUNNER_TEMP/before.txt"
+      - name: Build the sync goals
+        run: ./mvnw -B -l build.log -Dquickly install -pl tooling/maven/camel-package-maven-plugin -am
+      - name: Sync with camel-website
+        env:
+          # the GitHub API listings are rate limited without a token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./mvnw -B -pl catalog/camel-catalog ${{ matrix.goals }}
+      - name: Check that no entry was lost
+        # a sync only adds entries: fewer means GitHub did not answer in full, so no PR is opened
+        run: |
+          while read -r f before; do
+            after=$(jq length "$f")
+            echo "$f: $before -> $after"
+            if [ "$after" -lt "$before" ]; then
+              echo "::error file=$f::the sync has fewer entries ($after) than before ($before)"
+              exit 1
+            fi
+          done < "$RUNNER_TEMP/before.txt"
+      - name: archive logs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: sync-catalog-${{ matrix.branch }}.log
+          path: build.log
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+        with:
+          base: ${{ matrix.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: |
+            catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/advisories/*.json
+            catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/releases/*.json
+          commit-message: "Sync the catalog with camel-website for ${{ matrix.branch }}"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: regen_bot_catalog_website_${{ matrix.branch }}
+          title: "Sync the catalog security advisories and releases with camel-website (${{ matrix.branch }})"
+          body: |
+            Regen bot :robot: synced the Apache Camel security advisories and the known releases of the catalog with camel-website for :camel: `${{ matrix.branch }}`.
+            Please do not delete `regen_bot_catalog_website_${{ matrix.branch }}` branch after merge/rebase.
+          labels: |
+            regen
+            automated pr
+            camel-4
