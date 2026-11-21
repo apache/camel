@@ -43,9 +43,7 @@ public final class MNSHeaders {
               javaType = "Integer")
     public static final String PRIORITY = "CamelAlibabaMnsPriority";
 
-    @Metadata(label = "producer", description = "The tag of the message for publishMessage. Simple Message Queue accepts at"
-                                                + " most 16 characters.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "The tag of the message for publishMessage.", javaType = "String")
     public static final String MESSAGE_TAG = "CamelAlibabaMnsMessageTag";
 
     @Metadata(label = "producer", description = "The operation that the producer performs. This header replaces the operation"
