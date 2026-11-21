@@ -171,7 +171,7 @@ public final class DependencyChains {
         return Files.isRegularFile(pom) ? pom : null;
     }
 
-    // a POM is read with secure processing and without external entities
+    // a POM is read with secure processing, without external entities, and with the limits of Xerces when it is used
     private static DocumentBuilderFactory createDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -191,6 +191,14 @@ public final class DependencyChains {
             factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         } catch (ParserConfigurationException e) {
             // not supported by this parser
+        }
+        // the limits of Apache Xerces when it is the parser, as XmlHelper of camel-jbang-run sets them
+        try {
+            Class<?> smClass = Class.forName("org.apache.xerces.util.SecurityManager");
+            factory.setAttribute("http://apache.org/xml/properties/security-manager",
+                    smClass.getDeclaredConstructor().newInstance());
+        } catch (Exception e) {
+            // not Apache Xerces
         }
         return factory;
     }
