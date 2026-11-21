@@ -6817,6 +6817,44 @@ It was added for OSGi/Karaf, so that several applications (bundles) in one JVM c
 Spring Boot and Quarkus applications run one application per JVM: use a `netty-http` consumer per port, where several
 routes can use the same port, or the `platform-http` component.
 
+=== camel-netty-http - chunked requests on the shared HTTP server and with disableStreamCache
+
+A request with a chunked body (`Transfer-Encoding: chunked`) to a consumer on a shared HTTP server
+(`nettySharedHttpServer`) is now aggregated before the route is called, as on the server of an endpoint: the body is
+the stream cache, or the Netty `ByteBuf` with `disableStreamCache=true`, instead of an `InputStream`. Before, such a
+request got no response, and the I/O thread that received it no longer served its other connections. The `chunked`
+option of `NettySharedHttpServerBootstrapConfiguration` is no longer used; before, `chunked=false` made every request
+fail. The aggregated body is limited by its `chunkedMaxContentLength` (1 MB by default); a larger request gets the
+response `413 Request Entity Too Large`.
+
+With `disableStreamCache=true` on a consumer, the body of a chunked request is still an `InputStream`, with these
+changes:
+
+* When the route runs on the I/O thread (`usingExecutorService=false`), the request is aggregated, and the body is the
+  Netty `ByteBuf`, as for a request with a `Content-Length`. Before, the route waited for ever when it read the body.
+  The aggregated body is limited by the `chunkedMaxContentLength` option (1 MB by default); a larger request gets
+  the response `413 Request Entity Too Large`.
+* The stream is closed when the exchange is done, and the part of the body that the route did not read is discarded.
+  Before, a body of more than 1 KB that the route did not read held the I/O thread, so the next requests on it got no
+  response. A route that hands the stream to another thread must read it before the exchange is done.
+  When the reply is streamed (its body is an `InputStream`), the stream is closed once the reply is written instead,
+  as the reply may read it (a route that sends the request body back, as it is or in another stream). Such a reply
+  reads the stream on the I/O thread of the connection, so it can only
+  send back a body that is received already: when a part of the body, as of a large body, is still to be received,
+  the stream fails with an `IOException`, and the connection is closed without a complete reply. Before, the I/O
+  thread waited for ever.
+  As the rest of the body is read only once such a reply is written, when a route does not read a large body and
+  replies with a stream of its own that is larger than what the connection buffers, the reply and a client that sends
+  the whole body before it reads the response wait for each other for ever. In that case close the body stream in the
+  route (for example `exchange.getIn().getBody(InputStream.class).close()`), or reply with a body that is not a
+  stream. Before, such a request got no response once the body was larger than 1 KB.
+* The stream fails with an `IOException` when the connection is closed before the whole body is received. Before, it
+  ended as if the body was complete.
+
+The same stream is used for a chunked response on a producer with `disableStreamCache=true`: it fails with an
+`IOException` when it is read on the I/O thread of the connection with no data received yet, instead of waiting for
+ever, so read it after the producer with `synchronous=true`, or on another thread.
+
 === camel-alibaba-eventbridge - endpoint is marked as required instead of region
 
 The `endpoint` option of `alibaba-eventbridge` is now marked as required, and the `region` option no longer is. The
