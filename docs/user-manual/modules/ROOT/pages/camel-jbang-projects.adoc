@@ -270,7 +270,9 @@ The command exits with 1 when it finds a vulnerability of the `--fail-on` severi
 CI job fails; `--fail-on=none` always exits with 0. When OSV.dev (or the OSV database) cannot be used, the command
 warns and checks the Apache Camel security advisories only; with `--fail-on-error` it exits with 1 then, so a CI job
 does not pass without the check. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
-shows the same for a running integration, and explains a vulnerability with AI.
+shows the same for a running integration, and explains a vulnerability with AI. For a Maven build in a CI/CD
+pipeline, the xref:camel-report-maven-plugin.adoc#_camel_reportaudit[camel-report:audit] goal does the same checks
+on the dependencies Maven resolved, fails the build on a severity, and writes a SARIF report.
 
 === The offline OSV database
 
