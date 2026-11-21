@@ -313,7 +313,9 @@ public class AuditMojo extends AbstractMojo {
                             HttpProxy.splitHosts(maven.nonProxyHosts()));
                 }
             } catch (IOException e) {
-                // nothing to close in embedded mode
+                // only close() declares IOException: build() and proxyFor() throw none, and the downloader
+                // owns no resources when it uses the repository system and session of the build
+                getLog().debug("Cannot close the Maven downloader: " + e.getMessage());
             }
         }
         return HttpProxy.fromEnvironment(System.getenv());
