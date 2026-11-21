@@ -10899,3 +10899,14 @@ response or the request, and log it at DEBUG level. Before, camel-netty-http fai
 request, the other consumers passed the name on to the servlet container, and camel-http sent it, which a server may
 reject with a 400. Headers with a valid name are written as before. A route that needs such a value in the response or
 in the request must set it in a header with a valid name.
+
+=== camel-pinecone - the pinecone:embeddings transformer leaves the index name unset
+
+The `pinecone:embeddings` data type transformer no longer sets the `CamelPineconeIndexName` header to
+`embeddings` when the route does not set the header. The producer takes the header over the `indexName`
+option of its endpoint, so a route that configured `indexName` on the endpoint and did not set the header
+worked on the `embeddings` index instead of the configured one. The transformer now leaves the header
+unset, and the producer uses its `indexName` option.
+
+A route that relied on the `embeddings` index must set the `CamelPineconeIndexName` header to `embeddings`,
+or configure `indexName=embeddings` on the endpoint.
