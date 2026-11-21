@@ -293,9 +293,10 @@ public final class OsvDatabase implements VulnerabilitySource {
                 .uri(URI.create(url))
                 .timeout(Duration.ofMinutes(5))
                 .GET();
-        if (Files.isRegularFile(target)) {
+        Instant since = Files.isRegularFile(target) ? modified(target) : null;
+        if (since != null) {
             request.header("If-Modified-Since",
-                    DateTimeFormatter.RFC_1123_DATE_TIME.format(modified(target).atOffset(ZoneOffset.UTC)));
+                    DateTimeFormatter.RFC_1123_DATE_TIME.format(since.atOffset(ZoneOffset.UTC)));
         }
         Files.createDirectories(target.getParent());
         Path tmp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
