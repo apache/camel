@@ -43,7 +43,7 @@ public final class MojoHelper {
                         dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
                         dir.resolve("camel-semantic"), dir.resolve("camel-semantic-micrometer"),
-                        dir.resolve("camel-semantic-openai"),
+                        dir.resolve("camel-semantic-openai"), dir.resolve("camel-semantic-spring-ai"),
                         dir.resolve("camel-semantic-typesafe-ai"), dir.resolve("camel-semantic-wolf-defender"),
                         dir.resolve("camel-typesafe-ai"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
