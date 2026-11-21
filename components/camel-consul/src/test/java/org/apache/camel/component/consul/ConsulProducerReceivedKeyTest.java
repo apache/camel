@@ -136,6 +136,21 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
     }
 
     @Test
+    void producerWithTheWatchedFolderAsKeyActsOnTheFolder() throws Exception {
+        // the upgrade case: a producer that repeats the folder of a recursive watch as its key acts on the folder, not
+        // on each key the watch returns; without a key it acts on that key (producerWithoutKeyActsOnTheReceivedKey)
+        route("consul:kv?key=camel/jobs&recursive=true&valueAsString=true&blockSeconds=1&consulClient=#consul",
+                "consul:kv?key=camel/jobs&action=DELETE_KEYS&consulClient=#consul");
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !valuesQueries.isEmpty());
+        valuesQueries.get(0).onComplete(new ConsulResponse<>(
+                List.of(value("camel/jobs/1", "bar")), 0, true, BigInteger.TWO, (String) null, (String) null));
+
+        verify(keyValueClient, timeout(5000)).deleteKeys("camel/jobs");
+        verify(keyValueClient, never()).deleteKeys("camel/jobs/1");
+    }
+
+    @Test
     void keyChosenByTheRouteIsUsed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
