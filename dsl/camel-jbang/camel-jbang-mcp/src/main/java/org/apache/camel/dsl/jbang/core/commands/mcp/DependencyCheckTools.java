@@ -34,6 +34,7 @@ import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.DependencyLookup;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
@@ -356,7 +357,8 @@ public class DependencyCheckTools {
     }
 
     private static VulnerabilityFinding finding(AdvisoryService.AdvisoryView adv) {
-        return new VulnerabilityFinding(adv.cve(), adv.summary(), adv.severity(), adv.affected(), adv.fixed(), adv.url());
+        return new VulnerabilityFinding(
+                adv.cve(), adv.summary(), adv.severity(), adv.affected(), adv.fixed(), adv.upgradeTo(), adv.url());
     }
 
     /** Whether the routes use the component of the (catalog) artifact; only called when routes were given. */
@@ -368,6 +370,22 @@ public class DependencyCheckTools {
             }
         }
         return usedComponents.contains(artifactId.replace("camel-", ""));
+    }
+
+    /** The Camel release that fixes all the findings: the highest of their upgradeTo; null when one has none. */
+    static String upgradeToFixAll(List<ArtifactAudit> vulnerable) {
+        String highest = null;
+        for (ArtifactAudit artifact : vulnerable) {
+            for (VulnerabilityFinding finding : artifact.findings()) {
+                if (finding.upgradeTo() == null) {
+                    return null;
+                }
+                if (highest == null || VersionHelper.compare(finding.upgradeTo(), highest) > 0) {
+                    highest = finding.upgradeTo();
+                }
+            }
+        }
+        return highest;
     }
 
     /** Which of the vulnerable artifacts to patch first: those the routes use. */
@@ -430,10 +448,12 @@ public class DependencyCheckTools {
                         null, null));
             } else {
                 String detail = securityDetail(security, count, routesGiven);
+                String upgradeTo = upgradeToFixAll(security.vulnerableArtifacts());
+                String release = upgradeTo != null ? "Camel " + upgradeTo : "a release";
                 recommendations.add(new Recommendation(
                         security.criticalAndHighCves() > 0 ? "high" : "medium", "Security",
-                        "Upgrade Camel to a release that fixes the " + security.totalCves() + " CVE(s) of " + count
-                                                                                            + " artifact(s): each finding gives its fixed version. "
+                        "Upgrade to " + release + " to fix the " + security.totalCves() + " CVE(s) of " + count
+                                                                                            + " artifact(s): each finding gives the release that fixes it (upgradeTo). "
                                                                                             + "Use the camel_migration_recipes tool to get automated upgrade commands.",
                         detail, null));
             }
@@ -579,9 +599,10 @@ public class DependencyCheckTools {
     public record ArtifactAudit(String artifactId, Boolean reachable, List<VulnerabilityFinding> findings) {
     }
 
+    /** A Camel advisory; {@code upgradeTo} is the Camel release that fixes it for the project's version. */
     public record VulnerabilityFinding(
             String cve, String title, String severity, String affectedVersions, String fixedVersion,
-            String advisoryUrl) {
+            String upgradeTo, String advisoryUrl) {
     }
 
     public record ProjectInfo(String camelVersion, String runtimeType, String javaVersion, int dependencyCount) {

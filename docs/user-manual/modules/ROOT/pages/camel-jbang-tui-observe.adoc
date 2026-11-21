@@ -233,10 +233,12 @@ question has its state and last error, its endpoint and consumer group, where it
 the line of its route in the source and the last error of the route. The AI fixes the cause in the routes or
 configuration (brokers, topic, group, deserializers, security), or says how to fix it when it is outside the
 integration, such as a broker that is not running.
-* *CVE Audit*: *Shift+F8* asks the AI to explain the selected vulnerability: its severity, the artifacts it affects and
-the dependency that brings each in, the versions that fix it and its description. The AI tells whether the integration
-uses the vulnerable part of the library, and how to fix it (a fixed version of a dependency the project declares, or a
-newer Camel version for one that comes with a component), and changes no file unless you agree.
+* *CVE Audit*: *Shift+F8* asks the AI to explain the selected vulnerability, or all the vulnerabilities of the selected
+artifact when the tab is grouped by artifact: the severity, the artifacts with the version that fixes each and the
+dependency chain that brings each in, whether the routes use them, the Apache Camel advisory and the description, with
+the change that fixes each (the fixed version to declare with `camel.jbang.dependencies` or `//DEPS`, or the Camel
+release to upgrade to). The AI tells whether the integration uses the vulnerable part of the library, offers the
+change, and changes no file unless you agree.
 
 The Log tab shows the log in one of three views, and *c* goes to the next one:
 
@@ -459,12 +461,21 @@ image::jbang/camel-tui-chaos-explore.png[The exploration of the chaos example on
 === CVE Audit
 
 The CVE Audit tab (under More > Project) scans all Maven dependencies on your integration's classpath
-against the https://osv.dev[OSV.dev] vulnerability database. It queries every JAR using the OSV batch
+against the https://osv.dev[OSV.dev] vulnerability database, and the Camel JARs against the Apache Camel
+security advisories that ship with the Camel catalog. It queries every JAR using the OSV batch
 API and displays known vulnerabilities grouped by severity (Critical, High, Medium, Low).
 
-Each vulnerability shows the CVE ID, affected artifact, the direct dependency that pulls it in (VIA column),
-and a summary. Select a CVE to see full details including CVSS vector, published date, fixed versions,
-and aliases. Results are cached globally -- switching integrations that share JARs is instant.
+Each vulnerability shows the CVE ID, its CVSS score, the affected artifact, the version that fixes it (FIX
+column: the fix of the line the artifact's version is in, or the Camel release to upgrade to for a Camel
+advisory), the dependency chain that brings it in (VIA column, such as `camel-kafka > kafka-clients`), whether
+the routes use it (USED column: `yes` when the routes have an endpoint of the Camel component that brings it in,
+`no` when they have none, empty when no component brings it in), and a summary. Select a CVE to see full
+details including CVSS vector, published date, the Camel advisory with its mitigation, and aliases.
+
+Press `g` to group the table by artifact: one row per vulnerable JAR with its number of CVEs and the version that
+fixes all of them, which is what to upgrade. Press `/` to filter the rows by CVE, artifact, summary or a dependency
+of the chain. Results are cached globally -- switching integrations that share JARs is instant. When OSV.dev cannot
+be reached, the title says so and only the Camel advisories were checked; press `r` to scan again.
 
 === Kafka
 

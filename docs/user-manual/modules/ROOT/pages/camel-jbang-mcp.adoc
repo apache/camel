@@ -677,7 +677,8 @@ camel_catalog_find takes term (required), kind, limit, camelVersion; got q
 | Lists the published Apache Camel CVE security advisories (the data behind
   link:/security/[camel.apache.org/security]), optionally filtered by Camel version, component
   and severity. Each advisory includes the summary, affected and fixed versions, mitigation, and a best-effort
-  verdict on whether the given Camel version is affected. Use it to answer questions such as "is my Camel 4.10.1
+  verdict on whether the given Camel version is affected, with the release to upgrade to from that version
+  (`upgradeTo`: the fixed release of the same line when there is one, such as 4.18.3 for 4.18.1). Use it to answer questions such as "is my Camel 4.10.1
   project affected by known CVEs?".
 
 | `camel_security_scan`
@@ -715,8 +716,9 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
   conflicts between the Camel BOM and explicit dependency overrides. Returns actionable recommendations with
   corrected dependency snippets. Its `security` section lists the published Camel CVE advisories that affect the
   declared dependencies at the project's Camel version (see <<_security_advisory_data,Security advisory data>>),
-  with the severity, the affected and fixed versions, and, when routes are given, whether the routes use the
-  vulnerable component (`reachable`). Spring Boot starters and Camel Quarkus extensions are checked as the
+  with the severity, the affected and fixed versions, the Camel release that fixes each for the project's version
+  (`upgradeTo`), and, when routes are given, whether the routes use the vulnerable component (`reachable`). The
+  security recommendation names the one Camel release that fixes all of them. Spring Boot starters and Camel Quarkus extensions are checked as the
   component they provide. When the `pom.xml` does not set the Camel version (parent-managed), the answer says so
   in `security.warnings` and checks the `camelVersion` argument, or without it lists every advisory of the declared
   components. Advisories that name no component cannot be matched to a dependency and are listed as
