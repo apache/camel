@@ -25,6 +25,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -53,16 +55,27 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final ThrowingFunction<Endpoint, S, Exception> creator;
     private final Function<S, Endpoint> getEndpoint;
     private final ConcurrentMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
-    // keep track of all singleton endpoints with a pooled producer that are evicted
-    // for multi pool then they have their own house-keeping for evictions (more complex)
-    private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
+    // the evicted single pools whose service is still in use, by service: they are no longer in the pool map, and the
+    // last release of the service stops it (for multi pool then they have their own house-keeping for evictions)
+    private final ConcurrentMap<S, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
     private final int capacity;
     private final Map<S, S> cache;
 
     private interface Pool<S> {
+        /**
+         * Acquires a service, or returns null when the pool was evicted or stopped meanwhile (single pool only)
+         */
         S acquire() throws Exception;
 
-        void release(S s);
+        /**
+         * Acquires the given service again if it is still the service of this pool (single pool only)
+         */
+        boolean reacquire(S s);
+
+        /**
+         * Releases the service, or returns false when it is not a service of this pool (single pool only)
+         */
+        boolean release(S s);
 
         int size();
 
@@ -81,24 +94,22 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * This callback is invoked by LRUCache from a separate background cleanup thread. Therefore, we mark the entries to
-     * be evicted from this thread only, and then let SinglePool and MultiPool handle the evictions (stop the
-     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we stop the producer/consumer
-     * from the LRUCache background thread we can have a race condition with a pooled producer may have been acquired at
-     * the same time its being evicted.
+     * This callback is invoked by LRUCache when it evicts a service, which may be in use at the same time. Therefore,
+     * the pools do not stop a service that is in use: SinglePool takes its (shared) service out of use at once, and
+     * stops it when its last user releases it, and MultiPool stops an evicted service when it is idle, on acquire or
+     * release.
      */
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
         Pool<S> p = pool.get(e);
         if (p != null) {
             p.evict(s);
-            if (capacity > 0 && pool.size() > capacity) {
-                // the pool is growing too large, so we need to stop (stop will remove itself from pool)
-                p.stop();
-            }
         } else if (e.isSingletonProducer()) {
-            // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
-            stopAndRemove(s);
+            if (!singlePoolEvicted.containsKey(s)) {
+                // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
+                stopAndRemove(s);
+            }
+            // otherwise its pool was evicted while it is in use, and stops it when it is released
         } else {
             // no pool for this endpoint (for example it was stopped, which stopped its idle services, or the
             // endpoint of the service is not the instance used as the pool key): do not stop the service here, as it
@@ -114,14 +125,32 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * @return          the acquired producer/consumer
      */
     public S acquire(Endpoint endpoint) throws Exception {
-        if (!isStarted()) {
-            return null;
+        S s = null;
+        while (s == null) {
+            if (!isStarted()) {
+                return null;
+            }
+            // a single pool returns null when it was evicted or stopped meanwhile, and is then no longer in the pool
+            // map, so a new pool is used
+            s = getOrCreatePool(endpoint).acquire();
         }
-        S s = getOrCreatePool(endpoint).acquire();
-        if (s != null && cache != null) {
+        if (cache != null) {
             cache.putIfAbsent(s, s);
         }
         return s;
+    }
+
+    /**
+     * Acquires the given singleton producer/consumer again, which was acquired before, if it is still pooled (it has
+     * not been evicted or stopped meanwhile). It must be released as when it is acquired with
+     * {@link #acquire(Endpoint)}.
+     *
+     * @param  s the producer/consumer
+     * @return   true if it was acquired again, false if it is no longer pooled
+     */
+    boolean reacquire(S s) {
+        Pool<S> p = pool.get(getEndpoint.apply(s));
+        return p != null && p.reacquire(s);
     }
 
     /**
@@ -132,10 +161,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      */
     public void release(Endpoint endpoint, S s) {
         Pool<S> p = pool.get(endpoint);
-        if (p != null) {
-            p.release(s);
-        } else {
-            // the pool was evicted while this service was in use
+        if (p != null && p.release(s)) {
+            return;
+        }
+        // the pool was evicted while this service was in use (the endpoint may have a new pool meanwhile)
+        p = singlePoolEvicted.get(s);
+        if (p == null || !p.release(s)) {
             stopAndRemove(s);
         }
     }
@@ -234,10 +265,21 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Pool used for singleton producers or consumers which are thread-safe and can be shared by multiple worker threads
      * at any given time.
+     * <p>
+     * The pool counts the users of its service (acquired and not yet released), so an evicted service is stopped when
+     * it is no longer in use. An evicted pool is taken out of the pool map at once, so the next acquire of the endpoint
+     * creates a new pool and service.
      */
     private class SinglePool implements Pool<S> {
         private final Endpoint endpoint;
         private volatile S s;
+        // the acquires and the releases of s, counted apart without contention between the worker threads (the users of
+        // s are the difference)
+        private final LongAdder acquires = new LongAdder();
+        private final LongAdder releases = new LongAdder();
+        // s has been evicted: it is no longer handed out, and is stopped when it has no more users
+        private volatile boolean evicted;
+        private final AtomicBoolean stopped = new AtomicBoolean();
 
         SinglePool(Endpoint endpoint) {
             this.endpoint = requireNonNull(endpoint);
@@ -245,31 +287,65 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public S acquire() throws Exception {
-            cleanupEvicts();
-
-            if (s == null) {
+            if (!retain()) {
+                return null;
+            }
+            S answer = s;
+            if (answer == null) {
+                boolean acquired = false;
                 lock.lock();
                 try {
-                    if (s == null) {
+                    answer = s;
+                    if (answer == null && !stopped.get()) {
                         LOG.trace("Creating service from endpoint: {}", endpoint);
                         S tempS = creator.apply(endpoint);
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
+                        answer = tempS;
                     }
+                    acquired = answer != null;
                 } finally {
                     lock.unlock();
+                    if (!acquired) {
+                        // creating failed, or the pool was stopped meanwhile
+                        unretain();
+                    }
                 }
             }
-            LOG.trace("Acquired service: {}", s);
-            return s;
+            LOG.trace("Acquired service: {}", answer);
+            return answer;
         }
 
         @Override
-        public void release(S s) {
-            cleanupEvicts();
+        public boolean reacquire(S s) {
+            return s == this.s && retain();
+        }
 
-            // noop
+        @Override
+        public boolean release(S s) {
+            if (s == null || s != this.s) {
+                return false;
+            }
+            unretain();
             LOG.trace("Released service: {}", s);
+            return true;
+        }
+
+        private boolean retain() {
+            acquires.increment();
+            if (evicted || stopped.get()) {
+                // evicted or stopped meanwhile (the eviction may have counted this acquire already, so it is released)
+                unretain();
+                return false;
+            }
+            return true;
+        }
+
+        private void unretain() {
+            releases.increment();
+            if (evicted) {
+                stopEvicted();
+            }
         }
 
         @Override
@@ -279,6 +355,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void stop() {
+            stopped.set(true);
             S toStop;
             lock.lock();
             try {
@@ -287,34 +364,62 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             } finally {
                 lock.unlock();
             }
+            pool.remove(endpoint, this);
+            if (toStop != null) {
+                singlePoolEvicted.remove(toStop, this);
+            }
             doStop(toStop);
-            pool.remove(endpoint);
         }
 
         @Override
         public void evict(S s) {
-            singlePoolEvicted.putIfAbsent(endpoint, this);
+            if (s != this.s || evicted) {
+                // a service of an evicted pool of this endpoint, which an acquire in progress put in the cache again: its
+                // pool stops it when it is no longer in use
+                return;
+            }
+            // keep track of the evicted pool before it leaves the pool map, so the users of s can release it
+            singlePoolEvicted.put(s, this);
+            pool.remove(endpoint, this);
+            evicted = true;
+            stopEvicted();
+        }
+
+        /**
+         * Stops the evicted service if it has no more users
+         */
+        private void stopEvicted() {
+            // the releases are summed first: an acquire is counted before its release, so every release seen here has
+            // its acquire seen in the sum below, and an acquire of a user that may still use s (it was counted before s
+            // was evicted) is seen as well, so the counts are only equal when s has no more users
+            long released = releases.sum();
+            if (acquires.sum() != released || !stopped.compareAndSet(false, true)) {
+                // still in use (the last user stops it), or stopped already
+                return;
+            }
+            // under the lock that creates the services, so a service that a new pool of this endpoint creates meanwhile
+            // is either seen as using the endpoint, or created after it was stopped
+            lock.lock();
+            try {
+                S toStop = s;
+                s = null;
+                if (toStop != null) {
+                    singlePoolEvicted.remove(toStop, this);
+                }
+                // stop the evicted service first, so it no longer counts as using the endpoint
+                doStop(toStop);
+                if (!isEndpointInUse(endpoint)) {
+                    // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
+                    doStop(endpoint);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override
         public void cleanUp() {
-            cleanupEvicts();
-        }
-
-        private void cleanupEvicts() {
-            if (!singlePoolEvicted.isEmpty()) {
-                for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
-                    Endpoint e = entry.getKey();
-                    Pool<S> p = entry.getValue();
-                    // stop the evicted service first, so it no longer counts as using the endpoint
-                    p.stop();
-                    if (!isEndpointInUse(e)) {
-                        // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
-                        doStop(e);
-                    }
-                    singlePoolEvicted.remove(e);
-                }
-            }
+            // noop: an evicted service is stopped by the eviction, or by its last release
         }
 
         void doStop(Service s) {
@@ -368,7 +473,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         @Override
-        public void release(S s) {
+        public boolean reacquire(S s) {
+            return false;
+        }
+
+        @Override
+        public boolean release(S s) {
             cleanupEvicts();
 
             if (stopped || !active.contains(s) || !queue.offer(s)) {
@@ -380,6 +490,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 active.remove(s);
                 doStop(s);
             }
+            return true;
         }
 
         @Override
@@ -407,6 +518,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                     // the pool was stopped meanwhile, and may have stopped its evicts already
                     cleanupEvicts();
                 }
+            }
+            if (capacity > 0 && pool.size() > capacity) {
+                // the pool is growing too large, so we need to stop (stop will remove itself from pool)
+                stop();
             }
         }
 
