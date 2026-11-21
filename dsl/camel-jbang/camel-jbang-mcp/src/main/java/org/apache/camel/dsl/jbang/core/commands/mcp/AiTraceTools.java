@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * MCP Tool for tracing AI-specific exchange flow in running Camel applications.
@@ -45,6 +46,8 @@ import org.apache.camel.util.json.JsonObject;
 @McpSecured
 @ApplicationScoped
 public class AiTraceTools {
+
+    private static final Logger LOG = Logger.getLogger(AiTraceTools.class);
 
     /** The spans read for the GenAI part: an agent run with its route steps takes some 20 spans. */
     private static final int SPAN_LIMIT = 1000;
@@ -155,6 +158,7 @@ public class AiTraceTools {
             Object result = ToolRegistry.execute("get_spans", ctx, Map.of("limit", String.valueOf(SPAN_LIMIT)));
             return GenAiTraceReport.spans(RuntimeTools.toJsonObject(result));
         } catch (Exception e) {
+            LOG.debugf("The span dump cannot be read (%s): the trace shows no GenAI spans", e.getMessage());
             return List.of();
         }
     }
