@@ -1001,6 +1001,14 @@ before each had a generated group of its own: routes that consume the same topic
 on each route that must receive every record. When both `groupId` and the `group.id` property are set, `groupId` is
 still used.
 
+=== camel-kafka - Kafka 4.4 needs the Confluent serializers 8.4 or newer
+
+Camel uses the Kafka 4.4 client, which moved `org.apache.kafka.common.utils.ByteUtils` to
+`org.apache.kafka.common.utils.internals.ByteUtils`. The Confluent serializers before 8.4 use the old class: the
+Protobuf deserializer (`KafkaProtobufDeserializer`) fails on every record with
+`NoClassDefFoundError: org/apache/kafka/common/utils/ByteUtils`. If your application adds the Confluent serializer jars
+itself, upgrade them to 8.4.0 or newer. The Camel CLI downloads 8.4.1.
+
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
 With `transferException=true`, a consumer that sends the exception of a failed exchange back as the reply now always
