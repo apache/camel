@@ -16,13 +16,10 @@
  */
 package org.apache.camel.processor.idempotent.jpa;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -41,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+import static org.apache.camel.component.jpa.JpaHelper.isConstraintViolation;
 
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository {
@@ -86,31 +84,65 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return add(null, messageId);
     }
 
+    /**
+     * Adds the message id if it is not in the repository. When the insert fails with a constraint violation, which
+     * happens when another caller (thread, node) inserts the same message id at the same time, the message id is read
+     * again with a new EntityManager in a new transaction: add returns false if it is there, and throws otherwise (for
+     * example after a primary key collision, when the id sequence is behind the table). In a transaction of the caller,
+     * the message id is read again in that transaction (with the same EntityManager when it is shared), which the
+     * failed insert has marked for rollback: add may then throw, and the caller's transaction fails.
+     */
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
                 = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
-        // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
-        final boolean[] duplicate = new boolean[1];
+        final Exception[] violation = new Exception[1];
+        // what add throws when the message id is not stored after a constraint violation
+        RuntimeException failure = null;
         try {
-            doAdd(entityManager, messageId, rc, duplicate);
+            doAdd(entityManager, messageId, rc, violation);
         } catch (RuntimeException e) {
-            // the insert failed on the unique key of another caller's insert: the transaction could not commit (the
-            // failed flush marked it for rollback), or the constraint violation came at commit
-            if (duplicate[0] || isConstraintViolation(e)) {
-                LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
-                rc[0] = Boolean.FALSE;
-            } else {
+            // the transaction could not commit after the insert failed on a constraint (the failed flush marked it for
+            // rollback, and the commit failure, such as an UnexpectedRollbackException, may not say why), or the
+            // constraint violation came at commit
+            if (violation[0] == null && !isConstraintViolation(e)) {
                 throw e;
             }
+            failure = e;
+        }
+
+        if (violation[0] != null) {
+            String contextInfo = String.format(SOMETHING_WENT_WRONG, violation[0].getMessage());
+            PersistenceException wrapped = new PersistenceException(contextInfo, violation[0]);
+            if (failure != null) {
+                wrapped.addSuppressed(failure);
+            }
+            failure = wrapped;
+        }
+        if (failure != null) {
+            // the SQL state class 23 covers every integrity violation, not only the unique key on processorName and
+            // messageId. When the database reports the violation of that key, the other caller's insert has committed,
+            // so a new transaction sees its row
+            boolean stored;
+            try {
+                stored = isStored(messageId);
+            } catch (RuntimeException e) {
+                e.addSuppressed(failure);
+                throw e;
+            }
+            if (!stored) {
+                throw failure;
+            }
+            LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
+            rc[0] = Boolean.FALSE;
         }
 
         LOG.debug("add {} -> {}", messageId, rc[0]);
         return rc[0];
     }
 
-    private void doAdd(EntityManager entityManager, String messageId, Boolean[] rc, boolean[] duplicate) {
+    private void doAdd(EntityManager entityManager, String messageId, Boolean[] rc, Exception[] violation) {
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
                 entityManager.joinTransaction();
@@ -131,25 +163,41 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 }
             } catch (Exception ex) {
                 if (isConstraintViolation(ex)) {
-                    // concurrent insert of the same messageId detected via unique constraint
-                    // treat as duplicate rather than failing the exchange
-                    LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
-                    duplicate[0] = true;
-                    rc[0] = Boolean.FALSE;
+                    // possibly a concurrent insert of the same messageId: add checks it in a new transaction
+                    violation[0] = ex;
                 } else {
                     String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
                     throw new PersistenceException(contextInfo, ex);
                 }
             } finally {
-                try {
-                    if (entityManager.isOpen()) {
-                        entityManager.close();
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
+                closeEntityManager(entityManager);
             }
         });
+    }
+
+    /**
+     * Whether the message id is in the repository, read in a new transaction after the one of the insert, or in the
+     * caller's transaction when there is one, with a new EntityManager unless the EntityManager is shared (then the
+     * EntityManager of that transaction).
+     */
+    private boolean isStored(String messageId) {
+        final EntityManager entityManager
+                = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
+        final boolean[] rc = new boolean[1];
+        transactionStrategy.executeInTransaction(() -> {
+            if (isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+            try {
+                rc[0] = !query(entityManager, messageId).isEmpty();
+            } catch (Exception ex) {
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
+            } finally {
+                closeEntityManager(entityManager);
+            }
+        });
+        return rc[0];
     }
 
     @Override
@@ -324,23 +372,14 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         this.sharedEntityManager = sharedEntityManager;
     }
 
-    private static boolean isConstraintViolation(Exception ex) {
-        Throwable cause = ex;
-        while (cause != null) {
-            if (cause instanceof SQLIntegrityConstraintViolationException) {
-                return true;
+    private static void closeEntityManager(EntityManager entityManager) {
+        try {
+            if (entityManager.isOpen()) {
+                entityManager.close();
             }
-            if (cause instanceof EntityExistsException) {
-                return true;
-            }
-            // drivers such as the PostgreSQL and SQL Server ones report it only with the SQL state class 23
-            if (cause instanceof SQLException sqlException && sqlException.getSQLState() != null
-                    && sqlException.getSQLState().startsWith("23")) {
-                return true;
-            }
-            cause = cause.getCause();
+        } catch (Exception e) {
+            // ignore
         }
-        return false;
     }
 
     @Override

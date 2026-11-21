@@ -9712,6 +9712,24 @@ failed three times. A constraint violation is also recognised by its SQL state (
 Server drivers report it. When `putIfAbsent` runs in a transaction of the caller, the failed insert marks that
 transaction for rollback, so the caller's transaction fails, as before.
 
+=== camel-jpa - JpaMessageIdRepository: add after a constraint violation
+
+When the insert of `JpaMessageIdRepository.add` fails with a constraint violation, the message id is now read again with
+a new EntityManager in a new transaction: `add` returns `false` if the message id is there (another caller added it at
+the same time), and throws otherwise, for example after a primary key collision when the id sequence is behind the
+table. A constraint violation is now also recognised by its SQL state (class `23`), as the PostgreSQL and SQL Server
+drivers report it, and also when the transaction then fails to commit. So on PostgreSQL and SQL Server, `add` now
+returns `false` for a message id that another caller added at the same time, where it threw a `PersistenceException`
+before. With `sharedEntityManager=true`, `add` failed for such a message id on every database, as the failed insert
+marked the transaction for rollback and its commit then threw (an `UnexpectedRollbackException` with a Spring based
+transaction strategy); it now returns `false` there too. On H2, Derby, MySQL and Oracle with an EntityManager that is
+not shared, which returned `false` for any constraint violation, `add` now throws when the message id is not in the
+table after the violation.
+
+When `add` runs in a transaction of the caller, the message id is read again in that transaction (with the same
+EntityManager when it is shared), which the failed insert has marked for rollback. `add` may then throw where it
+returned `false` before, and the caller's transaction fails, as before.
+
 === camel-jbang - the export to Quarkus keeps camel-quarkus-microprofile-health
 
 `camel export --runtime=quarkus`, and `camel run --runtime=quarkus`, which exports the same way, now write

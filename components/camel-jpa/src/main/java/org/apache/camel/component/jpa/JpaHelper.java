@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -114,6 +117,34 @@ public final class JpaHelper {
             }
         }
         return createDefaultTransactionStrategy(camelContext, entityManagerFactory);
+    }
+
+    /**
+     * Whether the exception, or one of its causes, reports a constraint violation of the database: an
+     * {@link SQLIntegrityConstraintViolationException}, an {@link EntityExistsException}, or an {@link SQLException}
+     * with an SQL state of class 23 (integrity constraint violation), as the PostgreSQL and SQL Server drivers report
+     * it. Any integrity constraint counts, not only a unique key.
+     *
+     * @param  ex the exception
+     * @return    true if it reports a constraint violation
+     */
+    public static boolean isConstraintViolation(Throwable ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof SQLIntegrityConstraintViolationException) {
+                return true;
+            }
+            if (cause instanceof EntityExistsException) {
+                return true;
+            }
+            // drivers such as the PostgreSQL and SQL Server ones report it only with the SQL state class 23
+            if (cause instanceof SQLException sqlException && sqlException.getSQLState() != null
+                    && sqlException.getSQLState().startsWith("23")) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     /**
