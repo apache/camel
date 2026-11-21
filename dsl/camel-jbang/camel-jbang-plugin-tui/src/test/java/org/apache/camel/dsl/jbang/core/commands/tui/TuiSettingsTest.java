@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.zip.ZipOutputStream;
 
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -196,5 +200,26 @@ class TuiSettingsTest {
         } finally {
             Files.deleteIfExists(localFile);
         }
+    }
+
+    @Test
+    void theOsvDatabaseSettingIsTheSourceOfTheCveAudit(@TempDir Path tempDir) throws Exception {
+        // CAMEL-27344: a ZIP on disk, as a mirror of the OSV export
+        useHome(tempDir);
+        Path zip = tempDir.resolve("all.zip");
+        try (OutputStream file = Files.newOutputStream(zip); ZipOutputStream out = new ZipOutputStream(file)) {
+            out.finish();
+        }
+        TuiSettings settings = TuiSettings.load();
+        assertNull(settings.getOsvDatabase());
+        settings.setOsvDatabase(zip.toString());
+        settings.save();
+        assertEquals(zip.toString(), TuiSettings.load().getOsvDatabase());
+
+        VulnerabilitySource source = TuiSettings.vulnerabilitySource();
+
+        assertThat(source).isInstanceOf(OsvDatabase.class);
+        assertEquals(zip, ((OsvDatabase) source).file());
+        assertThat(CveAuditTab.databaseNote((OsvDatabase) source)).startsWith("offline OSV database, updated ");
     }
 }

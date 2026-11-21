@@ -33,6 +33,7 @@ camel dependency audit [options]
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fail-on` | Exits 1 when a vulnerability at or above this severity is found: critical, high, medium, low or none | low | String
+| `--fail-on-error` | Exits 1 when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database), instead of checking the Apache Camel security advisories only |  | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version |  | String
 | `--groovy-pre-compiled` | Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main) | false | boolean
@@ -58,6 +59,8 @@ camel dependency audit [options]
 | `--observe` | Enable observability services | false | boolean
 | `--offline` | Checks the Apache Camel security advisories of the catalog only, without OSV.dev |  | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
+| `--osv-database` | Checks with the offline OSV database instead of the OSV.dev API: the export of all the Maven vulnerabilities of OSV.dev, downloaded once a day and matched locally, so no coordinates of the project leave the machine |  | boolean
+| `--osv-database-url` | Where the offline OSV database is downloaded from, such as a mirror on the repository manager of the company, or a ZIP file on disk (default: \https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip). Implies --osv-database |  | String
 | `--output` | Output format (gav, maven, jbang) | gav | String
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
