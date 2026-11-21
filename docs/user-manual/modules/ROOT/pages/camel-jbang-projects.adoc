@@ -264,12 +264,45 @@ The options:
 * `--json` prints one JSON document, for a script or an AI agent. `vulnerabilities` counts the ones listed (`--severity`),
   `totalVulnerabilities` all of them, and `failed` is `true` when the command exits with 1.
 * `--offline` checks only the Apache Camel security advisories, without OSV.dev.
+* `--osv-database` checks with the offline OSV database instead of the OSV.dev API, see below.
 
 The command exits with 1 when it finds a vulnerability of the `--fail-on` severity or worse (default `low`: any), so a
-CI job fails; `--fail-on=none` always exits with 0. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
+CI job fails; `--fail-on=none` always exits with 0. When OSV.dev (or the OSV database) cannot be used, the command
+warns and checks the Apache Camel security advisories only; with `--fail-on-error` it exits with 1 then, so a CI job
+does not pass without the check. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
 shows the same for a running integration, and explains a vulnerability with AI.
 
-The command reaches OSV.dev through a proxy, which is taken from, in order:
+=== The offline OSV database
+
+By default, the command sends the coordinates (`groupId:artifactId:version`) of every dependency to the OSV.dev API,
+including those of the internal libraries of a company. With `--osv-database` it does not: it downloads the export of
+all the Maven vulnerabilities of OSV.dev (one ZIP file of about 10 MB, updated every day by OSV.dev) and matches the
+versions locally, so no coordinates leave the machine:
+
+[source,bash]
+----
+camel dependency audit --osv-database
+----
+
+The ZIP is kept in `~/.camel/osv` and downloaded again once a day, and only when it changed (`If-Modified-Since`).
+When the download fails, the copy of the day before is used, with a warning.
+
+A build machine without internet access can download the ZIP from the repository manager of the company: a raw
+repository of Nexus or a generic remote repository of Artifactory that proxies
+`https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip`, or a file on disk:
+
+[source,bash]
+----
+camel dependency audit --osv-database-url=https://nexus.corp.com/repository/osv/Maven/all.zip
+camel dependency audit --osv-database-url=/opt/osv/all.zip
+----
+
+The offline database and the OSV.dev API give the same vulnerabilities: OSV.dev matches the versions with the same
+data.
+
+=== Proxy
+
+The command reaches OSV.dev (or the URL of `--osv-database-url`) through a proxy, which is taken from, in order:
 
 . the active proxy of the Maven settings: `~/.m2/settings.xml`, or the file of `--maven-settings`, with its username,
   its password (encrypted with `settings-security.xml` or not) and its `nonProxyHosts`;

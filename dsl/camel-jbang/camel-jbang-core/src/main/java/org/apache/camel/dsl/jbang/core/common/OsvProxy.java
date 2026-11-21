@@ -34,9 +34,17 @@ public final class OsvProxy {
     private OsvProxy() {
     }
 
-    /** The proxy, from the Maven settings of a built downloader, else from the environment. */
+    /** The proxy to OSV.dev, from the Maven settings of a built downloader, else from the environment. */
     public static HttpProxy resolve(MavenDownloaderImpl downloader, Map<String, String> env) {
-        MavenProxy maven = downloader != null ? downloader.proxyFor(OsvClient.API_URL) : null;
+        return resolve(downloader, env, OsvClient.API_URL);
+    }
+
+    /**
+     * The proxy to the given URL (such as the one of the offline OSV database), from the Maven settings of a built
+     * downloader, else from the environment.
+     */
+    public static HttpProxy resolve(MavenDownloaderImpl downloader, Map<String, String> env, String url) {
+        MavenProxy maven = downloader != null ? downloader.proxyFor(url) : null;
         if (maven != null) {
             // with the nonProxyHosts: the TUI fetches other URLs (the documentation) through the same proxy
             return new HttpProxy(
@@ -51,11 +59,17 @@ public final class OsvProxy {
      * the environment. Only the settings are read: nothing is downloaded.
      */
     public static HttpProxy resolve(String mavenSettings, String mavenSettingsSecurity, Map<String, String> env) {
+        return resolve(mavenSettings, mavenSettingsSecurity, env, OsvClient.API_URL);
+    }
+
+    /** The proxy to the given URL, from the given Maven settings, else from the environment. */
+    public static HttpProxy resolve(
+            String mavenSettings, String mavenSettingsSecurity, Map<String, String> env, String url) {
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setMavenSettingsLocation(mavenSettings);
             downloader.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
             downloader.build();
-            return resolve(downloader, env);
+            return resolve(downloader, env, url);
         } catch (Exception e) {
             // unreadable settings: as without them
             return HttpProxy.fromEnvironment(env);

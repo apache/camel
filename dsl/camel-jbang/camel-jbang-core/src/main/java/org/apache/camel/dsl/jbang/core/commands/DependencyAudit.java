@@ -43,6 +43,8 @@ import org.apache.camel.catalog.cve.CvssScore;
 import org.apache.camel.catalog.cve.Dependency;
 import org.apache.camel.catalog.cve.HttpProxy;
 import org.apache.camel.catalog.cve.OsvClient;
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -50,6 +52,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.OsvProxy;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -65,13 +68,16 @@ import org.apache.camel.util.json.JsonObject;
                    description = "Checks the dependencies for known vulnerabilities (CVEs) with OSV.dev and the Apache Camel security advisories",
                    generateHelp = true,
                    footer = {
-                           "Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a CI job fails.",
+                           "Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a CI job fails,",
+                           "and with --fail-on-error also when OSV.dev or the OSV database could not be used.",
                            "",
                            "Examples:",
                            "  camel dependency audit",
                            "  camel dependency audit --by-artifact",
                            "  camel dependency audit --integration=my-app",
                            "  camel dependency audit --severity=high --fail-on=critical",
+                           "  camel dependency audit --osv-database --fail-on-error",
+                           "  camel dependency audit --osv-database-url=https://nexus.corp.com/repository/osv/Maven/all.zip",
                            "  camel dependency audit --json" })
 public class DependencyAudit extends DependencyList {
 
@@ -100,8 +106,25 @@ public class DependencyAudit extends DependencyList {
             description = "Checks the Apache Camel security advisories of the catalog only, without OSV.dev")
     boolean offline;
 
+    @Option(name = "fail-on-error", hasValue = false,
+            description = "Exits 1 when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database),"
+                          + " instead of checking the Apache Camel security advisories only")
+    boolean failOnError;
+
+    @Option(name = "osv-database", hasValue = false,
+            description = "Checks with the offline OSV database instead of the OSV.dev API: the export of all the Maven vulnerabilities of OSV.dev,"
+                          + " downloaded once a day and matched locally, so no coordinates of the project leave the machine")
+    boolean osvDatabase;
+
+    @Option(name = "osv-database-url",
+            description = "Where the offline OSV database is downloaded from, such as a mirror on the repository manager of the company,"
+                          + " or a ZIP file on disk (default: " + OsvDatabase.DEFAULT_URL + "). Implies --osv-database")
+    String osvDatabaseUrl;
+
     // the direct dependencies of the project, as DependencyList finds them
     private final List<MavenGav> directDeps = new ArrayList<>();
+    // the offline OSV database, when it is used
+    private OsvDatabase database;
 
     @Override
     public Integer doCall() throws Exception {
@@ -143,14 +166,14 @@ public class DependencyAudit extends DependencyList {
         }
         List<Dependency> deps = new ArrayList<>();
         Map<String, Path> jars = new HashMap<>();
-        HttpProxy proxy = null;
+        VulnerabilitySource source = null;
         if (!gavs.isEmpty()) {
             boolean snapshot = gavs.stream().anyMatch(g -> g.contains("SNAPSHOT"));
             try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
                 downloader.setMavenSettingsLocation(mavenSettings);
                 downloader.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
                 downloader.build();
-                proxy = offline ? null : OsvProxy.resolve(downloader, System.getenv());
+                source = vulnerabilitySource(downloader);
                 for (MavenArtifact ma : downloader.resolveArtifacts(gavs, Set.of(), true, snapshot)) {
                     MavenGav g = ma.getGav();
                     if (g.getVersion() == null || skipArtifact(g.getGroupId(), g.getArtifactId(), g.getVersion())) {
@@ -163,12 +186,12 @@ public class DependencyAudit extends DependencyList {
                 }
             }
         }
-        if (proxy == null && !offline) {
-            proxy = OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, System.getenv());
+        if (source == null) {
+            source = vulnerabilitySource(null);
         }
         CamelCatalog catalog = new DefaultCamelCatalog();
         return report("project", deps, CveAudit.audit(deps, jars, declared, Map.of(), routeComponents(catalog),
-                catalog, offline ? null : new OsvClient(proxy)));
+                catalog, source));
     }
 
     /** The classpath of a running integration, and the components of its endpoints. */
@@ -196,8 +219,29 @@ public class DependencyAudit extends DependencyList {
         String name = process.name() != null && !process.name().contains(" ")
                 ? process.name() + " (" + process.pid() + ")" : String.valueOf(process.pid());
         return report("integration " + name, deps, CveAudit.audit(deps, jars, declaredDependencies(process.status()),
-                Map.of(), endpointComponents(process.status()), catalog,
-                offline ? null : new OsvClient(OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, System.getenv()))));
+                Map.of(), endpointComponents(process.status()), catalog, vulnerabilitySource(null)));
+    }
+
+    /**
+     * Where the vulnerabilities come from: the offline OSV database (--osv-database), the OSV.dev API, or none
+     * (--offline). The proxy comes from the Maven settings of the downloader (null to read them), else HTTPS_PROXY.
+     */
+    VulnerabilitySource vulnerabilitySource(MavenDownloaderImpl downloader) {
+        if (offline) {
+            return null;
+        }
+        Map<String, String> env = System.getenv();
+        if (osvDatabase || osvDatabaseUrl != null) {
+            String url = osvDatabaseUrl != null && !osvDatabaseUrl.isBlank() ? osvDatabaseUrl : OsvDatabase.DEFAULT_URL;
+            HttpProxy proxy = !url.startsWith("http://") && !url.startsWith("https://") ? null
+                    : downloader != null ? OsvProxy.resolve(downloader, env, url)
+                    : OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, env, url);
+            database = OsvDatabase.open(url, CamelHome.getCamelDir().resolve("osv"), OsvDatabase.DEFAULT_MAX_AGE, proxy);
+            return database;
+        }
+        return new OsvClient(
+                downloader != null
+                        ? OsvProxy.resolve(downloader, env) : OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, env));
     }
 
     /** The components the routes of the project files use; null when there are no route files. */
@@ -298,21 +342,24 @@ public class DependencyAudit extends DependencyList {
             if (result.osvError() != null) {
                 outPrinter().printWarn(result.osvError() + ": only the Apache Camel security advisories were checked");
             }
+            if (database != null && database.warning() != null) {
+                outPrinter().printWarn(database.warning());
+            }
             String below = notListed > 0 ? " (" + notListed + " more below --severity=" + severity + ")" : "";
             if (findings.isEmpty()) {
                 outPrinter().println((notListed > 0
                         ? "No vulnerabilities of " + severity + " severity or worse in "
                         : "No known vulnerabilities in ")
                                      + deps.size() + " dependencies of the " + source
-                                     + (offline ? " (Apache Camel security advisories only)" : "") + below);
+                                     + (offline ? " (Apache Camel security advisories only)" : "") + databaseNote() + below);
             } else {
                 outPrinter().println(byArtifact ? artifactTable(artifacts) : findingTable(findings));
                 outPrinter().println();
                 outPrinter().println(findings.size() + " vulnerabilities in " + artifacts.size() + " of " + deps.size()
-                                     + " dependencies of the " + source + counts(findings) + below);
+                                     + " dependencies of the " + source + counts(findings) + databaseNote() + below);
             }
         }
-        return failed(result.findings()) ? CliExitCode.FAILURE : CliExitCode.OK;
+        return failed(result) ? CliExitCode.FAILURE : CliExitCode.OK;
     }
 
     /**
@@ -330,12 +377,23 @@ public class DependencyAudit extends DependencyList {
         doc.put("vulnerableArtifacts", artifacts.size());
         doc.put("severity", severity);
         doc.put("failOn", failOn);
-        doc.put("failed", failed(result.findings()));
+        doc.put("failed", failed(result));
         if (result.osvError() != null) {
             doc.put("osvError", result.osvError());
         }
         if (offline) {
             doc.put("offline", true);
+        }
+        if (database != null) {
+            JsonObject db = new JsonObject();
+            db.put("location", database.location());
+            if (database.updated() != null) {
+                db.put("updated", database.updated().toString());
+            }
+            if (database.warning() != null) {
+                db.put("warning", database.warning());
+            }
+            doc.put("osvDatabase", db);
         }
         JsonArray rows = new JsonArray();
         if (byArtifact) {
@@ -346,6 +404,22 @@ public class DependencyAudit extends DependencyList {
             doc.put("findings", rows);
         }
         return doc;
+    }
+
+    // which offline OSV database was used, such as " (offline OSV database, updated 2026-11-20)"
+    private String databaseNote() {
+        if (database == null || database.updated() == null) {
+            return "";
+        }
+        return " (offline OSV database, updated " + database.updated().toString().substring(0, 10) + ")";
+    }
+
+    /**
+     * Whether the command exits with 1: a vulnerability at or above --fail-on, or (--fail-on-error) the JARs could not
+     * be checked with OSV.dev or the OSV database.
+     */
+    boolean failed(CveAudit.Result result) {
+        return failed(result.findings()) || (failOnError && result.osvError() != null);
     }
 
     /** Whether a vulnerability at or above --fail-on was found (of all of them, not only those listed). */

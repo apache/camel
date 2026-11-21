@@ -58,11 +58,12 @@ public final class CveAudit {
      *                           JAR files
      * @param endpointComponents the components of the endpoints of the routes; null when not known (no usage)
      * @param catalog            the catalog with the Camel advisories and the components
-     * @param osv                the OSV.dev client; null to check the Camel advisories only
+     * @param osv                the OSV.dev API client or the offline OSV database; null to check the Camel advisories
+     *                           only
      */
     public static Result audit(
             List<Dependency> deps, Map<String, Path> jars, Set<String> declared, Map<String, String> fallbackVia,
-            Collection<String> endpointComponents, CamelCatalog catalog, OsvClient osv) {
+            Collection<String> endpointComponents, CamelCatalog catalog, VulnerabilitySource osv) {
         Map<String, List<OsvClient.Vulnerability>> vulnMap = osv != null ? osv.queryBatch(deps) : Map.of();
         String osvError = osv != null ? osv.lastError() : null;
 

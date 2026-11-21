@@ -2406,6 +2406,8 @@ Apache Camel security advisories
 Usage: camel dependency audit [-hy] [--integration=<integration>]
                                [--by-artifact] [--json] [--severity=<severity>]
                                [--fail-on=<fail-on>] [--offline]
+                               [--fail-on-error] [--osv-database]
+                               [--osv-database-url=<osv-database-url>]
                                [--output=<output>] [--dep=<dep>]
                                [--runtime=<runtime>] [--name=<name>]
                                [--port=<port>]
@@ -2461,6 +2463,21 @@ Options:
                             Default: low
       --offline             Checks the Apache Camel security advisories of the
                             catalog only, without OSV.dev
+      --fail-on-error       Exits 1 when the dependencies could not be checked
+                            with OSV.dev or the OSV database (not reachable, no
+                            database), instead of checking the Apache Camel
+                            security advisories only
+      --osv-database        Checks with the offline OSV database instead of the
+                            OSV.dev API: the export of all the Maven
+                            vulnerabilities of OSV.dev, downloaded once a day
+                            and matched locally, so no coordinates of the
+                            project leave the machine
+      --osv-database-url=<osv-database-url>
+                            Where the offline OSV database is downloaded from,
+                            such as a mirror on the repository manager of the
+                            company, or a ZIP file on disk (default:
+                            https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip).
+                            Implies --osv-database
       --output=<output>     Output format (gav, maven, jbang)
                             Default: gav
       --dep, --dependency=<dep>
@@ -2624,13 +2641,17 @@ Options:
                             specified then what was last run will be exported.
 
 Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a
-CI job fails.
+CI job fails,
+and with --fail-on-error also when OSV.dev or the OSV database could not be
+used.
 
 Examples:
   camel dependency audit
   camel dependency audit --by-artifact
   camel dependency audit --integration=my-app
   camel dependency audit --severity=high --fail-on=critical
+  camel dependency audit --osv-database --fail-on-error
+  camel dependency audit --osv-database-url=https://nexus.corp.com/repository/osv/Maven/all.zip
   camel dependency audit --json
 
 == camel dependency copy --help
