@@ -285,7 +285,6 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
 
             //process and prepare the routing slip
             boolean sync = processExchange(endpoint, current, exchange, originalCallback, iter, prototype);
-            current = prepareExchangeForRoutingSlip(current, endpoint);
 
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
@@ -294,8 +293,11 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                 }
                 // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                // (do not copy the exchange, as another thread may be processing it)
                 return false;
             }
+
+            current = prepareExchangeForRoutingSlip(current, endpoint);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
@@ -509,15 +511,17 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                 // prepare and process the routing slip
                 final AsyncCallback cbNext = getNextCallback(prototype, nextEndpoint, originalCallback);
                 boolean sync = processExchange(nextEndpoint, current, original, cbNext, iter, prototype);
-                current = prepareExchangeForRoutingSlip(current, nextEndpoint);
 
                 if (!sync) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Processing exchangeId: {} is continued being processed asynchronously",
                                 original.getExchangeId());
                     }
+                    // do not copy the exchange, as another thread may be processing it
                     return;
                 }
+
+                current = prepareExchangeForRoutingSlip(current, nextEndpoint);
             }
 
             // logging current as it contains the exchange that might have altered the payload and since
