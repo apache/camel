@@ -30,8 +30,10 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleProduce() throws Exception {
+        // disconnect=true forces a fresh connection on each send, so a stale cached MINA
+        // SSH session from before the server restart cannot cause a "Broken pipe" on the second send
         template.sendBodyAndHeader(
-                "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="
+                "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&disconnect=true&knownHostsFile="
                                    + service.getKnownHostsFile(),
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -44,7 +46,7 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
         service.setUpServer();
 
         template.sendBodyAndHeader(
-                "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="
+                "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&disconnect=true&knownHostsFile="
                                    + service.getKnownHostsFile(),
                 "Hello World", Exchange.FILE_NAME, "hello1.txt");
 
