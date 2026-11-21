@@ -53,6 +53,7 @@ import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.catalog.cve.CvssScore;
 import org.apache.camel.catalog.cve.Dependency;
+import org.apache.camel.catalog.cve.OnlineAdvisories;
 import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.catalog.cve.OsvDatabase;
 import org.apache.camel.catalog.cve.VulnerabilitySource;
@@ -603,11 +604,25 @@ class CveAuditTab extends AbstractTableTab {
                 .map(d -> new Dependency(d.groupId(), d.artifactId(), d.version())).toList();
         // the source and the proxy are looked up for each scan, so a change in the settings applies without a restart
         VulnerabilitySource source = TuiSettings.vulnerabilitySource();
-        sourceNote = source instanceof OsvDatabase db ? databaseNote(db) : null;
+        OnlineAdvisories.Result advisories = TuiSettings.camelAdvisories(ProjectOverviewAssist.catalog());
+        sourceNote = sourceNote(source instanceof OsvDatabase db ? databaseNote(db) : null, advisories);
         CveAudit.Result result = CveAudit.audit(deps, jars, declaredDependencies(info), fallbackVia,
                 endpointComponents(current != null ? current : info), ProjectOverviewAssist.catalog(),
-                source);
+                advisories.advisories(), source);
         applyResult(deps, result.findings(), null, result.osvError());
+    }
+
+    // the note of the title: the offline OSV database, and the Camel advisories when they could not be checked online
+    static String sourceNote(String databaseNote, OnlineAdvisories.Result advisories) {
+        String camel = advisories.warning() != null
+                ? (advisories.online() > 0
+                        ? "Camel advisories of " + advisories.updated().toString().substring(0, 10)
+                        : "Camel advisories of the catalog")
+                : null;
+        if (databaseNote == null) {
+            return camel;
+        }
+        return camel == null ? databaseNote : databaseNote + ", " + camel;
     }
 
     static String databaseNote(OsvDatabase db) {

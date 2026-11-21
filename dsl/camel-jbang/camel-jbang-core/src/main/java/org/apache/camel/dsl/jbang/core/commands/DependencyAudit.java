@@ -42,6 +42,7 @@ import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.catalog.cve.CvssScore;
 import org.apache.camel.catalog.cve.Dependency;
 import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.catalog.cve.OnlineAdvisories;
 import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.catalog.cve.OsvDatabase;
 import org.apache.camel.catalog.cve.VulnerabilitySource;
@@ -56,6 +57,7 @@ import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -103,7 +105,7 @@ public class DependencyAudit extends DependencyList {
     String failOn = "low";
 
     @Option(name = "offline", hasValue = false,
-            description = "Checks the Apache Camel security advisories of the catalog only, without OSV.dev")
+            description = "Checks the Apache Camel security advisories of the catalog only, without OSV.dev and without checking the advisories online")
     boolean offline;
 
     @Option(name = "fail-on-error", hasValue = false,
@@ -116,6 +118,13 @@ public class DependencyAudit extends DependencyList {
                           + " downloaded once a day and matched locally, so no coordinates of the project leave the machine")
     boolean osvDatabase;
 
+    @Option(name = "advisories-url",
+            description = "Where the Apache Camel security advisories are checked online, once a day, and merged with those of the catalog:"
+                          + " the GitHub contents API of camel-website (default: " + OnlineAdvisories.DEFAULT_URL
+                          + "), a mirror of it,"
+                          + " or the URL or file of a JSON array in the format of the catalog")
+    String advisoriesUrl;
+
     @Option(name = "osv-database-url",
             description = "Where the offline OSV database is downloaded from, such as a mirror on the repository manager of the company,"
                           + " or a ZIP file on disk (default: " + OsvDatabase.DEFAULT_URL + "). Implies --osv-database")
@@ -125,6 +134,8 @@ public class DependencyAudit extends DependencyList {
     private final List<MavenGav> directDeps = new ArrayList<>();
     // the offline OSV database, when it is used
     private OsvDatabase database;
+    // the Apache Camel security advisories checked online; null with --offline
+    private OnlineAdvisories.Result advisories;
 
     @Override
     public Integer doCall() throws Exception {
@@ -167,6 +178,8 @@ public class DependencyAudit extends DependencyList {
         List<Dependency> deps = new ArrayList<>();
         Map<String, Path> jars = new HashMap<>();
         VulnerabilitySource source = null;
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        List<SecurityAdvisoryModel> camelAdvisories = null;
         if (!gavs.isEmpty()) {
             boolean snapshot = gavs.stream().anyMatch(g -> g.contains("SNAPSHOT"));
             try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
@@ -174,6 +187,7 @@ public class DependencyAudit extends DependencyList {
                 downloader.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
                 downloader.build();
                 source = vulnerabilitySource(downloader);
+                camelAdvisories = camelAdvisories(downloader, catalog);
                 for (MavenArtifact ma : downloader.resolveArtifacts(gavs, Set.of(), true, snapshot)) {
                     MavenGav g = ma.getGav();
                     if (g.getVersion() == null || skipArtifact(g.getGroupId(), g.getArtifactId(), g.getVersion())) {
@@ -188,10 +202,10 @@ public class DependencyAudit extends DependencyList {
         }
         if (source == null) {
             source = vulnerabilitySource(null);
+            camelAdvisories = camelAdvisories(null, catalog);
         }
-        CamelCatalog catalog = new DefaultCamelCatalog();
         return report("project", deps, CveAudit.audit(deps, jars, declared, Map.of(), routeComponents(catalog),
-                catalog, source));
+                catalog, camelAdvisories, source));
     }
 
     /** The classpath of a running integration, and the components of its endpoints. */
@@ -219,7 +233,28 @@ public class DependencyAudit extends DependencyList {
         String name = process.name() != null && !process.name().contains(" ")
                 ? process.name() + " (" + process.pid() + ")" : String.valueOf(process.pid());
         return report("integration " + name, deps, CveAudit.audit(deps, jars, declaredDependencies(process.status()),
-                Map.of(), endpointComponents(process.status()), catalog, vulnerabilitySource(null)));
+                Map.of(), endpointComponents(process.status()), catalog, camelAdvisories(null, catalog),
+                vulnerabilitySource(null)));
+    }
+
+    /**
+     * The Apache Camel security advisories: those of the catalog, merged with those checked online (--advisories-url),
+     * except with --offline. The proxy comes from the Maven settings of the downloader (null to read them), else
+     * HTTPS_PROXY.
+     */
+    List<SecurityAdvisoryModel> camelAdvisories(MavenDownloaderImpl downloader, CamelCatalog catalog) {
+        List<SecurityAdvisoryModel> fromCatalog = CveAudit.advisories(catalog);
+        if (offline) {
+            return fromCatalog;
+        }
+        String url = advisoriesUrl != null && !advisoriesUrl.isBlank() ? advisoriesUrl : OnlineAdvisories.DEFAULT_URL;
+        Map<String, String> env = System.getenv();
+        HttpProxy proxy = !url.startsWith("http://") && !url.startsWith("https://") ? null
+                : downloader != null ? OsvProxy.resolve(downloader, env, url)
+                : OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, env, url);
+        advisories = OnlineAdvisories.load(url, CamelHome.getCamelDir().resolve("advisories"),
+                OnlineAdvisories.DEFAULT_MAX_AGE, proxy, fromCatalog);
+        return advisories.advisories();
     }
 
     /**
@@ -345,6 +380,9 @@ public class DependencyAudit extends DependencyList {
             if (database != null && database.warning() != null) {
                 outPrinter().printWarn(database.warning());
             }
+            if (advisories != null && advisories.warning() != null) {
+                outPrinter().printWarn(advisories.warning());
+            }
             String below = notListed > 0 ? " (" + notListed + " more below --severity=" + severity + ")" : "";
             if (findings.isEmpty()) {
                 outPrinter().println((notListed > 0
@@ -383,6 +421,18 @@ public class DependencyAudit extends DependencyList {
         }
         if (offline) {
             doc.put("offline", true);
+        }
+        if (advisories != null) {
+            JsonObject adv = new JsonObject();
+            adv.put("total", advisories.advisories().size());
+            adv.put("online", advisories.online());
+            if (advisories.updated() != null) {
+                adv.put("updated", advisories.updated().toString());
+            }
+            if (advisories.warning() != null) {
+                adv.put("warning", advisories.warning());
+            }
+            doc.put("camelAdvisories", adv);
         }
         if (database != null) {
             JsonObject db = new JsonObject();

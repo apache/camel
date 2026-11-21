@@ -46,6 +46,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
         </dependency>
+        <!-- the advisories of camel-website, checked online (SecurityAdvisoryParser of camel-tooling-model) -->
+        <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+            <version>${snakeyaml-engine-version}</version>
+        </dependency>
         <!-- ComparableVersion, to compare the versions of the affected ranges -->
         <dependency>
             <groupId>org.apache.maven</groupId>

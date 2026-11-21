@@ -234,8 +234,7 @@ Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 == Checking dependencies for known vulnerabilities
 
 Check the dependencies of your integration, with the ones they bring in, for known vulnerabilities (CVEs). Every JAR
-is checked against https://osv.dev[OSV.dev], and the Camel JARs against the Apache Camel security advisories that ship
-with the Camel catalog:
+is checked against https://osv.dev[OSV.dev], and the Camel JARs against the Apache Camel security advisories:
 
 [source,bash]
 ----
@@ -273,6 +272,27 @@ does not pass without the check. The CVE Audit screen of the xref:camel-jbang-tu
 shows the same for a running integration, and explains a vulnerability with AI. For a Maven build in a CI/CD
 pipeline, the xref:camel-report-maven-plugin.adoc#_camel_reportaudit[camel-report:audit] goal does the same checks
 on the dependencies Maven resolved, fails the build on a severity, and writes a SARIF report.
+
+=== The Apache Camel security advisories
+
+The Apache Camel security advisories that ship with the Camel catalog are those published up to the release of the
+CLI. The command also checks them online, in the camel-website repository on GitHub where they are published
+(https://github.com/apache/camel-website/tree/main/content/security[content/security]), and merges both, so an older
+CLI knows the advisories published after its release. They are checked once a day and kept in `~/.camel/advisories`;
+a check downloads only the advisories that are new or changed, and sends no coordinates of the project. When GitHub
+cannot be reached, the copy of the day before is used, else those of the catalog, with a warning. The `--json`
+document says how many came online (`camelAdvisories`).
+
+A machine without access to GitHub can read them from a mirror: a JSON file in the format of the catalog
+(`camel-security-advisories.json`), such as one kept on the repository manager of the company, or a file on disk:
+
+[source,bash]
+----
+camel dependency audit --advisories-url=https://nexus.corp.com/repository/camel/camel-security-advisories.json
+----
+
+With `--offline`, only those of the catalog are checked. Set the `GITHUB_TOKEN` environment variable when a shared CI
+runner hits the rate limit of the GitHub API.
 
 === The offline OSV database
 
