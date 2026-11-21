@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.OnlineAdvisories;
 import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -147,6 +149,19 @@ class CveAuditTabViewsTest {
         assertThat(row.getString("artifact")).isEqualTo(JSON_SMART);
         assertThat(row.getString("fixesAll")).isEqualTo("2.4.9");
         assertThat(row.getBoolean("usedByRoutes")).isFalse();
+    }
+
+    @Test
+    void theTitleNoteOfTheCamelAdvisories() {
+        Instant day = Instant.parse("2026-11-20T08:00:00Z");
+        assertThat(CveAuditTab.sourceNote(null, new OnlineAdvisories.Result(List.of(), 3, day, null))).isNull();
+        assertThat(CveAuditTab.sourceNote(null, new OnlineAdvisories.Result(List.of(), 3, day, "offline")))
+                .isEqualTo("Camel advisories of 2026-11-20");
+        assertThat(CveAuditTab.sourceNote(null, new OnlineAdvisories.Result(List.of(), 0, null, "offline")))
+                .isEqualTo("Camel advisories of the catalog");
+        // the date of the cached copy could not be read
+        assertThat(CveAuditTab.sourceNote("offline OSV database", new OnlineAdvisories.Result(List.of(), 3, null, "offline")))
+                .isEqualTo("offline OSV database, Camel advisories of an earlier copy");
     }
 
     private String footer() {

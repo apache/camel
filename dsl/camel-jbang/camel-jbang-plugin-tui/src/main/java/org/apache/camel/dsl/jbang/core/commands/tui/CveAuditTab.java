@@ -614,11 +614,17 @@ class CveAuditTab extends AbstractTableTab {
 
     // the note of the title: the offline OSV database, and the Camel advisories when they could not be checked online
     static String sourceNote(String databaseNote, OnlineAdvisories.Result advisories) {
-        String camel = advisories.warning() != null
-                ? (advisories.online() > 0
-                        ? "Camel advisories of " + advisories.updated().toString().substring(0, 10)
-                        : "Camel advisories of the catalog")
-                : null;
+        String camel = null;
+        if (advisories.warning() != null) {
+            if (advisories.online() == 0) {
+                camel = "Camel advisories of the catalog";
+            } else if (advisories.updated() != null) {
+                camel = "Camel advisories of " + advisories.updated().toString().substring(0, 10);
+            } else {
+                // the date of the cached copy could not be read
+                camel = "Camel advisories of an earlier copy";
+            }
+        }
         if (databaseNote == null) {
             return camel;
         }

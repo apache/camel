@@ -281,8 +281,13 @@ public final class OnlineAdvisories {
     private static void write(Path file, String text) throws IOException {
         Files.createDirectories(file.getParent());
         Path tmp = Files.createTempFile(file.getParent(), file.getFileName().toString(), ".tmp");
-        Files.writeString(tmp, text);
-        move(tmp, file);
+        try {
+            Files.writeString(tmp, text);
+            move(tmp, file);
+        } finally {
+            // a failed write or move leaves no temporary file in the cache
+            Files.deleteIfExists(tmp);
+        }
     }
 
     private static void move(Path tmp, Path target) throws IOException {

@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
@@ -194,6 +195,21 @@ class OnlineAdvisoriesTest {
         assertThat(result.online()).isZero();
         assertThat(result.updated()).isNull();
         assertThat(result.warning()).contains("HTTP status 500").contains("those of the catalog are used");
+    }
+
+    @Test
+    void aFailedWriteLeavesNoTemporaryFile() throws Exception {
+        // the cached copy cannot be replaced: its place is taken by a directory that is not empty
+        Path cached = dir.resolve(OnlineAdvisories.cacheName(base + "/listing") + ".json");
+        Files.createDirectories(cached);
+        Files.writeString(cached.resolve("keep.txt"), "x");
+
+        OnlineAdvisories.Result result = OnlineAdvisories.load(base + "/listing", dir, Duration.ofDays(1), null, List.of());
+
+        assertThat(result.warning()).contains("could not be checked online").contains("those of the catalog are used");
+        try (Stream<Path> files = Files.list(dir)) {
+            assertThat(files.map(p -> p.getFileName().toString())).noneMatch(n -> n.endsWith(".tmp"));
+        }
     }
 
     @Test
