@@ -4,6 +4,7 @@ The Camel Report Maven Plugin supports the following goals
 
  - camel-report:validate - To validate your source code for invalid Camel endpoint uris
  - camel-report:route-coverage - To report the coverage of your Camel routes after unit testing
+ - camel-report:audit - To check the dependencies for known vulnerabilities (CVEs), and fail the build on them
 
 == camel-report:validate
 
@@ -217,6 +218,129 @@ In particular, in order to use the validate plugin with transitive dependencies,
   </executions>
 </plugin>
 ----
+
+== camel-report:audit
+
+Checks the dependencies of the project for known vulnerabilities (CVEs), for a CI/CD pipeline: every JAR against
+https://osv.dev[OSV.dev], and the Camel JARs against the Apache Camel security advisories that ship with the Camel
+catalog. These are the same checks as `camel dependency audit` of the xref:camel-jbang.adoc[Camel CLI]. The
+dependencies are those Maven resolved for the build, with the versions the BOMs (`dependencyManagement`) chose.
+
+[source,bash]
+----
+mvn camel-report:audit
+----
+
+[source,text]
+----
+[WARNING] SEVERITY  SCORE  CVE             ARTIFACT                               FIX     VIA           SUMMARY
+[WARNING] CRITICAL    9.8  CVE-2022-42889  org.apache.commons:commons-text:1.9    1.10.0                Arbitrary code execution in Apache Commons Text
+[WARNING] MEDIUM      6.5  CVE-2025-48924  org.apache.commons:commons-lang3:3.11  3.18.0  commons-text  Apache Commons Lang is vulnerable to Uncontrolled Recursion…
+[WARNING] 2 vulnerabilities in 2 of 3 dependencies of com.acme:orders, 1 suppressed
+----
+
+*FIX* is the version that fixes the JAR, or the Camel release to upgrade to for a Camel advisory, and *VIA* the
+dependency chain that brings it in.
+
+By default the goal only reports. To fail the build, set `failOn` to a severity:
+
+[source,bash]
+----
+mvn camel-report:audit -Dcamel.audit.failOn=high
+----
+
+Or run it in every build, in the `verify` phase:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-report-maven-plugin</artifactId>
+  <version>${camel.version}</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>audit</goal>
+      </goals>
+      <configuration>
+        <failOn>high</failOn>
+        <osvDatabase>true</osvDatabase>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The Apache Camel security advisories are those of the catalog of the plugin, so use the latest release of the plugin,
+whatever the Camel version of the project, to know the latest advisories.
+
+=== The offline OSV database
+
+By default the goal sends the coordinates (`groupId:artifactId:version`) of the dependencies to the OSV.dev API. With
+`osvDatabase` it does not: it downloads the export of all the Maven vulnerabilities of OSV.dev (one ZIP file of about
+10 MB, updated every day by OSV.dev) and matches the versions locally, so no coordinates leave the machine. The ZIP is
+kept in `~/.camel/osv` (shared with the Camel CLI) and downloaded again once a day.
+
+A build machine without internet access downloads it from the repository manager of the company, such as a raw
+repository of Nexus or a generic remote repository of Artifactory that proxies
+`https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip`, or reads a file:
+
+[source,bash]
+----
+mvn camel-report:audit -Dcamel.audit.osvDatabaseUrl=https://nexus.corp.com/repository/osv/Maven/all.zip
+----
+
+The goal reaches OSV.dev, or the URL of the database, through the proxy of the Maven settings (`settings.xml`, with its
+username, password and `nonProxyHosts`), else the `HTTPS_PROXY` and `NO_PROXY` environment variables.
+
+=== Suppressions
+
+A vulnerability that does not apply to the project, such as one in a feature the project does not use, goes in
+`camel-audit-suppressions.txt` beside the `pom.xml`, one per line with the reason. It is then reported as suppressed,
+and does not fail the build:
+
+[source,text]
+----
+# the id of the CVE, or of its GHSA alias, and why
+CVE-2022-1471 the YAML comes from our own configuration only
+----
+
+=== Reports
+
+The goal writes `target/camel-audit.json` (in the shape of `camel dependency audit --json`, with the suppressed
+findings and their reasons) and `target/camel-audit.sarif`. The SARIF report can be uploaded to GitHub code scanning,
+which then shows the vulnerabilities in the Security tab of the repository:
+
+[source,yaml]
+----
+- run: mvn -B verify camel-report:audit
+- uses: github/codeql-action/upload-sarif@v4
+  if: always()
+  with:
+    sarif_file: target/camel-audit.sarif
+----
+
+=== Options
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Parameter | Default Value | Description
+| skip | false | Skips the audit.
+| scopes | compile,runtime | The scopes of the dependencies to check, separated by commas.
+| severity | low | The lowest severity to list: critical, high, medium or low.
+| failOn | none | Fails the build when a vulnerability at or above this severity is found (also one below `severity`): critical, high, medium, low, or none to only report them.
+| failOnError | false | Fails the build when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database). Otherwise only the Apache Camel security advisories are checked then, with a warning.
+| offline | false | Checks the Apache Camel security advisories of the catalog only, without OSV.dev.
+| osvDatabase | false | Checks with the offline OSV database instead of the OSV.dev API.
+| osvDatabaseUrl | | Where the offline OSV database is downloaded from, or a ZIP file on disk (default `\https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip`). Implies `osvDatabase`.
+| osvDatabaseCache | ~/.camel/osv | Where a downloaded OSV database is kept.
+| excludeGroupIds | | The groupIds that are not checked and not sent to OSV.dev, such as those of the internal libraries of a company, separated by commas; `com.acme` also leaves out `com.acme.billing`. The modules of the build are never checked.
+| suppressions | camel-audit-suppressions.txt | The file of the vulnerabilities that do not apply, beside the `pom.xml`.
+| jsonReport | target/camel-audit.json | The JSON report; empty for none.
+| sarifReport | target/camel-audit.sarif | The SARIF report; empty for none.
+|===
+
+Each option can be set as a property with the `camel.audit.` prefix, such as `-Dcamel.audit.failOn=high`.
 
 == camel-report:route-coverage
 

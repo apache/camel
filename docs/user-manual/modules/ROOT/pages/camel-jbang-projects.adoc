@@ -268,7 +268,9 @@ The options:
 
 The command exits with 1 when it finds a vulnerability of the `--fail-on` severity or worse (default `low`: any), so a
 CI job fails; `--fail-on=none` always exits with 0. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
-shows the same for a running integration, and explains a vulnerability with AI.
+shows the same for a running integration, and explains a vulnerability with AI. For a Maven build in a CI/CD
+pipeline, the xref:camel-report-maven-plugin.adoc#_camel_reportaudit[camel-report:audit] goal does the same checks
+on the dependencies Maven resolved, fails the build on a severity, and writes a SARIF report.
 
 === The offline OSV database
 
