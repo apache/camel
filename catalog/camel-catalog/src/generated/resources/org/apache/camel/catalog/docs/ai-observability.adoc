@@ -225,6 +225,11 @@ The content (`systemInstructions`, `toolDefinitions`, `inputMessages`, `outputMe
 `toolResult`) is only recorded at level `full`, capped at `camel.aiObservability.contentMaxLength` as on the spans, and
 only in the answer when asked with `content` or `id`. The messages are in the GenAI messages format of the spans.
 
+With the Camel CLI, `camel get genai` shows the same: the models, and the newest runs with their model calls and
+tool calls (`--content` adds the question of each run). `camel get genai --id 7` shows one run with its system
+message, question, each model call's answer or tool call's arguments and result, and the final answer; `--watch`
+keeps it on screen.
+
 Over HTTP the console is on the management server (`camel run --console`), as text or as JSON:
 
 [source,bash]

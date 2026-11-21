@@ -3804,6 +3804,8 @@ get commands:
     endpoint          Get usage of Camel endpoints
     error             Get captured routing errors of Camel integrations
     event             Get latest events of Camel integrations
+    genai             Display the model calls, agent runs and tool calls of the
+                      Camel AI components
     groovy            Groovy Sources used of Camel integrations
     group             Get status of Camel route groups
     health            Get health check status of running Camel integrations
@@ -4178,6 +4180,38 @@ Options:
 Examples:
   camel get event
   camel get event --watch
+
+== camel get genai --help
+Display the model calls, agent runs and tool calls of the Camel AI components
+Usage: camel get genai [-h] [--limit=<limit>] [--id=<id>] [--content] [--json]
+                        [--timeout=<timeout>] [--watch] [--duration=<duration>]
+                        [<name>]
+
+Options:
+  -h, --help                Display this help and exit
+      --limit=<limit>       The number of the newest agent runs and model calls
+                            to show
+                            Default: 20
+      --id=<id>             Show one call (an agent run, a model call or a tool
+                            call) with its messages
+      --content             Show the question of each agent run (recorded at
+                            camel.aiObservability.level=full)
+      --json                Output the answer of the genai dev console as JSON
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                            millis or as a duration such as 30s
+                            Default: 10000
+      --watch               Execute periodically and showing output fullscreen
+      --duration=<duration>
+                            How long to keep watching or following, in millis or
+                            as a duration such as 30s (default: until Enter is
+                            pressed)
+  <name>                    Name or pid of running Camel integration
+
+Examples:
+  camel get genai
+  camel get genai --content
+  camel get genai --id 7
+  camel get genai --watch
 
 == camel get groovy --help
 Groovy Sources used of Camel integrations

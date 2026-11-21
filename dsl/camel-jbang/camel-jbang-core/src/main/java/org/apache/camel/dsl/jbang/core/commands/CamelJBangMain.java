@@ -431,6 +431,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("endpoint", CommandTree.lazy(() -> cmd(new ListEndpoint())))
                     .addSubcommand("error", CommandTree.lazy(() -> cmd(new ListError())))
                     .addSubcommand("event", CommandTree.lazy(() -> cmd(new ListEvent())))
+                    .addSubcommand("genai", CommandTree.lazy(() -> cmd(new CamelGenAiAction())))
                     .addSubcommand("groovy", CommandTree.lazy(() -> cmd(new ListGroovy())))
                     .addSubcommand("group", CommandTree.lazy(() -> cmd(new CamelRouteGroupStatus())))
                     .addSubcommand("health", CommandTree.lazy(() -> cmd(new ListHealth())))
