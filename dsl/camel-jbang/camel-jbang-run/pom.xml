@@ -140,6 +140,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
+                        <!-- the tests need no Camel JMX: fewer MBeans, and contexts started at the same time do not clash -->
+                        <org.apache.camel.jmx.disabled>true</org.apache.camel.jmx.disabled>
                         <!-- a home of its own (~/.camel), out of the developer's. The local Maven repository stays
                              the build's, so what the tests resolve is not downloaded again -->
                         <user.home>${project.build.directory}/test-home</user.home>

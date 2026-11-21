@@ -190,6 +190,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
+                        <!-- the tests need no Camel JMX: fewer MBeans, and contexts started at the same time do not clash -->
+                        <org.apache.camel.jmx.disabled>true</org.apache.camel.jmx.disabled>
                         <!-- the tests write prompt and shell histories, settings and the camel-jbang log under the home
                              directory: a home of their own keeps them out of the developer's. The local Maven
                              repository stays the build's, so what the tests resolve is not downloaded again -->
