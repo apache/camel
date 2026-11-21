@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,6 +47,7 @@ import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobPersistenceException;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -427,11 +429,31 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     scheduler.scheduleJob(jobDetail, trigger);
                 }
             } catch (ObjectAlreadyExistsException ex) {
-                // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
-                if (!(getComponent().isClustered())) {
+                Trigger storedTrigger = scheduler.getTrigger(triggerKey);
+                JobDetail storedJob = null;
+                if (storedTrigger == null) {
+                    try {
+                        storedJob = scheduler.getJobDetail(jobDetail.getKey());
+                    } catch (JobPersistenceException e) {
+                        // a persistent job store cannot read the stored job (its class or data cannot be loaded, or a
+                        // database error): it is not taken as a Camel job
+                        ex.addSuppressed(e);
+                    }
+                }
+                if (storedJob != null && CamelJob.class.isAssignableFrom(storedJob.getJobClass())) {
+                    // only the job is in the scheduler: Quartz keeps a durable job (durableJob=true) when its trigger
+                    // is removed, as the endpoint does when it stops with deleteJob=true (the route is removed, such as
+                    // by a reload, or CamelContext stops with a persistent job store). Store the job of this endpoint in
+                    // its place (its data names this endpoint and CamelContext), with the trigger. Only a Camel job is
+                    // replaced: a job of another class with the same name and group (such as one of the application,
+                    // in a shared scheduler) is kept, and the start fails as before
+                    LOG.debug("Job {} is in the scheduler without its trigger. Scheduling it again.", jobDetail.getKey());
+                    scheduler.scheduleJob(jobDetail, Set.of(trigger), true);
+                } else if (!(getComponent().isClustered())) {
                     throw ex;
                 } else {
-                    trigger = scheduler.getTrigger(triggerKey);
+                    // some other VM may have stored the job & trigger in DB in clustered mode, in the mean time
+                    trigger = storedTrigger;
                     if (trigger == null) {
                         throw new SchedulerException("Trigger could not be found in quartz scheduler.");
                     }
