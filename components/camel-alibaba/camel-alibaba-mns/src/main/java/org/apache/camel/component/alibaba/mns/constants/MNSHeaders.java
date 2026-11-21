@@ -20,33 +20,41 @@ import org.apache.camel.spi.Metadata;
 
 public final class MNSHeaders {
 
-    @Metadata(label = "common", description = "The MNS message id", javaType = "String")
+    @Metadata(label = "common", description = "The ID of the message.", javaType = "String")
     public static final String MESSAGE_ID = "CamelAlibabaMnsMessageId";
 
-    @Metadata(label = "common", description = "The MNS receipt handle", javaType = "String")
+    @Metadata(label = "common", description = "The receipt handle of the message for deleteMessage. The consumer sets it for a"
+                                              + " received message. If this header is not set, the producer uses an exchange"
+                                              + " property of the same name.",
+              javaType = "String")
     public static final String RECEIPT_HANDLE = "CamelAlibabaMnsReceiptHandle";
 
     @Metadata(label = "common", description = "The MD5 digest of the message body", javaType = "String")
     public static final String MESSAGE_BODY_MD5 = "CamelAlibabaMnsMessageBodyMd5";
 
-    @Metadata(label = "producer", description = "Delay in seconds before the message becomes visible", javaType = "Integer")
+    @Metadata(label = "producer", description = "The delay in seconds for sendMessage before the message becomes visible. The"
+                                                + " value must be from 0 to 604800. If this header is not set, the"
+                                                + " DelaySeconds of the queue applies.",
+              javaType = "Integer")
     public static final String DELAY_SECONDS = "CamelAlibabaMnsDelaySeconds";
 
-    @Metadata(label = "producer", description = "Message priority", javaType = "Integer")
+    @Metadata(label = "producer", description = "The priority of the message for sendMessage. The consumer sets it for a"
+                                                + " received message.",
+              javaType = "Integer")
     public static final String PRIORITY = "CamelAlibabaMnsPriority";
 
-    @Metadata(label = "producer", description = "Message tag for topic publish operations", javaType = "String")
+    @Metadata(label = "producer", description = "The tag of the message for publishMessage. Simple Message Queue accepts at"
+                                                + " most 16 characters.",
+              javaType = "String")
     public static final String MESSAGE_TAG = "CamelAlibabaMnsMessageTag";
 
-    @Metadata(label = "producer", description = "The operation to invoke, overriding the operation the endpoint"
-                                                + " resolves. The exchange property of the same name takes precedence"
-                                                + " over this header.",
+    @Metadata(label = "producer", description = "The operation that the producer performs. This header replaces the operation"
+                                                + " option, and an exchange property of the same name replaces both.",
               javaType = "String")
     public static final String OPERATION = "CamelAlibabaMnsOperation";
 
-    @Metadata(label = "producer", description = "The name of the topic to publish to, overriding the one the endpoint"
-                                                + " resolves. The exchange property of the same name takes precedence"
-                                                + " over this header.",
+    @Metadata(label = "producer", description = "The name of the topic for publishMessage. This header replaces the topicName"
+                                                + " option, and an exchange property of the same name replaces both.",
               javaType = "String")
     public static final String TOPIC_NAME = "CamelAlibabaMnsTopicName";
 

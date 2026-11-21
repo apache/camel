@@ -454,7 +454,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -463,7 +464,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-mns:queueName</code>
      * 
      * Path parameter: queueName (required)
-     * Queue name, or topic name when using the topic URI syntax
+     * The name of the queue, or of the topic for a topic endpoint such as
+     * alibaba-mns:topic:myTopic. The CamelAlibabaMnsQueueName exchange property
+     * replaces the name of the queue for sendMessage and deleteMessage.
      * 
      * @param path queueName
      * @return the dsl builder
@@ -473,7 +476,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -482,7 +486,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-mns:queueName</code>
      * 
      * Path parameter: queueName (required)
-     * Queue name, or topic name when using the topic URI syntax
+     * The name of the queue, or of the topic for a topic endpoint such as
+     * alibaba-mns:topic:myTopic. The CamelAlibabaMnsQueueName exchange property
+     * replaces the name of the queue for sendMessage and deleteMessage.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

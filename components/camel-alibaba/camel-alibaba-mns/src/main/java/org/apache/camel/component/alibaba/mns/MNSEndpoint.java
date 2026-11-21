@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+ * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ, formerly MNS).
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
              syntax = "alibaba-mns:queueName", category = { Category.CLOUD, Category.MESSAGING },
@@ -59,52 +59,71 @@ import org.apache.camel.support.ScheduledPollEndpoint;
                                                  + " property"))
 public class MNSEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Queue name, or topic name when using the topic URI syntax", displayName = "Queue Name")
+    @UriPath(description = "The name of the queue, or of the topic for a topic endpoint such as alibaba-mns:topic:myTopic. The"
+                           + " CamelAlibabaMnsQueueName exchange property replaces the name of the queue for sendMessage and"
+                           + " deleteMessage.",
+             displayName = "Queue Name")
     @Metadata(required = true)
     private String queueName;
 
-    @UriParam(description = "Operation to perform by the producer. The consumer does not use it: it receives the messages"
-                            + " of the queue",
+    @UriParam(description = "The operation that the producer performs. If not set, the producer performs publishMessage for a"
+                            + " topic endpoint and sendMessage otherwise. The CamelAlibabaMnsOperation header replaces this"
+                            + " option, and an exchange property of the same name replaces both.",
               displayName = "Operation", enums = "sendMessage,deleteMessage,publishMessage")
     private String operation;
 
-    @UriParam(description = "Alibaba Cloud region", displayName = "Region")
+    @UriParam(description = "The region ID of Simple Message Queue, for example cn-hangzhou.", displayName = "Region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "MNS account endpoint, for example https://123456.mns.cn-hangzhou.aliyuncs.com",
+    @UriParam(description = "The endpoint of Simple Message Queue for the Alibaba Cloud account, for example"
+                            + " https://123456.mns.cn-hangzhou.aliyuncs.com. The value must start with http:// or https://.",
               displayName = "Account Endpoint")
     @Metadata(required = true)
     private String accountEndpoint;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Access Key", security = "secret",
+    @UriParam(description = "The AccessKey ID of the AccessKey pair for Simple Message Queue. If not set, the accessKey of the"
+                            + " serviceKeys option is used.",
+              displayName = "Access Key", security = "secret",
               label = "security")
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key", security = "secret",
+    @UriParam(description = "The AccessKey secret of the AccessKey pair for Simple Message Queue. If not set, the secretKey of"
+                            + " the serviceKeys option is used.",
+              displayName = "Secret Key", security = "secret",
               label = "security")
     private String secretKey;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Keys",
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Each of"
+                            + " its accessKey and secretKey is used when the option of the same name is not set.",
+              displayName = "Service Keys",
               security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Topic name for publishMessage operations", displayName = "Topic Name")
+    @UriParam(description = "The name of the topic for publishMessage. If not set, a topic endpoint takes the name of the"
+                            + " topic from its URI. The CamelAlibabaMnsTopicName header replaces this option, and an exchange"
+                            + " property of the same name replaces both.",
+              displayName = "Topic Name")
     private String topicName;
 
-    @UriParam(description = "Long polling wait time in seconds when receiving messages", displayName = "Wait Seconds",
+    @UriParam(description = "The long polling wait time in seconds when the consumer receives messages. If 0 or less, the"
+                            + " PollingWaitSeconds of the queue applies. Simple Message Queue accepts a value of at most 30.",
+              displayName = "Wait Seconds",
               defaultValue = "0")
     private int waitSeconds;
 
-    @UriParam(description = "Delete message from the queue after it has been processed", displayName = "Delete After Read",
+    @UriParam(description = "Whether to delete the message from the queue after it is processed successfully.",
+              displayName = "Delete After Read",
               defaultValue = "true", label = "consumer")
     private boolean deleteAfterRead = true;
 
-    @UriParam(description = "Maximum number of messages to receive per poll", displayName = "Max Messages Per Poll",
+    @UriParam(description = "The maximum number of messages that the consumer receives in one poll. Simple Message Queue"
+                            + " accepts a value of at most 16. The consumer treats a value of 0 or less as 1.",
+              displayName = "Max Messages Per Poll",
               defaultValue = "1", label = "consumer")
     private int maxMessagesPerPoll = 1;
 
-    @UriParam(description = "Autowire an existing MNSClient instance", displayName = "MNS Client", label = "advanced")
+    @UriParam(description = "To use a custom com.aliyun.mns.client.MNSClient.", displayName = "MNS Client", label = "advanced")
     @Metadata(autowired = true)
     private volatile MNSClient mnsClient;
 
