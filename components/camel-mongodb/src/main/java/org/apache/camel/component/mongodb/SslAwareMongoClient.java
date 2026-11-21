@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -64,33 +66,7 @@ public class SslAwareMongoClient implements MongoClient {
     private final Supplier<MongoClient> wrappedMongoClient = Suppliers.memorize(new Supplier<MongoClient>() {
         @Override
         public MongoClient get() {
-            String credentials = username == null ? "" : username;
-
-            if (!credentials.isEmpty()) {
-                credentials += password == null ? "@" : ":" + password + "@";
-            }
-
-            MongoClientSettings settings = MongoClientSettings.builder()
-                    .applyToSslSettings(builder -> {
-                        builder.enabled(ssl);
-                        if (!sslValidationEnabled) {
-                            builder.invalidHostNameAllowed(true);
-                            SSLContext sc = null;
-                            try {
-                                sc = SSLContext.getInstance("TLS");
-                            } catch (NoSuchAlgorithmException e) {
-                                throw new RuntimeException("Error instantiating trust all SSL context.", e);
-                            }
-                            try {
-                                sc.init(null, trustAllCerts, new SecureRandom());
-                            } catch (KeyManagementException e) {
-                                throw new RuntimeException("Error instantiating trust all SSL context.", e);
-                            }
-                            builder.context(sc);
-                        }
-                    })
-                    .applyConnectionString(new ConnectionString(String.format("mongodb://%s%s", credentials, hosts)))
-                    .build();
+            MongoClientSettings settings = createSettings();
             LOG.info("Connection created using provided credentials");
             return MongoClients.create(settings);
         }
@@ -101,6 +77,51 @@ public class SslAwareMongoClient implements MongoClient {
     private boolean ssl = true;
 
     private boolean sslValidationEnabled = true;
+    private String readPreference;
+
+    /**
+     * The settings of the client: the hosts, the credentials (authenticated against the admin database), TLS and the
+     * read preference. Package-private so the unit tests can check the settings without creating a client.
+     */
+    MongoClientSettings createSettings() {
+        // the username and password are percent-encoded, so characters such as @ : / ? % reach the server as they are
+        String credentials = username == null ? "" : encode(username);
+
+        if (!credentials.isEmpty()) {
+            credentials += password == null ? "@" : ":" + encode(password) + "@";
+        }
+
+        MongoClientSettings.Builder builder = MongoClientSettings.builder()
+                .applyToSslSettings(sslSettings -> {
+                    sslSettings.enabled(ssl);
+                    if (!sslValidationEnabled) {
+                        sslSettings.invalidHostNameAllowed(true);
+                        SSLContext sc = null;
+                        try {
+                            sc = SSLContext.getInstance("TLS");
+                        } catch (NoSuchAlgorithmException e) {
+                            throw new RuntimeException("Error instantiating trust all SSL context.", e);
+                        }
+                        try {
+                            sc.init(null, trustAllCerts, new SecureRandom());
+                        } catch (KeyManagementException e) {
+                            throw new RuntimeException("Error instantiating trust all SSL context.", e);
+                        }
+                        sslSettings.context(sc);
+                    }
+                })
+                .applyConnectionString(new ConnectionString(String.format("mongodb://%s%s", credentials, hosts)));
+        if (readPreference != null && !readPreference.isBlank()) {
+            // will throw an IllegalArgumentException if the value is unknown
+            builder.readPreference(MongoDbEndpoint.toReadPreference(readPreference.trim()));
+        }
+        return builder.build();
+    }
+
+    private static String encode(String value) {
+        // the driver decodes a + as a +, not as a space: a space must be %20 (URLEncoder writes a + as %2B)
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
+    }
 
     public MongoClient getWrappedMongoClient() {
         return wrappedMongoClient.get();
@@ -317,6 +338,16 @@ public class SslAwareMongoClient implements MongoClient {
 
     public void setSslValidationEnabled(boolean sslValidationEnabled) {
         this.sslValidationEnabled = sslValidationEnabled;
+    }
+
+    /**
+     * How the client routes read operations to the members of a replica set: PRIMARY, PRIMARY_PREFERRED, SECONDARY,
+     * SECONDARY_PREFERRED or NEAREST (the driver names such as secondaryPreferred are accepted too). Not set: the
+     * driver default (primary). An unknown value fails when the client is created. There is no getter for the value:
+     * {@link #getReadPreference()} of {@link MongoClient} returns the read preference of the client.
+     */
+    public void setReadPreference(String readPreference) {
+        this.readPreference = readPreference;
     }
 
     @Override

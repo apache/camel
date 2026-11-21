@@ -35,19 +35,21 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveAudit;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.CvssScore;
+import org.apache.camel.catalog.cve.Dependency;
+import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.OsvProxy;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
-import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
-import org.apache.camel.dsl.jbang.core.common.cve.CveAudit;
-import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
-import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
-import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
-import org.apache.camel.dsl.jbang.core.common.cve.Dependency;
-import org.apache.camel.dsl.jbang.core.common.cve.OsvClient;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -141,10 +143,14 @@ public class DependencyAudit extends DependencyList {
         }
         List<Dependency> deps = new ArrayList<>();
         Map<String, Path> jars = new HashMap<>();
+        HttpProxy proxy = null;
         if (!gavs.isEmpty()) {
             boolean snapshot = gavs.stream().anyMatch(g -> g.contains("SNAPSHOT"));
             try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+                downloader.setMavenSettingsLocation(mavenSettings);
+                downloader.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
                 downloader.build();
+                proxy = offline ? null : OsvProxy.resolve(downloader, System.getenv());
                 for (MavenArtifact ma : downloader.resolveArtifacts(gavs, Set.of(), true, snapshot)) {
                     MavenGav g = ma.getGav();
                     if (g.getVersion() == null || skipArtifact(g.getGroupId(), g.getArtifactId(), g.getVersion())) {
@@ -157,9 +163,12 @@ public class DependencyAudit extends DependencyList {
                 }
             }
         }
+        if (proxy == null && !offline) {
+            proxy = OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, System.getenv());
+        }
         CamelCatalog catalog = new DefaultCamelCatalog();
         return report("project", deps, CveAudit.audit(deps, jars, declared, Map.of(), routeComponents(catalog),
-                catalog, offline ? null : new OsvClient()));
+                catalog, offline ? null : new OsvClient(proxy)));
     }
 
     /** The classpath of a running integration, and the components of its endpoints. */
@@ -187,7 +196,8 @@ public class DependencyAudit extends DependencyList {
         String name = process.name() != null && !process.name().contains(" ")
                 ? process.name() + " (" + process.pid() + ")" : String.valueOf(process.pid());
         return report("integration " + name, deps, CveAudit.audit(deps, jars, declaredDependencies(process.status()),
-                Map.of(), endpointComponents(process.status()), catalog, offline ? null : new OsvClient()));
+                Map.of(), endpointComponents(process.status()), catalog,
+                offline ? null : new OsvClient(OsvProxy.resolve(mavenSettings, mavenSettingsSecurity, System.getenv()))));
     }
 
     /** The components the routes of the project files use; null when there are no route files. */

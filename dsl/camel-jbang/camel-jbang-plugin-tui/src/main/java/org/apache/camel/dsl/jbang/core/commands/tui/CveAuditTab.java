@@ -47,13 +47,13 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
-import org.apache.camel.dsl.jbang.core.common.cve.CveAudit;
-import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
-import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
-import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
-import org.apache.camel.dsl.jbang.core.common.cve.Dependency;
-import org.apache.camel.dsl.jbang.core.common.cve.OsvClient;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveAudit;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.CvssScore;
+import org.apache.camel.catalog.cve.Dependency;
+import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -66,7 +66,6 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
  */
 class CveAuditTab extends AbstractTableTab {
 
-    private final OsvClient osvClient = new OsvClient(TuiSettings.proxySelector());
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private final FilterField filter = new FilterField(this::filterChanged);
 
@@ -542,7 +541,7 @@ class CveAuditTab extends AbstractTableTab {
         if (loading.get()) {
             return;
         }
-        osvClient.clearCache(depEntries);
+        OsvClient.clearCache(depEntries);
         allGroups = Collections.emptyList();
         allRows = Collections.emptyList();
         dataLoaded = false;
@@ -597,7 +596,9 @@ class CveAuditTab extends AbstractTableTab {
         List<Dependency> deps = allDeps.stream()
                 .map(d -> new Dependency(d.groupId(), d.artifactId(), d.version())).toList();
         CveAudit.Result result = CveAudit.audit(deps, jars, declaredDependencies(info), fallbackVia,
-                endpointComponents(current != null ? current : info), ProjectOverviewAssist.catalog(), osvClient);
+                endpointComponents(current != null ? current : info), ProjectOverviewAssist.catalog(),
+                // the proxy is looked up for each scan, so a change in the settings applies without a restart
+                new OsvClient(TuiSettings.httpProxy()));
         applyResult(deps, result.findings(), null, result.osvError());
     }
 

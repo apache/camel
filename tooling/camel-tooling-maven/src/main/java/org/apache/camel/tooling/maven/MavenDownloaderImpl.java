@@ -73,8 +73,10 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.metadata.DefaultMetadata;
+import org.eclipse.aether.repository.AuthenticationContext;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
+import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactDescriptorException;
@@ -1166,6 +1168,49 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 }
             }
         }
+    }
+
+    /**
+     * The proxy of the Maven settings ({@code settings.xml}, or the session of the Maven build in embedded mode) to
+     * reach the given URL through, such as {@code https://api.osv.dev/}, with its username and password; null when the
+     * URL is reached directly (no active proxy, or the host is one of its {@code nonProxyHosts}). The answer carries
+     * the {@code nonProxyHosts} too, for a client that reaches other URLs through the same proxy. Call after
+     * {@link #build()}.
+     */
+    public MavenProxy proxyFor(String url) {
+        if (repositorySystemSession == null || repositorySystemSession.getProxySelector() == null) {
+            return null;
+        }
+        RemoteRepository repository = new RemoteRepository.Builder("proxy-lookup", "default", url).build();
+        Proxy proxy = repositorySystemSession.getProxySelector().getProxy(repository);
+        if (proxy == null) {
+            return null;
+        }
+        String username = null;
+        String password = null;
+        if (proxy.getAuthentication() != null) {
+            RemoteRepository proxied = new RemoteRepository.Builder(repository).setProxy(proxy).build();
+            try (AuthenticationContext context = AuthenticationContext.forProxy(repositorySystemSession, proxied)) {
+                if (context != null) {
+                    username = context.get(AuthenticationContext.USERNAME);
+                    password = context.get(AuthenticationContext.PASSWORD);
+                }
+            }
+        }
+        return new MavenProxy(proxy.getHost(), proxy.getPort(), username, password, nonProxyHosts(proxy));
+    }
+
+    // the nonProxyHosts of the active proxy of the settings: the proxy of the session does not expose them
+    private String nonProxyHosts(Proxy proxy) {
+        if (mimaContext != null && mimaContext.httpProxy() != null
+                && proxy.getHost().equalsIgnoreCase(mimaContext.httpProxy().getHost())) {
+            return mimaContext.httpProxy().getNonProxyHosts();
+        }
+        if (settings != null && settings.getActiveProxy() != null
+                && proxy.getHost().equalsIgnoreCase(settings.getActiveProxy().getHost())) {
+            return settings.getActiveProxy().getNonProxyHosts();
+        }
+        return null;
     }
 
     // ========== Configuration Methods ==========
