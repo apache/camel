@@ -16,20 +16,32 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.catalog.cve.CveAudit;
 import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.Dependency;
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 /**
  * CAMEL-27340: camel dependency audit, the parts that need no network or running integration.
@@ -134,5 +146,36 @@ class DependencyAuditTest {
                 """);
         assertThat(DependencyAudit.classpathOf(reply)).containsExactly("/r/a.jar", "/r/b.jar", "/r/commons-text-1.9.jar");
         assertThat(DependencyAudit.classpathOf(null)).isEmpty();
+    }
+
+    @Test
+    void theOfflineOsvDatabaseOfAFile(@TempDir Path dir) throws IOException {
+        // CAMEL-27344: a ZIP on disk, as a mirror of the OSV export
+        Path zip = dir.resolve("all.zip");
+        try (OutputStream file = Files.newOutputStream(zip); ZipOutputStream out = new ZipOutputStream(file)) {
+            out.putNextEntry(new ZipEntry("GHSA-599f-7c49-w659.json"));
+            out.write("""
+                    {"id": "GHSA-599f-7c49-w659", "aliases": ["CVE-2022-42889"], "summary": "Arbitrary code execution",
+                     "affected": [{"package": {"name": "org.apache.commons:commons-text", "ecosystem": "Maven"},
+                       "ranges": [{"type": "ECOSYSTEM", "events": [{"introduced": "1.5"}, {"fixed": "1.10.0"}]}]}]}
+                    """.getBytes(StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        DependencyAudit audit = new DependencyAudit();
+        audit.osvDatabaseUrl = zip.toString();
+
+        VulnerabilitySource source = audit.vulnerabilitySource(null);
+
+        assertThat(source).isInstanceOf(OsvDatabase.class);
+        assertThat(source.queryBatch(List.of(new Dependency("org.apache.commons", "commons-text", "1.9"))))
+                .extractingByKey("org.apache.commons:commons-text:1.9").asInstanceOf(LIST).hasSize(1);
+        CveAudit.Result result = new CveAudit.Result(List.of(), List.of(), null);
+        JsonObject db = (JsonObject) audit.jsonReport("project", 1, result, List.of(), List.of()).get("osvDatabase");
+        assertThat(db.getString("location")).isEqualTo(zip.toString());
+        assertThat(db.getString("updated")).isNotBlank();
+
+        // --offline wins
+        audit.offline = true;
+        assertThat(audit.vulnerabilitySource(null)).isNull();
     }
 }

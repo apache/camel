@@ -39,7 +39,7 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
  * maintains a global in-memory cache keyed by Maven GAV coordinates so results persist across tab visits and
  * integration switches.
  */
-public class OsvClient {
+public class OsvClient implements VulnerabilitySource {
 
     /** The OSV.dev API, to look up the proxy to reach it through. */
     public static final String API_URL = "https://api.osv.dev/";
@@ -131,6 +131,7 @@ public class OsvClient {
      *
      * @return map from GAV string (groupId:artifactId:version) to list of vulnerabilities
      */
+    @Override
     public Map<String, List<Vulnerability>> queryBatch(List<Dependency> entries) {
         Map<String, List<Vulnerability>> result = new HashMap<>();
         List<Dependency> uncached = new ArrayList<>();
@@ -303,6 +304,7 @@ public class OsvClient {
     }
 
     /** Why the last query got no answer from OSV.dev, so its JARs are not checked; null when it got one. */
+    @Override
     public String lastError() {
         return lastError;
     }
@@ -320,7 +322,8 @@ public class OsvClient {
         }
     }
 
-    private Vulnerability parseVuln(JsonObject vuln) {
+    /** A vulnerability of its OSV JSON, as the API and the OSV database export write it; null without an id. */
+    static Vulnerability parseVuln(JsonObject vuln) {
         String id = getString(vuln, "id");
         if (id == null) {
             return null;
@@ -382,7 +385,7 @@ public class OsvClient {
         return result;
     }
 
-    private List<String> extractFixedVersions(JsonObject vuln) {
+    private static List<String> extractFixedVersions(JsonObject vuln) {
         JsonArray affected = (JsonArray) vuln.get("affected");
         if (affected == null) {
             return Collections.emptyList();
@@ -484,7 +487,7 @@ public class OsvClient {
         return "MEDIUM";
     }
 
-    private List<String> extractAliases(JsonObject vuln) {
+    private static List<String> extractAliases(JsonObject vuln) {
         JsonArray aliases = (JsonArray) vuln.get("aliases");
         if (aliases == null || aliases.isEmpty()) {
             return Collections.emptyList();
