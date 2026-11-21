@@ -183,7 +183,7 @@ public record HttpProxy(String host, int port, String username, String password,
      * property once, when the first HTTP client is used, so this must be called before that; a value set by the user is
      * kept.
      */
-    public static void allowBasicTunneling() {
+    public static synchronized void allowBasicTunneling() {
         if (System.getProperty(TUNNELING_DISABLED_SCHEMES) == null) {
             System.setProperty(TUNNELING_DISABLED_SCHEMES, "");
         }

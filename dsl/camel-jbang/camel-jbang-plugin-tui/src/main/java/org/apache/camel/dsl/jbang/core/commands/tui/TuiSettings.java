@@ -364,8 +364,8 @@ final class TuiSettings {
     }
 
     // the proxy of the Maven settings or of HTTPS_PROXY, looked up once: reading the settings builds a resolver session
-    private static volatile HttpProxy fallbackProxy;
-    private static volatile boolean fallbackResolved;
+    private static HttpProxy fallbackProxy;
+    private static boolean fallbackResolved;
 
     /**
      * The proxy to reach the internet through (OSV.dev of the CVE Audit screen, the documentation): the Proxy Host and
@@ -387,6 +387,10 @@ final class TuiSettings {
             }
             return new HttpProxy(host, port);
         }
+        return fallbackProxy();
+    }
+
+    private static synchronized HttpProxy fallbackProxy() {
         if (!fallbackResolved) {
             fallbackProxy = OsvProxy.resolve(null, null, System.getenv());
             fallbackResolved = true;

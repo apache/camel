@@ -38,7 +38,10 @@ public final class OsvProxy {
     public static HttpProxy resolve(MavenDownloaderImpl downloader, Map<String, String> env) {
         MavenProxy maven = downloader != null ? downloader.proxyFor(OsvClient.API_URL) : null;
         if (maven != null) {
-            return new HttpProxy(maven.host(), maven.port(), maven.username(), maven.password(), null);
+            // with the nonProxyHosts: the TUI fetches other URLs (the documentation) through the same proxy
+            return new HttpProxy(
+                    maven.host(), maven.port(), maven.username(), maven.password(),
+                    HttpProxy.splitHosts(maven.nonProxyHosts()));
         }
         return HttpProxy.fromEnvironment(env);
     }
