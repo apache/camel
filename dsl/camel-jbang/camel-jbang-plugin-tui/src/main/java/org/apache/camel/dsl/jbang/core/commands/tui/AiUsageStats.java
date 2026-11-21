@@ -44,9 +44,7 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
-import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans;
 import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans.GenAiActivity;
-import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.formatSeconds;
 
@@ -66,14 +64,18 @@ final class AiUsageStats {
     private final List<long[]> turnTimings = new CopyOnWriteArrayList<>();
     private volatile long sessionToolTimeMs;
     private volatile int sessionToolCalls;
-    /** Route usage (GenAI spans) recorded before this instant is left out after a {@code /usage reset}. */
+    static final String NOT_RECORDING_HINT
+            = "not recorded: the dev console of the integration is off (camel.main.devConsoleEnabled=true)";
+
+    /** Route usage (GenAI calls) recorded before this instant is left out after a {@code /usage reset}. */
     private volatile Instant usageResetAt = Instant.EPOCH;
-    private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
+    private AtomicReference<GenAiConsoleUsage> genAiUsage = new AtomicReference<>(GenAiConsoleUsage.NONE);
     private final TableState statsTableState = new TableState();
     private int statsScrollOffset;
 
-    void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
-        this.otelSpans = otelSpans != null ? otelSpans : new AtomicReference<>(List.of());
+    /** The GenAI calls of the integration, from its genai dev console. */
+    void setGenAiUsage(AtomicReference<GenAiConsoleUsage> genAiUsage) {
+        this.genAiUsage = genAiUsage != null ? genAiUsage : new AtomicReference<>(GenAiConsoleUsage.NONE);
     }
 
     /** A request of the panel, or of an ACP agent. */
@@ -93,8 +95,8 @@ final class AiUsageStats {
     }
 
     /**
-     * Forgets the usage recorded so far: the panel's own requests are dropped, and route usage from spans that were
-     * exported before now is hidden (the spans themselves stay, as the Spans tab owns them).
+     * Forgets the usage recorded so far: the panel's own requests are dropped, and the GenAI calls of the integration
+     * made before now are hidden (the integration keeps them).
      */
     void reset() {
         usageHistory.clear();
@@ -131,7 +133,8 @@ final class AiUsageStats {
         if (entries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(
-                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability and --observe.",
+                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability "
+                                                         + "(camel.aiObservability.level=detailed).",
                             Style.EMPTY.dim()))),
                     area);
             return;
@@ -179,10 +182,10 @@ final class AiUsageStats {
             turnTokens.set(last, turnTokens.get(last) + e.totalTokens());
         }
 
-        // Layout: summary (2 rows, 3 with GenAI spans) + model table (header + models + 1 blank) + chart (fill)
+        // Layout: summary (2 rows, 3 with GenAI calls) + model table (header + models + 1 blank) + chart (fill)
         Style dimStyle = Theme.muted();
         Style cyanStyle = Style.EMPTY.fg(Theme.accent());
-        Line activityLine = activityLine(activity(), dimStyle, cyanStyle);
+        Line activityLine = activityLine(activity(), genAiUsage.get().recording(), dimStyle, cyanStyle);
         int tableRows = perModel.size() + 1;
         int summaryRows = activityLine != null ? 3 : 2;
         int chartMinRows = 4;
@@ -378,13 +381,10 @@ final class AiUsageStats {
     List<AiUsageEntry> combinedUsageEntries() {
         List<AiUsageEntry> combined = new ArrayList<>(usageHistory.size() + 8);
         combined.addAll(usageHistory);
-        List<SpanEntry> spans = otelSpans.get();
-        if (spans != null && !spans.isEmpty()) {
-            Instant since = usageResetAt;
-            for (AiUsageEntry entry : GenAiSpanUsageExtractor.extract(spans)) {
-                if (!entry.timestamp().isBefore(since)) {
-                    combined.add(entry);
-                }
+        Instant since = usageResetAt;
+        for (AiUsageEntry entry : genAiUsage.get().modelCalls()) {
+            if (!entry.timestamp().isBefore(since)) {
+                combined.add(entry);
             }
         }
         return combined;
@@ -392,18 +392,24 @@ final class AiUsageStats {
 
     /** The agent runs and tool calls of the integration since the last reset, and its GenAI observability level. */
     GenAiActivity activity() {
-        return GenAiSpans.activity(otelSpans.get(), usageResetAt);
+        return genAiUsage.get().activity(usageResetAt);
     }
 
     /**
      * The agent runs with their model and tool calls, or at level basic, where they are not traced, how to see them.
-     * {@code null} when the integration recorded no Camel GenAI spans.
+     * {@code null} when the integration has no genai dev console.
      */
-    private static Line activityLine(GenAiActivity activity, Style dimStyle, Style cyanStyle) {
+    private static Line activityLine(GenAiActivity activity, boolean recording, Style dimStyle, Style cyanStyle) {
         if (activity.level() == null) {
             return null;
         }
         String level = activity.level().name().toLowerCase(Locale.ROOT);
+        if (!recording) {
+            return Line.from(
+                    Span.styled("GenAI level: ", dimStyle),
+                    Span.styled(level, cyanStyle),
+                    Span.styled("   " + NOT_RECORDING_HINT, dimStyle));
+        }
         if (activity.level() == GenAiObservabilityLevel.BASIC) {
             return Line.from(
                     Span.styled("GenAI level: ", dimStyle),
@@ -471,8 +477,8 @@ final class AiUsageStats {
     String summary() {
         List<AiUsageEntry> entries = combinedUsageEntries();
         if (entries.isEmpty()) {
-            return "No AI usage yet. Ask a question, or run an integration with GenAI observability and --observe to see "
-                   + "their usage here.";
+            return "No AI usage yet. Ask a question, or run an integration with GenAI observability "
+                   + "(camel.aiObservability.level=detailed) to see their usage here.";
         }
         int totalInput = 0;
         int totalCached = 0;
@@ -511,7 +517,10 @@ final class AiUsageStats {
         }
         sb.append(")\n");
         GenAiActivity activity = activity();
-        if (activity.level() == GenAiObservabilityLevel.BASIC) {
+        if (activity.level() != null && !genAiUsage.get().recording()) {
+            sb.append("- **GenAI level:** ").append(activity.level().name().toLowerCase(Locale.ROOT)).append(" (")
+                    .append(NOT_RECORDING_HINT).append(")\n");
+        } else if (activity.level() == GenAiObservabilityLevel.BASIC) {
             sb.append("- **GenAI level:** basic (").append(BASIC_LEVEL_HINT).append(")\n");
         } else if (activity.level() != null) {
             sb.append("- **Agent runs:** ").append(activity.agentRuns())

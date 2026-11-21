@@ -84,7 +84,7 @@ cycles backward.
 | Send the last question again, starting from a clean turn in the model history.
 
 | `/usage [reset]` (`/u`)
-| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-question chart. `/usage reset` clears the counters and the chart without touching the conversation; GenAI spans recorded before the reset are hidden from the view as well.
+| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route for the GenAI calls of the integration), and the last request. *Ctrl+U* opens the full view with the per-question chart. `/usage reset` clears the counters and the chart without touching the conversation; GenAI calls the integration made before the reset are hidden from the view as well.
 
 | `/copy` (`/y`), `/export` (`/e`)
 | The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown). Copying is code-aware: when the response has one fenced code block only the code is copied (without the fences and the prose, which is what selecting it with the mouse cannot give you because of the panel borders); when it has several, a picker lists the blocks with their language and size plus the whole response; when it has none, the whole response is copied.
@@ -204,7 +204,10 @@ still copies only the code of a block.
 
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
-the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
+the latter taken from the `genai` dev console of camel-ai-observability. That needs no tracer and no `--observe`:
+`camel run` adds camel-ai-observability when a `camel.aiObservability` option is set (such as the level), and the
+console records while the dev console is on, as with `camel run`. The view refreshes every few seconds while it is
+open. The
 *Tokens per question* chart has one bar per question you asked, so a question that needed several tool
 calls shows as a single bar. The summary line splits the session time into *AI time* (waiting for the
 model) and *Tool time* (running the TUI tools the model called, with the number of calls), the summary line gives the
@@ -213,13 +216,12 @@ the average per request for that model, and the *Time per question* chart next t
 two side by side for each question, so you can see whether a slow answer was the model or the tools.
 
 The integration rows count model calls only. At the GenAI observability level `detailed` or `full`
-(`camel.aiObservability.level`), an agent run is recorded as an `invoke_agent` span with one span per model call
-and one per tool call. The view counts its model calls, and a third summary line gives the agent runs, their model
-and tool calls, and the level the spans were recorded at. At the default level `basic`, agent runs and tool calls
-are not traced: camel-openai records each model call, and camel-langchain4j-agent records a whole run as one call.
-The summary line then tells how to see them. The *CACHED* column shows the input tokens served from the provider's
-prompt cache: for the panel's own requests when the provider reports them, and for the integration from level
-`detailed` on.
+(`camel.aiObservability.level`), the console records each agent run with its model calls and tool calls. The view
+counts its model calls, and a third summary line gives the agent runs, their model and tool calls, and the level of
+the integration. At the default level `basic`, agent runs and tool calls are not recorded: camel-openai records each
+model call, and camel-langchain4j-agent records a whole run as one call. The summary line then tells how to see them,
+and it also says when the integration does not record because its dev console is off. The *CACHED* column shows the
+input tokens served from the provider's prompt cache, when the provider reports them.
 
 image::jbang/camel-tui-ai-usage-agent-runs.png[The AI Usage view of an integration whose agent calls a route tool, at GenAI level detailed]
 
