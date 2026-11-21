@@ -109,7 +109,10 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     @Override
     public void preWriteCheck(Exchange exchange) throws Exception {
-        doPreWriteCheck(exchange, getEndpoint().getConfiguration().isSendNoop());
+        // skip the noop when the operations report a recent upload, download or noop (see isRecentlyUsed); the health
+        // check calls doPreWriteCheck(exchange, true) itself, so it is not affected
+        boolean sendNoop = getEndpoint().getConfiguration().isSendNoop() && !getOperations().isRecentlyUsed();
+        doPreWriteCheck(exchange, sendNoop);
     }
 
     protected void doPreWriteCheck(Exchange exchange, boolean sendNoop) throws Exception {
