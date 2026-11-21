@@ -106,7 +106,11 @@ class CamelWebsiteContentTest {
 
     @Test
     void theTokenIsOnlyForTheGitHubApi() {
-        assertThat(CamelWebsiteContent.request("https://raw.githubusercontent.com/apache/camel-website/main/x.md")
+        assertThat(CamelWebsiteContent.request("https://api.github.com/repos/apache/camel-website/contents/x", " abc ")
+                .headers().firstValue("Authorization")).hasValue("Bearer abc");
+        assertThat(CamelWebsiteContent.request("https://raw.githubusercontent.com/apache/camel-website/main/x.md", "abc")
+                .headers().firstValue("Authorization")).isEmpty();
+        assertThat(CamelWebsiteContent.request("https://api.github.com/repos/apache/camel-website/contents/x", " ")
                 .headers().firstValue("Authorization")).isEmpty();
     }
 }

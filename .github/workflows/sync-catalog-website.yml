@@ -64,6 +64,11 @@ jobs:
             echo "$f $(jq length "$f")"
           done > "$RUNNER_TEMP/before.txt"
           cat "$RUNNER_TEMP/before.txt"
+          # no file means a moved folder: the check below would then pass without checking anything
+          if [ ! -s "$RUNNER_TEMP/before.txt" ]; then
+            echo "::error::no advisories or releases JSON file found in camel-catalog"
+            exit 1
+          fi
       - name: Build the sync goals
         run: ./mvnw -B -l build.log -Dquickly install -pl tooling/maven/camel-package-maven-plugin -am
       - name: Sync with camel-website

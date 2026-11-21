@@ -104,8 +104,12 @@ final class CamelWebsiteContent {
     }
 
     static HttpRequest request(String url) {
+        return request(url, System.getenv("GITHUB_TOKEN"));
+    }
+
+    // the token goes only to the GitHub API, never to the raw files it lists
+    static HttpRequest request(String url, String token) {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).timeout(TIMEOUT);
-        String token = System.getenv("GITHUB_TOKEN");
         if (url.startsWith(GITHUB_API) && token != null && !token.isBlank()) {
             builder.header("Authorization", "Bearer " + token.trim());
         }
