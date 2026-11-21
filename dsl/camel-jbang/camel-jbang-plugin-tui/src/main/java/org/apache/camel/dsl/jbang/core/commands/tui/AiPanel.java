@@ -69,7 +69,6 @@ import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
@@ -291,7 +290,7 @@ class AiPanel {
     /** The question the current turn answers, for grouping its requests on the Ollama tab. */
     private volatile String currentQuestion;
     private boolean statsView;
-    boolean spanRefreshRequested;
+    boolean usageRefreshRequested;
 
     /**
      * One conversation line. For assistant replies {@code elapsedMs} is the wall-clock time of the whole turn,
@@ -381,8 +380,8 @@ class AiPanel {
         toolSet.setMcpInfo(active, port);
     }
 
-    void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
-        usage.setOtelSpans(otelSpans);
+    void setGenAiUsage(AtomicReference<GenAiConsoleUsage> genAiUsage) {
+        usage.setGenAiUsage(genAiUsage);
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -2313,7 +2312,7 @@ class AiPanel {
         statsView = !statsView;
         usage.resetScroll();
         if (statsView) {
-            spanRefreshRequested = true;
+            usageRefreshRequested = true;
         }
     }
 
@@ -2580,7 +2579,7 @@ class AiPanel {
         statsView = !statsView;
         usage.resetScroll();
         if (statsView) {
-            spanRefreshRequested = true;
+            usageRefreshRequested = true;
         }
     }
 

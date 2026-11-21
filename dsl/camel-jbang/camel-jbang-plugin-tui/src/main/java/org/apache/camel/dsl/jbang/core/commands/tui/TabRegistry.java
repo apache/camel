@@ -383,6 +383,7 @@ class TabRegistry {
             activeMoreTab.onTabSelected();
         }
         dataService.otelSpans().set(List.of());
+        dataService.genAiUsage().set(GenAiConsoleUsage.NONE);
 
         filesBrowser.reset();
     }
