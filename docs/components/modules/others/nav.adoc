@@ -78,6 +78,7 @@
 ** xref:platform-http-vertx.adoc[Platform Http Vertx]
 ** xref:pqc-hybrid.adoc[PQC Hybrid Cryptography]
 ** xref:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management]
+** xref:protobuf-schema.adoc[Protobuf Schema]
 ** xref:reactor.adoc[Reactor]
 ** xref:redis.adoc[Redis]
 ** xref:resilience4j.adoc[Resilience4j]

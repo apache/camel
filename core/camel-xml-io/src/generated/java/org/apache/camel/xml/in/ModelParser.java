@@ -2035,9 +2035,11 @@ public class ModelParser extends BaseParser {
                 case "instanceClass": def.setInstanceClass(val); yield true;
                 case "jsonView": def.setJsonViewTypeName(val); yield true;
                 case "library": def.setLibrary(ProtobufLibrary.valueOf(val)); yield true;
+                case "messageName": def.setMessageName(val); yield true;
                 case "moduleClassNames": def.setModuleClassNames(val); yield true;
                 case "moduleRefs": def.setModuleRefs(val); yield true;
                 case "objectMapper": def.setObjectMapper(val); yield true;
+                case "schema": def.setSchema(val); yield true;
                 case "schemaResolver": def.setSchemaResolver(val); yield true;
                 case "timezone": def.setTimezone(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;

@@ -2654,6 +2654,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClass", def.getInstanceClass(), null);
+        doWriteAttribute(jo, "schema", def.getSchema(), null);
+        doWriteAttribute(jo, "messageName", def.getMessageName(), null);
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(jo, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(jo, "autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");
