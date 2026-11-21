@@ -6308,9 +6308,9 @@ first is routed first, where the entry that was published last was routed first 
 
 === camel-atom - the default idempotent strategy routes every new entry of a feed
 
-With the default options (`idempotent=true` with the default strategy, which skips an entry that is not newer than
-the one routed before it, and `sortEntries=false`), the `atom` consumer routed the entries in the order of the feed
-reader, the newest published first, from the end. An entry that was updated after newer entries were published (an
+The default options are `idempotent=true` with the default strategy, which skips an entry that is not newer than the
+one routed before it, and `sortEntries=false`. With them, the `atom` consumer routed the entries in the order of the
+feed reader: the newest published first, from the end. An entry that was updated after newer entries were published (an
 edited post) was routed first, and the newer entries were then skipped for good. An entry with the same date as the one
 routed before it (published in the same second) was skipped for good too.
 

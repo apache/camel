@@ -55,7 +55,7 @@ public class ItemUpdatedIdempotentStrategy implements AtomIdempotentStrategy {
                 return false;
             }
             if (lastUpdate.equals(updated)) {
-                // entries published or updated in the same second (or with a date without a time) are told apart by
+                // entries published or updated in the same second (or with a date without a time) are distinguished by
                 // their id: only an entry already routed with that date is skipped
                 if (id == null || !lastUpdateIds.add(id)) {
                     LOG.debug("Entry has the same date as lastupdate=[{}] and was routed already, no valid entry=[{}]",

@@ -134,4 +134,26 @@ public class ItemUpdatedIdempotentStrategyTest {
         assertFalse(strategy.isValidItem(item1));
         assertFalse(strategy.isValidItem(item2));
     }
+
+    @Test
+    void testEntriesWithEqualDateAndNoIdAreDistinguishedByTheirLink() {
+        Item item1 = Mockito.mock(Item.class);
+        Item item2 = Mockito.mock(Item.class);
+        ItemUpdatedIdempotentStrategy strategy = new ItemUpdatedIdempotentStrategy();
+
+        when(item1.getUpdated()).thenReturn(Optional.of("2023-01-01T00:00:00Z"));
+        when(item1.getGuid()).thenReturn(Optional.empty());
+        when(item1.getLink()).thenReturn(Optional.of("https://example.com/entry/1"));
+        when(item2.getUpdated()).thenReturn(Optional.of("2023-01-01T00:00:00Z"));
+        when(item2.getGuid()).thenReturn(Optional.empty());
+        when(item2.getLink()).thenReturn(Optional.of("https://example.com/entry/2"));
+
+        // without an atom:id, two entries with the same date and different links are both new
+        assertTrue(strategy.isValidItem(item1));
+        assertTrue(strategy.isValidItem(item2));
+
+        // and both were routed already
+        assertFalse(strategy.isValidItem(item1));
+        assertFalse(strategy.isValidItem(item2));
+    }
 }
