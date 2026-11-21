@@ -302,15 +302,7 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
             }
 
             // we ignore some kind of exceptions and allow us to continue
-            if (isIgnoreInvalidEndpoints()) {
-                FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
-                if (e != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
-                    }
-                    current.setException(null);
-                }
-            }
+            ignoreInvalidEndpoint(current, endpoint);
 
             // Decide whether to continue with the recipients or not; similar logic to the Pipeline
             // check for error if so we should break out
@@ -462,24 +454,12 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
             // continue processing the routing slip asynchronously
             Exchange current = prepareExchangeForRoutingSlip(stepExchange, endpoint);
 
-            while (iter.hasNext(current)) {
+            // as when the step completed synchronously: ignore an invalid endpoint of the step, and check for an error
+            // before the next step is asked for (so a dynamic router is not called again after a failed step)
+            ignoreInvalidEndpoint(current, endpoint);
+            boolean more = continueProcessing(current, "so breaking out of the routing slip", LOG);
 
-                // we ignore some kind of exceptions and allow us to continue
-                if (isIgnoreInvalidEndpoints()) {
-                    FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
-                    if (e != null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
-                        }
-                        current.setException(null);
-                    }
-                }
-
-                // Decide whether to continue with the recipients or not; similar logic to the Pipeline
-                // check for error if so we should break out
-                if (!continueProcessing(current, "so breaking out of the routing slip", LOG)) {
-                    break;
-                }
+            while (more && iter.hasNext(current)) {
 
                 Endpoint nextEndpoint;
                 boolean prototype = cacheSize < 0;
@@ -518,6 +498,9 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                     }
                     return;
                 }
+
+                ignoreInvalidEndpoint(current, nextEndpoint);
+                more = continueProcessing(current, "so breaking out of the routing slip", LOG);
             }
 
             // logging current as it contains the exchange that might have altered the payload and since
@@ -529,12 +512,26 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
             // copy results back to the original exchange
             ExchangeHelper.copyResults(original, current);
         } catch (Exception e) {
-            stepExchange.setException(e);
+            // fail the original exchange: the step exchange is a copy of it, unless the step was the first one, and the
+            // original callback is called next (for example a dynamic router whose expression threw)
+            original.setException(e);
         }
 
         // okay we are completely done with the routing slip
         // so we need to signal done on the original callback so it can continue
         originalCallback.done(false);
+    }
+
+    private void ignoreInvalidEndpoint(Exchange current, Endpoint endpoint) {
+        if (isIgnoreInvalidEndpoints()) {
+            FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
+            if (e != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
+                }
+                current.setException(null);
+            }
+        }
     }
 
     private static AsyncCallback getNextCallback(boolean prototype, Endpoint nextEndpoint, AsyncCallback cb) {

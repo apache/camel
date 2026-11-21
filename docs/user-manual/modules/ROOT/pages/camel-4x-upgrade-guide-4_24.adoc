@@ -262,6 +262,19 @@ This is what `xml` binding already did without its XML data format. Add the JSON
 (or `camel-jackson` for Jackson 2), or set `bindingMode` to `off`. With `bindingMode` `auto`, a route that finds
 neither a JSON nor an XML data format still starts, and logs a WARN as it binds nothing.
 
+=== camel-core - Dynamic Router and Routing Slip go on the same way after every step
+
+The steps of a Dynamic Router or Routing Slip are wrapped in the error handler of the route, so from the second step on
+the EIP goes on through the code for a step that completed asynchronously. That code now does what the code for a
+synchronous step did:
+
+* An exception thrown by the expression of a Dynamic Router (such as a bean method annotated with `@DynamicRouter`, or
+  a custom `Expression`) after the second step fails the message. Before, it was set on a copy of the message and lost:
+  the message went on as if the router had returned `null`, with the result of an earlier step.
+* After a step that failed, the expression of a Dynamic Router is no longer called again before the EIP stops.
+* With `ignoreInvalidEndpoints`, an endpoint whose producer cannot be created is ignored also when it is the last one of
+  the slip. Before, the message failed with a `FailedToCreateProducerException`.
+
 === camel-kamelet - the output data type of a Kamelet is applied when it hands the message on
 
 A Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
