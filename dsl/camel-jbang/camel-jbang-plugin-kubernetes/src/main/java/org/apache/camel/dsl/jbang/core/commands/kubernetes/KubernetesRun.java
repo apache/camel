@@ -55,8 +55,8 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
+import org.apache.camel.dsl.jbang.core.common.ExportRuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.ExportRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.MavenCommand;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
@@ -195,7 +195,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     List<String> dependencies = new ArrayList<>();
 
     @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", defaultValue = "quarkus",
-            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
+            completer = ExportRuntimeCompletionCandidates.class, converter = ExportRuntimeTypeConverter.class)
     RuntimeType runtime = RuntimeType.quarkus;
 
     @Option(name = "gav", description = "The Maven group:artifact:version")

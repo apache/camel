@@ -106,6 +106,22 @@ class TemplateHelperTest {
     }
 
     @Test
+    void testSpringBootTomcatMainTemplate() throws IOException {
+        Map<String, Object> model = new HashMap<>();
+        model.put("PackageName", "com.example");
+        model.put("MainClassname", "MySpringApp");
+        model.put("Tomcat", true);
+
+        String result = TemplateHelper.processTemplate("spring-boot-main.ftl", model);
+
+        assertNoLicenseHeader(result);
+        assertNoUnresolvedInterpolations(result);
+        assertTrue(result.contains("extends SpringBootServletInitializer"));
+        assertTrue(result.contains("SpringApplicationBuilder"));
+        assertTrue(result.contains("return application.sources(MySpringApp.class)"));
+    }
+
+    @Test
     void testDockerfile21Template() throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("ArtifactId", "my-app");

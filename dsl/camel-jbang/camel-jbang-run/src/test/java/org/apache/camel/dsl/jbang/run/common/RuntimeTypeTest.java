@@ -32,6 +32,7 @@ class RuntimeTypeTest {
         assertThat(RuntimeType.fromValue("camel-main")).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.fromValue("camel")).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.fromValue("spring-boot")).isEqualTo(RuntimeType.springBoot);
+        assertThat(RuntimeType.fromValue("tomcat")).isEqualTo(RuntimeType.tomcat);
         assertThat(RuntimeType.fromValue("quarkus")).isEqualTo(RuntimeType.quarkus);
         assertThatThrownBy(() -> RuntimeType.fromValue("unknown")).isInstanceOf(IllegalArgumentException.class);
     }
@@ -41,6 +42,7 @@ class RuntimeTypeTest {
         assertThat(RuntimeType.jbang.exportRuntime()).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.main.exportRuntime()).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.springBoot.exportRuntime()).isEqualTo(RuntimeType.springBoot);
+        assertThat(RuntimeType.tomcat.exportRuntime()).isEqualTo(RuntimeType.tomcat);
         assertThat(RuntimeType.quarkus.exportRuntime()).isEqualTo(RuntimeType.quarkus);
     }
 
@@ -48,6 +50,8 @@ class RuntimeTypeTest {
     void runtimeNames() {
         assertThat(RuntimeType.jbang.runtime()).isEqualTo("jbang");
         assertThat(RuntimeType.main.runtime()).isEqualTo("main");
+        assertThat(RuntimeType.tomcat.runtime()).isEqualTo("tomcat");
+        assertThat(RuntimeType.tomcat.version()).isEqualTo(RuntimeType.SPRING_BOOT_VERSION);
         assertThat(RuntimeType.jbang.version()).isEqualTo(RuntimeType.main.version());
     }
 }

@@ -201,7 +201,7 @@ public class ProjectExporter {
      */
     Exporter createExporter(ExportRequest request) {
         return switch (request.runtime) {
-            case springBoot -> new SpringBootExporter(request, context);
+            case springBoot, tomcat -> new SpringBootExporter(request, context);
             case quarkus -> new QuarkusExporter(request, context);
             case main -> new CamelMainExporter(request, context);
             default -> null;

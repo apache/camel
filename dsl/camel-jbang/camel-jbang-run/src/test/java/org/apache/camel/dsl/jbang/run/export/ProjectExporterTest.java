@@ -119,6 +119,79 @@ class ProjectExporterTest {
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
     }
 
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot4() throws Exception {
+        assertTomcatWarProject("4.2.0", "spring-boot-starter-webmvc");
+    }
+
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot3() throws Exception {
+        assertTomcatWarProject("3.5.0", "spring-boot-starter-web");
+    }
+
+    private void assertTomcatWarProject(String bootVersion, String expectedWebStarter) throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-" + bootVersion.replace('.', '-'));
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.tomcat;
+        request.springBootVersion = bootVersion;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+
+        assertThat(pom).contains(
+                "<packaging>war</packaging>",
+                "<artifactId>" + expectedWebStarter + "</artifactId>",
+                "<artifactId>spring-boot-starter-tomcat</artifactId>\n            <scope>provided</scope>",
+                "<artifactId>maven-war-plugin</artifactId>")
+                .doesNotContain("<id>jib</id>");
+
+        Path application;
+        try (Stream<Path> javaFiles = Files.walk(exportDir.resolve("src/main/java"))) {
+            application = javaFiles
+                    .filter(path -> path.getFileName().toString().equals("CamelApplication.java"))
+                    .findFirst()
+                    .orElseThrow();
+        }
+
+        String java = Files.readString(application);
+        assertThat(java).contains(
+                "extends SpringBootServletInitializer",
+                "SpringApplicationBuilder",
+                "configure(",
+                "application.sources(CamelApplication.class)");
+
+        String readme = Files.readString(exportDir.resolve("readme.md"));
+        assertThat(readme)
+                .contains("$CATALINA_BASE/webapps/")
+                .contains(".war")
+                .contains("ROOT.war");
+
+        assertThat(exportDir.resolve("src/main/docker")).doesNotExist();
+    }
+
+    @Test
+    void rejectsCustomTomcatPomTemplate() throws Exception {
+        Path exportDir = dir.resolve("tomcat-custom-pom-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.tomcat;
+        request.pomTemplateName = "custom-spring-boot-pom.ftl";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains("Custom POM templates are not supported with --runtime=tomcat");
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "4.10.0")

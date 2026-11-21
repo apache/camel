@@ -1120,7 +1120,7 @@ public class RunPipeline {
 
         switch (request.runtime) {
             case main, jbang -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_MAIN);
-            case springBoot -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_SPRING_BOOT);
+            case springBoot, tomcat -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_SPRING_BOOT);
             case quarkus -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_QUARKUS);
         }
 

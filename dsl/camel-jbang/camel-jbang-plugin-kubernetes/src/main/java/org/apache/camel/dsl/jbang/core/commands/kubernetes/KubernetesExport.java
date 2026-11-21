@@ -230,7 +230,7 @@ public class KubernetesExport extends Export {
                             mavenResolver.fresh())
                     .quarkusCamelBom();
             catalog = CatalogLoader.loadQuarkusCatalog(camelQuarkusBom, mavenResolver.downloader()::resolveArtifact);
-        } else if (runtime == RuntimeType.springBoot) {
+        } else if (runtime == RuntimeType.springBoot || runtime == RuntimeType.tomcat) {
             catalog = CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelSpringBootVersion,
                     mavenResolver.download());
         } else if (runtime == RuntimeType.main) {
@@ -336,9 +336,23 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));
         }
 
+        if (runtime == RuntimeType.tomcat && !"docker".equals(imageBuilder) && !"jib".equals(imageBuilder)) {
+            printer().printErr(
+                    "The Tomcat Kubernetes target supports the docker and jib image builders. "
+                               + "Use --image-builder=docker or --image-builder=jib.");
+            return 1;
+        }
+
         if (baseImage == null) {
-            // use default base image with java version
-            baseImage = "mirror.gcr.io/library/eclipse-temurin:%s".formatted(javaVersion);
+            if (runtime == RuntimeType.tomcat) {
+                // Boot 4 uses Tomcat 11; Boot 3 uses Tomcat 10.1.
+                String tomcatVersion = springBootVersion != null && springBootVersion.startsWith("3.")
+                        ? "10.1" : "11.0";
+                baseImage = "tomcat:%s-jdk%s-temurin".formatted(tomcatVersion, javaVersion);
+            } else {
+                // use default base image with java version
+                baseImage = "mirror.gcr.io/library/eclipse-temurin:%s".formatted(javaVersion);
+            }
         }
 
         if (registryMirror != null) {
@@ -427,6 +441,9 @@ public class KubernetesExport extends Export {
         }
         if (runtime == RuntimeType.springBoot) {
             request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
+        }
+        if (runtime == RuntimeType.tomcat) {
+            request.pomTemplateName = "spring-boot-tomcat-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
             request.pomTemplateName = "main-kubernetes-pom.ftl";
@@ -517,6 +534,12 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.enricher.jkube-healthcheck-quarkus.port=" + probePort);
             buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
             addToApplicationProperties("quarkus.management.port=" + probePort);
+        } else if (RuntimeType.tomcat == runtime) {
+            // The WAR runs inside the external Tomcat image. Keep the management endpoints
+            // on the same port as the application; a separate Boot management server would
+            // require another embedded servlet container.
+            addToApplicationProperties("management.endpoints.web.base-path=/observe",
+                    "management.endpoint.health.probes.enabled=true");
         } else if (RuntimeType.springBoot == runtime) {
             // jkube reads spring-boot properties to set the kubernetes container health probes path
             // in this case, jkube reads from the application.properties and not from the build properties in pom.xml

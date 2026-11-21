@@ -83,7 +83,7 @@ camel kubernetes export [options]
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--resource` | Add a runtime resource from a Configmap or a Secret (syntax: [configmap\|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path). |  | String[]
 | `--resource-dir,--resource-dirs` | Additional resource directories to include in src/main/resources (recursive, preserving structure) |  | List
-| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, tomcat, quarkus) |  | RuntimeType
 | `--service-account` | The service account used to run the application. |  | String
 | `--skip-plugins` | Skip plugins during export | false | boolean
 | `--spring-boot-version` | Spring Boot version | 4.2.0 | String

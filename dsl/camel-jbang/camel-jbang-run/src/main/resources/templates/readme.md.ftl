@@ -20,7 +20,7 @@
 
 This project was generated using [Camel Jbang](https://camel.apache.org/manual/camel-jbang.html). Please, refer to the online documentation for learning more about how to configure the export of your Camel application.
 
-This is a brief guide explaining how to build, "containerize" and run your Camel application.
+This is a brief guide explaining how to build and deploy or run your Camel application.
 
 ## For AI coding assistants
 
@@ -36,6 +36,34 @@ If you are an AI coding assistant working on this project, start from the Apache
 ./mvnw clean package
 ```
 
+[#if Tomcat?? && Tomcat]
+## Deploy to an external Apache Tomcat
+
+Copy the generated WAR file to the webapps directory of your Tomcat installation:
+
+```bash
+cp [=AppRuntimeJar] "$CATALINA_BASE/webapps/"
+```
+
+Spring Boot 4.x projects target Apache Tomcat 11. Spring Boot 3.x projects
+target Apache Tomcat 10.1.
+
+Tomcat uses the WAR file name as the application context path. Rename the WAR
+to `ROOT.war` to deploy the application at the root context (`/`).
+
+The WAR is also executable with Spring Boot:
+
+```bash
+java -jar [=AppRuntimeJar]
+```
+
+The Spring Boot Maven plugin keeps provided dependencies under
+`WEB-INF/lib-provided` for executable-WAR launches. When deployed to an external
+Tomcat server, the server supplies the servlet container.
+
+Docker and Jib files are not generated for this external-Tomcat target.
+
+[#else]
 The application could now immediately run:
 
 ```bash
@@ -74,3 +102,4 @@ you can run it directly from the container:
 ```bash
 docker run my-registry.io/my-registry-org/my-container:latest
 ```
+[/#if]

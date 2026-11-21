@@ -75,7 +75,7 @@ camel dependency audit [options]
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--resource-dir,--resource-dirs` | Additional resource directories to include in src/main/resources (recursive, preserving structure) |  | List
-| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, tomcat, quarkus) |  | RuntimeType
 | `--severity` | The lowest severity to list: critical, high, medium or low | low | String
 | `--skip-plugins` | Skip plugins during export | false | boolean
 | `--spring-boot-version` | Spring Boot version | 4.2.0 | String

@@ -32,11 +32,11 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
 import org.aesh.command.option.OptionVisibility;
+import org.apache.camel.dsl.jbang.core.common.ExportRuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.ExportRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
@@ -64,8 +64,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")
     protected List<String> dependencies = new ArrayList<>();
 
-    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
-            converter = RuntimeTypeConverter.class)
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})",
+            completer = ExportRuntimeCompletionCandidates.class,
+            converter = ExportRuntimeTypeConverter.class)
     protected RuntimeType runtime;
 
     @Option(name = "name", description = "The integration name. Use this when the name should not get derived otherwise.")

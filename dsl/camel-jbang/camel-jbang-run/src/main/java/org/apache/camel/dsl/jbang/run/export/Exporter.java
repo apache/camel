@@ -1567,6 +1567,7 @@ abstract class Exporter {
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
         model.put("AppRuntimeJar", appJar);
+        model.put("Tomcat", request.runtime == RuntimeType.tomcat);
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);

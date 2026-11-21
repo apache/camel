@@ -4,11 +4,13 @@ Export your Camel CLI integrations to production-ready Maven projects, manage de
 
 == Creating Projects
 
-Export your Camel CLI integration to a Maven-based project for Spring Boot, Quarkus, or standalone Camel Main.
+Export your Camel CLI integration to a Maven-based project for Spring Boot, external Tomcat (Spring Boot WAR),
+Quarkus, or standalone Camel Main.
 
 [source,bash]
 ----
 camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT
+camel export --runtime=tomcat --gav=com.foo:acme:1.0-SNAPSHOT
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT
 camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT
 ----
@@ -27,6 +29,50 @@ Notes:
 - The `--profile` option is not supported when exporting to Quarkus.
 - To find the dependencies, the export boots the integration with the profile of `--profile` (or the `dev` profile, as `camel run`, when none is given), so a component that only `application-<profile>.properties` uses is in the exported project.
 - For Spring Boot, you can override versions with `--camel-spring-boot-version`.
+
+=== Exporting for an external Tomcat
+
+Use `--runtime=tomcat` to generate a Spring Boot application packaged as a WAR
+for deployment to an existing Apache Tomcat server.
+
+Spring Boot 4.x is the default and targets Tomcat 11. Spring Boot 3.x is also
+supported and targets Tomcat 10.1.
+
+For the default Spring Boot 4.x / Tomcat 11 combination:
+
+[source,bash]
+----
+camel export --runtime=tomcat --gav=com.foo:acme:1.0-SNAPSHOT
+./mvnw clean package
+cp target/acme-1.0-SNAPSHOT.war "$CATALINA_BASE/webapps/"
+----
+
+To generate a Spring Boot 3.x WAR for Tomcat 10.1, select a 3.x version
+explicitly:
+
+[source,bash]
+----
+camel export --runtime=tomcat --spring-boot-version=3.5.0 --gav=com.foo:acme:1.0-SNAPSHOT
+./mvnw clean package
+cp target/acme-1.0-SNAPSHOT.war "$CATALINA_BASE/webapps/"
+----
+
+The generated main class extends `SpringBootServletInitializer`, the project
+uses WAR packaging, and the embedded Tomcat starter is declared with
+`provided` scope. The external Tomcat installation supplies the servlet
+container.
+
+Tomcat deploys the application using the WAR file name as its context path.
+For example, `acme-1.0-SNAPSHOT.war` is available under
+`/acme-1.0-SNAPSHOT/`. Rename the WAR to `ROOT.war` to deploy it at `/`.
+
+The generated WAR can also be launched with `java -jar`. The Spring Boot Maven
+plugin places provided dependencies under `WEB-INF/lib-provided` for this
+executable-WAR use case.
+
+The Tomcat target is an export target. It is not a runtime that `camel run`
+starts. Docker and Jib files are not generated for this external-container
+target.
 
 === Exporting with a parent POM
 

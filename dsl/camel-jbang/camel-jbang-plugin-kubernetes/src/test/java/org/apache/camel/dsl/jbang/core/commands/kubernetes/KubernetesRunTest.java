@@ -65,6 +65,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         return Stream.of(
                 Arguments.of(RuntimeType.main),
                 Arguments.of(RuntimeType.springBoot),
+                Arguments.of(RuntimeType.tomcat),
                 Arguments.of(RuntimeType.quarkus));
     }
 
@@ -151,6 +152,12 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
             Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
             Assertions.assertEquals(9876, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
             Assertions.assertEquals(9876, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
+        } else if (RuntimeType.tomcat == RuntimeType.fromValue(rt.runtime())) {
+            // External Tomcat serves the application and Actuator endpoints on the same HTTP port.
+            Assertions.assertEquals("/observe/health/liveness", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals(8080, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(8080, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
         }
     }
 

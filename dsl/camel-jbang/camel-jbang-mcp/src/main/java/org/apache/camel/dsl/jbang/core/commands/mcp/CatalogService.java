@@ -186,7 +186,12 @@ public class CatalogService {
             return RuntimeType.main;
         }
         try {
-            return RuntimeType.fromValue(runtime);
+            RuntimeType resolved = RuntimeType.fromValue(runtime);
+            if (resolved == RuntimeType.tomcat) {
+                throw new IllegalArgumentException(
+                        "Tomcat is an export target, not a catalog runtime");
+            }
+            return resolved;
         } catch (IllegalArgumentException e) {
             throw new ToolCallException(
                     "Unsupported runtime: " + runtime + ". Supported values are: main, spring-boot, quarkus", null);

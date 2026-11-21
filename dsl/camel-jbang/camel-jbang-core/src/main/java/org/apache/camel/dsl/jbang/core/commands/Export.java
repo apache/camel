@@ -22,7 +22,7 @@ import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 
-@CommandDefinition(name = "export", description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)",
+@CommandDefinition(name = "export", description = "Export to other runtimes (Camel Main, Spring Boot, Tomcat WAR, or Quarkus)",
                    generateHelp = true,
                    footer = {
                            "Examples:",

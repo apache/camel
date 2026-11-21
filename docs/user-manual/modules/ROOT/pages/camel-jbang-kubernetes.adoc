@@ -27,7 +27,26 @@ camel kubernetes run * --runtime=spring-boot --name=my-app
 ----
 
 This exports a Spring Boot project named `my-app`, builds the container image, pushes it, and deploys it to the cluster
-`kubectl` is connected to. The runtime is one of `spring-boot`, `quarkus` (the default) or `main`.
+`kubectl` is connected to. The runtime is one of `spring-boot`, `quarkus` (the default), `main` or `tomcat`.
+
+For `--runtime=tomcat`, Camel exports the application as a WAR and builds an image
+that runs it in an external Apache Tomcat server. Spring Boot 4.x uses Tomcat 11
+by default; Spring Boot 3.x uses Tomcat 10.1. For example:
+
+[source,bash]
+----
+camel kubernetes run * --runtime=tomcat --name=my-app
+----
+
+To select Spring Boot 3.x explicitly:
+
+[source,bash]
+----
+camel kubernetes run * --runtime=tomcat --spring-boot-version=3.5.0 --name=my-app
+----
+
+The Tomcat target uses the `jib` or `docker` image builder. S2I is not supported
+for this WAR-based image assembly.
 
 Minikube and OpenShift are detected, and the image build and registry are configured for them.
 Use `--cluster-type` to set the cluster type explicitly (for example `--cluster-type=kind`, which is not detected),
@@ -88,7 +107,7 @@ For a real deployment pipeline you want the project in source control.
 camel kubernetes export * --runtime=spring-boot --name=my-app --dir=../my-app
 ----
 
-The project uses the https://eclipse.dev/jkube/[Eclipse JKube] Maven plugin, for all three runtimes.
+The project uses the https://eclipse.dev/jkube/[Eclipse JKube] Maven plugin for all supported runtimes.
 The `package` phase builds the container image, generates the Kubernetes manifest
 (`target/kubernetes/kubernetes.yml`: Deployment, Service, ConfigMaps, ...) and pushes the image.
 Deploy it with:
@@ -97,6 +116,20 @@ Deploy it with:
 ----
 cd ../my-app
 ./mvnw package k8s:deploy
+----
+
+For `--runtime=tomcat`, the generated Maven project is packaged as a WAR and
+the JKube image assembly copies it to `ROOT.war` in the Tomcat image's
+`webapps` directory. Spring Boot 4.x uses a Tomcat 11 base image; Spring Boot
+3.x uses Tomcat 10.1. You can override the default image with `--base-image`
+when exporting, provided the image is compatible with the selected Servlet API
+and has the standard Tomcat installation layout.
+
+For example:
+
+[source,bash]
+----
+camel kubernetes export * --runtime=tomcat --gav=com.example:my-app:1.0.0 --dir=../my-app
 ----
 
 A `*.jkube.yaml` (or `*.jkube.yml`) file among the files to export is a JKube resource fragment, which JKube merges

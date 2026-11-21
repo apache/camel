@@ -438,7 +438,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     private void prepareFixtureProject(RuntimeType rt) throws Exception {
         String pomResource = switch (rt) {
             case quarkus -> "dependency-update/quarkus-pom.xml";
-            case springBoot -> "dependency-update/springboot-pom.xml";
+            case springBoot, tomcat -> "dependency-update/springboot-pom.xml";
             case main, jbang -> "dependency-update/main-pom.xml";
         };
 
