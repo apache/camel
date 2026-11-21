@@ -280,42 +280,62 @@ public class DependencyAudit extends DependencyList {
                 .filter(f -> CveScan.severityIndex(f.severity()) <= lowest || lowest == LEVELS.size() - 1)
                 .toList();
         List<CveArtifact> artifacts = CveScan.artifactRows(findings);
+        // the ones below --severity are not listed, but --fail-on applies to them too
+        int notListed = result.findings().size() - findings.size();
         if (json) {
-            JsonObject doc = new JsonObject();
-            doc.put("source", source);
-            doc.put("scanned", deps.size());
-            doc.put("vulnerabilities", findings.size());
-            doc.put("vulnerableArtifacts", artifacts.size());
-            if (result.osvError() != null) {
-                doc.put("osvError", result.osvError());
-            }
-            if (offline) {
-                doc.put("offline", true);
-            }
-            JsonArray rows = new JsonArray();
-            if (byArtifact) {
-                artifacts.forEach(a -> rows.add(a.toJson()));
-                doc.put("artifacts", rows);
-            } else {
-                findings.forEach(f -> rows.add(f.toJson()));
-                doc.put("findings", rows);
-            }
-            JsonOutput.print(outPrinter(), doc);
+            JsonOutput.print(outPrinter(), jsonReport(source, deps.size(), result, findings, artifacts));
         } else {
             if (result.osvError() != null) {
                 outPrinter().printWarn(result.osvError() + ": only the Apache Camel security advisories were checked");
             }
+            String below = notListed > 0 ? " (" + notListed + " more below --severity=" + severity + ")" : "";
             if (findings.isEmpty()) {
-                outPrinter().println("No known vulnerabilities in " + deps.size() + " dependencies of the " + source
-                                     + (offline ? " (Apache Camel security advisories only)" : ""));
+                outPrinter().println((notListed > 0
+                        ? "No vulnerabilities of " + severity + " severity or worse in "
+                        : "No known vulnerabilities in ")
+                                     + deps.size() + " dependencies of the " + source
+                                     + (offline ? " (Apache Camel security advisories only)" : "") + below);
             } else {
                 outPrinter().println(byArtifact ? artifactTable(artifacts) : findingTable(findings));
                 outPrinter().println();
                 outPrinter().println(findings.size() + " vulnerabilities in " + artifacts.size() + " of " + deps.size()
-                                     + " dependencies of the " + source + counts(findings));
+                                     + " dependencies of the " + source + counts(findings) + below);
             }
         }
         return failed(result.findings()) ? CliExitCode.FAILURE : CliExitCode.OK;
+    }
+
+    /**
+     * The --json document. vulnerabilities counts the ones listed (--severity), totalVulnerabilities all of them, and
+     * failed tells whether the command exits with 1 (--fail-on, applied to all of them), so a script or an AI agent
+     * gets the same answer from the document as from the exit code.
+     */
+    JsonObject jsonReport(
+            String source, int scanned, CveAudit.Result result, List<CveFinding> findings, List<CveArtifact> artifacts) {
+        JsonObject doc = new JsonObject();
+        doc.put("source", source);
+        doc.put("scanned", scanned);
+        doc.put("vulnerabilities", findings.size());
+        doc.put("totalVulnerabilities", result.findings().size());
+        doc.put("vulnerableArtifacts", artifacts.size());
+        doc.put("severity", severity);
+        doc.put("failOn", failOn);
+        doc.put("failed", failed(result.findings()));
+        if (result.osvError() != null) {
+            doc.put("osvError", result.osvError());
+        }
+        if (offline) {
+            doc.put("offline", true);
+        }
+        JsonArray rows = new JsonArray();
+        if (byArtifact) {
+            artifacts.forEach(a -> rows.add(a.toJson()));
+            doc.put("artifacts", rows);
+        } else {
+            findings.forEach(f -> rows.add(f.toJson()));
+            doc.put("findings", rows);
+        }
+        return doc;
     }
 
     /** Whether a vulnerability at or above --fail-on was found (of all of them, not only those listed). */

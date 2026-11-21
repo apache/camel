@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.cve.CveAudit;
 import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
 import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
 import org.apache.camel.util.json.JsonObject;
@@ -62,6 +63,26 @@ class DependencyAuditTest {
         assertThat(audit.failed(List.of())).isFalse();
         // a severity OSV.dev does not give fails the lowest level only
         assertThat(audit.failed(List.of(finding("CVE-2", "UNKNOWN", "a:b:1", null)))).isTrue();
+    }
+
+    @Test
+    void theJsonReportTellsWhetherTheAuditFailsWhenSeverityHidesFindings() {
+        CveFinding low = finding("CVE-3", "LOW", "a:b:1", "2");
+        CveAudit.Result result = new CveAudit.Result(List.of(low), CveScan.artifactRows(List.of(low)), null);
+        DependencyAudit audit = new DependencyAudit();
+        audit.severity = "critical";
+        audit.failOn = "low";
+
+        // --severity=critical lists none, but --fail-on=low fails on the LOW one
+        JsonObject doc = audit.jsonReport("project", 5, result, List.of(), List.of());
+        assertThat(doc.getInteger("vulnerabilities")).isZero();
+        assertThat(doc.getInteger("totalVulnerabilities")).isEqualTo(1);
+        assertThat(doc.getBoolean("failed")).isTrue();
+        assertThat(doc.getString("severity")).isEqualTo("critical");
+        assertThat(doc.getString("failOn")).isEqualTo("low");
+
+        audit.failOn = "none";
+        assertThat(audit.jsonReport("project", 5, result, List.of(), List.of()).getBoolean("failed")).isFalse();
     }
 
     @Test

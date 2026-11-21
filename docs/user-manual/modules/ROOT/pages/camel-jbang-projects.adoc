@@ -261,7 +261,8 @@ The options:
   versions it actually loaded.
 * `--by-artifact` shows one row per vulnerable JAR, with the version that fixes all its CVEs, which is what to upgrade.
 * `--severity=high` lists only the vulnerabilities of that severity or worse.
-* `--json` prints one JSON document, for a script or an AI agent.
+* `--json` prints one JSON document, for a script or an AI agent. `vulnerabilities` counts the ones listed (`--severity`),
+  `totalVulnerabilities` all of them, and `failed` is `true` when the command exits with 1.
 * `--offline` checks only the Apache Camel security advisories, without OSV.dev.
 
 The command exits with 1 when it finds a vulnerability of the `--fail-on` severity or worse (default `low`: any), so a
