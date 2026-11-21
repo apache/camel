@@ -52,6 +52,7 @@ public class IdempotentConsumer extends BaseProcessorSupport
         implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private static final AtomicLong KEY_OWNER_IDS = new AtomicLong();
 
     private CamelContext camelContext;
     private String id;
@@ -65,6 +66,9 @@ public class IdempotentConsumer extends BaseProcessorSupport
     private final boolean skipDuplicate;
     private final boolean removeOnFailure;
     private final AtomicLong duplicateMessageCount = new AtomicLong();
+    // the exchange property that marks an exchange whose processing failed in this idempotent consumer, while the
+    // message id it added is still in the repository (one property per idempotent consumer)
+    private final String keyOwnerProperty = "CamelIdempotentConsumerKeyOwner-" + KEY_OWNER_IDS.incrementAndGet();
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
                               boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure,
@@ -149,7 +153,14 @@ public class IdempotentConsumer extends BaseProcessorSupport
                 newKey = !idempotentRepository.contains(exchange, messageId);
             }
 
-            if (!newKey) {
+            final KeyOwner owner = !newKey && eager ? ownedKey(exchange, messageId) : null;
+            if (owner != null) {
+                // this exchange added the key and failed in this idempotent consumer, and is routed through it again
+                // (the error handler of a calling route redelivers it) before its completion removes the key: it is
+                // not a duplicate of itself, so process it again under the completion it registered the first time
+                LOG.debug("Processing again redelivered message with id: {} for exchange: {}", messageId, exchange);
+                target = new KeyOwnerCallback(exchange, owner, keyOwnerProperty, callback);
+            } else if (!newKey) {
                 // mark the exchange as duplicate
                 exchange.setProperty(ExchangePropertyKey.DUPLICATE_MESSAGE, Boolean.TRUE);
 
@@ -174,11 +185,18 @@ public class IdempotentConsumer extends BaseProcessorSupport
                     // the callback will eager complete
                     target = new IdempotentConsumerCallback(exchange, onCompletion, callback);
                 } else {
-                    // we can use existing callback as target
-                    target = callback;
                     // the scope is to do the idempotent completion work as an unit of work on the exchange
                     // when its done being routed
                     exchange.getExchangeExtension().addOnCompletion(onCompletion);
+                    if (eager && removeOnFailure) {
+                        // remember when the exchange fails in this idempotent consumer, so a redelivery of the
+                        // exchange is not taken for a duplicate (the key is removed only when the exchange is done)
+                        target = new KeyOwnerCallback(
+                                exchange, new KeyOwner(exchange, messageId, onCompletion), keyOwnerProperty, callback);
+                    } else {
+                        // we can use existing callback as target
+                        target = callback;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -280,6 +298,22 @@ public class IdempotentConsumer extends BaseProcessorSupport
     }
 
     /**
+     * The key owner of this idempotent consumer on the exchange, if the exchange added this message id, failed in this
+     * idempotent consumer, and the completion that removes the key is still pending on the exchange.
+     */
+    private KeyOwner ownedKey(Exchange exchange, String messageId) {
+        if (!removeOnFailure || completionEager) {
+            return null;
+        }
+        KeyOwner owner = exchange.getProperty(keyOwnerProperty, KeyOwner.class);
+        if (owner != null && owner.exchange() == exchange && owner.messageId().equals(messageId)
+                && exchange.getExchangeExtension().containsOnCompletion(owner.onCompletion())) {
+            return owner;
+        }
+        return null;
+    }
+
+    /**
      * Clear the idempotent repository
      */
     public void clear() {
@@ -294,6 +328,51 @@ public class IdempotentConsumer extends BaseProcessorSupport
      */
     protected void onDuplicateMessage(Exchange exchange, String messageId) {
         // noop
+    }
+
+    /**
+     * The message id that an exchange added to the repository, with the completion that confirms or removes it when the
+     * exchange is done.
+     */
+    private record KeyOwner(Exchange exchange, String messageId, Synchronization onCompletion) {
+        @Override
+        public String toString() {
+            return "IdempotentConsumerKeyOwner[" + messageId + "]";
+        }
+    }
+
+    /**
+     * {@link org.apache.camel.AsyncCallback} that marks the exchange as the owner of its key when the exchange fails in
+     * the idempotent consumer block (the exception leaves the block, so an error handler of a calling route may
+     * redeliver it), and removes the mark when the block succeeds.
+     */
+    private static final class KeyOwnerCallback implements AsyncCallback {
+        private final Exchange exchange;
+        private final KeyOwner owner;
+        private final String property;
+        private final AsyncCallback callback;
+
+        KeyOwnerCallback(Exchange exchange, KeyOwner owner, String property, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.owner = owner;
+            this.property = property;
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (exchange.isFailed()) {
+                exchange.setProperty(property, owner);
+            } else {
+                exchange.removeProperty(property);
+            }
+            callback.done(doneSync);
+        }
+
+        @Override
+        public String toString() {
+            return "IdempotentConsumerKeyOwnerCallback";
+        }
     }
 
     /**
