@@ -9552,6 +9552,22 @@ A trigger that is in the scheduler for the job of another route (the same `sched
 `scheduler.triggerGroup` in two routes) now fails the start with an `IllegalArgumentException` that names that route,
 also with a clustered job store, where the second route used to start and never poll.
 
+=== camel-quartz - a durable job left without its trigger is scheduled again
+
+With `durableJob=true` and the default `deleteJob=true`, a route removes its trigger when it stops (the route is
+removed, or the CamelContext stops), and Quartz keeps the durable job. A route with the same job then failed to start
+with an `ObjectAlreadyExistsException`: a route that was removed and added again (a reload), and, with a persistent job
+store, every start after a graceful stop. Now, when the trigger is not in the scheduler and the stored job is a Camel job
+(its class is `CamelJob` or a subclass), the job of the endpoint replaces the stored job when the route starts, and is
+scheduled with the trigger. The stored job therefore takes the job data, the class and the `jobParameters` of the
+endpoint that starts. A job that is not a Camel job with the same name and group, such as a job of the application in a
+shared scheduler, is not replaced, and the start fails as before.
+
+This also applies to a durable job whose trigger Quartz removed because it will not fire again, such as a simple trigger
+that fired its last repeat (`trigger.repeatCount`): the job is now scheduled again when the route starts, and the
+trigger fires again from the start. With a clustered job store, where a route does not remove its trigger when it stops,
+this is the case that changes: the start used to fail with `Trigger could not be found in quartz scheduler`.
+
 === camel-langchain4j-ingest - a media document whose type cannot be told is filtered
 
 With `modality=media` and no `contentType` set, a document whose media type cannot be told from the extension of its

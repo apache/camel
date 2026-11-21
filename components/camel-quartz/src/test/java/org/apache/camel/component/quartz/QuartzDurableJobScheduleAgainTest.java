@@ -16,23 +16,30 @@
  */
 package org.apache.camel.component.quartz;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.quartz.Job;
 import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
 import org.quartz.TriggerKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Quartz keeps a durable job (durableJob=true) when its trigger is removed, as the endpoint does when it stops
  * (deleteJob=true). The endpoint must schedule the job again when it starts, instead of failing with
- * ObjectAlreadyExistsException.
+ * ObjectAlreadyExistsException. A job of another class with the same name and group is not replaced.
  */
 class QuartzDurableJobScheduleAgainTest extends BaseQuartzTest {
 
@@ -64,9 +71,10 @@ class QuartzDurableJobScheduleAgainTest extends BaseQuartzTest {
 
     @Test
     void durableJobLeftWithoutTriggerScheduledAgain() throws Exception {
-        // the durable job without its trigger, as a persistent job store keeps it after the application stopped
+        // the durable job without its trigger, as a persistent job store keeps it after the application stopped (here
+        // of a stateful endpoint, a subclass of CamelJob)
         Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
-        scheduler.addJob(JobBuilder.newJob(CamelJob.class).withIdentity(JOB_KEY).storeDurably()
+        scheduler.addJob(JobBuilder.newJob(StatefulCamelJob.class).withIdentity(JOB_KEY).storeDurably()
                 .usingJobData(QuartzConstants.QUARTZ_ENDPOINT_URI, "quartz://durable/myTimer?durableJob=true")
                 .build(), false);
 
@@ -76,8 +84,33 @@ class QuartzDurableJobScheduleAgainTest extends BaseQuartzTest {
         mock.assertIsSatisfied();
 
         // the job of the endpoint replaced the stored one
+        assertEquals(CamelJob.class, scheduler.getJobDetail(JOB_KEY).getJobClass());
         assertEquals(context.getRoute("durable").getEndpoint().getEndpointUri(),
                 scheduler.getJobDetail(JOB_KEY).getJobDataMap().getString(QuartzConstants.QUARTZ_ENDPOINT_URI));
+    }
+
+    @Test
+    void durableJobOfAnotherClassIsNotReplaced() throws Exception {
+        // a durable job of the application with the same name and group, in a shared scheduler: it must not be
+        // replaced by the job of the endpoint, and the start fails as before
+        Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
+        scheduler.addJob(JobBuilder.newJob(ApplicationJob.class).withIdentity(JOB_KEY).storeDurably()
+                .usingJobData("owner", "application").build(), false);
+
+        Exception ex = assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(route()));
+        assertNotNull(ObjectHelper.getException(ObjectAlreadyExistsException.class, ex));
+
+        JobDetail stored = scheduler.getJobDetail(JOB_KEY);
+        assertEquals(ApplicationJob.class, stored.getJobClass());
+        assertEquals("application", stored.getJobDataMap().getString("owner"));
+        assertNull(scheduler.getTrigger(TRIGGER_KEY));
+    }
+
+    static class ApplicationJob implements Job {
+        @Override
+        public void execute(JobExecutionContext context) {
+            // never fires, it has no trigger
+        }
     }
 
     private static RouteBuilder route() {
