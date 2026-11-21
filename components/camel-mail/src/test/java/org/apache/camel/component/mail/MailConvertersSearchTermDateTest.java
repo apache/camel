@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import jakarta.mail.Session;
@@ -55,9 +56,42 @@ class MailConvertersSearchTermDateTest {
         assertFalse(term.match(sentAt("2026-11-18 14:30:50")), "a mail sent after the given time");
     }
 
+    @Test
+    void fromReceivedDateKeepsTheSeconds() throws Exception {
+        SimpleSearchTerm simple = new SimpleSearchTerm();
+        simple.setUnseen(false);
+        simple.setFromReceivedDate("2026-11-18 14:30:45");
+        SearchTerm term = MailConverters.toSearchTerm(simple);
+
+        assertFalse(term.match(receivedAt("2026-11-18 14:30:10")), "a mail received before the given time");
+        assertTrue(term.match(receivedAt("2026-11-18 14:30:50")), "a mail received after the given time");
+    }
+
+    @Test
+    void toReceivedDateKeepsTheSeconds() throws Exception {
+        SimpleSearchTerm simple = new SimpleSearchTerm();
+        simple.setUnseen(false);
+        simple.setToReceivedDate("2026-11-18 14:30:45");
+        SearchTerm term = MailConverters.toSearchTerm(simple);
+
+        assertTrue(term.match(receivedAt("2026-11-18 14:30:10")), "a mail received before the given time");
+        assertFalse(term.match(receivedAt("2026-11-18 14:30:50")), "a mail received after the given time");
+    }
+
     private static MimeMessage sentAt(String date) throws Exception {
         MimeMessage message = new MimeMessage(Session.getInstance(new Properties()));
         message.setSentDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date));
         return message;
+    }
+
+    private static MimeMessage receivedAt(String date) throws Exception {
+        Date received = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+        // only a mail server sets the received date, so a MimeMessage made here has none
+        return new MimeMessage(Session.getInstance(new Properties())) {
+            @Override
+            public Date getReceivedDate() {
+                return received;
+            }
+        };
     }
 }
