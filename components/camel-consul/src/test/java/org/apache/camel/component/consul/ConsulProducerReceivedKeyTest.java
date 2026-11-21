@@ -21,6 +21,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -90,7 +91,7 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
         route("consul:kv?key=camel/source&valueAsString=true&blockSeconds=1&consulClient=#consul",
                 "consul:kv?key=camel/target&action=PUT&consulClient=#consul");
 
-        await().until(() -> !valueQueries.isEmpty());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !valueQueries.isEmpty());
         valueQueries.get(0).onComplete(valueResponse("camel/source", "bar"));
 
         verify(keyValueClient, timeout(5000)).putValue(eq("camel/target"), eq("bar"), anyLong(), any(PutOptions.class));
@@ -102,7 +103,7 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
         route("consul:kv?key=camel/source&valueAsString=true&blockSeconds=1&consulClient=#consul",
                 "consul:kv?key=camel/target&action=DELETE_KEY&consulClient=#consul");
 
-        await().until(() -> !valueQueries.isEmpty());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !valueQueries.isEmpty());
         valueQueries.get(0).onComplete(valueResponse("camel/source", "bar"));
 
         verify(keyValueClient, timeout(5000)).deleteKey("camel/target");
@@ -114,7 +115,7 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
         route("consul:event?key=camel-source&blockSeconds=1&consulClient=#consul",
                 "consul:event?key=camel-target&action=FIRE&consulClient=#consul");
 
-        await().until(() -> !eventQueries.isEmpty());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !eventQueries.isEmpty());
         eventQueries.get(0).onComplete(eventResponse("camel-source", "bar"));
 
         verify(eventClient, timeout(5000)).fireEvent(eq("camel-target"), any(EventOptions.class), eq("bar"));
@@ -127,7 +128,7 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
         route("consul:kv?key=camel/jobs&recursive=true&valueAsString=true&blockSeconds=1&consulClient=#consul",
                 "consul:kv?action=DELETE_KEY&consulClient=#consul");
 
-        await().until(() -> !valuesQueries.isEmpty());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !valuesQueries.isEmpty());
         valuesQueries.get(0).onComplete(new ConsulResponse<>(
                 List.of(value("camel/jobs/1", "bar")), 0, true, BigInteger.TWO, (String) null, (String) null));
 
@@ -146,7 +147,7 @@ class ConsulProducerReceivedKeyTest extends CamelTestSupport {
         });
         context.start();
 
-        await().until(() -> !valueQueries.isEmpty());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !valueQueries.isEmpty());
         valueQueries.get(0).onComplete(valueResponse("camel/source", "bar"));
 
         verify(keyValueClient, timeout(5000)).putValue(eq("camel/other"), eq("bar"), anyLong(), any(PutOptions.class));
