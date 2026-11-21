@@ -269,6 +269,19 @@ The command exits with 1 when it finds a vulnerability of the `--fail-on` severi
 CI job fails; `--fail-on=none` always exits with 0. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
 shows the same for a running integration, and explains a vulnerability with AI.
 
+The command reaches OSV.dev through a proxy, which is taken from, in order:
+
+. the active proxy of the Maven settings: `~/.m2/settings.xml`, or the file of `--maven-settings`, with its username,
+  its password (encrypted with `settings-security.xml` or not) and its `nonProxyHosts`;
+. the `HTTPS_PROXY` (or `HTTP_PROXY`) and `NO_PROXY` environment variables, as CI runners set them, such as
+  `HTTPS_PROXY=http://user:secret@proxy.corp.com:3128`;
+. the proxy settings of the JVM, such as `JAVA_OPTS="-Dhttps.proxyHost=proxy.corp.com -Dhttps.proxyPort=3128"`.
+
+The JDK does not send a username and password to a proxy with Basic authentication when it tunnels HTTPS through it
+(`jdk.http.auth.tunneling.disabledSchemes=Basic`); the command allows it when the proxy has a username, unless the
+property is set already. When OSV.dev cannot be reached, the command checks the Apache Camel security advisories only,
+and says why.
+
 === Copying dependency JARs
 
 Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,

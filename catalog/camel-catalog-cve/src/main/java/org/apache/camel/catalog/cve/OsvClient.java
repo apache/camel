@@ -41,23 +41,37 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
  */
 public class OsvClient {
 
-    private static final String BATCH_URL = "https://api.osv.dev/v1/querybatch";
-    private static final String VULN_URL = "https://api.osv.dev/v1/vulns/";
+    /** The OSV.dev API, to look up the proxy to reach it through. */
+    public static final String API_URL = "https://api.osv.dev/";
+    private static final String BATCH_URL = API_URL + "v1/querybatch";
+    private static final String VULN_URL = API_URL + "v1/vulns/";
     private static final ConcurrentHashMap<String, List<Vulnerability>> CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Vulnerability> VULN_DETAIL_CACHE = new ConcurrentHashMap<>();
 
-    private final ProxySelector proxySelector;
+    private final HttpProxy proxy;
     // why the last query got no answer from OSV.dev; null when it got one
     private volatile String lastError;
 
     /** A client with the proxy settings of the JVM. */
     public OsvClient() {
-        this(ProxySelector.getDefault());
+        this(null);
     }
 
-    /** A client that connects through the given proxies, such as those of the settings of the TUI. */
-    public OsvClient(ProxySelector proxySelector) {
-        this.proxySelector = proxySelector != null ? proxySelector : ProxySelector.getDefault();
+    /**
+     * A client that connects through the given proxy, such as the proxy of the Maven settings, logging in to it when it
+     * has a username; with the proxy settings of the JVM when null.
+     */
+    public OsvClient(HttpProxy proxy) {
+        this.proxy = proxy;
+        if (proxy != null && proxy.hasCredentials()) {
+            // before the first HTTP client of the JVM, which reads it once
+            HttpProxy.allowBasicTunneling();
+        }
+    }
+
+    /** The proxy this client connects through; null for the proxy settings of the JVM. */
+    public HttpProxy proxy() {
+        return proxy;
     }
 
     /**
@@ -156,10 +170,7 @@ public class OsvClient {
 
         boolean success = false;
         try {
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(5))
-                    .proxy(proxySelector)
-                    .build();
+            HttpClient client = newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BATCH_URL))
                     .timeout(Duration.ofSeconds(30))
@@ -169,7 +180,9 @@ public class OsvClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                lastError = "OSV.dev answered with HTTP status " + response.statusCode();
+                lastError = response.statusCode() == 407
+                        ? proxyLoginError()
+                        : "OSV.dev answered with HTTP status " + response.statusCode();
             } else {
                 success = true;
                 JsonObject body = (JsonObject) Jsoner.deserialize(response.body());
@@ -219,7 +232,7 @@ public class OsvClient {
             lastError = "The query to OSV.dev was interrupted";
         } catch (Exception e) {
             // network errors: return whatever we have from cache; leave entries uncached for retry
-            lastError = "OSV.dev could not be reached: "
+            lastError = "OSV.dev could not be reached" + (proxy != null ? " through the proxy " + proxy : "") + ": "
                         + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
         }
 
@@ -233,6 +246,28 @@ public class OsvClient {
         }
 
         return result;
+    }
+
+    // the proxy answered 407 Proxy Authentication Required
+    private String proxyLoginError() {
+        if (proxy != null && proxy.hasCredentials()) {
+            // the JDK reads jdk.http.auth.tunneling.disabledSchemes once: an HTTP client used earlier in the JVM
+            // keeps Basic disabled
+            return "The proxy " + proxy + " refused the login (HTTP status 407). For a proxy with Basic authentication, "
+                   + "start the JVM with -D" + HttpProxy.TUNNELING_DISABLED_SCHEMES + "= (an empty value)";
+        }
+        return "The proxy " + (proxy != null ? proxy + " " : "") + "needs a username and password (HTTP status 407): "
+               + "set them on the proxy of the Maven settings (settings.xml), or in HTTPS_PROXY";
+    }
+
+    private HttpClient newHttpClient() {
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(5))
+                .proxy(proxy != null ? proxy.selector() : ProxySelector.getDefault());
+        if (proxy != null && proxy.authenticator() != null) {
+            builder.authenticator(proxy.authenticator());
+        }
+        return builder.build();
     }
 
     private void fetchVulnDetails(HttpClient client, Map<String, List<String>> gavToVulnIds) {
@@ -272,12 +307,12 @@ public class OsvClient {
         return lastError;
     }
 
-    public void clearCache() {
+    public static void clearCache() {
         CACHE.clear();
         VULN_DETAIL_CACHE.clear();
     }
 
-    public void clearCache(List<Dependency> entries) {
+    public static void clearCache(List<Dependency> entries) {
         for (Dependency entry : entries) {
             if (entry.groupId() != null) {
                 CACHE.remove(entry.gav());
