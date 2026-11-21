@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -44,6 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 public class KubernetesClusterView extends AbstractCamelClusterView implements CamelPreemptiveClusterView {
 
     private CamelContext camelContext;
+    private final KubernetesClusterService kubernetesCluster;
     private KubernetesClient kubernetesClient;
     private KubernetesConfiguration configuration;
     private KubernetesLockConfiguration lockConfiguration;
@@ -63,6 +65,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
                                  KubernetesConfiguration configuration,
                                  KubernetesLockConfiguration lockConfiguration) {
         super(cluster, lockConfiguration.getGroupName());
+        this.kubernetesCluster = cluster;
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.configuration = ObjectHelper.notNull(configuration, "configuration");
         this.lockConfiguration = ObjectHelper.notNull(lockConfiguration, "lockConfiguration");
@@ -161,9 +164,17 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
             synchronized (leaderLock) {
                 generation++;
             }
+            // the wait for a running refresh and the release take at most the renew deadline, and while the cluster
+            // service or the CamelContext stops, at most the renew deadline for all the views together
+            long stopStart = System.nanoTime();
+            long timeoutMillis = lockConfiguration.getRenewDeadlineMillis();
+            Long sharedTimeLeft = kubernetesCluster.sharedStopTimeLeftNanos();
+            if (sharedTimeLeft != null) {
+                timeoutMillis = Math.min(timeoutMillis, TimeUnit.NANOSECONDS.toMillis(sharedTimeLeft));
+            }
             try {
                 // no more refreshes of the lease, and no more leadership events
-                stopping.stop();
+                stopping.stop(timeoutMillis);
 
                 boolean wasLeader;
                 synchronized (leaderLock) {
@@ -179,6 +190,9 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
             } finally {
                 kubernetesClient.close();
                 kubernetesClient = null;
+                if (sharedTimeLeft != null) {
+                    kubernetesCluster.sharedStopTimeSpent(System.nanoTime() - stopStart);
+                }
             }
         }
     }

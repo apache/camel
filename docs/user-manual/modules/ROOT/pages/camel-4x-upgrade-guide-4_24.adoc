@@ -2311,12 +2311,21 @@ the `ConfigMap`). Another pod then takes over the leadership on its next check, 
 stopped view kept reporting the pod as leader (`CamelClusterService.isLeader` returned `true`, also once the view was
 used again, until its first lookup), and the lease kept naming the pod, so no other pod could lead the group until this
 pod was no longer ready. A pod that is stopped while it waits to become the leader keeps the lease, as before. If the
-lease cannot be updated, a WARN is logged and the lease is kept until the pod is no longer ready, as before. The stop
-now waits for a check of the lease that is running, and then for the release, each up to the renew deadline
-(`renewDeadlineMillis`, 10 seconds by default), so with an API server that does not answer a stop can take up to about
-twice the renew deadline; the Kubernetes client's own retries (`requestRetryBackoffLimit`, 10 by default) do not make it
-longer. A release that is given up at the renew deadline logs a WARN, and the lease may then be kept until the pod is no
-longer ready.
+lease cannot be updated, a WARN is logged and the lease is kept until the pod is no longer ready, as before.
+
+The stop of a view now waits for a check of the lease that is running and then for the release, both together up to
+about the renew deadline (`renewDeadlineMillis`, 10 seconds by default); the Kubernetes client's own retries
+(`requestRetryBackoffLimit`, 10 by default) do not make it longer, but the time the leadership listeners of the view
+take when it stops counts against it. The views are stopped one after another: when the CamelContext stops, each
+clustered route or `master:` consumer releases its view, which stops the view once no other route uses it, and then the
+cluster service stops the rest. The views that stop while the CamelContext or the cluster service stops share one renew
+deadline: the time each of them spends in its stop is taken from it (the time between their stops, such as the graceful
+shutdown of the routes, is not), so with an API server that does not answer they wait up to about the renew deadline in
+all, not once per group, and a view that stops after the time is used up does not try the release. A view that stops on
+its own while the CamelContext runs (such as when its last clustered route is removed) has its own renew deadline. A
+view also does not try the release when its last lookup of the lease (or of the pods) or its last renewal failed, which
+the Kubernetes client reports only after its own retries. A release that is given up or not tried logs a WARN, and the
+lease is then kept until the pod is no longer ready, as before.
 
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 

@@ -83,6 +83,13 @@ public class KubernetesLeadershipController implements Service {
     private volatile HasMetadata latestLeaseResource;
     private volatile Set<String> latestMembers;
 
+    // whether the last lookup (of the lease or of the pods) or renewal of the lease failed: written by the refreshes
+    // (not for a failure caused by stop), read by releaseLeadership
+    private volatile boolean lastLeaseCallFailed;
+
+    // the System.nanoTime() until which stop and releaseLeadership may wait together (null before stop)
+    private volatile Long stopDeadlineNanos;
+
     private boolean disabled;
 
     private final String logPrefix;
@@ -104,6 +111,8 @@ public class KubernetesLeadershipController implements Service {
     public void start() {
         if (serializedExecutor == null) {
             LOG.debug("{} Starting leadership controller...", logPrefix);
+            stopDeadlineNanos = null;
+            lastLeaseCallFailed = false;
             serializedExecutor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                     "CamelKubernetesLeadershipController");
             leaderNotifier = new TimedLeaderNotifier(this.camelContext, this.eventHandler);
@@ -114,19 +123,31 @@ public class KubernetesLeadershipController implements Service {
     }
 
     /**
-     * Stops the refreshes of the leadership status and the leadership events. A refresh that is running is interrupted,
-     * and waited for up to the renew deadline. The lease is not released, see {@link #releaseLeadership()}.
+     * Stops the controller, see {@link #stop(long)}, with the renew deadline as the time limit.
      */
     @Override
     public void stop() {
+        stop(lockConfiguration.getRenewDeadlineMillis());
+    }
+
+    /**
+     * Stops the refreshes of the leadership status and the leadership events. A refresh that is running is interrupted,
+     * and waited for. This wait and {@link #releaseLeadership()} together take at most the given time. The lease is not
+     * released, see {@link #releaseLeadership()}.
+     *
+     * @param timeoutMillis the time that this stop and {@link #releaseLeadership()} may take together
+     */
+    public void stop(long timeoutMillis) {
         LOG.debug("{} Stopping leadership controller...", logPrefix);
+        long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(Math.max(0, timeoutMillis));
+        stopDeadlineNanos = deadline;
         ScheduledExecutorService executor = serializedExecutor;
         serializedExecutor = null;
         if (executor != null) {
             executor.shutdownNow();
             try {
-                if (!executor.awaitTermination(lockConfiguration.getRenewDeadlineMillis(), TimeUnit.MILLISECONDS)) {
-                    LOG.debug("{} The leadership status refresh did not end within the renew deadline", logPrefix);
+                if (!executor.awaitTermination(deadline - System.nanoTime(), TimeUnit.NANOSECONDS)) {
+                    LOG.debug("{} The leadership status refresh did not end in time", logPrefix);
                 }
             } catch (InterruptedException e) {
                 LOG.debug("{} Interrupted while waiting for the leadership status refresh to end", logPrefix);
@@ -141,10 +162,12 @@ public class KubernetesLeadershipController implements Service {
     }
 
     /**
-     * Releases the leadership after {@link #stop()}: if the leadership of this pod has taken effect and the lease names
-     * this pod, the pod is removed from it, so that another pod can take over the leadership at once instead of when
-     * this pod is no longer ready. The release is given up after the renew deadline. A failure is logged, and the lease
-     * is then kept until this pod is no longer ready (as before).
+     * Releases the leadership after {@link #stop(long)}: if the leadership of this pod has taken effect and the lease
+     * names this pod, the pod is removed from it, so that another pod can take over the leadership at once instead of
+     * when this pod is no longer ready. The release is given up when the time given to {@link #stop(long)} has passed.
+     * It is not tried when the last lookup (of the lease or of the pods) or renewal of the lease failed (after the own
+     * retries of the Kubernetes client), as it would then most likely wait for an API server that does not answer. A
+     * failure is logged, and the lease is then kept until this pod is no longer ready (as before).
      */
     public void releaseLeadership() {
         String group = this.lockConfiguration.getGroupName();
@@ -156,17 +179,34 @@ public class KubernetesLeadershipController implements Service {
                     group, state);
             return;
         }
+        if (this.lastLeaseCallFailed) {
+            LOG.warn("{} The last lookup or renewal of the lease for group {} failed, so the release of the lease is not"
+                     + " tried: if the lease still names the current pod, other pods can take it over once the current"
+                     + " pod is no longer ready",
+                    logPrefix, group);
+            return;
+        }
+        Long deadline = this.stopDeadlineNanos;
+        long remaining = deadline != null
+                ? deadline - System.nanoTime() : TimeUnit.MILLISECONDS.toNanos(this.lockConfiguration.getRenewDeadlineMillis());
+        if (remaining <= 0) {
+            LOG.warn("{} No time is left to release the leadership for group {}, so the release of the lease is not tried:"
+                     + " if the lease still names the current pod, other pods can take it over once the current pod is"
+                     + " no longer ready",
+                    logPrefix, group);
+            return;
+        }
         // the Kubernetes client tries a request again on its own when the API server cannot be reached or answers
         // with 429 or a server error (by default up to 10 times, with a growing delay), which can take minutes, so the
-        // release runs on its own thread and the stop waits for it up to the renew deadline
+        // release runs on its own thread and the stop waits for it only for the time left
         ExecutorService executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this,
                 "CamelKubernetesLeadershipRelease");
         try {
             Future<?> release = executor.submit(this::doReleaseLeadership);
-            release.get(this.lockConfiguration.getRenewDeadlineMillis(), TimeUnit.MILLISECONDS);
+            release.get(remaining, TimeUnit.NANOSECONDS);
         } catch (TimeoutException e) {
-            LOG.warn("{} Unable to release the leadership for group {} within the renew deadline, other pods can take it"
-                     + " over once the current pod is no longer ready",
+            LOG.warn("{} Unable to release the leadership for group {} in time, other pods can take it over once the"
+                     + " current pod is no longer ready",
                     logPrefix, group);
         } catch (ExecutionException e) {
             LOG.warn("{} Unable to release the leadership for group {}: {}", logPrefix, group, e.getCause().toString());
@@ -385,8 +425,10 @@ public class KubernetesLeadershipController implements Service {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
-            LOG.warn("Thread interrupted", e);
+            // the controller is stopping (shutdownNow): the state stays LOSING_LEADERSHIP, see releaseLeadership
+            LOG.debug("{} Interrupted while waiting to lose the leadership", logPrefix);
             Thread.currentThread().interrupt();
+            return;
         }
 
         LOG.info("{} Current pod is losing leadership now...", logPrefix);
@@ -437,9 +479,16 @@ public class KubernetesLeadershipController implements Service {
                     this.lockConfiguration.getRenewDeadlineMillis(),
                     this.latestLeaderInfo.getMembers());
 
-            HasMetadata newLease = this.leaseManager.refreshLeaseRenewTime(kubernetesClient, this.latestLeaseResource,
-                    this.lockConfiguration.getRenewDeadlineSeconds());
+            HasMetadata newLease;
+            try {
+                newLease = this.leaseManager.refreshLeaseRenewTime(kubernetesClient, this.latestLeaseResource,
+                        this.lockConfiguration.getRenewDeadlineSeconds());
+            } catch (RuntimeException e) {
+                leaseCallFailed();
+                throw e;
+            }
             updateLatestLeaderInfo(newLease, this.latestMembers);
+            leaseCallSucceeded();
 
             rescheduleAfterDelay();
             return;
@@ -471,6 +520,7 @@ public class KubernetesLeadershipController implements Service {
                     this.lockConfiguration.getKubernetesResourceName(),
                     this.lockConfiguration.getGroupName());
         } catch (Exception e) {
+            leaseCallFailed();
             LOG.warn("{} Unable to retrieve the current lease resource {} for group {} from Kubernetes",
                     logPrefix, this.lockConfiguration.getKubernetesResourceName(), this.lockConfiguration.getGroupName());
             LOG.debug("{} Exception thrown during lease resource lookup", logPrefix, e);
@@ -481,13 +531,26 @@ public class KubernetesLeadershipController implements Service {
         try {
             members = Objects.requireNonNull(pullClusterMembers(), "Retrieved a null set of members");
         } catch (Exception e) {
+            leaseCallFailed();
             LOG.warn("{} Unable to retrieve the list of cluster members from Kubernetes", logPrefix);
             LOG.debug("{} Exception thrown during Pod list lookup", logPrefix, e);
             return false;
         }
 
         updateLatestLeaderInfo(leaseResource, members);
+        leaseCallSucceeded();
         return true;
+    }
+
+    private void leaseCallSucceeded() {
+        this.lastLeaseCallFailed = false;
+    }
+
+    private void leaseCallFailed() {
+        // a failure caused by stop (which interrupts the refresh) says nothing about the API server
+        if (this.serializedExecutor != null) {
+            this.lastLeaseCallFailed = true;
+        }
     }
 
     private boolean yieldLeadership() {

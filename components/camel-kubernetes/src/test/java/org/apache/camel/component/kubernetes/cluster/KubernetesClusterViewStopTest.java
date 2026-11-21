@@ -16,18 +16,26 @@
  */
 package org.apache.camel.component.kubernetes.cluster;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.coordination.v1.Lease;
+import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLockConfiguration;
 import org.apache.camel.component.kubernetes.cluster.utils.ConfigMapLockSimulator;
 import org.apache.camel.component.kubernetes.cluster.utils.LeaderRecorder;
 import org.apache.camel.component.kubernetes.cluster.utils.LeaseLockSimulator;
 import org.apache.camel.component.kubernetes.cluster.utils.LockTestServer;
 import org.apache.camel.component.kubernetes.cluster.utils.ResourceLockSimulator;
+import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,6 +58,7 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
     private static final int RENEW_DEADLINE_MILLIS = 1000;
     private static final int RETRY_PERIOD_MILLIS = 200;
     private static final String NS = "app";
+    private static final List<String> GROUPS = List.of("group-a", "group-b", "group-c");
 
     private ResourceLockSimulator<?> lockSimulator;
     private final Map<String, LockTestServer<?>> servers = new HashMap<>();
@@ -136,13 +145,13 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
     void testStopGivesUpTheReleaseAfterTheRenewDeadline(LeaseResourceType type) throws Exception {
         String leader = startCluster(type);
         // the API server answers the leader pod only after a long delay (the Kubernetes client would also try a failed
-        // request again, by default up to 10 times): the stop waits for the release up to the renew deadline only
+        // request again, by default up to 10 times): the stop and the release together wait the renew deadline at most
         servers.get(leader).setDelayRequests(5L * RENEW_DEADLINE_MILLIS);
         long start = System.nanoTime();
         KubernetesClusterView view = stopView(leader);
         long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-        assertTrue(millis < 4L * RENEW_DEADLINE_MILLIS, "The stop took " + millis + " ms");
+        assertTrue(millis < 2L * RENEW_DEADLINE_MILLIS, "The stop took " + millis + " ms");
         assertFalse(view.getLocalMember().isLeader());
         assertNull(recorders.get(leader).getCurrentLeader());
         // the release was given up, so the lease is kept until the pod is no longer ready, as before
@@ -165,6 +174,174 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
         KubernetesClusterView view = stopView(other);
         assertFalse(view.getLocalMember().isLeader());
         assertEquals(other, getHolder());
+    }
+
+    @ParameterizedTest
+    @EnumSource(LeaseResourceType.class)
+    void testStopOfManyGroupsWaitsOnceForAnApiServerThatStoppedAnswering(LeaseResourceType type) throws Exception {
+        Map<String, ResourceLockSimulator<?>> simulators = new HashMap<>();
+        KubernetesClusterService service = startGroups(type, simulators);
+        // the API server answers only after a long delay from now on: the groups share one renew deadline, so the
+        // stop of the first group waits for its release until the renew deadline, and the next groups do not wait
+        servers.get("mypod1").setDelayRequests(5L * RENEW_DEADLINE_MILLIS);
+        long start = System.nanoTime();
+        service.stop();
+        long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+        assertTrue(millis < 2L * RENEW_DEADLINE_MILLIS, "The stop of " + GROUPS.size() + " groups took " + millis + " ms");
+        for (String group : GROUPS) {
+            assertTrue(service.getView(group).isStopped());
+            assertFalse(service.getView(group).getLocalMember().isLeader());
+            // not released, so the lease is kept until the pod is no longer ready, as before
+            assertEquals("mypod1", getHolder(type, simulators, group));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(LeaseResourceType.class)
+    void testStopOfManyGroupsDoesNotWaitWhenTheLastLookupFailed(LeaseResourceType type) throws Exception {
+        Map<String, ResourceLockSimulator<?>> simulators = new HashMap<>();
+        KubernetesClusterService service = startGroups(type, simulators);
+        // the API server fails the lookups (the test client does not try a failed request again, while the default
+        // client does so for a while first): the leadership is lost locally once the renew deadline has passed
+        LockTestServer<?> server = servers.get("mypod1");
+        server.setRefuseRequests(true);
+        await().atMost(5, TimeUnit.SECONDS).until(() -> GROUPS.stream().noneMatch(service::isLeader));
+        // and then answers only after a long delay: the groups do not try to release the lease, so the stop does not
+        // wait for the API server (a release that is tried would wait until the renew deadline)
+        server.setDelayRequests(5L * RENEW_DEADLINE_MILLIS);
+        long start = System.nanoTime();
+        service.stop();
+        long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+        assertTrue(millis < RENEW_DEADLINE_MILLIS / 2, "The stop of " + GROUPS.size() + " groups took " + millis + " ms");
+        for (String group : GROUPS) {
+            assertTrue(service.getView(group).isStopped());
+            assertEquals("mypod1", getHolder(type, simulators, group));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(LeaseResourceType.class)
+    void testContextStopWithClusteredRoutesWaitsOnceForAnApiServerThatStoppedAnswering(LeaseResourceType type)
+            throws Exception {
+        Map<String, ResourceLockSimulator<?>> simulators = new HashMap<>();
+        KubernetesClusterService service = startGroups(type, simulators, true);
+        // when the CamelContext stops, each clustered route releases its view, which stops it, before the cluster
+        // service stops: these views share one renew deadline too
+        servers.get("mypod1").setDelayRequests(5L * RENEW_DEADLINE_MILLIS);
+        long start = System.nanoTime();
+        context.stop();
+        long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+        assertTrue(millis < 2L * RENEW_DEADLINE_MILLIS, "The stop of " + GROUPS.size() + " groups took " + millis + " ms");
+        for (String group : GROUPS) {
+            assertEquals("mypod1", getHolder(type, simulators, group));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(LeaseResourceType.class)
+    void testContextStopReleasesAllGroupsWhenTheTimeBetweenTheirStopsIsLong(LeaseResourceType type) throws Exception {
+        Map<String, ResourceLockSimulator<?>> simulators = new HashMap<>();
+        startGroups(type, simulators, true);
+        // the routes are shut down one after another, and each one takes longer than the renew deadline after it has
+        // released its view (like the graceful shutdown of routes): only the time that the views spend in their stop
+        // counts against the renew deadline that they share, so every group still releases its lease
+        context.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onRoutesRemove(Collection<Route> routes) {
+                try {
+                    new CountDownLatch(1).await(RENEW_DEADLINE_MILLIS * 3L / 2, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        context.stop();
+
+        for (String group : GROUPS) {
+            assertNull(getHolder(type, simulators, group), "The lease of " + group + " should be released");
+        }
+    }
+
+    private KubernetesClusterService startGroups(LeaseResourceType type, Map<String, ResourceLockSimulator<?>> simulators)
+            throws Exception {
+        return startGroups(type, simulators, false);
+    }
+
+    /**
+     * Starts one pod that leads all the {@link #GROUPS}, and returns its cluster service. The views are used by the
+     * test, or by a route with a {@link ClusteredRoutePolicy} for each group.
+     */
+    private KubernetesClusterService startGroups(
+            LeaseResourceType type, Map<String, ResourceLockSimulator<?>> simulators, boolean clusteredRoutes)
+            throws Exception {
+        LockTestServer<?> server = new LockTestServer<>();
+        servers.put("mypod1", server);
+        server.addPod("mypod1");
+        if (type == LeaseResourceType.Lease) {
+            for (String group : GROUPS) {
+                simulators.put(group, new LeaseLockSimulator("leaders-" + group));
+            }
+        } else {
+            ResourceLockSimulator<?> configMap = new ConfigMapLockSimulator("leaders");
+            GROUPS.forEach(group -> simulators.put(group, configMap));
+        }
+        simulators.values().forEach(server::addSimulator);
+
+        KubernetesClusterService service = new KubernetesClusterService(new KubernetesConfiguration()) {
+            @Override
+            protected KubernetesConfiguration setConfigDefaults(
+                    KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
+                // a client for each view, as when the views create their clients from the master URL (a client set on
+                // the configuration is shared by the views, and closed by the first view that stops)
+                configuration.setKubernetesClient(server.createClient());
+                return super.setConfigDefaults(configuration, lockConfiguration);
+            }
+        };
+        service.setNamespace("test");
+        service.setPodName("mypod1");
+        service.setLeaseDurationMillis(LEASE_TIME_MILLIS);
+        service.setRenewDeadlineMillis(RENEW_DEADLINE_MILLIS);
+        service.setRetryPeriodMillis(RETRY_PERIOD_MILLIS);
+        service.setJitterFactor(1.1);
+        service.setLeaseResourceType(type);
+        services.put("mypod1", service);
+        context().addService(service);
+        if (clusteredRoutes) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    for (String group : GROUPS) {
+                        from("direct:" + group).routeId(group)
+                                .routePolicy(ClusteredRoutePolicy.forNamespace(service, group))
+                                .to("mock:" + group);
+                    }
+                }
+            });
+        } else {
+            for (String group : GROUPS) {
+                service.getView(group);
+            }
+        }
+        context.start();
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> GROUPS.stream().allMatch(service::isLeader));
+        for (String group : GROUPS) {
+            assertEquals("mypod1", getHolder(type, simulators, group));
+        }
+        return service;
+    }
+
+    private static String getHolder(LeaseResourceType type, Map<String, ResourceLockSimulator<?>> simulators, String group) {
+        Object resource = simulators.get(group).getResource();
+        if (type == LeaseResourceType.Lease) {
+            Lease lease = (Lease) resource;
+            return lease != null && lease.getSpec() != null ? lease.getSpec().getHolderIdentity() : null;
+        }
+        ConfigMap configMap = (ConfigMap) resource;
+        return configMap != null && configMap.getData() != null ? configMap.getData().get("leader.pod." + group) : null;
     }
 
     private String startCluster(LeaseResourceType type) {
