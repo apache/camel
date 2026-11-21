@@ -7598,6 +7598,14 @@ The options cannot change a `MongoClient` the endpoint did not create (set with 
 from the registry). Such an endpoint now logs a WARN that lists the options it does not use; configure them on the
 `MongoClient` instead.
 
+=== camel-mongodb - SslAwareMongoClient percent-encodes the username and password
+
+`org.apache.camel.component.mongodb.SslAwareMongoClient` (the client the MongoDB Kamelets create) put the username and
+password into its connection string without percent-encoding them. A password with `@`, `:`, `/`, `?` or `%` failed to
+connect, and an encoded sequence such as `%41` was decoded, so the client logged in with another password. The client
+now encodes both itself: give the username and password as they are. A password that was percent-encoded by hand to
+work around this (for example `p%40ss` for `p@ss`) must now be given unencoded.
+
 === camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
