@@ -28,6 +28,8 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -178,6 +180,43 @@ class KafkaTab extends AbstractTableTab {
                                 .title(title).build())
                         .build(),
                 area);
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI (CAMEL-25362): why the selected consumer fails or does not run
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            KafkaConsumerInfo ki = info != null ? selectedConsumer(info) : null;
+            if (ki != null && ctx.askAiCallback != null) {
+                if (KafkaAiPrompt.hasTrouble(ki)) {
+                    ctx.askAiCallback.ask(KafkaAiPrompt.of(info, ki));
+                } else if (ctx.notificationCallback != null) {
+                    ctx.notificationCallback.accept("This Kafka consumer is running without errors: ask the AI with F8",
+                            false);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        KafkaConsumerInfo ki = info != null && ctx.askAiCallback != null ? selectedConsumer(info) : null;
+        if (ki != null && KafkaAiPrompt.hasTrouble(ki)) {
+            hint(spans, "Shift+F8", "fix with AI");
+        }
+    }
+
+    /** The consumer selected in the table, in the order it is shown; null when none is. */
+    KafkaConsumerInfo selectedConsumer(IntegrationInfo info) {
+        List<KafkaConsumerInfo> sorted = new ArrayList<>(info.kafkaConsumers);
+        sorted.sort(this::sortKafka);
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
     }
 
     private int sortKafka(KafkaConsumerInfo a, KafkaConsumerInfo b) {

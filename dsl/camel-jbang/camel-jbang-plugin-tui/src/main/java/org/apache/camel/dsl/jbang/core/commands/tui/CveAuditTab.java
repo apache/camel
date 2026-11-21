@@ -138,6 +138,14 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // explain with AI (CAMEL-25362): whether the selected vulnerability affects the integration, and the fix
+            VulnGroup group = selectedGroup();
+            if (group != null && ctx.askAiCallback != null) {
+                ctx.askAiCallback.ask(CveAiPrompt.of(ctx.findSelectedIntegration(), group));
+            }
+            return true;
+        }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             detailScroll = Math.max(0, detailScroll - 10);
             return true;
@@ -390,6 +398,21 @@ class CveAuditTab extends AbstractTableTab {
         super.renderFooter(spans);
     }
 
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        if (ctx.askAiCallback != null && selectedGroup() != null) {
+            hint(spans, "Shift+F8", "explain with AI");
+        }
+    }
+
+    /** The vulnerability selected in the table, in the order it is shown; null when none is. */
+    VulnGroup selectedGroup() {
+        List<VulnGroup> visible = sortedGroups();
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < visible.size() ? visible.get(sel) : null;
+    }
+
     private void rescan() {
         if (loading.get()) {
             return;
@@ -591,6 +614,15 @@ class CveAuditTab extends AbstractTableTab {
             }
             detailScroll = 0;
         });
+    }
+
+    /** Shows the vulnerabilities as a scan sets them, without the render thread; for tests. */
+    void showForTesting(List<VulnGroup> groups) {
+        allGroups = groups;
+        dataLoaded = true;
+        if (!groups.isEmpty()) {
+            tableState.select(0);
+        }
     }
 
     private List<VulnGroup> sortedGroups() {

@@ -210,7 +210,7 @@ listed once.
 
 image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
-The Routes, SQL Trace, Health and Circuit Breaker tabs have the key too:
+The Routes, SQL Trace, Health, Circuit Breaker, Kafka and CVE Audit tabs have the key too:
 
 * *Routes*: *Shift+F8* on a route whose exchanges fail asks the AI to fix it, with the steps they fail at, their source
 lines and the last error of the route. On a route without failures, it asks the AI to explain where the time goes, with
@@ -228,6 +228,15 @@ broker that is not running.
 calls failed, timed out or were rejected. The question has its state and counters, its configuration, its line in the
 source and the last error of its route. An open circuit breaker is often the breaker doing its job, so the AI explains
 and suggests, and changes no file unless you agree.
+* *Kafka*: *Shift+F8* asks the AI to fix the selected consumer when it has an error, or is not running or paused. The
+question has its state and last error, its endpoint and consumer group, where it last read (topic, partition, offset),
+the line of its route in the source and the last error of the route. The AI fixes the cause in the routes or
+configuration (brokers, topic, group, deserializers, security), or says how to fix it when it is outside the
+integration, such as a broker that is not running.
+* *CVE Audit*: *Shift+F8* asks the AI to explain the selected vulnerability: its severity, the artifacts it affects and
+the dependency that brings each in, the versions that fix it and its description. The AI tells whether the integration
+uses the vulnerable part of the library, and how to fix it (a fixed version of a dependency the project declares, or a
+newer Camel version for one that comes with a component), and changes no file unless you agree.
 
 The Log tab shows the log in one of three views, and *c* goes to the next one:
 
