@@ -55,6 +55,7 @@ import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,6 +165,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         consumerProfile.setMaxQueueSize(0);
         consumerProfile.setKeepAliveTime((long) getConfiguration().getAcceptTimeout());
         consumerProfile.setTimeUnit(TimeUnit.MILLISECONDS);
+        // reject a connection above maxConcurrentConsumers, so startConsumer resets it; without a policy the default
+        // profile's CallerRuns would serve it on the validation thread, and the limit would not apply
+        consumerProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
         consumerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newThreadPool(this, "MllpConsumer", consumerProfile);
 
@@ -255,6 +259,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             getEndpoint().updateLastConnectionEstablishedTicks();
         } catch (RejectedExecutionException rejectedExecutionEx) {
             log.warn("startConsumer({}) - cannot start consumer - max consumers already active", clientSocket);
+            // the runnable never runs, so it does not remove itself
+            consumerRunnables.remove(client);
             mllpBuffer.resetSocket(clientSocket);
         }
     }
