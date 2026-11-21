@@ -54,13 +54,13 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
     private static final PodStatus NOT_READY = new PodStatusBuilder().withPhase("Running").addNewCondition().withType("Ready")
             .withStatus("false").endCondition().build();
 
-    private boolean refuseRequests;
+    private volatile boolean refuseRequests;
 
     private volatile boolean refuseUpdateRequests;
 
     private final AtomicInteger refusedUpdateRequests = new AtomicInteger();
 
-    private Long delayRequests;
+    private volatile Long delayRequests;
 
     private Set<String> pods;
 
