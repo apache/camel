@@ -98,6 +98,21 @@ class DependencyAuditTest {
     }
 
     @Test
+    void failOnErrorWhenOsvCouldNotBeUsed() {
+        CveAudit.Result unchecked = new CveAudit.Result(List.of(), List.of(), "OSV.dev could not be reached: timeout");
+        DependencyAudit audit = new DependencyAudit();
+        audit.failOn = "low";
+
+        // only the Camel advisories were checked: a warning, not a failure
+        assertThat(audit.failed(unchecked)).isFalse();
+
+        audit.failOnError = true;
+        assertThat(audit.failed(unchecked)).isTrue();
+        assertThat(audit.jsonReport("project", 3, unchecked, List.of(), List.of()).getBoolean("failed")).isTrue();
+        assertThat(audit.failed(new CveAudit.Result(List.of(), List.of(), null))).isFalse();
+    }
+
+    @Test
     void aSeverityOptionMustBeALevel() {
         DependencyAudit.checkLevel("--severity", "HIGH", false);
         DependencyAudit.checkLevel("--fail-on", "none", true);

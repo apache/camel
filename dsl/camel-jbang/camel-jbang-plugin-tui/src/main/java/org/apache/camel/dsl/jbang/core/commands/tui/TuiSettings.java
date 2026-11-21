@@ -16,8 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.catalog.cve.OsvClient;
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.dsl.jbang.core.common.OsvProxy;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
 
 /**
  * User-facing preferences for the Camel TUI, persisted under {@code camel.tui.*} keys in the CLI user configuration
@@ -44,6 +52,7 @@ final class TuiSettings {
     static final String PROP_AI_ACP_COMMAND = "camel.tui.ai.acp.command";
     static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
+    static final String PROP_OSV_DATABASE = "camel.tui.osvDatabase";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
     static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
@@ -61,6 +70,7 @@ final class TuiSettings {
     private String defaultFolder;
     private String proxyHost;
     private String proxyPort;
+    private String osvDatabase;
     private String aiProvider;
     private String aiModel;
     private String aiUrl;
@@ -138,6 +148,15 @@ final class TuiSettings {
 
     void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    /** The offline OSV database of the CVE Audit screen: {@code default}, a URL or a file; null for the OSV.dev API. */
+    String getOsvDatabase() {
+        return osvDatabase;
+    }
+
+    void setOsvDatabase(String osvDatabase) {
+        this.osvDatabase = osvDatabase;
     }
 
     String getAiProvider() {
@@ -309,6 +328,7 @@ final class TuiSettings {
             settings.defaultFolder = trimToNull(TuiUserConfig.read(PROP_DEFAULT_FOLDER));
             settings.proxyHost = trimToNull(TuiUserConfig.read(PROP_PROXY_HOST));
             settings.proxyPort = trimToNull(TuiUserConfig.read(PROP_PROXY_PORT));
+            settings.osvDatabase = trimToNull(TuiUserConfig.read(PROP_OSV_DATABASE));
             settings.aiProvider = trimToNull(TuiUserConfig.read(PROP_AI_PROVIDER));
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
@@ -344,6 +364,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_DEFAULT_FOLDER, defaultFolder);
             TuiUserConfig.write(PROP_PROXY_HOST, proxyHost);
             TuiUserConfig.write(PROP_PROXY_PORT, proxyPort);
+            TuiUserConfig.write(PROP_OSV_DATABASE, osvDatabase);
             TuiUserConfig.write(PROP_AI_PROVIDER, aiProvider);
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
@@ -363,16 +384,22 @@ final class TuiSettings {
         }
     }
 
-    // the proxy of the Maven settings or of HTTPS_PROXY, looked up once: reading the settings builds a resolver session
-    private static volatile HttpProxy fallbackProxy;
-    private static volatile boolean fallbackResolved;
+    // the proxy of the Maven settings or of HTTPS_PROXY by URL, looked up once: reading the settings builds a resolver
+    // session; Optional as the map takes no null
+    private static final Map<String, Optional<HttpProxy>> FALLBACK_PROXIES = new ConcurrentHashMap<>();
+
+    /** The proxy to reach OSV.dev through, see {@link #httpProxy(String)}. */
+    static HttpProxy httpProxy() {
+        return httpProxy(OsvClient.API_URL);
+    }
 
     /**
-     * The proxy to reach the internet through (OSV.dev of the CVE Audit screen, the documentation): the Proxy Host and
-     * Proxy Port of the settings, else the active proxy of the Maven settings ({@code ~/.m2/settings.xml}, with its
-     * username and password), else {@code HTTPS_PROXY}; null for the proxy settings of the JVM.
+     * The proxy to reach a URL through (OSV.dev and the offline OSV database of the CVE Audit screen, the
+     * documentation): the Proxy Host and Proxy Port of the settings, else the active proxy of the Maven settings
+     * ({@code ~/.m2/settings.xml}, with its username, password and nonProxyHosts), else {@code HTTPS_PROXY}; null for
+     * the proxy settings of the JVM.
      */
-    static HttpProxy httpProxy() {
+    static HttpProxy httpProxy(String url) {
         TuiSettings s = load();
         String host = s.getProxyHost();
         if (host != null && !host.isEmpty()) {
@@ -387,11 +414,24 @@ final class TuiSettings {
             }
             return new HttpProxy(host, port);
         }
-        if (!fallbackResolved) {
-            fallbackProxy = OsvProxy.resolve(null, null, System.getenv());
-            fallbackResolved = true;
+        return FALLBACK_PROXIES
+                .computeIfAbsent(url, u -> Optional.ofNullable(OsvProxy.resolve(null, null, System.getenv(), u)))
+                .orElse(null);
+    }
+
+    /**
+     * Where the CVE Audit screen gets the vulnerabilities from: the offline OSV database of the OSV Database setting
+     * ({@code default} or {@code true} for the export of OSV.dev, else a URL or a file), cached in {@code ~/.camel/osv}
+     * as {@code camel dependency audit --osv-database} does, else the OSV.dev API.
+     */
+    static VulnerabilitySource vulnerabilitySource() {
+        String db = load().getOsvDatabase();
+        if (db == null || db.isBlank()) {
+            return new OsvClient(httpProxy());
         }
-        return fallbackProxy;
+        String url = "default".equalsIgnoreCase(db) || "true".equalsIgnoreCase(db) ? OsvDatabase.DEFAULT_URL : db;
+        HttpProxy proxy = url.startsWith("http://") || url.startsWith("https://") ? httpProxy(url) : null;
+        return OsvDatabase.open(url, CamelHome.getCamelDir().resolve("osv"), OsvDatabase.DEFAULT_MAX_AGE, proxy);
     }
 
     private static String trimToNull(String value) {

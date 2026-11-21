@@ -54,6 +54,8 @@ import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.catalog.cve.CvssScore;
 import org.apache.camel.catalog.cve.Dependency;
 import org.apache.camel.catalog.cve.OsvClient;
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -79,6 +81,8 @@ class CveAuditTab extends AbstractTableTab {
     private volatile String errorMessage;
     // the JARs were not checked against OSV.dev (it could not be reached): only the Camel advisories were
     private volatile String osvError;
+    // which offline OSV database the last scan used, such as "offline OSV database, updated 2026-11-20"; null for the API
+    private volatile String sourceNote;
     private volatile boolean dataLoaded;
     private int scannedCount;
 
@@ -480,6 +484,8 @@ class CveAuditTab extends AbstractTableTab {
         }
         if (osvError != null) {
             sb.append(" - OSV.dev not checked");
+        } else if (sourceNote != null) {
+            sb.append(" - ").append(sourceNote);
         }
         sb.append(" ");
         return sb.toString();
@@ -595,11 +601,21 @@ class CveAuditTab extends AbstractTableTab {
         IntegrationInfo current = ctx.findSelectedIntegration();
         List<Dependency> deps = allDeps.stream()
                 .map(d -> new Dependency(d.groupId(), d.artifactId(), d.version())).toList();
+        // the source and the proxy are looked up for each scan, so a change in the settings applies without a restart
+        VulnerabilitySource source = TuiSettings.vulnerabilitySource();
+        sourceNote = source instanceof OsvDatabase db ? databaseNote(db) : null;
         CveAudit.Result result = CveAudit.audit(deps, jars, declaredDependencies(info), fallbackVia,
                 endpointComponents(current != null ? current : info), ProjectOverviewAssist.catalog(),
-                // the proxy is looked up for each scan, so a change in the settings applies without a restart
-                new OsvClient(TuiSettings.httpProxy()));
+                source);
         applyResult(deps, result.findings(), null, result.osvError());
+    }
+
+    static String databaseNote(OsvDatabase db) {
+        if (db.updated() == null) {
+            return null;
+        }
+        return "offline OSV database, updated " + db.updated().toString().substring(0, 10)
+               + (db.warning() != null ? " (the download failed)" : "");
     }
 
     /** The {@code groupId:artifactId} of the dependencies the project declares. */
