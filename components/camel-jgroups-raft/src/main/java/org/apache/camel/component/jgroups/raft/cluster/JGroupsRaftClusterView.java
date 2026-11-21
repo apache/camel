@@ -19,13 +19,13 @@ package org.apache.camel.component.jgroups.raft.cluster;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.component.jgroups.raft.JGroupsRaftConstants;
-import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
-import org.jgroups.JChannel;
+import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,20 +34,19 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JGroupsRaftClusterView.class);
     private final CamelClusterMember localMember = new JGropusraftLocalMember();
-    private String jgroupsConfig;
-    private String jgroupsClusterName;
-    private RaftHandle raftHandle;
     private String raftId;
     private volatile boolean isMaster;
-    private ClusterRoleChangeListener roleListener;
+    // serializes the leadership changes (role changes of the node, start and stop of this view)
+    private final Lock roleLock = new ReentrantLock();
+    // the view was stopped: a role change still being notified to it is ignored, guarded by roleLock
+    private boolean disconnected;
+    private volatile ClusterRoleChangeListener roleListener;
 
     protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
                                      String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
         super(cluster, namespace);
 
-        this.jgroupsConfig = jgroupsConfig;
-        this.jgroupsClusterName = jgroupsClusterName;
-        this.raftHandle = raftHandle;
+        // the views of all namespaces share the RaftHandle of the node, which the cluster service configures and connects
         this.raftId = raftId;
     }
 
@@ -76,81 +75,72 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
-        if (raftHandle == null && jgroupsConfig != null && !jgroupsConfig.isEmpty()) {
-            raftHandle = new RaftHandle(new JChannel(jgroupsConfig), new NopStateMachine()).raftId(raftId);
-        } else if (raftHandle == null) {
-            raftHandle = new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG), new NopStateMachine())
-                    .raftId(raftId);
-        }
         fireLeadershipChangedEvent((CamelClusterMember) null);
-
-        // Register the listener once before attempting to connect; registering inside
-        // the retry loop would accumulate duplicate listeners across retries.
-        roleListener = new ClusterRoleChangeListener(this);
-        raftHandle.addRoleListener(roleListener);
-
-        // it may take a while for event to trigger and allow us to join so retry a while
-        Exception cause = null;
-        for (int i = 1; i < 11; i++) {
-            LOG.debug("Attempt #{} for raft {} to join {}", i, raftId, jgroupsClusterName);
-            try {
-                raftHandle.channel().connect(jgroupsClusterName);
-                LOG.debug("Joined and connected to {} with raft id: {}", jgroupsClusterName, raftId);
-                cause = null;
-                break;
-            } catch (Exception e) {
-                cause = e;
-            }
-            // wait for next attempt
-            Thread.sleep(5000);
+        roleLock.lock();
+        try {
+            disconnected = false;
+        } finally {
+            roleLock.unlock();
         }
-        if (cause != null) {
-            throw cause;
+
+        ClusterRoleChangeListener listener = new ClusterRoleChangeListener(this);
+        RaftHandle handle = getRaftClusterService().connectView(listener);
+        roleListener = listener;
+
+        // the node may already be the leader (elected before this view started), and then no role change is notified
+        roleLock.lock();
+        try {
+            leadershipChanged(Role.Leader.name().equals(handle.raft().role()));
+        } finally {
+            roleLock.unlock();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        isMaster = false;
-        fireLeadershipChangedEvent((CamelClusterMember) null);
-        if (raftHandle != null && raftHandle.channel() != null) {
-            LOG.info("Disconnecting JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
-            raftHandle.channel().disconnect();
-        }
-        if (roleListener != null) {
-            raftHandle.removeRoleListener(roleListener);
-            roleListener = null;
-        }
-        if (raftHandle != null && raftHandle.log() != null) {
-            raftHandle.log().close();
-            LOG.info("Closed Log for JGroupsRaftClusterView with Id {}", raftId);
+        leadershipLost();
+        ClusterRoleChangeListener listener = roleListener;
+        roleListener = null;
+        if (listener != null) {
+            // the handle is disconnected when the views of the other namespaces no longer use it either
+            LOG.debug("Disconnecting JGroupsRaftClusterView {} with Id {}", getNamespace(), raftId);
+            getRaftClusterService().disconnectView(listener);
         }
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        isMaster = false;
-        fireLeadershipChangedEvent((CamelClusterMember) null);
-        if (raftHandle != null) {
+        doStop();
+    }
 
-            if (raftHandle.channel() != null) {
-                LOG.info("Closing JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
-                raftHandle.channel().close();
-                LOG.info("Closed JGroupsraft Channel Channel for JGroupsRaftClusterView with Id {}", raftId);
+    private JGroupsRaftClusterService getRaftClusterService() {
+        return (JGroupsRaftClusterService) getClusterService();
+    }
+
+    /**
+     * Updates the leadership of this view, and notifies the listeners when it changes.
+     */
+    void leadershipChanged(boolean leader) {
+        roleLock.lock();
+        try {
+            if (!disconnected && leader != isMaster) {
+                isMaster = leader;
+                fireLeadershipChangedEvent(leader ? localMember : null);
             }
+        } finally {
+            roleLock.unlock();
+        }
+    }
 
-            if (roleListener != null) {
-                raftHandle.removeRoleListener(roleListener);
-                roleListener = null;
-            }
-
-            if (raftHandle.log() != null) {
-                LOG.info("Closing Log for JGroupsRaftClusterView with Id {}", raftId);
-                raftHandle.log().close();
-                LOG.info("Closed Log for JGroupsRaftClusterView with Id {}", raftId);
-            }
-
-            raftHandle = null;
+    private void leadershipLost() {
+        roleLock.lock();
+        try {
+            // the role changes that the handle notifies until this view's listener is removed are ignored
+            disconnected = true;
+            isMaster = false;
+            fireLeadershipChangedEvent((CamelClusterMember) null);
+        } finally {
+            roleLock.unlock();
         }
     }
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
-import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.util.ObjectHelper;
 import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
@@ -39,18 +38,11 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
         LOG.debug("Role received {}.", role);
         switch (role) {
             case Leader:
-                if (!jgroupsRaftClusterView.isMaster()) {
-                    jgroupsRaftClusterView.setMaster(true);
-                    jgroupsRaftClusterView
-                            .fireLeadershipChangedEvent(jgroupsRaftClusterView.getLocalMember());
-                }
+                jgroupsRaftClusterView.leadershipChanged(true);
                 break;
             case Follower:
             case Learner:
-                if (jgroupsRaftClusterView.isMaster()) {
-                    jgroupsRaftClusterView.setMaster(false);
-                    jgroupsRaftClusterView.fireLeadershipChangedEvent((CamelClusterMember) null);
-                }
+                jgroupsRaftClusterView.leadershipChanged(false);
                 break;
             default:
                 // Role enum is exhaustively handled above. This branch guards against
