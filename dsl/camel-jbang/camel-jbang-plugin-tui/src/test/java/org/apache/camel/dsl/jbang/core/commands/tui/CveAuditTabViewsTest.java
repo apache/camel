@@ -25,6 +25,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
+import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
+import org.apache.camel.dsl.jbang.core.common.cve.OsvClient;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +55,7 @@ class CveAuditTabViewsTest {
         ctx.selectedPid = "1234";
         tab = new CveAuditTab(ctx);
 
-        List<CveAuditTab.VulnGroup> groups = CveScan.buildVulnGroups(Map.of(
+        List<CveFinding> groups = CveScan.buildCveFindings(Map.of(
                 SNAPPY, List.of(vuln("CVE-2024-1001", "HIGH", "org.xerial.snappy:snappy-java", "1.1.10.4"),
                         vuln("CVE-2024-1002", "MEDIUM", "org.xerial.snappy:snappy-java", "1.1.10.6")),
                 JSON_SMART, List.of(vuln("CVE-2024-2001", "CRITICAL", "net.minidev:json-smart", "2.4.9"))),
@@ -76,7 +79,7 @@ class CveAuditTabViewsTest {
     @Test
     void byCveTheFixTheChainAndTheRoutes() {
         // the worst first
-        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId)
+        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId())
                 .containsExactly("CVE-2024-2001", "CVE-2024-1001", "CVE-2024-1002");
         String screen = TuiTestHelper.renderToString(tab, 200, 40);
         assertThat(screen).contains("FIX", "USED", "CVE-2024-1001", "1.1.10.4", "camel-kafka > kafka-clients")
@@ -111,14 +114,14 @@ class CveAuditTabViewsTest {
         }
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
         assertThat(tab.isTextInputActive()).isFalse();
-        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId)
+        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId())
                 .containsExactly("CVE-2024-1001", "CVE-2024-1002");
 
         // the filter matches the chain too
         tab.setFilter("jsonpath");
-        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId).containsExactly("CVE-2024-2001");
+        assertThat(tab.visibleGroups()).extracting(g -> g.canonicalId()).containsExactly("CVE-2024-2001");
         tab.handleKeyEvent(KeyEvent.ofChar('g'));
-        assertThat(tab.visibleRows()).extracting(r -> r.gav).containsExactly(JSON_SMART);
+        assertThat(tab.visibleRows()).extracting(r -> r.gav()).containsExactly(JSON_SMART);
 
         assertThat(tab.handleEscape()).isTrue();
         assertThat(tab.visibleRows()).hasSize(2);

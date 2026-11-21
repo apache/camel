@@ -385,6 +385,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "dependency")) {
             commandLine.addSubcommand("dependency", new CommandTree(cmd(new DependencyCommand()))
+                    .addSubcommand("audit", CommandTree.lazy(() -> cmd(new DependencyAudit())))
                     .addSubcommand("copy", CommandTree.lazy(() -> cmd(new DependencyCopy())))
                     .addSubcommand("list", CommandTree.lazy(() -> cmd(new DependencyList())))
                     .addSubcommand("runtime", CommandTree.lazy(() -> cmd(new DependencyRuntime())))

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.cve;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +27,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.ArtifactRow;
-import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.CamelAdvisory;
-import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.VulnGroup;
 import org.apache.camel.dsl.jbang.run.common.SecurityAdvisoryHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
@@ -40,12 +37,12 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
  * that fixes each JAR, the Apache Camel advisories of the Camel JARs, whether the routes use the component that brings
  * a JAR in, and the same grouped by JAR (what to upgrade).
  */
-final class CveScan {
+public final class CveScan {
 
-    static final List<String> SEVERITY_ORDER = List.of("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN");
-    static final String CAMEL_GROUP_ID = "org.apache.camel";
+    public static final List<String> SEVERITY_ORDER = List.of("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN");
+    public static final String CAMEL_GROUP_ID = "org.apache.camel";
     /** Between the artifacts of a dependency chain. */
-    static final String CHAIN_SEPARATOR = " > ";
+    public static final String CHAIN_SEPARATOR = " > ";
 
     // the URI schemes of the components, by artifactId
     private static volatile Map<String, Set<String>> componentSchemes;
@@ -61,19 +58,19 @@ final class CveScan {
      * @param gavVia  the dependency that brings a JAR in, by {@code groupId:artifactId:version} or
      *                {@code groupId:artifactId}
      */
-    static List<VulnGroup> buildVulnGroups(
+    public static List<CveFinding> buildCveFindings(
             Map<String, List<OsvClient.Vulnerability>> vulnMap, Map<String, String> gavVia) {
         Map<String, String> aliasToCanonical = new HashMap<>();
-        Map<String, VulnGroup> groups = new LinkedHashMap<>();
+        Map<String, CveFinding> groups = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<OsvClient.Vulnerability>> entry : vulnMap.entrySet()) {
             String gav = entry.getKey();
             for (OsvClient.Vulnerability vuln : entry.getValue()) {
                 String canonicalId = resolveCanonicalId(vuln, aliasToCanonical);
 
-                VulnGroup group = groups.get(canonicalId);
+                CveFinding group = groups.get(canonicalId);
                 if (group == null) {
-                    group = new VulnGroup(
+                    group = new CveFinding(
                             canonicalId, normalizeSeverity(vuln.severity()), vuln.cvssVector(), vuln.summary(),
                             vuln.details(), vuln.published(), new ArrayList<>(), new HashMap<>(),
                             new ArrayList<>(), new ArrayList<>());
@@ -84,34 +81,34 @@ final class CveScan {
                     }
                 }
 
-                if (!group.affectedGavs.contains(gav)) {
-                    group.affectedGavs.add(gav);
+                if (!group.affectedGavs().contains(gav)) {
+                    group.affectedGavs().add(gav);
                     String via = gavVia.get(gav);
                     if (via == null) {
                         via = gavVia.get(ga(gav));
                     }
                     if (via != null) {
-                        group.gavVia.put(gav, via);
+                        group.gavVia().put(gav, via);
                     }
                 }
                 String fix = vuln.nearestFix(ga(gav), version(gav));
-                String known = group.fixFor.get(gav);
+                String known = group.fixFor().get(gav);
                 if (fix != null && (known == null || compare(fix, known) > 0)) {
                     // two records of one CVE: the higher fix is the one that fixes both
-                    group.fixFor.put(gav, fix);
+                    group.fixFor().put(gav, fix);
                 }
                 for (String alias : vuln.aliases()) {
-                    if (!alias.equals(canonicalId) && !group.aliases.contains(alias)) {
-                        group.aliases.add(alias);
+                    if (!alias.equals(canonicalId) && !group.aliases().contains(alias)) {
+                        group.aliases().add(alias);
                     }
                 }
-                if (!vuln.id().equals(canonicalId) && !group.aliases.contains(vuln.id())) {
-                    group.aliases.add(vuln.id());
+                if (!vuln.id().equals(canonicalId) && !group.aliases().contains(vuln.id())) {
+                    group.aliases().add(vuln.id());
                 }
                 if (vuln.fixedVersions() != null) {
                     for (String fv : vuln.fixedVersions()) {
-                        if (!group.fixedVersions.contains(fv)) {
-                            group.fixedVersions.add(fv);
+                        if (!group.fixedVersions().contains(fv)) {
+                            group.fixedVersions().add(fv);
                         }
                     }
                 }
@@ -127,13 +124,13 @@ final class CveScan {
      *
      * @param deps the JARs on the classpath
      */
-    static List<VulnGroup> applyCamelAdvisories(
-            List<VulnGroup> groups, List<DependencyLoader.DepEntry> deps, List<SecurityAdvisoryModel> advisories) {
+    public static List<CveFinding> applyCamelAdvisories(
+            List<CveFinding> groups, List<Dependency> deps, List<SecurityAdvisoryModel> advisories) {
         if (advisories == null || advisories.isEmpty()) {
             return groups;
         }
-        List<VulnGroup> result = new ArrayList<>(groups);
-        for (DependencyLoader.DepEntry dep : deps) {
+        List<CveFinding> result = new ArrayList<>(groups);
+        for (Dependency dep : deps) {
             if (!CAMEL_GROUP_ID.equals(dep.groupId()) || dep.version() == null) {
                 continue;
             }
@@ -144,33 +141,33 @@ final class CveScan {
                                 SecurityAdvisoryHelper.affectsVersion(advisory.getAffected(), dep.version()))) {
                     continue;
                 }
-                String gav = dep.display();
-                VulnGroup group = findGroup(result, advisory.getCve());
+                String gav = dep.gav();
+                CveFinding group = findGroup(result, advisory.getCve());
                 if (group == null) {
-                    group = new VulnGroup(
+                    group = new CveFinding(
                             advisory.getCve(), normalizeSeverity(advisory.getSeverity()), null, advisory.getSummary(),
                             null, advisory.getDate(), new ArrayList<>(), new HashMap<>(), new ArrayList<>(),
                             new ArrayList<>());
                     result.add(group);
                 }
-                if (!group.affectedGavs.contains(gav)) {
-                    group.affectedGavs.add(gav);
+                if (!group.affectedGavs().contains(gav)) {
+                    group.affectedGavs().add(gav);
                 }
                 String upgradeTo = SecurityAdvisoryHelper.upgradeTo(
                         advisory.getAffected(), advisory.getFixed(), dep.version());
-                group.camelAdvisory = new CamelAdvisory(
-                        advisory.getFixed(), upgradeTo, advisory.getMitigation(), advisory.getUrl());
+                group.setCamelAdvisory(new CamelAdvisory(
+                        advisory.getFixed(), upgradeTo, advisory.getMitigation(), advisory.getUrl()));
                 if (upgradeTo != null) {
-                    group.fixFor.putIfAbsent(gav, upgradeTo);
+                    group.fixFor().putIfAbsent(gav, upgradeTo);
                 }
             }
         }
         return result;
     }
 
-    private static VulnGroup findGroup(List<VulnGroup> groups, String cve) {
-        for (VulnGroup g : groups) {
-            if (cve.equals(g.canonicalId) || g.aliases.contains(cve)) {
+    private static CveFinding findGroup(List<CveFinding> groups, String cve) {
+        for (CveFinding g : groups) {
+            if (cve.equals(g.canonicalId()) || g.aliases().contains(cve)) {
                 return g;
             }
         }
@@ -184,21 +181,21 @@ final class CveScan {
      * @param fallbackVia the dependency that brings a JAR in, by {@code groupId:artifactId}, when there are no chains
      * @param declared    the {@code groupId:artifactId} of the dependencies of the project
      */
-    static void attachChains(
-            List<VulnGroup> groups, Map<String, List<String>> chains, Map<String, String> fallbackVia,
+    public static void attachChains(
+            List<CveFinding> groups, Map<String, List<String>> chains, Map<String, String> fallbackVia,
             Set<String> declared) {
-        for (VulnGroup group : groups) {
-            for (String gav : group.affectedGavs) {
+        for (CveFinding group : groups) {
+            for (String gav : group.affectedGavs()) {
                 String ga = ga(gav);
                 String via = via(chains.get(ga));
                 if (via == null) {
                     via = fallbackVia.get(ga);
                 }
                 if (via != null) {
-                    group.gavVia.put(gav, via);
+                    group.gavVia().put(gav, via);
                 }
                 if (declared.contains(ga)) {
-                    group.declared.add(gav);
+                    group.declared().add(gav);
                 }
             }
         }
@@ -214,32 +211,28 @@ final class CveScan {
      * @param endpointComponents the components of the endpoints of the integration
      * @param schemes            the URI schemes of the Camel components, by artifactId
      */
-    static void markRoutesUsage(
-            List<VulnGroup> groups, Map<String, List<String>> chains, Collection<String> endpointComponents,
+    public static void markRoutesUsage(
+            List<CveFinding> groups, Map<String, List<String>> chains, Collection<String> endpointComponents,
             Map<String, Set<String>> schemes) {
-        for (VulnGroup group : groups) {
+        for (CveFinding group : groups) {
             Boolean used = null;
-            for (String gav : group.affectedGavs) {
-                Usage usage = usage(gav, chains.getOrDefault(ga(gav), List.of()), endpointComponents, schemes);
+            for (String gav : group.affectedGavs()) {
+                CveUsage usage = usage(gav, chains.getOrDefault(ga(gav), List.of()), endpointComponents, schemes);
                 if (usage == null) {
                     continue;
                 }
-                group.usedBy.put(gav, usage);
+                group.usedBy().put(gav, usage);
                 if (usage.used()) {
                     used = true;
                 } else if (used == null) {
                     used = false;
                 }
             }
-            group.usedByRoutes = used;
+            group.setUsedByRoutes(used);
         }
     }
 
-    /** The component that brings a JAR in, and whether the routes have an endpoint of it. */
-    record Usage(String component, boolean used) {
-    }
-
-    private static Usage usage(
+    private static CveUsage usage(
             String gav, List<String> chain, Collection<String> endpointComponents, Map<String, Set<String>> schemes) {
         List<String> path = new ArrayList<>(chain);
         path.add(ga(gav));
@@ -249,17 +242,17 @@ final class CveScan {
             if (!ga.startsWith(CAMEL_GROUP_ID + ":")) {
                 continue;
             }
-            Set<String> s = schemes.get(DependencyLoader.shortArtifact(ga));
+            Set<String> s = schemes.get(shortArtifact(ga));
             if (s != null) {
                 boolean used = endpointComponents.stream().anyMatch(s::contains);
-                return new Usage(DependencyLoader.shortArtifact(ga), used);
+                return new CveUsage(shortArtifact(ga), used);
             }
         }
         return null;
     }
 
     /** The URI schemes of the components of the catalog, by artifactId (camel-http has http and https). */
-    static Map<String, Set<String>> componentSchemes(CamelCatalog catalog) {
+    public static Map<String, Set<String>> componentSchemes(CamelCatalog catalog) {
         Map<String, Set<String>> result = componentSchemes;
         if (result != null) {
             return result;
@@ -279,48 +272,48 @@ final class CveScan {
      * The vulnerabilities grouped by JAR: what to upgrade. Each row has the worst severity and highest score of its
      * CVEs, and the version that fixes all of them (null when one has no known fix).
      */
-    static List<ArtifactRow> artifactRows(List<VulnGroup> groups) {
-        Map<String, ArtifactRow> rows = new LinkedHashMap<>();
-        for (VulnGroup group : groups) {
-            for (String gav : group.affectedGavs) {
-                ArtifactRow row = rows.computeIfAbsent(gav, k -> new ArtifactRow(k, new ArrayList<>()));
-                row.cves.add(group);
+    public static List<CveArtifact> artifactRows(List<CveFinding> groups) {
+        Map<String, CveArtifact> rows = new LinkedHashMap<>();
+        for (CveFinding group : groups) {
+            for (String gav : group.affectedGavs()) {
+                CveArtifact row = rows.computeIfAbsent(gav, k -> new CveArtifact(k, new ArrayList<>()));
+                row.cves().add(group);
                 if (row.via == null) {
-                    row.via = group.gavVia.get(gav);
+                    row.via = group.gavVia().get(gav);
                 }
                 if (row.usage == null) {
-                    row.usage = group.usedBy.get(gav);
+                    row.usage = group.usedBy().get(gav);
                 }
-                row.declared |= group.declared.contains(gav);
+                row.declared |= group.declared().contains(gav);
             }
         }
-        for (ArtifactRow row : rows.values()) {
-            row.cves.sort(Comparator.comparingInt((VulnGroup g) -> severityIndex(g.severity))
-                    .thenComparing(g -> g.canonicalId));
+        for (CveArtifact row : rows.values()) {
+            row.cves().sort(Comparator.comparingInt((CveFinding g) -> severityIndex(g.severity()))
+                    .thenComparing(g -> g.canonicalId()));
             String fix = null;
             boolean allFixed = true;
             boolean camelOnly = true;
-            for (VulnGroup g : row.cves) {
-                row.severity = severityIndex(g.severity) < severityIndex(row.severity) ? g.severity : row.severity;
+            for (CveFinding g : row.cves()) {
+                row.severity = severityIndex(g.severity()) < severityIndex(row.severity) ? g.severity() : row.severity;
                 Double score = g.score();
                 if (score != null && (row.score == null || score > row.score)) {
                     row.score = score;
                 }
-                String f = g.fixFor.get(row.gav);
+                String f = g.fixFor().get(row.gav());
                 if (f == null) {
                     allFixed = false;
                 } else if (fix == null || compare(f, fix) > 0) {
                     fix = f;
                 }
-                camelOnly &= g.camelAdvisory != null;
+                camelOnly &= g.camelAdvisory() != null;
             }
             row.fix = allFixed ? fix : null;
-            row.camelRelease = camelOnly && row.gav.startsWith(CAMEL_GROUP_ID + ":");
+            row.camelRelease = camelOnly && row.gav().startsWith(CAMEL_GROUP_ID + ":");
         }
         return new ArrayList<>(rows.values());
     }
 
-    static String resolveCanonicalId(OsvClient.Vulnerability vuln, Map<String, String> aliasToCanonical) {
+    public static String resolveCanonicalId(OsvClient.Vulnerability vuln, Map<String, String> aliasToCanonical) {
         String existing = aliasToCanonical.get(vuln.id());
         if (existing != null) {
             return existing;
@@ -339,7 +332,7 @@ final class CveScan {
         return vuln.id();
     }
 
-    static String normalizeSeverity(String severity) {
+    public static String normalizeSeverity(String severity) {
         if (severity == null) {
             return "UNKNOWN";
         }
@@ -349,37 +342,46 @@ final class CveScan {
         };
     }
 
-    static int severityIndex(String severity) {
+    public static int severityIndex(String severity) {
         int idx = SEVERITY_ORDER.indexOf(severity);
         return idx >= 0 ? idx : SEVERITY_ORDER.size();
     }
 
     /** Compares two Maven versions, as Maven orders them. */
-    static int compare(String a, String b) {
+    public static int compare(String a, String b) {
         return new ComparableVersion(a).compareTo(new ComparableVersion(b));
     }
 
     /** {@code groupId:artifactId} of {@code groupId:artifactId:version}. */
-    static String ga(String gav) {
+    public static String ga(String gav) {
         int last = gav.lastIndexOf(':');
         return last > 0 && gav.indexOf(':') != last ? gav.substring(0, last) : gav;
     }
 
     /** The version of {@code groupId:artifactId:version}; null when there is none. */
-    static String version(String gav) {
+    public static String version(String gav) {
         int first = gav.indexOf(':');
         int last = gav.lastIndexOf(':');
         return first >= 0 && last > first ? gav.substring(last + 1) : null;
     }
 
+    /** {@code artifactId} of {@code groupId:artifactId}. */
+    public static String shortArtifact(String ga) {
+        if (ga == null) {
+            return "";
+        }
+        int colon = ga.indexOf(':');
+        return colon >= 0 ? ga.substring(colon + 1) : ga;
+    }
+
     /** The chain as it is shown: the artifactIds, from the dependency of the project on. */
-    static String via(List<String> chain) {
+    public static String via(List<String> chain) {
         if (chain == null || chain.isEmpty()) {
             return null;
         }
         List<String> names = new ArrayList<>();
         for (String ga : chain) {
-            names.add(DependencyLoader.shortArtifact(ga));
+            names.add(shortArtifact(ga));
         }
         return String.join(CHAIN_SEPARATOR, names);
     }

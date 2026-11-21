@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.cve;
 
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -38,26 +39,37 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
  * maintains a global in-memory cache keyed by Maven GAV coordinates so results persist across tab visits and
  * integration switches.
  */
-class OsvClient {
+public class OsvClient {
 
     private static final String BATCH_URL = "https://api.osv.dev/v1/querybatch";
     private static final String VULN_URL = "https://api.osv.dev/v1/vulns/";
     private static final ConcurrentHashMap<String, List<Vulnerability>> CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Vulnerability> VULN_DETAIL_CACHE = new ConcurrentHashMap<>();
 
+    private final ProxySelector proxySelector;
     // why the last query got no answer from OSV.dev; null when it got one
     private volatile String lastError;
+
+    /** A client with the proxy settings of the JVM. */
+    public OsvClient() {
+        this(ProxySelector.getDefault());
+    }
+
+    /** A client that connects through the given proxies, such as those of the settings of the TUI. */
+    public OsvClient(ProxySelector proxySelector) {
+        this.proxySelector = proxySelector != null ? proxySelector : ProxySelector.getDefault();
+    }
 
     /**
      * A vulnerability of OSV.dev. {@code fixedVersions} are the fixed versions of every package and range of it, and
      * {@code ranges} the affected ranges per package, to tell which version fixes an installed one
      * ({@link #nearestFix(String, String)}).
      */
-    record Vulnerability(String id, String summary, String details, String severity, String cvssVector,
+    public record Vulnerability(String id, String summary, String details, String severity, String cvssVector,
             String published, List<String> aliases, List<String> fixedVersions, List<AffectedRange> ranges) {
 
-        Vulnerability(String id, String summary, String details, String severity, String cvssVector,
-                      String published, List<String> aliases, List<String> fixedVersions) {
+        public Vulnerability(String id, String summary, String details, String severity, String cvssVector,
+                             String published, List<String> aliases, List<String> fixedVersions) {
             this(id, summary, details, severity, cvssVector, published, aliases, fixedVersions, List.of());
         }
 
@@ -66,7 +78,7 @@ class OsvClient {
          * the version is in, else the lowest fixed version above it (of a later line, when the line of the version has
          * no fix). Null when no fixed version above it is known.
          */
-        String nearestFix(String packageName, String installed) {
+        public String nearestFix(String packageName, String installed) {
             if (installed == null) {
                 return null;
             }
@@ -96,7 +108,7 @@ class OsvClient {
      * An affected range of a package ({@code groupId:artifactId}): from {@code introduced} (null for all earlier
      * versions) to {@code fixed}, or to {@code lastAffected} when no version fixes it.
      */
-    record AffectedRange(String packageName, String introduced, String fixed, String lastAffected) {
+    public record AffectedRange(String packageName, String introduced, String fixed, String lastAffected) {
     }
 
     /**
@@ -105,15 +117,15 @@ class OsvClient {
      *
      * @return map from GAV string (groupId:artifactId:version) to list of vulnerabilities
      */
-    Map<String, List<Vulnerability>> queryBatch(List<DependencyLoader.DepEntry> entries) {
+    public Map<String, List<Vulnerability>> queryBatch(List<Dependency> entries) {
         Map<String, List<Vulnerability>> result = new HashMap<>();
-        List<DependencyLoader.DepEntry> uncached = new ArrayList<>();
+        List<Dependency> uncached = new ArrayList<>();
 
-        for (DependencyLoader.DepEntry entry : entries) {
+        for (Dependency entry : entries) {
             if (entry.groupId() == null || entry.version() == null) {
                 continue;
             }
-            String gav = entry.display();
+            String gav = entry.gav();
             List<Vulnerability> cached = CACHE.get(gav);
             if (cached != null) {
                 result.put(gav, cached);
@@ -128,7 +140,7 @@ class OsvClient {
         }
 
         JsonArray queries = new JsonArray();
-        for (DependencyLoader.DepEntry entry : uncached) {
+        for (Dependency entry : uncached) {
             JsonObject pkg = new JsonObject();
             pkg.put("name", entry.groupId() + ":" + entry.artifactId());
             pkg.put("ecosystem", "Maven");
@@ -146,7 +158,7 @@ class OsvClient {
         try {
             HttpClient client = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
-                    .proxy(TuiSettings.proxySelector())
+                    .proxy(proxySelector)
                     .build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BATCH_URL))
@@ -167,8 +179,8 @@ class OsvClient {
                     // collect vuln IDs per GAV, then fetch full details
                     Map<String, List<String>> gavToVulnIds = new HashMap<>();
                     for (int i = 0; i < results.size() && i < uncached.size(); i++) {
-                        DependencyLoader.DepEntry entry = uncached.get(i);
-                        String gav = entry.display();
+                        Dependency entry = uncached.get(i);
+                        String gav = entry.gav();
                         JsonObject queryResult = (JsonObject) results.get(i);
                         JsonArray vulns = (JsonArray) queryResult.get("vulns");
                         List<String> ids = new ArrayList<>();
@@ -213,8 +225,8 @@ class OsvClient {
 
         if (success) {
             // cache empty results only for entries the API actually processed
-            for (DependencyLoader.DepEntry entry : uncached) {
-                String gav = entry.display();
+            for (Dependency entry : uncached) {
+                String gav = entry.gav();
                 result.putIfAbsent(gav, Collections.emptyList());
                 CACHE.putIfAbsent(gav, Collections.emptyList());
             }
@@ -256,19 +268,19 @@ class OsvClient {
     }
 
     /** Why the last query got no answer from OSV.dev, so its JARs are not checked; null when it got one. */
-    String lastError() {
+    public String lastError() {
         return lastError;
     }
 
-    void clearCache() {
+    public void clearCache() {
         CACHE.clear();
         VULN_DETAIL_CACHE.clear();
     }
 
-    void clearCache(List<DependencyLoader.DepEntry> entries) {
-        for (DependencyLoader.DepEntry entry : entries) {
+    public void clearCache(List<Dependency> entries) {
+        for (Dependency entry : entries) {
             if (entry.groupId() != null) {
-                CACHE.remove(entry.display());
+                CACHE.remove(entry.gav());
             }
         }
     }
@@ -291,7 +303,7 @@ class OsvClient {
     }
 
     /** The affected ranges of the Maven packages, from the ordered events (introduced, then fixed or last_affected). */
-    static List<AffectedRange> extractRanges(JsonObject vuln) {
+    public static List<AffectedRange> extractRanges(JsonObject vuln) {
         JsonArray affected = (JsonArray) vuln.get("affected");
         if (affected == null) {
             return Collections.emptyList();
@@ -366,7 +378,7 @@ class OsvClient {
     }
 
     /** The CVSS vector: a CVSS 3 one when there is one (it can be scored), else the first. */
-    static String extractCvssVector(JsonObject vuln) {
+    public static String extractCvssVector(JsonObject vuln) {
         JsonArray severityArr = (JsonArray) vuln.get("severity");
         if (severityArr == null) {
             return null;
@@ -384,7 +396,7 @@ class OsvClient {
         return first;
     }
 
-    static String extractSeverity(JsonObject vuln) {
+    public static String extractSeverity(JsonObject vuln) {
         // first try database_specific.severity
         JsonObject dbSpecific = (JsonObject) vuln.get("database_specific");
         if (dbSpecific != null) {
@@ -402,7 +414,7 @@ class OsvClient {
         return "UNKNOWN";
     }
 
-    static String cvssToSeverity(String cvssVector) {
+    public static String cvssToSeverity(String cvssVector) {
         if (cvssVector == null) {
             return "UNKNOWN";
         }

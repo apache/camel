@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.cve;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -50,7 +50,7 @@ import org.apache.camel.dsl.jbang.run.common.XmlHelper;
  * the POM beside a JAR in the Maven repository when it embeds none, limited to the JARs on the classpath; a dependency
  * declared in a parent POM only is not seen.
  */
-final class DependencyChains {
+public final class DependencyChains {
 
     // the dependencies a JAR declares, by its path: the JARs of the local Maven repository do not change
     private static final Map<String, Set<String>> DECLARED_CACHE = new ConcurrentHashMap<>();
@@ -63,7 +63,7 @@ final class DependencyChains {
      *
      * @param jars the JARs of the classpath by {@code groupId:artifactId}
      */
-    static Map<String, Set<String>> graph(Map<String, Path> jars) {
+    public static Map<String, Set<String>> graph(Map<String, Path> jars) {
         Map<String, Set<String>> graph = new HashMap<>();
         for (Map.Entry<String, Path> e : jars.entrySet()) {
             String ga = e.getKey();
@@ -83,7 +83,7 @@ final class DependencyChains {
      * {@code groupId:artifactId}. When no root leads to it, the chain starts at a JAR that no other declares (one the
      * runtime adds, such as camel-main). Empty when the target is not in the graph.
      */
-    static List<String> chain(Map<String, Set<String>> graph, Collection<String> roots, String target) {
+    public static List<String> chain(Map<String, Set<String>> graph, Collection<String> roots, String target) {
         if (roots.contains(target)) {
             return List.of(target);
         }
@@ -127,7 +127,7 @@ final class DependencyChains {
     }
 
     /** The dependencies the POM embedded in the JAR declares, as {@code groupId:artifactId}; empty when it has none. */
-    static Set<String> declaredDependencies(Path jar, String ga) {
+    public static Set<String> declaredDependencies(Path jar, String ga) {
         return DECLARED_CACHE.computeIfAbsent(jar.toString(), k -> readDeclared(jar, ga));
     }
 
@@ -176,7 +176,7 @@ final class DependencyChains {
      * {@code dependencyManagement} or of plugins, and not the test, provided, system or optional ones, which do not
      * come along with it.
      */
-    static Set<String> parseDeclared(InputStream pom) throws Exception {
+    public static Set<String> parseDeclared(InputStream pom) throws Exception {
         DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
         Document dom = dbf.newDocumentBuilder().parse(pom);
         Element project = dom.getDocumentElement();
