@@ -72,6 +72,12 @@
             <artifactId>camel-catalog-maven</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- the CVE audit (camel-report:audit) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-cve</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
