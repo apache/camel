@@ -161,8 +161,8 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
                         return false;
                     }
                 }
-                OpaWasmEvaluator.Bundle bundle = immutableBundle(loaded);
-                replacement = factory.create(bundle);
+                // loaded is already this reload's own copy of the module, so only the data is checked here
+                replacement = factory.create(validData(loaded));
                 Snapshot previous;
                 synchronized (state) {
                     ensureOpen(generation);
@@ -312,13 +312,18 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
     }
 
     private static OpaWasmEvaluator.Bundle immutableBundle(OpaWasmEvaluator.Bundle bundle) throws Exception {
+        validData(bundle);
+        return new OpaWasmEvaluator.Bundle(bundle.wasm().clone(), bundle.data());
+    }
+
+    private static OpaWasmEvaluator.Bundle validData(OpaWasmEvaluator.Bundle bundle) throws Exception {
         if (bundle.data() != null) {
             JsonNode data = MAPPER.reader().with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS).readTree(bundle.data());
             if (data == null || data.isMissingNode()) {
                 throw new IllegalArgumentException("WASM bundle data must be a JSON document");
             }
         }
-        return new OpaWasmEvaluator.Bundle(bundle.wasm().clone(), bundle.data());
+        return bundle;
     }
 
     private static String revision(OpaWasmEvaluator.Bundle bundle) throws Exception {

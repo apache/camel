@@ -317,6 +317,39 @@ class OpaReloadableWasmEvaluatorTest {
     }
 
     @Test
+    void aLoaderThatReusesItsBufferDoesNotChangeTheBuiltModule() throws Exception {
+        // the loader hands out the same byte array on every load, and overwrites it when the resource changes
+        byte[] buffer = { 1 };
+        var built = new ArrayList<byte[]>();
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 0, () -> new OpaWasmEvaluator.Bundle(buffer, null),
+                     b -> {
+                         built.add(b.wasm());
+                         return b.wasm()[0] == 1 ? old : replacement;
+                     },
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            buffer[0] = 2;
+            assertThat(evaluator.reload()).isTrue();
+            String reloaded = evaluator.getReloadStatus().getActiveRevision();
+            assertThat(reloaded).isNotEqualTo(original);
+            assertThat(built).hasSize(2).allSatisfy(wasm -> assertThat(wasm).isNotSameAs(buffer));
+
+            // the loader overwrites its buffer: the module built from it and its revision stay as they were
+            buffer[0] = 1;
+            assertThat(built.get(1)).containsExactly(2);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(reloaded);
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+            assertThat(built).hasSize(3);
+            assertThat(built.get(1)).containsExactly(2);
+        }
+    }
+
+    @Test
     void anErrorFromTheFactoryIsRememberedLikeAnException() throws Exception {
         var content = new AtomicReference<>(bundle(1));
         var loads = new AtomicInteger();
