@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common.cve;
+package org.apache.camel.catalog.cve;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -35,13 +35,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 
 /**
  * Which dependency brings a JAR onto the classpath of an integration, and through which others: the chain from a
@@ -171,13 +171,45 @@ public final class DependencyChains {
         return Files.isRegularFile(pom) ? pom : null;
     }
 
+    // a POM is read with secure processing, without external entities, and with the limits of Xerces when it is used
+    private static DocumentBuilderFactory createDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        } catch (ParserConfigurationException e) {
+            // not supported by this parser
+        }
+        try {
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            // not supported by this parser
+        }
+        try {
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (ParserConfigurationException e) {
+            // not supported by this parser
+        }
+        // the limits of Apache Xerces when it is the parser, as XmlHelper of camel-jbang-run sets them
+        try {
+            Class<?> smClass = Class.forName("org.apache.xerces.util.SecurityManager");
+            factory.setAttribute("http://apache.org/xml/properties/security-manager",
+                    smClass.getDeclaredConstructor().newInstance());
+        } catch (Exception e) {
+            // not Apache Xerces
+        }
+        return factory;
+    }
+
     /**
      * The dependencies a POM declares in {@code project/dependencies}, as {@code groupId:artifactId}: not those of
      * {@code dependencyManagement} or of plugins, and not the test, provided, system or optional ones, which do not
      * come along with it.
      */
     public static Set<String> parseDeclared(InputStream pom) throws Exception {
-        DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+        DocumentBuilderFactory dbf = createDocumentBuilderFactory();
         Document dom = dbf.newDocumentBuilder().parse(pom);
         Element project = dom.getDocumentElement();
         String projectGroupId = childText(project, "groupId");

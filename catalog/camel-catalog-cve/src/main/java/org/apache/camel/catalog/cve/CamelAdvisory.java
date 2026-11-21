@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common.cve;
+package org.apache.camel.catalog.cve;
 
 /**
- * The Camel component that brings a JAR in, and whether the routes have an endpoint of it.
+ * What an Apache Camel security advisory adds to a CVE: the fixed releases, the one to upgrade to from the version in
+ * use, and the mitigation.
  */
-public record CveUsage(String component, boolean used) {
+public record CamelAdvisory(String fixed, String upgradeTo, String mitigation, String url) {
 }

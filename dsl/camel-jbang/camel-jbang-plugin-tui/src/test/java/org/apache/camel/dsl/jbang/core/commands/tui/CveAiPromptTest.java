@@ -27,11 +27,11 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
-import org.apache.camel.dsl.jbang.core.common.cve.CamelAdvisory;
-import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
-import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
-import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
-import org.apache.camel.dsl.jbang.core.common.cve.CveUsage;
+import org.apache.camel.catalog.cve.CamelAdvisory;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.CveUsage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -52,6 +52,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog</artifactId>
         </dependency>
+        <!-- the version comparison of the security advisories (CAMEL-27343) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-cve</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-maven</artifactId>

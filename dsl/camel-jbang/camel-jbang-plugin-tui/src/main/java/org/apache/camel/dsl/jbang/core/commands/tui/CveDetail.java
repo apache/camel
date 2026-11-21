@@ -19,11 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.common.cve.CamelAdvisory;
-import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
-import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
-import org.apache.camel.dsl.jbang.core.common.cve.CveUsage;
-import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
+import org.apache.camel.catalog.cve.CamelAdvisory;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveUsage;
+import org.apache.camel.catalog.cve.CvssScore;
 
 /**
  * The detail panel of the CVE Audit tab, as Markdown: of a CVE, or of a JAR with its CVEs.
