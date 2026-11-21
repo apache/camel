@@ -574,7 +574,8 @@ QUIT
 disconnected.
 ----
 As you can see when stepwise is enabled, it will traverse the directory
-structure using CD xxx. The current directory is asked for once per connection, and after a
+structure using CD xxx. The current directory is asked for only when the connection does not
+know it, usually once per connection, and after a
 download the connection stays in the directory of the file: the next file in the same
 directory is downloaded without changing directory, and the connection changes back
 only before an operation that needs the starting directory.
