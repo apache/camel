@@ -21,8 +21,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.ArtifactRow;
-import org.apache.camel.dsl.jbang.core.commands.tui.CveAuditTab.VulnGroup;
+import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
+import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
+import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
+import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
 
 /**
  * The question the AI panel is opened with to explain a vulnerability (Shift+F8 on the CVE Audit tab, CAMEL-25362), or
@@ -47,50 +49,50 @@ final class CveAiPrompt {
     private CveAiPrompt() {
     }
 
-    static String of(IntegrationInfo info, VulnGroup group) {
+    static String of(IntegrationInfo info, CveFinding group) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Explain the vulnerability ").append(group.canonicalId).append(" (").append(severity(group));
-        if (group.cvssVector != null) {
-            sb.append(", ").append(group.cvssVector);
+        sb.append("Explain the vulnerability ").append(group.canonicalId()).append(" (").append(severity(group));
+        if (group.cvssVector() != null) {
+            sb.append(", ").append(group.cvssVector());
         }
         sb.append(") in the dependencies of the running integration").append(name(info));
-        if (group.summary != null && !group.summary.isBlank()) {
-            sb.append(": ").append(group.summary.strip());
+        if (group.summary() != null && !group.summary().isBlank()) {
+            sb.append(": ").append(group.summary().strip());
         }
         sb.append(".\n");
         List<String> affected = new ArrayList<>();
-        for (String gav : group.affectedGavs) {
-            String fix = group.fixFor.get(gav);
+        for (String gav : group.affectedGavs()) {
+            String fix = group.fixFor().get(gav);
             affected.add(gav + (fix != null ? ", fixed in " + fix : ", no fixed version known") + origin(group, gav));
         }
         if (!affected.isEmpty()) {
             sb.append("It affects: ").append(String.join("; ", affected)).append(".\n");
         }
-        if (group.usedByRoutes != null) {
-            sb.append("Used by the routes: ").append(CveDetail.usageText(group.usedBy.values())).append(".\n");
+        if (group.usedByRoutes() != null) {
+            sb.append("Used by the routes: ").append(CveDetail.usageText(group.usedBy().values())).append(".\n");
         }
         appendCamelAdvisory(sb, group);
-        if (group.fixedVersions.isEmpty() && group.fixFor.isEmpty()) {
+        if (group.fixedVersions().isEmpty() && group.fixFor().isEmpty()) {
             sb.append("No fixed version is known.\n");
-        } else if (group.fixedVersions.size() > 1) {
-            sb.append("Fixed versions of all lines: ").append(String.join(", ", group.fixedVersions)).append(".\n");
+        } else if (group.fixedVersions().size() > 1) {
+            sb.append("Fixed versions of all lines: ").append(String.join(", ", group.fixedVersions())).append(".\n");
         }
-        List<String> aliases = group.aliases.stream().filter(a -> !a.equals(group.canonicalId)).toList();
+        List<String> aliases = group.aliases().stream().filter(a -> !a.equals(group.canonicalId())).toList();
         if (!aliases.isEmpty()) {
             sb.append("Also known as: ").append(String.join(", ", aliases)).append(".\n");
         }
-        if (group.published != null) {
-            sb.append("Published: ").append(group.published).append(".\n");
+        if (group.published() != null) {
+            sb.append("Published: ").append(group.published()).append(".\n");
         }
-        if (group.details != null && !group.details.isBlank()) {
-            String details = group.details.strip();
+        if (group.details() != null && !group.details().isBlank()) {
+            String details = group.details().strip();
             sb.append("Its description:\n").append(details.length() > MAX_DETAILS
                     ? details.substring(0, MAX_DETAILS) + "..." : details).append('\n');
         }
         Set<String> changes = new LinkedHashSet<>();
-        for (String gav : group.affectedGavs) {
-            boolean camelRelease = group.camelAdvisory != null && gav.startsWith(CveScan.CAMEL_GROUP_ID + ":");
-            changes.add(change(gav, group.fixFor.get(gav), group.declared.contains(gav), group.gavVia.get(gav),
+        for (String gav : group.affectedGavs()) {
+            boolean camelRelease = group.camelAdvisory() != null && gav.startsWith(CveScan.CAMEL_GROUP_ID + ":");
+            changes.add(change(gav, group.fixFor().get(gav), group.declared().contains(gav), group.gavVia().get(gav),
                     camelRelease));
         }
         appendChanges(sb, changes);
@@ -98,52 +100,52 @@ final class CveAiPrompt {
         return sb.toString();
     }
 
-    static String ofArtifact(IntegrationInfo info, ArtifactRow row) {
+    static String ofArtifact(IntegrationInfo info, CveArtifact row) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Explain the vulnerabilities of ").append(row.gav).append(", a dependency of the running integration")
-                .append(name(info)).append(": ").append(row.cves.size()).append(row.cves.size() == 1 ? " CVE" : " CVEs")
-                .append(", the worst ").append(row.severity);
-        if (row.score != null) {
-            sb.append(" ").append(CvssScore.format(row.score));
+        sb.append("Explain the vulnerabilities of ").append(row.gav()).append(", a dependency of the running integration")
+                .append(name(info)).append(": ").append(row.cves().size()).append(row.cves().size() == 1 ? " CVE" : " CVEs")
+                .append(", the worst ").append(row.severity());
+        if (row.score() != null) {
+            sb.append(" ").append(CvssScore.format(row.score()));
         }
         sb.append(".\n");
-        for (VulnGroup g : row.cves) {
-            String fix = g.fixFor.get(row.gav);
-            sb.append("- ").append(g.canonicalId).append(" (").append(severity(g)).append(")");
-            if (g.summary != null && !g.summary.isBlank()) {
-                sb.append(": ").append(g.summary.strip());
+        for (CveFinding g : row.cves()) {
+            String fix = g.fixFor().get(row.gav());
+            sb.append("- ").append(g.canonicalId()).append(" (").append(severity(g)).append(")");
+            if (g.summary() != null && !g.summary().isBlank()) {
+                sb.append(": ").append(g.summary().strip());
             }
             sb.append(fix != null ? ", fixed in " + fix : ", no fixed version known").append(".\n");
         }
-        if (row.via != null) {
-            sb.append("It comes in via ").append(row.via).append(".\n");
-        } else if (row.declared) {
+        if (row.via() != null) {
+            sb.append("It comes in via ").append(row.via()).append(".\n");
+        } else if (row.declared()) {
             sb.append("The project declares it itself.\n");
         }
-        if (row.usage != null) {
-            sb.append("Used by the routes: ").append(CveDetail.usageText(List.of(row.usage))).append(".\n");
+        if (row.usage() != null) {
+            sb.append("Used by the routes: ").append(CveDetail.usageText(List.of(row.usage()))).append(".\n");
         }
-        if (row.fix != null) {
-            sb.append(row.camelRelease ? "Camel " : "Version ").append(row.fix).append(" fixes all of them.\n");
+        if (row.fix() != null) {
+            sb.append(row.camelRelease() ? "Camel " : "Version ").append(row.fix()).append(" fixes all of them.\n");
         } else {
             sb.append("No version is known to fix all of them.\n");
         }
-        appendChanges(sb, Set.of(change(row.gav, row.fix, row.declared, row.via, row.camelRelease)));
+        appendChanges(sb, Set.of(change(row.gav(), row.fix(), row.declared(), row.via(), row.camelRelease())));
         sb.append(TAIL);
         return sb.toString();
     }
 
-    private static void appendCamelAdvisory(StringBuilder sb, VulnGroup group) {
-        if (group.camelAdvisory == null) {
+    private static void appendCamelAdvisory(StringBuilder sb, CveFinding group) {
+        if (group.camelAdvisory() == null) {
             return;
         }
         sb.append("Apache Camel advisory: ");
-        if (group.camelAdvisory.upgradeTo() != null) {
-            sb.append("upgrade to Camel ").append(group.camelAdvisory.upgradeTo()).append("; ");
+        if (group.camelAdvisory().upgradeTo() != null) {
+            sb.append("upgrade to Camel ").append(group.camelAdvisory().upgradeTo()).append("; ");
         }
-        sb.append("fixed in ").append(group.camelAdvisory.fixed()).append(".");
-        if (group.camelAdvisory.mitigation() != null && !group.camelAdvisory.mitigation().isBlank()) {
-            sb.append(" Mitigation: ").append(group.camelAdvisory.mitigation().strip());
+        sb.append("fixed in ").append(group.camelAdvisory().fixed()).append(".");
+        if (group.camelAdvisory().mitigation() != null && !group.camelAdvisory().mitigation().isBlank()) {
+            sb.append(" Mitigation: ").append(group.camelAdvisory().mitigation().strip());
         }
         sb.append("\n");
     }
@@ -175,16 +177,16 @@ final class CveAiPrompt {
                + " Camel when a newer release brings a fixed version";
     }
 
-    private static String origin(VulnGroup group, String gav) {
-        String via = group.gavVia.get(gav);
+    private static String origin(CveFinding group, String gav) {
+        String via = group.gavVia().get(gav);
         if (via != null) {
             return " (via " + via + ")";
         }
-        return group.declared.contains(gav) ? " (declared by the project)" : "";
+        return group.declared().contains(gav) ? " (declared by the project)" : "";
     }
 
-    private static String severity(VulnGroup group) {
-        String sev = group.severity != null ? group.severity : "UNKNOWN";
+    private static String severity(CveFinding group) {
+        String sev = group.severity() != null ? group.severity() : "UNKNOWN";
         Double score = group.score();
         return score != null ? sev + " " + CvssScore.format(score) : sev;
     }

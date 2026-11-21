@@ -27,6 +27,11 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.dsl.jbang.core.common.cve.CamelAdvisory;
+import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
+import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
+import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
+import org.apache.camel.dsl.jbang.core.common.cve.CveUsage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -86,9 +91,9 @@ class CveAiPromptTest {
 
     @Test
     void aDeclaredDependencyIsFixedWhereTheProjectDeclaresIt() {
-        CveAuditTab.VulnGroup group = vulnerability("details");
-        group.gavVia.clear();
-        group.declared.add("com.example:xml-parser:2.1.0");
+        CveFinding group = vulnerability("details");
+        group.gavVia().clear();
+        group.declared().add("com.example:xml-parser:2.1.0");
 
         assertThat(CveAiPrompt.of(info, group))
                 .contains("It affects: com.example:xml-parser:2.1.0, fixed in 2.1.4 (declared by the project).\n")
@@ -97,13 +102,13 @@ class CveAiPromptTest {
 
     @Test
     void aCamelAdvisoryIsFixedByUpgradingCamel() {
-        CveAuditTab.VulnGroup group = new CveAuditTab.VulnGroup(
+        CveFinding group = new CveFinding(
                 "CVE-2026-49098", "HIGH", null, "Kafka header injection", null, "2026-05-01",
                 new ArrayList<>(List.of("org.apache.camel:camel-kafka:4.18.1")), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>());
-        group.fixFor.put("org.apache.camel:camel-kafka:4.18.1", "4.18.3");
-        group.camelAdvisory = new CveAuditTab.CamelAdvisory(
-                "4.14.8, 4.18.3 and 4.21.0", "4.18.3", "Upgrade.", "https://camel.apache.org/security/CVE-2026-49098.html");
+        group.fixFor().put("org.apache.camel:camel-kafka:4.18.1", "4.18.3");
+        group.setCamelAdvisory(new CamelAdvisory(
+                "4.14.8, 4.18.3 and 4.21.0", "4.18.3", "Upgrade.", "https://camel.apache.org/security/CVE-2026-49098.html"));
 
         assertThat(CveAiPrompt.of(info, group))
                 .contains("Apache Camel advisory: upgrade to Camel 4.18.3; fixed in 4.14.8, 4.18.3 and 4.21.0."
@@ -113,7 +118,7 @@ class CveAiPromptTest {
 
     @Test
     void aVulnerabilityWithoutAFixSaysSo() {
-        CveAuditTab.VulnGroup group = new CveAuditTab.VulnGroup(
+        CveFinding group = new CveFinding(
                 "CVE-2026-9", "LOW", null, null, null, null,
                 List.of("com.example:lib:1.0"), Map.of(), List.of("CVE-2026-9"), List.of());
 
@@ -126,12 +131,12 @@ class CveAiPromptTest {
 
     @Test
     void theQuestionOfAnArtifactListsItsCvesAndTheVersionThatFixesAll() {
-        CveAuditTab.VulnGroup other = new CveAuditTab.VulnGroup(
+        CveFinding other = new CveFinding(
                 "CVE-2026-5678", "MEDIUM", null, "Denial of service", null, null,
                 new ArrayList<>(List.of("com.example:xml-parser:2.1.0")), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>());
-        other.fixFor.put("com.example:xml-parser:2.1.0", "2.1.6");
-        List<CveAuditTab.ArtifactRow> rows = CveScan.artifactRows(List.of(vulnerability("details"), other));
+        other.fixFor().put("com.example:xml-parser:2.1.0", "2.1.6");
+        List<CveArtifact> rows = CveScan.artifactRows(List.of(vulnerability("details"), other));
 
         assertThat(CveAiPrompt.ofArtifact(info, rows.get(0)))
                 .startsWith("Explain the vulnerabilities of com.example:xml-parser:2.1.0, a dependency of the running"
@@ -162,15 +167,15 @@ class CveAiPromptTest {
                 .startsWith("Explain the vulnerabilities of com.example:xml-parser:2.1.0");
     }
 
-    private static CveAuditTab.VulnGroup vulnerability(String details) {
-        CveAuditTab.VulnGroup group = new CveAuditTab.VulnGroup(
+    private static CveFinding vulnerability(String details) {
+        CveFinding group = new CveFinding(
                 "CVE-2026-1234", "HIGH", "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "XML external entity expansion",
                 details, "2026-11-01", new ArrayList<>(List.of("com.example:xml-parser:2.1.0")),
                 new HashMap<>(Map.of("com.example:xml-parser:2.1.0", "camel-jacksonxml")),
                 new ArrayList<>(List.of("CVE-2026-1234", "GHSA-abcd-1234")), new ArrayList<>(List.of("2.1.4", "2.2.0")));
-        group.fixFor.put("com.example:xml-parser:2.1.0", "2.1.4");
-        group.usedBy.put("com.example:xml-parser:2.1.0", new CveScan.Usage("camel-jacksonxml", true));
-        group.usedByRoutes = true;
+        group.fixFor().put("com.example:xml-parser:2.1.0", "2.1.4");
+        group.usedBy().put("com.example:xml-parser:2.1.0", new CveUsage("camel-jacksonxml", true));
+        group.setUsedByRoutes(true);
         return group;
     }
 
