@@ -2064,6 +2064,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-protobuf-schema</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-pubnub</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>

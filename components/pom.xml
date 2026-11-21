@@ -273,6 +273,7 @@
         <module>camel-plc4x</module>
         <module>camel-printer</module>
         <module>camel-protobuf</module>
+        <module>camel-protobuf-schema</module>
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
         <module>camel-pqc</module>
