@@ -496,13 +496,7 @@ class HeapHistogramTab extends AbstractTableTab {
             return Collections.emptyList();
         }
 
-        Object cp = response.get("classpath");
-        List<String> paths = new ArrayList<>();
-        if (cp instanceof JsonArray jArr) {
-            for (Object item : jArr) {
-                paths.add(String.valueOf(item));
-            }
-        }
+        List<String> paths = ClasspathTab.classpathOf(response);
 
         if (paths.isEmpty()) {
             return Collections.emptyList();

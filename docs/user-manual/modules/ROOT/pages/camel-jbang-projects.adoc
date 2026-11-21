@@ -231,6 +231,43 @@ camel sbom --runtime=quarkus
 
 Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 
+== Checking dependencies for known vulnerabilities
+
+Check the dependencies of your integration, with the ones they bring in, for known vulnerabilities (CVEs). Every JAR
+is checked against https://osv.dev[OSV.dev], and the Camel JARs against the Apache Camel security advisories that ship
+with the Camel catalog:
+
+[source,bash]
+----
+camel dependency audit
+ SEVERITY  SCORE  CVE             ARTIFACT                               FIX     VIA           USED  SUMMARY
+ CRITICAL    9.8  CVE-2022-42889  org.apache.commons:commons-text:1.9    1.10.0                      Arbitrary code execution in Apache Commons Text
+ HIGH        8.3  CVE-2022-1471   org.yaml:snakeyaml:1.33                2.0                         SnakeYaml Constructor Deserialization Remote Code Executi…
+ MEDIUM      6.5  CVE-2025-48924  org.apache.commons:commons-lang3:3.11  3.18.0  commons-text        Apache Commons Lang is vulnerable to Uncontrolled Recursi…
+
+3 vulnerabilities in 3 of 27 dependencies of the project (1 CRITICAL, 1 HIGH, 1 MEDIUM)
+----
+
+* *FIX* is the version that fixes the JAR, on the line its version is in, or the Camel release to upgrade to for a
+  Camel advisory.
+* *VIA* is the dependency chain that brings the JAR in, such as `camel-kafka > kafka-clients`; empty when the project
+  declares it itself.
+* *USED* is `yes` when the routes have an endpoint of the Camel component that brings the JAR in, and `no` when they
+  have none; empty when no component brings it in.
+
+The options:
+
+* `--integration=<name or pid>` checks the classpath of a running integration instead of the project files: the
+  versions it actually loaded.
+* `--by-artifact` shows one row per vulnerable JAR, with the version that fixes all its CVEs, which is what to upgrade.
+* `--severity=high` lists only the vulnerabilities of that severity or worse.
+* `--json` prints one JSON document, for a script or an AI agent.
+* `--offline` checks only the Apache Camel security advisories, without OSV.dev.
+
+The command exits with 1 when it finds a vulnerability of the `--fail-on` severity or worse (default `low`: any), so a
+CI job fails; `--fail-on=none` always exits with 0. The CVE Audit screen of the xref:camel-jbang-tui.adoc[Camel TUI]
+shows the same for a running integration, and explains a vulnerability with AI.
+
 === Copying dependency JARs
 
 Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,

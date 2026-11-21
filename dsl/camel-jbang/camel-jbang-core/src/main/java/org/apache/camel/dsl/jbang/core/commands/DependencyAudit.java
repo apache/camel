@@ -1,0 +1,395 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.cve.CveArtifact;
+import org.apache.camel.dsl.jbang.core.common.cve.CveAudit;
+import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
+import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
+import org.apache.camel.dsl.jbang.core.common.cve.CvssScore;
+import org.apache.camel.dsl.jbang.core.common.cve.Dependency;
+import org.apache.camel.dsl.jbang.core.common.cve.OsvClient;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+
+/**
+ * Checks the dependencies of a project, or the classpath of a running integration, for known vulnerabilities: OSV.dev
+ * for every JAR, and the Apache Camel security advisories of the catalog for the Camel JARs (CAMEL-27340). The same
+ * audit as the CVE Audit screen of the TUI, for a script, a CI job or an AI agent.
+ */
+@CommandDefinition(name = "audit",
+                   description = "Checks the dependencies for known vulnerabilities (CVEs) with OSV.dev and the Apache Camel security advisories",
+                   generateHelp = true,
+                   footer = {
+                           "Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a CI job fails.",
+                           "",
+                           "Examples:",
+                           "  camel dependency audit",
+                           "  camel dependency audit --by-artifact",
+                           "  camel dependency audit --integration=my-app",
+                           "  camel dependency audit --severity=high --fail-on=critical",
+                           "  camel dependency audit --json" })
+public class DependencyAudit extends DependencyList {
+
+    static final List<String> LEVELS = List.of("critical", "high", "medium", "low");
+
+    @Option(name = "integration",
+            description = "Name or pid of a running integration: audits its classpath, instead of the dependencies of the project files")
+    String integration;
+
+    @Option(name = "by-artifact", hasValue = false,
+            description = "One row per vulnerable JAR, with the version that fixes all its CVEs")
+    boolean byArtifact;
+
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
+    boolean json;
+
+    @Option(name = "severity", defaultValue = "low",
+            description = "The lowest severity to list: critical, high, medium or low")
+    String severity = "low";
+
+    @Option(name = "fail-on", defaultValue = "low",
+            description = "Exits 1 when a vulnerability at or above this severity is found: critical, high, medium, low or none")
+    String failOn = "low";
+
+    @Option(name = "offline", hasValue = false,
+            description = "Checks the Apache Camel security advisories of the catalog only, without OSV.dev")
+    boolean offline;
+
+    // the direct dependencies of the project, as DependencyList finds them
+    private final List<MavenGav> directDeps = new ArrayList<>();
+
+    @Override
+    public Integer doCall() throws Exception {
+        checkLevel("--severity", severity, false);
+        checkLevel("--fail-on", failOn, true);
+        severity = severity.toLowerCase(Locale.ROOT);
+        failOn = failOn.toLowerCase(Locale.ROOT);
+        if (integration != null && !integration.isBlank()) {
+            return auditIntegration();
+        }
+        return super.doCall();
+    }
+
+    @Override
+    protected Integer export() throws Exception {
+        directDeps.clear();
+        Integer answer = super.export();
+        if (answer != 0) {
+            return answer;
+        }
+        return auditProject();
+    }
+
+    @Override
+    protected void outputGav(MavenGav gav, int index, int total) {
+        // collected, not printed: audited when all are known
+        directDeps.add(gav);
+    }
+
+    /** The dependencies of the project, with the transitive ones, and the routes of its files. */
+    private Integer auditProject() throws Exception {
+        List<String> gavs = new ArrayList<>();
+        Set<String> declared = new LinkedHashSet<>();
+        for (MavenGav gav : directDeps) {
+            if (gav.getVersion() != null) {
+                gavs.add(gav.getGroupId() + ":" + gav.getArtifactId() + ":" + gav.getVersion());
+                declared.add(gav.getGroupId() + ":" + gav.getArtifactId());
+            }
+        }
+        List<Dependency> deps = new ArrayList<>();
+        Map<String, Path> jars = new HashMap<>();
+        if (!gavs.isEmpty()) {
+            boolean snapshot = gavs.stream().anyMatch(g -> g.contains("SNAPSHOT"));
+            try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+                downloader.build();
+                for (MavenArtifact ma : downloader.resolveArtifacts(gavs, Set.of(), true, snapshot)) {
+                    MavenGav g = ma.getGav();
+                    if (g.getVersion() == null || skipArtifact(g.getGroupId(), g.getArtifactId(), g.getVersion())) {
+                        continue;
+                    }
+                    deps.add(new Dependency(g.getGroupId(), g.getArtifactId(), g.getVersion()));
+                    if (ma.getFile() != null) {
+                        jars.putIfAbsent(g.getGroupId() + ":" + g.getArtifactId(), ma.getFile().toPath());
+                    }
+                }
+            }
+        }
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        return report("project", deps, CveAudit.audit(deps, jars, declared, Map.of(), routeComponents(catalog),
+                catalog, offline ? null : new OsvClient()));
+    }
+
+    /** The classpath of a running integration, and the components of its endpoints. */
+    private Integer auditIntegration() throws Exception {
+        ProcessFinder.CamelProcess process = ProcessFinder.requireOne(integration);
+        ActionClient.ActionResult result = ActionClient.execute(process, "jvm", o -> {
+        }, 10000);
+        List<String> classpath = result.isOk() ? classpathOf(result.reply()) : List.of();
+        if (classpath.isEmpty()) {
+            throw CliException.failure("The classpath of " + process.name() + " (" + process.pid()
+                                       + ") could not be read: "
+                                       + (result.error() != null ? result.error() : "the integration did not answer"));
+        }
+        List<Dependency> deps = new ArrayList<>();
+        Map<String, Path> jars = new HashMap<>();
+        for (String item : classpath) {
+            Dependency dep = Dependency.fromJarPath(String.valueOf(item));
+            if (dep == null || skipArtifact(dep.groupId(), dep.artifactId(), dep.version())) {
+                continue;
+            }
+            deps.add(dep);
+            jars.putIfAbsent(dep.ga(), Path.of(String.valueOf(item)));
+        }
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        String name = process.name() != null && !process.name().contains(" ")
+                ? process.name() + " (" + process.pid() + ")" : String.valueOf(process.pid());
+        return report("integration " + name, deps, CveAudit.audit(deps, jars, declaredDependencies(process.status()),
+                Map.of(), endpointComponents(process.status()), catalog, offline ? null : new OsvClient()));
+    }
+
+    /** The components the routes of the project files use; null when there are no route files. */
+    private Set<String> routeComponents(CamelCatalog catalog) {
+        Set<String> result = new LinkedHashSet<>();
+        boolean any = false;
+        for (String file : files) {
+            Path path = Path.of(file);
+            String name = path.getFileName().toString();
+            String format = name.endsWith(".yaml") || name.endsWith(".yml") ? "yaml"
+                    : name.endsWith(".xml") ? "xml" : name.endsWith(".java") ? "java" : null;
+            if (format == null || !Files.isRegularFile(path)) {
+                continue;
+            }
+            try {
+                result.addAll(RouteComponents.of(Files.readString(path), format, catalog));
+                any = true;
+            } catch (Exception e) {
+                // a file that cannot be read tells nothing about the routes
+            }
+        }
+        return any ? result : null;
+    }
+
+    /**
+     * The JARs of the reply of the jvm action: the JVM classpath, and the application class loader that camel run adds
+     * the downloaded dependencies to (applicationClasspath), without duplicates.
+     */
+    static List<String> classpathOf(JsonObject reply) {
+        Set<String> paths = new LinkedHashSet<>();
+        for (String key : List.of("classpath", "applicationClasspath")) {
+            Object cp = reply != null ? reply.get(key) : null;
+            if (cp instanceof JsonArray arr) {
+                arr.forEach(item -> paths.add(String.valueOf(item)));
+            }
+        }
+        return new ArrayList<>(paths);
+    }
+
+    /**
+     * The {@code groupId:artifactId} of the dependencies a running integration declares (camel.jbang.dependencies,
+     * which also has those of //DEPS and --dep), from the properties of its status.
+     */
+    static Set<String> declaredDependencies(JsonObject status) {
+        Set<String> result = new LinkedHashSet<>();
+        JsonObject properties = status != null ? status.getMap("properties") : null;
+        JsonArray list = properties != null ? (JsonArray) properties.get("properties") : null;
+        if (list == null) {
+            return result;
+        }
+        for (Object o : list) {
+            if (o instanceof JsonObject p && "camel.jbang.dependencies".equals(p.getString("key"))
+                    && p.getString("value") != null) {
+                for (String dep : p.getString("value").split(",")) {
+                    String gav = dep.trim();
+                    if (gav.startsWith("mvn:")) {
+                        gav = gav.substring(4);
+                    }
+                    String[] parts = gav.split(":");
+                    if (parts.length >= 3) {
+                        result.add(parts[0] + ":" + parts[1]);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /** The components of the endpoints of a running integration, from its status. */
+    static Set<String> endpointComponents(JsonObject status) {
+        Set<String> result = new LinkedHashSet<>();
+        JsonObject endpoints = status != null ? status.getMap("endpoints") : null;
+        JsonArray list = endpoints != null ? (JsonArray) endpoints.get("endpoints") : null;
+        if (list == null) {
+            return result;
+        }
+        for (Object o : list) {
+            String uri = o instanceof JsonObject ep ? ep.getString("uri") : null;
+            int colon = uri != null ? uri.indexOf(':') : -1;
+            if (colon > 0) {
+                result.add(uri.substring(0, colon).toLowerCase(Locale.ROOT));
+            }
+        }
+        return result;
+    }
+
+    private Integer report(String source, List<Dependency> deps, CveAudit.Result result) {
+        int lowest = LEVELS.indexOf(severity);
+        List<CveFinding> findings = result.findings().stream()
+                .filter(f -> CveScan.severityIndex(f.severity()) <= lowest || lowest == LEVELS.size() - 1)
+                .toList();
+        List<CveArtifact> artifacts = CveScan.artifactRows(findings);
+        if (json) {
+            JsonObject doc = new JsonObject();
+            doc.put("source", source);
+            doc.put("scanned", deps.size());
+            doc.put("vulnerabilities", findings.size());
+            doc.put("vulnerableArtifacts", artifacts.size());
+            if (result.osvError() != null) {
+                doc.put("osvError", result.osvError());
+            }
+            if (offline) {
+                doc.put("offline", true);
+            }
+            JsonArray rows = new JsonArray();
+            if (byArtifact) {
+                artifacts.forEach(a -> rows.add(a.toJson()));
+                doc.put("artifacts", rows);
+            } else {
+                findings.forEach(f -> rows.add(f.toJson()));
+                doc.put("findings", rows);
+            }
+            JsonOutput.print(outPrinter(), doc);
+        } else {
+            if (result.osvError() != null) {
+                outPrinter().printWarn(result.osvError() + ": only the Apache Camel security advisories were checked");
+            }
+            if (findings.isEmpty()) {
+                outPrinter().println("No known vulnerabilities in " + deps.size() + " dependencies of the " + source
+                                     + (offline ? " (Apache Camel security advisories only)" : ""));
+            } else {
+                outPrinter().println(byArtifact ? artifactTable(artifacts) : findingTable(findings));
+                outPrinter().println();
+                outPrinter().println(findings.size() + " vulnerabilities in " + artifacts.size() + " of " + deps.size()
+                                     + " dependencies of the " + source + counts(findings));
+            }
+        }
+        return failed(result.findings()) ? CliExitCode.FAILURE : CliExitCode.OK;
+    }
+
+    /** Whether a vulnerability at or above --fail-on was found (of all of them, not only those listed). */
+    boolean failed(List<CveFinding> findings) {
+        int level = LEVELS.indexOf(failOn);
+        if (level < 0) {
+            return false;
+        }
+        return findings.stream().anyMatch(f -> CveScan.severityIndex(f.severity()) <= level
+                || level == LEVELS.size() - 1);
+    }
+
+    private static String counts(List<CveFinding> findings) {
+        List<String> parts = new ArrayList<>();
+        for (String sev : CveScan.SEVERITY_ORDER) {
+            long n = findings.stream().filter(f -> sev.equals(f.severity())).count();
+            if (n > 0) {
+                parts.add(n + " " + sev);
+            }
+        }
+        return parts.isEmpty() ? "" : " (" + String.join(", ", parts) + ")";
+    }
+
+    static String findingTable(List<CveFinding> findings) {
+        return AsciiTable.getTable(AsciiTable.NO_BORDERS, findings, Arrays.asList(
+                new Column().header("SEVERITY").dataAlign(HorizontalAlign.LEFT).with(CveFinding::severity),
+                new Column().header("SCORE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(f -> CvssScore.format(f.score())),
+                new Column().header("CVE").dataAlign(HorizontalAlign.LEFT).with(CveFinding::canonicalId),
+                new Column().header("ARTIFACT").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(50, OverflowBehaviour.ELLIPSIS_LEFT)
+                        .with(f -> f.firstGav() + (f.affectedGavs().size() > 1
+                                ? " (+" + (f.affectedGavs().size() - 1) + ")" : "")),
+                new Column().header("FIX").dataAlign(HorizontalAlign.LEFT)
+                        .with(f -> orNone(f.fixFor().get(f.firstGav()))),
+                new Column().header("VIA").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(CveFinding::firstVia),
+                new Column().header("USED").dataAlign(HorizontalAlign.LEFT).with(f -> used(f.usedByRoutes())),
+                new Column().header("SUMMARY").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(f -> f.summary() != null ? f.summary() : "")));
+    }
+
+    static String artifactTable(List<CveArtifact> artifacts) {
+        return AsciiTable.getTable(AsciiTable.NO_BORDERS, artifacts, Arrays.asList(
+                new Column().header("SEVERITY").dataAlign(HorizontalAlign.LEFT).with(CveArtifact::severity),
+                new Column().header("SCORE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(a -> CvssScore.format(a.score())),
+                new Column().header("ARTIFACT").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT).with(CveArtifact::gav),
+                new Column().header("CVES").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(a -> String.valueOf(a.cves().size())),
+                new Column().header("FIXES ALL").dataAlign(HorizontalAlign.LEFT)
+                        .with(a -> a.fix() == null ? "none" : a.camelRelease() ? "Camel " + a.fix() : a.fix()),
+                new Column().header("VIA").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(a -> a.via() != null ? a.via() : ""),
+                new Column().header("USED").dataAlign(HorizontalAlign.LEFT)
+                        .with(a -> used(a.usage() != null ? a.usage().used() : null))));
+    }
+
+    private static String orNone(String value) {
+        return value != null ? value : "none";
+    }
+
+    private static String used(Boolean used) {
+        return used == null ? "" : used ? "yes" : "no";
+    }
+
+    /** Checks a severity option: exits 2 when it is not one of the levels (or none, when allowed). */
+    static void checkLevel(String option, String value, boolean noneAllowed) {
+        if (value == null || !(LEVELS.contains(value.toLowerCase(Locale.ROOT))
+                || noneAllowed && "none".equalsIgnoreCase(value))) {
+            throw CliException.usage(option + " must be critical, high, medium, low"
+                                     + (noneAllowed ? " or none" : "") + ", was: " + value);
+        }
+    }
+}

@@ -26,6 +26,9 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.common.cve.CveFinding;
+import org.apache.camel.dsl.jbang.core.common.cve.CveScan;
+import org.apache.camel.dsl.jbang.core.common.cve.OsvClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -86,11 +89,11 @@ class CveAuditTabRenderTest {
                         "CVE-2024-1234", "Test vuln", null, "HIGH", null, "2024-01-01",
                         List.of("GHSA-xxxx"), List.of("1.1"))));
 
-        List<CveAuditTab.VulnGroup> groups = CveScan.buildVulnGroups(vulnMap, Map.of());
+        List<CveFinding> groups = CveScan.buildCveFindings(vulnMap, Map.of());
 
         assertEquals(1, groups.size(), "Should deduplicate CVE-2024-1234 and GHSA-xxxx into one group");
-        assertEquals("CVE-2024-1234", groups.get(0).canonicalId, "Should prefer CVE- prefix as canonical ID");
-        assertEquals(2, groups.get(0).affectedGavs.size(), "Should list both affected artifacts");
+        assertEquals("CVE-2024-1234", groups.get(0).canonicalId(), "Should prefer CVE- prefix as canonical ID");
+        assertEquals(2, groups.get(0).affectedGavs().size(), "Should list both affected artifacts");
     }
 
     @Test
@@ -102,7 +105,7 @@ class CveAuditTabRenderTest {
                 new OsvClient.Vulnerability(
                         "CVE-2024-2222", "Vuln B", null, "MEDIUM", null, "2024-02-01", List.of(), List.of())));
 
-        List<CveAuditTab.VulnGroup> groups = CveScan.buildVulnGroups(vulnMap, Map.of());
+        List<CveFinding> groups = CveScan.buildCveFindings(vulnMap, Map.of());
 
         assertEquals(2, groups.size(), "Should create separate groups for distinct CVEs");
     }
@@ -119,9 +122,9 @@ class CveAuditTabRenderTest {
                         "CVE-2024-9999", "Critical vuln", null, "CRITICAL", null, "2024-01-01",
                         List.of(), List.of())));
 
-        List<CveAuditTab.VulnGroup> groups = CveScan.buildVulnGroups(vulnMap, Map.of());
+        List<CveFinding> groups = CveScan.buildCveFindings(vulnMap, Map.of());
         assertFalse(groups.isEmpty());
-        assertEquals("CRITICAL", groups.get(0).severity);
+        assertEquals("CRITICAL", groups.get(0).severity());
 
         // verify the severity style method returns red for CRITICAL
         var style = CveAuditTab.severityStyle("CRITICAL");
@@ -162,7 +165,7 @@ class CveAuditTabRenderTest {
                         "CVE-2024-6666", "Other vuln", null, "LOW", null, "2024-01-01",
                         List.of(), List.of())));
 
-        List<CveAuditTab.VulnGroup> groups = CveScan.buildVulnGroups(vulnMap, Map.of());
+        List<CveFinding> groups = CveScan.buildCveFindings(vulnMap, Map.of());
         assertEquals(2, groups.size());
     }
 }

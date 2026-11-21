@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.common.cve;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,13 +25,13 @@ import java.util.Map;
  * the formula of the CVSS 3.1 specification. CVSS 4.0 vectors are scored with lookup tables, which this does not have:
  * they get no score.
  */
-final class CvssScore {
+public final class CvssScore {
 
     private CvssScore() {
     }
 
     /** The base score from 0.0 to 10.0, or null for a vector that is not a complete CVSS 3.x vector. */
-    static Double baseScore(String vector) {
+    public static Double baseScore(String vector) {
         if (vector == null || !(vector.startsWith("CVSS:3.0/") || vector.startsWith("CVSS:3.1/"))) {
             return null;
         }
@@ -67,7 +67,7 @@ final class CvssScore {
     }
 
     /** The severity of a score: NONE, LOW, MEDIUM, HIGH or CRITICAL. */
-    static String severity(double score) {
+    public static String severity(double score) {
         if (score >= 9.0) {
             return "CRITICAL";
         }
@@ -81,7 +81,7 @@ final class CvssScore {
     }
 
     /** The score with one decimal, as it is shown; blank when there is none. */
-    static String format(Double score) {
+    public static String format(Double score) {
         return score != null ? String.format(Locale.ROOT, "%.1f", score) : "";
     }
 

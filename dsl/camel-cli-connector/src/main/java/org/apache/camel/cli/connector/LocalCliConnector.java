@@ -28,6 +28,8 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1016,12 +1018,33 @@ public class LocalCliConnector extends ServiceSupport
     private void doActionJvmTask() throws IOException {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("jvm");
-        if (dc != null) {
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-            writeOutput(json);
-        } else {
-            writeOutput(new JsonObject());
+        JsonObject json = dc != null ? (JsonObject) dc.call(DevConsole.MediaType.JSON) : new JsonObject();
+        List<String> application = applicationClasspath(camelContext.getApplicationContextClassLoader());
+        if (!application.isEmpty()) {
+            json.put("applicationClasspath", application);
         }
+        writeOutput(json);
+    }
+
+    /**
+     * The JARs of the application class loader that the JVM classpath does not list: camel run adds the dependencies it
+     * downloads (camel.jbang.dependencies, //DEPS, --dep and the components the routes use) to a class loader of its
+     * own, so a CVE audit of the classpath (CAMEL-27340) must see them too. Empty for another class loader.
+     */
+    static List<String> applicationClasspath(ClassLoader cl) {
+        List<String> answer = new ArrayList<>();
+        if (cl instanceof URLClassLoader ucl) {
+            for (URL url : ucl.getURLs()) {
+                if ("file".equals(url.getProtocol())) {
+                    try {
+                        answer.add(new File(url.toURI()).getPath());
+                    } catch (Exception e) {
+                        answer.add(url.getPath());
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     private void doActionThreadDumpTask() throws IOException {
