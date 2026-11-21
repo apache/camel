@@ -50,6 +50,7 @@ class OsvProxyTest {
                       <port>3128</port>
                       <username>scott</username>
                       <password>tiger</password>
+                      <nonProxyHosts>localhost|*.corp.com</nonProxyHosts>
                     </proxy>
                   </proxies>
                 </settings>
@@ -57,7 +58,11 @@ class OsvProxyTest {
 
         HttpProxy proxy = OsvProxy.resolve(settings.toString(), null, Map.of("HTTPS_PROXY", "http://ci:8080"));
 
-        assertThat(proxy).isEqualTo(new HttpProxy("proxy.corp.com", 3128, "scott", "tiger", null));
+        assertThat(proxy).isEqualTo(
+                new HttpProxy("proxy.corp.com", 3128, "scott", "tiger", List.of("localhost", "*.corp.com")));
+        // a URL other than OSV.dev, such as the documentation of the TUI, keeps the nonProxyHosts of the settings
+        assertThat(proxy.bypasses("nexus.corp.com")).isTrue();
+        assertThat(proxy.bypasses("camel.apache.org")).isFalse();
     }
 
     @Test
