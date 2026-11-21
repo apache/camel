@@ -52,7 +52,7 @@ A YAML route that turns JSON text into a Protobuf message of the type `Order`, a
 
 == Supported schemas
 
-`proto2` and `proto3` files with nested messages, enums, maps, `oneof` and repeated fields. A schema may import the well-known types of `google/protobuf`, such as `google/protobuf/timestamp.proto`, which are read in their JSON form (a `Timestamp` as RFC 3339 text). Other imports are not supported.
+`proto2` and `proto3` files with nested messages, enums, maps, `oneof` and repeated fields. A schema may import these well-known types of `google/protobuf`, which are read in their JSON form (a `Timestamp` as RFC 3339 text): `any.proto`, `descriptor.proto`, `duration.proto`, `empty.proto`, `struct.proto`, `timestamp.proto` and `wrappers.proto`. Other imports are not supported, including `api.proto`, `source_context.proto` and `type.proto`.
 
 == Your own parser
 
