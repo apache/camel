@@ -702,7 +702,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     private boolean isReadPreferenceSet() {
-        return readPreference != null && !"PRIMARY".equalsIgnoreCase(readPreference) || isSet(readPreferenceTags, null)
+        return (readPreference != null && !"PRIMARY".equalsIgnoreCase(readPreference)) || isSet(readPreferenceTags, null)
                 || isSet(maxStalenessSeconds, DEFAULT_MAX_STALENESS_SECONDS);
     }
 

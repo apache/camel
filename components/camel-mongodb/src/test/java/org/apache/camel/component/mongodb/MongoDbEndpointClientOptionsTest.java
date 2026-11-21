@@ -27,7 +27,6 @@ import com.mongodb.TagSet;
 import com.mongodb.TaggableReadPreference;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.internal.MongoClientImpl;
 import com.mongodb.connection.ClusterConnectionMode;
 import com.mongodb.connection.ClusterSettings;
 import com.mongodb.connection.ConnectionPoolSettings;
@@ -257,10 +256,9 @@ class MongoDbEndpointClientOptionsTest extends CamelTestSupport {
         MongoDbEndpoint endpoint = endpoint(HOSTS + "&readPreference=SECONDARY&maxPoolSize=5");
         endpoint.initializeConnection();
 
-        MongoClientSettings settings
-                = ((MongoClientImpl) endpoint.getMongoConnection()).getSettings();
-        assertThat(settings.getReadPreference()).isEqualTo(ReadPreference.secondary());
-        assertThat(settings.getConnectionPoolSettings().getMaxSize()).isEqualTo(5);
+        // the public API of the client shows its read preference; the pool size is only in the settings it is built from
+        assertThat(endpoint.getMongoConnection().getReadPreference()).isEqualTo(ReadPreference.secondary());
+        assertThat(endpoint.createMongoClientSettings().getConnectionPoolSettings().getMaxSize()).isEqualTo(5);
         // the tailable consumer and the producer read with the read preference of the collection
         assertThat(endpoint.getMongoCollection().getReadPreference()).isEqualTo(ReadPreference.secondary());
     }
