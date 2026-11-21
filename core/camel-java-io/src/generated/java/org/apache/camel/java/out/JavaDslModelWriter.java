@@ -3276,6 +3276,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "instanceClass", def.getInstanceClass(), null);
+        doWriteAttribute(sb, "schema", def.getSchema(), null);
+        doWriteAttribute(sb, "messageName", def.getMessageName(), null);
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(sb, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(sb, "autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");

@@ -30,7 +30,7 @@ import tools.jackson.dataformat.protobuf.ProtobufMapper;
  */
 @Dataformat("protobufJackson")
 @Metadata(firstVersion = "4.18.0", title = "Protobuf Jackson",
-          excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
+          excludeProperties = "library,permissions,dateFormatPattern,instanceClass,schema,messageName,contentTypeFormat,defaultInstance")
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.POJO },
                                  description = "A POJO, a Map or a JsonNode to write as the message of the protobuf schema of"
                                                + " the schemaResolver. Text, bytes or a stream are not written as they are:"
