@@ -159,6 +159,23 @@ class GenAiTraceReportTest {
     }
 
     @Test
+    void conversationTakesTheAnswerOfTheRunWhenItsModelCallsHaveNone() {
+        // the answer recorded on the agent run, not on its model calls
+        JsonObject run = run("7", "support");
+        List<JsonObject> steps = steps(run);
+        content(steps.get(0)).remove("outputMessages");
+        content(steps.get(2)).remove("outputMessages");
+        content(run).put("outputMessages", messages(message("assistant", text("No, it is sold out."))));
+
+        Conversation conversation = GenAiTraceReport.conversation(answer(run), "7");
+
+        assertThat(conversation.messages()).extracting(Message::role, Message::type).containsExactly(
+                tuple("system", "text"), tuple("user", "text"), tuple("tool", "tool result"),
+                tuple("assistant", "text"));
+        assertThat(conversation.messages().get(3).text()).isEqualTo("No, it is sold out.");
+    }
+
+    @Test
     void conversationIsCapped() {
         JsonObject run = run("7", "support");
         JsonArray output = new JsonArray();
