@@ -3026,7 +3026,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "method", def.getMethod(), null);
         doWriteAttribute(jo, "scope", def.getScope(), "Singleton");
         doWriteAttribute(jo, "validate", def.getValidate(), "true");
-        doWriteValue(jo, def.getExpression());
+        doWriteNonEmptyValue(jo, def.getExpression());
         return jo;
     }
     protected JsonObject doWriteMvelExpression(MvelExpression def) {
