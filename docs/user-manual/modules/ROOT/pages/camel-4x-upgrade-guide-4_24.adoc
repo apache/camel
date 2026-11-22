@@ -506,6 +506,39 @@ the same HTTP status as before, and a body that is a JSON-RPC error response wit
 code is `-32700` (parse error) for a message that cannot be parsed, and `-32600` (invalid request) otherwise; before,
 a missing header or session id gave `-32601` and an unknown session `-32603`.
 
+=== camel-ftp, camel-sftp - fewer directory changes with stepwise and autoCreate
+
+No option or default changes. With the default `stepwise=true`, an upload, a download or (ftp) a delete no longer
+changes back to the directory it started from after each file: the connection stays in the directory of the file, so the
+next download or delete in that directory needs no change of directory. The connection changes back before an operation
+that uses names relative to the starting directory, such as a rename, a listing, an existence check, a read lock check,
+a site command, (sftp) a delete, or an upload or download into another directory. An ftp upload changes back and into
+the directory of its file each time, as some servers (such as vsftpd) keep the directory itself rather than its path,
+and would store the file in a directory that was renamed or replaced since. The ftp component asks for the current
+directory only when the connection does not know it, usually once per connection, instead of sending `PWD` for each
+file.
+
+With the default `autoCreate=true`, the producer no longer checks that a directory exists before each upload into a
+directory where it already stored a file on the same connection; it remembers the 100 most recently used directories
+per connection. When such a directory is removed while the connection is open, the first attempt to upload into it
+fails; the producer then creates the directory again and uploads the file once more, and logs this at INFO level. It
+does not try again when the message body is a stream (other than a stream cache, which is the default for streams with
+stream caching enabled) or a reader, or with `fileExist=Append`: that upload fails, and the next one checks the
+directory. The directories that a consumer moves files into (`move`, `preMove`, `moveFailed`) are still checked each
+time.
+
+With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed
+an upload, a download or a `NOOP` on that connection less than a second before. A connection that the server closed
+within that second is then found by the upload, which fails, instead of by the `NOOP`, after which the producer would
+have connected again; the next upload connects again. The consumer still sends a `NOOP` before each poll, and the
+health check before each check.
+
+The absolute paths that the SFTP server sees do not change. The FTP server sees fewer `CWD` and `PWD` commands, and its
+current directory between two uploads is the directory of the last file, not the starting directory. `FtpOperations`
+`getClient()` changes back to the starting directory before it returns the client; code that keeps the `FTPClient` (for
+example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
+must change directory itself.
+
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
