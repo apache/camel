@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.share;
 
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +36,14 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
      * The value of share.acknowledgement.mode: every record is acknowledged by the consumer.
      */
     static final String EXPLICIT_ACKNOWLEDGEMENT = "explicit";
+
+    /**
+     * The group configuration that decides where a new share-partition starts (GroupConfig in the group coordinator of
+     * Kafka, not in kafka-clients).
+     */
+    static final String SHARE_AUTO_OFFSET_RESET_CONFIG = "share.auto.offset.reset";
+
+    private static final String BY_DURATION = "by_duration:";
 
     /**
      * The consumer group options that a share consumer rejects (see ShareConsumerConfig in kafka-clients).
@@ -92,6 +102,9 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
     private Long commitTimeoutMs = 5000L;
     @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER", enums = "DISCARD,ERROR_HANDLER,RECONNECT,RETRY,STOP")
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
+    // share.auto.offset.reset (a group config, set with the Admin client)
+    @UriParam(label = "consumer")
+    private String shareAutoOffsetReset;
 
     /**
      * Returns a copy of this configuration
@@ -340,5 +353,48 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
      */
     public void setPollOnError(PollOnError pollOnError) {
         this.pollOnError = pollOnError;
+    }
+
+    public String getShareAutoOffsetReset() {
+        return shareAutoOffsetReset;
+    }
+
+    /**
+     * Sets the group configuration share.auto.offset.reset of the share group when the consumer starts, through the
+     * Kafka Admin client: earliest, latest, or by_duration: followed by an ISO-8601 duration (such as
+     * by_duration:PT1H). It decides where a share-partition starts when the group first consumes it, so earliest lets a
+     * new share group read the records already in the topic (a new share group starts at the latest records). It is a
+     * setting of the group, so it applies to all the consumers of the group, and it does not move a share-partition
+     * that the group already consumes. The principal of the consumer needs the ALTER_CONFIGS permission on the group,
+     * and the consumer fails to start when the configuration cannot be set. When not set, the group configuration is
+     * left as it is.
+     */
+    public void setShareAutoOffsetReset(String shareAutoOffsetReset) {
+        this.shareAutoOffsetReset = shareAutoOffsetReset;
+    }
+
+    /**
+     * Fails when the value of shareAutoOffsetReset is not earliest, latest, or by_duration: followed by a duration,
+     * rather than when the broker rejects it.
+     */
+    static void validateShareAutoOffsetReset(String value) {
+        if ("earliest".equals(value) || "latest".equals(value)) {
+            return;
+        }
+        if (value.startsWith(BY_DURATION)) {
+            String duration = value.substring(BY_DURATION.length());
+            try {
+                if (!Duration.parse(duration).isNegative()) {
+                    return;
+                }
+            } catch (DateTimeParseException e) {
+                // the message below
+            }
+            throw new IllegalArgumentException(
+                    "The shareAutoOffsetReset option " + value + " has an invalid duration " + duration
+                                               + ": use an ISO-8601 duration that is not negative, such as by_duration:PT1H");
+        }
+        throw new IllegalArgumentException(
+                "The shareAutoOffsetReset option must be earliest, latest or by_duration:<duration>, but was " + value);
     }
 }

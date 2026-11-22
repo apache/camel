@@ -65,9 +65,39 @@ The broker setting `group.share.delivery.count.limit` (default 5) limits how man
 `group.share.record.lock.duration.ms` (default 30 seconds) limits how long a consumer can hold a record before the
 broker makes it available to another consumer.
 
+=== Where a new share group starts
+
 A new share group starts with the records produced after it is created. To consume the records already in the topic,
-set the group configuration `share.auto.offset.reset` to `earliest` before the group first consumes, for example with
-`kafka-configs.sh --entity-type groups --entity-name my-group --alter --add-config share.auto.offset.reset=earliest`.
+the group configuration `share.auto.offset.reset` must be `earliest` before the group first consumes. It is a
+configuration of the group on the broker, not a client property, so the consumer can set it with the
+`shareAutoOffsetReset` option:
+
+[source,java]
+----
+from("kafka-share:orders?brokers=localhost:9092&groupId=order-workers&shareAutoOffsetReset=earliest")
+    .to("log:orders");
+----
+
+When the consumer starts, before its share consumers subscribe, it sets `share.auto.offset.reset` of the group with
+the Kafka Admin client (`incrementalAlterConfigs` on the `GROUP` resource). The admin client gets the same brokers,
+security and additional properties as the share consumer. The values are:
+
+* `earliest`: a share-partition starts at the earliest record of the partition;
+* `latest`: a share-partition starts at the next record produced (the default of Kafka);
+* `by_duration:<duration>`: a share-partition starts at the records produced within the ISO-8601 duration before
+now, such as `by_duration:PT1H` for the last hour.
+
+The setting decides where a share-partition starts when the group first consumes it: it does not move a share group
+that already consumes the topic. It is a setting of the group, so it applies to all the consumers of the group, and the
+last consumer to start wins when they are configured differently. When the option is not set, the group configuration
+is left as it is.
+
+The principal of the consumer needs the `ALTER_CONFIGS` permission on the group (with ACLs:
+`kafka-acls.sh --add --allow-principal User:camel --operation AlterConfigs --group order-workers`), and the consumer
+fails to start, with an error naming the group, when the configuration cannot be set, such as when the principal is not
+authorized or the brokers cannot be reached within `consumerRequestTimeoutMs`. Without that permission, set the group
+configuration once with `kafka-configs.sh`:
+`kafka-configs.sh --bootstrap-server <broker> --entity-type groups --entity-name order-workers --alter --add-config share.auto.offset.reset=earliest`.
 
 === Acknowledgements
 
@@ -203,7 +233,7 @@ Use the xref:eips:idempotentConsumer-eip.adoc[Idempotent Consumer] where duplica
 === Differences from the Kafka component
 
 The options of the Kafka component that are about offsets, consumer group membership and ordering do not apply to a
-share group: `seekTo`, `autoOffsetReset`, `autoCommitEnable`, `allowManualCommit`, `breakOnFirstError`,
+share group: `seekTo`, `autoOffsetReset` (see `shareAutoOffsetReset` instead), `autoCommitEnable`, `allowManualCommit`, `breakOnFirstError`,
 `partitionAssignor`, `groupProtocol`, `groupInstanceId`, `topicIsPattern`, `isolationLevel`, `offsetRepository` and
 `batching`. A share consumer cannot be paused, so suspending a route stops its consumer. The brokers, security,
 deserializer, header and additional properties options are the same as the Kafka component.
