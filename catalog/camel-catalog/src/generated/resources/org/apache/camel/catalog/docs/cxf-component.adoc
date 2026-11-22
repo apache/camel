@@ -134,8 +134,8 @@ NOTE: The `username` and `password` options are for HTTP Basic authentication, n
 | Option | Producer | Consumer
 | `wsSecurityUsername` | The user name to send. | The one user that is accepted.
 | `wsSecurityPassword` | The password to send. | The password of that user.
-| `wsSecurityPasswordType` | `Text` (default) sends a PasswordText, `Digest` a PasswordDigest. | The password type that is required.
-| `wsSecurityCredentials` | Not used. | A `java.util.Map` bean of user name to password, to accept more than one user.
+| `wsSecurityPasswordType` | `Text` (default) sends a PasswordText, `Digest` a PasswordDigest. Not used when the WSDL has a WS-SecurityPolicy. | The password type that is required. Not used when the WSDL has a WS-SecurityPolicy.
+| `wsSecurityCredentials` | Not used. | A `java.util.Map` bean of user name to password, to accept more than one user. The map is copied when the consumer starts: use `wsSecurityCallbackHandler` for users that change at runtime.
 | `wsSecurityCallbackHandler` | A `CallbackHandler` bean that sets the password, instead of `wsSecurityPassword`. | A `CallbackHandler` bean that looks up the password of any user, for example from a vault.
 |===
 

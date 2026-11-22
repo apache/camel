@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.jaxws;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,8 @@ class CxfWsSecurityUsernameTokenTest extends CamelTestSupport {
         }
     }
 
+    private final Map<String, Object> users = new HashMap<>();
+
     private static String address(String path) {
         return "http://localhost:" + port.getPort() + "/CxfWsSecurityUsernameTokenTest/" + path;
     }
@@ -85,7 +88,11 @@ class CxfWsSecurityUsernameTokenTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getRegistry().bind("users", Map.of("bob", "builder", "carol", "secret"));
+        users.put("bob", "builder");
+        users.put("carol", "secret");
+        // a map bean may hold a password that is not a String, such as a number from a YAML bean
+        users.put("kryten", 4000);
+        context.getRegistry().bind("users", users);
         context.getRegistry().bind("serverCallback", new FixedPasswordCallbackHandler("alice", "wonderland"));
         context.getRegistry().bind("clientCallback", new FixedPasswordCallbackHandler("alice", "wonderland"));
         return context;
@@ -169,6 +176,21 @@ class CxfWsSecurityUsernameTokenTest extends CamelTestSupport {
                 "&wsSecurityUsername=carol&wsSecurityPassword=secret&wsSecurityPasswordType=Digest");
         reply = call(uri2);
         assertTrue(reply.contains("<user>carol</user>"), reply);
+    }
+
+    @Test
+    void digestWithoutPolicyNumberPassword() {
+        String reply = call(client("digest", "orders.wsdl",
+                "&wsSecurityUsername=kryten&wsSecurityPassword=4000&wsSecurityPasswordType=Digest"));
+        assertTrue(reply.contains("<user>kryten</user>"), reply);
+    }
+
+    @Test
+    void digestWithoutPolicyCredentialsCopied() {
+        // the consumer has copied the map when it started, so a user added to the bean later is not accepted
+        users.put("mallory", "builder");
+        callRejected(client("digest", "orders.wsdl",
+                "&wsSecurityUsername=mallory&wsSecurityPassword=builder&wsSecurityPasswordType=Digest"));
     }
 
     @Test

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -218,7 +219,8 @@ final class WsSecurityUsernameTokenConfigurer implements CxfConfigurer {
 
     /**
      * Sets the password of the user in a {@link WSPasswordCallback}, from a map of user name to password. It sets no
-     * password for an unknown user, so that the UsernameToken of that user is rejected.
+     * password for an unknown user, so that the UsernameToken of that user is rejected. The map is copied when the
+     * handler is created, so a later change of the map bean does not change the users.
      */
     static final class PasswordCallbackHandler implements CallbackHandler {
 
@@ -230,7 +232,8 @@ final class WsSecurityUsernameTokenConfigurer implements CxfConfigurer {
         }
 
         PasswordCallbackHandler(Map<?, ?> passwords) {
-            this.passwords = passwords;
+            // a copy, as the map bean may be changed while the handler is called by several requests at once
+            this.passwords = Collections.unmodifiableMap(new HashMap<>(passwords));
         }
 
         @Override
