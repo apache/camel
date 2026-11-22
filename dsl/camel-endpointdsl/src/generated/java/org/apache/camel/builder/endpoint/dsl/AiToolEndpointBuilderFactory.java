@@ -49,7 +49,10 @@ public interface AiToolEndpointBuilderFactory {
          * Raw JSON Schema for tool input parameters. Supports inline JSON and
          * resource references (classpath:, file:, resource:). Mutually
          * exclusive with the parameter multi-value options. Use for nested
-         * objects, arrays, oneOf, and other complex schemas.
+         * objects, arrays, oneOf, and other complex schemas. When the schema
+         * does not set additionalProperties, Camel adds additionalProperties:
+         * false, so a client that validates the input (such as the MCP server)
+         * refuses an undeclared argument.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -767,8 +770,10 @@ public interface AiToolEndpointBuilderFactory {
         public static final AiToolHeaderNameBuilder INSTANCE = new AiToolHeaderNameBuilder();
 
         /**
-         * The tool invocation identifier supplied by the calling framework.
-         * Absent when the framework does not supply one.
+         * The tool invocation identifier supplied by the calling framework. Set
+         * when an in-process producer (such as openai or langchain4j-agent)
+         * calls the tool. Absent when the framework does not supply one, such
+         * as for a call over MCP, where the bridge has no tool call id.
          * 
          * The option is a: {@code String} type.
          * 

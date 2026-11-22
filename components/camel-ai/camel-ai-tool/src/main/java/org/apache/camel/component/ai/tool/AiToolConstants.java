@@ -44,7 +44,9 @@ public final class AiToolConstants {
     public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = "CamelAiToolSecurityPrincipalName";
 
     @Metadata(label = "consumer", description = "The tool invocation identifier supplied by the calling framework. "
-                                                + "Absent when the framework does not supply one.",
+                                                + "Set when an in-process producer (such as openai or langchain4j-agent) "
+                                                + "calls the tool. Absent when the framework does not supply one, "
+                                                + "such as for a call over MCP, where the bridge has no tool call id.",
               javaType = "String")
     public static final String TOOL_CALL_ID = "CamelAiToolCallId";
 

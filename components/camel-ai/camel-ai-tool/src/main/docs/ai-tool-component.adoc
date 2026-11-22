@@ -196,7 +196,7 @@ Top-level schema properties are exposed as exchange headers. Nested values are p
 
 `argSchema` also supports Camel resource references such as `classpath:schemas/create-order.json`.
 
-The root schema must be a JSON Schema object with a top-level `properties` map. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
+The root schema must be a JSON Schema object with a top-level `properties` map. When the schema does not set `additionalProperties`, Camel adds `additionalProperties: false` to the schema it lists and validates, the same as for the schema generated from `+parameter.*+`. A client that validates the input, such as the MCP server, then refuses a call with an undeclared (for example misspelled) argument, instead of Camel dropping it with a warning. A schema that sets `additionalProperties` itself is kept as written. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
 
 === Structured Tool Output (outputSchema)
 
@@ -340,7 +340,8 @@ These headers are populated independently of `argumentsAsBody`. An unavailable i
 * OpenAI supplies the tool-call ID. The Responses API also supplies its resolved conversation ID
   (`CamelOpenAIConversationId` or the `conversationId` option); chat-completion callbacks omit it.
 * Spring AI Chat supplies the `CamelSpringAiChatConversationId` from the calling exchange. Its tool callback does not supply a call ID.
-* MCP server tool callbacks currently do not propagate these identifiers.
+* A call over MCP (`camel-mcp-server`) has neither: the MCP bridge has no tool call ID, so `CamelAiToolCallId` is not set.
+  `CamelAiToolCallId` is set only when an in-process producer such as `openai` or `langchain4j-agent` calls the tool.
 
 For example, use `${header.CamelAiToolCallId}` to correlate route processing with a particular tool invocation.
 Several calls in the same conversation can share `CamelAiToolConversationId` while having different call IDs.
