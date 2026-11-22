@@ -2774,12 +2774,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xsd-json</artifactId>
+        <artifactId>camel-xpath</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xpath</artifactId>
+        <artifactId>camel-xsd-json</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

@@ -21685,15 +21685,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "xsdJson",
             types = org.apache.camel.model.dataformat.XsdJsonDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "XSD JSON",
+            description = "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+            deprecated = false,
             properties = {
-                    @YamlProperty(name = "attributePrefix", type = "string"),
-                    @YamlProperty(name = "element", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ignoreUnknown", type = "boolean"),
-                    @YamlProperty(name = "includeRoot", type = "boolean"),
-                    @YamlProperty(name = "prettyPrint", type = "boolean"),
-                    @YamlProperty(name = "schema", type = "string", required = true),
-                    @YamlProperty(name = "textName", type = "string")
+                    @YamlProperty(name = "attributePrefix", type = "string", description = "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix.", displayName = "Attribute Prefix"),
+                    @YamlProperty(name = "element", type = "string", description = "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message.", displayName = "Element"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "ignoreUnknown", type = "boolean", defaultValue = "false", description = "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.", displayName = "Ignore Unknown"),
+                    @YamlProperty(name = "includeRoot", type = "boolean", defaultValue = "false", description = "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.", displayName = "Include Root"),
+                    @YamlProperty(name = "prettyPrint", type = "boolean", defaultValue = "false", description = "Whether to indent the output, the JSON on unmarshal and the XML on marshal.", displayName = "Pretty Print"),
+                    @YamlProperty(name = "schema", type = "string", required = true, description = "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only.", displayName = "Schema"),
+                    @YamlProperty(name = "textName", type = "string", defaultValue = "value", description = "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.", displayName = "Text Name")
             }
     )
     public static class XsdJsonDataFormatDeserializer extends YamlDeserializerBase<XsdJsonDataFormat> {

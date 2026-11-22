@@ -11353,32 +11353,54 @@
         }
       },
       "org.apache.camel.model.dataformat.XsdJsonDataFormat" : {
+        "title" : "XSD JSON",
+        "description" : "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "attributePrefix" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Attribute Prefix",
+            "description" : "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix."
           },
           "element" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Element",
+            "description" : "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message."
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
           },
           "ignoreUnknown" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "title" : "Ignore Unknown",
+            "description" : "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.",
+            "default" : false
           },
           "includeRoot" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "title" : "Include Root",
+            "description" : "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.",
+            "default" : false
           },
           "prettyPrint" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to indent the output, the JSON on unmarshal and the XML on marshal.",
+            "default" : false
           },
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Schema",
+            "description" : "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only."
           },
           "textName" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Text Name",
+            "description" : "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.",
+            "default" : "value"
           }
         },
         "required" : [ "schema" ]
