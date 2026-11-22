@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.kafka.consumer.support;
 
+import java.util.Collection;
+
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.TopicPartition;
 
 /**
  * A processing facade that allows processing consumer records in different ways
@@ -30,4 +33,15 @@ public interface KafkaRecordProcessorFacade {
      * @return            The result of processing this set of records
      */
     ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords);
+
+    /**
+     * Drops the records of the given partitions that were polled but are not processed yet, such as the records held
+     * for an incomplete batch. Called when the partitions are revoked or lost: they must not be processed and committed
+     * by this consumer any more, and their next owner reads them again from the committed offset.
+     *
+     * @param partitions the partitions that are no longer assigned to the consumer
+     */
+    default void discardPendingRecords(Collection<TopicPartition> partitions) {
+        // NO-OP: by default the records of a poll are processed before the next poll
+    }
 }
