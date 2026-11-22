@@ -94,6 +94,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- the sample messages of the samples option of camel generate wsdl -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xsd-json</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-openapi-rest-dsl-generator</artifactId>

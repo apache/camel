@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -24,8 +25,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -35,15 +38,19 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
+import org.apache.camel.CamelContext;
+import org.apache.camel.dataformat.xsdjson.XsdJsonSamples;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Fault;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Operation;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Port;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Service;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.WsdlException;
+import org.apache.camel.dsl.jbang.core.commands.generate.WsdlSamples.Sample;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -62,6 +69,8 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel generate wsdl orders.wsdl",
                            "  camel generate wsdl orders.wsdl --json",
                            "  camel generate wsdl orders.wsdl --route=consumer --output=orders.camel.yaml",
+                           "  camel generate wsdl orders.wsdl --samples --operation=getOrder",
+                           "  camel generate wsdl orders.wsdl --samples --output=samples",
                            "  camel generate wsdl http://localhost:8080/orders?wsdl --route=producer --operation=getOrder" })
 public class CodeWsdlGenerator extends CamelCommand {
 
@@ -88,8 +97,14 @@ public class CodeWsdlGenerator extends CamelCommand {
             completer = RouteCompletionCandidates.class)
     String route;
 
-    @Option(name = "output", description = "The file to write the route to (default: stdout)")
+    @Option(name = "output",
+            description = "The file to write the route to, or the directory to write the samples to (default: stdout)")
     String output;
+
+    @Option(name = "samples", hasValue = false,
+            description = "Write a sample request, response and faults of each operation, as XML and as JSON (the form of"
+                          + " the xsdJson data format), and the request in a SOAP envelope with a curl command to send it")
+    boolean samples;
 
     @Option(name = "service", description = "The service (its name), when the WSDL has more than one")
     String service;
@@ -113,8 +128,14 @@ public class CodeWsdlGenerator extends CamelCommand {
         if (route != null && jsonOutput) {
             return error(CliExitCode.USAGE, "Use --json to list the WSDL, or --route to scaffold a route, not both");
         }
-        if (route == null && output != null) {
-            return error(CliExitCode.USAGE, "--output is for the route of --route");
+        if (route != null && samples) {
+            return error(CliExitCode.USAGE, "Use --route to scaffold a route, or --samples for sample messages, not both");
+        }
+        if (samples && jsonOutput && output != null) {
+            return error(CliExitCode.USAGE, "--output is for the files of the samples, not with --json");
+        }
+        if (route == null && !samples && output != null) {
+            return error(CliExitCode.USAGE, "--output is for the route of --route, or the samples of --samples");
         }
 
         WsdlModel model;
@@ -173,9 +194,12 @@ public class CodeWsdlGenerator extends CamelCommand {
             }
         }
 
+        if (samples) {
+            return samples(model, services, operations);
+        }
         if (route == null) {
             if (jsonOutput) {
-                JsonOutput.print(printer(), toJson(model, services, operations));
+                JsonOutput.print(printer(), toJson(model, services, operations, null));
             } else {
                 printTable(services, operations);
             }
@@ -212,6 +236,122 @@ public class CodeWsdlGenerator extends CamelCommand {
             Files.writeString(Path.of(output), yaml, StandardCharsets.UTF_8);
         }
         return CliExitCode.OK;
+    }
+
+    private int samples(WsdlModel model, List<Service> services, List<String> operations) throws Exception {
+        Map<Port, List<Sample>> all = new LinkedHashMap<>();
+        List<Port> ports = allPorts(services);
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            XsdJsonSamples xsd;
+            try {
+                xsd = new XsdJsonSamples(context, wsdlUrl(), schemaReader());
+            } catch (RuntimeException e) {
+                // the WSDL was read, its types were not
+                return error(CliExitCode.FAILURE, "Cannot read the XML schema of the WSDL " + wsdl + ": "
+                                                  + rootMessage(e));
+            }
+            for (Port p : ports) {
+                // the operation names are file names: the port name tells the ports apart
+                String prefix = ports.size() > 1 ? p.name() + "-" : "";
+                WsdlSamples ws = new WsdlSamples(p, selected(p, operations), xsd);
+                all.put(p, ws.samples(prefix));
+                for (String warning : ws.warnings()) {
+                    printer().printWarn(warning);
+                }
+            }
+        }
+
+        if (jsonOutput) {
+            JsonOutput.print(printer(), toJson(model, services, operations, all));
+        } else if (output != null) {
+            Path dir = Path.of(output);
+            Files.createDirectories(dir);
+            for (List<Sample> list : all.values()) {
+                for (Sample sample : list) {
+                    for (Map.Entry<String, String> file : files(sample).entrySet()) {
+                        Files.writeString(dir.resolve(file.getKey()), file.getValue(), StandardCharsets.UTF_8);
+                        printer().println("Wrote " + dir.resolve(file.getKey()));
+                    }
+                }
+            }
+            for (List<Sample> list : all.values()) {
+                for (Sample sample : list) {
+                    if (sample.curl() != null) {
+                        printer().println();
+                        printer().println("Send the " + sample.operation() + " request (in " + output + "):");
+                        printer().println("  " + sample.curl());
+                    }
+                }
+            }
+        } else {
+            boolean first = true;
+            for (Map.Entry<Port, List<Sample>> entry : all.entrySet()) {
+                for (Sample sample : entry.getValue()) {
+                    if (!first) {
+                        printer().println();
+                    }
+                    first = false;
+                    printSample(entry.getKey(), sample);
+                }
+            }
+        }
+        return CliExitCode.OK;
+    }
+
+    private void printSample(Port p, Sample sample) {
+        String what = "fault".equals(sample.kind())
+                ? sample.operation() + " fault " + sample.name() : sample.operation() + " " + sample.kind();
+        printer().println("### " + what + ": " + sample.element().getLocalPart() + " (XML)");
+        printer().println(sample.xml().strip());
+        printer().println();
+        printer().println("### " + what + ": " + sample.element().getLocalPart() + " (JSON, xsdJson)");
+        printer().println(sample.json().strip());
+        if (sample.soap() != null) {
+            printer().println();
+            printer().println("### " + what + ": SOAP " + p.soapVersion() + " envelope (" + sample.soapFile() + ")");
+            printer().println(sample.soap().strip());
+            if (sample.curl() != null) {
+                printer().println();
+                printer().println("### Send it, with the envelope saved as " + sample.soapFile());
+                printer().println(sample.curl());
+            }
+        }
+    }
+
+    /**
+     * The files of a sample, by name: the XML, the JSON and the SOAP envelope.
+     */
+    private static Map<String, String> files(Sample sample) {
+        Map<String, String> answer = new LinkedHashMap<>();
+        answer.put(sample.baseName() + ".xml", sample.xml());
+        answer.put(sample.baseName() + ".json", sample.json() + "\n");
+        if (sample.soap() != null) {
+            answer.put(sample.soapFile(), sample.soap());
+        }
+        return answer;
+    }
+
+    /**
+     * Reads the documents of the XML schema of a remote WSDL with the rules of a wsdl:import (the host of the WSDL
+     * only, and a redirect only to the same scheme, host and port); a local WSDL only reads files.
+     */
+    private XsdJsonSamples.DocumentReader schemaReader() {
+        String url = wsdlUrl();
+        String lower = url.toLowerCase(Locale.ROOT);
+        if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
+            return null;
+        }
+        URI root = WsdlModel.toUri(url);
+        return uri -> WsdlModel.readDocument(root, uri);
+    }
+
+    private static String rootMessage(Throwable e) {
+        Throwable t = e;
+        while (t.getCause() != null && t.getCause() != t) {
+            t = t.getCause();
+        }
+        return t.getMessage() != null ? t.getMessage() : e.getMessage();
     }
 
     /**
@@ -276,7 +416,8 @@ public class CodeWsdlGenerator extends CamelCommand {
         return name.getNamespaceURI().equals(namespace) ? name.getLocalPart() : name.toString();
     }
 
-    private JsonObject toJson(WsdlModel model, List<Service> services, List<String> operations) {
+    private JsonObject toJson(
+            WsdlModel model, List<Service> services, List<String> operations, Map<Port, List<Sample>> samples) {
         JsonObject root = new JsonObject();
         root.put("wsdl", wsdl);
         root.put("targetNamespace", model.targetNamespace());
@@ -335,6 +476,9 @@ public class CodeWsdlGenerator extends CamelCommand {
                         fa.add(fo);
                     }
                     oo.put("faults", fa);
+                    if (samples != null) {
+                        oo.put("samples", samplesJson(samples.getOrDefault(p, List.of()), o.name()));
+                    }
                     oa.add(oo);
                 }
                 po.put("operations", oa);
@@ -345,6 +489,31 @@ public class CodeWsdlGenerator extends CamelCommand {
         }
         root.put("services", sa);
         return root;
+    }
+
+    private static JsonArray samplesJson(List<Sample> samples, String operation) {
+        JsonArray answer = new JsonArray();
+        for (Sample sample : samples) {
+            if (!operation.equals(sample.operation())) {
+                continue;
+            }
+            JsonObject so = new JsonObject();
+            so.put("kind", sample.kind());
+            if ("fault".equals(sample.kind())) {
+                so.put("fault", sample.name());
+            }
+            so.put("element", sample.element().toString());
+            so.put("xml", sample.xml());
+            so.put("json", sample.json());
+            if (sample.soap() != null) {
+                so.put("soap", sample.soap());
+            }
+            if (sample.curl() != null) {
+                so.put("curl", sample.curl());
+            }
+            answer.add(so);
+        }
+        return answer;
     }
 
     private static List<Operation> selected(Port p, List<String> operations) {

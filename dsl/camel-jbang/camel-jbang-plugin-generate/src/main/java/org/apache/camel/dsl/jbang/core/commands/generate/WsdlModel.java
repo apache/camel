@@ -263,6 +263,33 @@ final class WsdlModel {
     }
 
     /**
+     * Reads a document of a remote WSDL that is not a WSDL document, such as a schema that its types import, with the
+     * rules of a {@code wsdl:import}: only from the host of the WSDL, not from https down to http, and a redirect only
+     * to the same scheme, host and port.
+     *
+     * @param  root        the WSDL the user gave
+     * @param  uri         the document
+     * @throws IOException when the document cannot be read, or is refused
+     */
+    static byte[] readDocument(URI root, String uri) throws IOException {
+        URI target;
+        try {
+            target = new URI(uri);
+        } catch (URISyntaxException e) {
+            throw new IOException("Not a valid URI: " + printable(uri), e);
+        }
+        String refused = refusedImport(root, root, target);
+        if (refused != null) {
+            throw new IOException("The document " + printable(uri) + " is not read: " + refused);
+        }
+        try (Reader reader = new Reader(root)) {
+            return reader.readBytes(target).data();
+        } catch (WsdlException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Why the WSDL at {@code base} does not import the document at {@code imported}, or <tt>null</tt> when it does.
      * <p/>
      * A local WSDL only imports files. A remote WSDL only imports over http or https (http to https is fine, https down

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -28,6 +29,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -485,6 +488,168 @@ class CodeWsdlGeneratorTest {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(body);
         }
+    }
+
+    @Test
+    void samplesOfAnOperation() throws Exception {
+        assertThat(run(ORDERS, "--samples", "--operation=getOrder")).as(printer.getOutput()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains(
+                "### getOrder request: getOrder (XML)",
+                "<tns:getOrder xmlns:tns=\"http://example.com/orders\">",
+                "### getOrder request: getOrder (JSON, xsdJson)",
+                "### getOrder request: SOAP 1.1 envelope (getOrder-request.soap.xml)",
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">",
+                "curl -X POST -H 'Content-Type: text/xml; charset=utf-8'"
+                                                                                                  + " -H 'SOAPAction: \"http://example.com/orders/getOrder\"'"
+                                                                                                  + " --data-binary @getOrder-request.soap.xml"
+                                                                                                  + " 'http://localhost:18081/orders'",
+                "### getOrder response: getOrderResponse (XML)",
+                "### getOrder fault orderNotFound: orderNotFound (XML)")
+                .doesNotContain("placeOrder");
+        assertThat(printer.getStderr()).isEmpty();
+    }
+
+    @Test
+    void samplesAreWrittenToFiles() throws Exception {
+        Path samples = dir.resolve("samples");
+
+        assertThat(run(ORDERS, "--samples", "--output=" + samples)).as(printer.getOutput()).isZero();
+
+        assertThat(samples).isDirectoryContaining("glob:**/getOrder-request.xml")
+                .isDirectoryContaining("glob:**/getOrder-request.json")
+                .isDirectoryContaining("glob:**/getOrder-request.soap.xml")
+                .isDirectoryContaining("glob:**/getOrder-response.json")
+                .isDirectoryContaining("glob:**/getOrder-fault-orderNotFound.xml")
+                .isDirectoryContaining("glob:**/placeOrder-request.json");
+        JsonObject request = (JsonObject) Jsoner.deserialize(Files.readString(samples.resolve("getOrder-request.json")));
+        assertThat(request).containsKey("orderId");
+        // the envelope is XML
+        String soap = Files.readString(samples.resolve("getOrder-request.soap.xml"));
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        assertThat(factory.newDocumentBuilder()
+                .parse(new ByteArrayInputStream(soap.getBytes(StandardCharsets.UTF_8))).getDocumentElement()
+                .getLocalName()).isEqualTo("Envelope");
+        assertThat(printer.getStdout()).contains("Wrote " + samples.resolve("getOrder-request.xml"),
+                "--data-binary @getOrder-request.soap.xml");
+    }
+
+    @Test
+    void samplesOfSoap12LeaveOutTheUserInfo() throws Exception {
+        assertThat(run(NOTIFY, "--samples")).as(printer.getOutput()).isZero();
+
+        assertThat(printer.getStdout()).contains(
+                "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\">",
+                "-H 'Content-Type: application/soap+xml; charset=utf-8",
+                "'https://notify.example.com:8443/ws/notify'")
+                .doesNotContain("secret", "tenant");
+    }
+
+    @Test
+    void samplesInTheJsonListing() throws Exception {
+        assertThat(run(ORDERS, "--samples", "--json", "--operation=getOrder")).as(printer.getOutput()).isZero();
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        JsonObject getOrder = (JsonObject) port(root, 0, 0).getJsonArray("operations").get(0);
+        JsonArray samples = getOrder.getJsonArray("samples");
+        assertThat(samples).extracting(o -> ((JsonObject) o).getString("kind"))
+                .containsExactly("request", "response", "fault");
+        JsonObject request = (JsonObject) samples.get(0);
+        assertThat(request.getString("element")).isEqualTo("{http://example.com/orders}getOrder");
+        assertThat(request.getString("soap")).contains("<soapenv:Body>");
+        assertThat(request.getString("curl")).startsWith("curl -X POST");
+        assertThat(((JsonObject) samples.get(2)).getString("fault")).isEqualTo("orderNotFound");
+    }
+
+    @Test
+    void samplesOptions() throws Exception {
+        assertThat(run(ORDERS, "--samples", "--route=consumer")).isEqualTo(2);
+        assertThat(printer.getStderr()).contains("not both");
+
+        StringPrinter json = new StringPrinter();
+        assertThat(run(json, ORDERS, "--samples", "--json", "--output=" + dir)).isEqualTo(2);
+    }
+
+    @Test
+    void aSoapActionThatIsNotAPlainUriIsNotPutIntoTheCurlCommand() throws Exception {
+        Path wsdl = dir.resolve("hostile.wsdl");
+        Files.writeString(wsdl, Files.readString(Paths.get(ORDERS))
+                .replace("http://example.com/orders/getOrder", "x'; touch /tmp/pwned; echo '"));
+
+        assertThat(run(wsdl.toString(), "--samples", "--operation=getOrder")).as(printer.getOutput()).isZero();
+
+        assertThat(printer.getStdout()).contains("### getOrder request: SOAP 1.1 envelope")
+                .doesNotContain("curl", "pwned");
+        assertThat(printer.getStderr()).contains("The SOAP action of getOrder has characters");
+    }
+
+    @Test
+    void theSchemaOfARemoteWsdlIsOnlyReadFromItsHost() throws Exception {
+        byte[] types = """
+                <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:t"
+                           elementFormDefault="qualified">
+                  <xs:element name="ping"><xs:complexType><xs:sequence>
+                    <xs:element name="text" type="xs:string"/>
+                  </xs:sequence></xs:complexType></xs:element>
+                </xs:schema>
+                """.getBytes(StandardCharsets.UTF_8);
+        AtomicInteger typesRead = new AtomicInteger();
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        int port = server.getAddress().getPort();
+        server.createContext("/same", exchange -> reply(exchange, pingWsdl("types.xsd")));
+        server.createContext("/other",
+                exchange -> reply(exchange, pingWsdl("http://127.0.0.1:" + port + "/types.xsd")));
+        server.createContext("/types.xsd", exchange -> {
+            typesRead.incrementAndGet();
+            reply(exchange, types);
+        });
+        server.start();
+        try {
+            String base = "http://localhost:" + port;
+
+            assertThat(run(base + "/same", "--samples")).as(printer.getOutput()).isZero();
+            // the imported schema declares no prefix for its namespace, so the writer chooses one
+            assertThat(printer.getStdout()).contains(":ping xmlns:", "=\"urn:t\">", ":text>string</");
+            assertThat(typesRead).hasValue(1);
+
+            // 127.0.0.1 is another host than localhost
+            StringPrinter refused = new StringPrinter();
+            assertThat(run(refused, base + "/other", "--samples")).isEqualTo(1);
+            assertThat(refused.getStderr()).contains("is not read: it is on the host 127.0.0.1");
+            assertThat(typesRead).hasValue(1);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    private static byte[] pingWsdl(String schemaLocation) {
+        return """
+                <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:ping" xmlns:t="urn:t"
+                    xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ping">
+                  <wsdl:types>
+                    <xs:schema targetNamespace="urn:ping"><xs:import namespace="urn:t" schemaLocation="%s"/></xs:schema>
+                  </wsdl:types>
+                  <wsdl:message name="pingRequest"><wsdl:part name="body" element="t:ping"/></wsdl:message>
+                  <wsdl:portType name="PingPortType">
+                    <wsdl:operation name="ping"><wsdl:input message="tns:pingRequest"/></wsdl:operation>
+                  </wsdl:portType>
+                  <wsdl:binding name="PingBinding" type="tns:PingPortType">
+                    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                    <wsdl:operation name="ping">
+                      <soap:operation soapAction="urn:ping"/>
+                      <wsdl:input><soap:body use="literal"/></wsdl:input>
+                    </wsdl:operation>
+                  </wsdl:binding>
+                  <wsdl:service name="PingService">
+                    <wsdl:port name="PingPort" binding="tns:PingBinding">
+                      <soap:address location="http://localhost:9/ping"/>
+                    </wsdl:port>
+                  </wsdl:service>
+                </wsdl:definitions>
+                """.formatted(schemaLocation).getBytes(StandardCharsets.UTF_8);
     }
 
     @Test

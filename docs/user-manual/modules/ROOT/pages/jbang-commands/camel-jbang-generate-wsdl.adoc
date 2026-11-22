@@ -23,9 +23,10 @@ camel generate wsdl [options]
 | Option | Description | Default | Type
 | `--json` | Output the services, ports and operations in JSON Format, with the cxf endpoint options of each port |  | boolean
 | `--operation` | The operations to list or scaffold (use commas to separate them; default: all) |  | String
-| `--output` | The file to write the route to (default: stdout) |  | String
+| `--output` | The file to write the route to, or the directory to write the samples to (default: stdout) |  | String
 | `--port` | The port (its name), when the service has more than one |  | String
 | `--route` | Scaffold a YAML route (consumer or producer) instead of listing the WSDL |  | String
+| `--samples` | Write a sample request, response and faults of each operation, as XML and as JSON (the form of the xsdJson data format), and the request in a SOAP envelope with a curl command to send it |  | boolean
 | `--service` | The service (its name), when the WSDL has more than one |  | String
 | `-h,--help` | Display this help and exit |  | boolean
 |===
