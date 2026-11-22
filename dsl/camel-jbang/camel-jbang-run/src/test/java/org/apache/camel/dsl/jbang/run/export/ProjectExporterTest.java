@@ -121,19 +121,22 @@ class ProjectExporterTest {
 
     @Test
     void exportsTomcatWarProjectWithSpringBoot4() throws Exception {
-        assertTomcatWarProject("4.2.0", "spring-boot-starter-webmvc");
+        assertTomcatWarProject("4.2.0", "spring-boot-starter-webmvc", null);
     }
 
     @Test
     void exportsTomcatWarProjectWithSpringBoot3() throws Exception {
-        assertTomcatWarProject("3.5.0", "spring-boot-starter-web");
+        assertTomcatWarProject("3.5.0", "spring-boot-starter-web", "4.18.1");
     }
 
-    private void assertTomcatWarProject(String bootVersion, String expectedWebStarter) throws Exception {
+    private void assertTomcatWarProject(
+            String bootVersion, String expectedWebStarter, String camelSpringBootVersion)
+            throws Exception {
         Path exportDir = dir.resolve("tomcat-export-" + bootVersion.replace('.', '-'));
         ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
         request.runtime = RuntimeType.tomcat;
         request.springBootVersion = bootVersion;
+        request.camelSpringBootVersion = camelSpringBootVersion;
 
         StringPrinter printer = new StringPrinter();
         int exit = new ProjectExporter(
@@ -173,6 +176,66 @@ class ProjectExporterTest {
                 .contains("ROOT.war");
 
         assertThat(exportDir.resolve("src/main/docker")).doesNotExist();
+    }
+
+    @Test
+    void exportsTomcatWithSpringBootSpecificDependencies() throws Exception {
+        Path exportDir = dir.resolve("tomcat-runtime-dependencies");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.tomcat;
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+
+        DependencyResolver withSpringBootDependency = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.dependencies.spring-boot=org.example:spring-boot-only:1.0\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withSpringBootDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains(
+                "<groupId>org.example</groupId>",
+                "<artifactId>spring-boot-only</artifactId>",
+                "<version>1.0</version>");
+    }
+
+    @Test
+    void rejectsTlsFilesForTomcatExport() throws Exception {
+        Path exportDir = dir.resolve("tomcat-tls-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.tomcat;
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+
+        DependencyResolver withTlsFiles = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.tlsFiles=src/main/tls/keystore.p12\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withTlsFiles))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains("TLS files configured with camel.jbang.tlsFiles are not supported with --runtime=tomcat");
     }
 
     @Test

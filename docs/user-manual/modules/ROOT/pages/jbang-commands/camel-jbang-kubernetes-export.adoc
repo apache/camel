@@ -22,7 +22,7 @@ camel kubernetes export [options]
 |===
 | Option | Description | Default | Type
 | `--annotation` | Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello". |  | String[]
-| `--base-image` | The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>). |  | String
+| `--base-image` | The base image used to build the container image. The default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>, or mirror.gcr.io/library/tomcat:<tomcat-version>-jdk<java-version>-temurin for Tomcat. |  | String
 | `--build-property` | Maven build properties, ex. --build-property=prop1=foo |  | List
 | `--camel-spring-boot-version` | Camel version to use with Spring Boot |  | String
 | `--camel-version` | To export using a different Camel version than the default version. |  | String

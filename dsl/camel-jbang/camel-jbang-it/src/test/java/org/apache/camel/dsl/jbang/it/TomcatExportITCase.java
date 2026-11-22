@@ -18,11 +18,14 @@ package org.apache.camel.dsl.jbang.it;
 
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -42,8 +45,18 @@ public class TomcatExportITCase extends JBangTestSupport {
     private static final String WAR_NAME = ARTIFACT_ID + "-1.0-SNAPSHOT.war";
     private static final String ROUTE_STARTED = "CAMEL_TOMCAT_WAR_ROUTE_STARTED";
 
-    @Test
-    public void testTomcatWarExportAndDeployment() throws Exception {
+    private static Stream<Arguments> tomcatVersions() {
+        return Stream.of(
+                Arguments.of(null, null, "11.0", "mirror.gcr.io/library/tomcat:11.0-jdk21-temurin"),
+                Arguments.of("3.5.0", "4.18.1", "10.1", "mirror.gcr.io/library/tomcat:10.1-jdk21-temurin"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("tomcatVersions")
+    public void testTomcatWarExportAndDeployment(
+            String springBootVersion, String camelSpringBootVersion,
+            String tomcatVersion, String defaultTomcatImage)
+            throws Exception {
         // Create a route that proves Camel starts and processes routes
         // after the generated WAR is deployed to external Tomcat.
         newFileInDataFolder("tomcat-route.camel.yaml", """
@@ -57,11 +70,16 @@ public class TomcatExportITCase extends JBangTestSupport {
         String routeFile = mountPoint() + "/tomcat-route.camel.yaml";
 
         // Export the Camel project as a Tomcat-compatible WAR.
+        String bootOptions = springBootVersion == null
+                ? ""
+                : "--spring-boot-version=%s --camel-spring-boot-version=%s "
+                        .formatted(springBootVersion, camelSpringBootVersion);
+
         execute(String.format(
-                "export %s --runtime=tomcat "
+                "export %s --runtime=tomcat %s"
                               + "--gav=com.example:%s:1.0-SNAPSHOT "
                               + "--directory=%s",
-                routeFile, ARTIFACT_ID, exportDirectory));
+                routeFile, bootOptions, ARTIFACT_ID, exportDirectory));
 
         // Verify the export generated the expected WAR configuration.
         assertFileInDataFolderContains(
@@ -107,8 +125,8 @@ public class TomcatExportITCase extends JBangTestSupport {
         // The WAR is mounted under a stable name so its context path is
         // /camel-tomcat, independent of the Maven version suffix.
         String tomcatImage = System.getProperty(
-                "tomcat.test.image",
-                "tomcat:11.0-jdk21-temurin");
+                "tomcat.test.image." + tomcatVersion,
+                System.getProperty("tomcat.test.image", defaultTomcatImage));
 
         try (GenericContainer<?> tomcat = new GenericContainer<>(
                 DockerImageName.parse(tomcatImage))

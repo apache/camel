@@ -35,8 +35,10 @@ Notes:
 Use `--runtime=tomcat` to generate a Spring Boot application packaged as a WAR
 for deployment to an existing Apache Tomcat server.
 
-Spring Boot 4.x is the default and targets Tomcat 11. Spring Boot 3.x is also
-supported and targets Tomcat 10.1.
+Spring Boot 4.x is the default and targets Tomcat 11. Spring Boot 3.x targets
+Tomcat 10.1 but requires a Camel Spring Boot version compatible with Boot 3.
+Camel Spring Boot 4.19 moved to Spring Boot 4, so for Camel 4.24 use a 4.18.x
+version such as 4.18.1 explicitly.
 
 For the default Spring Boot 4.x / Tomcat 11 combination:
 
@@ -52,7 +54,8 @@ explicitly:
 
 [source,bash]
 ----
-camel export --runtime=tomcat --spring-boot-version=3.5.0 --gav=com.foo:acme:1.0-SNAPSHOT
+camel export --runtime=tomcat --spring-boot-version=3.5.0 \
+    --camel-spring-boot-version=4.18.1 --gav=com.foo:acme:1.0-SNAPSHOT
 ./mvnw clean package
 cp target/acme-1.0-SNAPSHOT.war "$CATALINA_BASE/webapps/"
 ----

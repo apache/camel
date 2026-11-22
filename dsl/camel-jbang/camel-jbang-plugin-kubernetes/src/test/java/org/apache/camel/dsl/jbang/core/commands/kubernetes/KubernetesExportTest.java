@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -1052,25 +1053,39 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
     @Test
     public void shouldGenerateTomcatWarForSpringBoot4() throws Exception {
         assertTomcatWarKubernetesProject(
-                "4.2.0", "spring-boot-starter-webmvc", "tomcat:11.0-jdk21-temurin");
+                "4.2.0", "spring-boot-starter-webmvc",
+                "mirror.gcr.io/library/tomcat:11.0-jdk21-temurin", null);
     }
 
     @Test
     public void shouldGenerateTomcatWarForSpringBoot3() throws Exception {
         assertTomcatWarKubernetesProject(
-                "3.5.0", "spring-boot-starter-web", "tomcat:10.1-jdk21-temurin");
+                "3.5.0", "spring-boot-starter-web",
+                "mirror.gcr.io/library/tomcat:10.1-jdk21-temurin", "4.18.1");
     }
 
     private void assertTomcatWarKubernetesProject(
-            String springBootVersion, String expectedWebStarter, String expectedTomcatImage)
+            String springBootVersion, String expectedWebStarter, String expectedTomcatImage,
+            String camelSpringBootVersion)
             throws Exception {
 
+        String[] options = camelSpringBootVersion == null
+                ? new String[] {
+                        "--gav=examples:route:1.0.0",
+                        "--runtime=tomcat",
+                        "--spring-boot-version=" + springBootVersion,
+                        "--observe=true"
+                }
+                : new String[] {
+                        "--gav=examples:route:1.0.0",
+                        "--runtime=tomcat",
+                        "--spring-boot-version=" + springBootVersion,
+                        "--camel-spring-boot-version=" + camelSpringBootVersion,
+                        "--observe=true"
+                };
+
         KubernetesExport command = createCommand(
-                new String[] { "classpath:myapp\\route.yaml" },
-                "--gav=examples:route:1.0.0",
-                "--runtime=tomcat",
-                "--spring-boot-version=" + springBootVersion,
-                "--observe=true");
+                new String[] { "classpath:myapp\\route.yaml" }, options);
 
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -1094,6 +1109,10 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
                 pomXml.contains("<entryPoint>"),
                 "Tomcat base image entry point must not be overridden");
 
+        Assertions.assertFalse(
+                Files.exists(workingDir.toPath().resolve("src/main/scripts/run-java.sh")),
+                "The Tomcat image must use its inherited startup command, not run-java.sh");
+
         Assertions.assertTrue(
                 model.getDependencies().stream()
                         .anyMatch(d -> "org.springframework.boot".equals(d.getGroupId())
@@ -1116,8 +1135,9 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Properties props = model.getProperties();
         Assertions.assertEquals(expectedTomcatImage, props.getProperty("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.getProperty("jkube.build.strategy"));
-        Assertions.assertEquals(
-                "1.20.0", props.getProperty("jkube.version"),
+        Assertions.assertTrue(
+                new ComparableVersion(props.getProperty("jkube.version"))
+                        .compareTo(new ComparableVersion("1.20.0")) >= 0,
                 "JKube 1.20.0 or newer is required for Spring Boot Actuator probes");
 
         Properties applicationProperties = getApplicationProperties(workingDir);

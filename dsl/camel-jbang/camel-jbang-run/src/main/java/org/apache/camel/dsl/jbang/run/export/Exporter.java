@@ -414,7 +414,8 @@ abstract class Exporter {
                 }
             } else if (line.startsWith(DEPENDENCIES_MAIN + "=") && request.runtime == RuntimeType.main) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_MAIN + "="), answer);
-            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=") && request.runtime == RuntimeType.springBoot) {
+            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=")
+                    && (request.runtime == RuntimeType.springBoot || request.runtime == RuntimeType.tomcat)) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_SPRING_BOOT + "="), answer);
             } else if (line.startsWith(DEPENDENCIES_QUARKUS + "=") && request.runtime == RuntimeType.quarkus) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_QUARKUS + "="), answer);

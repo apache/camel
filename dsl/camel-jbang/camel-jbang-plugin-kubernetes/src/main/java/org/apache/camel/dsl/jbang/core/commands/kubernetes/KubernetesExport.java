@@ -54,6 +54,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.run.common.Source;
 import org.apache.camel.dsl.jbang.run.common.SourceHelper;
+import org.apache.camel.dsl.jbang.run.common.TomcatVersionHelper;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -120,7 +121,7 @@ public class KubernetesExport extends Export {
     protected String[] imagePlatforms;
 
     @Option(name = "base-image",
-            description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
+            description = "The base image used to build the container image. The default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>, or mirror.gcr.io/library/tomcat:<tomcat-version>-jdk<java-version>-temurin for Tomcat.")
     protected String baseImage;
 
     @Option(name = "registry-mirror",
@@ -241,7 +242,9 @@ public class KubernetesExport extends Export {
 
         List<Source> sources;
         try {
-            addFile(RunPipeline.RUN_JAVA_SH);
+            if (runtime != RuntimeType.tomcat) {
+                addFile(RunPipeline.RUN_JAVA_SH);
+            }
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             printer().printf("Project export failed: %s - %s%n", e.getMessage(),
@@ -345,10 +348,7 @@ public class KubernetesExport extends Export {
 
         if (baseImage == null) {
             if (runtime == RuntimeType.tomcat) {
-                // Boot 4 uses Tomcat 11; Boot 3 uses Tomcat 10.1.
-                String tomcatVersion = springBootVersion != null && springBootVersion.startsWith("3.")
-                        ? "10.1" : "11.0";
-                baseImage = "tomcat:%s-jdk%s-temurin".formatted(tomcatVersion, javaVersion);
+                baseImage = TomcatVersionHelper.defaultBaseImage(springBootVersion, javaVersion);
             } else {
                 // use default base image with java version
                 baseImage = "mirror.gcr.io/library/eclipse-temurin:%s".formatted(javaVersion);
@@ -443,7 +443,7 @@ public class KubernetesExport extends Export {
             request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.tomcat) {
-            request.pomTemplateName = "spring-boot-tomcat-kubernetes-pom.ftl";
+            request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
             request.pomTemplateName = "main-kubernetes-pom.ftl";

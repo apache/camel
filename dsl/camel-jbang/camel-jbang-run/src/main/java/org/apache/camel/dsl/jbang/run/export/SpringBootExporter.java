@@ -42,6 +42,7 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.run.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.run.common.TomcatVersionHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -67,7 +68,7 @@ class SpringBootExporter extends Exporter {
     public Integer export() throws Exception {
         if (request.runtime == RuntimeType.tomcat) {
             if (!"spring-boot-pom.ftl".equals(request.pomTemplateName)
-                    && !"spring-boot-tomcat-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
+                    && !"spring-boot-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
                 printer().printErr(
                         "Custom POM templates are not supported with --runtime=tomcat. "
                                    + "The Tomcat target requires the built-in WAR-capable Spring Boot template.");
@@ -75,7 +76,7 @@ class SpringBootExporter extends Exporter {
             }
 
             String bootVersion = request.springBootVersion;
-            if (bootVersion == null || !bootVersion.matches("^[34]\\.\\d+.*")) {
+            if (!TomcatVersionHelper.supportsSpringBootVersion(bootVersion)) {
                 printer().printErr(
                         "Tomcat export supports Spring Boot 3.x with Tomcat 10.1 "
                                    + "and Spring Boot 4.x with Tomcat 11. Unsupported Spring Boot version: "
@@ -83,7 +84,17 @@ class SpringBootExporter extends Exporter {
                 return 1;
             }
 
-            String tomcatVersion = bootVersion.startsWith("4.") ? "11" : "10.1";
+            String camelSpringBootVersion = Objects.requireNonNullElse(
+                    request.camelSpringBootVersion,
+                    Objects.requireNonNullElse(request.camelVersion, RuntimeType.main.version()));
+            String compatibilityError = TomcatVersionHelper.compatibilityError(
+                    bootVersion, camelSpringBootVersion);
+            if (compatibilityError != null) {
+                printer().printErr(compatibilityError);
+                return 1;
+            }
+
+            String tomcatVersion = TomcatVersionHelper.tomcatVersion(bootVersion);
             printer().println(
                     "External Tomcat target: Spring Boot " + bootVersion
                               + " with Apache Tomcat " + tomcatVersion + ".");
@@ -124,6 +135,23 @@ class SpringBootExporter extends Exporter {
             }
         } else {
             printer().println("Reusing existing run data");
+        }
+
+        // Never place TLS private keys or certificates inside the Tomcat webapps
+        // directory. Externalize them and mount them outside webapps at runtime.
+        if (request.runtime == RuntimeType.tomcat) {
+            String tlsFilesProperty = CamelJBangConstants.TLS_FILES + "=";
+            boolean tlsFilesConfigured = RuntimeUtil.loadPropertiesLines(settings).stream()
+                    .filter(line -> line.startsWith(tlsFilesProperty))
+                    .map(line -> line.substring(tlsFilesProperty.length()))
+                    .anyMatch(value -> !value.isBlank());
+            if (tlsFilesConfigured) {
+                printer().printErr(
+                        "TLS files configured with " + CamelJBangConstants.TLS_FILES
+                                   + " are not supported with --runtime=tomcat. "
+                                   + "Provision TLS material separately and mount it outside Tomcat webapps.");
+                return 1;
+            }
         }
 
         printer().println(
