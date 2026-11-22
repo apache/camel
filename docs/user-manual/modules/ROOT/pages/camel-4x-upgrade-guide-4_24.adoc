@@ -989,6 +989,12 @@ When the `smb` consumer connects but cannot create its starting directory (`auto
 not connect. The `Cannot connect/login to: ... Will skip this poll.` WARN now gives the reason before
 `Will skip this poll.`, such as `due to: Connection refused`, on one line.
 
+=== camel-smb - delete=true with move fails at startup
+
+An `smb` consumer with both `delete=true` and `move` now fails to start with
+`You cannot set both delete=true and move options`, as the `file`, `ftp` and `sftp` consumers do. Before, it started,
+deleted the files and ignored `move`. Remove `move` to keep deleting the files, or `delete=true` to move them.
+
 === camel-azure-files - a starting directory that cannot be created, or a refused connection, no longer fails the route start
 
 When the share refuses to create the starting directory of the `azure-files` consumer as the route starts
