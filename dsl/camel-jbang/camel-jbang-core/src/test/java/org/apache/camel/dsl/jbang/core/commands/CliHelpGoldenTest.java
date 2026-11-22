@@ -78,9 +78,14 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
             List.of("run", "src/test/resources/golden/citrus/test"));
 
     private final Map<String, String> camelProperties = new TreeMap<>();
+    private String previousAeshHelpWidth;
 
     @BeforeEach
     void clearCamelSystemProperties() throws Exception {
+        // Keep the help snapshot independent of the environment's terminal width.
+        previousAeshHelpWidth = System.getProperty("aesh.help.width");
+        System.setProperty("aesh.help.width", "80");
+
         // the camel system properties of the JVM, which the commands read: the help is written without them
         for (String key : System.getProperties().stringPropertyNames()) {
             if (key.startsWith("camel.") && !key.equals("camel.golden.update")) {
@@ -94,6 +99,12 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
     @AfterEach
     void restoreCamelSystemProperties() {
         camelProperties.forEach(System::setProperty);
+
+        if (previousAeshHelpWidth == null) {
+            System.clearProperty("aesh.help.width");
+        } else {
+            System.setProperty("aesh.help.width", previousAeshHelpWidth);
+        }
     }
 
     @Test
