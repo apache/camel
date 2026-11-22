@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Alibaba Cloud Object Storage Service (OSS) component
+ * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-oss", title = "Alibaba Object Storage Service (OSS)",
              syntax = "alibaba-oss:bucketName",
@@ -68,51 +68,78 @@ import org.apache.camel.support.ScheduledPollEndpoint;
                                                  + " listObjects and listBuckets a List of a Map per object or bucket"))
 public class OSSEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Name of bucket to perform operation on", displayName = "Bucket Name")
+    @UriPath(description = "The name of the bucket, or of the destination bucket for copyObject. The CamelAlibabaOssBucketName"
+                           + " exchange property replaces this option for the producer, and a header of the same name replaces"
+                           + " both.",
+             displayName = "Bucket Name")
     private String bucketName;
 
-    @UriParam(description = "Operation to be performed", displayName = "Operation", label = "producer",
+    @UriParam(description = "The operation that the producer performs. The CamelAlibabaOssOperation exchange property replaces"
+                            + " this option, and a header of the same name replaces both.",
+              displayName = "Operation", label = "producer",
               enums = "listBuckets,listObjects,putObject,getObject,deleteObject,copyObject,headObject")
     private String operation;
 
-    @UriParam(description = "OSS service region", displayName = "Service region")
+    @UriParam(description = "The region ID of Object Storage Service, for example cn-hangzhou. The SDK uses it to sign"
+                            + " requests, and to build the endpoint when the endpoint option is not set.",
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "OSS endpoint URL. Carries higher precedence than region based client initialization",
+    @UriParam(description = "The endpoint of Object Storage Service, for example oss-cn-hangzhou.aliyuncs.com. If not set, the"
+                            + " SDK builds it from the region option.",
               displayName = "Endpoint url")
     private String endpoint;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Its"
+                            + " accessKey and its secretKey are each used when the option of the same name is not set.",
+              displayName = "Service Configuration",
               security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret",
+    @UriParam(description = "The AccessKey ID of the AccessKey pair for Object Storage Service. If not set, the accessKey of"
+                            + " the serviceKeys option is used.",
+              displayName = "API access key (AK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret",
+    @UriParam(description = "The AccessKey secret of the AccessKey pair for Object Storage Service. If not set, the secretKey"
+                            + " of the serviceKeys option is used.",
+              displayName = "API secret key (SK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "Name of object to perform operation with", displayName = "Object Name")
+    @UriParam(description = "The name of the object for the producer, or of the destination object for copyObject. The"
+                            + " CamelAlibabaOssObjectName exchange property replaces this option, and a header of the same name"
+                            + " replaces both.",
+              displayName = "Object Name")
     private String objectName;
 
-    @UriParam(description = "The object name prefix used for filtering objects to be listed", displayName = "Prefix",
+    @UriParam(description = "The prefix of the names of the objects to list, for the consumer and for listObjects. The"
+                            + " CamelAlibabaOssPrefix exchange property replaces this option for the producer, and a header of"
+                            + " the same name replaces both.",
+              displayName = "Prefix",
               label = "consumer")
     private String prefix;
 
-    @UriParam(description = "The maximum number of keys returned when listing objects", displayName = "Max Keys",
+    @UriParam(description = "The maximum number of objects that the producer returns for listObjects, or all of them if no"
+                            + " value is set. Object Storage Service accepts a value of at most 1000. The"
+                            + " CamelAlibabaOssMaxKeys exchange property replaces this option, and a header of the same name"
+                            + " replaces both.",
+              displayName = "Max Keys",
               label = "consumer,producer")
     private Integer maxKeys;
 
-    @UriParam(description = "Determines if objects should be deleted after they have been retrieved",
+    @UriParam(description = "Whether to delete the object from the bucket after it is processed successfully. If false, the"
+                            + " consumer consumes the object again in a later poll.",
               displayName = "Delete after read", defaultValue = "false", label = "consumer")
     private boolean deleteAfterRead;
 
-    @UriParam(description = "The maximum number of messages to poll at each polling", displayName = "Maximum messages per poll",
+    @UriParam(description = "The maximum number of objects that the consumer lists in one poll. Object Storage Service accepts"
+                            + " a value of at most 1000. The consumer treats a value of 0 or less as 10.",
+              displayName = "Maximum messages per poll",
               defaultValue = "10", label = "consumer")
     private int maxMessagesPerPoll = 10;
 
@@ -123,7 +150,10 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
               displayName = "Include Body", defaultValue = "true", label = "consumer")
     private boolean includeBody = true;
 
-    @UriParam(description = "An autowired OSS client", displayName = "OSS Client", label = "advanced")
+    @UriParam(description = "To use a custom com.aliyun.sdk.service.oss2.OSSClient. When this option is set or autowired, the"
+                            + " region, endpoint, accessKey, secretKey, and serviceKeys options are not used. The Camel"
+                            + " endpoint does not close a client that is set or autowired.",
+              displayName = "OSS Client", label = "advanced")
     @Metadata(autowired = true)
     private volatile OSSClient ossClient;
 

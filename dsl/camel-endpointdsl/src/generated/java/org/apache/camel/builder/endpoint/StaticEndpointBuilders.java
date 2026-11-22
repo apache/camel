@@ -500,7 +500,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -509,7 +509,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-oss:bucketName</code>
      * 
      * Path parameter: bucketName
-     * Name of bucket to perform operation on
+     * The name of the bucket, or of the destination bucket for copyObject. The
+     * CamelAlibabaOssBucketName exchange property replaces this option for the
+     * producer, and a header of the same name replaces both.
      * 
      * @param path bucketName
      * @return the dsl builder
@@ -519,7 +521,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -528,7 +530,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-oss:bucketName</code>
      * 
      * Path parameter: bucketName
-     * Name of bucket to perform operation on
+     * The name of the bucket, or of the destination bucket for copyObject. The
+     * CamelAlibabaOssBucketName exchange property replaces this option for the
+     * producer, and a header of the same name replaces both.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
