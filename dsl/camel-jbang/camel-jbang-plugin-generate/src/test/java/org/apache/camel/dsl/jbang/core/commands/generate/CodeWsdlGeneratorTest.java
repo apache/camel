@@ -50,8 +50,6 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -109,7 +107,7 @@ class CodeWsdlGeneratorTest {
         RouteDefinition route = load(yaml).get(0);
         assertThat(route.getId()).isEqualTo("OrderService");
         assertThat(route.getInput().getEndpointUri())
-                .startsWith("cxf://http://0.0.0.0:18081/orders?")
+                .startsWith("cxf:/orders?")
                 .contains("wsdlURL=file:" + ORDERS, "dataFormat=PAYLOAD", "schemaValidationEnabled=true",
                         "serviceName={http://example.com/orders}OrderService",
                         "portName={http://example.com/orders}OrderPort");
@@ -152,14 +150,17 @@ class CodeWsdlGeneratorTest {
         assertThat(load(printer.getStdout())).extracting(RouteDefinition::getId).containsExactly("placeOrder");
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "spring-boot", "quarkus" })
-    void aSpringBootOrQuarkusConsumerListensOnThePathOfTheAddress(String runtime) throws Exception {
-        assertThat(run(ORDERS, "--route=consumer", "--runtime=" + runtime)).as(printer.getOutput()).isZero();
+    @Test
+    void theConsumerAddressIsThePathOfTheWsdlAddress() throws Exception {
+        // the WSDL address is http://localhost:18081/orders: a cxf consumer takes only the path, as Camel Main
+        // (camel-cxf-platform-http), Spring Boot and Quarkus serve it on their own HTTP server
+        assertThat(run(ORDERS, "--route=consumer")).as(printer.getOutput()).isZero();
 
         String yaml = printer.getStdout();
         assertValid(yaml);
-        assertThat(load(yaml).get(0).getInput().getEndpointUri()).startsWith("cxf:///orders?");
+        String uri = load(yaml).get(0).getInput().getEndpointUri();
+        assertThat(uri).startsWith("cxf:/orders?").doesNotContain("0.0.0.0", "localhost", "18081");
+        assertThat(yaml).contains("uri: cxf:/orders\n", "http://localhost:8080/services/orders");
     }
 
     @Test
@@ -190,7 +191,7 @@ class CodeWsdlGeneratorTest {
         assertThat(yaml).doesNotContain("secret", "user", "tenant");
         assertThat(printer.getStderr()).contains("user info", "query");
         RouteDefinition route = load(yaml).get(0);
-        assertThat(route.getInput().getEndpointUri()).startsWith("cxf://http://0.0.0.0:8443/ws/notify?");
+        assertThat(route.getInput().getEndpointUri()).startsWith("cxf:/ws/notify?");
         ChoiceDefinition choice = (ChoiceDefinition) route.getOutputs().get(1);
         // notify is one-way: only a log
         assertThat(choice.getWhenClauses().get(0).getOutputs()).hasSize(1);
@@ -232,7 +233,7 @@ class CodeWsdlGeneratorTest {
                 .as(chosen.getOutput()).isZero();
         assertValid(chosen.getStdout());
         assertThat(load(chosen.getStdout()).get(0).getInput().getEndpointUri())
-                .startsWith("cxf://http://0.0.0.0:9001/stock12?")
+                .startsWith("cxf:/stock12?")
                 .contains("portName={http://example.com/stock/service}StockSoap12");
     }
 

@@ -674,9 +674,10 @@ camel generate wsdl orders.wsdl --route=producer --operation=getOrder --output=o
 * `consumer` is a SOAP service: a `cxf:` consumer with schema validation, and a `choice` with a `when` per operation
 (on the `CamelCxfOperationName` header) that logs the request and returns a placeholder response element. The response
 is validated against the schema too, so until you fill in the placeholder the caller gets a SOAP fault that names the
-first element it misses. With `--runtime=camel-main` (the default) the consumer listens on `0.0.0.0` and the port and
-path of the address of the WSDL, so `camel run` serves it as it is; with `spring-boot` or `quarkus` it uses the path,
-which the CXF servlet of the runtime serves.
+first element it misses. The address of the consumer is the path of the address of the WSDL, such as `cxf:/orders`
+for `\http://localhost:8080/orders`. Camel Main (with `camel run`), Spring Boot and Quarkus all serve it on their HTTP
+server under `/services`, so the same route runs on each of them, at `\http://localhost:8080/services/orders` with the
+default port. See xref:next@components:others:cxf-platform-http.adoc[CXF Platform HTTP].
 * `producer` is a SOAP client: a route `direct:<operation>` per operation, which takes the request element (XML) as
 the body and returns the response element. It removes the `Camel*` headers and the CXF operation headers first, so a
 caller cannot choose another operation or address (such as with `CamelDestinationOverrideUrl`).

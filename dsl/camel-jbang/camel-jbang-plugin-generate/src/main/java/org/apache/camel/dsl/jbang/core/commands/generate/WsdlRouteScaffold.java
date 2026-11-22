@@ -32,7 +32,6 @@ import javax.xml.namespace.QName;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Operation;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Port;
 import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.WsdlException;
-import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -81,19 +80,14 @@ final class WsdlRouteScaffold {
     }
 
     /**
-     * A route with a cxf: consumer for the port, with a choice of one when per operation.
-     *
-     * @param runtime the runtime: camel-main (and the Camel CLI) gets an absolute address on 0.0.0.0, spring-boot and
-     *                quarkus the path, which their CXF servlet serves
+     * A route with a cxf: consumer for the port, with a choice of one when per operation. The address of the consumer
+     * is the path of the address of the port: Camel Main (camel-cxf-platform-http), Spring Boot and Quarkus all serve
+     * it on their HTTP server, under the path of their CXF services (default /services).
      */
-    String consumer(RuntimeType runtime) throws WsdlException {
+    String consumer() throws WsdlException {
         check();
-        URI address = address();
-        int p = address.getPort() != -1 ? address.getPort() : DEFAULT_PORT;
-        String path = address.getRawPath();
-        String uri = RuntimeType.springBoot == runtime || RuntimeType.quarkus == runtime
-                ? "cxf://" + path
-                : "cxf://http://0.0.0.0:" + p + path;
+        String path = address().getRawPath();
+        String uri = "cxf:" + path;
 
         Map<String, Object> parameters = new LinkedHashMap<>();
         parameters.put("wsdlURL", wsdlUrl);
@@ -137,9 +131,9 @@ final class WsdlRouteScaffold {
         sb.append("# Each operation returns a placeholder response: replace it with the response element.\n");
         sb.append("# The request and the response are validated against the schema of the WSDL (schemaValidationEnabled):\n");
         sb.append("# until it is filled in, the placeholder gives a SOAP fault that names the first element it misses.\n");
-        if (RuntimeType.springBoot == runtime || RuntimeType.quarkus == runtime) {
-            sb.append("# The CXF servlet of the runtime serves the address ").append(path).append(".\n");
-        }
+        sb.append("# The address is the path ").append(path)
+                .append(" of the WSDL address: the HTTP server of the runtime serves it under /services,\n");
+        sb.append("# such as http://localhost:8080/services").append(path).append(" with the default port.\n");
         return sb + dump(List.of(Map.of("route", route)));
     }
 

@@ -44,9 +44,6 @@ import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.WsdlException
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -102,13 +99,6 @@ public class CodeWsdlGenerator extends CamelCommand {
 
     @Option(name = "operation", description = "The operations to list or scaffold (use commas to separate them; default: all)")
     String operation;
-
-    @Option(name = "runtime",
-            description = "The runtime the route is for (${COMPLETION-CANDIDATES}): camel-main listens on the address of"
-                          + " the WSDL, spring-boot and quarkus on its path in their CXF servlet",
-            defaultValue = "camel-main",
-            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
-    RuntimeType runtime = RuntimeType.main;
 
     @Override
     public boolean isJsonOutput() {
@@ -209,7 +199,7 @@ public class CodeWsdlGenerator extends CamelCommand {
         WsdlRouteScaffold scaffold = new WsdlRouteScaffold(p, selected(p, operations), wsdlUrl());
         String yaml;
         try {
-            yaml = "consumer".equals(route) ? scaffold.consumer(runtime) : scaffold.producer();
+            yaml = "consumer".equals(route) ? scaffold.consumer() : scaffold.producer();
         } catch (WsdlException e) {
             return error(CliExitCode.FAILURE, e.getMessage());
         }
