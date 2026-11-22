@@ -18,7 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
@@ -53,7 +53,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     private final AtomicLong maxDuration = new AtomicLong();
     private final AtomicLong meanDuration = new AtomicLong();
 
-    private final Map<Exchange, AwaitThread> inflight = new ConcurrentHashMap<>();
+    // one entry per waiting thread: two threads can wait for the same exchange (a thread that waits for an exchange while
+    // the exchange goes on, on another thread, through a step that waits for it too), and each must stay listed
+    private final Set<AwaitThreadEntry> inflight = ConcurrentHashMap.newKeySet();
     private final ExchangeFormatter exchangeFormatter;
     private boolean interruptThreadsWhileStopping = true;
 
@@ -104,11 +106,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
                     exchange.getExchangeId(), exchange);
         }
+        AwaitThreadEntry entry = new AwaitThreadEntry(Thread.currentThread(), exchange, latch);
         try {
             if (statistics.isStatisticsEnabled()) {
                 blockedCounter.incrementAndGet();
             }
-            inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
+            inflight.add(entry);
             latch.await();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
@@ -124,10 +127,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
             exchange.setException(e);
         } finally {
-            AwaitThread thread = inflight.remove(exchange);
+            // from here on the exchange is the caller's: an interrupt that comes later leaves it alone
+            entry.finish();
+            boolean removed = inflight.remove(entry);
 
-            if (statistics.isStatisticsEnabled() && thread != null) {
-                long time = thread.getWaitDuration();
+            if (statistics.isStatisticsEnabled() && removed) {
+                long time = entry.getWaitDuration();
                 long total = totalDuration.get() + time;
                 totalDuration.set(total);
 
@@ -179,7 +184,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
     @Override
     public Collection<AwaitThread> browse() {
-        return Collections.unmodifiableCollection(inflight.values());
+        return Collections.unmodifiableCollection(inflight);
     }
 
     @Override
@@ -201,33 +206,46 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
     @Override
     public void interrupt(Exchange exchange) {
-        AwaitThreadEntry entry = (AwaitThreadEntry) inflight.get(exchange);
-        if (entry != null) {
-            try {
-                StringBuilder sb = new StringBuilder(512);
-                sb.append(
-                        "Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
-                sb.append(exchange.getExchangeId());
-                sb.append("\n");
-
-                sb.append(dumpBlockedThread(entry));
-
-                // dump a route stack trace of the exchange
-                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, false);
-                sb.append(routeStackTrace);
-                LOG.warn(sb.toString());
-
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } finally {
-                if (statistics.isStatisticsEnabled()) {
-                    interruptedCounter.incrementAndGet();
-                }
-                exchange.setException(new RejectedExecutionException(
-                        "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
-                exchange.getExchangeExtension().setInterrupted(true);
-                entry.getLatch().countDown();
+        // every thread that waits for the exchange
+        for (AwaitThreadEntry entry : inflight) {
+            if (entry.getExchange() == exchange) {
+                interrupt(entry);
             }
+        }
+    }
+
+    private void interrupt(AwaitThreadEntry entry) {
+        Exchange exchange = entry.getExchange();
+        String dump = null;
+        RuntimeException failure = null;
+        try {
+            StringBuilder sb = new StringBuilder(512);
+            sb.append(
+                    "Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
+            sb.append(exchange.getExchangeId());
+            sb.append("\n");
+
+            sb.append(dumpBlockedThread(entry));
+
+            // dump a route stack trace of the exchange
+            String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, false);
+            sb.append(routeStackTrace);
+            dump = sb.toString();
+        } catch (Exception e) {
+            failure = RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+        // the callback may have fired while the dump was made, and the waiting thread may have returned the exchange
+        // to its caller as done: the exchange is then left alone
+        if (entry.interrupt()) {
+            if (statistics.isStatisticsEnabled()) {
+                interruptedCounter.incrementAndGet();
+            }
+            if (dump != null) {
+                LOG.warn(dump);
+            }
+        }
+        if (failure != null) {
+            throw failure;
         }
     }
 
@@ -262,7 +280,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 LOG.warn("The following threads are blocked and will be interrupted so the threads are released:\n{}", sb);
                 for (AwaitThread entry : threads) {
                     try {
-                        interrupt(entry.getExchange());
+                        interrupt((AwaitThreadEntry) entry);
                     } catch (Exception e) {
                         LOG.warn("Error while interrupting thread: {}. This exception is ignored.",
                                 entry.getBlockedThread().getName(),
@@ -275,8 +293,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         } else {
             LOG.debug("Shutting down with no inflight threads.");
         }
-
-        inflight.clear();
+        // the entries are not cleared: each thread removes its own once it returns, so a thread that is still blocked
+        // (not interrupted, or blocked since the threads were listed above) stays listed, and can be interrupted
     }
 
     private static String dumpBlockedThread(AwaitThread entry) {
@@ -310,6 +328,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         private final Exchange exchange;
         private final CountDownLatch latch;
         private final StopWatch watch = new StopWatch();
+        // guarded by this: the waiting thread returned (finish), or interrupt released it
+        private boolean finished;
 
         private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch) {
             this.thread = thread;
@@ -349,6 +369,29 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         public CountDownLatch getLatch() {
             return latch;
+        }
+
+        /**
+         * Fails the exchange as interrupted and releases the waiting thread, unless the callback already fired or the
+         * thread returned. The waiting thread sees the exception, as it returns only after it called {@link #finish()}.
+         *
+         * @return whether the exchange was failed and the thread released
+         */
+        synchronized boolean interrupt() {
+            if (finished || latch.getCount() == 0) {
+                return false;
+            }
+            finished = true;
+            exchange.setException(new RejectedExecutionException(
+                    "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+            exchange.getExchangeExtension().setInterrupted(true);
+            latch.countDown();
+            return true;
+        }
+
+        /** Called by the waiting thread before it returns: an interrupt after this leaves the exchange alone. */
+        synchronized void finish() {
+            finished = true;
         }
 
         @Override
