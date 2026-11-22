@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.debezium.configuration;
 
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +37,10 @@ import org.apache.kafka.connect.json.JsonConverter;
 
 @UriParams
 public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
+
+    // the properties of the file schema history of Debezium (MySQL, SQL Server, Oracle, Db2)
+    private static final String SCHEMA_HISTORY_INTERNAL = "schema.history.internal";
+    private static final String SCHEMA_HISTORY_INTERNAL_FILE_FILENAME = "schema.history.internal.file.filename";
 
     private static final String LABEL_NAME = "consumer";
 
@@ -241,7 +248,91 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
                     .format("Required field 'offsetStorageFileName' must be set since 'offsetStorage' is set to '%s'",
                             DebeziumConstants.DEFAULT_OFFSET_STORAGE));
         }
+        return validateStorageFiles();
+    }
+
+    /**
+     * Checks the files that Debezium writes its position and its schema history to, as the engine gets them (the
+     * additional properties included), so a consumer whose position cannot be saved fails when it starts instead of
+     * logging a WARN on every save and sending everything again, the snapshot included, after a restart.
+     * <p>
+     * The file offset store of Kafka writes the file in its folder, which must exist. The file schema history of
+     * Debezium creates its folders, so only a folder that cannot be created is an error there.
+     */
+    private ConfigurationValidation validateStorageFiles() {
+        final Configuration config;
+        try {
+            config = createDebeziumConfiguration();
+        } catch (RuntimeException e) {
+            // an incomplete configuration: the connector validation reports what is missing
+            return ConfigurationValidation.valid();
+        }
+        if (DebeziumConstants.DEFAULT_OFFSET_STORAGE.equals(config.getString(AsyncEmbeddedEngine.OFFSET_STORAGE))) {
+            String problem = storageFileProblem(config.getString(AsyncEmbeddedEngine.OFFSET_STORAGE_FILE_FILENAME), false);
+            if (problem != null) {
+                return ConfigurationValidation.notValid(
+                        "The file of offsetStorageFileName " + problem + ". Debezium saves its position to this file:"
+                                                        + " without it, a restart sends all the changes again.");
+            }
+        }
+        String history = config.getString(SCHEMA_HISTORY_INTERNAL);
+        if (history != null && history.endsWith(".FileSchemaHistory")) {
+            String file = config.getString(SCHEMA_HISTORY_INTERNAL_FILE_FILENAME);
+            if (isFieldValueNotSet(file)) {
+                return ConfigurationValidation.notValid(
+                        "Required field 'schemaHistoryInternalFileFilename' must be set since 'schemaHistoryInternal'"
+                                                        + " is set to '" + history + "'");
+            }
+            String problem = storageFileProblem(file, true);
+            if (problem != null) {
+                return ConfigurationValidation.notValid("The file of schemaHistoryInternalFileFilename " + problem);
+            }
+        }
         return ConfigurationValidation.valid();
+    }
+
+    /**
+     * Why the file cannot be written, or null when it can.
+     *
+     * @param file           the file
+     * @param createsFolders whether the store creates the folders of the file that do not exist
+     */
+    static String storageFileProblem(String file, boolean createsFolders) {
+        if (isFieldValueNotSet(file)) {
+            return null;
+        }
+        Path path;
+        try {
+            path = Path.of(file).toAbsolutePath().normalize();
+        } catch (InvalidPathException e) {
+            return "(" + file + ") is not a valid path";
+        }
+        if (Files.isDirectory(path)) {
+            return "(" + path + ") is a folder, not a file";
+        }
+        if (Files.exists(path)) {
+            return Files.isWritable(path) ? null : "(" + path + ") cannot be written";
+        }
+        Path folder = path.getParent();
+        if (createsFolders) {
+            Path existing = folder;
+            while (existing != null && !Files.exists(existing)) {
+                existing = existing.getParent();
+            }
+            if (existing == null || !Files.isDirectory(existing) || !Files.isWritable(existing)) {
+                return "(" + path + ") is in a folder that cannot be created, as "
+                       + (existing != null ? existing : folder) + " cannot be written";
+            }
+            return null;
+        }
+        if (folder == null || !Files.isDirectory(folder)) {
+            return "(" + path + ") is in the folder " + folder + ", which does not exist: create it, or use a file in"
+                   + " a folder that exists";
+        }
+        if (!Files.isWritable(folder)) {
+            return "(" + path + ") is in the folder " + folder + ", which cannot be written";
+        }
+        return null;
     }
 
     protected static boolean isFieldValueNotSet(final Object field) {

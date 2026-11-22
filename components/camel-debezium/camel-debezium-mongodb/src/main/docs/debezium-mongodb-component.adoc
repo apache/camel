@@ -99,6 +99,18 @@ then set only when the transformation adds the operation, with `additionalProper
 See below for more details.
 
 
+== Where the position is saved
+
+Debezium saves how far the connector got, so that after a restart it goes on from there. With the default
+`offsetStorage` (`org.apache.kafka.connect.storage.FileOffsetBackingStore`), the position is saved to the file of
+`offsetStorageFileName`. The file is created when it does not exist, but its folder must exist and be writable: the
+consumer fails when it starts otherwise, as without it nothing is saved and a restart sends everything again, the
+snapshot included. A relative name is in the folder the integration runs in, such as `data/offset-file-1.dat`.
+
+To save the position in a Kafka topic instead, such as for an integration that has no lasting disk, set `offsetStorage`
+to `org.apache.kafka.connect.storage.KafkaOffsetBackingStore`, with `offsetStorageTopic`, `offsetStoragePartitions`,
+`offsetStorageReplicationFactor` and the Kafka brokers as `additionalProperties.bootstrap.servers`.
+
 == Examples
 
 === Consuming events
@@ -111,7 +123,7 @@ Java::
 +
 [source,java]
 ----
-from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbConnectionString=RAW(mongodb://localhost:27017/?replicaSet=rs0)&mongodbUser=debezium&mongodbPassword=dbz&topicPrefix=dbserver1&schemaHistoryInternalFileFilename=/usr/history-file-1.dat")
+from("debezium-mongodb:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&mongodbConnectionString=RAW(mongodb://localhost:27017/?replicaSet=rs0)&mongodbUser=debezium&mongodbPassword=dbz&topicPrefix=dbserver1&schemaHistoryInternalFileFilename=data/history-file-1.dat")
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
@@ -131,7 +143,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&amp;mongodbConnectionString=RAW(mongodb://localhost:27017/?replicaSet=rs0)&amp;mongodbUser=debezium&amp;mongodbPassword=dbz&amp;topicPrefix=dbserver1&amp;schemaHistoryInternalFileFilename=/usr/history-file-1.dat"/>
+  <from uri="debezium-mongodb:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&amp;mongodbConnectionString=RAW(mongodb://localhost:27017/?replicaSet=rs0)&amp;mongodbUser=debezium&amp;mongodbPassword=dbz&amp;topicPrefix=dbserver1&amp;schemaHistoryInternalFileFilename=data/history-file-1.dat"/>
   <log message="Event received from Debezium : ${body}"/>
   <log message="    with this identifier ${headers.CamelDebeziumIdentifier}"/>
   <log message="    with these source metadata ${headers.CamelDebeziumSourceMetadata}"/>
@@ -156,12 +168,12 @@ YAML::
     from:
       uri: debezium-mongodb:dbz-test-1
       parameters:
-        offsetStorageFileName: /usr/offset-file-1.dat
+        offsetStorageFileName: data/offset-file-1.dat
         mongodbConnectionString: "mongodb://localhost:27017/?replicaSet=rs0"
         mongodbUser: debezium
         mongodbPassword: dbz
         topicPrefix: dbserver1
-        schemaHistoryInternalFileFilename: /usr/history-file-1.dat
+        schemaHistoryInternalFileFilename: data/history-file-1.dat
       steps:
         - log:
             message: "Event received from Debezium : ${body}"
