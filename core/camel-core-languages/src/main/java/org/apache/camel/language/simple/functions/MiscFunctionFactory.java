@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
+import org.apache.camel.language.simple.XmlJsonExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -31,9 +32,9 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumen
 
 /**
  * Built-in Simple miscellaneous functions: {@code ${isEmpty}}, {@code ${isAlpha}}, {@code ${isAlphaNumeric}},
- * {@code ${isNumeric}}, {@code ${not}}, {@code ${kindOfType}}, {@code ${throwException}}, {@code ${assert}},
- * {@code ${convertTo}}, {@code ${messageHistory}}, {@code ${uuid}}, {@code ${hash}}, {@code ${empty}},
- * {@code ${newEmpty}}, {@code ${iif}}, {@code ${load}}.
+ * {@code ${isNumeric}}, {@code ${isValidXml}}, {@code ${isValidJson}}, {@code ${not}}, {@code ${kindOfType}},
+ * {@code ${throwException}}, {@code ${assert}}, {@code ${convertTo}}, {@code ${messageHistory}}, {@code ${uuid}},
+ * {@code ${hash}}, {@code ${empty}}, {@code ${newEmpty}}, {@code ${iif}}, {@code ${load}}.
  */
 public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory {
 
@@ -69,6 +70,26 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.isAlphaNumericExpression(exp);
+        }
+
+        remainder = ifStartsWithReturnRemainder("isValidXml(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
+            }
+            return XmlJsonExpressionBuilder.isValidXmlExpression(exp);
+        }
+
+        remainder = ifStartsWithReturnRemainder("isValidJson(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
+            }
+            return XmlJsonExpressionBuilder.isValidJsonExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("isNumeric(", function);

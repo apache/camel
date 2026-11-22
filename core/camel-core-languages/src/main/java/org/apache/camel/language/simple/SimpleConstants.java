@@ -245,6 +245,20 @@ public final class SimpleConstants {
               examples = { "${camelId} -> camel-1" })
     public static final String CAMEL_ID = "camelId";
 
+    @Metadata(description = "Canonicalizes the message body (or expression) as XML (W3C Canonical XML, without comments), so two"
+                            + " XML documents that differ only in formatting (attribute order, quotes, empty element tags, namespace"
+                            + " declarations) give the same value. The XML declaration and comments are removed. The mode is exclusive"
+                            + " (default) or inclusive. XML with a DOCTYPE declaration is rejected, and a value that is not well-formed XML"
+                            + " fails the evaluation.",
+              label = "xml", javaType = "String", displayName = "Canonical XML",
+              examples = {
+                      "${canonicalXml()} -> <order id=\"1\" type=\"a\"><item></item></order> // when body is <order type='a' id='1'><item/></order>",
+                      "${canonicalXml()} == ${canonicalXml(${variable.expected})} -> true // as a predicate: the body and the variable are the same XML" },
+              annotations = {
+                      "param=exp:Object:optional:body:The expression. When omitted uses the message body",
+                      "param=mode:String:optional:exclusive:The canonicalization: exclusive (unused namespace declarations are removed) or inclusive" })
+    public static final String CANONICAL_XML = "canonicalXml(exp,mode)";
+
     @Metadata(description = "Capitalizes the message body/expression as a String value (upper case every words)",
               javaType = "String", label = "string", displayName = "Capitalize String Values",
               examples = { "${capitalize('hello world')} -> Hello World" },
@@ -266,6 +280,17 @@ public final class SimpleConstants {
               examples = { "${collate(3)} -> [[1,2,3],[4,5,6],[7]] // when body is [1,2,3,4,5,6,7]" },
               annotations = { "param=num:int:required::The group size for each sub list" })
     public static final String COLLATE = "collate(num)";
+
+    @Metadata(description = "Converts the message body (or expression) to a String, and removes the whitespace between the elements"
+                            + " of XML, or the tokens of JSON, so the value is on a single line (the inverse of pretty). Text with other"
+                            + " characters than whitespace, and JSON strings, are kept as they are. A value that is not XML or JSON, or not"
+                            + " well-formed, is returned as-is.",
+              label = "json,xml", javaType = "String", displayName = "Compact",
+              examples = {
+                      "${compact()} -> <order><id>1</id></order> // when body is pretty printed XML",
+                      "${compact(${header.json})} -> {\"id\":1,\"tags\":[\"a\",\"b\"]}" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String COMPACT = "compact(exp)";
 
     @Metadata(description = "Performs a string concat using two expressions (message body as default) with optional separator",
               label = "string", javaType = "String", displayName = "Concat",
@@ -506,6 +531,21 @@ public final class SimpleConstants {
               examples = { "${isNumeric('12345')} -> true", "${isNumeric('12.34')} -> false // dot is not numeric" },
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String IS_NUMERIC = "isNumeric(exp)";
+
+    @Metadata(description = "Whether the message body (or expression) is valid JSON (RFC 8259): an object, an array, or a single"
+                            + " string, number, true, false or null.",
+              label = "condition,json", javaType = "boolean", displayName = "Is Valid JSON",
+              examples = {
+                      "${isValidJson('{\"id\": 1}')} -> true", "${isValidJson('{\"id\": 1,}')} -> false // trailing comma" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String IS_VALID_JSON = "isValidJson(exp)";
+
+    @Metadata(description = "Whether the message body (or expression) is well-formed XML. XML with a DOCTYPE declaration is not"
+                            + " accepted (returns false), as DTDs and entities are not allowed.",
+              label = "condition,xml", javaType = "boolean", displayName = "Is Valid XML",
+              examples = { "${isValidXml('<order id=\"1\"/>')} -> true", "${isValidXml('<order>')} -> false" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String IS_VALID_XML = "isValidXml(exp)";
 
     @Metadata(description = "When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath. For input (optional), you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.",
               label = "json", javaType = "Object", displayName = "JQ",
@@ -864,6 +904,32 @@ public final class SimpleConstants {
               label = "core")
     public static final String STEP_ID = "stepId";
 
+    @Metadata(description = "Removes the comments from the message body (or expression) as XML. A value that is not well-formed XML"
+                            + " is returned as-is. XML with a DOCTYPE declaration is not accepted.",
+              label = "xml", javaType = "String", displayName = "Strip XML Comments",
+              examples = {
+                      "${stripXmlComments()} -> <order><id>1</id></order> // when body is <order><!-- internal --><id>1</id></order>" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String STRIP_XML_COMMENTS = "stripXmlComments(exp)";
+
+    @Metadata(description = "Removes the XML declaration (<?xml version=\"1.0\"?>) from the message body (or expression), and the"
+                            + " whitespace after it. The rest of the value is kept exactly as it is.",
+              label = "xml", javaType = "String", displayName = "Strip XML Declaration",
+              examples = { "${stripXmlDeclaration()} -> <order/> // when body is <?xml version=\"1.0\"?><order/>" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String STRIP_XML_DECLARATION = "stripXmlDeclaration(exp)";
+
+    @Metadata(description = "Removes the namespace declarations (xmlns and xmlns:prefix) and the namespace prefixes of elements and"
+                            + " attributes from the message body (or expression) as XML, so XPath can be used without local-name()."
+                            + " Attributes in the xml: namespace such as xml:lang are kept, and prefixes in attribute values or text"
+                            + " are not changed. A value that is not well-formed XML is returned as-is. XML with a DOCTYPE declaration"
+                            + " is not accepted.",
+              label = "xml", javaType = "String", displayName = "Strip XML Namespaces",
+              examples = {
+                      "${stripXmlNamespaces()} -> <Order id=\"1\"/> // when body is <ns1:Order xmlns:ns1=\"urn:a\" ns1:id=\"1\"/>" },
+              annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
+    public static final String STRIP_XML_NAMESPACES = "stripXmlNamespaces(exp)";
+
     @Metadata(description = "Returns a substring of the message body/expression by clipping characters off its ends (not by positions). With one number, a positive number clips that many characters from the beginning, and a negative number clips that many characters from the end. With two numbers, head is how many characters to clip from the beginning and tail how many to clip from the end; the sign of tail does not matter, so -1 and 1 both clip one character.",
               label = "string", javaType = "String",
               examples = {
@@ -954,6 +1020,19 @@ public final class SimpleConstants {
                       "${kindOfType(${null})} -> null" },
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String KIND_OF_TYPE = "kindOfType(exp)";
+
+    @Metadata(description = "Unescapes the message body (or expression): the inverse of escape. The kind is one of: html, xml, json,"
+                            + " js, sql, url. For html and xml the five predefined entities and numeric character references are"
+                            + " decoded; other named entities are kept. A sequence that is not a valid escape is kept as it is.",
+              label = "string", javaType = "String", displayName = "Unescape Special Characters",
+              examples = {
+                      "${unescape(xml)} -> Tom & Jerry // when body is Tom &amp; Jerry",
+                      "${unescape(json, ${header.text})} -> the header value with \\n and \\\" turned back into a line break and a quote",
+                      "${unescape(url, 'Camel%20in%20Action')} -> Camel in Action" },
+              annotations = {
+                      "param=kind:String:required::The kind of escaping: html, xml, json, js, sql, or url",
+                      "param=exp:Object:optional:body:The expression to unescape. When omitted uses the message body" })
+    public static final String UNESCAPE = "unescape(kind,exp)";
 
     @Metadata(description = "Returns the message body (or expression) with any leading/ending quotes removed",
               label = "string", javaType = "String",
