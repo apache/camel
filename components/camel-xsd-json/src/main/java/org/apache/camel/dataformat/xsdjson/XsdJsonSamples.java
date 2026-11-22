@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.xsdjson.XsdModel.Attribute;
 import org.apache.camel.dataformat.xsdjson.XsdModel.Element;
 import org.apache.camel.dataformat.xsdjson.XsdModel.Group;
@@ -49,7 +50,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @since 4.24
  */
-public final class XsdJsonSamples {
+public final class XsdJsonSamples implements AutoCloseable {
 
     private static final int MAX_DEPTH = 32;
 
@@ -73,8 +74,10 @@ public final class XsdJsonSamples {
     /**
      * Loads the schema as the xsdJson data format does.
      *
-     * @param camelContext the CamelContext, which loads the schema
-     * @param schema       the schema, such as file:orders.wsdl or classpath:orders.xsd
+     * @param  camelContext          the CamelContext, which loads the schema
+     * @param  schema                the schema, such as file:orders.wsdl or classpath:orders.xsd
+     * @throws RuntimeCamelException if the schema cannot be loaded, such as a resource that does not exist or is not an
+     *                               XML Schema or a WSDL
      */
     public XsdJsonSamples(CamelContext camelContext, String schema) {
         this(camelContext, schema, null);
@@ -84,9 +87,11 @@ public final class XsdJsonSamples {
      * Loads the schema as the xsdJson data format does, with the documents read by the reader, such as to only read
      * from the host of a WSDL. The imports and includes still keep to the scheme of the schema.
      *
-     * @param camelContext the CamelContext
-     * @param schema       the schema, such as file:orders.wsdl or https://example.com/orders?wsdl
-     * @param reader       reads the schema and the documents it imports or includes (null to use the CamelContext)
+     * @param  camelContext          the CamelContext
+     * @param  schema                the schema, such as file:orders.wsdl or https://example.com/orders?wsdl
+     * @param  reader                reads the schema and the documents it imports or includes (null to use the
+     *                               CamelContext)
+     * @throws RuntimeCamelException if the schema cannot be loaded, or the reader refuses a document
      */
     public XsdJsonSamples(CamelContext camelContext, String schema, DocumentReader reader) {
         this.camelContext = camelContext;
@@ -134,6 +139,14 @@ public final class XsdJsonSamples {
             xml = xml.substring(0, end + 2) + "\n" + xml.substring(end + 2);
         }
         return xml;
+    }
+
+    /**
+     * Stops the data format that the samples are written with.
+     */
+    @Override
+    public void close() {
+        dataFormat.stop();
     }
 
     private Object sample(String element) {

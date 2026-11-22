@@ -323,9 +323,10 @@ follow the other facets of its type, such as a pattern or a length.
 
 [source,java]
 ----
-XsdJsonSamples samples = new XsdJsonSamples(camelContext, "classpath:orders.wsdl");
-String json = samples.json("getOrder");
-String xml = samples.xml("getOrder");
+try (XsdJsonSamples samples = new XsdJsonSamples(camelContext, "classpath:orders.wsdl")) {
+    String json = samples.json("getOrder");
+    String xml = samples.xml("getOrder");
+}
 ----
 
 == Dependencies

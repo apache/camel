@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -137,6 +138,23 @@ class XsdJsonSamplesTest extends XsdJsonTestSupport {
         };
         assertThatThrownBy(() -> new XsdJsonSamples(context, "classpath:xsdjson/shop.xsd", refusing))
                 .hasStackTraceContaining("not this one");
+    }
+
+    @Test
+    void theSamplesAreClosed() throws Exception {
+        XsdJsonSamples samples;
+        try (XsdJsonSamples s = new XsdJsonSamples(context, SAMPLES)) {
+            samples = s;
+            assertThat(s.json("types")).contains("\"text\"");
+        }
+        // the model is kept, so a closed one still answers, as a stopped data format does
+        assertThat(samples.json("types")).contains("\"text\"");
+    }
+
+    @Test
+    void aSchemaThatCannotBeLoaded() {
+        assertThatThrownBy(() -> new XsdJsonSamples(context, "classpath:xsdjson/nope.xsd"))
+                .isInstanceOf(RuntimeCamelException.class);
     }
 
     @Test

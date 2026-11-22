@@ -251,13 +251,15 @@ public class CodeWsdlGenerator extends CamelCommand {
                 return error(CliExitCode.FAILURE, "Cannot read the XML schema of the WSDL " + wsdl + ": "
                                                   + rootMessage(e));
             }
-            for (Port p : ports) {
-                // the operation names are file names: the port name tells the ports apart
-                String prefix = ports.size() > 1 ? p.name() + "-" : "";
-                WsdlSamples ws = new WsdlSamples(p, selected(p, operations), xsd);
-                all.put(p, ws.samples(prefix));
-                for (String warning : ws.warnings()) {
-                    printer().printWarn(warning);
+            try (xsd) {
+                for (Port p : ports) {
+                    // the operation names are file names: the port name tells the ports apart
+                    String prefix = ports.size() > 1 ? p.name() + "-" : "";
+                    WsdlSamples ws = new WsdlSamples(p, selected(p, operations), xsd);
+                    all.put(p, ws.samples(prefix));
+                    for (String warning : ws.warnings()) {
+                        printer().printWarn(warning);
+                    }
                 }
             }
         }
