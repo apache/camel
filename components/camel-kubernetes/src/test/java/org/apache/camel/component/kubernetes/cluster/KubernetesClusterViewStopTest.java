@@ -297,8 +297,7 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
             @Override
             protected KubernetesConfiguration setConfigDefaults(
                     KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
-                // a client for each view, as when the views create their clients from the master URL (a client set on
-                // the configuration is shared by the views, and closed by the first view that stops)
+                // a client for each view, as when the views create their clients from the master URL
                 configuration.setKubernetesClient(server.createClient());
                 return super.setConfigDefaults(configuration, lockConfiguration);
             }
