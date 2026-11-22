@@ -48,6 +48,7 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
                 Message in = exchange.getIn();
                 in.setBody(payload);
                 in.setHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic());
+                exchange.setProperty(IgniteConstants.IGNITE_MESSAGING_RECEIVED_TOPIC, endpoint.getTopic());
                 in.setHeader(IgniteConstants.IGNITE_MESSAGING_UUID, uuid);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing Ignite message for subscription {} with payload {}.", uuid, payload);
