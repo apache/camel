@@ -51,9 +51,14 @@ final class XsdModel {
     }
 
     /**
-     * A simple type: the JSON kind of its text, and whether it is an xs:list (a JSON array).
+     * A simple type: the JSON kind of its text, and whether it is an xs:list (a JSON array). The built-in type that it
+     * derives from (such as dateTime or int) and its first enumeration value (or null) are only used for samples.
      */
-    record SimpleType(SimpleKind kind, boolean list) {
+    record SimpleType(SimpleKind kind, boolean list, String builtin, String enumeration) {
+
+        SimpleType withEnumeration(String value) {
+            return new SimpleType(kind, list, builtin, value);
+        }
     }
 
     /**

@@ -100,6 +100,7 @@ public class XsdJsonDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean prettyPrint;
 
     private XsdModel model;
+    private XsdJsonSamples.DocumentReader documentReader;
     private Element defaultElement;
     private XMLInputFactory inputFactory;
     private XMLOutputFactory outputFactory;
@@ -128,7 +129,8 @@ public class XsdJsonDataFormat extends ServiceSupport implements DataFormat, Dat
         if (ObjectHelper.isEmpty(textName)) {
             textName = "value";
         }
-        model = new XsdModelBuilder(new XsdSchemaLoader(camelContext, schema).load(), attributePrefix, textName).build();
+        model = new XsdModelBuilder(
+                new XsdSchemaLoader(camelContext, schema, documentReader).load(), attributePrefix, textName).build();
         if (ObjectHelper.isNotEmpty(element)) {
             defaultElement = model.findElement(element);
             model.checkConflicts(defaultElement);
@@ -140,6 +142,20 @@ public class XsdJsonDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     protected void doStop() throws Exception {
         // the model is kept, a restart reads the schema again
+    }
+
+    /**
+     * Reads the schema and the documents it imports, instead of the CamelContext (used by {@link XsdJsonSamples}).
+     */
+    void setDocumentReader(XsdJsonSamples.DocumentReader documentReader) {
+        this.documentReader = documentReader;
+    }
+
+    /**
+     * The model of the schema, once the data format is started.
+     */
+    XsdModel getModel() {
+        return model;
     }
 
     /**

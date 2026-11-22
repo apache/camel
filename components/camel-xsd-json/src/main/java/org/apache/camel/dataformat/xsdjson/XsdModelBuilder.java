@@ -52,6 +52,8 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaContent;
 import org.apache.ws.commons.schema.XmlSchemaContentModel;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaGroup;
 import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
@@ -82,7 +84,7 @@ import static org.apache.camel.dataformat.xsdjson.XsdSchemaLoader.XSD_NS;
  */
 final class XsdModelBuilder {
 
-    private static final SimpleType STRING = new SimpleType(SimpleKind.STRING, false);
+    private static final SimpleType STRING = new SimpleType(SimpleKind.STRING, false, "string", null);
     private static final int MAX_TYPE_DEPTH = 64;
 
     private final XmlSchemaCollection collection;
@@ -448,12 +450,19 @@ final class XsdModelBuilder {
         }
         XmlSchemaSimpleTypeContent content = st.getContent();
         if (content instanceof XmlSchemaSimpleTypeRestriction r) {
-            return r.getBaseType() != null
+            SimpleType base = r.getBaseType() != null
                     ? simpleType(r.getBaseType(), depth + 1) : simpleType(r.getBaseTypeName(), depth + 1);
+            // the enumeration of the most derived type that has one
+            for (XmlSchemaFacet facet : r.getFacets()) {
+                if (facet instanceof XmlSchemaEnumerationFacet e && e.getValue() != null) {
+                    return base.withEnumeration(e.getValue().toString());
+                }
+            }
+            return base;
         } else if (content instanceof XmlSchemaSimpleTypeList list) {
             SimpleType item = list.getItemType() != null
                     ? simpleType(list.getItemType(), depth + 1) : simpleType(list.getItemTypeName(), depth + 1);
-            return new SimpleType(item.kind(), true);
+            return new SimpleType(item.kind(), true, item.builtin(), item.enumeration());
         } else if (content instanceof XmlSchemaSimpleTypeUnion) {
             return STRING;
         }
@@ -462,15 +471,17 @@ final class XsdModelBuilder {
 
     private static SimpleType builtin(String name) {
         return switch (name) {
-            case "boolean" -> new SimpleType(SimpleKind.BOOLEAN, false);
-            case "decimal" -> new SimpleType(SimpleKind.DECIMAL, false);
-            case "float", "double" -> new SimpleType(SimpleKind.FLOAT, false);
+            case "boolean" -> new SimpleType(SimpleKind.BOOLEAN, false, name, null);
+            case "decimal" -> new SimpleType(SimpleKind.DECIMAL, false, name, null);
+            case "float", "double" -> new SimpleType(SimpleKind.FLOAT, false, name, null);
             case "integer", "nonPositiveInteger", "negativeInteger", "long", "int", "short", "byte",
                     "nonNegativeInteger", "unsignedLong", "unsignedInt", "unsignedShort", "unsignedByte",
                     "positiveInteger" ->
-                new SimpleType(SimpleKind.INTEGER, false);
-            case "NMTOKENS", "IDREFS", "ENTITIES" -> new SimpleType(SimpleKind.STRING, true);
-            default -> STRING;
+                new SimpleType(SimpleKind.INTEGER, false, name, null);
+            case "NMTOKENS" -> new SimpleType(SimpleKind.STRING, true, "NMTOKEN", null);
+            case "IDREFS" -> new SimpleType(SimpleKind.STRING, true, "IDREF", null);
+            case "ENTITIES" -> new SimpleType(SimpleKind.STRING, true, "ENTITY", null);
+            default -> new SimpleType(SimpleKind.STRING, false, name, null);
         };
     }
 

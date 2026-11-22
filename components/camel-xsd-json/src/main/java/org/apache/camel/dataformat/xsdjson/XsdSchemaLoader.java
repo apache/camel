@@ -65,9 +65,18 @@ final class XsdSchemaLoader {
     private final CamelContext camelContext;
     private final String location;
     private final String scheme;
+    private final XsdJsonSamples.DocumentReader reader;
 
     XsdSchemaLoader(CamelContext camelContext, String schema) {
+        this(camelContext, schema, null);
+    }
+
+    /**
+     * @param reader reads the schema and the documents it imports or includes, instead of the CamelContext (or null)
+     */
+    XsdSchemaLoader(CamelContext camelContext, String schema, XsdJsonSamples.DocumentReader reader) {
         this.camelContext = camelContext;
+        this.reader = reader;
         String s = schema.trim();
         this.location = hasScheme(s) ? s : "classpath:" + s;
         this.scheme = schemeOf(this.location);
@@ -227,6 +236,9 @@ final class XsdSchemaLoader {
     }
 
     private byte[] read(String uri) throws IOException {
+        if (reader != null) {
+            return reader.read(uri);
+        }
         try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri)) {
             return is.readAllBytes();
         }

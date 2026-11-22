@@ -311,6 +311,23 @@ YAML::
               schema: classpath:orders.wsdl
 ----
 
+== Samples
+
+The Camel CLI writes a sample of each message of a WSDL, as XML and as JSON in the form of this data format, with
+`camel generate wsdl orders.wsdl --samples`. See xref:manual::camel-jbang-projects.adoc[Camel CLI projects].
+
+From Java, `org.apache.camel.dataformat.xsdjson.XsdJsonSamples` gives the same samples for any global element of a
+schema. Every element and attribute has a value of its type (the first value of an enumeration, a date for `xs:date`,
+and so on), a repeating element has one item, and of an `xs:choice` only the first member is filled in. A value does not
+follow the other facets of its type, such as a pattern or a length.
+
+[source,java]
+----
+XsdJsonSamples samples = new XsdJsonSamples(camelContext, "classpath:orders.wsdl");
+String json = samples.json("getOrder");
+String xml = samples.xml("getOrder");
+----
+
 == Dependencies
 
 Maven users need to add the following dependency:
