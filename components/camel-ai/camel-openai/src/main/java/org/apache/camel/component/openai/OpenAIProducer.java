@@ -196,10 +196,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // Build OpenAI JSON schema response format from provided schema string
             try {
                 ResponseFormatJsonSchema.JsonSchema.Schema schema = buildSchemaFromJson(jsonSchema);
-                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = ResponseFormatJsonSchema.JsonSchema.builder()
+                ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema.builder()
                         .name("camel_schema")
-                        .schema(schema)
-                        .build();
+                        .schema(schema);
+                if (config.isJsonSchemaStrict()) {
+                    // without the option, strict is left out of the request, as before
+                    jsonSchemaBuilder.strict(true);
+                }
+                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = jsonSchemaBuilder.build();
                 paramsBuilder.responseFormat(
                         ResponseFormatJsonSchema.builder()
                                 .jsonSchema(jsonSchemaObj)

@@ -217,7 +217,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 params = paramsBuilder.text(responseClass).build().rawParams();
             } else {
                 if (ObjectHelper.isNotEmpty(jsonSchema)) {
-                    OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema);
+                    OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema, config.isJsonSchemaStrict());
                 }
                 params = paramsBuilder.build();
             }

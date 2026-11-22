@@ -137,6 +137,16 @@ public class OpenAIConfiguration implements Cloneable {
               inputLanguage = "json")
     private String jsonSchema;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(defaultValue = "false",
+              description = "Whether the model must follow jsonSchema exactly (strict structured outputs): sets strict to"
+                            + " true in the JSON schema response format of chat-completion, the Responses API and batch."
+                            + " OpenAI then only accepts a schema that meets its rules, every property of each object listed"
+                            + " in required and additionalProperties false on every object, and rejects any other with HTTP"
+                            + " 400. Without it, OpenAI takes the schema as a hint, and the answer can miss required fields"
+                            + " or have others. Other OpenAI-compatible servers may ignore it.")
+    private boolean jsonSchemaStrict;
+
     @UriParam
     @Metadata(description = "Previous response id for OpenAI server-side conversation state (Responses API only)")
     private String previousResponseId;
@@ -787,6 +797,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setJsonSchema(String jsonSchema) {
         this.jsonSchema = jsonSchema;
+    }
+
+    public boolean isJsonSchemaStrict() {
+        return jsonSchemaStrict;
+    }
+
+    public void setJsonSchemaStrict(boolean jsonSchemaStrict) {
+        this.jsonSchemaStrict = jsonSchemaStrict;
     }
 
     public boolean isConversationMemory() {

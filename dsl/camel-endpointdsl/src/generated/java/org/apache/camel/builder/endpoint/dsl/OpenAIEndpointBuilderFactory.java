@@ -1060,6 +1060,50 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
          * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
@@ -3628,6 +3672,50 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
          * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
@@ -6042,6 +6130,50 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
             return this;
         }
         /**

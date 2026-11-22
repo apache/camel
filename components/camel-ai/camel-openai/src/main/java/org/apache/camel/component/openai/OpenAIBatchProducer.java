@@ -334,12 +334,13 @@ public class OpenAIBatchProducer extends DefaultProducer {
         }
         String jsonSchema = in.getHeader(OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
         if (ObjectHelper.isNotEmpty(jsonSchema)) {
-            builder.responseFormat(ResponseFormatJsonSchema.builder()
-                    .jsonSchema(ResponseFormatJsonSchema.JsonSchema.builder()
-                            .name("camel_schema")
-                            .schema(schema(jsonSchema))
-                            .build())
-                    .build());
+            ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema.builder()
+                    .name("camel_schema")
+                    .schema(schema(jsonSchema));
+            if (config.isJsonSchemaStrict()) {
+                jsonSchemaBuilder.strict(true);
+            }
+            builder.responseFormat(ResponseFormatJsonSchema.builder().jsonSchema(jsonSchemaBuilder.build()).build());
         }
         return builder.build()._body();
     }
@@ -385,7 +386,7 @@ public class OpenAIBatchProducer extends DefaultProducer {
         }
         String jsonSchema = in.getHeader(OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
         if (ObjectHelper.isNotEmpty(jsonSchema)) {
-            OpenAIResponsesSupport.applyJsonSchemaTextFormat(builder, jsonSchema);
+            OpenAIResponsesSupport.applyJsonSchemaTextFormat(builder, jsonSchema, config.isJsonSchemaStrict());
         }
         return builder.build()._body();
     }
