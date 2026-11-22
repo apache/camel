@@ -40,7 +40,7 @@ With `includeRoot` the JSON has the root element as its single field instead: `{
 
 * `unmarshal`: the XML names its root element, which must be a global element of the schema. When `element` is set,
   the root element must be that one.
-* `marshal`: the `element` option names the root element, as `{namespace}name` or as a local name that is unique in
+* `marshal`: the `element` option names the root element, as `\{namespace}name` or as a local name that is unique in
   the schema. With `includeRoot`, the single field of the JSON names it, so the option is not needed.
 
 The `CamelXsdJsonElement` header overrides the `element` option for one message, for example when the reply of a
