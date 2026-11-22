@@ -1,0 +1,34 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "xsdJson",
+    "title": "XSD JSON",
+    "description": "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "dataformat,transformation,xml,json",
+    "javaType": "org.apache.camel.dataformat.xsdjson.XsdJsonDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-xsd-json",
+    "version": "4.24.0-SNAPSHOT",
+    "modelName": "xsdJson",
+    "modelJavaType": "org.apache.camel.model.dataformat.XsdJsonDataFormat"
+  },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file", "map" ], "format": "json", "description": "The JSON to write as XML: JSON text (a String, bytes, a stream or a file), or a Map of the root element" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The XML in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "xml" },
+    "unmarshalOut": { "carriers": [ "text" ], "format": "json", "description": "The JSON text, typed and ordered by the schema" }
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "schema": { "index": 1, "kind": "attribute", "displayName": "Schema", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas\/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only." },
+    "element": { "index": 2, "kind": "attribute", "displayName": "Element", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message." },
+    "includeRoot": { "index": 3, "kind": "attribute", "displayName": "Include Root", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element." },
+    "attributePrefix": { "index": 4, "kind": "attribute", "displayName": "Attribute Prefix", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A prefix for the JSON fields of XML attributes, such as . By default attributes and child elements share the JSON object without a prefix." },
+    "textName": { "index": 5, "kind": "attribute", "displayName": "Text Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "value", "description": "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}." },
+    "ignoreUnknown": { "index": 6, "kind": "attribute", "displayName": "Ignore Unknown", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing." },
+    "prettyPrint": { "index": 7, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to indent the output, the JSON on unmarshal and the XML on marshal." }
+  }
+}

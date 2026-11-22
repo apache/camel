@@ -4054,6 +4054,10 @@
         "type" : "object",
         "ref" : "xMLSecurity"
       }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
+      }, {
         "name" : "yaml",
         "type" : "object",
         "ref" : "yAML"
@@ -9811,6 +9815,10 @@
         "type" : "object",
         "ref" : "xMLSecurity"
       }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
+      }, {
         "name" : "yaml",
         "type" : "object",
         "ref" : "yAML"
@@ -14191,6 +14199,34 @@
         "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
         "title" : "Xml Cipher Algorithm",
         "default" : "AES_256_GCM"
+      } ]
+    },
+    "xsdJson" : {
+      "children" : [ {
+        "name" : "attributePrefix",
+        "type" : "string"
+      }, {
+        "name" : "element",
+        "type" : "string"
+      }, {
+        "name" : "id",
+        "type" : "string"
+      }, {
+        "name" : "ignoreUnknown",
+        "type" : "boolean"
+      }, {
+        "name" : "includeRoot",
+        "type" : "boolean"
+      }, {
+        "name" : "prettyPrint",
+        "type" : "boolean"
+      }, {
+        "name" : "schema",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "textName",
+        "type" : "string"
       } ]
     },
     "yAML" : {
@@ -20167,6 +20203,10 @@
         "name" : "xmlSecurity",
         "type" : "object",
         "ref" : "xMLSecurity"
+      }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
       }, {
         "name" : "yaml",
         "type" : "object",

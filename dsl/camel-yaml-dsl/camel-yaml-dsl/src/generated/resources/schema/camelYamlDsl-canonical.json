@@ -2304,6 +2304,9 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
+          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -5902,6 +5905,9 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
+          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -7124,6 +7130,9 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+          },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
@@ -9191,6 +9200,37 @@
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
+      },
+      "org.apache.camel.model.dataformat.XsdJsonDataFormat" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "attributePrefix" : {
+            "type" : "string"
+          },
+          "element" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "ignoreUnknown" : {
+            "type" : "boolean"
+          },
+          "includeRoot" : {
+            "type" : "boolean"
+          },
+          "prettyPrint" : {
+            "type" : "boolean"
+          },
+          "schema" : {
+            "type" : "string"
+          },
+          "textName" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "schema" ]
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "title" : "YAML",
@@ -13333,6 +13373,9 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+          },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"

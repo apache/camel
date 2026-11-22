@@ -52,6 +52,7 @@ UniVocityFixedDataFormat
 UniVocityHeader
 UniVocityTsvDataFormat
 XMLSecurityDataFormat
+XsdJsonDataFormat
 YAMLDataFormat
 YAMLLibrary
 ZipDeflaterDataFormat

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:s="urn:shop" xmlns:c="urn:common"
+           targetNamespace="urn:shop" elementFormDefault="qualified">
+
+  <xs:import namespace="urn:common" schemaLocation="common/common.xsd"/>
+
+  <xs:simpleType name="Sku">
+    <xs:restriction base="xs:string"><xs:pattern value="[A-Z]+-[0-9]+"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Quantity">
+    <xs:restriction base="xs:positiveInteger"><xs:maxInclusive value="1000"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NEW"/>
+      <xs:enumeration value="SHIPPED"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Tags"><xs:list itemType="xs:string"/></xs:simpleType>
+  <xs:simpleType name="Scores"><xs:list itemType="xs:int"/></xs:simpleType>
+
+  <xs:complexType name="Money">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="currency" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Line">
+    <xs:sequence>
+      <xs:element name="sku" type="s:Sku"/>
+      <xs:element name="quantity" type="s:Quantity"/>
+      <xs:element name="price" type="s:Money"/>
+      <xs:element name="note" type="xs:string" minOccurs="0" nillable="true"/>
+    </xs:sequence>
+    <xs:attribute name="lineNo" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="Party">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Customer">
+    <xs:complexContent>
+      <xs:extension base="s:Party">
+        <xs:sequence>
+          <xs:element name="vip" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:long"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="orderId" type="xs:string"/>
+        <xs:element name="status" type="s:Status"/>
+        <xs:element name="created" type="xs:dateTime"/>
+        <xs:element name="customer" type="s:Customer"/>
+        <xs:element ref="c:address"/>
+        <xs:element name="line" type="s:Line" maxOccurs="unbounded"/>
+        <xs:choice>
+          <xs:element name="card" type="xs:string"/>
+          <xs:element name="invoice" type="xs:boolean"/>
+        </xs:choice>
+        <xs:element name="tags" type="s:Tags" minOccurs="0"/>
+        <xs:element name="scores" type="s:Scores" minOccurs="0"/>
+        <xs:element name="total" type="xs:decimal"/>
+        <xs:element name="weight" type="xs:double" minOccurs="0"/>
+        <xs:element name="gift" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="comment" type="xs:string" nillable="true"/>
+        <xs:element name="extras" minOccurs="0">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="wrap" type="xs:boolean" minOccurs="0"/>
+              <xs:element name="ribbon" type="xs:string" minOccurs="0"/>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- a repeating sequence: key and val come in pairs -->
+  <xs:element name="pairs">
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="key" type="xs:string"/>
+        <xs:element name="val" type="xs:int"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- a recursive type -->
+  <xs:complexType name="Node">
+    <xs:sequence>
+      <xs:element name="node" type="s:Node" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+  <xs:element name="tree" type="s:Node"/>
+
+  <xs:element name="price" type="s:Money"/>
+</xs:schema>

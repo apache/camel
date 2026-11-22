@@ -63,6 +63,7 @@ import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
+import org.apache.camel.model.dataformat.XsdJsonDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -396,6 +397,13 @@ public final class DataFormatBuilderFactory {
      */
     public XMLSecurityDataFormat.Builder xmlSecurity() {
         return new XMLSecurityDataFormat.Builder();
+    }
+
+    /**
+     * Uses the XSD JSON data format, which maps XML to JSON and back, driven by an XML Schema
+     */
+    public XsdJsonDataFormat.Builder xsdJson() {
+        return new XsdJsonDataFormat.Builder();
     }
 
     /**
