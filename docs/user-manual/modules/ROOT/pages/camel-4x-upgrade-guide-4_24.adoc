@@ -11069,3 +11069,15 @@ unset, and the producer uses its `indexName` option.
 
 A route that relied on the `embeddings` index must set the `CamelPineconeIndexName` header to `embeddings`,
 or configure `indexName=embeddings` on the endpoint.
+
+=== camel-aws2-sqs - extendMessageVisibility requires a visibilityTimeout of at least 2 seconds
+
+An `aws2-sqs` endpoint with `extendMessageVisibility=true` now fails to be created when `visibilityTimeout` is below 2
+seconds. The task that extends the visibility runs every half of the visibility timeout, in whole seconds, and extends a
+message once 80% of its visibility timeout has passed. With a `visibilityTimeout` of 1 second, each extension came when
+the message was already visible again, so another consumer received it while the first one still processed it. With 0
+or a negative value, `extendMessageVisibility` was silently ignored.
+
+The consumer also logs a warning at startup when `visibilityTimeout` is below 10 seconds, as the extension then has only 1
+to 2 seconds before the message becomes visible again. Use a `visibilityTimeout` of 10 seconds or more with
+`extendMessageVisibility`.

@@ -405,6 +405,13 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
 
             if (ObjectHelper.isNotEmpty(visibilityTimeout) && visibilityTimeout > 0) {
+                if (visibilityTimeout < 10) {
+                    LOG.warn(
+                            "The visibilityTimeout of {} seconds leaves the extendMessageVisibility task only 1 to 2 seconds"
+                             + " to extend the visibility of a message before it becomes visible again."
+                             + " A visibilityTimeout of 10 seconds or more is recommended.",
+                            visibilityTimeout);
+                }
                 int delay = Math.max(1, visibilityTimeout / 2);
                 this.timeoutExtender = new TimeoutExtender(visibilityTimeout, delay);
 

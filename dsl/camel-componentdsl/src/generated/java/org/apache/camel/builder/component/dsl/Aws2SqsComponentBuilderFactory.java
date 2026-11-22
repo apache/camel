@@ -323,8 +323,11 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * If enabled, then a scheduled background task will keep extending the
          * message visibility on SQS. This is needed if it takes a long time to
-         * process the message. If set to true visibilityTimeout must be set.
-         * See details at Amazon docs.
+         * process the message. If set to true visibilityTimeout must be set to
+         * at least 2 seconds; 10 seconds or more is recommended, as the
+         * visibility is extended when 80% of the visibility timeout has passed,
+         * which leaves only 1 to 2 seconds with a shorter timeout. See details
+         * at Amazon docs.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -433,7 +436,8 @@ public interface Aws2SqsComponentBuilderFactory {
          * and does not change the queue: use defaultVisibilityTimeout to set
          * the visibility timeout attribute of the queue.
          * extendMessageVisibility extends the visibility of a message by this
-         * duration.
+         * duration, and requires at least 2 seconds; 10 seconds or more is
+         * recommended.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
