@@ -157,7 +157,14 @@ The service is at `\http://localhost:8080/services/orders`. An address with a sc
 
 The `wsSecurity` options set up a WS-Security UsernameToken without Java code. The producer sends a UsernameToken in
 the SOAP header of its requests, and the consumer rejects a request without a valid UsernameToken with a SOAP fault.
-The options need the `org.apache.cxf:cxf-rt-ws-security` dependency, which `camel-cxf-soap` does not bring by itself.
+With SOAP 1.1, the code of that fault is `SecurityError`, whatever the reason: no token, an unknown user, a wrong
+password, or another password type than `wsSecurityPasswordType`. The fault does not tell the client which check
+failed.
+
+The options need the `org.apache.cxf:cxf-rt-ws-security` dependency of the CXF version that Camel uses, which
+`camel-cxf-soap` does not bring by itself. The Camel CLI adds it: `camel run` downloads it when a cxf endpoint sets
+`wsSecurityUsername`, `wsSecurityPassword`, `wsSecurityCallbackHandler` or `wsSecurityCredentials`, and `camel export`
+adds it to the project (on Quarkus as `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`).
 
 NOTE: The `username` and `password` options are for HTTP Basic authentication, not for WS-Security.
 
