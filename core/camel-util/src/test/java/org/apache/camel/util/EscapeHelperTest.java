@@ -106,4 +106,59 @@ public class EscapeHelperTest {
         assertEquals("a &amp; b", EscapeHelper.Kind.HTML.escape("a & b"));
         assertEquals("a%20%26%20b", EscapeHelper.Kind.URL.escape("a & b"));
     }
+
+    @Test
+    public void testUnescapeEntities() {
+        assertEquals("Monday & Tuesday", EscapeHelper.unescapeEntities("Monday &amp; Tuesday"));
+        assertEquals("<a href=\"x\">it's</a>",
+                EscapeHelper.unescapeEntities("&lt;a href=&quot;x&quot;&gt;it&apos;s&lt;/a&gt;"));
+        assertEquals("'''\u00e9\ud83d\ude00", EscapeHelper.unescapeEntities("&#39;&#x27;&#X27;&#233;&#x1F600;"));
+        // decoded once: &amp;lt; is the text &lt;
+        assertEquals("&lt;", EscapeHelper.unescapeEntities("&amp;lt;"));
+        // not an entity of XML, or not a valid one: kept as it is
+        assertEquals("&nbsp;&foo;&#;&#x;&#12a;&#x110000;& ;a & b;&amp", EscapeHelper.unescapeEntities(
+                "&nbsp;&foo;&#;&#x;&#12a;&#x110000;& ;a & b;&amp"));
+        assertEquals("&#\u0663;", EscapeHelper.unescapeEntities("&#\u0663;"));
+        assertNull(EscapeHelper.unescapeEntities(null));
+    }
+
+    @Test
+    public void testUnescapeJsonAndJs() {
+        assertEquals("say \"hi\"", EscapeHelper.unescapeJson("say \\\"hi\\\""));
+        assertEquals("c:\\temp", EscapeHelper.unescapeJson("c:\\\\temp"));
+        assertEquals("line1\nline2\ttab\r\b\f/", EscapeHelper.unescapeJson("line1\\nline2\\ttab\\r\\b\\f\\/"));
+        assertEquals("a\u0001b\u00e9", EscapeHelper.unescapeJson("a\\u0001b\\u00E9"));
+        // not a valid escape: kept as it is
+        assertEquals("\\x \\u12 \\u12zz \\'", EscapeHelper.unescapeJson("\\x \\u12 \\u12zz \\'"));
+        assertEquals("end\\", EscapeHelper.unescapeJson("end\\"));
+
+        assertEquals("it's </script>", EscapeHelper.unescapeJs("it\\'s <\\/script>"));
+        assertNull(EscapeHelper.unescapeJson(null));
+    }
+
+    @Test
+    public void testUnescapeSql() {
+        assertEquals("O'Reilly", EscapeHelper.unescapeSql("O''Reilly"));
+        assertEquals("''", EscapeHelper.unescapeSql("''''"));
+        assertEquals("Camel", EscapeHelper.unescapeSql("Camel"));
+    }
+
+    @Test
+    public void testUnescapeUrl() {
+        assertEquals("Camel in Action?", EscapeHelper.unescapeUrl("Camel%20in%20Action%3F"));
+        assertEquals("a b+c", EscapeHelper.unescapeUrl("a+b%2Bc"));
+        assertEquals("caf\u00e9 \u6771\u4eac", EscapeHelper.unescapeUrl("caf%C3%A9%20%E6%9D%B1%E4%BA%AC"));
+        // not a valid percent sequence: kept as it is
+        assertEquals("100% %zz %4", EscapeHelper.unescapeUrl("100% %zz %4"));
+        assertEquals("abc", EscapeHelper.unescapeUrl("abc"));
+    }
+
+    @Test
+    public void testUnescapeIsTheInverseOfEscape() {
+        String value = "Tom & Jerry's \"<Show>\" \\ / \n\t caf\u00e9 100% a+b </script>";
+        for (EscapeHelper.Kind kind : EscapeHelper.Kind.values()) {
+            assertEquals(value, kind.unescape(kind.escape(value)), kind.name());
+        }
+        assertNull(EscapeHelper.unescape(EscapeHelper.Kind.URL, null));
+    }
 }
