@@ -1791,6 +1791,38 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointSpringWsLabelsAndType() {
+        // both sides use messageSender
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&messageSender=#messageSender";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses sslContextParameters
+        uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+              + "&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("sslContextParameters"));
+
+        uri = "spring-ws:http://example.com/ws?messageSender=#messageSender&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer sets the SOAP header too
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("spring-ws").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelSpringWebserviceSoapHeader"));
+
+        // the endpoint uri takes the type soapaction, which is not the name of the enum constant
+        uri = "spring-ws:soapaction:urn:GetFoo?endpointMapping=#endpointMapping";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+    }
+
+    @Test
     public void testNettyHttpDynamicToIssue() throws Exception {
         String uri = "netty-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
         Map<String, String> params = catalog.endpointProperties(uri);

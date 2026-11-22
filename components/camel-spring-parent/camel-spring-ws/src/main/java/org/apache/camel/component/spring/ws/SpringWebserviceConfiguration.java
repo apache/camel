@@ -49,14 +49,12 @@ public class SpringWebserviceConfiguration {
     /* Common configuration */
     @UriParam
     private MessageFilter messageFilter;
-    @UriParam(label = "security",
-              description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that the"
-                            + " producer sends. Only applied to a message sender of the WebServiceTemplate whose class is"
-                            + " exactly HttpUrlConnectionMessageSender, which is the default message sender. For any other"
-                            + " message sender, the producer logs a warning and does not apply it. If not set, the component"
-                            + " sets it to the global SSL context parameters when it creates the endpoint and its own"
-                            + " useGlobalSslContextParameters option is true. The consumer does not use it.")
-    private SSLContextParameters sslContextParameters;
+    @UriParam(description = "To use a custom org.springframework.ws.transport.WebServiceMessageSender, for example to perform"
+                            + " authentication or to use another transport. The producer sends its requests with it, in place"
+                            + " of the message senders of the WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS"
+                            + " sends the response of the consumer with it when the response goes to the WS-Addressing ReplyTo"
+                            + " or FaultTo address of the request instead of the connection of the request.")
+    private WebServiceMessageSender messageSender;
 
     @UriParam(label = "common")
     private MessageIdStrategy messageIdStrategy;
@@ -67,13 +65,14 @@ public class SpringWebserviceConfiguration {
     /* Producer configuration */
     @UriParam(label = "producer")
     private WebServiceTemplate webServiceTemplate;
-    @UriParam(label = "producer",
-              description = "To use a custom org.springframework.ws.transport.WebServiceMessageSender, for example to perform"
-                            + " authentication or to use another transport. The producer sends its requests with it, in place"
-                            + " of the message senders of the WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS"
-                            + " sends the response of the consumer with it when the response goes to the WS-Addressing ReplyTo"
-                            + " or FaultTo address of the request instead of the connection of the request.")
-    private WebServiceMessageSender messageSender;
+    @UriParam(label = "producer,security",
+              description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that the"
+                            + " producer sends. Only applied to a message sender of the WebServiceTemplate whose class is"
+                            + " exactly HttpUrlConnectionMessageSender, which is the default message sender. For any other"
+                            + " message sender, the producer logs a warning and does not apply it. If not set, the component"
+                            + " sets it to the global SSL context parameters when it creates the endpoint and its own"
+                            + " useGlobalSslContextParameters option is true. The consumer does not use it.")
+    private SSLContextParameters sslContextParameters;
     @UriParam(label = "producer")
     private WebServiceMessageFactory messageFactory;
     @UriParam(label = "producer",
@@ -130,8 +129,9 @@ public class SpringWebserviceConfiguration {
                            + " of the request. xpathresult: the result of the XPath expression of the expression option for the"
                            + " request. action: the WS-Addressing Action header. to: the WS-Addressing To header. beanname: no"
                            + " part of the request, because lookupKey names a CamelEndpointDispatcher bean and an existing"
-                           + " Spring-WS endpoint mapping maps requests to that bean. The endpoint URI takes the type as"
-                           + " written here, without the underscore of the enum constant, and ignores its case.")
+                           + " Spring-WS endpoint mapping maps requests to that bean. The endpoint URI ignores the case of the"
+                           + " type.",
+             enums = "rootqname,action,to,soapaction,xpathresult,uri,uripath,beanname")
     private EndpointMappingType endpointMappingType;
     @UriPath(label = "consumer", name = "lookupKey",
              description = "The value that is compared with the part of the request that type names. With rootqname, a QName in"
