@@ -26,9 +26,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -48,6 +50,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     // It isolates the critical section making sure only one service creates the files.
     private static final ReentrantLock contextStartLock = new ReentrantLock();
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusterView.class);
+    // The lock files that a view of this JVM has locked or is trying to lock, with that view. The file locks are
+    // locks of the process (POSIX fcntl locks on Linux and macOS), and closing any channel of a file releases all the
+    // locks of the process on it (see FileLock), while the FileLock of the holder still says it is valid. So a view
+    // must not open (and then close) a channel on a lock file that another view of the JVM has locked: it does not try
+    // the lock while the path is registered here.
+    private static final Map<Path, FileLockClusterView> LOCK_PATHS = new ConcurrentHashMap<>();
 
     private final ClusterMember localMember;
     private final Path leaderLockPath;
@@ -58,6 +66,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private volatile RandomAccessFile leaderLockFile;
     private volatile RandomAccessFile leaderDataFile;
     private volatile FileLock lock;
+    // the key of the lock file in LOCK_PATHS while the view holds the lock (written with lock, under stateLock)
+    private volatile Path lockPathKey;
     private int heartbeatTimeoutMultiplier;
     private long acquireLockIntervalMilliseconds;
     private FileLockClusterTaskExecutor clusterTaskExecutor;
@@ -154,6 +164,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         final FileLock heldLock;
         final RandomAccessFile heldLockFile;
         final RandomAccessFile heldDataFile;
+        final Path heldLockPathKey;
         stateLock.lock();
         try {
             // A leadership check that is running now can no longer publish a lock it acquires: it re-checks the
@@ -165,9 +176,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             heldLock = lock;
             heldLockFile = leaderLockFile;
             heldDataFile = leaderDataFile;
+            heldLockPathKey = lockPathKey;
             lock = null;
             leaderLockFile = null;
             leaderDataFile = null;
+            lockPathKey = null;
         } finally {
             stateLock.unlock();
         }
@@ -201,6 +214,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             releaseFileLock(heldLock);
             closeFile(heldLockFile);
             closeFile(heldDataFile);
+            unregisterLockPath(heldLockPathKey);
             clusterLeaderInfoRef.set(null);
         }
     }
@@ -208,11 +222,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     /**
      * The lock, lock file and data file taken over from this view by {@link #takeOver(long)}.
      */
-    private record HeldLock(FileLock lock, RandomAccessFile lockFile, RandomAccessFile dataFile) {
-        void release() {
+    private record HeldLock(FileLock lock, RandomAccessFile lockFile, RandomAccessFile dataFile, Path lockPathKey) {
+        void release(FileLockClusterView view) {
             releaseFileLock(lock);
             closeFile(lockFile);
             closeFile(dataFile);
+            view.unregisterLockPath(lockPathKey);
         }
     }
 
@@ -227,10 +242,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             if (gen != generation) {
                 return null;
             }
-            HeldLock held = new HeldLock(lock, leaderLockFile, leaderDataFile);
+            HeldLock held = new HeldLock(lock, leaderLockFile, leaderDataFile, lockPathKey);
             lock = null;
             leaderLockFile = null;
             leaderDataFile = null;
+            lockPathKey = null;
             localMember.setStatus(ClusterMemberStatus.FOLLOWER);
             return held;
         } finally {
@@ -241,6 +257,44 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private void closeInternal() {
         releaseFileLock();
         closeLockFiles();
+        // Safe without stateLock: closeInternal() is only called from doStart() under contextStartLock,
+        // before the first scheduleTryLock(), so no concurrent acquireLock() writes lockPathKey here.
+        unregisterLockPath(lockPathKey);
+        lockPathKey = null;
+    }
+
+    /**
+     * The key of the lock file in the JVM-wide registry (see {@link #resolveLockPathKey()}). Resolving it reads the
+     * file system, so it runs through the cluster task executor with the cluster data task timeout and attempts, like
+     * the other file I/O of the leadership check: on a hung network mount the attempt fails instead of blocking the
+     * check (and the other checks of the service, which share its scheduler thread). Returns null if the check was
+     * interrupted.
+     */
+    private Path lockPathKey() throws ExecutionException, TimeoutException {
+        return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Path, Throwable>() {
+            @Override
+            public Path get() throws Throwable {
+                return resolveLockPathKey();
+            }
+        }));
+    }
+
+    /**
+     * The absolute path of the lock file, with the symbolic links of its directory resolved, so that two services
+     * configured with different paths to one directory share the key. If the directory cannot be resolved, the attempt
+     * fails rather than use a key that may differ from the key of another view (opening the lock file would fail
+     * without the directory anyway).
+     */
+    Path resolveLockPathKey() throws IOException {
+        Path path = leaderLockPath.toAbsolutePath().normalize();
+        Path parent = path.getParent();
+        return parent != null ? parent.toRealPath().resolve(path.getFileName()) : path;
+    }
+
+    private void unregisterLockPath(Path key) {
+        if (key != null) {
+            LOCK_PATHS.remove(key, this);
+        }
     }
 
     private void closeLockFiles() {
@@ -325,7 +379,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                                 localMember.getUuid());
                         fireLeadershipChangedEvent((CamelClusterMember) null);
                         clusterLeaderInfoRef.set(null);
-                        held.release();
+                        held.release(this);
                     }
                     return;
                 }
@@ -394,6 +448,20 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             // stopped while the cluster data was read: do not take the lock, even briefly
             return false;
         }
+        // resolved before the key is registered, so a timeout leaves nothing in LOCK_PATHS
+        Path key = lockPathKey();
+        if (key == null) {
+            // interrupted while resolving the key
+            return false;
+        }
+        FileLockClusterView holder = LOCK_PATHS.putIfAbsent(key, this);
+        if (holder != null) {
+            // another view of this JVM holds (or is trying) the lock: trying it here would fail anyway, and closing
+            // the channel afterwards would release the lock of that view at OS level (see LOCK_PATHS)
+            LOGGER.debug("Lock on file {} is held by another cluster view of this JVM (cluster-member-id={}), not trying it",
+                    leaderLockPath, holder.localMember.getUuid());
+            return false;
+        }
         RandomAccessFile newLockFile = null;
         RandomAccessFile newDataFile = null;
         FileLock newLock = null;
@@ -412,6 +480,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                         lock = newLock;
                         leaderLockFile = newLockFile;
                         leaderDataFile = newDataFile;
+                        lockPathKey = key;
                         localMember.setStatus(ClusterMemberStatus.LEADER);
                         clusterLeaderInfoRef.set(null);
                         published = true;
@@ -430,6 +499,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 releaseFileLock(newLock);
                 closeFile(newLockFile);
                 closeFile(newDataFile);
+                unregisterLockPath(key);
             }
         }
         return published;
