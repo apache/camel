@@ -54,6 +54,10 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerRoutePolicy.class);
 
+    // the route policy of camel-opentelemetry-metrics, which camel-micrometer does not depend on
+    private static final String OPENTELEMETRY_ROUTE_POLICY
+            = "org.apache.camel.opentelemetry.metrics.routepolicy.OpenTelemetryRoutePolicy";
+
     private final MicrometerRoutePolicyFactory factory;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
@@ -282,6 +286,14 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     @Override
     public void onInit(Route route) {
         super.onInit(route);
+
+        // both route policies measure the same route metrics, so a route can have only one of them
+        if (route.getRoutePolicyList().stream()
+                .anyMatch(policy -> OPENTELEMETRY_ROUTE_POLICY.equals(policy.getClass().getName()))) {
+            throw new IllegalStateException(
+                    "Route " + route.getRouteId() + " has both MicrometerRoutePolicy and OpenTelemetryRoutePolicy."
+                                            + " Use only one of camel-micrometer or camel-opentelemetry-metrics.");
+        }
 
         ManagementStrategy ms = route.getCamelContext().getManagementStrategy();
         if (ms != null && ms.getManagementAgent() != null) {

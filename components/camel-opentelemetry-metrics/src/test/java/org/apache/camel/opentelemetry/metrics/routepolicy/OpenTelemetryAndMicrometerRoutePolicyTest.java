@@ -16,77 +16,67 @@
  */
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.api.OpenTelemetry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Verifies that the OpenTelemetry and the Micrometer route policies both measure a route they share.
+ * Verifies that a route with both the Micrometer and the OpenTelemetry route policy fails to start, and that the policy
+ * that comes first on the route is the one that refuses it.
  */
-public class OpenTelemetryAndMicrometerRoutePolicyTest extends AbstractOpenTelemetryTestSupport {
+public class OpenTelemetryAndMicrometerRoutePolicyTest {
 
-    private final MeterRegistry meterRegistry = new SimpleMeterRegistry();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        MicrometerRoutePolicyFactory micrometerFactory = new MicrometerRoutePolicyFactory();
-        micrometerFactory.setMeterRegistry(meterRegistry);
-        context.addRoutePolicyFactory(micrometerFactory);
-        OpenTelemetryRoutePolicyFactory openTelemetryFactory = new OpenTelemetryRoutePolicyFactory();
-        openTelemetryFactory.setMeter(otelExtension.getOpenTelemetry().getMeter("meterTest"));
-        context.addRoutePolicyFactory(openTelemetryFactory);
-        return context;
+    @Test
+    public void testRouteFailsToStartWithMicrometerFirst() throws Exception {
+        String message = "Route foo has both MicrometerRoutePolicy and OpenTelemetryRoutePolicy."
+                         + " Use only one of camel-micrometer or camel-opentelemetry-metrics.";
+        assertRouteFailsToStart(micrometerFactory(), openTelemetryFactory(), message);
     }
 
     @Test
-    public void testBothRoutePoliciesMeasureTheRoute() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:foo", "Hello");
-        MockEndpoint.assertIsSatisfied(context);
-
-        // each policy measures the route, and the CamelContext, whose metrics have the route id ""
-        assertAll(
-                () -> assertEquals(1, micrometerTimer("foo").count(), "Micrometer route timer count"),
-                () -> assertEquals(1, micrometerTimer("").count(), "Micrometer context timer count"),
-                () -> assertEquals(1, openTelemetryHistogram("foo").getCount(), "OpenTelemetry route histogram count"),
-                () -> assertEquals(1, openTelemetryHistogram("").getCount(), "OpenTelemetry context histogram count"));
+    public void testRouteFailsToStartWithOpenTelemetryFirst() throws Exception {
+        String message = "Route foo has both OpenTelemetryRoutePolicy and MicrometerRoutePolicy."
+                         + " Use only one of camel-opentelemetry-metrics or camel-micrometer.";
+        assertRouteFailsToStart(openTelemetryFactory(), micrometerFactory(), message);
     }
 
-    private Timer micrometerTimer(String routeId) {
-        Timer timer = meterRegistry.find(MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)
-                .tag(MicrometerConstants.ROUTE_ID_TAG, routeId).timer();
-        assertNotNull(timer, "Micrometer timer for route id '" + routeId + "'");
-        return timer;
+    private static RoutePolicyFactory micrometerFactory() {
+        MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+        factory.setMeterRegistry(new SimpleMeterRegistry());
+        return factory;
     }
 
-    private HistogramPointData openTelemetryHistogram(String routeId) {
-        return assertInstanceOf(HistogramPointData.class,
-                getPointDataForRouteId(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, routeId));
+    private static RoutePolicyFactory openTelemetryFactory() {
+        OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
+        factory.setMeter(OpenTelemetry.noop().getMeter("test"));
+        return factory;
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:foo").routeId("foo").to("mock:result");
-            }
-        };
+    private static void assertRouteFailsToStart(RoutePolicyFactory first, RoutePolicyFactory second, String message)
+            throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutePolicyFactory(first);
+            context.addRoutePolicyFactory(second);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:foo").routeId("foo").to("mock:result");
+                }
+            });
+
+            FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, context::start);
+            IllegalStateException cause = assertInstanceOf(IllegalStateException.class, e.getCause());
+            assertEquals(message, cause.getMessage());
+        }
     }
 }
