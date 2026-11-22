@@ -556,6 +556,42 @@ class ProjectExporterTest {
 
     @ParameterizedTest
     @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void cxfWithAUsernameTokenHasWsSecurity(RuntimeType runtime) throws Exception {
+        // CAMEL-27395: camel run adds cxf-rt-ws-security of the CXF version for a cxf endpoint with a wsSecurity option
+        Path route = writeRoute("soap");
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    dependency=mvn:org.apache.cxf:cxf-rt-ws-security:4.2.4
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        if (runtime == RuntimeType.quarkus) {
+            // the CXF extension of Quarkus, whose version is in the Quarkus Platform BOM
+            assertThat(pom).contains("<groupId>io.quarkiverse.cxf</groupId>",
+                    "<artifactId>quarkus-cxf-rt-ws-security</artifactId>")
+                    .doesNotContain("<artifactId>cxf-rt-ws-security</artifactId>", "4.2.4");
+        } else {
+            assertThat(pom).contains("<groupId>org.apache.cxf</groupId>", "<artifactId>cxf-rt-ws-security</artifactId>",
+                    "<version>4.2.4</version>");
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
     void localJarsAreInTheLibDirectoryAsThePomRefersToThem(RuntimeType runtime) throws Exception {
         Path route = writeRoute("hello");
         // a JAR in a directory that is not built by Maven, and one built by Maven whose file name is not its artifact
