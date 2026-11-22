@@ -38,14 +38,18 @@ import tools.jackson.databind.JsonNode;
  */
 @DataTypeTransformer(name = "avro-x-java-object",
                      description = "Transforms from JSon to Java object using Jackson Avro (supports content schema)")
-@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+@BodyTypes(transformerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO,
+        Carrier.MAP, Carrier.LIST },
                                      description = "Json text or a JsonNode, or Avro binary with the Avro schema in the"
                                                    + " X-Content-Schema exchange property, read into the class of the"
                                                    + " X-Content-Class exchange property, which a body other than a POJO"
-                                                   + " needs: a POJO of that class, or any POJO without it, is kept, and a"
-                                                   + " Map or a null body fail"),
+                                                   + " needs: a POJO of that class, or any POJO without it, is kept, and"
+                                                   + " so is a Map or a List without it; a Map or a List with it, and a"
+                                                   + " null body, fail"),
            transformerOut = @BodyType(value = Carrier.UNKNOWN,
-                                      description = "An object of the class of the X-Content-Class exchange property"))
+                                      description = "An object of the class of the X-Content-Class exchange property, or"
+                                                    + " the POJO, Map or List as it was without it"))
 public class AvroPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
 
     @Override

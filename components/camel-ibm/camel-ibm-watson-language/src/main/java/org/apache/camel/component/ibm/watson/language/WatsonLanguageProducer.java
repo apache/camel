@@ -32,6 +32,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.24")
 public class WatsonLanguageProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonLanguageProducer.class);

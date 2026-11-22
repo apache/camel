@@ -17,8 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Rect;
@@ -280,17 +283,7 @@ class ClasspathTab extends AbstractTab {
                     return;
                 }
 
-                Object cp = response.get("classpath");
-                List<String> paths = new ArrayList<>();
-                if (cp instanceof JsonArray arr) {
-                    for (Object item : arr) {
-                        paths.add(String.valueOf(item));
-                    }
-                } else if (cp instanceof String[] arr) {
-                    for (String s : arr) {
-                        paths.add(s);
-                    }
-                }
+                List<String> paths = classpathOf(response);
 
                 if (paths.isEmpty()) {
                     applyResult(Collections.emptyList(), "No classpath information available");
@@ -352,6 +345,25 @@ class ClasspathTab extends AbstractTab {
             return String.format("  %-" + gavCol + "s  %s", TuiHelper.truncate(gav, gavCol), ver);
         }
         return "  " + TuiHelper.truncate(entry.display(), width - 2);
+    }
+
+    /**
+     * The JARs of the reply of the jvm action: the JVM classpath, and the application class loader that camel run adds
+     * the downloaded dependencies to (applicationClasspath, CAMEL-27340), without duplicates.
+     */
+    static List<String> classpathOf(JsonObject response) {
+        Set<String> paths = new LinkedHashSet<>();
+        for (String key : List.of("classpath", "applicationClasspath")) {
+            Object cp = response != null ? response.get(key) : null;
+            if (cp instanceof JsonArray arr) {
+                for (Object item : arr) {
+                    paths.add(String.valueOf(item));
+                }
+            } else if (cp instanceof String[] arr) {
+                paths.addAll(Arrays.asList(arr));
+            }
+        }
+        return new ArrayList<>(paths);
     }
 
     static JarEntry parseJarEntry(String path) {

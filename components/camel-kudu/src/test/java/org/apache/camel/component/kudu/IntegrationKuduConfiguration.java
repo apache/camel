@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
@@ -30,6 +31,7 @@ import com.github.dockerjava.api.model.Ports;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.kudu.client.KuduClient;
+import org.apache.kudu.client.KuduException;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -41,6 +43,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -138,6 +141,18 @@ public class IntegrationKuduConfiguration implements BeforeAllCallback, AfterAll
         LOG.info("Kudu tablet server RPC accessible at {}:{}", tabletContainer.getHost(), KUDU_TABLET_RPC_PORT);
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAuthority).build();
+        awaitClusterReady();
+    }
+
+    /**
+     * A listening RPC port does not mean the cluster is usable: the master must have elected itself leader and the
+     * tablet server must have registered, otherwise operations such as create table keep retrying until they time out.
+     */
+    private void awaitClusterReady() {
+        await().atMost(60, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .ignoreExceptionsInstanceOf(KuduException.class)
+                .until(() -> kuduClient.listTabletServers().getTabletServersCount() >= 1);
     }
 
     @Override

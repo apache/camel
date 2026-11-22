@@ -34,6 +34,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.spi.BodyType;
@@ -177,7 +178,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             // Generate KEM encapsulation and the fresh shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
             SecretKeyWithEncapsulation secretKey;
-            synchronized (kg) {
+            synchronized (PQCKemLocks.lockFor(kg, kp.getPublic())) {
                 kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength),
                         SecureRandomHelper.getSecureRandom());
                 secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
@@ -239,7 +240,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             // Extract the shared secret from the encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
             SecretKeyWithEncapsulation secretKey;
-            synchronized (kg) {
+            synchronized (PQCKemLocks.lockFor(kg, kp.getPrivate())) {
                 kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
                         SecureRandomHelper.getSecureRandom());
                 secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
@@ -267,6 +268,11 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         // overrides via the CamelPQCSymmetricAlgorithm header are validated at marshal/unmarshal time.
         if (symmetricKeyAlgorithm != null) {
             checkAeadSupported(PQCSymmetricAlgorithms.toJceName(symmetricKeyAlgorithm));
+        }
+
+        if ("CMCE".equals(keyEncapsulationAlgorithm)) {
+            LOG.warn("The CMCE (Classic McEliece) key encapsulation algorithm is deprecated: it is believed to be unsafe"
+                     + " to use and will be removed in a future release. Use MLKEM instead.");
         }
 
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {

@@ -24,6 +24,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
@@ -62,6 +63,10 @@ class HealthTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiAboutChecksNotUp();
+            return true;
+        }
         if (ke.isCharIgnoreCase('t')) {
             table = !table;
             return true;
@@ -165,6 +170,49 @@ class HealthTab extends AbstractTableTab {
         if (table) {
             hint(spans, "d", showOnlyDown ? "show all" : "only DOWN");
         }
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (ctx.askAiCallback != null && info != null && !checksToAskAbout(info).isEmpty()) {
+            hint(spans, "Shift+F8", "fix with AI");
+        }
+    }
+
+    /**
+     * Fix with AI (Shift+F8, CAMEL-25362): the selected check in the table, or every check that is not UP on the page.
+     */
+    private void askAiAboutChecksNotUp() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || ctx.askAiCallback == null) {
+            return;
+        }
+        List<HealthCheckInfo> checks = checksToAskAbout(info);
+        if (checks.isEmpty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(table
+                        ? "The selected check is UP: select one that is DOWN, or ask the AI with F8"
+                        : "All checks are UP: ask the AI with F8", false);
+            }
+            return;
+        }
+        ctx.askAiCallback.ask(HealthAiPrompt.of(info, checks, System.currentTimeMillis()));
+    }
+
+    /** The checks Shift+F8 asks about: the selected one in the table when it is not UP, else all that are not UP. */
+    List<HealthCheckInfo> checksToAskAbout(IntegrationInfo info) {
+        if (table) {
+            List<HealthCheckInfo> checks = new ArrayList<>(getFilteredHealthChecks(info));
+            checks.sort(this::sortHealth);
+            Integer sel = tableState.selected();
+            if (sel == null || sel < 0 || sel >= checks.size() || "UP".equals(checks.get(sel).state)) {
+                return List.of();
+            }
+            return List.of(checks.get(sel));
+        }
+        return info.healthChecks.stream().filter(hc -> !"UP".equals(hc.state)).toList();
     }
 
     boolean isTable() {

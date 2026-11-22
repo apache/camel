@@ -63,3 +63,13 @@ for each data message:
               - log:
                   message: "Temperature: ${header[CamelTahuMetric.temperature].value}"
 ----
+
+=== One Host Application consumer per JVM
+
+Define only one `tahu-host` route in a JVM, also across CamelContexts, and including routes that are not started
+(`autoStartup=false`): their consumer is created when the route is set up. Eclipse Tahu hands the Sparkplug messages of
+every Host Application in the JVM to one shared `SequenceReorderManager`, which gives them to the Host Application
+created last. With two consumers, all the Sparkplug messages the two receive go to the consumer created last, and the
+other one gets none of them.
+
+A route that is restarted, reloaded, or removed and added again is fine: its new consumer is the one created last.

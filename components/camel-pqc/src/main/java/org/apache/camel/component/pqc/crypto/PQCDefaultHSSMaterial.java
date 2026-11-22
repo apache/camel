@@ -20,12 +20,12 @@ import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.crypto.params.LMOtsParameters;
+import org.bouncycastle.crypto.params.LMSigParameters;
+import org.bouncycastle.jcajce.spec.LMSHSSKeyGenParameterSpec;
+import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
 
 public class PQCDefaultHSSMaterial {
     public static final KeyPair keyPair;

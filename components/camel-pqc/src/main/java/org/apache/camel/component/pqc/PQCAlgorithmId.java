@@ -72,6 +72,10 @@ public enum PQCAlgorithmId {
     ML_KEM(0x0401, "ML-KEM"),
     BIKE(0x0402, "BIKE"),
     HQC(0x0403, "HQC"),
+    /**
+     * @deprecated Classic McEliece is believed to be unsafe to use, see {@link PQCKeyEncapsulationAlgorithms#CMCE}.
+     */
+    @Deprecated(since = "4.24")
     CMCE(0x0404, "CMCE"),
     SABER(0x0405, "SABER"),
     FRODO(0x0406, "FRODO"),

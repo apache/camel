@@ -92,26 +92,15 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
             }
         }
 
-        if (answer == null && !DataType.isAnyType(key.getFrom())) {
-            alias = new TransformerKey(key.getFrom());
-            answer = get(alias);
-
-            if (answer == null) {
-                alias = new TransformerKey(key.getFrom().getScheme());
-                answer = get(alias);
-            }
-        }
-
         if (answer != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found transformer {} for key {} using alias {}", ObjectHelper.name(answer.getClass()), key, alias);
-            }
-
-            aliasMap.put(key, alias);
-            return answer;
+            return addAlias(key, alias, answer);
         }
 
-        if (!DataType.isJavaType(key.getTo())) {
+        // lazy load the transformer of the to data type before falling back to a transformer of the from data type:
+        // only a few transformers are loaded up front, so a loaded transformer of the from data type (such as the one
+        // of the data type of the previous step) would otherwise be taken, and kept, for a to data type that is not
+        // loaded yet
+        if (!DataType.isAnyType(key.getTo()) && !DataType.isJavaType(key.getTo())) {
             answer = lazyLoadTransformer(new TransformerKey(key.getTo()));
 
             if (answer != null) {
@@ -124,9 +113,34 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found transformer {} for key {}", ObjectHelper.name(answer.getClass()), key);
                 }
+                return answer;
             }
         }
 
+        // a transformer of the from data type, such as the transformer of a data format scheme that unmarshals into a
+        // Java type
+        if (!DataType.isAnyType(key.getFrom())) {
+            alias = new TransformerKey(key.getFrom());
+            answer = get(alias);
+
+            if (answer == null) {
+                alias = new TransformerKey(key.getFrom().getScheme());
+                answer = get(alias);
+            }
+        }
+
+        if (answer != null) {
+            return addAlias(key, alias, answer);
+        }
+
+        return null;
+    }
+
+    private Transformer addAlias(TransformerKey key, TransformerKey alias, Transformer answer) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found transformer {} for key {} using alias {}", ObjectHelper.name(answer.getClass()), key, alias);
+        }
+        aliasMap.put(key, alias);
         return answer;
     }
 

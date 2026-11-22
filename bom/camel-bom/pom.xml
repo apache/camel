@@ -538,6 +538,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-cve</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-maven</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -2060,6 +2065,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-protobuf-schema</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

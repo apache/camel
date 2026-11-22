@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,15 +24,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -46,7 +40,6 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -54,25 +47,42 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import org.apache.camel.dsl.jbang.run.common.XmlHelper;
+import org.apache.camel.catalog.cve.CveArtifact;
+import org.apache.camel.catalog.cve.CveAudit;
+import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
+import org.apache.camel.catalog.cve.CvssScore;
+import org.apache.camel.catalog.cve.Dependency;
+import org.apache.camel.catalog.cve.OsvClient;
+import org.apache.camel.catalog.cve.OsvDatabase;
+import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
+/**
+ * The CVE Audit tab: the JARs on the classpath of the integration checked against OSV.dev and the Apache Camel security
+ * advisories of the catalog. One row per CVE, or with {@code g} one row per JAR (what to upgrade), each with the
+ * version that fixes it, the dependency chain that brings it in and whether the routes use it (CAMEL-27328).
+ */
 class CveAuditTab extends AbstractTableTab {
 
-    private static final List<String> SEVERITY_ORDER = List.of("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN");
-
-    private final OsvClient osvClient = new OsvClient();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private final FilterField filter = new FilterField(this::filterChanged);
 
     private int detailScroll;
+    private boolean byArtifact;
 
-    private List<DependencyLoader.DepEntry> depEntries = Collections.emptyList();
-    private volatile List<VulnGroup> allGroups = Collections.emptyList();
+    private List<Dependency> depEntries = Collections.emptyList();
+    private volatile List<CveFinding> allGroups = Collections.emptyList();
+    private volatile List<CveArtifact> allRows = Collections.emptyList();
     private String lastPid;
     private volatile String errorMessage;
+    // the JARs were not checked against OSV.dev (it could not be reached): only the Camel advisories were
+    private volatile String osvError;
+    // which offline OSV database the last scan used, such as "offline OSV database, updated 2026-11-20"; null for the API
+    private volatile String sourceNote;
     private volatile boolean dataLoaded;
     private int scannedCount;
 
@@ -82,7 +92,7 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     protected int getRowCount() {
-        return allGroups.size();
+        return byArtifact ? visibleRows().size() : visibleGroups().size();
     }
 
     @Override
@@ -91,6 +101,7 @@ class CveAuditTab extends AbstractTableTab {
         if (pid != null && !pid.equals(lastPid)) {
             lastPid = pid;
             allGroups = Collections.emptyList();
+            allRows = Collections.emptyList();
             dataLoaded = false;
         }
         if (!dataLoaded) {
@@ -112,25 +123,42 @@ class CveAuditTab extends AbstractTableTab {
         if (errorMessage != null) {
             return errorMessage;
         }
-        return allGroups.isEmpty() ? "No known vulnerabilities found for the selected integration" : null;
+        if (allGroups.isEmpty()) {
+            return osvError != null
+                    ? osvError + " (only the Apache Camel advisories were checked)"
+                    : "No known vulnerabilities found for the selected integration";
+        }
+        return null;
     }
 
     @Override
     public void onIntegrationChanged() {
         allGroups = Collections.emptyList();
+        allRows = Collections.emptyList();
         depEntries = Collections.emptyList();
         lastPid = null;
         errorMessage = null;
+        osvError = null;
         dataLoaded = false;
         detailScroll = 0;
+        filter.reset();
         loading.set(false);
         // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (filter.handleKey(ke)) {
+            return true;
+        }
         if (ke.isChar('r')) {
             rescan();
+            return true;
+        }
+        if (ke.isChar('g')) {
+            byArtifact = !byArtifact;
+            tableState.select(0);
+            detailScroll = 0;
             return true;
         }
         return super.handleKeyEvent(ke);
@@ -138,6 +166,11 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // explain with AI (CAMEL-25362): whether the selection affects the integration, and the change that fixes it
+            askAi();
+            return true;
+        }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             detailScroll = Math.max(0, detailScroll - 10);
             return true;
@@ -149,18 +182,57 @@ class CveAuditTab extends AbstractTableTab {
         return false;
     }
 
-    @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        boolean handled = super.handleMouseEvent(me, area);
-        if (handled) {
-            detailScroll = 0;
+    private void askAi() {
+        if (ctx.askAiCallback == null) {
+            return;
         }
-        return handled;
+        if (byArtifact) {
+            CveArtifact row = selectedRow();
+            if (row != null) {
+                ctx.askAiCallback.ask(CveAiPrompt.ofArtifact(ctx.findSelectedIntegration(), row));
+            }
+        } else {
+            CveFinding group = selectedGroup();
+            if (group != null) {
+                ctx.askAiCallback.ask(CveAiPrompt.of(ctx.findSelectedIntegration(), group));
+            }
+        }
+    }
+
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
+    }
+
+    @Override
+    public boolean setFilter(String term) {
+        filter.setTerm(term);
+        return true;
+    }
+
+    private void filterChanged() {
+        tableState.select(0);
+        detailScroll = 0;
+    }
+
+    @Override
+    protected void rowClicked() {
+        detailScroll = 0;
+    }
+
+    @Override
+    protected void scrollDetail(int lines) {
+        detailScroll = Math.max(0, detailScroll + lines);
     }
 
     @Override
     public boolean handleEscape() {
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
@@ -171,105 +243,106 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     public void navigateDown() {
-        tableState.selectNext(allGroups.size());
+        tableState.selectNext(getRowCount());
         detailScroll = 0;
+    }
+
+    @Override
+    protected boolean selectsFirstRow() {
+        return true;
     }
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
         if (loading.get() && allGroups.isEmpty()) {
-            String msg = "  Scanning dependencies...";
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(msg, Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" CVE Audit ").build())
-                            .build(),
-                    area);
+            renderMessage(frame, area, Text.from(Line.from(Span.styled("  Scanning dependencies...", Style.EMPTY.dim()))));
             return;
         }
-
         if (errorMessage != null && allGroups.isEmpty()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled("  " + errorMessage, Theme.error()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" CVE Audit ").build())
-                            .build(),
-                    area);
+            renderMessage(frame, area, Text.from(Line.from(Span.styled("  " + errorMessage, Theme.error()))));
             return;
         }
-
         if (dataLoaded && allGroups.isEmpty()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(
-                                    Line.from(Span.raw("")),
-                                    Line.from(Span.styled("  No vulnerabilities found",
-                                            Theme.success())),
-                                    Line.from(Span.raw("")),
-                                    Line.from(Span.styled(
-                                            String.format("  Scanned %d dependencies", scannedCount),
-                                            Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" CVE Audit ").build())
-                            .build(),
-                    area);
+            Line result = osvError != null
+                    ? Line.from(Span.styled("  " + osvError, Theme.error()))
+                    : Line.from(Span.styled("  No vulnerabilities found", Theme.success()));
+            String scanned = osvError != null
+                    ? String.format("  Only the Apache Camel advisories were checked, for %d dependencies (r to retry)",
+                            scannedCount)
+                    : String.format("  Scanned %d dependencies", scannedCount);
+            renderMessage(frame, area, Text.from(Line.from(Span.raw("")), result, Line.from(Span.raw("")),
+                    Line.from(Span.styled(scanned, Style.EMPTY.dim()))));
             return;
         }
 
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.percentage(60))
                 .split(area);
-        renderTable(frame, chunks.get(0));
+        if (byArtifact) {
+            renderArtifactTable(frame, chunks.get(0));
+        } else {
+            renderCveTable(frame, chunks.get(0));
+        }
         renderDetail(frame, chunks.get(1));
     }
 
-    private void renderTable(Frame frame, Rect area) {
-        List<VulnGroup> visible = sortedGroups();
+    private static void renderMessage(Frame frame, Rect area, Text text) {
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(text)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(" CVE Audit ").build())
+                        .build(),
+                area);
+    }
+
+    private void renderCveTable(Frame frame, Rect area) {
+        List<CveFinding> visible = visibleGroups();
         List<Row> rows = new ArrayList<>();
-        for (VulnGroup group : visible) {
-            String firstArtifact = group.affectedGavs.isEmpty() ? "" : group.affectedGavs.get(0);
-            String firstParent = group.affectedGavs.isEmpty() ? null : group.gavParents.get(firstArtifact);
-            int artCount = group.affectedGavs.size();
-            String artDisplay = firstArtifact;
-            if (artCount > 1) {
-                artDisplay += " (+" + (artCount - 1) + ")";
+        for (CveFinding group : visible) {
+            String firstArtifact = group.firstGav();
+            String artDisplay = firstArtifact != null ? firstArtifact : "";
+            if (group.affectedGavs().size() > 1) {
+                artDisplay += " (+" + (group.affectedGavs().size() - 1) + ")";
             }
-            String viaDisplay = firstParent != null ? firstParent : "";
-
+            String fix = firstArtifact != null ? group.fixFor().get(firstArtifact) : null;
             rows.add(Row.from(
-                    Cell.from(Span.styled(group.severity != null ? group.severity : "", severityStyle(group.severity))),
-                    Cell.from(Span.styled(group.canonicalId != null ? group.canonicalId : "", Style.EMPTY.bold())),
+                    Cell.from(Span.styled(group.severity() != null ? group.severity() : "", severityStyle(group.severity()))),
+                    Cell.from(Span.styled(CvssScore.format(group.score()), severityStyle(group.severity()))),
+                    Cell.from(Span.styled(group.canonicalId() != null ? group.canonicalId() : "", Style.EMPTY.bold())),
                     Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Theme.accent()))),
-                    Cell.from(Span.styled(viaDisplay, Style.EMPTY.dim())),
-                    Cell.from(Span.styled(group.summary != null ? group.summary : "", Style.EMPTY.dim()))));
+                    fixCell(fix),
+                    Cell.from(Span.styled(group.firstVia(), Style.EMPTY.dim())),
+                    routesCell(group.usedByRoutes()),
+                    Cell.from(Span.styled(group.summary() != null ? group.summary() : "", Style.EMPTY.dim()))));
         }
-
         if (rows.isEmpty() && dataLoaded) {
-            rows.add(emptyRow("No matching vulnerabilities", 5, 4));
+            rows.add(emptyRow("No matching vulnerabilities", 8, 7));
         }
-
-        String title = buildTitle();
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(sortLabel("SEVERITY", "severity"), sortStyle("severity"))),
+                        Cell.from(Span.styled("SCORE", Style.EMPTY.dim())),
                         Cell.from(Span.styled(sortLabel("CVE ID", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("ARTIFACT", "artifact"), sortStyle("artifact"))),
+                        Cell.from(Span.styled("FIX", Style.EMPTY.dim())),
                         Cell.from(Span.styled(sortLabel("VIA", "via"), sortStyle("via"))),
+                        Cell.from(Span.styled("USED", Style.EMPTY.dim())),
                         Cell.from(Span.styled("SUMMARY", Style.EMPTY.dim()))))
                 .widths(
-                        Constraint.length(10),
+                        Constraint.length(9),
+                        Constraint.length(5),
                         Constraint.length(16),
-                        Constraint.percentage(25),
-                        Constraint.percentage(15),
+                        Constraint.percentage(24),
+                        Constraint.length(12),
+                        Constraint.percentage(16),
+                        Constraint.length(6),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(buildTitle()).build())
                 .build();
 
         lastTableArea = area;
@@ -277,60 +350,96 @@ class CveAuditTab extends AbstractTableTab {
         renderScrollbar(frame, table, visible.size());
     }
 
+    private void renderArtifactTable(Frame frame, Rect area) {
+        List<CveArtifact> visible = visibleRows();
+        List<Row> rows = new ArrayList<>();
+        for (CveArtifact row : visible) {
+            rows.add(Row.from(
+                    Cell.from(Span.styled(row.severity(), severityStyle(row.severity()))),
+                    Cell.from(Span.styled(CvssScore.format(row.score()), severityStyle(row.severity()))),
+                    Cell.from(Span.styled(row.gav(), Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(Span.styled(String.valueOf(row.cves().size()), Style.EMPTY.bold())),
+                    fixCell(row.camelRelease() && row.fix() != null ? "Camel " + row.fix() : row.fix()),
+                    Cell.from(Span.styled(row.via() != null ? row.via() : "", Style.EMPTY.dim())),
+                    routesCell(row.usage() != null ? row.usage().used() : null)));
+        }
+        if (rows.isEmpty() && dataLoaded) {
+            rows.add(emptyRow("No matching artifacts", 7, 2));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(sortLabel("SEVERITY", "severity"), sortStyle("severity"))),
+                        Cell.from(Span.styled("SCORE", Style.EMPTY.dim())),
+                        Cell.from(Span.styled(sortLabel("ARTIFACT", "artifact"), sortStyle("artifact"))),
+                        Cell.from(Span.styled(sortLabel("CVES", "id"), sortStyle("id"))),
+                        Cell.from(Span.styled("FIXES ALL", Style.EMPTY.dim())),
+                        Cell.from(Span.styled(sortLabel("VIA", "via"), sortStyle("via"))),
+                        Cell.from(Span.styled("USED", Style.EMPTY.dim()))))
+                .widths(
+                        Constraint.length(9),
+                        Constraint.length(5),
+                        Constraint.percentage(35),
+                        Constraint.length(6),
+                        Constraint.length(16),
+                        Constraint.fill(),
+                        Constraint.length(6))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(buildTitle()).build())
+                .build();
+
+        lastTableArea = area;
+        frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, table, visible.size());
+    }
+
+    private static Cell fixCell(String fix) {
+        return fix != null
+                ? Cell.from(Span.styled(fix, Theme.success()))
+                : Cell.from(Span.styled("none", Style.EMPTY.dim()));
+    }
+
+    private static Cell routesCell(Boolean used) {
+        if (used == null) {
+            return Cell.from(Span.raw(""));
+        }
+        return used
+                ? Cell.from(Span.styled("yes", Theme.warning().bold()))
+                : Cell.from(Span.styled("no", Style.EMPTY.dim()));
+    }
+
     private void renderDetail(Frame frame, Rect area) {
-        Integer sel = tableState.selected();
-        List<VulnGroup> visible = sortedGroups();
-        if (sel == null || sel < 0 || sel >= visible.size()) {
+        lastDetailArea = area;
+        String title = null;
+        String md = null;
+        if (byArtifact) {
+            CveArtifact row = selectedRow();
+            if (row != null) {
+                title = " " + row.gav() + " ";
+                md = CveDetail.artifact(row);
+            }
+        } else {
+            CveFinding group = selectedGroup();
+            if (group != null) {
+                title = " " + group.canonicalId() + " ";
+                md = CveDetail.cve(group);
+            }
+        }
+        if (md == null) {
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(" Select a vulnerability", Style.EMPTY.dim()))))
+                            .text(Text.from(Line.from(Span.styled(" Select a row", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" Details ").build())
                             .build(),
                     area);
             return;
         }
-
-        VulnGroup group = visible.get(sel);
-        String title = " " + group.canonicalId + " ";
-
-        StringBuilder md = new StringBuilder();
-        md.append("**Severity:** ").append(group.severity != null ? group.severity : "UNKNOWN");
-        if (group.cvssVector != null) {
-            md.append(" (`").append(group.cvssVector).append("`)");
-        }
-        md.append("  \n");
-        if (group.published != null) {
-            String date = group.published.length() > 10 ? group.published.substring(0, 10) : group.published;
-            md.append("**Published:** ").append(date).append("  \n");
-        }
-        md.append("\n");
-        if (group.summary != null) {
-            md.append(group.summary).append("\n\n");
-        }
-        md.append("**Affected artifacts:**\n");
-        for (String gav : group.affectedGavs) {
-            String parent = group.gavParents.get(gav);
-            md.append("- `").append(gav).append("`");
-            if (parent != null) {
-                md.append(" *(via ").append(parent).append(")*");
-            }
-            md.append("\n");
-        }
-        if (!group.fixedVersions.isEmpty()) {
-            md.append("\n**Fixed in:** ").append(String.join(", ", group.fixedVersions)).append("\n");
-        }
-        if (!group.aliases.isEmpty()) {
-            md.append("\n**Aliases:** ").append(String.join(", ", group.aliases)).append("\n");
-        }
-        md.append("\nhttps://osv.dev/vulnerability/").append(group.canonicalId).append("\n");
-        if (group.details != null && !group.details.isEmpty()) {
-            md.append("\n---\n\n").append(group.details).append("\n");
-        }
-
         frame.renderWidget(
                 MarkdownView.builder()
-                        .source(md.toString())
+                        .source(md)
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .styles(Theme.markdownStyles())
@@ -341,12 +450,16 @@ class CveAuditTab extends AbstractTableTab {
 
     private String buildTitle() {
         StringBuilder sb = new StringBuilder(" CVE Audit (scanned: ");
-        sb.append(scannedCount).append(", vulnerable: ").append(allGroups.size()).append(")");
+        sb.append(scannedCount).append(", vulnerable: ").append(allGroups.size());
+        if (byArtifact) {
+            sb.append(", artifacts: ").append(allRows.size());
+        }
+        sb.append(")");
         Map<String, Integer> counts = new LinkedHashMap<>();
-        for (String sev : SEVERITY_ORDER) {
+        for (String sev : CveScan.SEVERITY_ORDER) {
             int count = 0;
-            for (VulnGroup g : allGroups) {
-                if (sev.equals(g.severity)) {
+            for (CveFinding g : allGroups) {
+                if (sev.equals(g.severity())) {
                     count++;
                 }
             }
@@ -366,6 +479,14 @@ class CveAuditTab extends AbstractTableTab {
             }
             sb.append("]");
         }
+        if (filter.term() != null) {
+            sb.append(" filter: ").append(filter.term());
+        }
+        if (osvError != null) {
+            sb.append(" - OSV.dev not checked");
+        } else if (sourceNote != null) {
+            sb.append(" - ").append(sourceNote);
+        }
         sb.append(" ");
         return sb.toString();
     }
@@ -378,26 +499,60 @@ class CveAuditTab extends AbstractTableTab {
             case "CRITICAL" -> Theme.error().bold();
             case "HIGH" -> Theme.error();
             case "MEDIUM" -> Theme.warning();
-            case "LOW" -> Style.EMPTY.dim();
             default -> Style.EMPTY.dim();
         };
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
+        if (filter.renderEditingFooter(spans)) {
+            return;
+        }
+        hint(spans, "Esc", filter.escapeLabel());
+        hint(spans, "g", byArtifact ? "by CVE" : "by artifact");
+        filter.renderHint(spans);
         hint(spans, "r", "rescan");
-        super.renderFooter(spans);
+        hintLast(spans, "s", "sort");
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        if (ctx.askAiCallback != null && (byArtifact ? selectedRow() != null : selectedGroup() != null)) {
+            hint(spans, "Shift+F8", "explain with AI");
+        }
+    }
+
+    /** The vulnerability selected in the table, in the order it is shown; null when none is, or it is by artifact. */
+    CveFinding selectedGroup() {
+        if (byArtifact) {
+            return null;
+        }
+        List<CveFinding> visible = visibleGroups();
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < visible.size() ? visible.get(sel) : null;
+    }
+
+    /** The artifact selected in the table grouped by artifact; null when none is, or it is by CVE. */
+    CveArtifact selectedRow() {
+        if (!byArtifact) {
+            return null;
+        }
+        List<CveArtifact> visible = visibleRows();
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < visible.size() ? visible.get(sel) : null;
     }
 
     private void rescan() {
         if (loading.get()) {
             return;
         }
-        osvClient.clearCache(depEntries);
+        OsvClient.clearCache(depEntries);
         allGroups = Collections.emptyList();
+        allRows = Collections.emptyList();
         dataLoaded = false;
         errorMessage = null;
+        osvError = null;
         loadAndScan();
     }
 
@@ -412,142 +567,85 @@ class CveAuditTab extends AbstractTableTab {
 
         ctx.backgroundExecutor.execute(() -> {
             try {
-                // use actual JVM classpath as primary source (correct versions)
-                List<DependencyLoader.DepEntry> allDeps = fetchClasspathDeps();
-                if (allDeps.isEmpty()) {
-                    // fallback to pom.xml/run.properties + Maven transitive resolution
-                    DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
-                    if (loadResult.error() != null && loadResult.entries().isEmpty()) {
-                        applyResult(Collections.emptyList(), Collections.emptyList(), loadResult.error());
-                        return;
-                    }
-                    List<DependencyLoader.DepEntry> directDeps = loadResult.entries();
-                    List<DependencyLoader.DepEntry> transitiveDeps = DependencyLoader.resolveTransitives(directDeps);
-                    allDeps = new ArrayList<>(directDeps);
-                    for (DependencyLoader.DepEntry t : transitiveDeps) {
-                        allDeps.add(t);
-                    }
-                }
-
-                Map<String, List<OsvClient.Vulnerability>> vulnMap = osvClient.queryBatch(allDeps);
-
-                // only resolve "via" parent mapping if vulnerabilities were found
-                Map<String, String> gavToParent = new HashMap<>();
-                if (!vulnMap.isEmpty()) {
-                    gavToParent = resolveViaParents(info, vulnMap);
-                }
-
-                List<VulnGroup> groups = buildVulnGroups(vulnMap, gavToParent);
-                groups.sort(Comparator
-                        .comparingInt((VulnGroup g) -> severityIndex(g.severity))
-                        .thenComparing(g -> g.canonicalId));
-
-                applyResult(allDeps, groups, null);
+                scan(info);
             } catch (Exception e) {
-                applyResult(Collections.emptyList(), Collections.emptyList(), "Error: " + e.getMessage());
+                applyResult(Collections.emptyList(), Collections.emptyList(), "Error: " + e.getMessage(), null);
             } finally {
                 loading.set(false);
             }
         });
     }
 
-    private Map<String, String> resolveViaParents(
-            IntegrationInfo info, Map<String, List<OsvClient.Vulnerability>> vulnMap) {
-        Map<String, String> result = new HashMap<>();
-        try {
-            // collect vulnerable groupId:artifactId keys
-            Set<String> vulnKeys = new HashSet<>();
-            for (String gav : vulnMap.keySet()) {
-                int last = gav.lastIndexOf(':');
-                if (last > 0) {
-                    vulnKeys.add(gav.substring(0, last));
-                }
-            }
-            if (vulnKeys.isEmpty()) {
-                return result;
-            }
-
-            // get direct deps and build classpath JAR path map
+    /** The scan, on the background thread: the classpath, OSV.dev, the Camel advisories, the chains, the routes. */
+    private void scan(IntegrationInfo info) {
+        // use actual JVM classpath as primary source (correct versions)
+        Map<String, Path> jars = new HashMap<>();
+        List<DependencyLoader.DepEntry> allDeps = fetchClasspathDeps(jars);
+        Map<String, String> fallbackVia = new HashMap<>();
+        if (allDeps.isEmpty()) {
+            // fallback to pom.xml/run.properties + Maven transitive resolution
             DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
-            if (loadResult.entries().isEmpty()) {
-                return result;
+            if (loadResult.error() != null && loadResult.entries().isEmpty()) {
+                applyResult(Collections.emptyList(), Collections.emptyList(), loadResult.error(), null);
+                return;
             }
-            Set<String> directKeys = new HashSet<>();
-            for (DependencyLoader.DepEntry d : loadResult.entries()) {
-                directKeys.add(d.groupId() + ":" + d.artifactId());
-            }
-            vulnKeys.removeAll(directKeys);
-            if (vulnKeys.isEmpty()) {
-                return result;
-            }
-
-            // build map of groupId:artifactId -> JAR path from classpath
-            Map<String, Path> classpathJars = new HashMap<>();
-            String pid = ctx.selectedPid;
-            if (pid != null) {
-                JsonObject response = ctx.jvmInfo(pid, 5000);
-                if (response != null) {
-                    Object cp = response.get("classpath");
-                    if (cp instanceof JsonArray arr) {
-                        for (Object item : arr) {
-                            ClasspathTab.JarEntry entry = ClasspathTab.parseJarEntry(String.valueOf(item));
-                            if (entry.groupId() != null) {
-                                String key = entry.groupId() + ":" + entry.artifactId();
-                                if (directKeys.contains(key)) {
-                                    classpathJars.put(key, Path.of(entry.fullPath()));
-                                }
-                            }
-                        }
-                    }
+            allDeps = new ArrayList<>(loadResult.entries());
+            for (DependencyLoader.DepEntry t : DependencyLoader.resolveTransitives(loadResult.entries())) {
+                allDeps.add(t);
+                if (t.parent() != null) {
+                    fallbackVia.put(t.groupId() + ":" + t.artifactId(), DependencyLoader.shortArtifact(t.parent()));
                 }
             }
+        }
 
-            // read each direct dep's JAR embedded POM to find which pulls in the vulnerable dep
-            for (Map.Entry<String, Path> e : classpathJars.entrySet()) {
-                Set<String> declaredDeps = readDeclaredDepsFromJar(e.getValue());
-                for (String vulnKey : vulnKeys) {
-                    if (declaredDeps.contains(vulnKey) && !result.containsKey(vulnKey)) {
-                        result.put(vulnKey, DependencyLoader.shortArtifact(e.getKey()));
-                    }
+        IntegrationInfo current = ctx.findSelectedIntegration();
+        List<Dependency> deps = allDeps.stream()
+                .map(d -> new Dependency(d.groupId(), d.artifactId(), d.version())).toList();
+        // the source and the proxy are looked up for each scan, so a change in the settings applies without a restart
+        VulnerabilitySource source = TuiSettings.vulnerabilitySource();
+        sourceNote = source instanceof OsvDatabase db ? databaseNote(db) : null;
+        CveAudit.Result result = CveAudit.audit(deps, jars, declaredDependencies(info), fallbackVia,
+                endpointComponents(current != null ? current : info), ProjectOverviewAssist.catalog(),
+                source);
+        applyResult(deps, result.findings(), null, result.osvError());
+    }
+
+    static String databaseNote(OsvDatabase db) {
+        if (db.updated() == null) {
+            return null;
+        }
+        return "offline OSV database, updated " + db.updated().toString().substring(0, 10)
+               + (db.warning() != null ? " (the download failed)" : "");
+    }
+
+    /** The {@code groupId:artifactId} of the dependencies the project declares. */
+    private static Set<String> declaredDependencies(IntegrationInfo info) {
+        Set<String> declared = new HashSet<>();
+        try {
+            for (DependencyLoader.DepEntry d : DependencyLoader.loadDependencies(info).entries()) {
+                declared.add(d.groupId() + ":" + d.artifactId());
+            }
+        } catch (Exception e) {
+            // best effort: the chains then start at the JARs no other declares
+        }
+        return declared;
+    }
+
+    private static Set<String> endpointComponents(IntegrationInfo info) {
+        Set<String> result = new HashSet<>();
+        try {
+            for (EndpointInfo ep : new ArrayList<>(info.endpoints)) {
+                if (ep.component != null) {
+                    result.add(ep.component.toLowerCase(Locale.ROOT));
                 }
             }
         } catch (Exception e) {
-            // best effort
+            // the endpoints changed meanwhile: best effort
         }
         return result;
     }
 
-    private static Set<String> readDeclaredDepsFromJar(Path jarPath) {
-        Set<String> deps = new HashSet<>();
-        try (java.util.jar.JarFile jar = new java.util.jar.JarFile(jarPath.toFile())) {
-            jar.stream()
-                    .filter(entry -> entry.getName().startsWith("META-INF/maven/")
-                            && entry.getName().endsWith("/pom.xml"))
-                    .findFirst()
-                    .ifPresent(entry -> {
-                        try (InputStream is = jar.getInputStream(entry)) {
-                            DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-                            Document dom = dbf.newDocumentBuilder().parse(is);
-                            NodeList nl = dom.getElementsByTagName("dependency");
-                            for (int i = 0; i < nl.getLength(); i++) {
-                                Element dep = (Element) nl.item(i);
-                                String g = DependencyLoader.textContent(dep, "groupId");
-                                String a = DependencyLoader.textContent(dep, "artifactId");
-                                if (g != null && a != null) {
-                                    deps.add(g + ":" + a);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            // skip
-                        }
-                    });
-        } catch (Exception e) {
-            // skip
-        }
-        return deps;
-    }
-
-    private List<DependencyLoader.DepEntry> fetchClasspathDeps() {
+    private List<DependencyLoader.DepEntry> fetchClasspathDeps(Map<String, Path> jars) {
         try {
             String pid = ctx.selectedPid;
             if (pid == null) {
@@ -557,15 +655,18 @@ class CveAuditTab extends AbstractTableTab {
             if (response == null) {
                 return Collections.emptyList();
             }
-            Object cp = response.get("classpath");
-            if (!(cp instanceof JsonArray arr) || arr.isEmpty()) {
+            List<String> classpath = ClasspathTab.classpathOf(response);
+            if (classpath.isEmpty()) {
                 return Collections.emptyList();
             }
             List<DependencyLoader.DepEntry> deps = new ArrayList<>();
-            for (Object item : arr) {
+            for (String item : classpath) {
                 ClasspathTab.JarEntry entry = ClasspathTab.parseJarEntry(String.valueOf(item));
-                if (entry.groupId() != null && entry.version() != null
-                        && !DependencyLoader.skipArtifact(entry.groupId(), entry.artifactId())) {
+                if (entry.groupId() == null) {
+                    continue;
+                }
+                jars.putIfAbsent(entry.groupId() + ":" + entry.artifactId(), Path.of(entry.fullPath()));
+                if (entry.version() != null && !DependencyLoader.skipArtifact(entry.groupId(), entry.artifactId())) {
                     deps.add(new DependencyLoader.DepEntry(entry.groupId(), entry.artifactId(), entry.version()));
                 }
             }
@@ -576,14 +677,18 @@ class CveAuditTab extends AbstractTableTab {
         }
     }
 
-    private void applyResult(List<DependencyLoader.DepEntry> deps, List<VulnGroup> groups, String error) {
+    private void applyResult(
+            List<Dependency> deps, List<CveFinding> groups, String error, String osvFailure) {
         if (ctx.runner == null) {
             return;
         }
+        List<CveArtifact> rows = CveScan.artifactRows(groups);
         ctx.runner.runOnRenderThread(() -> {
             depEntries = deps;
             allGroups = groups;
+            allRows = rows;
             errorMessage = error;
+            osvError = osvFailure;
             dataLoaded = true;
             scannedCount = deps.size();
             if (!allGroups.isEmpty()) {
@@ -593,135 +698,108 @@ class CveAuditTab extends AbstractTableTab {
         });
     }
 
-    private List<VulnGroup> sortedGroups() {
-        List<VulnGroup> result = new ArrayList<>(allGroups);
+    /** The vulnerabilities of one JAR, for the CVES column of the Maven Dependencies tab (CAMEL-27351). */
+    record CveCount(int cves, String severity, String fix) {
+    }
+
+    /**
+     * The vulnerabilities of the last scan, by {@code groupId:artifactId:version}; null when the selected integration
+     * is not scanned (yet).
+     */
+    Map<String, CveCount> cveCounts() {
+        String pid = ctx.selectedPid;
+        if (!dataLoaded || pid == null || !pid.equals(lastPid)) {
+            return null;
+        }
+        Map<String, CveCount> result = new HashMap<>();
+        for (CveArtifact a : allRows) {
+            String fix = a.fix() == null ? null : a.camelRelease() ? "Camel " + a.fix() : a.fix();
+            result.put(a.gav(), new CveCount(a.cves().size(), a.severity(), fix));
+        }
+        return result;
+    }
+
+    /** Scans the selected integration in the background, unless it is scanned already. */
+    void scanInBackground() {
+        onTabSelected();
+    }
+
+    /** Shows the vulnerabilities as a scan sets them, without the render thread; for tests. */
+    void showForTesting(List<CveFinding> groups) {
+        allGroups = groups;
+        allRows = CveScan.artifactRows(groups);
+        dataLoaded = true;
+        if (!groups.isEmpty()) {
+            tableState.select(0);
+        }
+    }
+
+    /** The vulnerabilities the filter lets through, in the order of the sort. */
+    List<CveFinding> visibleGroups() {
+        String term = filter.term() != null ? filter.term().toLowerCase(Locale.ROOT) : null;
+        List<CveFinding> result = new ArrayList<>();
+        for (CveFinding g : allGroups) {
+            if (term == null || g.matches(term)) {
+                result.add(g);
+            }
+        }
         result.sort((a, b) -> {
             int cmp = switch (sort) {
-                case "id" -> compareStr(a.canonicalId, b.canonicalId);
-                case "artifact" -> compareStr(
-                        a.affectedGavs.isEmpty() ? "" : a.affectedGavs.get(0),
-                        b.affectedGavs.isEmpty() ? "" : b.affectedGavs.get(0));
-                case "via" -> compareStr(firstParent(a), firstParent(b));
-                default -> Integer.compare(severityIndex(a.severity), severityIndex(b.severity));
+                case "id" -> compareStr(a.canonicalId(), b.canonicalId());
+                case "artifact" -> compareStr(a.firstGav(), b.firstGav());
+                case "via" -> compareStr(a.firstVia(), b.firstVia());
+                default -> compareSeverity(a.severity(), a.score(), b.severity(), b.score());
             };
             return sortReversed ? -cmp : cmp;
         });
         return result;
     }
 
-    static List<VulnGroup> buildVulnGroups(
-            Map<String, List<OsvClient.Vulnerability>> vulnMap, Map<String, String> gavToParent) {
-        Map<String, String> aliasToCanonical = new HashMap<>();
-        Map<String, VulnGroup> groups = new LinkedHashMap<>();
-
-        for (Map.Entry<String, List<OsvClient.Vulnerability>> entry : vulnMap.entrySet()) {
-            String gav = entry.getKey();
-            for (OsvClient.Vulnerability vuln : entry.getValue()) {
-                String canonicalId = resolveCanonicalId(vuln, aliasToCanonical);
-
-                VulnGroup group = groups.get(canonicalId);
-                if (group == null) {
-                    group = new VulnGroup(
-                            canonicalId, normalizeSeverity(vuln.severity()), vuln.cvssVector(), vuln.summary(),
-                            vuln.details(), vuln.published(), new ArrayList<>(), new HashMap<>(),
-                            new ArrayList<>(), new ArrayList<>());
-                    groups.put(canonicalId, group);
-                    aliasToCanonical.put(vuln.id(), canonicalId);
-                    for (String alias : vuln.aliases()) {
-                        aliasToCanonical.put(alias, canonicalId);
-                    }
-                }
-
-                if (!group.affectedGavs.contains(gav)) {
-                    group.affectedGavs.add(gav);
-                    String parent = gavToParent.get(gav);
-                    if (parent == null) {
-                        // try lookup by groupId:artifactId without version
-                        int last = gav.lastIndexOf(':');
-                        if (last > 0) {
-                            parent = gavToParent.get(gav.substring(0, last));
-                        }
-                    }
-                    if (parent != null) {
-                        group.gavParents.put(gav, parent);
-                    }
-                }
-                for (String alias : vuln.aliases()) {
-                    if (!alias.equals(canonicalId) && !group.aliases.contains(alias)) {
-                        group.aliases.add(alias);
-                    }
-                }
-                if (!vuln.id().equals(canonicalId) && !group.aliases.contains(vuln.id())) {
-                    group.aliases.add(vuln.id());
-                }
-                if (vuln.fixedVersions() != null) {
-                    for (String fv : vuln.fixedVersions()) {
-                        if (!group.fixedVersions.contains(fv)) {
-                            group.fixedVersions.add(fv);
-                        }
-                    }
-                }
+    /** The artifacts the filter lets through, in the order of the sort (by CVE count for the id column). */
+    List<CveArtifact> visibleRows() {
+        String term = filter.term() != null ? filter.term().toLowerCase(Locale.ROOT) : null;
+        List<CveArtifact> result = new ArrayList<>();
+        for (CveArtifact r : allRows) {
+            if (term == null || r.matches(term)) {
+                result.add(r);
             }
         }
-        return new ArrayList<>(groups.values());
+        result.sort((a, b) -> {
+            int cmp = switch (sort) {
+                case "id" -> Integer.compare(b.cves().size(), a.cves().size());
+                case "artifact" -> compareStr(a.gav(), b.gav());
+                case "via" -> compareStr(a.via() != null ? a.via() : "", b.via() != null ? b.via() : "");
+                default -> compareSeverity(a.severity(), a.score(), b.severity(), b.score());
+            };
+            return sortReversed ? -cmp : cmp;
+        });
+        return result;
     }
 
-    private static String resolveCanonicalId(OsvClient.Vulnerability vuln, Map<String, String> aliasToCanonical) {
-        String existing = aliasToCanonical.get(vuln.id());
-        if (existing != null) {
-            return existing;
+    /** The worst first: by severity, then by score. */
+    private static int compareSeverity(String sevA, Double scoreA, String sevB, Double scoreB) {
+        int cmp = Integer.compare(CveScan.severityIndex(sevA), CveScan.severityIndex(sevB));
+        if (cmp != 0) {
+            return cmp;
         }
-        for (String alias : vuln.aliases()) {
-            existing = aliasToCanonical.get(alias);
-            if (existing != null) {
-                return existing;
-            }
-        }
-        for (String alias : vuln.aliases()) {
-            if (alias.startsWith("CVE-")) {
-                return alias;
-            }
-        }
-        return vuln.id();
-    }
-
-    static String normalizeSeverity(String severity) {
-        if (severity == null) {
-            return "UNKNOWN";
-        }
-        return switch (severity.toUpperCase()) {
-            case "MODERATE" -> "MEDIUM";
-            default -> severity.toUpperCase();
-        };
-    }
-
-    private static String firstParent(VulnGroup g) {
-        if (g.affectedGavs.isEmpty()) {
-            return "";
-        }
-        String parent = g.gavParents.get(g.affectedGavs.get(0));
-        return parent != null ? parent : "";
-    }
-
-    private static int severityIndex(String severity) {
-        int idx = SEVERITY_ORDER.indexOf(severity);
-        return idx >= 0 ? idx : SEVERITY_ORDER.size();
+        return Double.compare(scoreB != null ? scoreB : -1, scoreA != null ? scoreA : -1);
     }
 
     @Override
     public SelectionContext getSelectionContext() {
-        List<VulnGroup> visible = sortedGroups();
-        if (visible.isEmpty()) {
+        List<String> items = byArtifact
+                ? visibleRows().stream().map(r -> r.gav()).toList()
+                : visibleGroups().stream().map(g -> g.canonicalId() != null ? g.canonicalId() : "").toList();
+        if (items.isEmpty()) {
             return null;
         }
-        List<String> items = visible.stream().map(g -> g.canonicalId != null ? g.canonicalId : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "CVE Audit");
     }
 
     @Override
     public String description() {
-        return "Vulnerability scanning via OSV.dev";
+        return "Vulnerability scanning via OSV.dev and the Apache Camel advisories";
     }
 
     @Override
@@ -731,71 +809,33 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<VulnGroup> visible = sortedGroups();
-        if (visible.isEmpty()) {
+        if (allGroups.isEmpty()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("tab", "CVE Audit");
+        result.put("view", byArtifact ? "artifact" : "cve");
+        if (osvError != null) {
+            result.put("osvError", osvError);
+        }
+        if (filter.term() != null) {
+            result.put("filter", filter.term());
+        }
         JsonArray rows = new JsonArray();
-        for (VulnGroup g : visible) {
-            JsonObject row = new JsonObject();
-            row.put("cveId", g.canonicalId);
-            row.put("severity", g.severity);
-            row.put("via", firstParent(g));
-            row.put("summary", g.summary);
-            row.put("published", g.published);
-            JsonArray arts = new JsonArray();
-            for (String gav : g.affectedGavs) {
-                arts.add(gav);
-            }
-            row.put("affectedArtifacts", arts);
-            if (!g.fixedVersions.isEmpty()) {
-                JsonArray fixed = new JsonArray();
-                for (String fv : g.fixedVersions) {
-                    fixed.add(fv);
-                }
-                row.put("fixedVersions", fixed);
-            }
-            JsonArray aliases = new JsonArray();
-            for (String alias : g.aliases) {
-                aliases.add(alias);
-            }
-            row.put("aliases", aliases);
-            rows.add(row);
+        int total;
+        if (byArtifact) {
+            List<CveArtifact> visible = visibleRows();
+            visible.forEach(r -> rows.add(r.toJson()));
+            total = visible.size();
+        } else {
+            List<CveFinding> visible = visibleGroups();
+            visible.forEach(g -> rows.add(g.toJson()));
+            total = visible.size();
         }
         result.put("rows", rows);
-        result.put("totalRows", visible.size());
+        result.put("totalRows", total);
         Integer sel = tableState.selected();
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;
-    }
-
-    static class VulnGroup {
-        final String canonicalId;
-        final String severity;
-        final String cvssVector;
-        final String summary;
-        final String details;
-        final String published;
-        final List<String> affectedGavs;
-        final Map<String, String> gavParents;
-        final List<String> aliases;
-        final List<String> fixedVersions;
-
-        VulnGroup(String canonicalId, String severity, String cvssVector, String summary, String details,
-                  String published, List<String> affectedGavs, Map<String, String> gavParents,
-                  List<String> aliases, List<String> fixedVersions) {
-            this.canonicalId = canonicalId;
-            this.severity = severity;
-            this.cvssVector = cvssVector;
-            this.summary = summary;
-            this.details = details;
-            this.published = published;
-            this.affectedGavs = affectedGavs;
-            this.gavParents = gavParents;
-            this.aliases = aliases;
-            this.fixedVersions = fixedVersions;
-        }
     }
 }

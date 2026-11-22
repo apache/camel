@@ -17,8 +17,10 @@
 package org.apache.camel.component.jgroups.raft;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.core.ConditionTimeoutException;
 import org.jgroups.Address;
@@ -64,6 +66,30 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
      */
     protected void checkLeaderAddressHeader(Exchange exchange) {
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, Address.class));
+    }
+
+    /**
+     * Send the exchange until it succeeds. The leader checked by {@link #waitForLeader(int, RaftHandle...)} can be lost
+     * again right after (the election has not settled yet), and then <code>set()</code> fails because REDIRECT has no
+     * leader to forward the request to.
+     */
+    protected Exchange requestWhenLeaderKnown(String uri, Processor processor) {
+        AtomicReference<Exchange> last = new AtomicReference<>();
+        try {
+            await().atMost(30, TimeUnit.SECONDS)
+                    .pollInterval(200, TimeUnit.MILLISECONDS)
+                    .until(() -> {
+                        Exchange exchange = template.request(uri, processor);
+                        last.set(exchange);
+                        return exchange.getException() == null;
+                    });
+        } catch (ConditionTimeoutException e) {
+            throw new ConditionTimeoutException(
+                    e.getMessage() + System.lineSeparator() + "Last failure: "
+                                                + last.get().getException(),
+                    e);
+        }
+        return last.get();
     }
 
     /**

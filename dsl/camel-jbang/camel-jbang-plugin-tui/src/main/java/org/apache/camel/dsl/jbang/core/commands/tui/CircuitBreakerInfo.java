@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.Map;
+
 class CircuitBreakerInfo {
     String routeId;
     String id;
@@ -38,4 +40,8 @@ class CircuitBreakerInfo {
     String sinceLastStarted;
     String sinceLastSuccess;
     String sinceLastFail;
+    /**
+     * The configuration of the breaker (failureRateThreshold, waitDurationInOpenState ...), when its console has it.
+     */
+    Map<String, Object> configuration = Map.of();
 }

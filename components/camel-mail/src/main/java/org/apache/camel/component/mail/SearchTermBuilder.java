@@ -180,7 +180,7 @@ public class SearchTermBuilder {
     }
 
     public SearchTermBuilder receivedNow(Comparison comparison, long offset) {
-        return sentNow(Op.and, comparison, offset);
+        return receivedNow(Op.and, comparison, offset);
     }
 
     public SearchTermBuilder receivedNow(Op op, Comparison comparison, long offset) {

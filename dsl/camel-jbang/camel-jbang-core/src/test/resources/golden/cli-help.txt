@@ -2389,12 +2389,270 @@ Options:
   -h, --help  Display this help and exit
 
 dependency commands:
-    copy     Copies all Camel dependencies required to run to a specific
-             directory
-    list     Displays all Camel dependencies required to run
-    runtime  Display Camel runtime and version for given Maven project
-    update   Updates dependencies in Maven pom.xml or Java source files (JBang
-             style)
+    audit     Checks the dependencies for known vulnerabilities (CVEs) with
+              OSV.dev and the Apache Camel security advisories
+    copy      Copies all Camel dependencies required to run to a specific
+              directory
+    list      Displays all Camel dependencies required to run
+    outdated  Lists the dependencies with newer versions, or a version other
+              than the one Camel brings
+    runtime   Display Camel runtime and version for given Maven project
+    update    Updates dependencies in Maven pom.xml or Java source files (JBang
+              style)
+
+== camel dependency audit --help
+Checks the dependencies for known vulnerabilities (CVEs) with OSV.dev and the
+Apache Camel security advisories
+Usage: camel dependency audit [-hy] [--integration=<integration>]
+                               [--by-artifact] [--json] [--severity=<severity>]
+                               [--fail-on=<fail-on>] [--offline]
+                               [--fail-on-error] [--osv-database]
+                               [--osv-database-url=<osv-database-url>]
+                               [--output=<output>] [--dep=<dep>]
+                               [--runtime=<runtime>] [--name=<name>]
+                               [--port=<port>]
+                               [--management-port=<management-port>]
+                               [--gav=<gav>] [--parent-pom=<parent-pom>]
+                               [--exclude=<exclude>]
+                               [--maven-settings=<maven-settings>]
+                               [--maven-settings-security=<maven-settings-security>]
+                               [--maven-central-enabled]
+                               [--maven-apache-snapshot-enabled]
+                               [--main-classname=<main-classname>]
+                               [--java-version=<java-version>]
+                               [--camel-version=<camel-version>]
+                               [--kamelets-version=<kamelets-version>]
+                               [--profile=<profile>]
+                               [--local-kamelet-dir=<local-kamelet-dir>]
+                               [--spring-boot-version=<spring-boot-version>]
+                               [--camel-spring-boot-version=<camel-spring-boot-version>]
+                               [--quarkus-group-id=<quarkus-group-id>]
+                               [--quarkus-artifact-id=<quarkus-artifact-id>]
+                               [--quarkus-version=<quarkus-version>]
+                               [--quarkus-ext-registry=<quarkus-ext-registry>]
+                               [--maven-wrapper] [--camel-wrapper] [--docker]
+                               [--open-api=<open-api>] [--observe] [--console]
+                               [--dir=<dir>] [--clean-dir]
+                               [--logging-level=<logging-level>]
+                               [--package-name=<package-name>] [--download]
+                               [--repo=<repo>] [--fresh] [--package-scan-jars]
+                               [--resource-dir=<resource-dir>]
+                               [--build-property=<build-property>]
+                               [--prop=<prop>] [--logging] [--quiet] [--verbose]
+                               [--dry-run] [--ignore-loading-error]
+                               [--lazy-bean] [--skip-plugins]
+                               [--groovy-pre-compiled] [--hawtio]
+                               [--hawtio-version=<hawtio-version>] [<files>]
+
+Options:
+  -h, --help                Display this help and exit
+      --integration=<integration>
+                            Name or pid of a running integration: audits its
+                            classpath, instead of the dependencies of the
+                            project files
+      --by-artifact         One row per vulnerable JAR, with the version that
+                            fixes all its CVEs
+      --json                Output in JSON Format
+      --severity=<severity>
+                            The lowest severity to list: critical, high, medium
+                            or low
+                            Default: low
+      --fail-on=<fail-on>   Exits 1 when a vulnerability at or above this
+                            severity is found: critical, high, medium, low or
+                            none
+                            Default: low
+      --offline             Checks the Apache Camel security advisories of the
+                            catalog only, without OSV.dev
+      --fail-on-error       Exits 1 when the dependencies could not be checked
+                            with OSV.dev or the OSV database (not reachable, no
+                            database), instead of checking the Apache Camel
+                            security advisories only
+      --osv-database        Checks with the offline OSV database instead of the
+                            OSV.dev API: the export of all the Maven
+                            vulnerabilities of OSV.dev, downloaded once a day
+                            and matched locally, so no coordinates of the
+                            project leave the machine
+      --osv-database-url=<osv-database-url>
+                            Where the offline OSV database is downloaded from,
+                            such as a mirror on the repository manager of the
+                            company, or a ZIP file on disk (default:
+                            https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip).
+                            Implies --osv-database
+      --output=<output>     Output format (gav, maven, jbang)
+                            Default: gav
+      --dep, --dependency=<dep>
+                            Add additional dependencies
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --name=<name>         The integration name. Use this when the name should
+                            not get derived otherwise.
+      --port=<port>         Embeds a local HTTP server on this port
+      --management-port=<management-port>
+                            To use a dedicated port for HTTP management
+      --gav=<gav>           The Maven group:artifact:version
+      --parent-pom=<parent-pom>
+                            The Maven parent POM group:artifact:version
+      --exclude=<exclude>   Exclude files by name or pattern
+      --maven-settings=<maven-settings>
+                            Optional location of Maven settings.xml file to
+                            configure servers, repositories, mirrors and
+                            proxies. If set to "false", not even the default
+                            ~/.m2/settings.xml will be used.
+      --maven-settings-security=<maven-settings-security>
+                            Optional location of Maven settings-security.xml
+                            file to decrypt settings.xml
+      --maven-central-enabled
+                            Whether downloading JARs from Maven Central
+                            repository is enabled
+                            Default: true
+      --maven-apache-snapshot-enabled
+                            Whether downloading JARs from ASF Maven Snapshot
+                            repository is enabled
+                            Default: true
+      --main-classname=<main-classname>
+                            The class name of the Camel Main application class
+                            Default: CamelApplication
+      --java-version, --java=<java-version>
+                            Java version (21, 25)
+                            Default: 21
+      --camel-version=<camel-version>
+                            To export using a different Camel version than the
+                            default version.
+      --kamelets-version=<kamelets-version>
+                            Apache Camel Kamelets version (auto-detected from
+                            classpath if not set)
+      --profile=<profile>   Profile to export (dev, test, prod).
+      --local-kamelet-dir=<local-kamelet-dir>
+                            Local directory for loading Kamelets (takes
+                            precedence)
+      --spring-boot-version=<spring-boot-version>
+                            Spring Boot version
+                            Default: ${spring-boot-version}
+      --camel-spring-boot-version=<camel-spring-boot-version>
+                            Camel version to use with Spring Boot
+      --quarkus-group-id=<quarkus-group-id>
+                            groupId of Quarkus Platform BOM; honored only if
+                            --quarkus-version is set
+                            Default: io.quarkus.platform
+      --quarkus-artifact-id=<quarkus-artifact-id>
+                            Deprecated. This value is not used anymore. It is
+                            kept only for backwards compatibility and will be
+                            removed in Camel 5.x. Camel commands may use either
+                            'quarkus-bom' or 'quarkus-camel-bom' artifactIds
+                            depending on the context.
+                            Default: quarkus-bom
+      --quarkus-version=<quarkus-version>
+                            version of Quarkus Platform BOM; the default value
+                            is looked up in Quarkus Extension Registry
+      --quarkus-ext-registry=<quarkus-ext-registry>
+                            The base URI of Quarkus Extension Registry. The
+                            default is https://registry.quarkus.io unless
+                            camel.jbang.quarkus.platform.url system property is
+                            set (the "/client/platforms" suffix is removed if
+                            present).
+      --maven-wrapper       Include Maven Wrapper files in exported project
+                            Default: true
+      --camel-wrapper       Include Camel Wrapper scripts in exported project
+                            for version pinning
+                            Default: false
+      --docker              Include Docker files in exported project
+                            Default: true
+      --open-api=<open-api>
+                            Adds an OpenAPI spec from the given file (json or
+                            yaml file)
+      --observe             Enable observability services
+                            Default: false
+      --console             Developer console on the local HTTP server (port
+                            8080 by default): /q/dev with Camel Main,
+                            /actuator/camel with Spring Boot, and
+                            /q/camel/dev-console with Quarkus. The exported
+                            project only has the console with the dev profile.
+                            Default: false
+      --dir, --directory=<dir>
+                            Directory where the project will be exported
+                            Default: .
+      --clean-dir           If exporting to current directory (default) then all
+                            existing files are preserved. Enabling this option
+                            will force cleaning current directory including all
+                            sub dirs (use this with care)
+                            Default: false
+  -y, --yes                 Automatically answer yes to confirmation prompts
+                            (e.g. when using --clean-dir)
+                            Default: false
+      --logging-level=<logging-level>
+                            Logging level (ERROR, WARN, INFO, DEBUG, TRACE)
+                            Default: info
+      --package-name=<package-name>
+                            For Java source files should they have the given
+                            package name. By default the package name is
+                            computed from the Maven GAV. Use false to turn off
+                            and not include package name in the Java source
+                            files.
+      --download            Whether to allow automatic downloading JAR
+                            dependencies (over the internet)
+                            Default: true
+      --repo, --repos=<repo>
+                            Additional maven repositories for download on-demand
+                            (Use commas to separate multiple repositories)
+      --fresh               Make sure we use fresh (i.e. non-cached) resources
+                            Default: false
+      --package-scan-jars   Whether to automatic package scan JARs for custom
+                            Spring or Quarkus beans making them available for
+                            Camel CLI
+                            Default: false
+      --resource-dir, --resource-dirs=<resource-dir>
+                            Additional resource directories to include in
+                            src/main/resources (recursive, preserving structure)
+      --build-property=<build-property>
+                            Maven build properties, ex.
+                            --build-property=prop1=foo
+      --prop, --property=<prop>
+                            Camel application properties, ex.
+                            --property=prop1=foo
+      --logging             Can be used to turn on logging to console (logs by
+                            default to file in <user home>/.camel directory)
+                            Default: false
+      --quiet               Will be quiet, only print when error occurs
+                            Default: false
+      --verbose             Verbose output of startup activity (dependency
+                            resolution and downloading
+                            Default: false
+      --dry-run             Preview export without writing files
+                            Default: false
+      --ignore-loading-error
+                            Whether to ignore route loading and compilation
+                            errors (use this with care!)
+                            Default: false
+      --lazy-bean           Whether to use lazy bean initialization (can help
+                            with complex classloading issues
+                            Default: true
+      --skip-plugins        Skip plugins during export
+                            Default: false
+      --groovy-pre-compiled
+                            Whether to include pre-compiled Groovy classes in
+                            the export (only supported with runtime=camel-main)
+                            Default: false
+      --hawtio              Whether to include Hawtio web console (only
+                            available for exporting to Spring Boot or Quarkus)
+                            Default: false
+      --hawtio-version=<hawtio-version>
+                            Version of the Hawtio web console
+                            Default: ${hawtio-version}
+  <files>                   The Camel file(s) to export. If no files is
+                            specified then what was last run will be exported.
+
+Exits 1 when a vulnerability at or above --fail-on is found (default: any), so a
+CI job fails,
+and with --fail-on-error also when OSV.dev or the OSV database could not be
+used.
+
+Examples:
+  camel dependency audit
+  camel dependency audit --by-artifact
+  camel dependency audit --integration=my-app
+  camel dependency audit --severity=high --fail-on=critical
+  camel dependency audit --osv-database --fail-on-error
+  camel dependency audit --osv-database-url=https://nexus.corp.com/repository/osv/Maven/all.zip
+  camel dependency audit --json
 
 == camel dependency copy --help
 Copies all Camel dependencies required to run to a specific directory
@@ -2810,6 +3068,245 @@ Options:
 Examples:
   camel dependency list hello.java
   camel dependency list hello.java --output=gav
+
+== camel dependency outdated --help
+Lists the dependencies with newer versions, or a version other than the one
+Camel brings
+Usage: camel dependency outdated [-hy] [--integration=<integration>]
+                                  [--transitive] [--all] [--offline] [--json]
+                                  [--fail-on=<fail-on>] [--output=<output>]
+                                  [--dep=<dep>] [--runtime=<runtime>]
+                                  [--name=<name>] [--port=<port>]
+                                  [--management-port=<management-port>]
+                                  [--gav=<gav>] [--parent-pom=<parent-pom>]
+                                  [--exclude=<exclude>]
+                                  [--maven-settings=<maven-settings>]
+                                  [--maven-settings-security=<maven-settings-security>]
+                                  [--maven-central-enabled]
+                                  [--maven-apache-snapshot-enabled]
+                                  [--main-classname=<main-classname>]
+                                  [--java-version=<java-version>]
+                                  [--camel-version=<camel-version>]
+                                  [--kamelets-version=<kamelets-version>]
+                                  [--profile=<profile>]
+                                  [--local-kamelet-dir=<local-kamelet-dir>]
+                                  [--spring-boot-version=<spring-boot-version>]
+                                  [--camel-spring-boot-version=<camel-spring-boot-version>]
+                                  [--quarkus-group-id=<quarkus-group-id>]
+                                  [--quarkus-artifact-id=<quarkus-artifact-id>]
+                                  [--quarkus-version=<quarkus-version>]
+                                  [--quarkus-ext-registry=<quarkus-ext-registry>]
+                                  [--maven-wrapper] [--camel-wrapper] [--docker]
+                                  [--open-api=<open-api>] [--observe]
+                                  [--console] [--dir=<dir>] [--clean-dir]
+                                  [--logging-level=<logging-level>]
+                                  [--package-name=<package-name>] [--download]
+                                  [--repo=<repo>] [--fresh]
+                                  [--package-scan-jars]
+                                  [--resource-dir=<resource-dir>]
+                                  [--build-property=<build-property>]
+                                  [--prop=<prop>] [--logging] [--quiet]
+                                  [--verbose] [--dry-run]
+                                  [--ignore-loading-error] [--lazy-bean]
+                                  [--skip-plugins] [--groovy-pre-compiled]
+                                  [--hawtio] [--hawtio-version=<hawtio-version>]
+                                  [<files>]
+
+Options:
+  -h, --help                Display this help and exit
+      --integration=<integration>
+                            Name or pid of a running integration: checks the
+                            JARs it loaded, instead of the dependencies of the
+                            project files
+      --transitive          Also the transitive dependencies, with the
+                            dependency of the project that brings each in (VIA)
+      --all                 Lists all dependencies, not only those with
+                            something to report
+      --offline             Does not look up newer versions in the Maven
+                            repositories: only the versions Camel brings
+      --json                Output in JSON Format
+      --fail-on=<fail-on>   Exits 1 when: any = a status to act on or any newer
+                            release, patch = a status to act on or a newer
+                            release of the same line, status = a status to act
+                            on (override, conflict, mixed), none = never
+                            Default: any
+      --output=<output>     Output format (gav, maven, jbang)
+                            Default: gav
+      --dep, --dependency=<dep>
+                            Add additional dependencies
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --name=<name>         The integration name. Use this when the name should
+                            not get derived otherwise.
+      --port=<port>         Embeds a local HTTP server on this port
+      --management-port=<management-port>
+                            To use a dedicated port for HTTP management
+      --gav=<gav>           The Maven group:artifact:version
+      --parent-pom=<parent-pom>
+                            The Maven parent POM group:artifact:version
+      --exclude=<exclude>   Exclude files by name or pattern
+      --maven-settings=<maven-settings>
+                            Optional location of Maven settings.xml file to
+                            configure servers, repositories, mirrors and
+                            proxies. If set to "false", not even the default
+                            ~/.m2/settings.xml will be used.
+      --maven-settings-security=<maven-settings-security>
+                            Optional location of Maven settings-security.xml
+                            file to decrypt settings.xml
+      --maven-central-enabled
+                            Whether downloading JARs from Maven Central
+                            repository is enabled
+                            Default: true
+      --maven-apache-snapshot-enabled
+                            Whether downloading JARs from ASF Maven Snapshot
+                            repository is enabled
+                            Default: true
+      --main-classname=<main-classname>
+                            The class name of the Camel Main application class
+                            Default: CamelApplication
+      --java-version, --java=<java-version>
+                            Java version (21, 25)
+                            Default: 21
+      --camel-version=<camel-version>
+                            To export using a different Camel version than the
+                            default version.
+      --kamelets-version=<kamelets-version>
+                            Apache Camel Kamelets version (auto-detected from
+                            classpath if not set)
+      --profile=<profile>   Profile to export (dev, test, prod).
+      --local-kamelet-dir=<local-kamelet-dir>
+                            Local directory for loading Kamelets (takes
+                            precedence)
+      --spring-boot-version=<spring-boot-version>
+                            Spring Boot version
+                            Default: ${spring-boot-version}
+      --camel-spring-boot-version=<camel-spring-boot-version>
+                            Camel version to use with Spring Boot
+      --quarkus-group-id=<quarkus-group-id>
+                            groupId of Quarkus Platform BOM; honored only if
+                            --quarkus-version is set
+                            Default: io.quarkus.platform
+      --quarkus-artifact-id=<quarkus-artifact-id>
+                            Deprecated. This value is not used anymore. It is
+                            kept only for backwards compatibility and will be
+                            removed in Camel 5.x. Camel commands may use either
+                            'quarkus-bom' or 'quarkus-camel-bom' artifactIds
+                            depending on the context.
+                            Default: quarkus-bom
+      --quarkus-version=<quarkus-version>
+                            version of Quarkus Platform BOM; the default value
+                            is looked up in Quarkus Extension Registry
+      --quarkus-ext-registry=<quarkus-ext-registry>
+                            The base URI of Quarkus Extension Registry. The
+                            default is https://registry.quarkus.io unless
+                            camel.jbang.quarkus.platform.url system property is
+                            set (the "/client/platforms" suffix is removed if
+                            present).
+      --maven-wrapper       Include Maven Wrapper files in exported project
+                            Default: true
+      --camel-wrapper       Include Camel Wrapper scripts in exported project
+                            for version pinning
+                            Default: false
+      --docker              Include Docker files in exported project
+                            Default: true
+      --open-api=<open-api>
+                            Adds an OpenAPI spec from the given file (json or
+                            yaml file)
+      --observe             Enable observability services
+                            Default: false
+      --console             Developer console on the local HTTP server (port
+                            8080 by default): /q/dev with Camel Main,
+                            /actuator/camel with Spring Boot, and
+                            /q/camel/dev-console with Quarkus. The exported
+                            project only has the console with the dev profile.
+                            Default: false
+      --dir, --directory=<dir>
+                            Directory where the project will be exported
+                            Default: .
+      --clean-dir           If exporting to current directory (default) then all
+                            existing files are preserved. Enabling this option
+                            will force cleaning current directory including all
+                            sub dirs (use this with care)
+                            Default: false
+  -y, --yes                 Automatically answer yes to confirmation prompts
+                            (e.g. when using --clean-dir)
+                            Default: false
+      --logging-level=<logging-level>
+                            Logging level (ERROR, WARN, INFO, DEBUG, TRACE)
+                            Default: info
+      --package-name=<package-name>
+                            For Java source files should they have the given
+                            package name. By default the package name is
+                            computed from the Maven GAV. Use false to turn off
+                            and not include package name in the Java source
+                            files.
+      --download            Whether to allow automatic downloading JAR
+                            dependencies (over the internet)
+                            Default: true
+      --repo, --repos=<repo>
+                            Additional maven repositories for download on-demand
+                            (Use commas to separate multiple repositories)
+      --fresh               Make sure we use fresh (i.e. non-cached) resources
+                            Default: false
+      --package-scan-jars   Whether to automatic package scan JARs for custom
+                            Spring or Quarkus beans making them available for
+                            Camel CLI
+                            Default: false
+      --resource-dir, --resource-dirs=<resource-dir>
+                            Additional resource directories to include in
+                            src/main/resources (recursive, preserving structure)
+      --build-property=<build-property>
+                            Maven build properties, ex.
+                            --build-property=prop1=foo
+      --prop, --property=<prop>
+                            Camel application properties, ex.
+                            --property=prop1=foo
+      --logging             Can be used to turn on logging to console (logs by
+                            default to file in <user home>/.camel directory)
+                            Default: false
+      --quiet               Will be quiet, only print when error occurs
+                            Default: false
+      --verbose             Verbose output of startup activity (dependency
+                            resolution and downloading
+                            Default: false
+      --dry-run             Preview export without writing files
+                            Default: false
+      --ignore-loading-error
+                            Whether to ignore route loading and compilation
+                            errors (use this with care!)
+                            Default: false
+      --lazy-bean           Whether to use lazy bean initialization (can help
+                            with complex classloading issues
+                            Default: true
+      --skip-plugins        Skip plugins during export
+                            Default: false
+      --groovy-pre-compiled
+                            Whether to include pre-compiled Groovy classes in
+                            the export (only supported with runtime=camel-main)
+                            Default: false
+      --hawtio              Whether to include Hawtio web console (only
+                            available for exporting to Spring Boot or Quarkus)
+                            Default: false
+      --hawtio-version=<hawtio-version>
+                            Version of the Hawtio web console
+                            Default: ${hawtio-version}
+  <files>                   The Camel file(s) to export. If no files is
+                            specified then what was last run will be exported.
+
+STATUS: override = the project declares another version than the one the Camel
+dependencies bring,
+conflict = loaded twice or in another version than declared, mixed = a Camel JAR
+of another Camel version.
+NEWER is the latest release of the same major.minor line, LATEST the latest
+release.
+
+Exits 1 when a dependency is outdated (see --fail-on), so a CI job fails.
+
+Examples:
+  camel dependency outdated
+  camel dependency outdated --transitive
+  camel dependency outdated --integration=my-app
+  camel dependency outdated --offline --fail-on=status
+  camel dependency outdated --json
 
 == camel dependency runtime --help
 Display Camel runtime and version for given Maven project
@@ -3804,6 +4301,8 @@ get commands:
     endpoint          Get usage of Camel endpoints
     error             Get captured routing errors of Camel integrations
     event             Get latest events of Camel integrations
+    genai             Display the model calls, agent runs and tool calls of the
+                      Camel AI components
     groovy            Groovy Sources used of Camel integrations
     group             Get status of Camel route groups
     health            Get health check status of running Camel integrations
@@ -4178,6 +4677,38 @@ Options:
 Examples:
   camel get event
   camel get event --watch
+
+== camel get genai --help
+Display the model calls, agent runs and tool calls of the Camel AI components
+Usage: camel get genai [-h] [--limit=<limit>] [--id=<id>] [--content] [--json]
+                        [--timeout=<timeout>] [--watch] [--duration=<duration>]
+                        [<name>]
+
+Options:
+  -h, --help                Display this help and exit
+      --limit=<limit>       The number of the newest agent runs and model calls
+                            to show
+                            Default: 20
+      --id=<id>             Show one call (an agent run, a model call or a tool
+                            call) with its messages
+      --content             Show the question of each agent run (recorded at
+                            camel.aiObservability.level=full)
+      --json                Output the answer of the genai dev console as JSON
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                            millis or as a duration such as 30s
+                            Default: 10000
+      --watch               Execute periodically and showing output fullscreen
+      --duration=<duration>
+                            How long to keep watching or following, in millis or
+                            as a duration such as 30s (default: until Enter is
+                            pressed)
+  <name>                    Name or pid of running Camel integration
+
+Examples:
+  camel get genai
+  camel get genai --content
+  camel get genai --id 7
+  camel get genai --watch
 
 == camel get groovy --help
 Groovy Sources used of Camel integrations

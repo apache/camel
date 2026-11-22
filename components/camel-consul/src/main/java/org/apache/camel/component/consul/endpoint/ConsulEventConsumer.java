@@ -117,6 +117,7 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
                 final Message message = exchange.getIn();
 
                 message.setHeader(ConsulConstants.CONSUL_KEY, key);
+                exchange.setProperty(ConsulConstants.CONSUL_RECEIVED_KEY, key);
                 message.setHeader(ConsulConstants.CONSUL_RESULT, true);
                 message.setHeader(ConsulConstants.CONSUL_EVENT_ID, event.getId());
                 message.setHeader(ConsulConstants.CONSUL_EVENT_NAME, event.getName());

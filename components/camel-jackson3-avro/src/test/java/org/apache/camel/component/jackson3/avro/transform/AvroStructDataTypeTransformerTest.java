@@ -32,6 +32,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson3.SchemaHelper;
 import org.apache.camel.component.jackson3.transform.Json;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -149,6 +150,30 @@ class AvroStructDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+    }
+
+    @Test
+    void shouldHandleAvroBinaryStreamCacheAfterSchemaResolver() throws Exception {
+        // CAMEL-27258: the binary data type keeps a stream cache body, such as the body of an HTTP request; the
+        // schema resolver must not take the stream cache for a POJO and set its class as the content class
+        Exchange exchange = new DefaultExchange(camelContext);
+        byte[] binary = Avro.mapper().writer(getSchema()).writeValueAsBytes(new Person("Sheldon", 28));
+        exchange.getMessage().setBody(new InputStreamCache(binary));
+
+        camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-octet-stream"))
+                .transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        Assertions.assertInstanceOf(InputStreamCache.class, exchange.getMessage().getBody());
+
+        AvroSchemaResolver schemaResolver = new AvroSchemaResolver();
+        schemaResolver.setSchema(getSchema().getAvroSchema().toString());
+        schemaResolver.process(exchange);
+        Assertions.assertNull(exchange.getProperty(SchemaHelper.CONTENT_CLASS));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonNode body = exchange.getMessage().getBody(JsonNode.class);
+        Assertions.assertEquals("Sheldon", body.get("name").asString());
+        Assertions.assertEquals(28, body.get("age").asInt());
     }
 
     @Test

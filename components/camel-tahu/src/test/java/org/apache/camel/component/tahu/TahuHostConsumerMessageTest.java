@@ -50,7 +50,6 @@ class TahuHostConsumerMessageTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    // a host id of its own, as a consumer keeps its host application in a static map
                     from("tahu-host:MessageHost" + broker.getPort()
                          + "?clientId=MessageHostClient&servers=Fake:tcp://localhost:" + broker.getPort())
                             // the exchanges of the messages, not those of each metric

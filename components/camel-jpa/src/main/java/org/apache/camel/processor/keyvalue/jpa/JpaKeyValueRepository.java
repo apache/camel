@@ -16,14 +16,11 @@
  */
 package org.apache.camel.processor.keyvalue.jpa;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
@@ -44,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+import static org.apache.camel.component.jpa.JpaHelper.isConstraintViolation;
 
 /**
  * A JPA-based {@link KeyValueRepository} that stores entries as {@link KeyValueEntry} entities.
@@ -539,24 +537,5 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
         } catch (Exception e) {
             // ignore
         }
-    }
-
-    private static boolean isConstraintViolation(Exception ex) {
-        Throwable cause = ex;
-        while (cause != null) {
-            if (cause instanceof SQLIntegrityConstraintViolationException) {
-                return true;
-            }
-            if (cause instanceof EntityExistsException) {
-                return true;
-            }
-            // drivers such as the PostgreSQL and SQL Server ones report it only with the SQL state class 23
-            if (cause instanceof SQLException sqlException && sqlException.getSQLState() != null
-                    && sqlException.getSQLState().startsWith("23")) {
-                return true;
-            }
-            cause = cause.getCause();
-        }
-        return false;
     }
 }

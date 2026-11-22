@@ -183,6 +183,71 @@ class JsonDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepAJsonValueWhenTheContentTypeIsJson() throws Exception {
+        // CAMEL-27270: with the Content-Type application/json, text that is one Json value is Json already
+        for (String json : List.of("\"Hello\"", "42", "true", "null", " \"Hello\" ")) {
+            for (String contentType : List.of("application/json", "application/json; charset=UTF-8", "APPLICATION/JSON")) {
+                for (Object body : List.of(json, json.getBytes(StandardCharsets.UTF_8))) {
+                    Exchange exchange = new DefaultExchange(camelContext);
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+                    exchange.getMessage().setBody(body);
+                    transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+                    Assertions.assertEquals(json, exchange.getMessage().getBody(String.class), json + " " + contentType);
+                    Assertions.assertEquals("application/json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+                }
+            }
+        }
+        // text that is not one Json value still becomes a Json string
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("ORD-1", "\"ORD-1\"");
+        expected.put("42 abc", "\"42 abc\"");
+        expected.put("\"Hello\" \"World\"", "\"\\\"Hello\\\" \\\"World\\\"\"");
+        expected.put("", "\"\"");
+        for (Map.Entry<String, String> entry : expected.entrySet()) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            exchange.getMessage().setBody(entry.getKey());
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            Assertions.assertEquals(entry.getValue(), exchange.getMessage().getBody(String.class), entry.getKey());
+        }
+        // another Content-Type keeps the CAMEL-26300 rule
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        exchange.getMessage().setBody("\"Hello\"");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        Assertions.assertEquals("\"\\\"Hello\\\"\"", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
+    void shouldKeepAJsonSuffixContentType() throws Exception {
+        // CAMEL-27271: a more specific Json media type is kept, and a Json value given as text with it too
+        for (String contentType : List.of("application/fhir+json", "application/geo+json; charset=UTF-8")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+            exchange.getMessage().setBody(Map.of("resourceType", "Patient"));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            JSONAssert.assertEquals("{\"resourceType\":\"Patient\"}", exchange.getMessage().getBody(String.class), true);
+            Assertions.assertEquals(contentType, exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+
+            exchange.getMessage().setBody("\"Hello\"");
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertEquals("\"Hello\"", exchange.getMessage().getBody(String.class));
+            Assertions.assertEquals(contentType, exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        }
+        // any other Content-Type becomes application/json
+        for (String contentType : List.of("text/plain", "application/xml", "application/json; charset=UTF-8")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+            exchange.getMessage().setBody(Map.of("a", 1));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertEquals("application/json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE), contentType);
+        }
+    }
+
+    @Test
     void shouldReadBytesWithTheExchangeCharset() throws Exception {
         // CAMEL-26300: bytes are read as text with the charset of the exchange, and the Json is written in UTF-8
         String json = "{\"name\":\"Jos\u00e9\"}";

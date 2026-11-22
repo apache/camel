@@ -20,6 +20,7 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -96,22 +97,31 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
-        String currentDir = null;
-        if (isStepwise()) {
-            // must remember current dir so we stay in that directory after the
-            // poll
-            currentDir = operations.getCurrentDirectory();
+        // the walk through the directories changes the current directory (stepwise), so it holds the lock of the
+        // operations: a file of the previous poll that is committed meanwhile on another thread (such as a seda
+        // consumer) would else be deleted or moved from the directory the walk is in
+        ReentrantLock lock = getOperations().lock;
+        lock.lock();
+        try {
+            String currentDir = null;
+            if (isStepwise()) {
+                // must remember current dir so we stay in that directory after the
+                // poll
+                currentDir = operations.getCurrentDirectory();
+            }
+
+            // strip trailing slash
+            fileName = FileUtil.stripTrailingSeparator(fileName);
+
+            boolean answer = doPollDirectory(dynamic, fileName, null, fileList, depth);
+            if (currentDir != null) {
+                operations.changeCurrentDirectory(currentDir);
+            }
+
+            return answer;
+        } finally {
+            lock.unlock();
         }
-
-        // strip trailing slash
-        fileName = FileUtil.stripTrailingSeparator(fileName);
-
-        boolean answer = doPollDirectory(dynamic, fileName, null, fileList, depth);
-        if (currentDir != null) {
-            operations.changeCurrentDirectory(currentDir);
-        }
-
-        return answer;
     }
 
     protected boolean pollSubDirectory(

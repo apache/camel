@@ -79,6 +79,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 
     private volatile CassandraSessionHolder sessionHolder;
+    // whether the endpoint created the session from its hosts (and so closes it when it stops)
+    private boolean createdSession;
 
     @UriPath(description = "beanRef is defined using bean:id")
     private String beanRef;
@@ -170,12 +172,16 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
             }
         }
 
+        createdSession = false;
         if (session == null && hosts != null) {
             // use the session builder to create the cluster
             session = createSessionBuilder().build();
+            createdSession = true;
         }
 
-        sessionHolder = new CassandraSessionHolder(session);
+        // the endpoint closes only the session it created from its hosts; a session it was given (session) or looked
+        // up (beanRef) is managed outside, and other endpoints, repositories or the application can use it
+        sessionHolder = new CassandraSessionHolder(session, !createdSession);
 
         sessionHolder.start();
     }
@@ -183,7 +189,14 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        sessionHolder.stop();
+        if (sessionHolder != null) {
+            sessionHolder.stop();
+        }
+        if (createdSession) {
+            // the session is closed, so the next start creates a new one from the hosts
+            session = null;
+            createdSession = false;
+        }
     }
 
     protected CassandraSessionHolder getSessionHolder() {

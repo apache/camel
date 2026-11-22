@@ -2054,6 +2054,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageHeaderNameBuilder ibmWatsonLanguage() {
         return WatsonLanguageEndpointBuilderFactory.WatsonLanguageHeaderNameBuilder.INSTANCE;
     }

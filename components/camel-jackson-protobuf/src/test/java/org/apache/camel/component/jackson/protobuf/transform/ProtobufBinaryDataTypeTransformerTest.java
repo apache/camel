@@ -117,6 +117,30 @@ class ProtobufBinaryDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepProtobufBinaryWithItsContentType() throws Exception {
+        // CAMEL-27271: bytes or a stream that the Content-Type says are Protobuf binary already are kept as they are,
+        // with that Content-Type, and need no schema
+        byte[] binary = new byte[] { 1, 2, 3 };
+        for (String contentType : List.of("application/protobuf", "protobuf/binary", "APPLICATION/PROTOBUF; charset=UTF-8")) {
+            for (Object body : List.of(binary, new ByteArrayInputStream(binary))) {
+                Exchange exchange = new DefaultExchange(camelContext);
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+                exchange.getMessage().setBody(body);
+                transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+                Assertions.assertSame(body, exchange.getMessage().getBody(), contentType);
+                Assertions.assertEquals(contentType, exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+            }
+        }
+        // other bytes still need the schema
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/octet-stream");
+        exchange.getMessage().setBody(binary);
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("protobuf-binary"));
@@ -136,7 +160,7 @@ class ProtobufBinaryDataTypeTransformerTest {
         BodyTypes bodyTypes = ProtobufBinaryDataTypeTransformer.class.getAnnotation(BodyTypes.class);
         Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
                 List.of(bodyTypes.transformerIn().value()));
-        Assertions.assertEquals(List.of(Carrier.BYTES), List.of(bodyTypes.transformerOut().value()));
+        Assertions.assertEquals(List.of(Carrier.BYTES, Carrier.STREAM), List.of(bodyTypes.transformerOut().value()));
         Assertions.assertEquals(byte[].class.getCanonicalName(), bodyTypes.transformerOut().javaType());
         Assertions.assertEquals("binary", bodyTypes.transformerOut().format());
         String json = "{ \"name\": \"Goofy\", \"age\": 25 }";

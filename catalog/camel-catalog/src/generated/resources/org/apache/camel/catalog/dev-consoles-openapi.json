@@ -2378,6 +2378,563 @@
 				}
 			}
 		},
+		"\/q\/dev\/genai": {
+			"get": {
+				"summary": "GenAI",
+				"description": "The model calls, agent runs and tool calls of the Camel AI components",
+				"operationId": "genai",
+				"parameters": [
+					{
+						"name": "content",
+						"in": "query",
+						"description": "Whether to add the message content to the listed calls (only recorded at level full)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "id",
+						"in": "query",
+						"description": "The id of one call (an agent run, a model call or a tool call) to answer with its content",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "The number of the newest top-level calls to list",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 20
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "GenAI output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"recording": {
+											"type": "boolean",
+											"description": "Whether the calls are recorded: while the dev console is enabled"
+										},
+										"level": {
+											"type": "string",
+											"description": "The observability level: basic, detailed or full"
+										},
+										"contentMaxLength": {
+											"type": "integer",
+											"description": "The cap on each recorded text"
+										},
+										"modelCalls": {
+											"type": "integer",
+											"description": "The model calls since start"
+										},
+										"agentRuns": {
+											"type": "integer",
+											"description": "The agent runs since start"
+										},
+										"toolCalls": {
+											"type": "integer",
+											"description": "The tool calls since start"
+										},
+										"errors": {
+											"type": "integer",
+											"description": "The calls that failed since start"
+										},
+										"inputTokens": {
+											"type": "integer",
+											"description": "The input tokens of the model calls since start"
+										},
+										"outputTokens": {
+											"type": "integer",
+											"description": "The output tokens of the model calls since start"
+										},
+										"cachedInputTokens": {
+											"type": "integer",
+											"description": "The input tokens read from the cache of the provider since start"
+										},
+										"models": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"description": "The provider, such as openai or ollama"
+													},
+													"model": {
+														"type": "string",
+														"description": "The model, the response model when known"
+													},
+													"calls": {
+														"type": "integer",
+														"description": "The model calls"
+													},
+													"errors": {
+														"type": "integer",
+														"description": "The model calls that failed"
+													},
+													"inputTokens": {
+														"type": "integer",
+														"description": "The input tokens"
+													},
+													"outputTokens": {
+														"type": "integer",
+														"description": "The output tokens"
+													},
+													"cachedInputTokens": {
+														"type": "integer",
+														"description": "The input tokens read from the cache of the provider"
+													},
+													"durationMs": {
+														"type": "integer",
+														"description": "The time of the model calls in millis"
+													}
+												},
+												"required": [
+													"calls",
+													"errors",
+													"inputTokens",
+													"outputTokens",
+													"cachedInputTokens",
+													"durationMs"
+												]
+											},
+											"description": "The model calls since start per provider and model"
+										},
+										"calls": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The id of the call"
+													},
+													"operation": {
+														"type": "string",
+														"description": "The GenAI operation: invoke_agent, chat, embeddings, ..."
+													},
+													"name": {
+														"type": "string",
+														"description": "The name of the call, such as chat gpt-4o"
+													},
+													"agentName": {
+														"type": "string",
+														"description": "The agent of an agent run"
+													},
+													"provider": {
+														"type": "string",
+														"description": "The provider"
+													},
+													"model": {
+														"type": "string",
+														"description": "The model"
+													},
+													"component": {
+														"type": "string",
+														"description": "The Camel component"
+													},
+													"conversationId": {
+														"type": "string",
+														"description": "The conversation (chat memory) id"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route of the call"
+													},
+													"exchangeId": {
+														"type": "string",
+														"description": "The exchange of the call"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "When the call started, in epoch millis"
+													},
+													"running": {
+														"type": "boolean",
+														"description": "Whether the call is still running"
+													},
+													"durationMs": {
+														"type": "integer",
+														"description": "The time of the call in millis, when it ended"
+													},
+													"inputTokens": {
+														"type": "integer",
+														"description": "The input tokens (of its model calls, for an agent run)"
+													},
+													"outputTokens": {
+														"type": "integer",
+														"description": "The output tokens (of its model calls, for an agent run)"
+													},
+													"cachedInputTokens": {
+														"type": "integer",
+														"description": "The input tokens read from the cache (of its model calls, for an agent run)"
+													},
+													"finishReason": {
+														"type": "string",
+														"description": "The finish reason, such as stop or tool_calls"
+													},
+													"error": {
+														"type": "string",
+														"description": "The exception type when the call failed"
+													},
+													"modelCalls": {
+														"type": "integer",
+														"description": "The model calls of an agent run"
+													},
+													"toolCalls": {
+														"type": "integer",
+														"description": "The tool calls of an agent run"
+													},
+													"modelMs": {
+														"type": "integer",
+														"description": "The time of the model calls of an agent run in millis"
+													},
+													"toolMs": {
+														"type": "integer",
+														"description": "The time of the tool calls of an agent run in millis"
+													},
+													"steps": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"description": "The id of the call"
+																},
+																"parentId": {
+																	"type": "string",
+																	"description": "The id of the call it was made in"
+																},
+																"operation": {
+																	"type": "string",
+																	"description": "The GenAI operation: chat, execute_tool, ..."
+																},
+																"name": {
+																	"type": "string",
+																	"description": "The name of the call"
+																},
+																"toolName": {
+																	"type": "string",
+																	"description": "The tool of a tool call"
+																},
+																"toolCallId": {
+																	"type": "string",
+																	"description": "The id the model gave to the tool call"
+																},
+																"provider": {
+																	"type": "string",
+																	"description": "The provider"
+																},
+																"model": {
+																	"type": "string",
+																	"description": "The model of a model call"
+																},
+																"timestamp": {
+																	"type": "integer",
+																	"description": "When the call started, in epoch millis"
+																},
+																"running": {
+																	"type": "boolean",
+																	"description": "Whether the call is still running"
+																},
+																"durationMs": {
+																	"type": "integer",
+																	"description": "The time of the call in millis, when it ended"
+																},
+																"inputTokens": {
+																	"type": "integer",
+																	"description": "The input tokens of a model call"
+																},
+																"outputTokens": {
+																	"type": "integer",
+																	"description": "The output tokens of a model call"
+																},
+																"cachedInputTokens": {
+																	"type": "integer",
+																	"description": "The input tokens read from the cache"
+																},
+																"finishReason": {
+																	"type": "string",
+																	"description": "The finish reason, such as stop or tool_calls"
+																},
+																"error": {
+																	"type": "string",
+																	"description": "The exception type when the call failed"
+																},
+																"content": {
+																	"type": "object",
+																	"additionalProperties": true,
+																	"description": "The content at level full"
+																}
+															},
+															"required": [
+																"timestamp",
+																"running"
+															]
+														},
+														"description": "The calls made inside this one, in the order they started"
+													},
+													"droppedSteps": {
+														"type": "integer",
+														"description": "The steps not kept, beyond the cap per call"
+													},
+													"question": {
+														"type": "string",
+														"description": "The first user message, with content at level full"
+													},
+													"answer": {
+														"type": "string",
+														"description": "The last assistant message, with content at level full"
+													},
+													"content": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "The content at level full: systemInstructions, toolDefinitions, inputMessages, outputMessages, toolArguments, toolResult"
+													}
+												},
+												"required": [
+													"timestamp",
+													"running"
+												]
+											},
+											"description": "The newest top-level calls (agent runs, and model calls outside a run), newest first"
+										},
+										"moreCalls": {
+											"type": "integer",
+											"description": "The top-level calls not listed: beyond the limit, or no longer kept"
+										},
+										"call": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string",
+													"description": "The id of the call"
+												},
+												"operation": {
+													"type": "string",
+													"description": "The GenAI operation: invoke_agent, chat, embeddings, ..."
+												},
+												"name": {
+													"type": "string",
+													"description": "The name of the call, such as chat gpt-4o"
+												},
+												"agentName": {
+													"type": "string",
+													"description": "The agent of an agent run"
+												},
+												"provider": {
+													"type": "string",
+													"description": "The provider"
+												},
+												"model": {
+													"type": "string",
+													"description": "The model"
+												},
+												"component": {
+													"type": "string",
+													"description": "The Camel component"
+												},
+												"conversationId": {
+													"type": "string",
+													"description": "The conversation (chat memory) id"
+												},
+												"routeId": {
+													"type": "string",
+													"description": "The route of the call"
+												},
+												"exchangeId": {
+													"type": "string",
+													"description": "The exchange of the call"
+												},
+												"timestamp": {
+													"type": "integer",
+													"description": "When the call started, in epoch millis"
+												},
+												"running": {
+													"type": "boolean",
+													"description": "Whether the call is still running"
+												},
+												"durationMs": {
+													"type": "integer",
+													"description": "The time of the call in millis, when it ended"
+												},
+												"inputTokens": {
+													"type": "integer",
+													"description": "The input tokens (of its model calls, for an agent run)"
+												},
+												"outputTokens": {
+													"type": "integer",
+													"description": "The output tokens (of its model calls, for an agent run)"
+												},
+												"cachedInputTokens": {
+													"type": "integer",
+													"description": "The input tokens read from the cache (of its model calls, for an agent run)"
+												},
+												"finishReason": {
+													"type": "string",
+													"description": "The finish reason, such as stop or tool_calls"
+												},
+												"error": {
+													"type": "string",
+													"description": "The exception type when the call failed"
+												},
+												"modelCalls": {
+													"type": "integer",
+													"description": "The model calls of an agent run"
+												},
+												"toolCalls": {
+													"type": "integer",
+													"description": "The tool calls of an agent run"
+												},
+												"modelMs": {
+													"type": "integer",
+													"description": "The time of the model calls of an agent run in millis"
+												},
+												"toolMs": {
+													"type": "integer",
+													"description": "The time of the tool calls of an agent run in millis"
+												},
+												"steps": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string",
+																"description": "The id of the call"
+															},
+															"parentId": {
+																"type": "string",
+																"description": "The id of the call it was made in"
+															},
+															"operation": {
+																"type": "string",
+																"description": "The GenAI operation: chat, execute_tool, ..."
+															},
+															"name": {
+																"type": "string",
+																"description": "The name of the call"
+															},
+															"toolName": {
+																"type": "string",
+																"description": "The tool of a tool call"
+															},
+															"toolCallId": {
+																"type": "string",
+																"description": "The id the model gave to the tool call"
+															},
+															"provider": {
+																"type": "string",
+																"description": "The provider"
+															},
+															"model": {
+																"type": "string",
+																"description": "The model of a model call"
+															},
+															"timestamp": {
+																"type": "integer",
+																"description": "When the call started, in epoch millis"
+															},
+															"running": {
+																"type": "boolean",
+																"description": "Whether the call is still running"
+															},
+															"durationMs": {
+																"type": "integer",
+																"description": "The time of the call in millis, when it ended"
+															},
+															"inputTokens": {
+																"type": "integer",
+																"description": "The input tokens of a model call"
+															},
+															"outputTokens": {
+																"type": "integer",
+																"description": "The output tokens of a model call"
+															},
+															"cachedInputTokens": {
+																"type": "integer",
+																"description": "The input tokens read from the cache"
+															},
+															"finishReason": {
+																"type": "string",
+																"description": "The finish reason, such as stop or tool_calls"
+															},
+															"error": {
+																"type": "string",
+																"description": "The exception type when the call failed"
+															},
+															"content": {
+																"type": "object",
+																"additionalProperties": true,
+																"description": "The content at level full"
+															}
+														},
+														"required": [
+															"timestamp",
+															"running"
+														]
+													},
+													"description": "The calls made inside this one, in the order they started"
+												},
+												"droppedSteps": {
+													"type": "integer",
+													"description": "The steps not kept, beyond the cap per call"
+												},
+												"question": {
+													"type": "string",
+													"description": "The first user message, with content at level full"
+												},
+												"answer": {
+													"type": "string",
+													"description": "The last assistant message, with content at level full"
+												},
+												"content": {
+													"type": "object",
+													"additionalProperties": true,
+													"description": "The content at level full: systemInstructions, toolDefinitions, inputMessages, outputMessages, toolArguments, toolResult"
+												}
+											},
+											"required": [
+												"timestamp",
+												"running"
+											],
+											"description": "The call asked for with the id option"
+										},
+										"error": {
+											"type": "string",
+											"description": "Why the call asked for is not there"
+										}
+									},
+									"required": [
+										"recording",
+										"contentMaxLength",
+										"modelCalls",
+										"agentRuns",
+										"toolCalls",
+										"errors",
+										"inputTokens",
+										"outputTokens",
+										"cachedInputTokens"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/groovy": {
 			"get": {
 				"summary": "Groovy",

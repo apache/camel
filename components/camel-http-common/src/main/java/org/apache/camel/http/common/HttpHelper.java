@@ -396,10 +396,7 @@ public final class HttpHelper {
      * @return       a sanitized log trace
      */
     public static String sanitizeLog(String input) {
-        if (input == null) {
-            return null;
-        }
-        return input.replaceAll("[\n\r]", "_");
+        return org.apache.camel.http.base.HttpHelper.sanitizeLog(input);
     }
 
 }

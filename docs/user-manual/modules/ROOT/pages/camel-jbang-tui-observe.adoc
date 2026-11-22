@@ -210,6 +210,36 @@ listed once.
 
 image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
+The Routes, SQL Trace, Health, Circuit Breaker, Kafka and CVE Audit tabs have the key too:
+
+* *Routes*: *Shift+F8* on a route whose exchanges fail asks the AI to fix it, with the steps they fail at, their source
+lines and the last error of the route. On a route without failures, it asks the AI to explain where the time goes, with
+its slowest steps.
+* *SQL Trace*: *Shift+F8* on a statement that failed asks the AI to fix it, with the SQL, the route and source line, and
+the error of its exchange. On a slow statement (100 ms or more), it asks the AI why it is slow and what could make it
+faster.
+
+* *Health*: *Shift+F8* asks the AI to fix the checks that are not UP (in the table, the selected one). The question has
+the message of the check and what being DOWN means for the integration (taken out of service, or restarted). It also
+has the details of the check, such as the route and endpoint, the source line of its route, and the stack trace of the
+error. The AI tells whether the cause is in the project, and fixes it there, or outside the integration, such as a
+broker that is not running.
+* *Circuit Breaker*: *Shift+F8* asks the AI to explain the selected circuit breaker when it is open or half open, or its
+calls failed, timed out or were rejected. The question has its state and counters, its configuration, its line in the
+source and the last error of its route. An open circuit breaker is often the breaker doing its job, so the AI explains
+and suggests, and changes no file unless you agree.
+* *Kafka*: *Shift+F8* asks the AI to fix the selected consumer when it has an error, or is not running or paused. The
+question has its state and last error, its endpoint and consumer group, where it last read (topic, partition, offset),
+the line of its route in the source and the last error of the route. The AI fixes the cause in the routes or
+configuration (brokers, topic, group, deserializers, security), or says how to fix it when it is outside the
+integration, such as a broker that is not running.
+* *CVE Audit*: *Shift+F8* asks the AI to explain the selected vulnerability, or all the vulnerabilities of the selected
+artifact when the tab is grouped by artifact: the severity, the artifacts with the version that fixes each and the
+dependency chain that brings each in, whether the routes use them, the Apache Camel advisory and the description, with
+the change that fixes each (the fixed version to declare with `camel.jbang.dependencies` or `//DEPS`, or the Camel
+release to upgrade to). The AI tells whether the integration uses the vulnerable part of the library, offers the
+change, and changes no file unless you agree.
+
 The Log tab shows the log in one of three views, and *c* goes to the next one:
 
 * *compact* (the default): the time, level, logger and message of each line, as the date, pid and thread take most of
@@ -245,9 +275,23 @@ Features:
 * *Sort and search* -- sort by trace ID, route, status, duration, or span count;
   filter with text search
 * *Error highlighting* -- failed spans (status ERROR) are highlighted in red
+* *AI agent runs* -- GenAI spans are labelled in the waterfall: an agent run (◆), a model call (●) with its
+  tokens and finish reason, and a tool call (⚙) with its arguments. The detail panel of an agent run shows its
+  model and provider, the number of model and tool calls, the tokens, how its time splits into model calls, tool
+  calls and the rest, and the steps one by one. Agent runs are recorded from the GenAI observability level
+  `detailed` on (`camel.aiObservability.level=detailed`).
+* *AI conversations* -- on a GenAI span (a model call, an agent run or a tool call), press *t* to read its
+  conversation: the system instructions, the user and assistant messages, and each tool call with its arguments
+  and result. An agent run shows the input and output of its last model call, which hold the whole run. The
+  messages are recorded at the GenAI observability level `full` (`camel.aiObservability.level=full`); at a lower
+  level the detail panel says so
 
 This is especially useful for understanding latency in multi-route integrations and for
 correlating Camel processing with external service calls (HTTP, database, messaging).
+
+image::jbang/camel-tui-spans-agent-run.png[An agent run in the waterfall: two model calls and a tool call, with the steps, tokens and time of the run in the detail panel]
+
+image::jbang/camel-tui-spans-conversation.png[The conversation of an agent run: the question, the call of a route tool with its result, and the answer]
 
 == Process Information
 
@@ -417,12 +461,54 @@ image::jbang/camel-tui-chaos-explore.png[The exploration of the chaos example on
 === CVE Audit
 
 The CVE Audit tab (under More > Project) scans all Maven dependencies on your integration's classpath
-against the https://osv.dev[OSV.dev] vulnerability database. It queries every JAR using the OSV batch
+against the https://osv.dev[OSV.dev] vulnerability database, and the Camel JARs against the Apache Camel
+security advisories that ship with the Camel catalog. It queries every JAR using the OSV batch
 API and displays known vulnerabilities grouped by severity (Critical, High, Medium, Low).
 
-Each vulnerability shows the CVE ID, affected artifact, the direct dependency that pulls it in (VIA column),
-and a summary. Select a CVE to see full details including CVSS vector, published date, fixed versions,
-and aliases. Results are cached globally -- switching integrations that share JARs is instant.
+Each vulnerability shows the CVE ID, its CVSS score, the affected artifact, the version that fixes it (FIX
+column: the fix of the line the artifact's version is in, or the Camel release to upgrade to for a Camel
+advisory), the dependency chain that brings it in (VIA column, such as `camel-kafka > kafka-clients`), whether
+the routes use it (USED column: `yes` when the routes have an endpoint of the Camel component that brings it in,
+`no` when they have none, empty when no component brings it in), and a summary. Select a CVE to see full
+details including CVSS vector, published date, the Camel advisory with its mitigation, and aliases.
+
+Press `g` to group the table by artifact: one row per vulnerable JAR with its number of CVEs and the version that
+fixes all of them, which is what to upgrade. Press `/` to filter the rows by CVE, artifact, summary or a dependency
+of the chain. Results are cached globally -- switching integrations that share JARs is instant. When OSV.dev cannot
+be reached, the title says so and only the Camel advisories were checked; press `r` to scan again.
+
+By default the coordinates of the JARs are sent to the OSV.dev API. With *OSV Database* in the
+xref:camel-jbang-tui-settings.adoc[Settings] set to `default`, the tab uses the offline OSV database instead, as
+`camel dependency audit --osv-database` does: the export of all the Maven vulnerabilities of OSV.dev, downloaded once a
+day into `~/.camel/osv` and matched locally, so no coordinates leave the machine. The title then says
+`offline OSV database, updated <date>`. A URL downloads the export from a mirror, such as the repository manager of
+the company, and a path reads a ZIP file on disk.
+
+=== Maven Dependencies
+
+The Maven Dependencies tab (under More > Project) lists the dependencies the integration declares, and with `t` the
+ones they bring in, with the dependency that brings each (VIA column). Above the table, a line tells where the Camel
+version stands: LTS or not, its end of life, the latest patch release of the same line, the latest LTS release and the
+latest release. The Camel JARs move together, so they have no newer versions of their own.
+
+Each dependency is checked against the Camel dependencies:
+
+* *CAMEL* is the version the Camel dependencies bring of the library, empty when Camel does not bring it.
+* *STATUS* is `conflict` when the JAR is loaded in more than one version or in another version than the one declared
+  (a declared old version of a library Camel also brings ends up next to Camel's version), `mixed` for a Camel JAR of
+  another Camel version, `override` when the project declares another version than the one Camel brings, `managed`
+  when it is the version Camel brings, and `camel` for a Camel JAR.
+
+Press `u` to look up the newer releases in the Maven repositories of your Maven settings: *NEWER* is the latest release
+of the same major.minor line, and *LATEST* the latest release, marked `(major)` when it is another major version. `u`
+also runs the CVE Audit, whose findings fill the *CVES* column; `v` opens the CVE Audit on the selected dependency.
+Nothing is looked up before you press `u`. `f` cycles the scope, and `outdated` keeps the dependencies worth a look.
+`Shift+F8` asks the AI which dependencies to upgrade, and whether that is safe with this Camel version.
+
+image::jbang/camel-tui-observe-maven-dependencies.png[The Maven Dependencies tab: camel-zipfile 4.18.0 among the Camel 4.24 JARs is mixed, snakeyaml 1.33 is loaded next to Camel's 2.7 and has a CVE, and commons-text 1.9 has a newer release and a CVE]
+
+The same check is a command, `camel dependency outdated` (see
+xref:camel-jbang-projects.adoc#_checking_for_outdated_dependencies[Checking for outdated dependencies]).
 
 === Kafka
 

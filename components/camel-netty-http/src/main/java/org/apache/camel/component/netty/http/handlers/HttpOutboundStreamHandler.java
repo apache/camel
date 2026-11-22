@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.DefaultChannelPromise;
@@ -38,6 +39,9 @@ public class HttpOutboundStreamHandler extends ChunkedWriteHandler {
 
         if (needNewPromise) {
             promise = new DefaultChannelPromise(ctx.channel());
+            // the headers are sent before the body, so a body that fails to be read or written leaves the message
+            // incomplete: close the connection, otherwise the peer waits for the rest of the body
+            promise.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
         }
 
         super.write(ctx, msg, promise);

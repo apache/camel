@@ -2652,6 +2652,8 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("instanceClass", def.getInstanceClass(), null);
+        doWriteAttribute("schema", def.getSchema(), null);
+        doWriteAttribute("messageName", def.getMessageName(), null);
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
         doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");

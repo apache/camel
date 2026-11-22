@@ -64,11 +64,12 @@ public class ExportITCase extends JBangTestSupport {
     public void testExportFile() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);
+        // export to a new directory: the one of the source files has files that no export created (CAMEL-26912)
         execute(String.format(
-                "export %s/FromDirectoryRoute.java %s/server.yaml --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
+                "export %s/FromDirectoryRoute.java %s/server.yaml --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s/exported",
                 mountPoint(), mountPoint(), mountPoint()));
-        assertFileInDataFolderExists("src/main/java/com/foo/acme/FromDirectoryRoute.java");
-        assertFileInDataFolderExists("src/main/resources/camel/server.yaml");
+        assertFileInDataFolderExists("exported/src/main/java/com/foo/acme/FromDirectoryRoute.java");
+        assertFileInDataFolderExists("exported/src/main/resources/camel/server.yaml");
     }
 
     @Test

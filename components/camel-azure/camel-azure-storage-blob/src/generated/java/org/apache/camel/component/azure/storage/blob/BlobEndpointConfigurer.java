@@ -105,6 +105,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "leaseDurationInSeconds": target.getConfiguration().setLeaseDurationInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxconcurrency":
         case "maxConcurrency": target.getConfiguration().setMaxConcurrency(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.getConfiguration().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "maxresultsperpage":
         case "maxResultsPerPage": target.getConfiguration().setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
@@ -243,6 +245,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "leaseDurationInSeconds": return java.lang.Integer.class;
         case "maxconcurrency":
         case "maxConcurrency": return java.lang.Integer.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
         case "maxresultsperpage":
         case "maxResultsPerPage": return java.lang.Integer.class;
         case "maxretryrequests":
@@ -377,6 +381,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "leaseDurationInSeconds": return target.getConfiguration().getLeaseDurationInSeconds();
         case "maxconcurrency":
         case "maxConcurrency": return target.getConfiguration().getMaxConcurrency();
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return target.getConfiguration().getMaxMessagesPerPoll();
         case "maxresultsperpage":
         case "maxResultsPerPage": return target.getConfiguration().getMaxResultsPerPage();
         case "maxretryrequests":

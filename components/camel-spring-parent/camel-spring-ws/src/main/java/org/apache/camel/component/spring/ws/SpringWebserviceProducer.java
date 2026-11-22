@@ -286,8 +286,9 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
 
         @Override
-        public boolean supports(URI uri) {
-            return delegate.supports(uri);
+        public boolean supports(URI uri, WebServiceMessageSender.UriSource uriSource) {
+            // delegate so the destination policy configured on the decorated sender applies
+            return delegate.supports(uri, uriSource);
         }
     }
 

@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StringDataTypeTransformerTest {
 
@@ -92,10 +93,11 @@ public class StringDataTypeTransformerTest {
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {
-        // CAMEL-25928: any body Camel converts, as transformerIn says, and the body transformerOut says
+        // CAMEL-25928: a payload or a value, as transformerIn says, and the body transformerOut says
         BodyTypes bodyTypes = StringDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
-        assertEquals(Carrier.TEXT, bodyTypes.transformerOut().value()[0]);
+        assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.NULL),
+                List.of(bodyTypes.transformerIn().value()));
+        assertEquals(List.of(Carrier.TEXT, Carrier.NULL), List.of(bodyTypes.transformerOut().value()));
         assertEquals(String.class.getCanonicalName(), bodyTypes.transformerOut().javaType());
         for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
                 new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5)) {
@@ -104,6 +106,11 @@ public class StringDataTypeTransformerTest {
             transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
             assertInstanceOf(String.class, exchange.getMessage().getBody(), body.getClass().getName());
         }
+        // a null body stays null, as transformerOut says, and gets the content type
+        Exchange empty = new DefaultExchange(camelContext);
+        transformer.transform(empty.getMessage(), DataType.ANY, DataType.ANY);
+        assertNull(empty.getMessage().getBody());
+        assertEquals("text/plain", empty.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     private static void assertStringBody(Exchange exchange, String key, String content) {

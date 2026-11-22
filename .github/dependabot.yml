@@ -34,7 +34,8 @@ updates:
       - dependency-name: "org.apache.logging.log4j:*"
       # This is a virtual plugin which doesn't really exist
       - dependency-name: "org.eclipse.m2e:lifecycle-mapping"
-      # Managed manually - gencode version must be <= the lowest runtime version across Spring Boot and Quarkus
+      # Managed manually - the gencode version (protoc-version) must be <= the lowest runtime version across Spring Boot and Quarkus,
+      # and the runtime version (protobuf-version) must be >= the gencode version of the libraries that use it (such as Apicurio Registry)
       - dependency-name: "com.google.protobuf:*"
       # fugue 7 is compiled for Java 25 and breaks camel-jira on Java 17 and 21 (CAMEL-25401): revisit when Camel's minimum Java is 25
       - dependency-name: "io.atlassian.fugue:fugue"

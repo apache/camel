@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
@@ -26,7 +25,8 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import org.apache.camel.component.ai.observability.GenAiAttributes;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,37 +34,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AiPanelGenAiUsageTest {
 
-    private AtomicReference<List<SpanEntry>> spans;
+    private AtomicReference<GenAiConsoleUsage> genAi;
 
     @BeforeEach
     void setUp() {
         Theme.resetForTesting();
-        spans = new AtomicReference<>(List.of());
+        genAi = new AtomicReference<>(GenAiConsoleUsage.NONE);
     }
 
     @Test
-    void combinedUsageIncludesRouteGenAiSpans() {
+    void combinedUsageIncludesTheGenAiCallsOfTheIntegration() {
         AiPanel panel = new AiPanel();
-        panel.setOtelSpans(spans);
-        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+        panel.setGenAiUsage(genAi);
+        panel.recordUsageForTesting(new AiUsageEntry(
                 "gpt-4o-mini", "openai", 10, 5, 15, 1000, "stop", Instant.now()));
 
-        spans.set(List.of(routeSpan("route-chat", "gpt-4o", 100, 20)));
+        genAi.set(console("detailed", chat("route-chat", "gpt-4o", 100, 20, 0)));
 
         assertThat(panel.combinedUsageEntriesForTesting()).hasSize(2);
         assertThat(panel.combinedUsageEntriesForTesting())
-                .anyMatch(entry -> entry.source() == AiPanel.AiUsageSource.ROUTE
+                .anyMatch(entry -> entry.source() == AiUsageSource.ROUTE
                         && "route-chat".equals(entry.routeId()));
     }
 
     @Test
     void statsViewRendersRouteAndTuiBreakdown() {
         AiPanel panel = new AiPanel();
-        panel.setOtelSpans(spans);
+        panel.setGenAiUsage(genAi);
         panel.open();
-        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+        panel.recordUsageForTesting(new AiUsageEntry(
                 "gpt-4o-mini", "openai", 10, 5, 15, 1000, "stop", Instant.now()));
-        spans.set(List.of(routeSpan("orders", "gpt-4o", 50, 10)));
+        genAi.set(console("detailed", chat("orders", "gpt-4o", 50, 10, 0)));
         panel.toggleStatsViewForTesting();
 
         Rect area = new Rect(0, 0, 120, 24);
@@ -82,10 +82,10 @@ class AiPanelGenAiUsageTest {
     @Test
     void pageDownScrollsTheModelsOfTheStatsView() {
         AiPanel panel = new AiPanel();
-        panel.setOtelSpans(spans);
+        panel.setGenAiUsage(genAi);
         panel.open();
         for (int i = 0; i < 12; i++) {
-            panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+            panel.recordUsageForTesting(new AiUsageEntry(
                     "model-" + (char) ('a' + i), "openai", 10, 5, 15, 1000, "stop", Instant.now()));
         }
         panel.toggleStatsViewForTesting();
@@ -109,23 +109,23 @@ class AiPanelGenAiUsageTest {
     }
 
     @Test
-    void togglingStatsViewRequestsSpanRefresh() {
+    void togglingStatsViewRequestsUsageRefresh() {
         AiPanel panel = new AiPanel();
-        assertThat(panel.spanRefreshRequested).isFalse();
+        assertThat(panel.usageRefreshRequested).isFalse();
 
         panel.toggleStatsViewForTesting();
         assertThat(panel.isStatsView()).isTrue();
-        assertThat(panel.spanRefreshRequested).isTrue();
+        assertThat(panel.usageRefreshRequested).isTrue();
 
         panel.toggleStatsViewForTesting();
         assertThat(panel.isStatsView()).isFalse();
-        assertThat(panel.spanRefreshRequested).isTrue();
+        assertThat(panel.usageRefreshRequested).isTrue();
     }
 
     @Test
     void statsViewShowsGuidanceWhenNoDataAvailable() {
         AiPanel panel = new AiPanel();
-        panel.setOtelSpans(spans);
+        panel.setGenAiUsage(genAi);
         panel.open();
         panel.toggleStatsViewForTesting();
 
@@ -138,27 +138,119 @@ class AiPanelGenAiUsageTest {
                 .contains("GenAI observability");
     }
 
-    private static SpanEntry routeSpan(String routeId, String model, int input, int output) {
-        return new SpanEntry(
-                "trace-1",
-                "span-1",
-                "",
-                "chat " + model,
-                "CLIENT",
-                "OK",
-                Instant.now().getEpochSecond() * 1_000_000_000L,
-                Instant.now().getEpochSecond() * 1_000_000_000L + 500_000_000L,
-                500,
-                routeId,
-                null,
-                "camel",
-                Map.of(
-                        GenAiAttributes.OPERATION_NAME, "chat",
-                        GenAiAttributes.SYSTEM, "openai",
-                        GenAiAttributes.REQUEST_MODEL, model,
-                        GenAiAttributes.RESPONSE_MODEL, model,
-                        GenAiAttributes.INPUT_TOKENS, input,
-                        GenAiAttributes.OUTPUT_TOKENS, output,
-                        GenAiAttributes.FINISH_REASONS, "stop"));
+    @Test
+    void statsViewCountsOnlyTheModelCallsOfAnAgentRun() {
+        AiPanel panel = new AiPanel();
+        panel.setGenAiUsage(genAi);
+        panel.open();
+        genAi.set(console("detailed", agentRun()));
+        panel.toggleStatsViewForTesting();
+
+        assertThat(panel.combinedUsageEntriesForTesting()).hasSize(2);
+        String rendered = render(panel, new Rect(0, 0, 140, 24));
+        assertThat(rendered)
+                .contains("integration: 2")
+                .contains("cached: 800")
+                .contains("CACHED")
+                .contains("Agent runs: 1")
+                .contains("model calls: 2")
+                .contains("tool calls: 1")
+                .contains("GenAI level: detailed")
+                .doesNotContain("execute_tool")
+                // the panel itself called no tools: its tool time would read as the integration's
+                .doesNotContain("Tool time");
+    }
+
+    @Test
+    void statsViewExplainsLevelBasic() {
+        AiPanel panel = new AiPanel();
+        panel.setGenAiUsage(genAi);
+        panel.open();
+        genAi.set(console("basic", chat("orders", "gpt-4o", 50, 10, 0)));
+        panel.toggleStatsViewForTesting();
+
+        assertThat(render(panel, new Rect(0, 0, 140, 24)))
+                .contains("GenAI level: basic")
+                .contains("agent runs and tool calls are not traced");
+    }
+
+    @Test
+    void statsViewSaysWhenTheIntegrationDoesNotRecord() {
+        AiPanel panel = new AiPanel();
+        panel.setGenAiUsage(genAi);
+        panel.open();
+        panel.recordUsageForTesting(new AiUsageEntry(
+                "gpt-4o-mini", "openai", 10, 5, 15, 1000, "stop", Instant.now()));
+        JsonObject off = answer("detailed");
+        off.put("recording", false);
+        genAi.set(GenAiConsoleUsage.from(off));
+        panel.toggleStatsViewForTesting();
+
+        assertThat(render(panel, new Rect(0, 0, 160, 24)))
+                .contains("not recorded: the dev console of the integration is off");
+    }
+
+    @Test
+    void usageSummaryListsAgentRunsAndCachedTokens() {
+        genAi.set(console("detailed", agentRun()));
+
+        AiUsageStats stats = new AiUsageStats();
+        stats.setGenAiUsage(genAi);
+        assertThat(stats.summary())
+                .contains("2 request(s) (0 from this panel, 2 from the integration)")
+                .contains("cached 800")
+                .contains("**Agent runs:** 1 (2 model call(s), 1 tool call(s)), **GenAI level:** detailed")
+                .contains("| Model | Reqs | In | Cached | Out | Total | Avg/req |");
+    }
+
+    /** The answer of the genai action of the integration, as the CLI connector gives it. */
+    private static GenAiConsoleUsage console(String level, JsonObject... calls) {
+        return GenAiConsoleUsage.from(answer(level, calls));
+    }
+
+    private static JsonObject answer(String level, JsonObject... calls) {
+        JsonObject answer = new JsonObject();
+        answer.put("recording", true);
+        answer.put("level", level);
+        answer.put("calls", new JsonArray(List.of((Object[]) calls)));
+        return answer;
+    }
+
+    /** An agent run at level detailed: two model calls and a tool call. */
+    private static JsonObject agentRun() {
+        JsonObject run = call("invoke_agent", "invoke_agent support", "support");
+        run.put("agentName", "support");
+        JsonObject tool = call("execute_tool", "execute_tool lookupOrder", null);
+        tool.put("toolName", "lookupOrder");
+        run.put("steps", new JsonArray(
+                List.of(
+                        chat(null, "gpt-4.1", 1000, 100, 0), tool, chat("support", "gpt-4.1", 1200, 100, 800))));
+        return run;
+    }
+
+    private static JsonObject chat(String routeId, String model, long input, long output, long cached) {
+        JsonObject chat = call("chat", "chat " + model, routeId);
+        chat.put("provider", "openai");
+        chat.put("model", model);
+        chat.put("inputTokens", input);
+        chat.put("outputTokens", output);
+        if (cached > 0) {
+            chat.put("cachedInputTokens", cached);
+        }
+        chat.put("finishReason", "stop");
+        return chat;
+    }
+
+    private static JsonObject call(String operation, String name, String routeId) {
+        JsonObject call = new JsonObject();
+        call.put("operation", operation);
+        call.put("name", name);
+        if (routeId != null) {
+            call.put("routeId", routeId);
+        }
+        call.put("timestamp", Instant.now().toEpochMilli());
+        call.put("running", false);
+        call.put("durationMs", 1000L);
+        return call;
     }
 }

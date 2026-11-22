@@ -179,6 +179,17 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced,consumer",
               description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
+    @UriParam(label = "advanced,consumer", defaultValue = "false",
+              description = "Whether the consumer routes each request synchronously. When true, the route runs on a thread of the"
+                            + " Vert.x worker pool, which waits until the route is complete, so the size of the worker pool limits"
+                            + " how many requests are routed at the same time. When false, the route starts on a worker thread"
+                            + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
+                            + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
+                            + " requests in flight. Keep it false for a route that calls an asynchronous producer using the same"
+                            + " Vert.x as the HTTP server (such as vertx-http in Camel Quarkus): with true, such requests can"
+                            + " occupy every worker thread while their producers need a worker thread to complete, and then no"
+                            + " request completes. (currently only supported by camel-platform-http-vertx)")
+    private boolean synchronous;
     @UriParam(label = "consumer,security", displayName = "OAuth Profile",
               description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
                             + "When set, the request is authenticated before the route is processed. "
@@ -438,6 +449,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public String getOauthProfile() {

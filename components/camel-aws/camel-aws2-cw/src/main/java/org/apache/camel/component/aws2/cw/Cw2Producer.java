@@ -217,10 +217,10 @@ public class Cw2Producer extends DefaultProducer {
             return Arrays.asList(metricDatum);
         }
         if (body instanceof Collection<?> collection) {
-            return toMetricData(collection);
+            return toMetricData(collection, "collection");
         }
         if (body instanceof Object[] array) {
-            return toMetricData(Arrays.asList(array));
+            return toMetricData(Arrays.asList(array), "array");
         }
 
         MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange))
@@ -230,7 +230,12 @@ public class Cw2Producer extends DefaultProducer {
         return Arrays.asList(metricDatum.build());
     }
 
-    private static List<MetricDatum> toMetricData(Collection<?> elements) {
+    private static List<MetricDatum> toMetricData(Collection<?> elements, String kind) {
+        if (elements.isEmpty()) {
+            // fail here, as what the service does with no metric data differs (an emulator accepts it and puts nothing)
+            throw new IllegalArgumentException(
+                    "The body is an empty " + kind + ": there is no MetricDatum to put");
+        }
         List<MetricDatum> metricData = new ArrayList<>(elements.size());
         for (Object element : elements) {
             if (element instanceof MetricDatum metricDatum) {

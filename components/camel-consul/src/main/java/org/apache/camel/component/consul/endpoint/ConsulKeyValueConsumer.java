@@ -103,6 +103,7 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
                 final Message message = exchange.getIn();
 
                 message.setHeader(ConsulConstants.CONSUL_KEY, value.getKey());
+                exchange.setProperty(ConsulConstants.CONSUL_RECEIVED_KEY, value.getKey());
                 message.setHeader(ConsulConstants.CONSUL_RESULT, true);
                 message.setHeader(ConsulConstants.CONSUL_FLAGS, value.getFlags());
                 message.setHeader(ConsulConstants.CONSUL_CREATE_INDEX, value.getCreateIndex());

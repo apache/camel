@@ -32,8 +32,10 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -52,7 +54,8 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.apache.tika.sax.ExpandedTitleContentHandler;
+import org.apache.tika.sax.ContentHandlerDecorator;
+import org.apache.tika.sax.XHTMLContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,7 +192,7 @@ public class TikaProducer extends DefaultProducer {
                 result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
                 break;
             case html:
-                result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", true));
+                result = new HtmlTitleContentHandler(getTransformerHandler(outputStream, "html", true));
                 break;
             default:
                 throw new IllegalArgumentException(
@@ -216,6 +219,80 @@ public class TikaProducer extends DefaultProducer {
         }
 
         return handler;
+    }
+
+    /**
+     * Writes an empty XHTML {@code title} element without its namespace, so the html output method treats it as an HTML
+     * element and writes the end tag: {@code <title></title>} and not {@code <title/>}, which browsers do not handle
+     * (TIKA-725). A title with text is passed on unchanged.
+     * <p>
+     * Tika's {@code ExpandedTitleContentHandler} does this by writing one character from an empty array, expecting the
+     * serializer to fail with an {@code ArrayIndexOutOfBoundsException} after it has closed the start tag. The JDK 21+
+     * serializer keeps a NUL character instead, and fails the parse when the element ends.
+     */
+    private static final class HtmlTitleContentHandler extends ContentHandlerDecorator {
+
+        private String titleUri;
+        private String titleLocalName;
+        private String titleName;
+        private Attributes titleAttributes;
+
+        private HtmlTitleContentHandler(ContentHandler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String name, Attributes atts) throws SAXException {
+            startPendingTitle();
+            if (XHTMLContentHandler.XHTML.equals(uri) && "title".equalsIgnoreCase(localName)) {
+                // wait for the title text, to know whether the title is empty
+                titleUri = uri;
+                titleLocalName = localName;
+                titleName = name;
+                titleAttributes = new AttributesImpl(atts);
+            } else {
+                super.startElement(uri, localName, name, atts);
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (length > 0) {
+                startPendingTitle();
+                super.characters(ch, start, length);
+            }
+        }
+
+        @Override
+        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+            startPendingTitle();
+            super.ignorableWhitespace(ch, start, length);
+        }
+
+        @Override
+        public void processingInstruction(String target, String data) throws SAXException {
+            startPendingTitle();
+            super.processingInstruction(target, data);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String name) throws SAXException {
+            if (titleUri != null) {
+                // an empty title: without the namespace the html output method writes the end tag
+                super.startElement("", titleLocalName, titleName, titleAttributes);
+                super.endElement("", titleLocalName, titleName);
+                titleUri = null;
+            } else {
+                super.endElement(uri, localName, name);
+            }
+        }
+
+        private void startPendingTitle() throws SAXException {
+            if (titleUri != null) {
+                super.startElement(titleUri, titleLocalName, titleName, titleAttributes);
+                titleUri = null;
+            }
+        }
     }
 
     private static HeaderFilterStrategy createHeaderFilterStrategy() {

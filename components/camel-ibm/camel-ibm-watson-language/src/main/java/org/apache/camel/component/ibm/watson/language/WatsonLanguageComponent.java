@@ -24,6 +24,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
 @Component("ibm-watson-language")
+@Deprecated(since = "4.24")
 public class WatsonLanguageComponent extends HealthCheckComponent {
 
     @Metadata

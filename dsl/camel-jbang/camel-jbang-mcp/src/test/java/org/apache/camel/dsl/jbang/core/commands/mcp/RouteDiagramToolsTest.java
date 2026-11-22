@@ -16,15 +16,23 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerDelegate;
+import javax.management.MBeanServerNotification;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
 
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -181,6 +189,35 @@ class RouteDiagramToolsTest {
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    void aTransformRunRegistersNoMBeans(@TempDir Path dir) throws Exception {
+        // CAMEL-27326: every transform run names its context transform; with JMX on, two runs at the same time in one
+        // JVM (the MCP server) could both take that name, and the second failed with InstanceAlreadyExistsException,
+        // which made callsAtTheSameTime flaky. A transform run only dumps the routes to files, so it has no JMX.
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        List<ObjectName> registered = new CopyOnWriteArrayList<>();
+        NotificationListener listener = (notification, handback) -> {
+            if (notification instanceof MBeanServerNotification n
+                    && MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(n.getType())
+                    && "org.apache.camel".equals(n.getMBeanName().getDomain())
+            // the MBeans of the transform run; other tests may start contexts of their own meanwhile
+                    && String.valueOf(n.getMBeanName().getKeyProperty("context")).startsWith("transform")) {
+                registered.add(n.getMBeanName());
+            }
+        };
+        server.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, null, null);
+        try {
+            RouteDiagramTools.RouteDiagramResult result = new RouteDiagramTools().camel_render_route_diagram(
+                    route(dir, "lonely").toString(), null, "ascii", null, null, null, null, null, null);
+
+            assertThat(result.success()).as(result.message()).isTrue();
+            assertThat(result.asciiDiagram()).contains("lonely");
+        } finally {
+            server.removeNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener);
+        }
+        assertThat(registered).isEmpty();
     }
 
     private static Path route(Path dir, String id) throws Exception {

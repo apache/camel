@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.List;
+import java.util.Map;
+
 class HealthCheckInfo {
     String group;
     String name;
@@ -32,4 +35,8 @@ class HealthCheckInfo {
     long failures;
     /** When it last failed (epoch millis), 0 when it did not. */
     long lastFailure;
+    /** The stack trace of the error of a check that is not UP, one line per entry; empty when there is none. */
+    List<String> stackTrace = List.of();
+    /** The details of the check (route.id, endpoint.uri and the check's own), as the health console gives them. */
+    Map<String, String> details = Map.of();
 }

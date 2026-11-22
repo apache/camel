@@ -289,11 +289,11 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
         // CAMEL-26300: the pinecone:embeddings transformer puts the text in the text_segment metadata that UPSERT stores,
         // which the pinecone:rag transformer reads from the matches of a QUERY. Before, the text was not stored, and the
         // match of the vector gave an empty String.
+        // CAMEL-27098: no CamelPineconeIndexName header is set, as the transformer leaves it unset and the UPSERT
+        // uses the indexName of the endpoint
         Exchange upsert = fluentTemplate.to("direct:embeddings")
                 .withHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
                         new Embedding(new float[] { 0.1f, 0.2f, 0.3f }))
-                // the index of the endpoint, as the transformer gives the embeddings index without this header
-                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, indexName)
                 .withHeader(PineconeVectorDbHeaders.INDEX_ID, "vector-1")
                 .withBody(TextSegment.from("the source passage"))
                 .request(Exchange.class);

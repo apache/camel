@@ -1,0 +1,28 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "application-x-unchanged",
+    "title": "Application X Unchanged",
+    "description": "Leaves the body and the headers as they are",
+    "deprecated": false,
+    "javaType": "org.apache.camel.processor.transformer.UnchangedDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "Any body, which is not read"
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "The body as it was"
+    }
+  }
+}
+
