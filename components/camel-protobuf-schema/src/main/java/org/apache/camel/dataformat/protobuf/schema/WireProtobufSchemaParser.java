@@ -28,7 +28,6 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FileDescriptor;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Empty;
-import com.google.protobuf.FieldMask;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Timestamp;
@@ -56,6 +55,8 @@ import org.apache.camel.dataformat.protobuf.ProtobufSchemaParser;
 public class WireProtobufSchemaParser implements ProtobufSchemaParser {
 
     private static final String FILE_NAME = "camel-schema.proto";
+    private static final String WELL_KNOWN_TYPES = "any.proto, descriptor.proto, duration.proto, empty.proto,"
+                                                   + " struct.proto, timestamp.proto and wrappers.proto";
 
     /**
      * The descriptor of the message type of the schema.
@@ -123,7 +124,15 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
         return new Loader() {
             @Override
             public ProtoFile load(String path) {
-                return FILE_NAME.equals(path) ? file : core.load(path);
+                if (FILE_NAME.equals(path)) {
+                    return file;
+                }
+                try {
+                    return core.load(path);
+                } catch (IllegalStateException e) {
+                    // the core loader of Wire only has its own files, and says "unexpected load: shop/common.proto"
+                    throw new IllegalArgumentException(unsupportedImport(path), e);
+                }
             }
 
             @Override
@@ -142,9 +151,7 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
         if (answer == null) {
             ProtoFile file = schema.protoFile(path);
             if (file == null) {
-                throw new IllegalArgumentException(
-                        "The protobuf schema imports " + path
-                                                   + ", but only the well-known types of google/protobuf can be imported");
+                throw new IllegalArgumentException(unsupportedImport(path));
             }
             FileDescriptorProto proto = FileDescriptorProto.parseFrom(new SchemaEncoder(schema).encode(file).toByteArray());
             List<FileDescriptor> dependencies = new ArrayList<>();
@@ -158,15 +165,25 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
     }
 
     /**
+     * The message for an import that is not a well-known type that Wire ships: the schema is one file, and Camel has no
+     * path to load other .proto files from.
+     */
+    private static String unsupportedImport(String path) {
+        return "Cannot read the protobuf schema: it imports " + path + ", but only the well-known types of"
+               + " google/protobuf can be imported (" + WELL_KNOWN_TYPES + "): put the types of " + path
+               + " in the schema itself";
+    }
+
+    /**
      * The well-known types compiled into protobuf-java, so that JsonFormat prints and parses them in their JSON form,
-     * such as a Timestamp as RFC 3339 text.
+     * such as a Timestamp as RFC 3339 text. These are the google/protobuf files that the core loader of Wire ships:
+     * field_mask.proto is not one of them, so its import fails in the loader already.
      */
     private static FileDescriptor wellKnownType(String path) {
         return switch (path) {
             case "google/protobuf/any.proto" -> Any.getDescriptor().getFile();
             case "google/protobuf/duration.proto" -> Duration.getDescriptor().getFile();
             case "google/protobuf/empty.proto" -> Empty.getDescriptor().getFile();
-            case "google/protobuf/field_mask.proto" -> FieldMask.getDescriptor().getFile();
             case "google/protobuf/struct.proto" -> Struct.getDescriptor().getFile();
             case "google/protobuf/timestamp.proto" -> Timestamp.getDescriptor().getFile();
             case "google/protobuf/wrappers.proto" -> StringValue.getDescriptor().getFile();

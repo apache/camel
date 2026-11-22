@@ -209,6 +209,22 @@ public class BodyFactsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testABodyHintNamesAFileOfTheDataFormat() {
+        // the unmarshal of a data format names a file of its data, not a JSON file for a CSV error (CAMEL-27371)
+        assertTrue(BodyFacts.hint(exchange(null), Need.A_BODY, "csv").contains("resource:file:data.csv for a known file"));
+        assertTrue(BodyFacts.hint(exchange(null), Need.A_BODY, null).contains("resource:file:data.json for a known file"));
+        assertEquals("data.csv", BodyFacts.dataFile("csv"));
+        assertEquals("data.csv", BodyFacts.dataFile("univocityCsv"));
+        assertEquals("data.tsv", BodyFacts.dataFile("univocityTsv"));
+        assertEquals("data.xml", BodyFacts.dataFile("jacksonXml"));
+        assertEquals("data.xml", BodyFacts.dataFile("jaxb"));
+        assertEquals("data.yaml", BodyFacts.dataFile("yaml"));
+        assertEquals("data.json", BodyFacts.dataFile("json"));
+        assertEquals("data.json", BodyFacts.dataFile("MyDataFormat"));
+        assertEquals("data.json", BodyFacts.dataFile(null));
+    }
+
+    @Test
     public void testTheKindOfABody() {
         assertEquals(Kind.NULL, BodyFacts.kindOf(null));
         // the payload as it is, and a single value, which converts to text

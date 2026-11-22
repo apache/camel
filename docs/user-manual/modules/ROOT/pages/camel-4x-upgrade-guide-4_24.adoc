@@ -989,6 +989,12 @@ When the `smb` consumer connects but cannot create its starting directory (`auto
 not connect. The `Cannot connect/login to: ... Will skip this poll.` WARN now gives the reason before
 `Will skip this poll.`, such as `due to: Connection refused`, on one line.
 
+=== camel-smb - delete=true with move fails at startup
+
+An `smb` consumer with both `delete=true` and `move` now fails to start with
+`You cannot set both delete=true and move options`, as the `file`, `ftp` and `sftp` consumers do. Before, it started,
+deleted the files and ignored `move`. Remove `move` to keep deleting the files, or `delete=true` to move them.
+
 === camel-azure-files - a starting directory that cannot be created, or a refused connection, no longer fails the route start
 
 When the share refuses to create the starting directory of the `azure-files` consumer as the route starts
@@ -2593,6 +2599,26 @@ Because of the retries, a batch whose records all fail now blocks the caller lon
 milliseconds per request, 14 to 17.5 seconds for 10,000 records), and a record that is sent again is written after the
 next records of its request. A redelivery of the exchange still sends the whole batch again: see the Batch Producer
 section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
+
+=== camel-aws2-eventbridge - the queue the consumer creates accepts only the events of its rule
+
+With `autoCreateQueue` (the default when no `queueUrl` is given), the policy of the SQS queue the consumer creates now
+allows `sqs:SendMessage` only for the EventBridge rule of the consumer (an `aws:SourceArn` condition with the rule
+ARN). Before, the policy allowed `events.amazonaws.com` without a condition, so any EventBridge rule could send to
+the queue.
+
+To get the rule ARN, the consumer calls `DescribeRule` before it creates the queue, so the IAM principal of the
+consumer now also needs `events:DescribeRule` on the rule. A rule that does not exist now fails the consumer start
+before a queue is created. A queue given with `queueUrl` keeps its own policy, as before.
+
+=== camel-aws2-eventbridge - with deleteQueueOnShutdown=false the consumer reuses its queue
+
+With `deleteQueueOnShutdown=false`, the queue the consumer creates now has a name without a random part
+(`camel-eventbridge-<rule name>-<hash of the event bus and the rule name>`), so the next start reuses it. Before, every
+start created another queue and left the previous one behind. The queue now also keeps its target on the rule on
+shutdown (as the option description already said), so it collects the events while the consumer is stopped, and the
+consumers of the rule with `deleteQueueOnShutdown=false` share one queue. The queues that earlier versions left
+behind (with a random part in the name) are not used any more and can be deleted.
 
 === camel-azure-storage-blob - copyBlob validates the source account and container name
 
@@ -5367,6 +5393,12 @@ the previous output, convert the rows to `List` before marshalling, or set a cus
 now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
 give about N²/2 fields for N rows, where the output was linear in the input before.
 
+=== camel-csv - the names of the header option are trimmed
+
+The names of the `header` option are now trimmed, so `header=id, name` gives the columns `id` and `name`. Before, the
+second column was named ` name`: marshalling a `Map` with the key `name` wrote an empty field, and unmarshalling with
+`useMaps=true` gave maps with the key ` name`.
+
 === camel-cxf - message bodies of the POJO producer and of CXF_MESSAGE, and replies that do not convert
 
 The `cxf` producer in `POJO` mode split a body that is not a `List` or an `Object[]` into several parameters, the way
@@ -5550,8 +5582,27 @@ charset. A body that cannot be converted, such as a `Map`, fails the exchange wi
 Before, such a body was sent as an empty MLLP message: with `InOut` the exchange then failed with a
 `MllpAcknowledgementTimeoutException` after the receive timeout, and with `InOnly` it completed without an error.
 
-After sending a `String` body, the `CamelCharsetName` exchange property is now the charset the message was sent in.
-Before, it was set to `charsetName` even when the charset of the exchange was used to encode the message.
+=== camel-mllp - the charset of a message is MSH-18, then charsetName, and no longer the CamelCharsetName exchange property
+
+The mllp producer now encodes a `String` body in the charset named in MSH-18 of the message, and in its `charsetName`
+when the message has no MSH-18 (or MSH-18 names a charset that is not supported), as the mllp consumer already
+decoded it. The `CamelCharsetName` header and exchange property no longer choose the charset of the producer, and the
+producer no longer sets the `CamelCharsetName` exchange property after sending. Before, the producer ignored MSH-18 and
+used the `CamelCharsetName` header, then the exchange property, then `charsetName`: a message marked `UNICODE UTF-8` in
+MSH-18 was sent in ISO-8859-1, and in a route from an mllp consumer to an mllp producer the `charsetName` of the
+producer was ignored. A text body of another type, such as a `Reader`, is converted in `charsetName` too. To send a
+message in a charset that is not its MSH-18, send it as a `byte[]`.
+
+The mllp consumer no longer sets the `CamelCharsetName` exchange property for a `String` body (the default,
+`stringPayload=true`), so its charset (ISO-8859-1 by default) is no longer used by the later steps of the route that
+turn text into bytes. With `stringPayload=false`, it sets the property to the charset of the `byte[]` body: the charset
+of MSH-18, and `charsetName` when the message has no MSH-18. Before, the property was always the `charsetName` of the
+consumer. An acknowledgement given as a `String` in the `CamelMllpAcknowledgement` or `CamelMllpAcknowledgementString`
+exchange property is encoded in the charset of its MSH-18, and else in the charset of the exchange, or `charsetName`.
+
+The `CamelMllpCharset` header of the consumer now holds the MSH-18 value of the message (such as `UNICODE UTF-8`), as
+documented. Before, it held the `charsetName` of the consumer (`ISO_8859_1` by default) whenever the message had an
+MSH-18.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 

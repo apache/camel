@@ -78,7 +78,10 @@ public class EventbridgeConfiguration implements Cloneable, AwsCommonConfigurati
               description = "Whether to auto-create an SQS queue and wire it as an EventBridge rule target.")
     private boolean autoCreateQueue = true;
     @UriParam(label = "consumer", defaultValue = "true",
-              description = "Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown.")
+              description = "Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown. "
+                            + "When false, the queue and its target are kept, so the queue collects the events while the "
+                            + "consumer is stopped, and the queue name is derived from the event bus and the rule name, "
+                            + "so the next start reuses the queue.")
     private boolean deleteQueueOnShutdown = true;
     @UriParam(label = "consumer", defaultValue = "10",
               description = "The maximum number of messages to receive per poll from SQS.")
@@ -342,7 +345,9 @@ public class EventbridgeConfiguration implements Cloneable, AwsCommonConfigurati
     }
 
     /**
-     * Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown
+     * Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown. When false, the queue
+     * and its target are kept, so the queue collects the events while the consumer is stopped, and the queue name is
+     * derived from the event bus and the rule name, so the next start reuses the queue.
      */
     public void setDeleteQueueOnShutdown(boolean deleteQueueOnShutdown) {
         this.deleteQueueOnShutdown = deleteQueueOnShutdown;

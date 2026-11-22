@@ -156,6 +156,9 @@ public final class BodyFacts {
         A_BODY
     }
 
+    /** The file in the hint to read the data first, when the data format is not known. */
+    private static final String DATA_FILE = "data.json";
+
     /** At most this many keys of a Map are listed. */
     private static final int MAX_KEYS = 20;
 
@@ -183,14 +186,15 @@ public final class BodyFacts {
     /**
      * What to write so that the failing step gets the body it needs; null when the body is not why it failed. For
      * {@link Need#BYTES}, target is what the step writes: its Content-Type, or the name of the file, which names the
-     * data format to marshal to; it is not used for the other needs.
+     * data format to marshal to. For {@link Need#A_BODY}, target is the name of the data format that reads the body
+     * (csv), so the file in the hint is one of its data (data.csv); it is not used for {@link Need#DATA}.
      */
     public static String hint(Exchange exchange, Need need, String target) {
         Object body = exchange.getMessage().getBody();
         String answer = switch (need) {
             case DATA -> dataHint(exchange, body);
             case BYTES -> bytesHint(body, target);
-            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body) : null;
+            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body, dataFile(target)) : null;
         };
         return answer != null ? answer + otherBodies(exchange, body) : null;
     }
@@ -216,9 +220,30 @@ public final class BodyFacts {
         return null;
     }
 
+    /**
+     * A file of the data that a data format reads, for the hint: data.csv for csv; data.json when the data format is
+     * not known, or reads json.
+     */
+    static String dataFile(String dataFormat) {
+        if (dataFormat == null) {
+            return DATA_FILE;
+        }
+        String name = dataFormat.toLowerCase(Locale.ROOT);
+        if (name.contains("csv")) {
+            return "data.csv";
+        } else if (name.contains("tsv")) {
+            return "data.tsv";
+        } else if (name.contains("xml") || name.equals("jaxb")) {
+            return "data.xml";
+        } else if (name.contains("yaml")) {
+            return "data.yaml";
+        }
+        return DATA_FILE;
+    }
+
     private static String dataHint(Exchange exchange, Object body) {
         if (isEmpty(body)) {
-            return readTheDataFirst(exchange, body);
+            return readTheDataFirst(exchange, body, DATA_FILE);
         }
         if (isPayload(body)) {
             String marshal = marshalledData(exchange, body);
@@ -320,13 +345,13 @@ public final class BodyFacts {
      * route emptied it, as the message history says, read what is needed before that step. r23 (http-client s1): the
      * route set the body to ${null} and then read ${body[sku]}, and "read the data first" did not fit.
      */
-    private static String readTheDataFirst(Exchange exchange, Object body) {
+    private static String readTheDataFirst(Exchange exchange, Object body, String dataFile) {
         String emptiedBy = emptiedBy(exchange, body);
         if (emptiedBy != null) {
             return "the " + emptiedBy + " emptied it: read what is needed before that step, for example into a variable"
                    + " with setVariable, or write a fixed value as a constant where it is used";
         }
-        return readTheDataFirst();
+        return readTheDataFirst(dataFile);
     }
 
     /** The setBody or transform that left the body null or empty, from the message history; or null. */
@@ -348,8 +373,8 @@ public final class BodyFacts {
         return null;
     }
 
-    private static String readTheDataFirst() {
-        return "read the data first - setBody with constant: resource:file:data.json for a known file, or poll:,"
+    private static String readTheDataFirst(String dataFile) {
+        return "read the data first - setBody with constant: resource:file:" + dataFile + " for a known file, or poll:,"
                + " pollEnrich or a from: consumer for one that is not (a route reached with direct: has the body of its"
                + " caller)";
     }

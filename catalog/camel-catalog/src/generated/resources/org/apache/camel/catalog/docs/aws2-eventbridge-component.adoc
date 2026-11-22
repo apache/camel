@@ -615,13 +615,23 @@ This is the standard AWS pattern for programmatically consuming EventBridge even
 === How It Works
 
 1. On startup the consumer creates an SQS queue (unless you provide one via `queueUrl`).
-2. It sets an SQS queue policy that allows EventBridge to send messages.
+2. It sets an SQS queue policy that allows only the EventBridge rule given by `ruleName` to send messages (an
+`aws:SourceArn` condition with the ARN of the rule, which the consumer gets with `DescribeRule`). A queue given with
+`queueUrl` keeps its own policy.
 3. It adds the queue as a target of the EventBridge rule specified by `ruleName`.
 4. It polls the SQS queue on schedule, delivering each event into the Camel route.
 5. Successfully processed messages are deleted from the queue; failed messages remain for retry.
 6. On shutdown the target of an auto-created queue is removed and the queue is deleted (configurable).
 A queue given with `queueUrl` keeps its target, so it collects the events while no consumer runs, and all the
 consumers that share it use the same target (its id is derived from the queue ARN).
+
+An auto-created queue has a random part in its name, so every consumer has its own queue, which is deleted on
+shutdown. With `deleteQueueOnShutdown=false`, the consumer creates a durable queue instead: its name is
+`camel-eventbridge-<rule name>-<hash of the event bus and the rule name>`, so the next start reuses the queue (SQS
+`CreateQueue` returns the existing queue), and the queue keeps its target on shutdown, like a queue given with
+`queueUrl`. The queue collects the events while the consumer is stopped, and the consumers of the rule that use
+`deleteQueueOnShutdown=false` share one queue (they compete for the events instead of each getting a copy). Delete the
+queue yourself when the route is no longer used.
 
 === Consumer Configuration Options
 
@@ -647,7 +657,8 @@ consumers that share it use the same target (its id is derived from the queue AR
 |`deleteQueueOnShutdown`
 |`true`
 |boolean
-|Whether to delete the auto-created queue and remove the EventBridge target on shutdown.
+|Whether to delete the auto-created queue and remove the EventBridge target on shutdown. When `false`, the queue has a
+name derived from the event bus and the rule name, the next start reuses it, and its target stays on the rule.
 
 |`maxMessagesPerPoll`
 |`10`
@@ -827,6 +838,7 @@ YAML::
 The consumer's IAM principal needs the following permissions:
 
 - `events:PutTargets` and `events:RemoveTargets` on the EventBridge rule
+- `events:DescribeRule` on the EventBridge rule (if auto-creating)
 - `sqs:CreateQueue`, `sqs:DeleteQueue`, `sqs:SetQueueAttributes`, `sqs:GetQueueAttributes` (if auto-creating)
 - `sqs:ReceiveMessage`, `sqs:DeleteMessage` on the SQS queue
 

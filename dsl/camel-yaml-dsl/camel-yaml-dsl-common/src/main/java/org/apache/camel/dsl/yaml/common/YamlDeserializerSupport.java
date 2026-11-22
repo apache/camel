@@ -370,7 +370,7 @@ public class YamlDeserializerSupport {
                     uri = YamlDeserializerSupport.asText(val);
                     break;
                 case "properties":
-                    properties = YamlDeserializerSupport.asScalarMap(tuple.getValueNode());
+                    properties = asEndpointParameters(tuple.getValueNode());
                     break;
                 default:
                     throw new UnsupportedFieldException(node, key);
@@ -391,7 +391,39 @@ public class YamlDeserializerSupport {
 
     public static Map<String, Object> parseParameters(NodeTuple node) {
         Node value = node.getValueNode();
-        return asScalarMap(value);
+        return asEndpointParameters(value);
+    }
+
+    /**
+     * The parameters of an endpoint, with the keys as they are written (also the keys of a map value), in the order
+     * they are written. {@link YamlSupport#createEndpointUri(CamelContext, Node, String, Map)} turns the option names
+     * into camelCase, but not the part after a multiValue prefix (such as properties.) that is passed on as written.
+     */
+    public static Map<String, Object> asEndpointParameters(Node node) {
+        if (node == null) {
+            return null;
+        }
+
+        final MappingNode mn = asMappingNode(node);
+        final Map<String, Object> answer = new LinkedHashMap<>();
+
+        for (NodeTuple tuple : mn.getValue()) {
+            final String key = asText(tuple.getKeyNode());
+            final Node val = tuple.getValueNode();
+
+            switch (val.getNodeType()) {
+                case SCALAR:
+                    answer.put(key, asText(val));
+                    break;
+                case MAPPING:
+                    answer.put(key, asEndpointParameters(val));
+                    break;
+                default:
+                    throw new UnsupportedNodeTypeException(val);
+            }
+        }
+
+        return answer;
     }
 
     public static void setSteps(Block target, Node node) {

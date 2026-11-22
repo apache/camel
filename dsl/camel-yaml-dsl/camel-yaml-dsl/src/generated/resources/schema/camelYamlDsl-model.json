@@ -11127,6 +11127,16 @@
         "index" : 8,
         "group" : "common"
       }, {
+        "name" : "headerFromMapKeys",
+        "type" : "boolean",
+        "description" : "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.",
+        "title" : "Header From Map Keys",
+        "default" : "false",
+        "displayName" : "Header From Map Keys",
+        "kind" : "attribute",
+        "index" : 9,
+        "group" : "common"
+      }, {
         "name" : "allowMissingColumnNames",
         "type" : "boolean",
         "description" : "Whether to allow missing column names.",
@@ -11134,7 +11144,7 @@
         "default" : "false",
         "displayName" : "Allow Missing Column Names",
         "kind" : "attribute",
-        "index" : 9,
+        "index" : 10,
         "group" : "common"
       }, {
         "name" : "ignoreEmptyLines",
@@ -11144,7 +11154,7 @@
         "default" : "false",
         "displayName" : "Ignore Empty Lines",
         "kind" : "attribute",
-        "index" : 10,
+        "index" : 11,
         "group" : "common"
       }, {
         "name" : "ignoreSurroundingSpaces",
@@ -11154,7 +11164,7 @@
         "default" : "false",
         "displayName" : "Ignore Surrounding Spaces",
         "kind" : "attribute",
-        "index" : 11,
+        "index" : 12,
         "group" : "common"
       }, {
         "name" : "nullStringDisabled",
@@ -11164,7 +11174,7 @@
         "default" : "false",
         "displayName" : "Null String Disabled",
         "kind" : "attribute",
-        "index" : 12,
+        "index" : 13,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11174,7 +11184,7 @@
         "title" : "Null String",
         "displayName" : "Null String",
         "kind" : "attribute",
-        "index" : 13,
+        "index" : 14,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11185,7 +11195,7 @@
         "default" : "false",
         "displayName" : "Quote Disabled",
         "kind" : "attribute",
-        "index" : 14,
+        "index" : 15,
         "group" : "common"
       }, {
         "name" : "quote",
@@ -11194,7 +11204,7 @@
         "title" : "Quote",
         "displayName" : "Quote",
         "kind" : "attribute",
-        "index" : 15,
+        "index" : 16,
         "group" : "common"
       }, {
         "name" : "recordSeparatorDisabled",
@@ -11204,7 +11214,7 @@
         "default" : "false",
         "displayName" : "Record Separator Disabled",
         "kind" : "attribute",
-        "index" : 16,
+        "index" : 17,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11214,7 +11224,7 @@
         "title" : "Record Separator",
         "displayName" : "Record Separator",
         "kind" : "attribute",
-        "index" : 17,
+        "index" : 18,
         "group" : "common"
       }, {
         "name" : "skipHeaderRecord",
@@ -11224,7 +11234,7 @@
         "default" : "false",
         "displayName" : "Skip Header Record",
         "kind" : "attribute",
-        "index" : 18,
+        "index" : 19,
         "group" : "common"
       }, {
         "name" : "quoteMode",
@@ -11234,7 +11244,7 @@
         "title" : "Quote Mode",
         "displayName" : "Quote Mode",
         "kind" : "attribute",
-        "index" : 19,
+        "index" : 20,
         "group" : "common"
       }, {
         "name" : "ignoreHeaderCase",
@@ -11244,7 +11254,7 @@
         "default" : "false",
         "displayName" : "Ignore Header Case",
         "kind" : "attribute",
-        "index" : 20,
+        "index" : 21,
         "group" : "common"
       }, {
         "name" : "trim",
@@ -11254,7 +11264,7 @@
         "default" : "false",
         "displayName" : "Trim",
         "kind" : "attribute",
-        "index" : 21,
+        "index" : 22,
         "group" : "common"
       }, {
         "name" : "trailingDelimiter",
@@ -11264,7 +11274,7 @@
         "default" : "false",
         "displayName" : "Trailing Delimiter",
         "kind" : "attribute",
-        "index" : 22,
+        "index" : 23,
         "group" : "common"
       }, {
         "name" : "marshallerFactoryRef",
@@ -11273,7 +11283,7 @@
         "title" : "Marshaller Factory Ref",
         "displayName" : "Marshaller Factory Ref",
         "kind" : "attribute",
-        "index" : 23,
+        "index" : 24,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11284,7 +11294,7 @@
         "default" : "false",
         "displayName" : "Lazy Load",
         "kind" : "attribute",
-        "index" : 24,
+        "index" : 25,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11295,7 +11305,7 @@
         "default" : "false",
         "displayName" : "Use Maps",
         "kind" : "attribute",
-        "index" : 25,
+        "index" : 26,
         "group" : "common"
       }, {
         "name" : "useOrderedMaps",
@@ -11305,7 +11315,7 @@
         "default" : "false",
         "displayName" : "Use Ordered Maps",
         "kind" : "attribute",
-        "index" : 26,
+        "index" : 27,
         "group" : "common"
       }, {
         "name" : "recordConverterRef",
@@ -11314,7 +11324,7 @@
         "title" : "Record Converter Ref",
         "displayName" : "Record Converter Ref",
         "kind" : "attribute",
-        "index" : 27,
+        "index" : 28,
         "group" : "advanced",
         "label" : "advanced"
       }, {
@@ -11325,7 +11335,7 @@
         "default" : "false",
         "displayName" : "Capture Header Record",
         "kind" : "attribute",
-        "index" : 28,
+        "index" : 29,
         "group" : "advanced",
         "label" : "advanced"
       } ]

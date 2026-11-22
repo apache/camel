@@ -94,8 +94,7 @@ public class SmbOperations implements SmbFileOperations {
     }
 
     private SMBClient createSmbClient() {
-        return configuration == null || configuration.getSmbConfig() == null
-                ? new SMBClient() : new SMBClient(configuration.getSmbConfig());
+        return configuration == null ? new SMBClient() : new SMBClient(configuration.createSmbConfig());
     }
 
     @Override
@@ -114,11 +113,8 @@ public class SmbOperations implements SmbFileOperations {
                 disconnect();
 
                 // Establish fresh connections
+                AuthenticationContext ac = createAuthenticationContext(configuration);
                 connection = smbClient.connect(configuration.getHostname(), configuration.getPort());
-                AuthenticationContext ac = new AuthenticationContext(
-                        configuration.getUsername(),
-                        configuration.getPassword().toCharArray(),
-                        configuration.getDomain());
                 session = connection.authenticate(ac);
 
                 share = (DiskShare) session.connectShare(configuration.getShareName());
@@ -133,6 +129,26 @@ public class SmbOperations implements SmbFileOperations {
                                                           + e.getMessage(),
                     e);
         }
+    }
+
+    /**
+     * The credentials to log in with. A username without a password logs in with an empty password, so the user
+     * {@code Guest} without a password is a guest login. Without a username it fails: smbj's anonymous login fails with
+     * a NullPointerException against Samba (SMB 3.1.1), so it is not offered.
+     */
+    static AuthenticationContext createAuthenticationContext(SmbConfiguration configuration) {
+        String username = configuration.getUsername();
+        if (ObjectHelper.isEmpty(username)) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot connect to: " + configuration.getHostname() + ":" + configuration.getPort()
+                                                          + " as no username is set. Set the username and password of the share,"
+                                                          + " or username=Guest for guest access.");
+        }
+        String password = configuration.getPassword();
+        return new AuthenticationContext(
+                username,
+                password != null ? password.toCharArray() : new char[0],
+                configuration.getDomain());
     }
 
     @Override

@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.yaml.LwModelToYAMLDumper;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,31 @@ public class YamlWriterEdgeCasesTest {
         JsonNode steps = node.get(0).get("route").get("from").get("steps");
         assertThat(steps.get(0).get("setHeader").get("name").asText()).as(yaml).isEqualTo("007");
         assertThat(steps.get(1).get("log").get("message").asText()).as(yaml).isEqualTo("1e3");
+    }
+
+    @Test
+    public void testEmptyExpressionText() throws Exception {
+        RouteDefinition route = new RouteDefinition();
+        route.from("direct:a").setBody(new ConstantExpression("")).setHeader("foo", new SimpleExpression(""))
+                .bean("myBean", "hello").setBody(new MethodCallExpression("myBean", "hello"));
+
+        YamlModelWriter writer = new YamlModelWriter();
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String yaml = writer.printAsYaml(List.of(jo));
+
+        JsonNode node = new YAMLMapper().readTree(yaml);
+        JsonNode steps = node.get(0).get("route").get("from").get("steps");
+        // the empty text is the value of the expression: constant: {} would have no expression
+        JsonNode constant = steps.get(0).get("setBody").get("expression").get("constant");
+        assertThat(constant.has("expression")).as(yaml).isTrue();
+        assertThat(constant.get("expression").asText()).as(yaml).isEmpty();
+        JsonNode simple = steps.get(1).get("setHeader").get("expression").get("simple");
+        assertThat(simple.has("expression")).as(yaml).isTrue();
+        assertThat(simple.get("expression").asText()).as(yaml).isEmpty();
+        // the bean of a method call is given by its attributes, its empty text is not written
+        JsonNode method = steps.get(3).get("setBody").get("expression").get("method");
+        assertThat(method.get("ref").asText()).as(yaml).isEqualTo("myBean");
+        assertThat(method.has("expression")).as(yaml).isFalse();
     }
 
     @Test

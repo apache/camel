@@ -270,9 +270,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 hl7MessageBytes == null ? -1 : hl7MessageBytes.length, consumerRunnable.getSocket());
         Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
-        if (getConfiguration().hasCharsetName()) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
-        }
         try {
             createUoW(exchange);
 
@@ -303,15 +300,20 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             populateHl7DataHeaders(exchange, message, hl7MessageBytes);
 
             if (getConfiguration().isStringPayload()) {
+                // the String body is not tied to a charset: the CamelCharsetName exchange property is not set, so the
+                // charset of this endpoint does not leak to other endpoints of the route, such as an mllp producer
                 if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
                     message.setBody(
                             new String(
                                     hl7MessageBytes,
-                                    MllpCharsetHelper.getCharset(exchange, hl7MessageBytes, hl7Util, charset)));
+                                    MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, charset)));
                 } else {
                     message.setBody("", String.class);
                 }
             } else {
+                // the charset of the byte array body, for converting it to text later in the route
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+                        MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, charset).name());
                 message.setBody(hl7MessageBytes, byte[].class);
             }
 
@@ -405,7 +407,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.warn("Population of message headers failed - unable to find the end of the MSH segment");
             } else {
                 log.debug("Populating the HL7 message headers");
-                Charset charset = MllpCharsetHelper.getCharset(exchange, this.charset);
+                Charset charset = MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, this.charset);
 
                 for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
                     int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(i - 1);
@@ -453,11 +455,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 continue;
                         }
 
-                        String headerValue = (i == 17 && getConfiguration().hasCharsetName())
-                                ? getConfiguration().getCharsetName()
-                                : new String(
-                                        hl7MessageBytes, startingFieldSeparatorIndex + 1,
-                                        endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
+                        String headerValue = new String(
+                                hl7MessageBytes, startingFieldSeparatorIndex + 1,
+                                endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
 
                         message.setHeader(headerName, headerValue);
 
@@ -480,6 +480,18 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     }
 
+    /**
+     * The acknowledgement in an exchange property as a byte array, with text encoded in the charset of MSH-18 of the
+     * acknowledgement, or the charset of the exchange, or charsetName.
+     */
+    private byte[] getAcknowledgementBytes(Exchange exchange, String propertyName) {
+        Object acknowledgement = exchange.getProperty(propertyName);
+        if (acknowledgement instanceof CharSequence text) {
+            return MllpCharsetHelper.encode(text.toString(), hl7Util, MllpCharsetHelper.getCharset(exchange, charset));
+        }
+        return exchange.getProperty(propertyName, byte[].class);
+    }
+
     void sendAcknowledgement(byte[] originalHl7MessageBytes, Exchange exchange, TcpSocketConsumerRunnable consumerRunnable) {
         log.trace("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - entering",
                 originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
@@ -488,9 +500,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         getEndpoint().checkBeforeSendProperties(exchange, consumerRunnable.getSocket(), log);
 
         // Find the acknowledgement body
-        byte[] acknowledgementMessageBytes = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT, byte[].class);
+        byte[] acknowledgementMessageBytes = getAcknowledgementBytes(exchange, MllpConstants.MLLP_ACKNOWLEDGEMENT);
         if (acknowledgementMessageBytes == null) {
-            acknowledgementMessageBytes = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, byte[].class);
+            acknowledgementMessageBytes = getAcknowledgementBytes(exchange, MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
         }
 
         String acknowledgementMessageType = null;

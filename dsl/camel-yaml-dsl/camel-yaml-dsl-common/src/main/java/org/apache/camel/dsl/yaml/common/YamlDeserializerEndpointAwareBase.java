@@ -51,7 +51,7 @@ public abstract class YamlDeserializerEndpointAwareBase<T> extends YamlDeseriali
 
             switch (propertyName) {
                 case "parameters":
-                    parameters = asScalarMap(tuple.getValueNode());
+                    parameters = asEndpointParameters(tuple.getValueNode());
                     break;
                 default:
                     if (!setProperty(target, propertyName, key.getValue(), val)) {

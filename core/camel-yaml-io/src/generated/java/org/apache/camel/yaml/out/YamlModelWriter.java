@@ -2293,6 +2293,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "escape", def.getEscape(), null);
         doWriteAttribute(jo, "headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute(jo, "header", def.getHeader(), null);
+        doWriteAttribute(jo, "headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute(jo, "allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute(jo, "ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute(jo, "ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
@@ -3026,7 +3027,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "method", def.getMethod(), null);
         doWriteAttribute(jo, "scope", def.getScope(), "Singleton");
         doWriteAttribute(jo, "validate", def.getValidate(), "true");
-        doWriteValue(jo, def.getExpression());
+        doWriteNonEmptyValue(jo, def.getExpression());
         return jo;
     }
     protected JsonObject doWriteMvelExpression(MvelExpression def) {
