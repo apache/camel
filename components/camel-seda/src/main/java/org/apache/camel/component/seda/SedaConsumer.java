@@ -17,7 +17,9 @@
 package org.apache.camel.component.seda;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +50,13 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
-    private final AtomicInteger taskCount = new AtomicInteger();
+    // each start of this consumer submits its own polling tasks, which poll only while their start is the current one
+    // and count down the latch of their start when they end: doStop does not wait for the polling threads, so a thread
+    // of an earlier start can still be processing an exchange when the consumer is started again
+    private final AtomicInteger starts = new AtomicInteger();
     protected volatile CountDownLatch latch;
+    // the latches of the earlier starts whose polling threads have not all ended yet
+    private final Queue<CountDownLatch> earlierLatches = new ConcurrentLinkedQueue<>();
     private volatile boolean shutdownPending;
     private volatile boolean forceShutdown;
     private ExecutorService executor;
@@ -133,16 +140,24 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         shutdownPending = true;
         forceShutdown = forced;
 
-        if (latch != null) {
-            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
+        CountDownLatch current = latch;
+        if (current != null) {
+            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", current.getCount());
 
-            // wait for all threads to end, using the shutdown strategy timeout
+            // wait for all threads to end, using the shutdown strategy timeout: the threads of this start, and the
+            // threads of earlier starts still processing the exchange they polled before the consumer was stopped
             try {
                 long timeout = getEndpoint().getCamelContext().getShutdownStrategy().getTimeout();
                 TimeUnit timeUnit = getEndpoint().getCamelContext().getShutdownStrategy().getTimeUnit();
-                if (!latch.await(timeout, timeUnit)) {
+                long deadline = System.nanoTime() + timeUnit.toNanos(timeout);
+                boolean done = current.await(timeout, timeUnit);
+                for (CountDownLatch earlier : earlierLatches) {
+                    done = done && earlier.await(deadline - System.nanoTime(), TimeUnit.NANOSECONDS);
+                }
+                if (!done) {
+                    long left = current.getCount() + earlierLatches.stream().mapToLong(CountDownLatch::getCount).sum();
                     LOG.warn("Timeout waiting for {} consumer threads to complete during shutdown (waited {} {}).",
-                            latch.getCount(), timeout, timeUnit);
+                            left, timeout, timeUnit);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -167,22 +182,33 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     @Override
     public void run() {
-        taskCount.incrementAndGet();
+        // a thread that runs this consumer directly polls for the current start
+        run(starts.get(), latch);
+    }
+
+    private void run(int start, CountDownLatch startLatch) {
         try {
-            doRun();
+            doRun(start);
         } finally {
-            taskCount.decrementAndGet();
-            if (latch != null) {
-                latch.countDown();
-                LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
+            if (startLatch != null) {
+                startLatch.countDown();
+                LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.",
+                        startLatch.getCount());
             }
         }
     }
 
-    protected void doRun() {
+    /**
+     * Polls the queue and processes the exchanges while the given start is the current start of this consumer.
+     *
+     * @param start the start of this consumer that submitted the polling task
+     */
+    protected void doRun(int start) {
         BlockingQueue<Exchange> queue = getEndpoint().getQueue();
-        // loop while we are allowed, or if we are stopping loop until the queue is empty
-        while (queue != null && isRunAllowed()) {
+        // loop while we are allowed, or if we are stopping loop until the queue is empty. A thread of an earlier start
+        // (still processing an exchange when the consumer was stopped and started again) stops polling: this start
+        // has its own threads, and the earlier stop may have interrupted this thread, so its polls would only fail
+        while (queue != null && start == starts.get() && isRunAllowed()) {
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
@@ -383,9 +409,15 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (getEndpoint().getConcurrentConsumers() > 0) {
-            latch = new CountDownLatch(getEndpoint().getConcurrentConsumers());
+        // the threads of the previous start (doStop does not wait for them) end after the exchange they are processing,
+        // and a graceful shutdown waits for them too
+        CountDownLatch previous = latch;
+        if (previous != null && previous.getCount() > 0) {
+            earlierLatches.add(previous);
         }
+        earlierLatches.removeIf(l -> l.getCount() == 0);
+        starts.incrementAndGet();
+        latch = new CountDownLatch(getPollingTasks());
         shutdownPending = false;
         forceShutdown = false;
 
@@ -446,7 +478,14 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     }
 
     /**
-     * Setup the thread pool and ensures tasks gets executed (if needed)
+     * The number of polling tasks each start of this consumer submits: concurrentConsumers, at least one.
+     */
+    protected int getPollingTasks() {
+        return Math.max(1, getEndpoint().getConcurrentConsumers());
+    }
+
+    /**
+     * Setup the thread pool and submits the polling tasks of this start
      */
     protected void setupTasks() {
         int poolSize = getEndpoint().getConcurrentConsumers();
@@ -456,14 +495,13 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             executor = createExecutor(poolSize);
         }
 
-        // submit needed number of tasks
-        int tasks = poolSize - taskCount.get();
-        if (tasks <= 0) {
-            tasks = 1;
-        }
+        // submit the tasks of this start: each polls while this start is the current one, and counts down its latch
+        final int start = starts.get();
+        final CountDownLatch startLatch = latch;
+        int tasks = getPollingTasks();
         LOG.debug("Creating {} queue pooler with poll timeout {} ms.", tasks, pollTimeout);
         for (int i = 0; i < tasks; i++) {
-            executor.execute(this);
+            executor.execute(() -> run(start, startLatch));
         }
     }
 
