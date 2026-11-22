@@ -56,6 +56,8 @@ import org.apache.camel.dataformat.protobuf.ProtobufSchemaParser;
 public class WireProtobufSchemaParser implements ProtobufSchemaParser {
 
     private static final String FILE_NAME = "camel-schema.proto";
+    private static final String WELL_KNOWN_TYPES = "any.proto, descriptor.proto, duration.proto, empty.proto,"
+                                                   + " struct.proto, timestamp.proto and wrappers.proto";
 
     /**
      * The descriptor of the message type of the schema.
@@ -123,7 +125,15 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
         return new Loader() {
             @Override
             public ProtoFile load(String path) {
-                return FILE_NAME.equals(path) ? file : core.load(path);
+                if (FILE_NAME.equals(path)) {
+                    return file;
+                }
+                try {
+                    return core.load(path);
+                } catch (RuntimeException e) {
+                    // the core loader of Wire only has its own files, and says "unexpected load: shop/common.proto"
+                    throw new IllegalArgumentException(unsupportedImport(path), e);
+                }
             }
 
             @Override
@@ -142,9 +152,7 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
         if (answer == null) {
             ProtoFile file = schema.protoFile(path);
             if (file == null) {
-                throw new IllegalArgumentException(
-                        "The protobuf schema imports " + path
-                                                   + ", but only the well-known types of google/protobuf can be imported");
+                throw new IllegalArgumentException(unsupportedImport(path));
             }
             FileDescriptorProto proto = FileDescriptorProto.parseFrom(new SchemaEncoder(schema).encode(file).toByteArray());
             List<FileDescriptor> dependencies = new ArrayList<>();
@@ -155,6 +163,16 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
         }
         built.put(path, answer);
         return answer;
+    }
+
+    /**
+     * The message for an import that is not a well-known type that Wire ships: the schema is one file, and Camel has no
+     * path to load other .proto files from.
+     */
+    private static String unsupportedImport(String path) {
+        return "Cannot read the protobuf schema: it imports " + path + ", but only the well-known types of"
+               + " google/protobuf can be imported (" + WELL_KNOWN_TYPES + "): put the types of " + path
+               + " in the schema itself";
     }
 
     /**
