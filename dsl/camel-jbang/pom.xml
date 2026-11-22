@@ -46,6 +46,7 @@
         <module>camel-jbang-plugin-test</module>
         <module>camel-jbang-plugin-tui</module>
         <module>camel-jbang-plugin-validate</module>
+        <module>camel-jbang-wsdl</module>
         <module>camel-jbang-it</module>
         <module>camel-launcher</module>
         <module>camel-launcher-container</module>

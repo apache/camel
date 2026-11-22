@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.generate;
+package org.apache.camel.dsl.jbang.wsdl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.dataformat.xsdjson.XsdJsonSamples;
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Fault;
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Operation;
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Port;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Fault;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Operation;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Port;
 
 /**
  * The sample messages of the operations of a port: the request, the response and the faults as XML and as JSON in the
@@ -38,10 +38,10 @@ import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Port;
  * they must be NCNames and plain URIs (no quote, space or brace); a message whose values are not is left out with a
  * warning, as a hostile WSDL could otherwise put a command into the curl line.
  */
-final class WsdlSamples {
+public final class WsdlSamples {
 
-    static final String SOAP11_ENV = "http://schemas.xmlsoap.org/soap/envelope/";
-    static final String SOAP12_ENV = "http://www.w3.org/2003/05/soap-envelope";
+    public static final String SOAP11_ENV = "http://schemas.xmlsoap.org/soap/envelope/";
+    public static final String SOAP12_ENV = "http://www.w3.org/2003/05/soap-envelope";
 
     /**
      * The characters of an address or a SOAP action that can go into a single-quoted shell argument as they are.
@@ -61,18 +61,18 @@ final class WsdlSamples {
      * @param soap      the request in a SOAP envelope, else null
      * @param curl      the curl command that sends the SOAP envelope (from the file {@link #soapFile()}), else null
      */
-    record Sample(
+    public record Sample(
             String prefix, String operation, String kind, String name, QName element, String xml, String json, String soap,
             String curl) {
 
         /**
          * The base name of the files of this sample, such as getOrder-request or getOrder-fault-orderNotFound.
          */
-        String baseName() {
+        public String baseName() {
             return prefix + ("fault".equals(kind) ? operation + "-fault-" + name : operation + "-" + kind);
         }
 
-        String soapFile() {
+        public String soapFile() {
             return baseName() + ".soap.xml";
         }
     }
@@ -82,13 +82,13 @@ final class WsdlSamples {
     private final XsdJsonSamples samples;
     private final List<String> warnings = new ArrayList<>();
 
-    WsdlSamples(Port port, List<Operation> operations, XsdJsonSamples samples) {
+    public WsdlSamples(Port port, List<Operation> operations, XsdJsonSamples samples) {
         this.port = port;
         this.operations = operations;
         this.samples = samples;
     }
 
-    List<String> warnings() {
+    public List<String> warnings() {
         return warnings;
     }
 
@@ -97,7 +97,7 @@ final class WsdlSamples {
      *
      * @param prefix the prefix of the file names, such as the port name when there is more than one port (or empty)
      */
-    List<Sample> samples(String prefix) {
+    public List<Sample> samples(String prefix) {
         List<Sample> answer = new ArrayList<>();
         if (!port.isDocument()) {
             warnings.add("The port " + port.name() + " uses the rpc style, which has no samples (only document style)");
@@ -159,7 +159,7 @@ final class WsdlSamples {
     /**
      * The request in a SOAP envelope of the SOAP version of the port.
      */
-    String envelope(String xml) {
+    public String envelope(String xml) {
         String body = xml;
         if (body.startsWith("<?xml")) {
             int end = body.indexOf("?>");
