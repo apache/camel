@@ -248,10 +248,14 @@ class RunPipelineTest {
         // camel run --prop camel.server.mcp-enabled=true --mcp-tags=crm (CAMEL-27404)
         RunRequest request = request();
         request.applicationProperties = new String[] { "camel.server.mcp-enabled=true" };
+        request.mcpTags = "crm";
+        KameletMain main = new KameletMain("jbang");
         RunPipeline pipeline = new RunPipeline(request);
 
         assertThat(pipeline.isAiToolMcpServerEnabled(new Properties())).isTrue();
         assertThat(pipeline.isAiToolMcpServerEnabled(null)).isTrue();
+        pipeline.applyMcpTagsOverride(main);
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-tags")).isEqualTo("crm");
 
         request.applicationProperties = new String[] { "camel.server.mcpEnabled = true" };
         assertThat(pipeline.isAiToolMcpServerEnabled(null)).isTrue();
