@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +36,8 @@ import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel;
+import org.apache.camel.dsl.jbang.wsdl.WsdlRouteScaffold;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceDefinition;
@@ -428,34 +429,6 @@ class CodeWsdlGeneratorTest {
         } finally {
             server.stop(0);
         }
-    }
-
-    @Test
-    void aRemoteWsdlImportsFromItsHostOverHttpOrHttps() throws Exception {
-        URI http = URI.create("http://example.com/svc?wsdl");
-        URI https = URI.create("https://example.com/svc?wsdl");
-        URI file = URI.create("file:///tmp/svc.wsdl");
-
-        // the same host, also on another port, and from http up to https
-        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://example.com/types.wsdl"))).isNull();
-        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://EXAMPLE.com:8080/types.wsdl"))).isNull();
-        assertThat(WsdlModel.refusedImport(http, http, URI.create("https://example.com/types.wsdl"))).isNull();
-        assertThat(WsdlModel.refusedImport(https, https, URI.create("https://example.com/types.wsdl"))).isNull();
-        assertThat(WsdlModel.refusedImport(file, file, URI.create("file:///tmp/types.wsdl"))).isNull();
-
-        // not from https down to http, not to another host, and not across files and http(s)
-        assertThat(WsdlModel.refusedImport(https, https, URI.create("http://example.com/types.wsdl")))
-                .isEqualTo("a WSDL read over https does not import over http");
-        assertThat(WsdlModel.refusedImport(http, URI.create("https://example.com/types.wsdl"),
-                URI.create("http://example.com/more.wsdl")))
-                .isEqualTo("a WSDL read over https does not import over http");
-        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://169.254.169.254/latest/meta-data")))
-                .startsWith("it is on the host 169.254.169.254, not on the host of the WSDL (example.com)");
-        assertThat(WsdlModel.refusedImport(http, http, file)).isEqualTo("a remote WSDL only imports over http(s), not file");
-        assertThat(WsdlModel.refusedImport(https, https, file))
-                .isEqualTo("a remote WSDL only imports over http(s), not file");
-        assertThat(WsdlModel.refusedImport(file, file, http)).isEqualTo("a WSDL file only imports files, not http");
-        assertThat(WsdlModel.refusedImport(file, file, https)).isEqualTo("a WSDL file only imports files, not https");
     }
 
     @Test

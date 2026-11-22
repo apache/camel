@@ -94,10 +94,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- the sample messages of the samples option of camel generate wsdl -->
+        <!-- camel generate wsdl -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xsd-json</artifactId>
+            <artifactId>camel-jbang-wsdl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -3422,6 +3422,11 @@
                 <artifactId>camel-jbang-run</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-wsdl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- camel catalog -->
             <dependency>

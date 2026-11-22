@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.generate;
+package org.apache.camel.dsl.jbang.wsdl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -65,7 +65,7 @@ import org.xml.sax.SAXParseException;
  * scheme, host and port, for the same reason. At most {@link #MAX_DOCUMENTS} documents and {@link #MAX_DEPTH} levels
  * are read.
  */
-final class WsdlModel {
+public final class WsdlModel {
 
     static final String WSDL_NS = "http://schemas.xmlsoap.org/wsdl/";
     static final String WSDL2_NS = "http://www.w3.org/ns/wsdl";
@@ -75,7 +75,12 @@ final class WsdlModel {
     static final int MAX_DOCUMENTS = 32;
     static final int MAX_DEPTH = 8;
     static final int MAX_BYTES = 16 * 1024 * 1024;
-    static final int MAX_REDIRECTS = 5;
+    public static final int MAX_REDIRECTS = 5;
+
+    /**
+     * The location of a WSDL given as content (see {@link #parse(byte[])}).
+     */
+    private static final URI CONTENT = URI.create("content:wsdl");
 
     /**
      * An NCName (the type of the name attributes of WSDL 1.1): no colon, no space, no quote, no $ or brace, so it can
@@ -94,7 +99,7 @@ final class WsdlModel {
      * @param name    the name of the fault
      * @param element the element of the fault detail, or <tt>null</tt>
      */
-    record Fault(String name, QName element) {
+    public record Fault(String name, QName element) {
     }
 
     /**
@@ -110,7 +115,7 @@ final class WsdlModel {
      * @param oneWay     whether the operation has no response
      * @param faults     the faults
      */
-    record Operation(
+    public record Operation(
             String name, String namespace, String soapAction, String style, String use, QName input, QName output,
             boolean oneWay, List<Fault> faults) {
     }
@@ -128,18 +133,18 @@ final class WsdlModel {
      * @param namespace   the namespace of the port type, which is the namespace of the operations
      * @param operations  the operations
      */
-    record Port(
+    public record Port(
             QName service, String name, QName binding, String soapVersion, String style, String transport, String address,
             String namespace, List<Operation> operations) {
 
-        QName qname() {
+        public QName qname() {
             return new QName(service.getNamespaceURI(), name);
         }
 
         /**
          * Whether the operations are all document style (rpc is listed, but not scaffolded).
          */
-        boolean isDocument() {
+        public boolean isDocument() {
             return operations.stream().allMatch(o -> "document".equals(o.style()));
         }
     }
@@ -150,14 +155,14 @@ final class WsdlModel {
      * @param name  the name
      * @param ports the SOAP ports
      */
-    record Service(QName name, List<Port> ports) {
+    public record Service(QName name, List<Port> ports) {
     }
 
     /**
      * The WSDL cannot be read: it is not well formed, not WSDL 1.1, has a DOCTYPE, refers to something it does not
      * define, or imports a document that cannot be read.
      */
-    static final class WsdlException extends Exception {
+    public static final class WsdlException extends Exception {
         WsdlException(String message) {
             super(message);
         }
@@ -204,28 +209,28 @@ final class WsdlModel {
     /**
      * The target namespace of the WSDL (of the first document).
      */
-    String targetNamespace() {
+    public String targetNamespace() {
         return targetNamespace;
     }
 
     /**
      * The services with at least one SOAP port, in the order of the WSDL.
      */
-    List<Service> services() {
+    public List<Service> services() {
         return services;
     }
 
     /**
      * What was left out, such as a port with a binding that is not SOAP.
      */
-    List<String> warnings() {
+    public List<String> warnings() {
         return warnings;
     }
 
     /**
      * The location of a WSDL as a URI: a http or https URL, a file: URL, or a file name.
      */
-    static URI toUri(String location) {
+    public static URI toUri(String location) {
         String lower = location.toLowerCase(Locale.ROOT);
         if (lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("file:")) {
             return URI.create(location);
@@ -241,7 +246,7 @@ final class WsdlModel {
      * @throws IOException         when the WSDL cannot be read
      * @throws WsdlException       when the WSDL, or a document it imports, is not a WSDL 1.1 document this can read
      */
-    static WsdlModel load(String location) throws IOException, WsdlException {
+    public static WsdlModel load(String location) throws IOException, WsdlException {
         URI base;
         try {
             base = toUri(location);
@@ -263,6 +268,30 @@ final class WsdlModel {
     }
 
     /**
+     * Reads a WSDL given as its content, such as by an AI assistant through the MCP server. Nothing else is read: a
+     * {@code wsdl:import} is not followed but listed as a warning, so the services, ports and operations are those of
+     * this document.
+     *
+     * @param  content       the WSDL document
+     * @throws WsdlException when the content is not a WSDL 1.1 document this can read
+     */
+    public static WsdlModel parse(byte[] content) throws WsdlException {
+        if (content == null || content.length == 0) {
+            throw new WsdlException("The WSDL content is empty");
+        }
+        if (content.length > MAX_BYTES) {
+            throw new WsdlException("The WSDL is larger than " + MAX_BYTES + " bytes");
+        }
+        try (Reader reader = new Reader(CONTENT, content)) {
+            reader.read(CONTENT, 0);
+            return reader.build();
+        } catch (IOException e) {
+            // nothing is read but the content
+            throw new WsdlException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Reads a document of a remote WSDL that is not a WSDL document, such as a schema that its types import, with the
      * rules of a {@code wsdl:import}: only from the host of the WSDL, not from https down to http, and a redirect only
      * to the same scheme, host and port.
@@ -271,7 +300,7 @@ final class WsdlModel {
      * @param  uri         the document
      * @throws IOException when the document cannot be read, or is refused
      */
-    static byte[] readDocument(URI root, String uri) throws IOException {
+    public static byte[] readDocument(URI root, String uri) throws IOException {
         URI target;
         try {
             target = new URI(uri);
@@ -350,7 +379,7 @@ final class WsdlModel {
     /**
      * Whether the name is an NCName, which can go into YAML and into a simple expression as it is.
      */
-    static boolean isNcName(String name) {
+    public static boolean isNcName(String name) {
         return name != null && NCNAME.matcher(name).matches();
     }
 
@@ -362,6 +391,7 @@ final class WsdlModel {
 
     private static final class Reader implements AutoCloseable {
         private final URI root;
+        private final byte[] content;
         private HttpClient client;
         private final Set<URI> visited = new HashSet<>();
         private String targetNamespace;
@@ -372,7 +402,15 @@ final class WsdlModel {
         private final List<String> warnings = new ArrayList<>();
 
         Reader(URI root) {
+            this(root, null);
+        }
+
+        /**
+         * @param content the content of the root, which is then the only document read (or null)
+         */
+        Reader(URI root, byte[] content) {
             this.root = root;
+            this.content = content;
         }
 
         @Override
@@ -425,6 +463,11 @@ final class WsdlModel {
         private void readImport(URI base, Element e, int depth) throws IOException, WsdlException {
             String location = e.getAttribute("location");
             if (location.isBlank()) {
+                return;
+            }
+            if (content != null) {
+                warnings.add("The import " + printable(location) + " is not followed, as the WSDL is given as content:"
+                             + " its services, ports and operations are left out");
                 return;
             }
             if (depth + 1 > MAX_DEPTH) {
@@ -660,6 +703,9 @@ final class WsdlModel {
         }
 
         private Fetched readBytes(URI uri) throws IOException, WsdlException {
+            if (content != null) {
+                return new Fetched(uri, content);
+            }
             if ("file".equalsIgnoreCase(uri.getScheme())) {
                 Path path = Path.of(uri);
                 if (!Files.isRegularFile(path)) {
@@ -868,7 +914,7 @@ final class WsdlModel {
      * The text with the control characters (such as the escape of a terminal color code) replaced by a question mark,
      * so a value from a remote WSDL cannot change the terminal.
      */
-    static String printable(String text) {
+    public static String printable(String text) {
         if (text == null) {
             return null;
         }
@@ -886,7 +932,7 @@ final class WsdlModel {
     /**
      * The address with the user info (user:password@) masked, for the listing.
      */
-    static String maskedAddress(String address) {
+    public static String maskedAddress(String address) {
         if (address == null) {
             return null;
         }

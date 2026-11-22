@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.generate;
+package org.apache.camel.dsl.jbang.wsdl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Operation;
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.Port;
-import org.apache.camel.dsl.jbang.core.commands.generate.WsdlModel.WsdlException;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Operation;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Port;
+import org.apache.camel.dsl.jbang.wsdl.WsdlModel.WsdlException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -40,7 +40,7 @@ import org.yaml.snakeyaml.Yaml;
  * classes. The YAML is written with a YAML writer, and every name from the WSDL that goes into it is an NCName, and
  * every namespace a plain URI, so a hostile WSDL cannot add YAML, a simple expression or a property placeholder.
  */
-final class WsdlRouteScaffold {
+public final class WsdlRouteScaffold {
 
     /**
      * The characters of a namespace or an address that can go into an endpoint parameter, a constant and an XML
@@ -52,7 +52,8 @@ final class WsdlRouteScaffold {
      * The headers that decide which operation and which address the cxf producer calls: they are removed before the
      * call, so a caller of the route (or a consumer that copied them from a request) cannot steer it.
      */
-    static final String PRODUCER_REMOVE_HEADERS = "Camel.*|operationName|operationNamespace|RequestContext|ResponseContext";
+    public static final String PRODUCER_REMOVE_HEADERS
+            = "Camel.*|operationName|operationNamespace|RequestContext|ResponseContext";
 
     private static final int DEFAULT_PORT = 8080;
 
@@ -66,7 +67,7 @@ final class WsdlRouteScaffold {
      * @param operations the operations of the port to scaffold
      * @param wsdlUrl    the wsdlURL of the endpoints
      */
-    WsdlRouteScaffold(Port port, List<Operation> operations, String wsdlUrl) {
+    public WsdlRouteScaffold(Port port, List<Operation> operations, String wsdlUrl) {
         this.port = port;
         this.operations = operations;
         this.wsdlUrl = wsdlUrl;
@@ -75,7 +76,7 @@ final class WsdlRouteScaffold {
     /**
      * What the scaffold changed from the WSDL, such as the query of an address that it left out.
      */
-    List<String> warnings() {
+    public List<String> warnings() {
         return warnings;
     }
 
@@ -84,7 +85,7 @@ final class WsdlRouteScaffold {
      * is the path of the address of the port: Camel Main (camel-cxf-platform-http), Spring Boot and Quarkus all serve
      * it on their HTTP server, under the path of their CXF services (default /services).
      */
-    String consumer() throws WsdlException {
+    public String consumer() throws WsdlException {
         check();
         String path = address().getRawPath();
         String uri = "cxf:" + path;
@@ -140,7 +141,7 @@ final class WsdlRouteScaffold {
     /**
      * A route with a cxf: producer per operation, called with direct:operation and the request element as the body.
      */
-    String producer() throws WsdlException {
+    public String producer() throws WsdlException {
         check();
         URI address = address();
         String uri = "cxf://" + address;
