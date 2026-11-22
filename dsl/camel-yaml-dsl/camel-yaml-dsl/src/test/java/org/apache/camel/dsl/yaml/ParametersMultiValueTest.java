@@ -131,6 +131,22 @@ class ParametersMultiValueTest extends YamlTestSupport {
         assertThat(scheduler.getPoolSize()).isEqualTo(2);
     }
 
+    @Test
+    void questionMarkInPlaceholderIsNotAQuery() throws Exception {
+        // an optional placeholder has a ?, which is not the start of a query
+        loadRoutes("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - to:
+                          uri: "file:target/data/ParametersMultiValueTest/{{?dir}}"
+                          parameters:
+                            auto-create: false
+                """);
+
+        assertThat(toUri()).isEqualTo("file:target/data/ParametersMultiValueTest/{{?dir}}?autoCreate=false");
+    }
+
     private String toUri() {
         return ((ToDefinition) context.getRouteDefinitions().get(0).getOutputs().get(0)).getEndpointUri();
     }

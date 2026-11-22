@@ -79,7 +79,7 @@ public final class YamlSupport {
             //
             return answer;
         }
-        if (uri.indexOf('?') != -1) {
+        if (hasQuery(uri)) {
             //
             // we support URIs defined as scheme only or scheme and path params,
             // query params are not supported so a definition like:
@@ -156,6 +156,29 @@ public final class YamlSupport {
         }
 
         return answer;
+    }
+
+    /**
+     * Whether the uri has a query. A ? in a property placeholder, such as {{?dir}} (an optional placeholder), is not
+     * the start of a query.
+     */
+    static boolean hasQuery(String uri) {
+        int i = 0;
+        while (i < uri.length()) {
+            if (uri.startsWith("{{", i)) {
+                int end = uri.indexOf("}}", i + 2);
+                if (end == -1) {
+                    // not a placeholder
+                    return uri.indexOf('?', i) != -1;
+                }
+                i = end + 2;
+            } else if (uri.charAt(i) == '?') {
+                return true;
+            } else {
+                i++;
+            }
+        }
+        return false;
     }
 
     /**

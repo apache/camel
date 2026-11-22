@@ -74,4 +74,15 @@ class YamlSupportOptionNameTest {
                 .isEqualTo("properties.wsSecurity.username");
         assertThat(YamlSupport.optionName("other.ws-security", Set.of("properties."))).isEqualTo("other.wsSecurity");
     }
+
+    @Test
+    void questionMarkInPlaceholderIsNotAQuery() {
+        assertThat(YamlSupport.hasQuery("smb:host/share/{{?dir}}")).isFalse();
+        assertThat(YamlSupport.hasQuery("file:{{?base}}/{{?dir}}")).isFalse();
+        assertThat(YamlSupport.hasQuery("file:{{?dir}}?noop=true")).isTrue();
+        assertThat(YamlSupport.hasQuery("file:inbox?noop=true")).isTrue();
+        assertThat(YamlSupport.hasQuery("file:inbox")).isFalse();
+        // not a placeholder, as it is not closed
+        assertThat(YamlSupport.hasQuery("file:{{?dir")).isTrue();
+    }
 }
