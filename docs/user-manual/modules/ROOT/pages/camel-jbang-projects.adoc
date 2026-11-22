@@ -611,9 +611,11 @@ which the CXF servlet of the runtime serves.
 the body and returns the response element. It removes the `Camel*` headers and the CXF operation headers first, so a
 caller cannot choose another operation or address (such as with `CamelDestinationOverrideUrl`).
 
-When the WSDL has more than one port, choose one with `--service` and `--port`. A remote WSDL may only import documents
-over http(s), and a local one only files. The rpc style is listed but not scaffolded, and WSDL 2.0 and bindings that are
-not SOAP (such as HTTP GET) are not supported.
+When the WSDL has more than one port, choose one with `--service` and `--port`. A local WSDL may only import files, and
+a remote one only documents on its own host, over http or https (not from https down to http). A redirect is only
+followed to the same scheme, host and port; for another one the command names the new location, so you can use it if
+you trust it. The rpc style is listed but not scaffolded, and WSDL 2.0 and bindings that are not SOAP (such as HTTP GET)
+are not supported.
 
 === JSON schema
 

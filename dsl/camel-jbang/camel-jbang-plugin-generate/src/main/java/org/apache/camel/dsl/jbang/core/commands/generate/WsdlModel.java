@@ -58,9 +58,12 @@ import org.xml.sax.SAXParseException;
  * The services, ports and operations of a WSDL 1.1 document with SOAP 1.1 or SOAP 1.2 bindings, read with the DOM
  * parser of the JDK. Only the WSDL structure is read: the XML schema of the types is not.
  * <p/>
- * The WSDL may come from a remote server, so the parser refuses a DOCTYPE and never loads an external entity, and a
- * {@code wsdl:import} is only followed with the same scheme as the WSDL that imports it (a remote WSDL cannot import a
- * local file), for at most {@link #MAX_DOCUMENTS} documents and {@link #MAX_DEPTH} levels.
+ * The WSDL may come from a remote server, so the parser refuses a DOCTYPE and never loads an external entity. A
+ * {@code wsdl:import} of a local WSDL is only followed to a file, and of a remote WSDL only over http or https (not
+ * from https down to http) to the host of the WSDL the user gave, so a remote WSDL can neither read a local file nor
+ * make the command call another host, such as one of the internal network. A redirect is only followed to the same
+ * scheme, host and port, for the same reason. At most {@link #MAX_DOCUMENTS} documents and {@link #MAX_DEPTH} levels
+ * are read.
  */
 final class WsdlModel {
 
@@ -72,6 +75,7 @@ final class WsdlModel {
     static final int MAX_DOCUMENTS = 32;
     static final int MAX_DEPTH = 8;
     static final int MAX_BYTES = 16 * 1024 * 1024;
+    static final int MAX_REDIRECTS = 5;
 
     /**
      * An NCName (the type of the name attributes of WSDL 1.1): no colon, no space, no quote, no $ or brace, so it can
@@ -244,13 +248,76 @@ final class WsdlModel {
         } catch (IllegalArgumentException e) {
             throw new WsdlException("Not a file or URL: " + location, e);
         }
-        String scheme = base.getScheme() != null ? base.getScheme().toLowerCase(Locale.ROOT) : "";
-        if (!"file".equals(scheme) && !"http".equals(scheme) && !"https".equals(scheme)) {
+        String scheme = scheme(base);
+        if (!"file".equals(scheme) && !isRemote(scheme)) {
             throw new WsdlException("Not a file or http(s) URL: " + location);
         }
-        Reader reader = new Reader(scheme);
-        reader.read(base, 0);
-        return reader.build();
+        if (isRemote(scheme) && host(base).isEmpty()) {
+            throw new WsdlException("Not a http(s) URL with a host: " + location);
+        }
+        // one http client for the WSDL and the documents it imports
+        try (Reader reader = new Reader(base)) {
+            reader.read(base, 0);
+            return reader.build();
+        }
+    }
+
+    /**
+     * Why the WSDL at {@code base} does not import the document at {@code imported}, or <tt>null</tt> when it does.
+     * <p/>
+     * A local WSDL only imports files. A remote WSDL only imports over http or https (http to https is fine, https down
+     * to http is not), and only from the host of the WSDL the user gave ({@code root}): the WSDL documents of a service
+     * are on the same server, while an import of another host would let a remote WSDL make the command call any host
+     * the user can reach, such as one of the internal network.
+     *
+     * @param  root     the WSDL the user gave
+     * @param  base     the WSDL with the import
+     * @param  imported the location of the import, resolved against the base
+     * @return          the reason, or <tt>null</tt> when the import is followed
+     */
+    static String refusedImport(URI root, URI base, URI imported) {
+        String baseScheme = scheme(base);
+        String importScheme = scheme(imported);
+        if ("file".equals(baseScheme)) {
+            return "file".equals(importScheme) ? null : "a WSDL file only imports files, not " + importScheme;
+        }
+        if (!isRemote(importScheme)) {
+            return "a remote WSDL only imports over http(s), not " + importScheme;
+        }
+        if ("https".equals(baseScheme) && "http".equals(importScheme)) {
+            return "a WSDL read over https does not import over http";
+        }
+        if (!host(root).equals(host(imported))) {
+            return "it is on the host " + host(imported) + ", not on the host of the WSDL (" + host(root)
+                   + "); save the documents as files to read them";
+        }
+        return null;
+    }
+
+    /**
+     * Whether the redirect from {@code from} to {@code to} stays on the same scheme, host and port.
+     */
+    static boolean isSameOrigin(URI from, URI to) {
+        return scheme(from).equals(scheme(to)) && host(from).equals(host(to)) && port(from) == port(to);
+    }
+
+    private static boolean isRemote(String scheme) {
+        return "http".equals(scheme) || "https".equals(scheme);
+    }
+
+    private static String scheme(URI uri) {
+        return uri.getScheme() != null ? uri.getScheme().toLowerCase(Locale.ROOT) : "";
+    }
+
+    private static String host(URI uri) {
+        return uri.getHost() != null ? uri.getHost().toLowerCase(Locale.ROOT) : "";
+    }
+
+    private static int port(URI uri) {
+        if (uri.getPort() != -1) {
+            return uri.getPort();
+        }
+        return "https".equals(scheme(uri)) ? 443 : 80;
     }
 
     /**
@@ -260,8 +327,15 @@ final class WsdlModel {
         return name != null && NCNAME.matcher(name).matches();
     }
 
-    private static final class Reader {
-        private final String scheme;
+    /**
+     * A document as it was read: its location (after a redirect) and its bytes.
+     */
+    private record Fetched(URI uri, byte[] data) {
+    }
+
+    private static final class Reader implements AutoCloseable {
+        private final URI root;
+        private HttpClient client;
         private final Set<URI> visited = new HashSet<>();
         private String targetNamespace;
         private final Map<QName, List<Part>> messages = new LinkedHashMap<>();
@@ -270,8 +344,15 @@ final class WsdlModel {
         private final List<RawService> rawServices = new ArrayList<>();
         private final List<String> warnings = new ArrayList<>();
 
-        Reader(String scheme) {
-            this.scheme = scheme;
+        Reader(URI root) {
+            this.root = root;
+        }
+
+        @Override
+        public void close() {
+            if (client != null) {
+                client.close();
+            }
         }
 
         void read(URI uri, int depth) throws IOException, WsdlException {
@@ -283,14 +364,17 @@ final class WsdlModel {
             if (visited.size() > MAX_DOCUMENTS) {
                 throw new WsdlException("The WSDL imports more than " + MAX_DOCUMENTS + " documents");
             }
-            Document doc = parse(normalized, readBytes(normalized));
+            Fetched fetched = readBytes(normalized);
+            // the imports are relative to where the document is (after a redirect)
+            URI location = fetched.uri();
+            Document doc = parse(location, fetched.data());
             Element root = doc.getDocumentElement();
             if (WSDL2_NS.equals(root.getNamespaceURI())) {
                 throw new WsdlException(
-                        "WSDL 2.0 is not supported (only WSDL 1.1 with SOAP 1.1 or SOAP 1.2 bindings): " + normalized);
+                        "WSDL 2.0 is not supported (only WSDL 1.1 with SOAP 1.1 or SOAP 1.2 bindings): " + location);
             }
             if (!WSDL_NS.equals(root.getNamespaceURI()) || !"definitions".equals(root.getLocalName())) {
-                throw new WsdlException("Not a WSDL 1.1 document (the root element is not wsdl:definitions): " + normalized);
+                throw new WsdlException("Not a WSDL 1.1 document (the root element is not wsdl:definitions): " + location);
             }
             String tns = root.getAttribute("targetNamespace");
             if (targetNamespace == null) {
@@ -299,7 +383,7 @@ final class WsdlModel {
 
             for (Element e : children(root, WSDL_NS)) {
                 switch (e.getLocalName()) {
-                    case "import" -> readImport(normalized, e, depth);
+                    case "import" -> readImport(location, e, depth);
                     case "message" -> readMessage(tns, e);
                     case "portType" -> readPortType(tns, e);
                     case "binding" -> readBinding(tns, e);
@@ -325,11 +409,9 @@ final class WsdlModel {
             } catch (URISyntaxException ex) {
                 throw new WsdlException("The import location " + location + " of " + base + " is not a valid URI", ex);
             }
-            String importScheme = imported.getScheme() != null ? imported.getScheme().toLowerCase(Locale.ROOT) : "";
-            if (!scheme.equals(importScheme)) {
-                throw new WsdlException(
-                        "The import " + location + " of " + base + " is not followed: its scheme (" + importScheme
-                                        + ") is not the scheme of the WSDL (" + scheme + ")");
+            String refused = refusedImport(this.root, base, imported);
+            if (refused != null) {
+                throw new WsdlException("The import " + location + " of " + base + " is not followed: " + refused);
             }
             read(imported, depth + 1);
         }
@@ -550,7 +632,7 @@ final class WsdlModel {
             return null;
         }
 
-        private byte[] readBytes(URI uri) throws IOException, WsdlException {
+        private Fetched readBytes(URI uri) throws IOException, WsdlException {
             if ("file".equalsIgnoreCase(uri.getScheme())) {
                 Path path = Path.of(uri);
                 if (!Files.isRegularFile(path)) {
@@ -559,29 +641,76 @@ final class WsdlModel {
                 if (Files.size(path) > MAX_BYTES) {
                     throw new WsdlException("The WSDL " + uri + " is larger than " + MAX_BYTES + " bytes");
                 }
-                return Files.readAllBytes(path);
+                return new Fetched(uri, Files.readAllBytes(path));
             }
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    // never from https to http
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .proxy(ProxySelector.getDefault())
-                    .build();
-            HttpRequest request = HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(30)).GET().build();
-            try {
-                HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-                try (InputStream is = response.body()) {
-                    if (response.statusCode() != 200) {
-                        throw new IOException("HTTP " + response.statusCode() + " from " + uri);
-                    }
-                    return readLimited(uri, is);
+            URI current = uri;
+            for (int redirects = 0;; redirects++) {
+                HttpRequest request = HttpRequest.newBuilder(current).timeout(Duration.ofSeconds(30)).GET().build();
+                HttpResponse<InputStream> response;
+                try {
+                    response = httpClient().send(request, HttpResponse.BodyHandlers.ofInputStream());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted while reading " + current, e);
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IOException("Interrupted while reading " + uri, e);
-            } finally {
-                client.close();
+                try (InputStream is = response.body()) {
+                    int status = response.statusCode();
+                    if (isRedirect(status)) {
+                        current = redirect(current, status, response.headers().firstValue("Location").orElse(null),
+                                redirects);
+                        continue;
+                    }
+                    if (status != 200) {
+                        throw new IOException("HTTP " + status + " from " + current);
+                    }
+                    return new Fetched(current, readLimited(current, is));
+                }
             }
+        }
+
+        /**
+         * The http client, which does not follow redirects: {@link #redirect} does, only to the same scheme, host and
+         * port.
+         */
+        private HttpClient httpClient() {
+            if (client == null) {
+                client = HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(10))
+                        .followRedirects(HttpClient.Redirect.NEVER)
+                        .proxy(ProxySelector.getDefault())
+                        .build();
+            }
+            return client;
+        }
+
+        private static boolean isRedirect(int status) {
+            return status == 301 || status == 302 || status == 303 || status == 307 || status == 308;
+        }
+
+        /**
+         * Where a redirect goes, when it stays on the same scheme, host and port: a redirect to another host (such as
+         * one of the internal network) is not followed.
+         */
+        private static URI redirect(URI from, int status, String location, int redirects)
+                throws IOException, WsdlException {
+            if (location == null || location.isBlank()) {
+                throw new IOException("HTTP " + status + " from " + from + " without a Location header");
+            }
+            if (redirects >= MAX_REDIRECTS) {
+                throw new WsdlException("The WSDL " + from + " is redirected more than " + MAX_REDIRECTS + " times");
+            }
+            URI to;
+            try {
+                to = from.resolve(new URI(location.trim()));
+            } catch (URISyntaxException e) {
+                throw new WsdlException("The redirect of " + from + " to " + location + " is not a valid URI", e);
+            }
+            if (!isSameOrigin(from, to)) {
+                throw new WsdlException(
+                        "The redirect of " + from + " to " + location + " is not followed: it is not the same scheme,"
+                                        + " host and port (use that URL if you trust it)");
+            }
+            return to;
         }
 
         private static byte[] readLimited(URI uri, InputStream is) throws IOException, WsdlException {

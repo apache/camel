@@ -20,11 +20,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -292,7 +294,7 @@ class CodeWsdlGeneratorTest {
                 """);
 
         assertThat(run(wsdl.toString())).isEqualTo(1);
-        assertThat(printer.getStderr()).contains("is not followed: its scheme (http) is not the scheme of the WSDL (file)");
+        assertThat(printer.getStderr()).contains("is not followed: a WSDL file only imports files, not http");
     }
 
     @Test
@@ -349,10 +351,132 @@ class CodeWsdlGeneratorTest {
 
             StringPrinter refused = new StringPrinter();
             assertThat(run(refused, base + "/evil")).isEqualTo(1);
-            assertThat(refused.getStderr()).contains("its scheme (file) is not the scheme of the WSDL (http)");
+            assertThat(refused.getStderr()).contains("is not followed: a remote WSDL only imports over http(s), not file");
         } finally {
             server.stop(0);
         }
+    }
+
+    @Test
+    void followsARedirectOnlyToTheSameSchemeHostAndPort() throws Exception {
+        byte[] orders = Files.readAllBytes(Paths.get(ORDERS));
+        AtomicInteger otherCalls = new AtomicInteger();
+        HttpServer other = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        other.createContext("/", exchange -> {
+            otherCalls.incrementAndGet();
+            reply(exchange, orders);
+        });
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/orders", exchange -> reply(exchange, orders));
+        server.createContext("/moved", exchange -> redirect(exchange, "/orders?wsdl"));
+        server.createContext("/otherPort",
+                exchange -> redirect(exchange, "http://localhost:" + other.getAddress().getPort() + "/orders?wsdl"));
+        server.createContext("/otherHost",
+                exchange -> redirect(exchange, "http://127.0.0.1:" + server.getAddress().getPort() + "/orders?wsdl"));
+        server.createContext("/loop", exchange -> redirect(exchange, "/loop"));
+        other.start();
+        server.start();
+        try {
+            String base = "http://localhost:" + server.getAddress().getPort();
+
+            // the same scheme, host and port
+            assertThat(run(base + "/moved")).as(printer.getOutput()).isZero();
+            assertThat(printer.getStdout()).contains("getOrder");
+
+            for (String path : List.of("/otherPort", "/otherHost")) {
+                StringPrinter refused = new StringPrinter();
+                assertThat(run(refused, base + path)).isEqualTo(1);
+                assertThat(refused.getStderr()).contains("/orders?wsdl is not followed: it is not the same scheme, host"
+                                                         + " and port (use that URL if you trust it)");
+            }
+            assertThat(otherCalls).hasValue(0);
+
+            StringPrinter loop = new StringPrinter();
+            assertThat(run(loop, base + "/loop")).isEqualTo(1);
+            assertThat(loop.getStderr()).contains("is redirected more than " + WsdlModel.MAX_REDIRECTS + " times");
+        } finally {
+            server.stop(0);
+            other.stop(0);
+        }
+    }
+
+    @Test
+    void doesNotFollowAnImportOfAnotherHost() throws Exception {
+        AtomicInteger otherCalls = new AtomicInteger();
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        int port = server.getAddress().getPort();
+        byte[] evil = ("""
+                <wsdl:definitions targetNamespace="urn:x" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+                  <wsdl:import namespace="urn:y" location="http://127.0.0.1:%d/internal"/>
+                </wsdl:definitions>
+                """.formatted(port)).getBytes(StandardCharsets.UTF_8);
+        server.createContext("/evil", exchange -> reply(exchange, evil));
+        server.createContext("/internal", exchange -> {
+            otherCalls.incrementAndGet();
+            reply(exchange, evil);
+        });
+        server.start();
+        try {
+            assertThat(run("http://localhost:" + port + "/evil")).isEqualTo(1);
+            assertThat(printer.getStderr()).contains(
+                    "is not followed: it is on the host 127.0.0.1, not on the host of the WSDL (localhost)");
+            assertThat(otherCalls).hasValue(0);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void aRemoteWsdlImportsFromItsHostOverHttpOrHttps() throws Exception {
+        URI http = URI.create("http://example.com/svc?wsdl");
+        URI https = URI.create("https://example.com/svc?wsdl");
+        URI file = URI.create("file:///tmp/svc.wsdl");
+
+        // the same host, also on another port, and from http up to https
+        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://example.com/types.wsdl"))).isNull();
+        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://EXAMPLE.com:8080/types.wsdl"))).isNull();
+        assertThat(WsdlModel.refusedImport(http, http, URI.create("https://example.com/types.wsdl"))).isNull();
+        assertThat(WsdlModel.refusedImport(https, https, URI.create("https://example.com/types.wsdl"))).isNull();
+        assertThat(WsdlModel.refusedImport(file, file, URI.create("file:///tmp/types.wsdl"))).isNull();
+
+        // not from https down to http, not to another host, and not across files and http(s)
+        assertThat(WsdlModel.refusedImport(https, https, URI.create("http://example.com/types.wsdl")))
+                .isEqualTo("a WSDL read over https does not import over http");
+        assertThat(WsdlModel.refusedImport(http, URI.create("https://example.com/types.wsdl"),
+                URI.create("http://example.com/more.wsdl")))
+                .isEqualTo("a WSDL read over https does not import over http");
+        assertThat(WsdlModel.refusedImport(http, http, URI.create("http://169.254.169.254/latest/meta-data")))
+                .startsWith("it is on the host 169.254.169.254, not on the host of the WSDL (example.com)");
+        assertThat(WsdlModel.refusedImport(http, http, file)).isEqualTo("a remote WSDL only imports over http(s), not file");
+        assertThat(WsdlModel.refusedImport(https, https, file))
+                .isEqualTo("a remote WSDL only imports over http(s), not file");
+        assertThat(WsdlModel.refusedImport(file, file, http)).isEqualTo("a WSDL file only imports files, not http");
+        assertThat(WsdlModel.refusedImport(file, file, https)).isEqualTo("a WSDL file only imports files, not https");
+    }
+
+    @Test
+    void anHttpWsdlFollowsAnHttpsImport() throws Exception {
+        // nothing listens on the https port: the import is followed (and fails to connect) rather than refused
+        byte[] wsdl = """
+                <wsdl:definitions targetNamespace="urn:x" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+                  <wsdl:import namespace="urn:y" location="https://localhost:1/types.wsdl"/>
+                </wsdl:definitions>
+                """.getBytes(StandardCharsets.UTF_8);
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/svc", exchange -> reply(exchange, wsdl));
+        server.start();
+        try {
+            assertThat(run("http://localhost:" + server.getAddress().getPort() + "/svc")).isEqualTo(1);
+            assertThat(printer.getStderr()).contains("Cannot read the WSDL").doesNotContain("is not followed");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    private static void redirect(HttpExchange exchange, String location) throws IOException {
+        exchange.getResponseHeaders().add("Location", location);
+        exchange.sendResponseHeaders(302, -1);
+        exchange.close();
     }
 
     private static void reply(HttpExchange exchange, byte[] body) throws IOException {
