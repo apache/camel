@@ -121,6 +121,82 @@ Using CXF with Spring Boot or Quarkus comes automatic integrated with the embedd
 
 See more details in the https://cxf.apache.org/docs/http-transport.html[CXF Transport] documentation.
 
+== WS-Security UsernameToken
+
+The `wsSecurity` options set up a WS-Security UsernameToken without Java code. The producer sends a UsernameToken in
+the SOAP header of its requests, and the consumer rejects a request without a valid UsernameToken with a SOAP fault.
+The options need the `org.apache.cxf:cxf-rt-ws-security` dependency, which `camel-cxf-soap` does not bring by itself.
+
+NOTE: The `username` and `password` options are for HTTP Basic authentication, not for WS-Security.
+
+[cols="1,2,2",options="header"]
+|===
+| Option | Producer | Consumer
+| `wsSecurityUsername` | The user name to send. | The one user that is accepted.
+| `wsSecurityPassword` | The password to send. | The password of that user.
+| `wsSecurityPasswordType` | `Text` (default) sends a PasswordText, `Digest` a PasswordDigest. | The password type that is required.
+| `wsSecurityCredentials` | Not used. | A `java.util.Map` bean of user name to password, to accept more than one user.
+| `wsSecurityCallbackHandler` | A `CallbackHandler` bean that sets the password, instead of `wsSecurityPassword`. | A `CallbackHandler` bean that looks up the password of any user, for example from a vault.
+|===
+
+When the WSDL of the service has a WS-SecurityPolicy, the policy decides how the UsernameToken is sent and checked,
+including the password type, and the options give the user name, the password and the callback handler to the policy.
+When the WSDL has no WS-SecurityPolicy, or there is no WSDL, the endpoint adds the CXF `WSS4JOutInterceptor` (producer)
+or `WSS4JInInterceptor` (consumer) for the UsernameToken.
+
+The consumer sets the authenticated user in the `CamelAuthentication` header, as a `javax.security.auth.Subject`.
+
+The options are not supported with `dataFormat=RAW`, as CXF does not process the SOAP envelope in this mode.
+
+WARNING: A UsernameToken with a plain text password must only be sent over HTTPS. `Digest` is no replacement for
+HTTPS: it uses SHA-1, and the consumer needs the plain password to check it.
+
+A consumer that accepts two users with a PasswordDigest:
+
+[source,yaml]
+----
+- beans:
+    - name: users
+      type: java.util.HashMap
+      properties:
+        alice: "{{alice.password}}"
+        bob: "{{bob.password}}"
+- route:
+    from:
+      uri: cxf://https://0.0.0.0:8443/orders
+      parameters:
+        wsdlURL: classpath:orders.wsdl
+        dataFormat: PAYLOAD
+        wsSecurityCredentials: "#bean:users"
+        wsSecurityPasswordType: Digest
+      steps:
+        - log: "Order request from ${header.CamelAuthentication}"
+----
+
+A producer that calls this service:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getOrder
+      steps:
+        - to:
+            uri: cxf://https://orders.example.com/orders
+            parameters:
+              wsdlURL: classpath:orders.wsdl
+              dataFormat: PAYLOAD
+              defaultOperationName: getOrder
+              wsSecurityUsername: alice
+              wsSecurityPassword: "{{alice.password}}"
+              wsSecurityPasswordType: Digest
+----
+
+Other WS-Security features, such as a Timestamp, a signature or encryption, are set up with the CXF properties in
+`properties.*`, or with CXF interceptors or a `cxfConfigurer` in Java code. A value of `properties.*` that is a
+`#bean:name` reference is resolved from the registry, for example
+`properties.security.callback-handler=#bean:myCallbackHandler`. A plain `#name` is not resolved.
+
 == Usage
 
 === RAW Mode

@@ -114,6 +114,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- WS-Security options set from a YAML route -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-dsl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- test for cxf failover feature -->
 
         <dependency>
