@@ -465,6 +465,17 @@ final class VertxMqttConnection {
      * @param handler called on the context for every message the broker sends
      */
     void subscribe(final String filter, final int qos, final MessageHandler handler) {
+        synchronized (this) {
+            if (context == null) {
+                // Not started yet: the first connect subscribes, and the handler is there before the CONNACK, after
+                // which a session the broker kept sends the messages it holds at once. start() runs the connect on
+                // the context after it took this lock
+                subscription = filter;
+                subscriptionQos = qos;
+                messageHandler = handler;
+                return;
+            }
+        }
         run(() -> {
             subscription = filter;
             subscriptionQos = qos;
@@ -546,15 +557,18 @@ final class VertxMqttConnection {
     /**
      * Closes the connection without acknowledging a message, so that the broker delivers it again after the reconnect,
      * from the session it keeps. Needs automatic reconnect, does nothing without it.
+     *
+     * @param receivers the clients the failed messages arrived on: only a failure on the current client needs the
+     *                  close, a message of an earlier connection comes again on the current one from the session
      */
-    void redeliver(final MqttClient receiver) {
+    void redeliver(final List<MqttClient> receivers) {
         run(() -> {
-            if (receiver == client && connected && reconnector != null && !redelivering) {
+            if (connected && client != null && receivers.contains(client) && reconnector != null && !redelivering) {
                 redelivering = true;
                 LOG.warn("Closing the connection to the MQTT broker {}, so that it delivers the messages whose exchange"
                          + " failed again. A message that fails every time comes back after every reconnect",
                         broker);
-                receiver.disconnect();
+                client.disconnect();
             }
         });
     }
