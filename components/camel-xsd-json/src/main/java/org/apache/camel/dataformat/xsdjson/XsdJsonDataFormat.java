@@ -213,9 +213,17 @@ public class XsdJsonDataFormat extends ServiceSupport implements DataFormat, Dat
             new JsonToXml(model, ignoreUnknown, textName, prettyPrint, writer).write(root, json);
             writer.writeEndDocument();
             writer.flush();
-        } finally {
-            writer.close();
+        } catch (Exception e) {
+            // the document is not complete: a writer such as Woodstox fails to close it ("Trying to write END_DOCUMENT
+            // when document has no root"), and that failure must not hide the error that stopped the document
+            try {
+                writer.close();
+            } catch (Exception closeFailure) {
+                e.addSuppressed(closeFailure);
+            }
+            throw e;
         }
+        writer.close();
     }
 
     private static Map<String, Object> singletonMap(String key, Object value) {
