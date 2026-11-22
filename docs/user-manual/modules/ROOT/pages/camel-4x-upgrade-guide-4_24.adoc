@@ -11420,24 +11420,37 @@ The Kamelet catalog 4.24 adds these Kamelets:
   (CAMEL-27329), which brings Kotlin and Guava (about 6 MB); `kafka-sink` does not.
 * `mllp-source` and `mllp-sink` receive and send HL7 v2 messages over MLLP. The source listens on `0.0.0.0` by default
   and acknowledges each message automatically (AA, or AE when the flow fails). The sink fails the message on a negative
-  acknowledgement (AE or AR). TLS uses the global `camel.ssl.*` settings.
+  acknowledgement (AE or AR). TLS uses the global `camel.ssl.*` settings. The charset of a message is the one its MSH-18
+  field names, such as `UNICODE UTF-8` (CAMEL-27366), and `charset` is used only when MSH-18 is empty; `mllp-source`
+  sets the header `CamelMllpCharset`.
 * `xslt-action` transforms XML with an XSLT 3.0 stylesheet (Saxon), and `xml-schema-validator-action` validates XML
   against an XML Schema and fails the messages that do not match. DTD external entities are not read, and entity
   expansion is limited by the JDK.
 * `aws-eventbridge-source` receives the events that an existing Amazon EventBridge rule matches, through an SQS queue
-  that it adds to the rule as a target. Without `queueURL`, it creates the queue when it starts and deletes it when it
-  stops.
+  that it adds to the rule as a target. Without `queueURL`, it creates the queue when it starts, needs
+  `events:DescribeRule` on the rule, and lets the queue accept only the events of that rule. It deletes the queue when
+  it stops; with `deleteQueueOnShutdown: false` the queue keeps a fixed name, collects the events while the Kamelet does
+  not run, and is reused at the next start.
 * `smb-source` and `smb-sink` read and write files on Windows and Samba file shares (SMB). The sink drops any directory
-  from the file name and refuses a `CamelFileName` that leaves the directory.
+  from the file name and refuses a `CamelFileName` that leaves the directory. `directoryName` and `password` are
+  optional (the top of the share, and guest access with `username: Guest`), and there are `encryptData`,
+  `connectTimeout`, `transactTimeout` and `readTimeout` (source) or `writeTimeout` (sink). `move` together with `delete`
+  fails at startup.
 * `csv-deserialize-action` turns CSV text into a `List` of rows (a `Map` keyed by the column names, or a `List` of
   values), and `csv-serialize-action` turns a `List` of Maps or Lists, a `Map` or parsed JSON into CSV text with a
-  header line (`Content-Type: text/csv`), on the Camel `csv` data format.
+  header line (`Content-Type: text/csv`), on the Camel `csv` data format. Without `columns`, the keys of the first `Map`
+  row are the columns of all the rows (CAMEL-27371): a key that only a later row has is left out, and a missing key is
+  empty.
 * `soap-source` and `soap-action` (Preview) serve a SOAP web service from a WSDL, with the reply of the route as the
-  response and SOAP faults from headers, or call an operation of a SOAP service from its WSDL, with XML text in and out
-  and no generated Java code. Requests with a DOCTYPE are refused.
+  response and SOAP faults from headers or a `<soap:Fault>` reply as XML text, or call an operation of a SOAP service
+  from its WSDL (at `address`, or the address in the WSDL), with XML text in and out and no generated Java code.
+  Requests with a DOCTYPE are refused. `wsSecurityUsername`, `wsSecurityPassword` and `wsSecurityPasswordType` send or
+  require a WS-Security UsernameToken; they need `--dep=mvn:org.apache.cxf:cxf-rt-ws-security:<CXF version of Camel>`.
 * `kafka-share-source` (Preview) reads Kafka topics through a share group (KIP-932, Kafka 4.2 or newer), so that more
   consumers than partitions share the records like a queue. Each record is acknowledged on its own, and one whose
-  handling fails is delivered again (`onFailure`, `kafka-delivery-count`).
+  handling fails is delivered again (`onFailure`, `kafka-delivery-count`). `autoOffsetReset` (`earliest`, `latest` or
+  `by_duration:<duration>`) sets where a new share group starts; it needs the `ALTER_CONFIGS` permission on the group,
+  and the Kamelet does not start when it cannot be set.
 * `jms-apache-activemq-source` and `jms-apache-activemq-sink` send and receive messages on ActiveMQ Classic over
   OpenWire (`tcp://`, `ssl://` or `failover:`), with queues or topics, durable subscriptions, selectors and
   transactions. The sink pools its connections and removes the `CamelJms*` headers before sending.
