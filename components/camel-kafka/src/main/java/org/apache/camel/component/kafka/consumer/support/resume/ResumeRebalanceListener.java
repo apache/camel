@@ -48,13 +48,29 @@ public class ResumeRebalanceListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-        for (TopicPartition partition : partitions) {
-            LOG.debug("onPartitionsRevoked: {} from {}", threadId, partition.topic());
+        try {
+            for (TopicPartition partition : partitions) {
+                LOG.debug("onPartitionsRevoked: {} from {}", threadId, partition.topic());
 
-            // only commit offsets if the component has control
-            if (!configuration.isAutoCommitEnable()) {
-                commitManager.commit(partition);
+                // only commit offsets if the component has control
+                if (!configuration.isAutoCommitEnable()) {
+                    commitManager.commit(partition);
+                }
             }
+        } finally {
+            // the partitions are no longer owned: an offset that was not committed (the commit failed) must not be
+            // committed after a partition is assigned to this consumer again
+            partitions.forEach(commitManager::discardRecordedOffset);
+        }
+    }
+
+    @Override
+    public void onPartitionsLost(Collection<TopicPartition> partitions) {
+        // the partitions are owned by other consumers already: a commit would fail (this consumer is no longer in the
+        // group generation) or move back what the new owner committed, so the recorded offsets are only forgotten
+        for (TopicPartition partition : partitions) {
+            LOG.debug("onPartitionsLost: {} from {}", threadId, partition.topic());
+            commitManager.discardRecordedOffset(partition);
         }
     }
 

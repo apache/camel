@@ -40,6 +40,9 @@
     <groupId>[=GroupId]</groupId>
     <artifactId>[=ArtifactId]</artifactId>
     <version>[=Version]</version>
+[#if War]
+    <packaging>war</packaging>
+[/#if]
 
     <properties>
         <java.version>[=JavaVersion]</java.version>
@@ -107,8 +110,15 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>[#if War][=SpringBootWebStarter][#else]spring-boot-starter-web[/#if]</artifactId>
         </dependency>
+[#if War]
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+[/#if]
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -158,6 +168,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+[#if War]
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+[#if ParentGroupId??]
+                <version>3.5.1</version>
+[/#if]
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+[/#if]
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
                 <artifactId>${jkube.maven.plugin}</artifactId>
@@ -168,13 +190,30 @@
                         <image>
                             <build>
                                 <from>${jkube.container-image.from}</from>
+[#if !War]
                                 <entryPoint>
                                     <exec>
                                         <arg>/maven/run-java.sh</arg>
                                         <arg>run</arg>
                                     </exec>
                                 </entryPoint>
+[/#if]
                                 <assembly>
+[#if War]
+                                    <targetDir>/usr/local/tomcat/webapps</targetDir>
+                                    <layers>
+                                        <layer>
+                                            <id>tomcat-war</id>
+                                            <files>
+                                                <file>
+                                                    <source>${project.build.directory}/${project.build.finalName}.war</source>
+                                                    <outputDirectory>.</outputDirectory>
+                                                    <destName>ROOT.war</destName>
+                                                </file>
+                                            </files>
+                                        </layer>
+                                    </layers>
+[#else]
                                     <layers>
                                         <layer>
                                             <id>entrypoint</id>
@@ -196,6 +235,7 @@
                                             </fileSets>
                                         </layer>
                                     </layers>
+[/#if]
                                 </assembly>
                             </build>
                         </image>
@@ -237,6 +277,7 @@
         </plugins>
     </build>
 
+[#if !War]
     <profiles>
         <profile>
             <id>camel.debug</id>
@@ -291,5 +332,6 @@
             </build>
         </profile>
     </profiles>
+[/#if]
 
 </project>

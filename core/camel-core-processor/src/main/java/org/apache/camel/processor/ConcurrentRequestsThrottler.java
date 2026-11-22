@@ -225,6 +225,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             failAsyncCalls();
         }
         states.clear();
+        clearThrottleRate();
         super.doShutdown();
     }
 
@@ -345,6 +346,11 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             lock.lock();
             try {
                 Integer newThrottle = getMaximumRequestsExpression().evaluate(exchange, Integer.class);
+                if (newThrottle == null && throttleRate == 0) {
+                    // the expression gives no limit (the old value is used) for a state that has none: the state of the
+                    // key was removed when it was idle, so it is the limit the removed state had
+                    newThrottle = previousThrottleRate();
+                }
 
                 if (newThrottle != null && newThrottle < 0) {
                     throw new IllegalStateException(
@@ -387,6 +393,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
                             }
                         }
                         throttleRate = newThrottle;
+                        keepThrottleRate(newThrottle);
                     }
                 }
             } finally {

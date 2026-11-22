@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -1047,6 +1048,132 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasIngress(rt));
+    }
+
+    @Test
+    public void shouldGenerateSpringBootWarForSpringBoot4() throws Exception {
+        assertSpringBootWarKubernetesProject(
+                "4.2.0", "spring-boot-starter-webmvc",
+                "mirror.gcr.io/library/tomcat:11.0-jdk21-temurin", null);
+    }
+
+    @Test
+    public void shouldGenerateSpringBootWarForSpringBoot3() throws Exception {
+        assertSpringBootWarKubernetesProject(
+                "3.5.0", "spring-boot-starter-web",
+                "mirror.gcr.io/library/tomcat:10.1-jdk21-temurin", "4.18.1");
+    }
+
+    @Test
+    public void shouldRejectUnsupportedSpringBootVersionForWarPackaging() throws Exception {
+        KubernetesExport command = createCommand(
+                new String[] { "classpath:myapp\\route.yaml" },
+                "--gav=examples:route:1.0.0",
+                "--runtime=spring-boot",
+                "--packaging=war",
+                "--spring-boot-version=5.0.0");
+
+        Assertions.assertEquals(1, command.doCall());
+        Assertions.assertFalse(workingDir.toPath().resolve("pom.xml").toFile().exists());
+    }
+
+    private void assertSpringBootWarKubernetesProject(
+            String springBootVersion, String expectedWebStarter, String expectedTomcatImage,
+            String camelSpringBootVersion)
+            throws Exception {
+
+        String[] options = camelSpringBootVersion == null
+                ? new String[] {
+                        "--gav=examples:route:1.0.0",
+                        "--runtime=spring-boot",
+                        "--packaging=war",
+                        "--spring-boot-version=" + springBootVersion,
+                        "--observe=true"
+                }
+                : new String[] {
+                        "--gav=examples:route:1.0.0",
+                        "--runtime=spring-boot",
+                        "--packaging=war",
+                        "--spring-boot-version=" + springBootVersion,
+                        "--camel-spring-boot-version=" + camelSpringBootVersion,
+                        "--observe=true"
+                };
+
+        KubernetesExport command = createCommand(
+                new String[] { "classpath:myapp\\route.yaml" }, options);
+
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("war", model.getPackaging());
+
+        // Verify Tomcat WAR image assembly and inherited startup command.
+        String pomXml = Files.readString(workingDir.toPath().resolve("pom.xml"));
+
+        Assertions.assertTrue(
+                pomXml.contains(
+                        "<targetDir>/usr/local/tomcat/webapps</targetDir>"),
+                "WAR must be assembled into Tomcat webapps");
+
+        Assertions.assertTrue(
+                pomXml.contains("<destName>ROOT.war</destName>"),
+                "WAR must be deployed as ROOT.war");
+
+        Assertions.assertFalse(
+                pomXml.contains("<entryPoint>"),
+                "Tomcat base image entry point must not be overridden");
+
+        Assertions.assertFalse(
+                Files.exists(workingDir.toPath().resolve("src/main/scripts/run-java.sh")),
+                "The Tomcat image must use its inherited startup command, not run-java.sh");
+
+        Assertions.assertTrue(
+                model.getDependencies().stream()
+                        .anyMatch(d -> "org.springframework.boot".equals(d.getGroupId())
+                                && expectedWebStarter.equals(d.getArtifactId())),
+                "Expected dependency " + expectedWebStarter);
+
+        var tomcatDependency = model.getDependencies().stream()
+                .filter(d -> "org.springframework.boot".equals(d.getGroupId())
+                        && "spring-boot-starter-tomcat".equals(d.getArtifactId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Missing spring-boot-starter-tomcat"));
+
+        Assertions.assertEquals("provided", tomcatDependency.getScope());
+
+        Assertions.assertTrue(
+                model.getBuild().getPlugins().stream()
+                        .anyMatch(p -> "maven-war-plugin".equals(p.getArtifactId())),
+                "Missing maven-war-plugin");
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals(expectedTomcatImage, props.getProperty("jkube.container-image.from"));
+        Assertions.assertEquals("jib", props.getProperty("jkube.build.strategy"));
+        Assertions.assertTrue(
+                new ComparableVersion(props.getProperty("jkube.version"))
+                        .compareTo(new ComparableVersion("1.20.0")) >= 0,
+                "JKube 1.20.0 or newer is required for Spring Boot Actuator probes");
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals(
+                "/observe", applicationProperties.getProperty("management.endpoints.web.base-path"));
+        Assertions.assertEquals(
+                "true", applicationProperties.getProperty("management.endpoint.health.probes.enabled"));
+        Assertions.assertNull(applicationProperties.getProperty("management.server.port"));
+
+        Deployment deployment = getDeployment(RuntimeType.springBoot);
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
+        Assertions.assertEquals(1, containers.size());
+
+        Container container = containers.get(0);
+        Assertions.assertEquals("route", container.getName());
+        Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        // getDeployment() reads src/main/jkube/deployment.yml, which is the
+        // base resource generated by Camel's TraitCatalog.
+        // JKube adds the Spring Boot Actuator liveness and readiness probes
+        // when the generated project's k8s:resource goal is executed.
     }
 
 }

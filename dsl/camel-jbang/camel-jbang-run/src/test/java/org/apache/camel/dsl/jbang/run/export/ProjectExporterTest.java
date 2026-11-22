@@ -119,6 +119,162 @@ class ProjectExporterTest {
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
     }
 
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot4() throws Exception {
+        assertSpringBootWarProject("4.2.0", "spring-boot-starter-webmvc", null);
+    }
+
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot3WithoutCamelVersion() throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-3-5-0-without-camel-version");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "3.5.0";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput())
+                .contains("Spring Boot 3.x requires an explicitly selected compatible Camel Spring Boot version");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+    }
+
+    private void assertSpringBootWarProject(
+            String bootVersion, String expectedWebStarter, String camelSpringBootVersion)
+            throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-" + bootVersion.replace('.', '-'));
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = bootVersion;
+        request.camelSpringBootVersion = camelSpringBootVersion;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+
+        assertThat(pom).contains(
+                "<packaging>war</packaging>",
+                "<artifactId>" + expectedWebStarter + "</artifactId>",
+                "<artifactId>spring-boot-starter-tomcat</artifactId>\n            <scope>provided</scope>",
+                "<artifactId>maven-war-plugin</artifactId>")
+                .doesNotContain("<id>jib</id>");
+
+        Path application;
+        try (Stream<Path> javaFiles = Files.walk(exportDir.resolve("src/main/java"))) {
+            application = javaFiles
+                    .filter(path -> path.getFileName().toString().equals("CamelApplication.java"))
+                    .findFirst()
+                    .orElseThrow();
+        }
+
+        String java = Files.readString(application);
+        assertThat(java).contains(
+                "extends SpringBootServletInitializer",
+                "SpringApplicationBuilder",
+                "configure(",
+                "application.sources(CamelApplication.class)");
+
+        String readme = Files.readString(exportDir.resolve("readme.md"));
+        assertThat(readme)
+                .contains("$CATALINA_BASE/webapps/")
+                .contains(".war")
+                .contains("ROOT.war");
+
+        assertThat(exportDir.resolve("src/main/docker")).doesNotExist();
+    }
+
+    @Test
+    void exportsSpringBootWarWithSpringBootSpecificDependencies() throws Exception {
+        Path exportDir = dir.resolve("tomcat-runtime-dependencies");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+
+        DependencyResolver withSpringBootDependency = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.dependencies.spring-boot=org.example:spring-boot-only:1.0\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withSpringBootDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains(
+                "<groupId>org.example</groupId>",
+                "<artifactId>spring-boot-only</artifactId>",
+                "<version>1.0</version>");
+    }
+
+    @Test
+    void rejectsTlsFilesForKubernetesWarExport() throws Exception {
+        Path exportDir = dir.resolve("tomcat-tls-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+        request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
+
+        DependencyResolver withTlsFiles = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.tlsFiles=src/main/tls/keystore.p12\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withTlsFiles))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains(
+                        "TLS files configured with camel.jbang.tlsFiles are not supported with --packaging=war for Kubernetes export");
+    }
+
+    @Test
+    void rejectsCustomWarPomTemplate() throws Exception {
+        Path exportDir = dir.resolve("tomcat-custom-pom-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.pomTemplateName = "custom-spring-boot-pom.ftl";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains("Custom POM templates are not supported with --packaging=war");
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "4.10.0")
