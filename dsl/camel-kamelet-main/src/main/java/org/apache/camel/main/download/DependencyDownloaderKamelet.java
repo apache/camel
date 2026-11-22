@@ -221,6 +221,9 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 }
             } catch (Exception e) {
                 // use the location of the component
+                LOG.debug("Cannot parse the query of the kamelet endpoint: {} due to: {}. Using the location of the"
+                          + " kamelet component.",
+                        URISupport.sanitizeUri(uri), e.getMessage(), e);
             }
         }
         if (camelContext.getComponent("kamelet") instanceof KameletComponent kc) {
