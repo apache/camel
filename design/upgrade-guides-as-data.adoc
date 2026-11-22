@@ -8,6 +8,7 @@ creation-date: 2026-11-21
 last-updated: 2026-11-21
 status: proposed
 see-also:
+  - "CAMEL-27359"
   - "CAMEL-27352"
   - "CAMEL-27351"
 replaces: []
@@ -431,5 +432,6 @@ The MCP server keeps its tool names and arguments when it moves to the catalog d
 
 == Related tickets
 
+* CAMEL-27359: the JSON in the catalog, the checks and the fixes of the guides (this design).
 * CAMEL-27352: the upgrade view, the first user of the data.
 * CAMEL-27351: the release data (LTS, end of life, latest patch) the upgrade view uses next to the entries.
