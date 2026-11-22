@@ -73,6 +73,10 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
     protected void doStop() throws Exception {
         if (useLocalHzInstance) {
             hazelcastInstance.getLifecycleService().shutdown();
+            // a start after this stop (a route removed and added again, CamelContext started again) creates a new
+            // local instance, as the one shut down cannot be used anymore
+            hazelcastInstance = null;
+            useLocalHzInstance = false;
         }
     }
 
