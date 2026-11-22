@@ -77,4 +77,39 @@ class GenericFileKeptDoneFilesTest {
         assertTrue(nextPoll.isKept("other/ready"));
         assertTrue(lastPoll.isKept("other/ready"));
     }
+
+    @Test
+    void clearLeavesTheFilesOfTheLastPollTheirKeptDoneFiles() {
+        keptDoneFiles.keep("dir/ready");
+        GenericFileKeptDoneFiles.Batch lastPoll = keptDoneFiles.batch();
+
+        // the consumer stops while a file of the last poll still routes on another thread
+        keptDoneFiles.clear();
+        assertFalse(keptDoneFiles.isKept("dir/ready"));
+        assertTrue(lastPoll.isKept("dir/ready"));
+    }
+
+    @Test
+    void doneFileOfAFileInProgressIsNotGone() {
+        keptDoneFiles.keep("routing/ready");
+        keptDoneFiles.keep("gone/ready");
+
+        // the listing skips the file of routing/ready that is still in progress, and finds no file of gone/ready
+        keptDoneFiles.startListing();
+        keptDoneFiles.skippedInProgress("routing/ready");
+        assertEquals(List.of("gone/ready"), keptDoneFiles.startBatch(Set.of(), true));
+        assertTrue(keptDoneFiles.isKept("routing/ready"));
+
+        // the next listing finds no file of routing/ready in progress any more: it is gone
+        keptDoneFiles.startListing();
+        assertEquals(List.of("routing/ready"), keptDoneFiles.startBatch(Set.of(), true));
+        assertFalse(keptDoneFiles.isKept("routing/ready"));
+
+        // a done file listed again is decided again by the files of the poll, in progress or not
+        keptDoneFiles.keep("dir/ready");
+        keptDoneFiles.startListing();
+        keptDoneFiles.skippedInProgress("dir/ready");
+        assertNull(keptDoneFiles.startBatch(Set.of("dir/ready"), true));
+        assertFalse(keptDoneFiles.isKept("dir/ready"));
+    }
 }
