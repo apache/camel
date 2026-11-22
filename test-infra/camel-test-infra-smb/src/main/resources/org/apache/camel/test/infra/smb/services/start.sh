@@ -54,6 +54,7 @@ printf "camelTester123\ncamelTester123\n" | smbpasswd -s -a camel
 chown -Rv camel /data/rw
 chown -Rv camel /data/fixed-delete
 chown -Rv camel /data/unix-owned
+chown -Rv camel /data/encrypted
 
 nmbd -D
 smbd -D -s /etc/samba/smb.conf

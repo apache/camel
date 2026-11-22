@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.protobuf.schema;
 
 import java.util.Map;
 
+import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import org.apache.camel.builder.RouteBuilder;
@@ -83,6 +84,58 @@ public class ProtobufSchemaDynamicMessageTest extends CamelTestSupport {
                         "syntax = \"proto3\"; import \"other.proto\"; message A { string x = 1; }",
                         null));
         assertTrue(e.getMessage().contains("other.proto"), e.getMessage());
+    }
+
+    @Test
+    public void importOfAnotherFileSaysOnlyTheWellKnownTypesCanBeImported() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new WireProtobufSchemaParser().parse(
+                        "syntax = \"proto3\"; package shop; import \"shop/common.proto\";"
+                                                           + " message Order { shop.Money total = 1; }",
+                        null));
+        assertEquals("Cannot read the protobuf schema: it imports shop/common.proto, but only the well-known types of"
+                     + " google/protobuf can be imported (any.proto, descriptor.proto, duration.proto, empty.proto,"
+                     + " struct.proto, timestamp.proto and wrappers.proto): put the types of"
+                     + " shop/common.proto in the schema itself",
+                e.getMessage());
+    }
+
+    @Test
+    public void importOfAnUnsupportedGoogleFileSaysOnlyTheWellKnownTypesCanBeImported() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new WireProtobufSchemaParser().parse(
+                        "syntax = \"proto3\"; import \"google/protobuf/type.proto\"; message A { string x = 1; }",
+                        null));
+        assertTrue(e.getMessage().startsWith("Cannot read the protobuf schema: it imports google/protobuf/type.proto, but"
+                                             + " only the well-known types of google/protobuf can be imported"),
+                e.getMessage());
+    }
+
+    @Test
+    public void importOfFieldMaskSaysOnlyTheWellKnownTypesCanBeImported() {
+        // Wire does not ship google/protobuf/field_mask.proto: if a Wire upgrade does, it can be added to the list
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new WireProtobufSchemaParser().parse(
+                        "syntax = \"proto3\"; import \"google/protobuf/field_mask.proto\"; message A { string x = 1; }",
+                        null));
+        assertTrue(e.getMessage().startsWith("Cannot read the protobuf schema: it imports google/protobuf/field_mask.proto,"
+                                             + " but only the well-known types of google/protobuf can be imported"),
+                e.getMessage());
+    }
+
+    @Test
+    public void wellKnownTypesCanBeImported() {
+        Descriptor d = new WireProtobufSchemaParser().parse(
+                "syntax = \"proto3\"; import \"google/protobuf/timestamp.proto\";"
+                                                            + " import \"google/protobuf/duration.proto\";"
+                                                            + " import \"google/protobuf/wrappers.proto\";"
+                                                            + " message A { google.protobuf.Timestamp at = 1;"
+                                                            + " google.protobuf.Duration took = 2;"
+                                                            + " google.protobuf.StringValue note = 3; }",
+                null);
+        assertEquals("google.protobuf.Timestamp", d.findFieldByName("at").getMessageType().getFullName());
+        assertEquals("google.protobuf.Duration", d.findFieldByName("took").getMessageType().getFullName());
+        assertEquals("google.protobuf.StringValue", d.findFieldByName("note").getMessageType().getFullName());
     }
 
     @Test

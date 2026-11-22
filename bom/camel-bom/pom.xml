@@ -2779,6 +2779,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xsd-json</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-xslt</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>

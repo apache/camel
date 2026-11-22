@@ -480,6 +480,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.XPathExpression": return new ModelDeserializers.XPathExpressionDeserializer();
             case "xquery": return new ModelDeserializers.XQueryExpressionDeserializer();
             case "org.apache.camel.model.language.XQueryExpression": return new ModelDeserializers.XQueryExpressionDeserializer();
+            case "xsdJson": return new ModelDeserializers.XsdJsonDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.XsdJsonDataFormat": return new ModelDeserializers.XsdJsonDataFormatDeserializer();
             case "yaml": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.YAMLDataFormat": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "zipDeflater": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();

@@ -156,6 +156,47 @@ To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has bee
 ====
 
 
+== Login
+
+The component logs in with the `username`, `password` and `domain` options. A `username` without a `password`
+logs in with an empty password, so `username=Guest` without a password is a guest login, when the server allows
+guest access (for Samba: `map to guest` and `guest ok = yes` on the share).
+
+The `username` is required: an anonymous login (no username) is not supported, and the connection fails with
+a message that no username is set.
+
+== Encryption and timeouts
+
+A share that requires encryption (for Samba `smb encrypt = required`) refuses the connection with
+`STATUS_ACCESS_DENIED` unless `encryptData=true` is set. With `encryptData=true` the messages to and from the server,
+including the file content, are encrypted with SMB 3 encryption, also on a share that does not require it.
+
+The timeouts of the SMB client are the `connectTimeout` (5 seconds by default), `readTimeout` and `writeTimeout` (of
+the file content, 60 seconds by default) and `transactTimeout` options (of the other requests, such as listing a
+directory, opening, renaming or deleting a file, 60 seconds by default):
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: smb:myserver/myshare/inbox
+      parameters:
+        username: "{{smb.username}}"
+        password: "{{smb.password}}"
+        encryptData: true
+        transactTimeout: 10s
+      steps:
+        - to:
+            uri: log:files
+----
+
+For the other settings of the SMB client, configure a `com.hierynomus.smbj.SmbConfig` bean in the `smbConfig` option
+(a single `SmbConfig` bean in the registry is used automatically). The `SmbConfig` is then used as it is, so it cannot be
+combined with the `encryptData`, `connectTimeout`, `readTimeout`, `writeTimeout` and `transactTimeout` options:
+the endpoint fails to start when one of them is set as well. Set them on the `SmbConfig` instead
+(`withEncryptData`, `withSocketFactory(new ProxySocketFactory(connectTimeout))`, `withReadTimeout`, `withWriteTimeout`
+and `withTransactTimeout`).
+
 == Permissions
 
 The Camel SMB component requires the authenticated user to have appropriate permissions on the SMB share.

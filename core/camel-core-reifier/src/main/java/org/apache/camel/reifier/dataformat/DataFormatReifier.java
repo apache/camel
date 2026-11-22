@@ -233,6 +233,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new UniVocityTsvDataFormatReifier(camelContext, definition);
         } else if (definition instanceof XMLSecurityDataFormat) {
             return new XMLSecurityDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof XsdJsonDataFormat) {
+            return new XsdJsonDataFormatReifier(camelContext, definition);
         } else if (definition instanceof YAMLDataFormat) {
             return new YAMLDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ZipDeflaterDataFormat) {

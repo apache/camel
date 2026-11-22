@@ -171,6 +171,7 @@ import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
+import org.apache.camel.model.dataformat.XsdJsonDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -2732,6 +2733,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "format", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180", defaultValue = "DEFAULT", description = "The format to use.", displayName = "Format"),
                     @YamlProperty(name = "header", type = "string", description = "To configure the CSV headers. Multiple headers can be separated by comma.", displayName = "Header"),
                     @YamlProperty(name = "headerDisabled", type = "boolean", defaultValue = "false", description = "Whether to disable headers.", displayName = "Header Disabled"),
+                    @YamlProperty(name = "headerFromMapKeys", type = "boolean", defaultValue = "false", description = "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.", displayName = "Header From Map Keys"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreEmptyLines", type = "boolean", defaultValue = "false", description = "Whether to ignore empty lines.", displayName = "Ignore Empty Lines"),
                     @YamlProperty(name = "ignoreHeaderCase", type = "boolean", defaultValue = "false", description = "Whether to ignore case when accessing header names.", displayName = "Ignore Header Case"),
@@ -2821,6 +2823,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "headerDisabled": {
                     String val = asText(node);
                     target.setHeaderDisabled(val);
+                    break;
+                }
+                case "headerFromMapKeys": {
+                    String val = asText(node);
+                    target.setHeaderFromMapKeys(val);
                     break;
                 }
                 case "id": {
@@ -3240,6 +3247,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "xsdJson", type = "object:org.apache.camel.model.dataformat.XsdJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat", oneOf = "dataFormatType")
@@ -3500,6 +3508,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "xsdJson": {
+                    org.apache.camel.model.dataformat.XsdJsonDataFormat val = asType(node, org.apache.camel.model.dataformat.XsdJsonDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "yaml": {
                     org.apache.camel.model.dataformat.YAMLDataFormat val = asType(node, org.apache.camel.model.dataformat.YAMLDataFormat.class);
                     target.setDataFormatType(val);
@@ -3598,6 +3611,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
+                    @YamlProperty(name = "xsdJson", type = "object:org.apache.camel.model.dataformat.XsdJsonDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
@@ -4085,6 +4099,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "xsdJson": {
+                    org.apache.camel.model.dataformat.XsdJsonDataFormat val = asType(node, org.apache.camel.model.dataformat.XsdJsonDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9554,6 +9578,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Receive"),
                     @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "xsdJson", type = "object:org.apache.camel.model.dataformat.XsdJsonDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat", required = true, oneOf = "dataFormatType")
@@ -9816,6 +9841,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "xsdJson": {
+                    org.apache.camel.model.dataformat.XsdJsonDataFormat val = asType(node, org.apache.camel.model.dataformat.XsdJsonDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -20319,6 +20349,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Receive"),
                     @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "xsdJson", type = "object:org.apache.camel.model.dataformat.XsdJsonDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat", required = true, oneOf = "dataFormatType")
@@ -20581,6 +20612,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "xsdJson": {
+                    org.apache.camel.model.dataformat.XsdJsonDataFormat val = asType(node, org.apache.camel.model.dataformat.XsdJsonDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -21645,6 +21681,87 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "xsdJson",
+            types = org.apache.camel.model.dataformat.XsdJsonDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "XSD JSON",
+            description = "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "attributePrefix", type = "string", description = "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix.", displayName = "Attribute Prefix"),
+                    @YamlProperty(name = "element", type = "string", description = "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message.", displayName = "Element"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "ignoreUnknown", type = "boolean", defaultValue = "false", description = "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.", displayName = "Ignore Unknown"),
+                    @YamlProperty(name = "includeRoot", type = "boolean", defaultValue = "false", description = "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.", displayName = "Include Root"),
+                    @YamlProperty(name = "prettyPrint", type = "boolean", defaultValue = "false", description = "Whether to indent the output, the JSON on unmarshal and the XML on marshal.", displayName = "Pretty Print"),
+                    @YamlProperty(name = "schema", type = "string", required = true, description = "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only.", displayName = "Schema"),
+                    @YamlProperty(name = "textName", type = "string", defaultValue = "value", description = "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.", displayName = "Text Name")
+            }
+    )
+    public static class XsdJsonDataFormatDeserializer extends YamlDeserializerBase<XsdJsonDataFormat> {
+        public XsdJsonDataFormatDeserializer() {
+            super(XsdJsonDataFormat.class);
+        }
+
+        @Override
+        protected XsdJsonDataFormat newInstance() {
+            return new XsdJsonDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(XsdJsonDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "attributePrefix": {
+                    String val = asText(node);
+                    target.setAttributePrefix(val);
+                    break;
+                }
+                case "element": {
+                    String val = asText(node);
+                    target.setElement(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "ignoreUnknown": {
+                    String val = asText(node);
+                    target.setIgnoreUnknown(val);
+                    break;
+                }
+                case "includeRoot": {
+                    String val = asText(node);
+                    target.setIncludeRoot(val);
+                    break;
+                }
+                case "prettyPrint": {
+                    String val = asText(node);
+                    target.setPrettyPrint(val);
+                    break;
+                }
+                case "schema": {
+                    String val = asText(node);
+                    target.setSchema(val);
+                    break;
+                }
+                case "textName": {
+                    String val = asText(node);
+                    target.setTextName(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

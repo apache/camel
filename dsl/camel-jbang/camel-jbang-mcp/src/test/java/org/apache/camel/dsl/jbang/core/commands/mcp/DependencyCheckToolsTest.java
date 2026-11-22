@@ -542,7 +542,7 @@ class DependencyCheckToolsTest {
     private static final String POM_CURRENT_VERSION = """
             <project>
                 <properties>
-                    <camel.version>4.22.0</camel.version>
+                    <camel.version>4.22.1</camel.version>
                 </properties>
                 <dependencies>
                     <dependency>
@@ -582,10 +582,11 @@ class DependencyCheckToolsTest {
 
     @Test
     void securityIsCleanForARecentVersion() {
+        // camel-core 4.22.0 is affected by CVE-2026-85312, fixed in 4.22.1
         DependencyCheckTools.DependencyCheckResult result
                 = tools.camel_dependency_check(POM_CURRENT_VERSION, null, null, null, null, null);
 
-        assertThat(result.security().camelVersion()).isEqualTo("4.22.0");
+        assertThat(result.security().camelVersion()).isEqualTo("4.22.1");
         assertThat(result.security().vulnerableArtifacts()).isNull();
         assertThat(result.security().clean()).isTrue();
         assertThat(result.summary().vulnerableArtifactCount()).isZero();
@@ -684,7 +685,7 @@ class DependencyCheckToolsTest {
     void securityIsNotCleanWhenAdvisoriesWithoutComponentsMayApply() {
         // CVE-2024-22371 names no component and affects 4.1.0 before 4.4.0
         DependencyCheckTools.DependencyCheckResult result = tools.camel_dependency_check(
-                POM_CURRENT_VERSION.replace("4.22.0", "4.2.0"), null, null, null, null, null);
+                POM_CURRENT_VERSION.replace("4.22.1", "4.2.0"), null, null, null, null, null);
 
         assertThat(result.security().uncheckedAdvisories())
                 .extracting(DependencyCheckTools.VulnerabilityFinding::cve)

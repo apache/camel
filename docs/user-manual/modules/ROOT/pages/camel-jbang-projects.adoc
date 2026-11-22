@@ -337,6 +337,54 @@ The JDK does not send a username and password to a proxy with Basic authenticati
 property is set already. When OSV.dev cannot be reached, the command checks the Apache Camel security advisories only,
 and says why.
 
+== Checking for outdated dependencies
+
+List the dependencies with a newer release, and those whose version does not fit the Camel version:
+
+[source,bash]
+----
+camel dependency outdated
+Camel 4.24.0-SNAPSHOT (not released)
+
+ ARTIFACT                         VERSION  CAMEL  STATUS    NEWER  LATEST
+ org.apache.commons:commons-text  1.9                              1.15.0
+ org.snakeyaml:snakeyaml-engine   2.9      3.2    override         3.2 (major)
+ org.yaml:snakeyaml               1.33                             2.7 (major)
+
+3 of 8 dependencies of the project to look at (1 override, 3 with a newer release)
+----
+
+The first line tells where the Camel version stands, from the known releases in the Camel catalog. On Camel 4.18.1 it
+reads:
+
+[source,text]
+----
+Camel 4.18.1 LTS, end of life 2027-02-16 · newer on this line: 4.18.5 · latest LTS: 4.22.2 · latest: 4.23.0
+----
+
+The Camel JARs move together, so they are not listed with newer versions of their own: upgrade Camel instead.
+
+* *CAMEL* is the version the Camel dependencies bring of the library; empty when Camel does not bring it.
+* *STATUS* is `override` when the project declares another version than the one Camel brings, `conflict` when the JAR
+  is loaded in more than one version or in another version than declared (with `--integration`), `mixed` for a Camel
+  JAR of another Camel version, and `managed` when it is the version Camel brings.
+* *NEWER* is the latest release of the same major.minor line, and *LATEST* the latest release, marked `(major)` when it
+  is another major version. A version newer than the one Camel brings, or another major version, may not work with
+  this Camel version.
+
+The newer versions come from the Maven repositories of your Maven settings (Maven Central, mirrors). The options:
+
+* `--integration=<name or pid>` checks the JARs a running integration loaded, which finds the ones loaded twice.
+* `--transitive` also lists the dependencies the declared ones bring in, with the one that brings each (VIA).
+* `--all` lists all dependencies, not only those with something to report.
+* `--offline` does not look up newer versions: only the versions Camel brings.
+* `--json` prints one JSON document, for a script or an AI agent.
+
+The command exits with 1 when a dependency is outdated, so a CI job fails. `--fail-on` sets what counts: `any` (the
+default) a status to act on or any newer release, `patch` a status to act on or a newer release of the same line,
+`status` only a status to act on, and `none` never. The Maven Dependencies screen of the
+xref:camel-jbang-tui.adoc[Camel TUI] shows the same, with the CVEs of each dependency.
+
 === Copying dependency JARs
 
 Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,
@@ -367,7 +415,7 @@ The plugins of the Apache Camel project:
 | kubernetes | `camel kubernetes`: deploy to Kubernetes, see xref:camel-jbang-kubernetes.adoc[Kubernetes Plugin]
 | test | `camel test`: Citrus tests, see xref:camel-jbang-test.adoc[Testing Plugin]
 | validate | `camel validate`: check source files, see xref:camel-jbang-validation.adoc[Validation]
-| generate | `camel generate`: REST DSL and DTOs from OpenAPI, JSON schemas (see below)
+| generate | `camel generate`: REST DSL and DTOs from OpenAPI, cxf routes from a WSDL, JSON schemas (see below)
 | tui | `camel tui`: the xref:camel-jbang-tui.adoc[Camel TUI]
 | mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 | edit | `camel edit`: edit a Camel file in the terminal with suggestions and diagnostics
@@ -531,6 +579,63 @@ camel generate rest --input=petstore.yaml --dto --runtime=quarkus --package=com.
 `--routes` also generates a route for each operation (YAML only), and `--dto` generates Java data objects
 for the schemas of the specification. Each generated route has a `log` step that says it is not implemented yet: the
 routes run as they are (`camel run petstore-rest.yaml`), and you replace that step with the implementation.
+
+=== SOAP routes from a WSDL
+
+List the services, ports and operations of a WSDL 1.1 document (a file or a http(s) URL) with SOAP 1.1 or SOAP 1.2
+bindings:
+
+[source,bash]
+----
+camel generate wsdl orders.wsdl
+camel generate wsdl http://localhost:8080/orders?wsdl --json
+----
+
+The listing has a block per port (the service, port, binding, SOAP version, style, address and namespace), and a row per
+operation with its SOAP action, request and response elements, and faults:
+
+[source,text]
+----
+SERVICE    OrderService
+PORT       OrderPort
+BINDING    OrderSoapBinding
+SOAP       1.1
+STYLE      document/literal
+ADDRESS    http://localhost:18081/orders
+NAMESPACE  http://example.com/orders
+
+ OPERATION   SOAP ACTION                           INPUT       OUTPUT              FAULTS
+ getOrder    http://example.com/orders/getOrder    getOrder    getOrderResponse    orderNotFound
+ placeOrder  http://example.com/orders/placeOrder  placeOrder  placeOrderResponse
+----
+
+With `--json`, each port also has the values of the xref:components::cxf-component.adoc[CXF] endpoint options
+(`serviceName`, `portName`, `wsdlURL`, `address` and `defaultOperationNamespace`), ready to copy into a route or a
+Kamelet. The user info of an address (`user:password@`) is masked.
+
+`--route` scaffolds a YAML route in `PAYLOAD` mode, which needs no generated Java classes:
+
+[source,bash]
+----
+camel generate wsdl orders.wsdl --route=consumer --output=orders-service.camel.yaml
+camel generate wsdl orders.wsdl --route=producer --operation=getOrder --output=orders-client.camel.yaml
+----
+
+* `consumer` is a SOAP service: a `cxf:` consumer with schema validation, and a `choice` with a `when` per operation
+(on the `CamelCxfOperationName` header) that logs the request and returns a placeholder response element. The response
+is validated against the schema too, so until you fill in the placeholder the caller gets a SOAP fault that names the
+first element it misses. With `--runtime=camel-main` (the default) the consumer listens on `0.0.0.0` and the port and
+path of the address of the WSDL, so `camel run` serves it as it is; with `spring-boot` or `quarkus` it uses the path,
+which the CXF servlet of the runtime serves.
+* `producer` is a SOAP client: a route `direct:<operation>` per operation, which takes the request element (XML) as
+the body and returns the response element. It removes the `Camel*` headers and the CXF operation headers first, so a
+caller cannot choose another operation or address (such as with `CamelDestinationOverrideUrl`).
+
+When the WSDL has more than one port, choose one with `--service` and `--port`. A local WSDL may only import files, and
+a remote one only documents on its own host, over http or https (not from https down to http). A redirect is only
+followed to the same scheme, host and port; for another one the command names the new location, so you can use it if
+you trust it. The rpc style is listed but not scaffolded, and WSDL 2.0 and bindings that are not SOAP (such as HTTP GET)
+are not supported.
 
 === JSON schema
 

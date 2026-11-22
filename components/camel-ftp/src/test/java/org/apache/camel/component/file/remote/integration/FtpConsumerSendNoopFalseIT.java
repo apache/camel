@@ -52,7 +52,7 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     private final AtomicInteger noops = new AtomicInteger();
     private final AtomicInteger logins = new AtomicInteger();
     private final AtomicInteger retrieves = new AtomicInteger();
-    private final AtomicInteger pwds = new AtomicInteger();
+    private final AtomicInteger lists = new AtomicInteger();
 
     // a poll strategy that does not disconnect when a poll fails, unlike the default one of the ftp consumer
     @BindToRegistry("myPollStrategy")
@@ -74,8 +74,8 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
                         logins.incrementAndGet();
                     } else if ("RETR".equalsIgnoreCase(request.getCommand())) {
                         retrieves.incrementAndGet();
-                    } else if ("PWD".equalsIgnoreCase(request.getCommand())) {
-                        pwds.incrementAndGet();
+                    } else if ("LIST".equalsIgnoreCase(request.getCommand())) {
+                        lists.incrementAndGet();
                     }
                     return super.beforeCommand(session, request);
                 }
@@ -164,9 +164,9 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> !service.ftpFile("pollstrategy/hello.txt").toFile().exists());
-        // and the consumer has polled again, as each poll starts with a PWD command (stepwise=true)
-        int pwdsAfterDelete = pwds.get();
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> pwds.get() > pwdsAfterDelete + 1);
+        // and the consumer has polled again, as each poll lists the directory
+        int listsAfterDelete = lists.get();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> lists.get() > listsAfterDelete + 1);
 
         // the server closes the connection between polls. The client does not notice, so the first command of the next
         // poll fails, and the failure is thrown out of the poll to a poll strategy that does not disconnect

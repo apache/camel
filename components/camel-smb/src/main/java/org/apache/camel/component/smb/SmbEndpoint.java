@@ -173,6 +173,10 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
 
     @Override
     public GenericFileConsumer<FileIdBothDirectoryInformation> createConsumer(Processor processor) throws Exception {
+        if (isDelete() && getMove() != null) {
+            throw new IllegalArgumentException("You cannot set both delete=true and move options");
+        }
+
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
             LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
