@@ -82,7 +82,8 @@ final class XsdSchemaLoader {
         String name = root.getLocalName();
         if (XSD_NS.equals(ns) && "schema".equals(name)) {
             collection.read(doc, location);
-        } else if (WSDL11_NS.equals(ns) && "definitions".equals(name) || WSDL20_NS.equals(ns) && "description".equals(name)) {
+        } else if ((WSDL11_NS.equals(ns) && "definitions".equals(name))
+                || (WSDL20_NS.equals(ns) && "description".equals(name))) {
             List<Element> schemas = inlineSchemas(root);
             if (schemas.isEmpty()) {
                 throw new IllegalArgumentException(

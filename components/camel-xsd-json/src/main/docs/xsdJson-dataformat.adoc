@@ -97,7 +97,8 @@ array writes no element.
 |`xsi:nil="true"`
 |`null`
 |On marshal `null` writes `xsi:nil="true"` when the element is nillable, is left out when the element is optional,
-and fails otherwise.
+and fails otherwise. For an element that repeats, `null` writes no elements (the same as a missing field), and a
+`null` item inside the array, such as `["a", null]`, writes one `xsi:nil="true"` element.
 
 |`xs:sequence`
 |object

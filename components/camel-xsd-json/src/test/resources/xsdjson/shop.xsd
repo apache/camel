@@ -123,4 +123,13 @@
   <xs:element name="tree" type="s:Node"/>
 
   <xs:element name="price" type="s:Money"/>
+
+  <!-- a nillable element that repeats -->
+  <xs:element name="notes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

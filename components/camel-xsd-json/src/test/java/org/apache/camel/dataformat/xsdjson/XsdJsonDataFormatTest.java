@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.xsdjson;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,22 @@ class XsdJsonDataFormatTest extends XsdJsonTestSupport {
         order.put("orderId", null);
         assertThatThrownBy(() -> toXml(df, order))
                 .hasMessageContaining("/order/orderId is null, but the element is neither nillable nor optional");
+    }
+
+    @Test
+    void nullArrayWritesNoElementsAndNullItemWritesNil() throws Exception {
+        XsdJsonDataFormat df = dataFormat(SCHEMA, d -> d.setElement("notes"));
+        Map<String, Object> notes = new LinkedHashMap<>();
+        // null for an array means no items
+        notes.put("note", null);
+        assertThat(toXml(df, notes)).endsWith("<s:notes xmlns:s=\"urn:shop\"></s:notes>");
+
+        // a null item inside the array is one nil element
+        notes.put("note", Arrays.asList("a", null));
+        String xml = toXml(df, notes);
+        assertThat(xml).contains("<s:note>a</s:note>")
+                .contains("<s:note xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\"></s:note>");
+        assertThat(toJson(df, xml)).isEqualTo("{\"note\":[\"a\",null]}");
     }
 
     @Test

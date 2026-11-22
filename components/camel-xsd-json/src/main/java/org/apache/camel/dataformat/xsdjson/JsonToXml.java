@@ -280,11 +280,13 @@ final class JsonToXml {
         return true;
     }
 
+    /**
+     * The items of an element that repeats. A JSON null means no items, the same as a missing field; a null item inside
+     * the array (such as [null]) is one element, written as xsi:nil when the element is nillable.
+     */
     private static List<?> asList(Object value) {
         if (value == null) {
-            List<Object> single = new ArrayList<>(1);
-            single.add(null);
-            return single;
+            return List.of();
         }
         if (value instanceof List<?> list) {
             return list;
@@ -302,6 +304,10 @@ final class JsonToXml {
                 return false;
             }
             Object v = map.get(e.jsonName());
+            if (v == null && e.array) {
+                // a JSON null for an element that repeats writes no items
+                return false;
+            }
             return !(v instanceof Collection<?> c && c.isEmpty());
         }
         List<Element> elements = new ArrayList<>();
