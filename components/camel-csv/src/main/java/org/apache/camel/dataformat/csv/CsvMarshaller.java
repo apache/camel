@@ -47,6 +47,16 @@ public abstract class CsvMarshaller {
     }
 
     /**
+     * Gets the CSV format of this marshaller.
+     *
+     * @return the CSV format
+     * @since  4.24
+     */
+    protected CSVFormat getFormat() {
+        return format;
+    }
+
+    /**
      * Creates a new instance.
      *
      * @param  format     CSV format
@@ -223,11 +233,9 @@ public abstract class CsvMarshaller {
      * the marshaller without a header.
      */
     private static final class MapKeysHeaderMarshaller extends CsvMarshaller {
-        private final CSVFormat format;
 
         private MapKeysHeaderMarshaller(CSVFormat format) {
             super(format);
-            this.format = format;
         }
 
         @Override
@@ -244,13 +252,13 @@ public abstract class CsvMarshaller {
             Map<?, ?> map = first != null
                     ? exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, first) : null;
             if (map == null || map.isEmpty()) {
-                new DynamicColumnsMarshaller(format).marshal(exchange, body, outputStream);
+                new DynamicColumnsMarshaller(getFormat()).marshal(exchange, body, outputStream);
                 return;
             }
             List<Object> columns = new ArrayList<>(map.keySet());
             String[] header = columns.stream().map(String::valueOf).toArray(String[]::new);
             // the printer writes the header line of the format first
-            new KeyColumnsMarshaller(format.builder().setHeader(header).get(), columns)
+            new KeyColumnsMarshaller(getFormat().builder().setHeader(header).get(), columns)
                     .marshal(exchange, body, outputStream);
         }
 
@@ -276,8 +284,9 @@ public abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            // a map on its own: its keys are the columns
-            return new ArrayList<>(map.values());
+            // never called: marshal hands every body to another marshaller, the method is only here because it is
+            // abstract in the parent
+            throw new UnsupportedOperationException("The map rows are written by the marshaller that marshal delegates to");
         }
     }
 
