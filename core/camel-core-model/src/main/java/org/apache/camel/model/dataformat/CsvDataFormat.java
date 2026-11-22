@@ -65,6 +65,13 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(description = "To configure the CSV headers. Multiple headers can be separated by comma.")
     private String header;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a"
+                            + " header line with the keys of the first Map. The keys of the first Map are then the columns"
+                            + " of all the rows, as with the header option: a key that only later rows have is not"
+                            + " written.")
+    private String headerFromMapKeys;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to allow missing column names.")
     private String allowMissingColumnNames;
     @XmlAttribute
@@ -153,6 +160,7 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.escape = source.escape;
         this.headerDisabled = source.headerDisabled;
         this.header = source.header;
+        this.headerFromMapKeys = source.headerFromMapKeys;
         this.allowMissingColumnNames = source.allowMissingColumnNames;
         this.ignoreEmptyLines = source.ignoreEmptyLines;
         this.ignoreSurroundingSpaces = source.ignoreSurroundingSpaces;
@@ -195,6 +203,7 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.escape = builder.escape;
         this.headerDisabled = builder.headerDisabled;
         this.header = builder.header;
+        this.headerFromMapKeys = builder.headerFromMapKeys;
         this.allowMissingColumnNames = builder.allowMissingColumnNames;
         this.ignoreEmptyLines = builder.ignoreEmptyLines;
         this.ignoreSurroundingSpaces = builder.ignoreSurroundingSpaces;
@@ -292,6 +301,14 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     public void setHeader(String header) {
         this.header = header;
+    }
+
+    public String getHeaderFromMapKeys() {
+        return headerFromMapKeys;
+    }
+
+    public void setHeaderFromMapKeys(String headerFromMapKeys) {
+        this.headerFromMapKeys = headerFromMapKeys;
     }
 
     public String getAllowMissingColumnNames() {
@@ -459,6 +476,7 @@ public class CsvDataFormat extends DataFormatDefinition {
         private String escape;
         private String headerDisabled;
         private String header;
+        private String headerFromMapKeys;
         private String allowMissingColumnNames;
         private String ignoreEmptyLines;
         private String ignoreSurroundingSpaces;
@@ -572,6 +590,26 @@ public class CsvDataFormat extends DataFormatDefinition {
          */
         public Builder header(String header) {
             this.header = header;
+            return this;
+        }
+
+        /**
+         * When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with
+         * the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header
+         * option: a key that only later rows have is not written.
+         */
+        public Builder headerFromMapKeys(String headerFromMapKeys) {
+            this.headerFromMapKeys = headerFromMapKeys;
+            return this;
+        }
+
+        /**
+         * When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with
+         * the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header
+         * option: a key that only later rows have is not written.
+         */
+        public Builder headerFromMapKeys(boolean headerFromMapKeys) {
+            this.headerFromMapKeys = Boolean.toString(headerFromMapKeys);
             return this;
         }
 

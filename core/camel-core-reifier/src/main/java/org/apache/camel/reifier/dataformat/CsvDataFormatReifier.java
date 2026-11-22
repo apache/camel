@@ -38,6 +38,7 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
         properties.put("escape", definition.getEscape());
         properties.put("headerDisabled", definition.getHeaderDisabled());
         properties.put("header", definition.getHeader());
+        properties.put("headerFromMapKeys", definition.getHeaderFromMapKeys());
         properties.put("allowMissingColumnNames", definition.getAllowMissingColumnNames());
         properties.put("ignoreEmptyLines", definition.getIgnoreEmptyLines());
         properties.put("ignoreSurroundingSpaces", definition.getIgnoreSurroundingSpaces());

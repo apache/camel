@@ -183,7 +183,8 @@ format, you can now store the message payload as a
 each row.
 
 When `header` is set (and `headerDisabled` is false), its names are the
-columns, in that order. Otherwise, the columns are the keys of the first Map,
+columns, in that order (the names are trimmed, so `id, name` gives the
+columns `id` and `name`). Otherwise, the columns are the keys of the first Map,
 followed by the keys of later Maps that the first one does not have, in the
 order they first appear (the rows written before such a key appears have
 fewer fields). A Map without one of these keys gets a null value in that
@@ -201,6 +202,79 @@ with the number of rows times the number of distinct keys. A body of rows
 that each have keys of their own (such as sparse or pivoted data) gives
 about N²/2 fields for N rows; for such data, convert the rows to Lists, or
 set `header` to only the columns you need.
+
+==== Writing a header line from the keys of the first Map
+
+*Since Camel 4.24*
+
+Set `headerFromMapKeys` to write a header line with the keys of the first
+Map when no `header` is configured, such as when turning JSON rows into CSV:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+CsvDataFormat csv = new CsvDataFormat();
+csv.setHeaderFromMapKeys(true);
+
+from("direct:start")
+    .unmarshal().json()
+    .marshal(csv)
+    .to("file:out?fileName=rows.csv");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <unmarshal>
+        <json/>
+    </unmarshal>
+    <marshal>
+        <csv headerFromMapKeys="true"/>
+    </marshal>
+    <to uri="file:out?fileName=rows.csv"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - unmarshal:
+            json: {}
+        - marshal:
+            csv:
+              headerFromMapKeys: true
+        - to:
+            uri: file:out
+            parameters:
+              fileName: rows.csv
+----
+====
+
+The JSON `[{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]` is then
+written as:
+
+----
+id,name
+1,Alice
+2,Bob
+----
+
+The keys of the first Map are the columns of all the rows, as if they were
+given with `header`: a row without one of these keys gets an empty field, and
+a key that only later rows have is not written. A body whose first row is not
+a Map (such as a List of Lists) gets no header line, and `skipHeaderRecord`
+leaves the header line out.
 
 === File Poller of CSV, then unmarshaling
 

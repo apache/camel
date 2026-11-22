@@ -1703,6 +1703,7 @@ public class ModelParser extends BaseParser {
                 case "format": def.setFormat(val); yield true;
                 case "header": def.setHeader(val); yield true;
                 case "headerDisabled": def.setHeaderDisabled(val); yield true;
+                case "headerFromMapKeys": def.setHeaderFromMapKeys(val); yield true;
                 case "ignoreEmptyLines": def.setIgnoreEmptyLines(val); yield true;
                 case "ignoreHeaderCase": def.setIgnoreHeaderCase(val); yield true;
                 case "ignoreSurroundingSpaces": def.setIgnoreSurroundingSpaces(val); yield true;

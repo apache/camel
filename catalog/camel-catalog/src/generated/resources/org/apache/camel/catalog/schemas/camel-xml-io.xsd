@@ -7186,6 +7186,17 @@ To configure the CSV headers. Multiple headers can be separated by comma.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="headerFromMapKeys" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of
+the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that
+only later rows have is not written. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="allowMissingColumnNames" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

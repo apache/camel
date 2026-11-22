@@ -66,6 +66,9 @@ public abstract class CsvMarshaller {
         if (headers != null && headers.length != 0) {
             return new FixedColumnsMarshaller(format, headers);
         }
+        if (dataFormat.isHeaderFromMapKeys() && !format.getSkipHeaderRecord()) {
+            return new MapKeysHeaderMarshaller(format);
+        }
         return new DynamicColumnsMarshaller(format);
     }
 
@@ -211,6 +214,91 @@ public abstract class CsvMarshaller {
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             // a map on its own: its keys are the columns
             return createMapRecordValues().apply(map);
+        }
+    }
+
+    /**
+     * This marshaller writes a header line with the keys of the first map row, and these keys are the columns of all
+     * the rows, as with a configured header. A body whose first row is not a map, or is an empty map, is written as by
+     * the marshaller without a header.
+     */
+    private static final class MapKeysHeaderMarshaller extends CsvMarshaller {
+        private final CSVFormat format;
+
+        private MapKeysHeaderMarshaller(CSVFormat format) {
+            super(format);
+            this.format = format;
+        }
+
+        @Override
+        public void marshal(Exchange exchange, Object object, OutputStream outputStream)
+                throws NoTypeConversionAvailableException, IOException {
+            Object body = object;
+            Object first = object;
+            if (!(object instanceof Map)) {
+                // take the first row, and put it back in front of the others (the body can be an iterator)
+                Iterator<?> it = ObjectHelper.createIterator(object);
+                first = it.hasNext() ? it.next() : null;
+                body = first != null ? prepend(first, it) : object;
+            }
+            Map<?, ?> map = first != null
+                    ? exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, first) : null;
+            if (map == null || map.isEmpty()) {
+                new DynamicColumnsMarshaller(format).marshal(exchange, body, outputStream);
+                return;
+            }
+            List<Object> columns = new ArrayList<>(map.keySet());
+            String[] header = columns.stream().map(String::valueOf).toArray(String[]::new);
+            // the printer writes the header line of the format first
+            new KeyColumnsMarshaller(format.builder().setHeader(header).get(), columns)
+                    .marshal(exchange, body, outputStream);
+        }
+
+        private static Iterator<Object> prepend(Object first, Iterator<?> rest) {
+            return new Iterator<>() {
+                private boolean firstTaken;
+
+                @Override
+                public boolean hasNext() {
+                    return !firstTaken || rest.hasNext();
+                }
+
+                @Override
+                public Object next() {
+                    if (!firstTaken) {
+                        firstTaken = true;
+                        return first;
+                    }
+                    return rest.next();
+                }
+            };
+        }
+
+        @Override
+        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
+            // a map on its own: its keys are the columns
+            return new ArrayList<>(map.values());
+        }
+    }
+
+    /**
+     * This marshaller has the keys of a map as its fixed columns, which can be other objects than strings.
+     */
+    private static final class KeyColumnsMarshaller extends CsvMarshaller {
+        private final List<Object> columns;
+
+        private KeyColumnsMarshaller(CSVFormat format, List<Object> columns) {
+            super(format);
+            this.columns = columns;
+        }
+
+        @Override
+        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
+            List<Object> result = new ArrayList<>(columns.size());
+            for (Object column : columns) {
+                result.add(DynamicColumnsMarshaller.valueOf(map, column));
+            }
+            return result;
         }
     }
     //endregion

@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.csv;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.StringJoiner;
 
 import org.apache.camel.Exchange;
@@ -74,6 +75,9 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private Boolean trim;
     private Boolean ignoreHeaderCase;
     private Boolean trailingDelimiter;
+
+    // Marshal options
+    private boolean headerFromMapKeys;
 
     // Unmarshal options
     private boolean captureHeaderRecord;
@@ -170,10 +174,12 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
             answer = answer.builder().setHeader((String[]) null).get(); // null disables the header
         } else if (header != null && !header.isBlank()) {
             // a blank header is no header, not one column named ""
+            // the names are trimmed, so "id, name" gives the columns id and name, not " name"
             if (header.indexOf(',') != -1) {
-                answer = answer.builder().setHeader(header.split(",")).get();
+                answer = answer.builder().setHeader(Arrays.stream(header.split(",")).map(String::trim).toArray(String[]::new))
+                        .get();
             } else {
-                answer = answer.builder().setHeader(header).get();
+                answer = answer.builder().setHeader(header.trim()).get();
             }
         }
 
@@ -396,7 +402,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Gets the header. Multiple values can be separated by comma.
+     * Gets the header. Multiple values can be separated by comma, and the names are trimmed.
      *
      * If {@code null}, empty or blank, then the header of the format is used.
      *
@@ -407,7 +413,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets the header. Multiple values can be separated by comma.
+     * Sets the header. Multiple values can be separated by comma, and the names are trimmed.
      *
      * If {@code null}, empty or blank, then the header of the format is used.
      *
@@ -657,6 +663,29 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      */
     public CsvDataFormat setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
+        return this;
+    }
+
+    /**
+     * Whether marshalling a Map, or a List of Maps, without a configured header writes a header line with the keys of
+     * the first Map.
+     *
+     * @return {@code true} to write the header line from the keys of the first Map
+     */
+    public boolean isHeaderFromMapKeys() {
+        return headerFromMapKeys;
+    }
+
+    /**
+     * When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the
+     * keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option:
+     * a key that only later rows have is not written.
+     *
+     * @param  headerFromMapKeys {@code true} to write the header line from the keys of the first Map
+     * @return                   Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setHeaderFromMapKeys(boolean headerFromMapKeys) {
+        this.headerFromMapKeys = headerFromMapKeys;
         return this;
     }
 

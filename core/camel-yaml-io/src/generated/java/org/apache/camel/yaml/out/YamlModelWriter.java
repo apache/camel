@@ -2293,6 +2293,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "escape", def.getEscape(), null);
         doWriteAttribute(jo, "headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute(jo, "header", def.getHeader(), null);
+        doWriteAttribute(jo, "headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute(jo, "allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute(jo, "ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute(jo, "ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);

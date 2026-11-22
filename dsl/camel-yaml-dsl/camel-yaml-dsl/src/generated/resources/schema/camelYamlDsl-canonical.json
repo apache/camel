@@ -6849,6 +6849,12 @@
             "description" : "Whether to disable headers.",
             "default" : false
           },
+          "headerFromMapKeys" : {
+            "type" : "boolean",
+            "title" : "Header From Map Keys",
+            "description" : "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.",
+            "default" : false
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",

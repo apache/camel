@@ -5367,6 +5367,12 @@ the previous output, convert the rows to `List` before marshalling, or set a cus
 now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
 give about N²/2 fields for N rows, where the output was linear in the input before.
 
+=== camel-csv - the names of the header option are trimmed
+
+The names of the `header` option are now trimmed, so `header=id, name` gives the columns `id` and `name`. Before, the
+second column was named ` name`: marshalling a `Map` with the key `name` wrote an empty field, and unmarshalling with
+`useMaps=true` gave maps with the key ` name`.
+
 === camel-cxf - message bodies of the POJO producer and of CXF_MESSAGE, and replies that do not convert
 
 The `cxf` producer in `POJO` mode split a body that is not a `List` or an `Object[]` into several parameters, the way
