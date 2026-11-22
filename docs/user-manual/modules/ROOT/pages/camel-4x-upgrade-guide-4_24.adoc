@@ -2572,6 +2572,15 @@ To get the rule ARN, the consumer calls `DescribeRule` before it creates the que
 consumer now also needs `events:DescribeRule` on the rule. A rule that does not exist now fails the consumer start
 before a queue is created. A queue given with `queueUrl` keeps its own policy, as before.
 
+=== camel-aws2-eventbridge - with deleteQueueOnShutdown=false the consumer reuses its queue
+
+With `deleteQueueOnShutdown=false`, the queue the consumer creates now has a name without a random part
+(`camel-eventbridge-<rule name>-<hash of the event bus and the rule name>`), so the next start reuses it. Before, every
+start created another queue and left the previous one behind. The queue now also keeps its target on the rule on
+shutdown (as the option description already said), so it collects the events while the consumer is stopped, and the
+consumers of the rule with `deleteQueueOnShutdown=false` share one queue. The queues that earlier versions left
+behind (with a random part in the name) are not used any more and can be deleted.
+
 === camel-azure-storage-blob - copyBlob validates the source account and container name
 
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`

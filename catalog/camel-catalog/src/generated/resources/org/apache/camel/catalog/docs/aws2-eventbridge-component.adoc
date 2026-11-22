@@ -625,6 +625,14 @@ This is the standard AWS pattern for programmatically consuming EventBridge even
 A queue given with `queueUrl` keeps its target, so it collects the events while no consumer runs, and all the
 consumers that share it use the same target (its id is derived from the queue ARN).
 
+An auto-created queue has a random part in its name, so every consumer has its own queue, which is deleted on
+shutdown. With `deleteQueueOnShutdown=false`, the consumer creates a durable queue instead: its name is
+`camel-eventbridge-<rule name>-<hash of the event bus and the rule name>`, so the next start reuses the queue (SQS
+`CreateQueue` returns the existing queue), and the queue keeps its target on shutdown, like a queue given with
+`queueUrl`. The queue collects the events while the consumer is stopped, and the consumers of the rule that use
+`deleteQueueOnShutdown=false` share one queue (they compete for the events instead of each getting a copy). Delete the
+queue yourself when the route is no longer used.
+
 === Consumer Configuration Options
 
 [width="100%",cols="2,1,1,4",options="header"]
@@ -649,7 +657,8 @@ consumers that share it use the same target (its id is derived from the queue AR
 |`deleteQueueOnShutdown`
 |`true`
 |boolean
-|Whether to delete the auto-created queue and remove the EventBridge target on shutdown.
+|Whether to delete the auto-created queue and remove the EventBridge target on shutdown. When `false`, the queue has a
+name derived from the event bus and the rule name, the next start reuses it, and its target stays on the rule.
 
 |`maxMessagesPerPoll`
 |`10`

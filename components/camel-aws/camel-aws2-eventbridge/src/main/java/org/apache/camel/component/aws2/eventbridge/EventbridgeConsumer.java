@@ -66,12 +66,16 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
  *
  * <p>
  * The consumer can auto-create an SQS queue and wire it to the EventBridge rule, or use a user-provided queue. On
- * shutdown, auto-provisioned resources are cleaned up by default. A user-provided queue keeps its target on the rule.
+ * shutdown, auto-provisioned resources are cleaned up by default. A user-provided queue keeps its target on the rule,
+ * and so does an auto-created queue that is kept on shutdown (deleteQueueOnShutdown=false), which the next start
+ * reuses.
  * </p>
  */
 public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventbridgeConsumer.class);
+    // "camel-eventbridge-" + rule name + "-" + 16 hex characters fits the 80 characters of a queue name
+    private static final int MAX_RULE_NAME_IN_QUEUE_NAME = 45;
 
     private SqsClient sqsClient;
     private String queueUrl;
@@ -166,9 +170,12 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
             // missing rule then fails before a queue is created
             String ruleArn = getRuleArn(ruleName, config.getEventbusName());
 
-            // Auto-create queue
-            String queueName
-                    = "camel-eventbridge-" + ruleName + "-" + UUID.randomUUID().toString().substring(0, 8);
+            // Auto-create queue. A queue that is kept on shutdown has a name derived from the event bus and the rule, so
+            // the next start reuses it (CreateQueue returns the existing queue) instead of leaving it behind. A queue
+            // that is deleted on shutdown has a random part, so every consumer has its own queue.
+            String queueName = config.isDeleteQueueOnShutdown()
+                    ? queueNamePrefix(ruleName) + UUID.randomUUID().toString().substring(0, 8)
+                    : durableQueueName(config.getEventbusName(), ruleName);
 
             CreateQueueResponse createResponse = sqsClient.createQueue(
                     CreateQueueRequest.builder()
@@ -187,16 +194,17 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
                             .attributes(Map.of(QueueAttributeName.POLICY, policy))
                             .build());
 
-            LOG.info("Auto-created SQS queue {} for EventBridge rule {}", queueName, ruleName);
+            LOG.info("Auto-created SQS queue {} for EventBridge rule {}", queueUrl, ruleName);
         } else {
             throw new IllegalArgumentException(
                     "Either queueUrl must be specified or autoCreateQueue must be enabled for EventBridge consumer");
         }
 
-        // Add queue as EventBridge target. The target of a user-provided queue has an id derived from the queue, so
-        // every start and every consumer that shares the queue updates the same target (putTargets replaces a target
-        // with the same id): two targets for one queue would each put a copy of every event on the queue.
-        targetId = queueAutoCreated
+        // Add queue as EventBridge target. The target of a queue that outlives the consumer (a user-provided queue,
+        // or an auto-created queue with deleteQueueOnShutdown=false) has an id derived from the queue, so every start
+        // and every consumer that shares the queue updates the same target (putTargets replaces a target with the same
+        // id): two targets for one queue would each put a copy of every event on the queue.
+        targetId = isQueueDeletedOnShutdown()
                 ? "camel-eb-" + UUID.randomUUID().toString().substring(0, 8)
                 : targetIdForQueue(queueArn);
         Target target = Target.builder()
@@ -224,9 +232,11 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
         EventbridgeConfiguration config = getEndpoint().getConfiguration();
 
         try {
-            // Remove the target of an auto-created queue. The target of a user-provided queue is kept: other consumers
-            // can share the queue, and the queue keeps collecting the events of the rule while this consumer is stopped.
-            if (queueAutoCreated && ObjectHelper.isNotEmpty(targetId)) {
+            // Remove the target of a queue that is deleted on shutdown. The target of a queue that is kept (a
+            // user-provided queue, or an auto-created queue with deleteQueueOnShutdown=false) is kept too: other
+            // consumers can share the queue, and the queue keeps collecting the events of the rule while this consumer
+            // is stopped.
+            if (isQueueDeletedOnShutdown() && ObjectHelper.isNotEmpty(targetId)) {
                 EventBridgeClient ebClient = getEndpoint().getEventbridgeClient();
                 ebClient.removeTargets(
                         RemoveTargetsRequest.builder()
@@ -242,7 +252,7 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
 
         try {
             // Delete auto-created queue
-            if (queueAutoCreated && config.isDeleteQueueOnShutdown() && ObjectHelper.isNotEmpty(queueUrl)) {
+            if (isQueueDeletedOnShutdown() && ObjectHelper.isNotEmpty(queueUrl)) {
                 sqsClient.deleteQueue(
                         DeleteQueueRequest.builder()
                                 .queueUrl(queueUrl)
@@ -279,17 +289,44 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    private boolean isQueueDeletedOnShutdown() {
+        return queueAutoCreated && getEndpoint().getConfiguration().isDeleteQueueOnShutdown();
+    }
+
+    private static String queueNamePrefix(String ruleName) {
+        // a queue name has at most 80 characters of [-_A-Za-z0-9], a rule name can also have dots
+        String name = ruleName.replace('.', '-');
+        if (name.length() > MAX_RULE_NAME_IN_QUEUE_NAME) {
+            name = name.substring(0, MAX_RULE_NAME_IN_QUEUE_NAME);
+        }
+        return "camel-eventbridge-" + name + "-";
+    }
+
     /**
-     * The EventBridge target id for a user-provided queue: the same for every start and every consumer of the queue.
+     * The name of an auto-created queue that is kept on shutdown: the same for every start of a consumer of the rule,
+     * so the queue is reused. The hash tells apart the rules with the same name on other event buses, and the rules
+     * whose names are cut.
      */
-    static String targetIdForQueue(String queueArn) {
+    static String durableQueueName(String eventBusName, String ruleName) {
+        return queueNamePrefix(ruleName) + sha256Hex(eventBusName + "/" + ruleName, 8);
+    }
+
+    private static String sha256Hex(String value, int bytes) {
         try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(queueArn.getBytes(StandardCharsets.UTF_8));
-            // a target id has at most 64 characters of [.-_A-Za-z0-9]
-            return "camel-eb-" + HexFormat.of().formatHex(digest, 0, 16);
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest, 0, bytes);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 is not available", e);
         }
+    }
+
+    /**
+     * The EventBridge target id for a queue that outlives the consumer: the same for every start and every consumer of
+     * the queue.
+     */
+    static String targetIdForQueue(String queueArn) {
+        // a target id has at most 64 characters of [.-_A-Za-z0-9]
+        return "camel-eb-" + sha256Hex(queueArn, 16);
     }
 
     private String getQueueArn(String queueUrl) {
