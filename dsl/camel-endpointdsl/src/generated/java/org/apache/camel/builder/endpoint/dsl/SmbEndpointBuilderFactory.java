@@ -1801,6 +1801,44 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
          * The password to access the share.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2410,6 +2448,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -2442,8 +2510,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -2458,7 +2558,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -2470,6 +2572,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointConsumerBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }
@@ -2864,6 +3030,44 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointProducerBuilder domain(String domain) {
             doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
             return this;
         }
         /**
@@ -3291,6 +3495,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -3323,8 +3557,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -3339,7 +3605,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -3351,6 +3619,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointProducerBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }
@@ -3538,6 +3870,44 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
          * The password to access the share.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3679,6 +4049,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -3711,8 +4111,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -3727,7 +4159,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -3739,6 +4173,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }
