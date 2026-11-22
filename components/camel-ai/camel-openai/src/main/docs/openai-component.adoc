@@ -132,7 +132,9 @@ API key resolution order:
 
 [NOTE]
 ====
-The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
+The API key can be omitted for an OpenAI-compatible server that checks no key, such as a local Ollama, vLLM or LM
+Studio: when none of the above is set (and no `oauthProfile`), the requests are sent without an `Authorization` header.
+A server that needs a key then answers with HTTP 401 (`UnauthorizedException`).
 ====
 
 ==== OAuth Authentication

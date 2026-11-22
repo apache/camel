@@ -176,7 +176,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2742,7 +2744,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5157,7 +5161,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

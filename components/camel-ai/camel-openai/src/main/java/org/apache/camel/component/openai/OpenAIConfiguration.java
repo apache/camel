@@ -54,7 +54,10 @@ public class OpenAIConfiguration implements Cloneable {
     private int webhookMaxPayloadSize = 1048576;
 
     @UriParam(security = "secret")
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable. Optional for a"
+                            + " server that checks no key, such as a local Ollama, vLLM or LM Studio (with baseUrl): without"
+                            + " a key (and no oauthProfile), the requests are sent without an Authorization header.",
+              security = "secret")
     private String apiKey;
 
     @UriParam(label = "security")
