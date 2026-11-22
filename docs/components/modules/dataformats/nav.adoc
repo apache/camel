@@ -57,6 +57,7 @@
 ** xref:univocityFixed-dataformat.adoc[uniVocity Fixed Length]
 ** xref:univocityTsv-dataformat.adoc[uniVocity TSV]
 ** xref:xmlSecurity-dataformat.adoc[XML Security]
+** xref:xsdJson-dataformat.adoc[XSD JSON]
 ** xref:snakeYaml-dataformat.adoc[YAML SnakeYAML]
 ** xref:zipDeflater-dataformat.adoc[Zip Deflater]
 ** xref:zipFile-dataformat.adoc[Zip File]

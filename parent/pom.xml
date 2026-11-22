@@ -571,6 +571,7 @@
         <xchange-version>6.0.0</xchange-version>
         <xerces-version>2.12.2</xerces-version>
         <xml-resolver-version>1.2</xml-resolver-version>
+        <xmlschema-core-version>2.3.3</xmlschema-core-version>
         <xmlsec-version>4.0.4</xmlsec-version>
         <xmlunit-version>2.14.0</xmlunit-version>
         <yasson-version>3.0.5</yasson-version>
@@ -3235,6 +3236,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-xpath</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-xsd-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -2192,6 +2192,18 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected XsdJsonDataFormat doParseXsdJsonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new XsdJsonDataFormat(), (def, key, val) -> switch (key) {
+                case "attributePrefix": def.setAttributePrefix(val); yield true;
+                case "element": def.setElement(val); yield true;
+                case "ignoreUnknown": def.setIgnoreUnknown(val); yield true;
+                case "includeRoot": def.setIncludeRoot(val); yield true;
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                case "schema": def.setSchema(val); yield true;
+                case "textName": def.setTextName(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> switch (key) {
                 case "allowAnyType": def.setAllowAnyType(val); yield true;
@@ -2955,6 +2967,7 @@ public class ModelParser extends BaseParser {
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "xmlSecurity": return doParseXMLSecurityDataFormat();
+            case "xsdJson": return doParseXsdJsonDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipFile": return doParseZipFileDataFormat();

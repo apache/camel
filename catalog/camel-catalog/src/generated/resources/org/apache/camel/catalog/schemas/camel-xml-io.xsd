@@ -2190,6 +2190,16 @@ Evaluates an XQuery expressions against an XML payload
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="xsdJson" type="tns:xsdJsonDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the
+types, arrays, order and namespaces.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="xtokenize" type="tns:xmlTokenizerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -6426,6 +6436,7 @@ custom logic needed before the looping executes.
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
+            <xs:element ref="tns:xsdJson"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -9894,6 +9905,84 @@ Default value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 Refers to a Map of XML Namespaces of prefix to uri mappings.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="xsdJsonDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="schema" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource
+such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to
+it, with the same scheme only.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="element" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema.
+Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and
+this option only restricts it. The header CamelXsdJsonElement overrides it per message.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="includeRoot" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the
+root element. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="attributePrefix" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON
+object without a prefix.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="textName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.
+Default value: value
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreUnknown" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.
+Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to indent the output, the JSON on unmarshal and the XML on marshal. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14072,6 +14161,7 @@ into.
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
+            <xs:element ref="tns:xsdJson"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -15525,6 +15615,7 @@ An example value of this response header.
         <xs:element ref="tns:univocityFixed"/>
         <xs:element ref="tns:univocityTsv"/>
         <xs:element ref="tns:xmlSecurity"/>
+        <xs:element ref="tns:xsdJson"/>
         <xs:element ref="tns:yaml"/>
         <xs:element ref="tns:zipDeflater"/>
         <xs:element ref="tns:zipFile"/>
@@ -16360,6 +16451,7 @@ matches. If you specify just 'json', it matches all json destination types.
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
+            <xs:element ref="tns:xsdJson"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>

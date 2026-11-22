@@ -1187,6 +1187,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteXMLSecurityDataFormat(sb, def);
         return sb.toString();
     }
+    public String writeXsdJsonDataFormat(XsdJsonDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "xsdJson", def);
+        doWriteXsdJsonDataFormat(sb, def);
+        return sb.toString();
+    }
     public String writeYAMLDataFormat(YAMLDataFormat def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -2123,6 +2130,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(sb, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(sb, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(sb, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(sb, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(sb, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(sb, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);
@@ -2762,6 +2770,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(sb, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(sb, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(sb, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(sb, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(sb, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(sb, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);
@@ -3044,6 +3053,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) item, this::doWriteUniVocityFixedDataFormat);
                     case "UniVocityTsvDataFormat" -> doWriteChildElement(sb, "univocityTsv", (UniVocityTsvDataFormat) item, this::doWriteUniVocityTsvDataFormat);
                     case "XMLSecurityDataFormat" -> doWriteChildElement(sb, "xmlSecurity", (XMLSecurityDataFormat) item, this::doWriteXMLSecurityDataFormat);
+                    case "XsdJsonDataFormat" -> doWriteChildElement(sb, "xsdJson", (XsdJsonDataFormat) item, this::doWriteXsdJsonDataFormat);
                     case "YAMLDataFormat" -> doWriteChildElement(sb, "yaml", (YAMLDataFormat) item, this::doWriteYAMLDataFormat);
                     case "ZipDeflaterDataFormat" -> doWriteChildElement(sb, "zipDeflater", (ZipDeflaterDataFormat) item, this::doWriteZipDeflaterDataFormat);
                     case "ZipFileDataFormat" -> doWriteChildElement(sb, "zipFile", (ZipFileDataFormat) item, this::doWriteZipFileDataFormat);
@@ -3415,6 +3425,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
         doWriteAttribute(sb, "mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
         doWriteAttribute(sb, "addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
+    }
+    protected void doWriteXsdJsonDataFormat(StringBuilder sb, XsdJsonDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "schema", def.getSchema(), null);
+        doWriteAttribute(sb, "element", def.getElement(), null);
+        doWriteAttribute(sb, "includeRoot", def.getIncludeRoot(), "false");
+        doWriteAttribute(sb, "attributePrefix", def.getAttributePrefix(), null);
+        doWriteAttribute(sb, "textName", def.getTextName(), "value");
+        doWriteAttribute(sb, "ignoreUnknown", def.getIgnoreUnknown(), "false");
+        doWriteAttribute(sb, "prettyPrint", def.getPrettyPrint(), "false");
     }
     protected void doWriteYAMLDataFormat(StringBuilder sb, YAMLDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -4008,6 +4028,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(sb, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(sb, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(sb, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(sb, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(sb, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(sb, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);

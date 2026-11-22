@@ -4054,6 +4054,10 @@
         "type" : "object",
         "ref" : "xMLSecurity"
       }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
+      }, {
         "name" : "yaml",
         "type" : "object",
         "ref" : "yAML"
@@ -9811,6 +9815,10 @@
         "type" : "object",
         "ref" : "xMLSecurity"
       }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
+      }, {
         "name" : "yaml",
         "type" : "object",
         "ref" : "yAML"
@@ -14201,6 +14209,89 @@
         "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
         "title" : "Xml Cipher Algorithm",
         "default" : "AES_256_GCM"
+      } ]
+    },
+    "xsdJson" : {
+      "title" : "XSD JSON",
+      "description" : "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+      "label" : "dataformat,transformation,xml,json",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "schema",
+        "type" : "string",
+        "description" : "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only.",
+        "title" : "Schema",
+        "required" : true,
+        "displayName" : "Schema",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "element",
+        "type" : "string",
+        "description" : "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message.",
+        "title" : "Element",
+        "displayName" : "Element",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "includeRoot",
+        "type" : "boolean",
+        "description" : "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.",
+        "title" : "Include Root",
+        "default" : "false",
+        "displayName" : "Include Root",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "attributePrefix",
+        "type" : "string",
+        "description" : "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix.",
+        "title" : "Attribute Prefix",
+        "displayName" : "Attribute Prefix",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "textName",
+        "type" : "string",
+        "description" : "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.",
+        "title" : "Text Name",
+        "default" : "value",
+        "displayName" : "Text Name",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "ignoreUnknown",
+        "type" : "boolean",
+        "description" : "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.",
+        "title" : "Ignore Unknown",
+        "default" : "false",
+        "displayName" : "Ignore Unknown",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
+      }, {
+        "name" : "prettyPrint",
+        "type" : "boolean",
+        "description" : "Whether to indent the output, the JSON on unmarshal and the XML on marshal.",
+        "title" : "Pretty Print",
+        "default" : "false",
+        "displayName" : "Pretty Print",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "common"
       } ]
     },
     "yAML" : {
@@ -20177,6 +20268,10 @@
         "name" : "xmlSecurity",
         "type" : "object",
         "ref" : "xMLSecurity"
+      }, {
+        "name" : "xsdJson",
+        "type" : "object",
+        "ref" : "xsdJson"
       }, {
         "name" : "yaml",
         "type" : "object",
