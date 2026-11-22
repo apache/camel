@@ -193,6 +193,14 @@ public class KubernetesExport extends Export {
             return 1;
         }
 
+        if (isWarPackaging() && !TomcatVersionHelper.supportsSpringBootVersion(springBootVersion)) {
+            printer().printErr(
+                    "Spring Boot WAR export supports Spring Boot 3.x with Tomcat 10.1 "
+                               + "and Spring Boot 4.x with Tomcat 11. Unsupported Spring Boot version: "
+                               + springBootVersion);
+            return 1;
+        }
+
         // special if user type: camel run . or camel run dirName
         if (files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));

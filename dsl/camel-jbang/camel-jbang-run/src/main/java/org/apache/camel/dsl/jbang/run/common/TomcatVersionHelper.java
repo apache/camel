@@ -68,9 +68,9 @@ public final class TomcatVersionHelper {
 
         if (camelSpringBootVersion == null || camelSpringBootVersion.isBlank()) {
             if (springBootVersion.startsWith("3.")) {
-                return "Spring Boot 3.x requires an explicitly selected compatible Camel version. "
-                       + "Use --camel-spring-boot-version=4.18.1 or specify a compatible "
-                       + "--camel-version=4.18.1.";
+                return "Spring Boot 3.x requires an explicitly selected compatible Camel Spring Boot version. "
+                       + "Use the latest compatible 4.18.x release with --camel-spring-boot-version, "
+                       + "or specify that version with --camel-version.";
             }
             return "A compatible Camel Spring Boot version must be specified.";
         }
@@ -80,7 +80,7 @@ public final class TomcatVersionHelper {
 
         if (springBootVersion.startsWith("3.") && comparison >= 0) {
             return "Spring Boot 3.x requires Camel Spring Boot earlier than 4.19.0. "
-                   + "Use --camel-spring-boot-version=4.18.1 or another compatible 4.18.x release.";
+                   + "Select the latest compatible 4.18.x release with --camel-spring-boot-version.";
         }
 
         if (springBootVersion.startsWith("4.") && comparison < 0) {

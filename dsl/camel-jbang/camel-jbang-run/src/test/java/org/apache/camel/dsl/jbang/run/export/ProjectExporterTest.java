@@ -125,8 +125,22 @@ class ProjectExporterTest {
     }
 
     @Test
-    void exportsTomcatWarProjectWithSpringBoot3() throws Exception {
-        assertSpringBootWarProject("3.5.0", "spring-boot-starter-web", "4.18.1");
+    void exportsTomcatWarProjectWithSpringBoot3WithoutCamelVersion() throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-3-5-0-without-camel-version");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "3.5.0";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput())
+                .contains("Spring Boot 3.x requires an explicitly selected compatible Camel Spring Boot version");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
     }
 
     private void assertSpringBootWarProject(

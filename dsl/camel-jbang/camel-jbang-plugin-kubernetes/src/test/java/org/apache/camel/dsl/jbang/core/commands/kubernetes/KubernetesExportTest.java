@@ -1064,6 +1064,19 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
                 "mirror.gcr.io/library/tomcat:10.1-jdk21-temurin", "4.18.1");
     }
 
+    @Test
+    public void shouldRejectUnsupportedSpringBootVersionForWarPackaging() throws Exception {
+        KubernetesExport command = createCommand(
+                new String[] { "classpath:myapp\\route.yaml" },
+                "--gav=examples:route:1.0.0",
+                "--runtime=spring-boot",
+                "--packaging=war",
+                "--spring-boot-version=5.0.0");
+
+        Assertions.assertEquals(1, command.doCall());
+        Assertions.assertFalse(workingDir.toPath().resolve("pom.xml").toFile().exists());
+    }
+
     private void assertSpringBootWarKubernetesProject(
             String springBootVersion, String expectedWebStarter, String expectedTomcatImage,
             String camelSpringBootVersion)

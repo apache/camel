@@ -37,7 +37,8 @@ application packaged as a WAR. The default packaging remains `jar`.
 
 Spring Boot 4.x targets Tomcat 11. Spring Boot 3.x targets Tomcat 10.1 and
 requires a compatible Camel Spring Boot BOM. Camel Spring Boot 4.19 moved to
-Spring Boot 4, so for Camel 4.24 use a 4.18.x version such as 4.18.1.
+Spring Boot 4, so select the latest compatible 4.18.x release explicitly with
+`--camel-spring-boot-version`.
 
 For a Spring Boot 4.x WAR:
 
@@ -60,8 +61,10 @@ version explicitly:
 
 [source,bash]
 ----
+# Set CAMEL_SPRING_BOOT_VERSION to the latest compatible 4.18.x release.
+: "${CAMEL_SPRING_BOOT_VERSION:?Set CAMEL_SPRING_BOOT_VERSION first}"
 camel export --runtime=spring-boot --packaging=war --spring-boot-version=3.5.0 \
-    --camel-spring-boot-version=4.18.1 --gav=com.foo:acme:1.0-SNAPSHOT
+    --camel-spring-boot-version="${CAMEL_SPRING_BOOT_VERSION}" --gav=com.foo:acme:1.0-SNAPSHOT
 ----
 
 The generated main class extends `SpringBootServletInitializer`, the project
