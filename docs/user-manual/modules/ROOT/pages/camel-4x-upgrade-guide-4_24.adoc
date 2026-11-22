@@ -5341,6 +5341,23 @@ a Saxon PE/EE stylesheet can call Java extension functions) also restores the pr
 `Source` parsing: `setTransformerFactory(...)` replaces the factory, but the strategy's `XsltSaxonBuilder` keeps
 `secureProcessing=true`, so the body is still parsed with the restricted reader.
 
+=== camel-xslt-saxon - unparsed-text() and json-doc() honour the same restriction as document()
+
+Since Camel 4.23 the `document()` function refuses an external `http:`, `https:`, `ftp:` or `file:` URI at
+transform time unless the transformer factory's `ACCESS_EXTERNAL_STYLESHEET` permits the protocol; the
+`xslt-saxon` endpoint sets it to the empty (deny-all) value. Saxon does not read the resources of the XSLT 3.0
+functions `unparsed-text()`, `unparsed-text-lines()`, `unparsed-text-available()` and `json-doc()` through the
+resolver installed on the transformer, so these functions still read such a URI. They now honour the same
+restriction as `document()`, also in a stylesheet run with `fn:transform()`: a refused URI fails the transform (and
+the reason is logged as a warning), and `unparsed-text-available()` returns `false`. As with `document()`, this
+includes a relative URI when the stylesheet was loaded from `file:`. (`collection()` and `uri-collection()` were
+already restricted by Saxon.)
+
+Camel's `classpath:`, `ref:` and `bean:` schemes are not affected, nor are `xsl:include` and `xsl:import`. A route
+that needs these functions to read an external resource supplies a `TransformerFactory` through the
+`transformerFactory` option whose `ACCESS_EXTERNAL_STYLESHEET` permits the protocols (a comma-separated list such
+as `file` or `http,https`, or `all`).
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
