@@ -17,8 +17,6 @@
 package org.apache.camel.dataformat.xsdjson;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +40,14 @@ class XsdJsonRouteTest extends CamelTestSupport {
                 from("direct:toXml")
                         .marshal(dataFormat().xsdJson().schema("classpath:xsdjson/orders.wsdl").element("getOrder").end())
                         .convertBodyTo(String.class);
+
+                from("direct:toJsonWithRoot")
+                        .unmarshal(dataFormat().xsdJson().schema("classpath:xsdjson/orders.wsdl").element("getOrderResponse")
+                                .includeRoot(true).end());
+
+                from("direct:toXmlByHeader")
+                        .marshal(dataFormat().xsdJson().schema("classpath:xsdjson/orders.wsdl").end())
+                        .convertBodyTo(String.class);
             }
         };
     }
@@ -56,34 +62,12 @@ class XsdJsonRouteTest extends CamelTestSupport {
     }
 
     @Test
-    void yamlDsl() throws Exception {
-        PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("xsd-json.yaml", """
-                - route:
-                    from:
-                      uri: direct:yamlToJson
-                      steps:
-                        - unmarshal:
-                            xsdJson:
-                              schema: classpath:xsdjson/orders.wsdl
-                              element: getOrderResponse
-                              includeRoot: true
-                - route:
-                    from:
-                      uri: direct:yamlToXml
-                      steps:
-                        - setHeader:
-                            name: CamelXsdJsonElement
-                            constant: getOrder
-                        - marshal:
-                            xsdJson:
-                              schema: classpath:xsdjson/orders.wsdl
-                        - convertBodyTo:
-                            type: String
-                """));
-        assertThat(template.requestBody("direct:yamlToJson", RESPONSE, String.class))
+    void includeRootAndElementHeader() {
+        assertThat(template.requestBody("direct:toJsonWithRoot", RESPONSE, String.class))
                 .isEqualTo("{\"getOrderResponse\":{\"order\":{\"orderId\":\"42\",\"customer\":\"Ann\",\"status\":\"NEW\","
                            + "\"item\":[{\"sku\":\"A\",\"quantity\":2,\"price\":9.95}]}}}");
-        assertThat(template.requestBody("direct:yamlToXml", "{\"orderId\": \"42\"}", String.class))
+        assertThat(template.requestBodyAndHeader("direct:toXmlByHeader", "{\"orderId\": \"42\"}",
+                XsdJsonDataFormat.ELEMENT, "getOrder", String.class))
                 .endsWith("<tns:getOrder xmlns:tns=\"http://example.com/orders\"><tns:orderId>42</tns:orderId></tns:getOrder>");
     }
 }
