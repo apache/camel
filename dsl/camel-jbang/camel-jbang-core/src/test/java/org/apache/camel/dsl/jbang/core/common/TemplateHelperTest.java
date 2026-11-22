@@ -106,11 +106,11 @@ class TemplateHelperTest {
     }
 
     @Test
-    void testSpringBootTomcatMainTemplate() throws IOException {
+    void testSpringBootWarMainTemplate() throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("PackageName", "com.example");
         model.put("MainClassname", "MySpringApp");
-        model.put("Tomcat", true);
+        model.put("War", true);
 
         String result = TemplateHelper.processTemplate("spring-boot-main.ftl", model);
 
@@ -339,7 +339,7 @@ class TemplateHelperTest {
         model.put("Repositories", List.of());
         model.put("Dependencies", List.of());
         model.put("JibMavenPluginVersion", "3.5.2");
-        model.put("Tomcat", false);
+        model.put("War", false);
 
         String result = TemplateHelper.processTemplate("spring-boot-pom.ftl", model);
 
@@ -348,6 +348,33 @@ class TemplateHelperTest {
         assertTrue(result.contains("camel-spring-boot-bom"));
         assertTrue(result.contains("<version>4.10.0</version>"), "Should contain Camel SB version");
         assertTrue(result.contains("spring-boot-maven-plugin"));
+    }
+
+    @Test
+    void testSpringBootWarPomTemplateUsesSpringBootManagedWarPluginVersion() throws IOException {
+        Map<String, Object> model = springBootWarPomModel();
+
+        String result = TemplateHelper.processTemplate("spring-boot-pom.ftl", model);
+
+        assertTrue(result.contains("<packaging>war</packaging>"));
+        assertTrue(result.contains("<artifactId>spring-boot-starter-tomcat</artifactId>"));
+        assertTrue(result.contains("<artifactId>maven-war-plugin</artifactId>"));
+        assertFalse(result.contains(
+                "<artifactId>maven-war-plugin</artifactId>\n"
+                                    + "                <version>3.5.1</version>"));
+    }
+
+    @Test
+    void testSpringBootWarPomTemplatePinsWarPluginWithCustomParent() throws IOException {
+        Map<String, Object> model = springBootWarPomModel();
+        model.put("ParentGroupId", "com.example");
+        model.put("ParentArtifactId", "company-parent");
+        model.put("ParentVersion", "1.0.0");
+
+        String result = TemplateHelper.processTemplate("spring-boot-pom.ftl", model);
+
+        assertTrue(result.contains("<artifactId>maven-war-plugin</artifactId>\n"
+                                   + "                <version>3.5.1</version>"));
     }
 
     @Test
@@ -540,6 +567,24 @@ class TemplateHelperTest {
     private static void assertCanonical(String name, String yaml) throws Exception {
         var report = canonicalValidator.validate(yaml);
         assertTrue(report.isEmpty(), name + " is not in the canonical YAML format:\n" + yaml + "\n" + report);
+    }
+
+    private Map<String, Object> springBootWarPomModel() {
+        Map<String, Object> model = new HashMap<>();
+        model.put("GroupId", "com.example");
+        model.put("ArtifactId", "my-war-app");
+        model.put("Version", "1.0.0");
+        model.put("SpringBootVersion", "3.5.0");
+        model.put("SpringBootWebStarter", "spring-boot-starter-web");
+        model.put("CamelSpringBootVersion", "4.18.1");
+        model.put("JavaVersion", "21");
+        model.put("ProjectBuildOutputTimestamp", "2024-01-01T00:00:00Z");
+        model.put("BuildProperties", "");
+        model.put("Repositories", List.of());
+        model.put("Dependencies", List.of());
+        model.put("JibMavenPluginVersion", "3.5.2");
+        model.put("War", true);
+        return model;
     }
 
     private String loadInitTemplate(String name) throws IOException {
