@@ -160,6 +160,7 @@ public class SmbOperations implements SmbFileOperations {
             return;
         }
         // the SMB client of the connection, when the disconnect does not wait for it: closed once the connection is
+        // closed
         AtomicReference<SMBClient> abandonedClient = new AtomicReference<>();
         AtomicBoolean closed = new AtomicBoolean();
         Thread disconnector = endpoint.getCamelContext().getExecutorServiceManager()
