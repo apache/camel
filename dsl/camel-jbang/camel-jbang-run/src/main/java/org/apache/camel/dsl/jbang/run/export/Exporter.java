@@ -1090,6 +1090,19 @@ abstract class Exporter {
     }
 
     /**
+     * The path that camel-cxf-platform-http serves the SOAP services of cxf consumers under (camel-main), which is
+     * {@code cxf.path} on Spring Boot and {@code quarkus.cxf.path} on Quarkus.
+     */
+    protected static final String CXF_PATH = "camel.cxf.path";
+
+    /**
+     * Whether the key is the option of camel-cxf-platform-http that reads the X-Forwarded headers (camel-main).
+     */
+    protected static boolean isCxfUseXForwardedHeaders(String key) {
+        return "camel.cxf.useXForwardedHeaders".equals(key) || "camel.cxf.use-x-forwarded-headers".equals(key);
+    }
+
+    /**
      * Gets the maven repositories
      *
      * @param  prop         settings

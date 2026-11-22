@@ -476,6 +476,55 @@ class ProjectExporterTest {
 
     @ParameterizedTest
     @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void cxfConsumerIsServedOnTheHttpServerOfTheRuntime(RuntimeType runtime) throws Exception {
+        Path route = writeRoute("soap");
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+        request.applicationProperties
+                = new String[] { "camel.cxf.path=/soap", "camel.cxf.useXForwardedHeaders=true" };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        String properties = Files.readString(exportDir.resolve("src/main/resources/application.properties"));
+        switch (runtime) {
+            case main -> {
+                // served on the platform-http server, as in camel run
+                assertThat(pom).contains("<artifactId>camel-cxf-platform-http</artifactId>",
+                        "<artifactId>camel-platform-http-main</artifactId>");
+                assertThat(properties).contains("camel.cxf.path=/soap", "camel.cxf.useXForwardedHeaders=true",
+                        "camel.server.enabled=true");
+            }
+            case springBoot -> {
+                assertThat(pom).doesNotContain("camel-cxf-platform-http");
+                assertThat(properties).contains("cxf.path=/soap", "cxf.servlet.init.use-x-forwarded-headers=true")
+                        .doesNotContain("camel.cxf.");
+            }
+            default -> {
+                assertThat(pom).doesNotContain("camel-cxf-platform-http");
+                assertThat(properties).contains("quarkus.cxf.path=/soap",
+                        "quarkus.http.proxy.proxy-address-forwarding=true",
+                        "quarkus.http.proxy.enable-forwarded-host=true")
+                        .doesNotContain("camel.cxf.");
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
     void localJarsAreInTheLibDirectoryAsThePomRefersToThem(RuntimeType runtime) throws Exception {
         Path route = writeRoute("hello");
         // a JAR in a directory that is not built by Maven, and one built by Maven whose file name is not its artifact
