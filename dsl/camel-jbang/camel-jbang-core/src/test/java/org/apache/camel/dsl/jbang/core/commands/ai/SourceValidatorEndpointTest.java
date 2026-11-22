@@ -525,6 +525,36 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aPlaceholderInTheFileIncludeOptionIsNotCheckedAsARegex() {
+        // CAMEL-27365: the sftp-source Kamelet has include: "RAW({{?include}})", the value is only known at runtime
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: sftp:{{host}}:22/{{directory}}
+                    parameters:
+                      username: admin
+                      include: "RAW({{?include}})"
+                      exclude: "RAW({{?exclude}})"
+                    steps:
+                      - log: "${body}"
+                - from:
+                    uri: file:input?include={{prefix}}*&exclude=RAW({{?exclude}})&noop=true
+                    steps:
+                      - log: "${body}"
+                """, catalog);
+        assertThat(msgs).noneMatch(m -> m.contains("regular expression"));
+
+        // RAW() is not part of the regex: the value inside it is what is checked
+        List<String> raw = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: file:input?include=RAW(*.txt)&noop=true
+                    steps:
+                      - log: "${body}"
+                """, catalog);
+        assertThat(raw).hasSize(1);
+        assertThat(raw.get(0)).contains("include=*.txt is not a regular expression").contains("antInclude=*.txt");
+    }
+
+    @Test
     void aSimpleMistakeInAFileNameOptionIsReportedAtWriteTime() {
         // r26 connect-sftp-transfer step 3, a receipt named like the batch: the write was accepted, and the route then
         // failed to reload on "Unknown file language syntax: noext"
