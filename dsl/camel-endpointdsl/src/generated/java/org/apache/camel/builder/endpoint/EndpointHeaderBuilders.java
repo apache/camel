@@ -163,7 +163,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
