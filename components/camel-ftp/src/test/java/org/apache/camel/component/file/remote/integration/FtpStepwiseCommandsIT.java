@@ -16,22 +16,29 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.apache.camel.component.file.remote.FtpOperations;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.ftp.services.embedded.EmbeddedConfiguration;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
@@ -54,8 +61,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * With the default stepwise and autoCreate, an upload does not ask for the current directory, change into the directory
- * of its file and back, nor check that the directory exists, for each file (CAMEL-26657).
+ * With the default stepwise and autoCreate, an upload does not ask for the current directory, nor check that the
+ * directory exists, for each file (CAMEL-26657). It still changes into the directory of its file each time: a server
+ * such as vsftpd keeps the directory itself, not its path, so a connection that stayed in a directory that was renamed
+ * since would store the file in the renamed directory.
  */
 public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
 
@@ -64,6 +73,8 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
 
     // by command, such as CWD
     private final Map<String, AtomicInteger> commands = new ConcurrentHashMap<>();
+    // the commands that change or use a directory, with their argument, such as "CWD out", in the order received
+    private final List<String> sequence = new CopyOnWriteArrayList<>();
 
     @RegisterExtension
     public FtpEmbeddedService service = new FtpEmbeddedService() {
@@ -74,7 +85,11 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
                 @Override
                 public FtpletResult beforeCommand(FtpSession session, FtpRequest request)
                         throws FtpException, IOException {
-                    commands.computeIfAbsent(request.getCommand().toUpperCase(), k -> new AtomicInteger()).incrementAndGet();
+                    String command = request.getCommand().toUpperCase();
+                    commands.computeIfAbsent(command, k -> new AtomicInteger()).incrementAndGet();
+                    if (List.of("CWD", "PWD", "MKD", "STOR", "DELE", "RNFR", "RNTO").contains(command)) {
+                        sequence.add(request.hasArgument() ? command + " " + request.getArgument() : command);
+                    }
                     if ("STOR".equalsIgnoreCase(request.getCommand()) && REFUSED.equals(request.getArgument())) {
                         session.write(new DefaultFtpReply(550, "Refused"));
                         return FtpletResult.SKIP;
@@ -96,24 +111,26 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
     }
 
     @Test
-    public void uploadsIntoTheSameDirectorySendOnlyTheFile() throws Exception {
+    public void uploadsIntoTheSameDirectoryChangeIntoItWithoutAskingOrChecking() throws Exception {
         String uri = ftpUri("p1/out");
         // connects, creates the directory and changes into it
         template.sendBodyAndHeader(uri, "warm-up", Exchange.FILE_NAME, "warm-up.txt");
 
         commands.clear();
+        sequence.clear();
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader(uri, "message " + i, Exchange.FILE_NAME, "file-" + i + ".txt");
         }
 
-        // a data connection and a STOR per file: no PWD, no CWD into the directory and back, and no check that the
-        // directory exists. The NOOP that the producer skips within a second of the previous upload is not counted
-        // here, as it depends on time: RemoteFileProducerPreWriteCheckTest checks it
-        assertEquals(10, count("STOR"), "commands: " + commands);
-        assertEquals(0, count("PWD"), "commands: " + commands);
-        assertEquals(0, count("CWD"), "commands: " + commands);
+        // per file: back to the starting directory, stepwise into the directory of the file, and a data connection and
+        // a STOR. No PWD, and no check that the directory exists. The NOOP that the producer skips within a second of
+        // the previous upload is not counted here, as it depends on time: RemoteFileProducerPreWriteCheckTest checks it
+        for (int i = 0; i < 10; i++) {
+            assertEquals(List.of("CWD /", "CWD p1", "CWD out", "STOR file-" + i + ".txt"),
+                    sequence.subList(i * 4, i * 4 + 4), "sequence: " + sequence);
+        }
+        assertEquals(40, sequence.size(), "sequence: " + sequence);
         assertEquals(0, count("CDUP"), "commands: " + commands);
-        assertEquals(0, count("MKD"), "commands: " + commands);
         for (int i = 0; i < 10; i++) {
             assertEquals("message " + i, Files.readString(service.ftpFile("p1/out/file-" + i + ".txt")));
         }
@@ -131,9 +148,46 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
         template.sendBodyAndHeader(uri, "second", Exchange.FILE_NAME, "second.txt");
 
         assertEquals("second", Files.readString(service.ftpFile("p1/out/second.txt")));
-        // the upload into the remembered directory failed, so the directory was created again and the upload tried
+        // the change into the remembered directory failed, so the directory was created again and the upload tried
         // once more
-        assertEquals(2, count("STOR"), "commands: " + commands);
+        assertEquals(1, count("STOR"), "commands: " + commands);
+        assertTrue(count("MKD") >= 1, "commands: " + commands);
+    }
+
+    @Test
+    public void directoryRenamedBetweenUploadsIsNotUsed() throws Exception {
+        String uri = ftpUri("p1/out");
+        template.sendBodyAndHeader(uri, "first", Exchange.FILE_NAME, "first.txt");
+
+        // the receiving side hands the directory off and starts a new one, while the connection stays in it
+        Files.move(service.ftpFile("p1/out"), service.ftpFile("p1/out.1"));
+        Files.createDirectories(service.ftpFile("p1/out"));
+        sequence.clear();
+
+        template.sendBodyAndHeader(uri, "second", Exchange.FILE_NAME, "second.txt");
+
+        assertEquals("second", Files.readString(service.ftpFile("p1/out/second.txt")));
+        assertFalse(Files.exists(service.ftpFile("p1/out.1/second.txt")));
+        // the embedded server resolves STOR against the path of its current directory, so it would store the file in
+        // the new directory without the change of directory: what keeps a server that holds the directory itself
+        // (vsftpd) from using the renamed one is that the upload changes into the path again
+        assertEquals(List.of("CWD /", "CWD p1", "CWD out", "STOR second.txt"), sequence);
+    }
+
+    @Test
+    public void streamCacheBodyIsUploadedAgainIntoARemovedDirectory() throws Exception {
+        String uri = ftpUri("p1/out");
+        template.sendBodyAndHeader(uri, "first", Exchange.FILE_NAME, "first.txt");
+
+        FileUtil.removeDir(service.ftpFile("p1").toFile());
+        commands.clear();
+
+        // a stream body reaches the producer as a stream cache with the default stream caching: it is read again
+        // from the start
+        template.sendBodyAndHeader(uri, new ByteArrayInputStreamCache(new ByteArrayInputStream("second".getBytes())),
+                Exchange.FILE_NAME, "second.txt");
+
+        assertEquals("second", Files.readString(service.ftpFile("p1/out/second.txt")));
         assertTrue(count("MKD") >= 1, "commands: " + commands);
     }
 
@@ -161,12 +215,12 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
         FileUtil.removeDir(service.ftpFile("p1").toFile());
         commands.clear();
 
-        // the failed upload may have read the reader (which is not an InputStream), so a second upload could store a
-        // part of it
+        // a failed upload may have read the reader (which is not an InputStream), so a second upload could store a part
+        // of it
         StringReader stream = new StringReader("second");
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, stream, Exchange.FILE_NAME, "second.txt"));
-        assertEquals(1, count("STOR"), "commands: " + commands);
+        assertEquals(0, count("STOR"), "commands: " + commands);
         assertEquals(0, count("MKD"), "commands: " + commands);
 
         // the next upload checks the directory again
@@ -263,6 +317,51 @@ public class FtpStepwiseCommandsIT extends BaseServerTestSupport {
         } finally {
             operations.disconnect();
         }
+    }
+
+    @Test
+    public void autoCreateRemembersOnlyTheMostRecentDirectories() throws Exception {
+        String uri = ftpUri("base");
+        // more directories than the operations remember, each checked or created once
+        for (int i = 0; i <= 100; i++) {
+            template.sendBodyAndHeader(uri, "x", Exchange.FILE_NAME, "d" + i + "/x.txt");
+        }
+        sequence.clear();
+
+        // the first one was forgotten, so it is checked again; the last one is still known
+        template.sendBodyAndHeader(uri, "y", Exchange.FILE_NAME, "d0/y.txt");
+        template.sendBodyAndHeader(uri, "y", Exchange.FILE_NAME, "d100/y.txt");
+
+        assertEquals(1, sequence.stream().filter("CWD base/d0"::equals).count(), "sequence: " + sequence);
+        assertEquals(0, sequence.stream().filter("CWD base/d100"::equals).count(), "sequence: " + sequence);
+        assertEquals("y", Files.readString(service.ftpFile("base/d0/y.txt")));
+        assertEquals("y", Files.readString(service.ftpFile("base/d100/y.txt")));
+    }
+
+    @Test
+    public void deleteFromAMoveExistingStrategyKeepsTheUploadInTheDirectoryOfTheFile() throws Exception {
+        Files.createDirectories(service.ftpFile("p1/out"));
+        Files.writeString(service.ftpFile("p1/out/a.txt"), "old");
+        Files.writeString(service.ftpFile("p1/out/a.txt.bak"), "older");
+        // as SftpDefaultMoveExistingFileStrategy does: delete the target through the operations, then rename
+        context.getRegistry().bind("deleteThenRename", new FileMoveExistingStrategy() {
+            @Override
+            public boolean moveExistingFile(
+                    GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations,
+                    String fileName) {
+                operations.deleteFile(fileName + ".bak");
+                return operations.renameFile(fileName, fileName + ".bak");
+            }
+        });
+
+        template.sendBodyAndHeader(ftpUri("p1/out") + "&fileExist=Move&moveExisting=${file:name}.bak"
+                                   + "&moveExistingFileStrategy=#deleteThenRename",
+                "new", Exchange.FILE_NAME, "a.txt");
+
+        // the delete and the rename use names relative to the directory of the file, and the upload stays there
+        assertEquals("new", Files.readString(service.ftpFile("p1/out/a.txt")));
+        assertEquals("old", Files.readString(service.ftpFile("p1/out/a.txt.bak")));
+        assertFalse(Files.exists(service.ftpFile("a.txt")));
     }
 
     private FtpOperations connect(String uri) throws Exception {

@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.time.Duration;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -35,12 +35,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -71,6 +73,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
      * next upload, as the connection was just seen working.
      */
     private static final long RECENTLY_USED_NANOS = TimeUnit.SECONDS.toNanos(1);
+    /**
+     * How many directories autoCreate remembers on a connection at most: the gain is for repeated uploads into the same
+     * directories, and a producer that writes into a new directory for each message must not grow without limit.
+     */
+    private static final int MAX_BUILT_DIRECTORIES = 100;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
@@ -92,7 +99,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     /**
      * The directory to change back to before an operation that uses names relative to the directory where the
      * operations started: a stepwise upload, download or delete stays in the directory of its file, so that the next
-     * file in that directory needs no change of directory. {@code null} when there is nothing to change back.
+     * download or delete in that directory needs no change of directory (an upload changes back and into it again, see
+     * {@link #storeFileInItsDirectory(String, Exchange)}). {@code null} when there is nothing to change back.
      */
     private String restoreDirectory;
     /**
@@ -110,9 +118,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     /**
      * The directories that a file was uploaded into on this connection, as absolute paths (see
      * {@link #builtDirectoryKey(String)}), so that autoCreate does not check them again before the next upload. Only an
-     * upload adds a directory: the moves of a consumer check their directory each time.
+     * upload adds a directory: the moves of a consumer check their directory each time. Holds the
+     * {@link #MAX_BUILT_DIRECTORIES} most recently used ones.
      */
-    private final Set<String> builtDirectories = new HashSet<>();
+    private final Set<String> builtDirectories = Collections.newSetFromMap(LRUCacheFactory.newLRUCache(MAX_BUILT_DIRECTORIES));
     /**
      * When the server last completed an upload, a download or a noop ({@link System#nanoTime()}), or 0.
      */
@@ -457,24 +466,53 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             checkName(name);
 
             boolean result;
+            boolean outer = inStepwiseOperation;
             try {
                 reconnectIfNecessary(null);
-                inStepwiseOperation = true;
-                String target = changeToDirectoryOf(name);
+                if (outer) {
+                    result = deleteFileDuringOperation(name);
+                } else {
+                    inStepwiseOperation = true;
+                    String target = changeToDirectoryOf(name);
 
-                // delete the file
-                log.trace("Client deleteFile: {}", target);
-                result = client.deleteFile(target);
+                    // delete the file
+                    log.trace("Client deleteFile: {}", target);
+                    result = client.deleteFile(target);
+                }
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
                         client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } finally {
-                inStepwiseOperation = false;
+                inStepwiseOperation = outer;
             }
 
             return result;
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Deletes a file while an upload or a download runs, such as from a custom move-existing strategy of the upload:
+     * the name is relative to the directory of the file of that operation, so a stepwise delete changes in relative to
+     * that directory and back, and leaves the connection where the operation needs it.
+     */
+    private boolean deleteFileDuringOperation(String name) throws IOException {
+        String path = FileUtil.onlyPath(name);
+        if (path == null || !endpoint.getConfiguration().isStepwise()) {
+            log.trace("Client deleteFile: {}", name);
+            return client.deleteFile(name);
+        }
+        String current = currentDirectory();
+        try {
+            workingDirectory = null;
+            changeDirectory(FtpUtils.compactPath(path));
+            String target = FileUtil.stripPath(name);
+            log.trace("Client deleteFile: {}", target);
+            return client.deleteFile(target);
+        } finally {
+            changeDirectory(current);
+            workingDirectory = current;
         }
     }
 
@@ -557,6 +595,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             clientActivityListener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
 
             boolean answer;
+            boolean outer = inStepwiseOperation;
             inStepwiseOperation = true;
             try {
                 log.trace("retrieveFile({})", name);
@@ -572,7 +611,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
                 throw e;
             } finally {
-                inStepwiseOperation = false;
+                inStepwiseOperation = outer;
             }
 
             if (answer) {
@@ -951,11 +990,16 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private boolean storeFileInItsDirectory(String name, Exchange exchange) {
+        // change into the directory of the file for each upload, even when the previous upload left the connection
+        // there: a server such as vsftpd keeps the directory itself, not its path, so after the directory was renamed
+        // or replaced, a STOR without the change would store the file in the old directory, without an error
+        leaveStepwiseDirectory();
+        boolean outer = inStepwiseOperation;
         inStepwiseOperation = true;
         try {
             return doStoreFile(name, changeToDirectoryOf(name), exchange);
         } finally {
-            inStepwiseOperation = false;
+            inStepwiseOperation = outer;
         }
     }
 
@@ -972,6 +1016,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 throw new GenericFileOperationFailedException(
                         "Cannot store file: " + name + " as directory: " + directory
                                                               + " was removed and cannot be created again");
+            }
+            if (exchange.getIn().getBody() instanceof StreamCache cache) {
+                // the failed attempt may have read it
+                cache.reset();
             }
             return storeFileInItsDirectory(name, exchange);
         } catch (GenericFileOperationFailedException retryFailure) {

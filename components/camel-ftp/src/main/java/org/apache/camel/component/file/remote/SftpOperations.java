@@ -33,7 +33,7 @@ import java.security.KeyPair;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -60,6 +60,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -68,6 +69,7 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -98,6 +100,11 @@ public class SftpOperations
     // while the stop of the producer waits for an operation of another thread, how often it checks whether the shutdown
     // is forced, and then how long it waits for the disconnect
     private static final long DISCONNECT_ON_STOP_WAIT_MILLIS = 1000;
+    /**
+     * How many directories autoCreate remembers on a connection at most: the gain is for repeated uploads into the same
+     * directories, and a producer that writes into a new directory for each message must not grow without limit.
+     */
+    private static final int MAX_BUILT_DIRECTORIES = 100;
     private Proxy proxy;
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
@@ -128,9 +135,10 @@ public class SftpOperations
     /**
      * The directories that a file was uploaded into on this connection, as absolute paths (see
      * {@link #builtDirectoryKey(String)}), so that autoCreate does not check them again before the next upload. Only an
-     * upload adds a directory: the moves of a consumer check their directory each time.
+     * upload adds a directory: the moves of a consumer check their directory each time. Holds the
+     * {@link #MAX_BUILT_DIRECTORIES} most recently used ones.
      */
-    private final Set<String> builtDirectories = new HashSet<>();
+    private final Set<String> builtDirectories = Collections.newSetFromMap(LRUCacheFactory.newLRUCache(MAX_BUILT_DIRECTORIES));
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
@@ -1575,6 +1583,10 @@ public class SftpOperations
                 throw new GenericFileOperationFailedException(
                         "Cannot store file: " + name + " as directory: " + directory
                                                               + " was removed and cannot be created again");
+            }
+            if (exchange.getIn().getBody() instanceof StreamCache cache) {
+                // the failed attempt may have read it
+                cache.reset();
             }
             return storeFileInItsDirectory(name, exchange);
         } catch (GenericFileOperationFailedException retryFailure) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -28,6 +29,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.file.remote.SftpOperations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
@@ -100,6 +102,45 @@ class SftpStepwiseRequestsIT extends CamelTestSupport {
         // once more
         assertEquals(2, service.requests(SftpConstants.SSH_FXP_OPEN));
         assertTrue(service.requests(SftpConstants.SSH_FXP_MKDIR) >= 1, "requests: " + service.requests());
+    }
+
+    @Test
+    void streamCacheBodyIsUploadedAgainIntoARemovedDirectory() throws Exception {
+        String uri = sftpUri("p1/out");
+        template.sendBodyAndHeader(uri, "first", Exchange.FILE_NAME, "first.txt");
+
+        FileUtil.removeDir(base.resolve("p1").toFile());
+        service.reset();
+
+        // a stream body reaches the producer as a stream cache with the default stream caching: it is read again
+        // from the start
+        template.sendBodyAndHeader(uri, new ByteArrayInputStreamCache(new ByteArrayInputStream("second".getBytes())),
+                Exchange.FILE_NAME, "second.txt");
+
+        assertEquals("second", Files.readString(base.resolve("p1/out/second.txt")));
+        assertTrue(service.requests(SftpConstants.SSH_FXP_MKDIR) >= 1, "requests: " + service.requests());
+    }
+
+    @Test
+    void autoCreateRemembersOnlyTheMostRecentDirectories() throws Exception {
+        // without stepwise, an upload into a remembered directory sends no request to change or check a directory
+        String uri = sftpUri("") + "&stepwise=false";
+        // more directories than the operations remember, each checked or created once
+        for (int i = 0; i <= 100; i++) {
+            template.sendBodyAndHeader(uri, "x", Exchange.FILE_NAME, "d" + i + "/x.txt");
+        }
+
+        service.reset();
+        template.sendBodyAndHeader(uri, "y", Exchange.FILE_NAME, "d100/y.txt");
+        assertEquals(0, service.requests(SftpConstants.SSH_FXP_STAT), "requests: " + service.requests());
+
+        // the first one was forgotten, so it is checked again
+        service.reset();
+        template.sendBodyAndHeader(uri, "y", Exchange.FILE_NAME, "d0/y.txt");
+        assertTrue(service.requests(SftpConstants.SSH_FXP_STAT) >= 1, "requests: " + service.requests());
+
+        assertEquals("y", Files.readString(base.resolve("d0/y.txt")));
+        assertEquals("y", Files.readString(base.resolve("d100/y.txt")));
     }
 
     @Test
@@ -186,7 +227,7 @@ class SftpStepwiseRequestsIT extends CamelTestSupport {
             }
         });
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
