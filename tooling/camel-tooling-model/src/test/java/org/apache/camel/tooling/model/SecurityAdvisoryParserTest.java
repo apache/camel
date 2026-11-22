@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging;
+package org.apache.camel.tooling.model;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests the advisory front-matter parsing of {@link UpdateSecurityAdvisoriesMojo} against canned copies of two real
- * published advisories: CVE-2025-27636 (recent front matter style) and CVE-2013-4330 (old style).
+ * Tests the advisory front-matter parsing of {@link SecurityAdvisoryParser} against canned copies of two real published
+ * advisories: CVE-2025-27636 (recent front matter style) and CVE-2013-4330 (old style).
  */
-class UpdateSecurityAdvisoriesMojoTest {
+class SecurityAdvisoryParserTest {
 
     private static String fixture(String name) throws IOException {
-        try (InputStream in = UpdateSecurityAdvisoriesMojoTest.class
+        try (InputStream in = SecurityAdvisoryParserTest.class
                 .getResourceAsStream("/security-advisories/" + name)) {
             assertThat(in).as("fixture /security-advisories/" + name).isNotNull();
             return new String(in.readAllBytes(), StandardCharsets.UTF_8);
@@ -43,7 +41,7 @@ class UpdateSecurityAdvisoriesMojoTest {
 
     @Test
     void parsesRecentAdvisoryStyle() throws Exception {
-        SecurityAdvisoryModel model = UpdateSecurityAdvisoriesMojo.parseAdvisory(fixture("CVE-2025-27636.md"));
+        SecurityAdvisoryModel model = SecurityAdvisoryParser.parse(fixture("CVE-2025-27636.md"));
 
         assertThat(model).isNotNull();
         assertThat(model.getCve()).isEqualTo("CVE-2025-27636");
@@ -59,7 +57,7 @@ class UpdateSecurityAdvisoriesMojoTest {
 
     @Test
     void parsesOldAdvisoryStyle() throws Exception {
-        SecurityAdvisoryModel model = UpdateSecurityAdvisoriesMojo.parseAdvisory(fixture("CVE-2013-4330.md"));
+        SecurityAdvisoryModel model = SecurityAdvisoryParser.parse(fixture("CVE-2013-4330.md"));
 
         assertThat(model).isNotNull();
         assertThat(model.getCve()).isEqualTo("CVE-2013-4330");
@@ -82,7 +80,7 @@ class UpdateSecurityAdvisoriesMojoTest {
                 ---
                 body
                 """;
-        assertThat(UpdateSecurityAdvisoriesMojo.parseAdvisory(draft)).isNull();
+        assertThat(SecurityAdvisoryParser.parse(draft)).isNull();
 
         String wrongType = """
                 ---
@@ -92,16 +90,16 @@ class UpdateSecurityAdvisoriesMojoTest {
                 ---
                 body
                 """;
-        assertThat(UpdateSecurityAdvisoriesMojo.parseAdvisory(wrongType)).isNull();
+        assertThat(SecurityAdvisoryParser.parse(wrongType)).isNull();
 
-        assertThat(UpdateSecurityAdvisoriesMojo.parseAdvisory("no front matter")).isNull();
-        assertThat(UpdateSecurityAdvisoriesMojo.parseAdvisory(null)).isNull();
+        assertThat(SecurityAdvisoryParser.parse("no front matter")).isNull();
+        assertThat(SecurityAdvisoryParser.parse(null)).isNull();
     }
 
     @Test
     void componentExtractionSkipsJiraIdsAndProse() {
         // lowercased JIRA ids and English prose following "Camel-" must not become component names
-        assertThat(UpdateSecurityAdvisoriesMojo.extractComponents(
+        assertThat(SecurityAdvisoryParser.extractComponents(
                 "See CAMEL-12444 and CAMEL-23200 for the fix.",
                 "Camel-internal headers with non-Camel-prefixed names are Camel-specific.",
                 "The camel-side filter uses the Camel-namespace and camel-case naming on camel-kafka and camel-aws2-sqs."))
@@ -110,7 +108,7 @@ class UpdateSecurityAdvisoriesMojoTest {
 
     @Test
     void modelRoundTripsThroughJsonMapper() throws Exception {
-        SecurityAdvisoryModel model = UpdateSecurityAdvisoriesMojo.parseAdvisory(fixture("CVE-2025-27636.md"));
+        SecurityAdvisoryModel model = SecurityAdvisoryParser.parse(fixture("CVE-2025-27636.md"));
 
         JsonObject json = JsonMapper.asJsonObject(model);
         SecurityAdvisoryModel copy = JsonMapper.generateSecurityAdvisoryModel(json);

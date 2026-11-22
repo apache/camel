@@ -462,8 +462,9 @@ image::jbang/camel-tui-chaos-explore.png[The exploration of the chaos example on
 
 The CVE Audit tab (under More > Project) scans all Maven dependencies on your integration's classpath
 against the https://osv.dev[OSV.dev] vulnerability database, and the Camel JARs against the Apache Camel
-security advisories that ship with the Camel catalog. It queries every JAR using the OSV batch
-API and displays known vulnerabilities grouped by severity (Critical, High, Medium, Low).
+security advisories: those that ship with the Camel catalog, merged with those published on camel-website, checked
+online once a day as `camel dependency audit` does (when that fails, the title says which are used). It queries every
+JAR using the OSV batch API and displays known vulnerabilities grouped by severity (Critical, High, Medium, Low).
 
 Each vulnerability shows the CVE ID, its CVSS score, the affected artifact, the version that fixes it (FIX
 column: the fix of the line the artifact's version is in, or the Camel release to upgrade to for a Camel

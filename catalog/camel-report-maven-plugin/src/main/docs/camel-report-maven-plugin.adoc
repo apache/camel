@@ -271,8 +271,11 @@ Or run it in every build, in the `verify` phase:
 </plugin>
 ----
 
-The Apache Camel security advisories are those of the catalog of the plugin, so use the latest release of the plugin,
-whatever the Camel version of the project, to know the latest advisories.
+The Apache Camel security advisories are those of the catalog of the plugin, merged with those published in the
+camel-website repository on GitHub, checked online once a day and kept in `~/.camel/advisories` (shared with the Camel
+CLI), so an older plugin knows the advisories published after its release. When GitHub cannot be reached, the copy of
+the day before is used, else those of the catalog, with a warning. `advisoriesUrl` reads them from a mirror instead (a
+JSON file in the format of the catalog), and `offline` checks those of the catalog only.
 
 === The offline OSV database
 
@@ -330,7 +333,9 @@ which then shows the vulnerabilities in the Security tab of the repository:
 | severity | low | The lowest severity to list: critical, high, medium or low.
 | failOn | none | Fails the build when a vulnerability at or above this severity is found (also one below `severity`): critical, high, medium, low, or none to only report them.
 | failOnError | false | Fails the build when the dependencies could not be checked with OSV.dev or the OSV database (not reachable, no database). Otherwise only the Apache Camel security advisories are checked then, with a warning.
-| offline | false | Checks the Apache Camel security advisories of the catalog only, without OSV.dev.
+| offline | false | Checks the Apache Camel security advisories of the catalog only, without OSV.dev and without checking the advisories online.
+| advisoriesUrl | | Where the Apache Camel security advisories are checked online: the GitHub contents API of camel-website (default `\https://api.github.com/repos/apache/camel-website/contents/content/security`), a mirror of it, or the URL or file of a JSON array in the format of the catalog.
+| advisoriesCache | ~/.camel/advisories | Where the advisories checked online are kept.
 | osvDatabase | false | Checks with the offline OSV database instead of the OSV.dev API.
 | osvDatabaseUrl | | Where the offline OSV database is downloaded from, or a ZIP file on disk (default `\https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip`). Implies `osvDatabase`.
 | osvDatabaseCache | ~/.camel/osv | Where a downloaded OSV database is kept.

@@ -20,7 +20,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.cve.CveAudit;
 import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.catalog.cve.OnlineAdvisories;
 import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.catalog.cve.OsvDatabase;
 import org.apache.camel.catalog.cve.VulnerabilitySource;
@@ -432,6 +435,16 @@ final class TuiSettings {
         String url = "default".equalsIgnoreCase(db) || "true".equalsIgnoreCase(db) ? OsvDatabase.DEFAULT_URL : db;
         HttpProxy proxy = url.startsWith("http://") || url.startsWith("https://") ? httpProxy(url) : null;
         return OsvDatabase.open(url, CamelHome.getCamelDir().resolve("osv"), OsvDatabase.DEFAULT_MAX_AGE, proxy);
+    }
+
+    /**
+     * The Apache Camel security advisories of the CVE Audit screen: those of the catalog, merged with those of
+     * camel-website, checked online once a day and cached in {@code ~/.camel/advisories}, as
+     * {@code camel dependency audit} does.
+     */
+    static OnlineAdvisories.Result camelAdvisories(CamelCatalog catalog) {
+        return OnlineAdvisories.load(OnlineAdvisories.DEFAULT_URL, CamelHome.getCamelDir().resolve("advisories"),
+                OnlineAdvisories.DEFAULT_MAX_AGE, httpProxy(OnlineAdvisories.DEFAULT_URL), CveAudit.advisories(catalog));
     }
 
     private static String trimToNull(String value) {

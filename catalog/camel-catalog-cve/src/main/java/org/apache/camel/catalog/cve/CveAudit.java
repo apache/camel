@@ -64,11 +64,25 @@ public final class CveAudit {
     public static Result audit(
             List<Dependency> deps, Map<String, Path> jars, Set<String> declared, Map<String, String> fallbackVia,
             Collection<String> endpointComponents, CamelCatalog catalog, VulnerabilitySource osv) {
+        return audit(deps, jars, declared, fallbackVia, endpointComponents, catalog, advisories(catalog), osv);
+    }
+
+    /**
+     * Audits the JARs, with the given Apache Camel security advisories, such as those checked online
+     * ({@link OnlineAdvisories}) instead of those of the catalog.
+     *
+     * @param advisories the Apache Camel security advisories
+     * @see              #audit(List, Map, Set, Map, Collection, CamelCatalog, VulnerabilitySource)
+     */
+    public static Result audit(
+            List<Dependency> deps, Map<String, Path> jars, Set<String> declared, Map<String, String> fallbackVia,
+            Collection<String> endpointComponents, CamelCatalog catalog, List<SecurityAdvisoryModel> advisories,
+            VulnerabilitySource osv) {
         Map<String, List<OsvClient.Vulnerability>> vulnMap = osv != null ? osv.queryBatch(deps) : Map.of();
         String osvError = osv != null ? osv.lastError() : null;
 
         List<CveFinding> findings = CveScan.buildCveFindings(vulnMap, Map.of());
-        findings = CveScan.applyCamelAdvisories(findings, deps, advisories(catalog));
+        findings = CveScan.applyCamelAdvisories(findings, deps, advisories);
         if (!findings.isEmpty()) {
             Map<String, List<String>> chains = chains(jars, declared, findings);
             CveScan.attachChains(findings, chains, fallbackVia, declared);
@@ -81,7 +95,8 @@ public final class CveAudit {
         return new Result(findings, CveScan.artifactRows(findings), osvError);
     }
 
-    private static List<SecurityAdvisoryModel> advisories(CamelCatalog catalog) {
+    /** The Apache Camel security advisories of the catalog. */
+    public static List<SecurityAdvisoryModel> advisories(CamelCatalog catalog) {
         try {
             return catalog.camelSecurityAdvisories();
         } catch (Exception e) {
