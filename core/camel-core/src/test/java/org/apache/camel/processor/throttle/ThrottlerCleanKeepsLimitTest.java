@@ -138,7 +138,9 @@ class ThrottlerCleanKeepsLimitTest extends ContextTestSupport {
         @Override
         public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
             scheduled.add(command);
-            return super.schedule(command, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
+            // the clean runs only in runScheduled(): the executor gets a no-op, so its future has a delay for the throttler
+            return super.schedule(() -> {
+            }, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
         }
 
         void runScheduled() {
