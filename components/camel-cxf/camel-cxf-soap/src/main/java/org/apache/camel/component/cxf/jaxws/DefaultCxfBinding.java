@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import jakarta.activation.DataHandler;
 import jakarta.xml.soap.SOAPMessage;
@@ -67,6 +69,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -105,7 +108,50 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfBinding.class);
+
+    /**
+     * The common HTTP request headers, which the consumer does not return as HTTP response headers (the same list as
+     * camel-platform-http). The headers of the request are still on the Camel message when the route does not replace
+     * them, and these should not be returned in the reply. Compared without regard to case, as the Camel headers keep
+     * the casing of the request and HTTP/2 requires field names in lower case.
+     */
+    private static final Set<String> COMMON_HTTP_REQUEST_HEADERS = caseInsensitiveSet(
+            "A-IM",
+            "Accept",
+            "Accept-Charset",
+            "Accept-Encoding",
+            "Accept-Language",
+            "Accept-Datetime",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers",
+            "Authorization",
+            "Cookie",
+            "Expect",
+            "Forwarded",
+            "From",
+            "Host",
+            "HTTP2-Settings",
+            "If-Match",
+            "If-Modified-Since",
+            "If-None-Match",
+            "If-Range",
+            "If-Unmodified-Since",
+            "Max-Forwards",
+            "Origin",
+            "Prefer",
+            "Proxy-Authorization",
+            "Range",
+            "Referer",
+            "TE",
+            "User-Agent");
+
     private HeaderFilterStrategy headerFilterStrategy;
+
+    private static Set<String> caseInsensitiveSet(String... names) {
+        Set<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        set.addAll(Arrays.asList(names));
+        return Collections.unmodifiableSet(set);
+    }
 
     // CxfBinding Methods
     // -------------------------------------------------------------------------
@@ -473,7 +519,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, CxfConstants.RESPONSE_CONTEXT);
 
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
+        // the headers of the request are still on the message, do not return them as HTTP response headers
+        propagateHeadersFromCamelToCxf(camelExchange, removeHttpRequestHeaders(camelHeaders), cxfExchange,
                 responseContext);
         Object protocolHeaders = responseContext.get(CxfConstants.PROTOCOL_HEADERS);
         if (protocolHeaders != null) {
@@ -508,7 +555,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, CxfConstants.RESPONSE_CONTEXT);
 
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
+        // the headers of the request are still on the message, do not return them as HTTP response headers
+        propagateHeadersFromCamelToCxf(camelExchange, removeHttpRequestHeaders(camelHeaders), cxfExchange,
                 responseContext);
         // create out message
         Endpoint ep = cxfExchange.get(Endpoint.class);
@@ -655,6 +703,35 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     // Non public methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Whether the header is one of the common HTTP request headers (such as Authorization, Cookie, Host and
+     * User-Agent), which the consumer does not return as HTTP response headers. A custom binding can override this
+     * method to return such a header in the reply.
+     *
+     * @param  name the name of the header
+     * @return      true to keep the header out of the HTTP response
+     */
+    protected boolean isHttpRequestHeader(String name) {
+        return COMMON_HTTP_REQUEST_HEADERS.contains(name);
+    }
+
+    /**
+     * The headers of the response message without the common HTTP request headers. The headers of the message are not
+     * changed: a copy is returned when there is a header to remove.
+     */
+    private Map<String, Object> removeHttpRequestHeaders(Map<String, Object> headers) {
+        Map<String, Object> answer = null;
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            if (isHttpRequestHeader(entry.getKey())) {
+                if (answer == null) {
+                    answer = new CaseInsensitiveMap(headers);
+                }
+                answer.remove(entry.getKey());
+            }
+        }
+        return answer != null ? answer : headers;
+    }
 
     protected MessageContentsList getResponsePayloadList(
             org.apache.cxf.message.Exchange exchange,
