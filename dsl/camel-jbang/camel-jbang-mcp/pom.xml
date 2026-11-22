@@ -128,6 +128,11 @@
         </dependency>
 
         <!-- rest-openapi component: the OpenAPI tools follow its rules (generated operation ids) -->
+        <!-- the wsdl tools -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-wsdl</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rest-openapi</artifactId>
