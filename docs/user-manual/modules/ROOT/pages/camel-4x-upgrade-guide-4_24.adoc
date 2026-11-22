@@ -11061,8 +11061,8 @@ Other changes to the messaging Kamelets:
   `jms-apache-artemis-sink` and `jms-apache-artemis-source` have new `username` and `password` options.
 * The body of `nats-source` is a `byte[]` instead of a stream. The `Content-Type` of the sender is kept instead of
   being set to `application/json`.
-* `mqtt5-source` without a `clientId` connects with a generated client ID instead of `mqtt-source`. This matters only
-  for broker ACLs or monitoring that use that ID.
+* `mqtt5-source` without a `clientId` connects with a generated client ID instead of `mqtt-source`, the old default.
+  This matters only for broker ACLs or monitoring that use that ID.
 * `spring-rabbitmq-source` and `spring-rabbitmq-sink` with `protocol: amqps` check the certificate of the broker
   against the trust store of Java, and that it names the host in `host`. A broker whose certificate Java does not
   trust, or that is for another name, no longer connects. Add its CA to the trust store of Java, or give it with the new
@@ -11074,6 +11074,11 @@ Other changes to the messaging Kamelets:
   for the host name in `serviceUrl`, as camel-pulsar now verifies the host name (CAMEL-27207, see _camel-pulsar - the
   host name of the broker is verified with pulsar+ssl_ above). A broker reached by an address its certificate does not
   name no longer connects.
+* The JMS sources `jms-apache-artemis-source`, `jms-amqp-10-source`, `jms-ibm-mq-source` and
+  `jms-apache-activemq-source` answer only to the `JMSReplyTo` of the incoming message. They still answer a request
+  that has a `JMSReplyTo`, to that destination, and send nothing for a message without one. They now put the incoming
+  `JMSReplyTo` back on the answer and remove the `CamelJms*` headers after the flow, so a flow that set `JMSReplyTo` or
+  `CamelJms*` headers no longer changes the answer. Request-reply is unchanged.
 
 === Kamelets - the component headers of the incoming message are removed
 
@@ -11257,7 +11262,7 @@ The sink Kamelets:
   route that removed the quotes itself, or compared the body with `"ORD-1"`, must change.
 * `solr-source` gives JSON text, with `Content-Type: application/json`, instead of a SolrJ object. A route that read
   the fields of the object must read the JSON instead, for example with `jsonpath`.
-* The SQL and Cassandra Kamelets send a query with `+` to the database unchanged. A query that worked around this, for
+* The SQL Kamelets and `cassandra-sink` send a query with `+` to the database unchanged. A query that worked around this, for
   example with `%2B`, now sends a literal `%2B`.
 * `google-sheets-source` with `majorDimension=COLUMNS` reads columns.
 * `mongodb-changes-stream-source` sends the whole document for an update, read again from the collection, instead of
@@ -11324,7 +11329,7 @@ Many Kamelets have new options. They change nothing when they are not set:
 * `aws-sqs-source`: `messageAttributeNames` and `attributeNames`. With them, the attributes of a message become
   headers.
 * `azure-eventhubs-source`: `consumerGroupName`.
-* The MQTT 5 Kamelets: `qos`, `retained` on the sink, and a trust store for TLS.
+* `mqtt5-source` and `mqtt5-sink`: `qos` and a trust store for TLS. `mqtt5-sink`: `retained`.
 * `cassandra-sink`: `datacenter`.
 * `exec-sink`: `args`, `workingDir`, `commandTimeout` and `exitValues`.
 * `ssh-source` and `ssh-sink`: login with a private key, `failOnUnknownHost` and `connectTimeout`. `password` is no
@@ -11430,3 +11435,9 @@ The Kamelet catalog 4.24 adds these Kamelets:
 * `soap-source` and `soap-action` (Preview) serve a SOAP web service from a WSDL, with the reply of the route as the
   response and SOAP faults from headers, or call an operation of a SOAP service from its WSDL, with XML text in and out
   and no generated Java code. Requests with a DOCTYPE are refused.
+* `kafka-share-source` (Preview) reads Kafka topics through a share group (KIP-932, Kafka 4.2 or newer), so that more
+  consumers than partitions share the records like a queue. Each record is acknowledged on its own, and one whose
+  handling fails is delivered again (`onFailure`, `kafka-delivery-count`).
+* `jms-apache-activemq-source` and `jms-apache-activemq-sink` send and receive messages on ActiveMQ Classic over
+  OpenWire (`tcp://`, `ssl://` or `failover:`), with queues or topics, durable subscriptions, selectors and
+  transactions. The sink pools its connections and removes the `CamelJms*` headers before sending.
