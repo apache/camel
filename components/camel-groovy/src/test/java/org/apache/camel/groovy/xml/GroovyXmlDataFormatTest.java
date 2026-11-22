@@ -180,7 +180,8 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
-        xml = xml + System.lineSeparator();
+        // the JDK serializer ends the lines of the document with the platform line separator, except the last line
+        xml = xml.replace(System.lineSeparator(), "\n") + "\n";
         Assertions.assertEquals(BOOKS, xml);
 
         MockEndpoint.assertIsSatisfied(context);
