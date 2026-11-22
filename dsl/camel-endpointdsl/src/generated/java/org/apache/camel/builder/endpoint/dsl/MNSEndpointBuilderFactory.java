@@ -973,9 +973,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option is a: <code>com.aliyun.mns.client.MNSClient</code> type.
          * 
@@ -990,9 +990,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option will be converted to a
          * <code>com.aliyun.mns.client.MNSClient</code> type.
@@ -1242,9 +1242,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option is a: <code>com.aliyun.mns.client.MNSClient</code> type.
          * 
@@ -1259,9 +1259,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option will be converted to a
          * <code>com.aliyun.mns.client.MNSClient</code> type.
@@ -1469,9 +1469,9 @@ public interface MNSEndpointBuilderFactory {
 
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option is a: <code>com.aliyun.mns.client.MNSClient</code> type.
          * 
@@ -1486,9 +1486,9 @@ public interface MNSEndpointBuilderFactory {
         }
         /**
          * To use a custom com.aliyun.mns.client.MNSClient. When this option is
-         * set or autowired, the region and accountEndpoint options are not
-         * used. The Camel endpoint does not close a client that is set or
-         * autowired.
+         * set or autowired, the region, accountEndpoint, accessKey, secretKey,
+         * and serviceKeys options are not used. The Camel endpoint does not
+         * close a client that is set or autowired.
          * 
          * The option will be converted to a
          * <code>com.aliyun.mns.client.MNSClient</code> type.

@@ -123,9 +123,9 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
               defaultValue = "1", label = "consumer")
     private int maxMessagesPerPoll = 1;
 
-    @UriParam(description = "To use a custom com.aliyun.mns.client.MNSClient. When this option is set or autowired, the region"
-                            + " and accountEndpoint options are not used. The Camel endpoint does not close a client that is"
-                            + " set or autowired.",
+    @UriParam(description = "To use a custom com.aliyun.mns.client.MNSClient. When this option is set or autowired, the region,"
+                            + " accountEndpoint, accessKey, secretKey, and serviceKeys options are not used. The Camel endpoint"
+                            + " does not close a client that is set or autowired.",
               displayName = "MNS Client", label = "advanced")
     @Metadata(autowired = true)
     private volatile MNSClient mnsClient;
