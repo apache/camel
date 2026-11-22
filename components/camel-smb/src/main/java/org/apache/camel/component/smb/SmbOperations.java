@@ -66,6 +66,13 @@ public class SmbOperations implements SmbFileOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbOperations.class);
 
+    /**
+     * How long a disconnect waits for the server to answer the close of the share and the logoff of the session. smbj
+     * waits up to its transact timeout (60 seconds by default) for each of them, so a server that went away would hold
+     * the poll, and the stop of the route, for minutes. The disconnect completes in the background after this time.
+     */
+    static final long DISCONNECT_WAIT_MILLIS = 2000;
+
     private final SmbConfiguration configuration;
     private SmbEndpoint endpoint;
     private boolean loggedIn;
@@ -76,7 +83,16 @@ public class SmbOperations implements SmbFileOperations {
 
     public SmbOperations(SmbConfiguration configuration) {
         this.configuration = configuration;
-        this.smbClient = configuration == null || configuration.getSmbConfig() == null
+        this.smbClient = createSmbClient();
+    }
+
+    SmbOperations(SmbConfiguration configuration, SMBClient smbClient) {
+        this.configuration = configuration;
+        this.smbClient = smbClient;
+    }
+
+    private SMBClient createSmbClient() {
+        return configuration == null || configuration.getSmbConfig() == null
                 ? new SMBClient() : new SMBClient(configuration.getSmbConfig());
     }
 
@@ -128,13 +144,59 @@ public class SmbOperations implements SmbFileOperations {
     @Override
     public void disconnect() throws GenericFileOperationFailedException {
         loggedIn = false;
+        DiskShare currentShare = share;
+        Session currentSession = session;
+        Connection currentConnection = connection;
+        share = null;
+        session = null;
+        connection = null;
+        if (currentShare == null && currentSession == null && currentConnection == null) {
+            return;
+        }
+        if (endpoint == null) {
+            close(currentConnection, currentSession, currentShare);
+            return;
+        }
+        Thread disconnector = endpoint.getCamelContext().getExecutorServiceManager()
+                .newThread("SmbDisconnect", () -> close(currentConnection, currentSession, currentShare));
+        disconnector.start();
+        try {
+            disconnector.join(DISCONNECT_WAIT_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        if (disconnector.isAlive()) {
+            LOG.warn("Disconnecting from {}:{} waits for the server, which does not answer."
+                     + " The disconnect completes in the background.",
+                    configuration.getHostname(), configuration.getPort());
+            // the SMB client hands out its open connection again to the next connect, until the connection is closed
+            if (smbClient != null) {
+                smbClient = createSmbClient();
+            }
+        }
+    }
+
+    /**
+     * Closes the share, the session and the connection, in this order, ignoring failures.
+     */
+    static void close(Connection connection, Session session, DiskShare share) {
+        if (connection != null && share != null && share.isConnected()) {
+            // smbj closes the directories it holds a lease on (the listings it caches) when the connection closes,
+            // after the share: closed then, each logs a WARN that the share has already been closed. So close them
+            // first, while the share is open.
+            try {
+                connection.getLeaseManager().close();
+            } catch (Exception e) {
+                LOG.debug("Error closing the leased directories of {} due to: {}. This exception is ignored.", share,
+                        e.getMessage(), e);
+            }
+        }
         if (share != null) {
             try {
                 share.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // ignore
             }
-            share = null;
         }
         if (session != null) {
             try {
@@ -142,7 +204,6 @@ public class SmbOperations implements SmbFileOperations {
             } catch (Exception e) {
                 // ignore
             }
-            session = null;
         }
         if (connection != null) {
             try {
@@ -156,7 +217,6 @@ public class SmbOperations implements SmbFileOperations {
             } catch (Exception e) {
                 // ignore
             }
-            connection = null;
         }
     }
 
