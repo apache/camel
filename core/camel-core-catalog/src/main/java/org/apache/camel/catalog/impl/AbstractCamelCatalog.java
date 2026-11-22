@@ -1078,8 +1078,9 @@ public abstract class AbstractCamelCatalog {
                 // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
                 copy.replaceAll((key, val) -> wrapRAW(key, val, rows));
 
-                boolean hasQuestionMark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
+                // (but not the ? of an optional property placeholder {{?name}}) (CAMEL-27361)
+                boolean hasQuestionMark = URISupport.indexOfQuestionMark(sb.toString()) != -1;
                 sb.append(hasQuestionMark ? ampersand : '?');
                 String query = URISupport.createQueryString(copy, ampersand, encode);
                 sb.append(query);
@@ -1113,7 +1114,8 @@ public abstract class AbstractCamelCatalog {
                     first = false;
                 }
             }
-            boolean hasQuestionmark = sb.indexOf("?") != -1;
+            // a ? char in the path, but not the ? of an optional property placeholder {{?name}} (CAMEL-27361)
+            boolean hasQuestionmark = URISupport.indexOfQuestionMark(sb.toString()) != -1;
 
             if (!copy.isEmpty()) {
                 // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
