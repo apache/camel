@@ -2034,7 +2034,8 @@ Usage: camel debug [-h] [--remote-attach] [--breakpoint=<breakpoint>]
                     [--quarkus-version=<quarkus-version>]
                     [--quarkus-ext-registry=<quarkus-ext-registry>]
                     [--spring-boot-version=<spring-boot-version>]
-                    [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
+                    [--packaging=<packaging>] [--profile=<profile>]
+                    [--dep=<dep>] [--gav=<gav>]
                     [--maven-settings=<maven-settings>]
                     [--maven-settings-security=<maven-settings-security>]
                     [--maven-central-enabled] [--maven-apache-snapshot-enabled]
@@ -2164,6 +2165,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -3555,8 +3560,8 @@ Usage: camel dev [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--quarkus-version=<quarkus-version>]
                   [--quarkus-ext-registry=<quarkus-ext-registry>]
                   [--spring-boot-version=<spring-boot-version>]
-                  [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                  [--maven-settings=<maven-settings>]
+                  [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                  [--gav=<gav>] [--maven-settings=<maven-settings>]
                   [--maven-settings-security=<maven-settings-security>]
                   [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                   [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]
@@ -3645,6 +3650,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -4080,10 +4089,11 @@ Examples:
 
 == camel export --help
 Export to other runtimes (Camel Main, Spring Boot, or Quarkus)
-Usage: camel export [-hy] [--dep=<dep>] [--runtime=<runtime>] [--name=<name>]
-                     [--port=<port>] [--management-port=<management-port>]
-                     [--gav=<gav>] [--parent-pom=<parent-pom>]
-                     [--exclude=<exclude>] [--maven-settings=<maven-settings>]
+Usage: camel export [-hy] [--packaging=<packaging>] [--dep=<dep>]
+                     [--runtime=<runtime>] [--name=<name>] [--port=<port>]
+                     [--management-port=<management-port>] [--gav=<gav>]
+                     [--parent-pom=<parent-pom>] [--exclude=<exclude>]
+                     [--maven-settings=<maven-settings>]
                      [--maven-settings-security=<maven-settings-security>]
                      [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                      [--main-classname=<main-classname>]
@@ -4113,6 +4123,10 @@ Usage: camel export [-hy] [--dep=<dep>] [--runtime=<runtime>] [--name=<name>]
 
 Options:
   -h, --help                Display this help and exit
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --dep, --dependency=<dep>
                             Add additional dependencies
       --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
@@ -5976,8 +5990,8 @@ Usage: camel run [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--quarkus-version=<quarkus-version>]
                   [--quarkus-ext-registry=<quarkus-ext-registry>]
                   [--spring-boot-version=<spring-boot-version>]
-                  [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                  [--maven-settings=<maven-settings>]
+                  [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                  [--gav=<gav>] [--maven-settings=<maven-settings>]
                   [--maven-settings-security=<maven-settings-security>]
                   [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                   [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]
@@ -6066,6 +6080,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -7494,8 +7512,8 @@ stderr:
                     [--quarkus-version=<quarkus-version>]
                     [--quarkus-ext-registry=<quarkus-ext-registry>]
                     [--spring-boot-version=<spring-boot-version>]
-                    [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                    [--maven-settings=<maven-settings>]
+                    [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                    [--gav=<gav>] [--maven-settings=<maven-settings>]
                     [--maven-settings-security=<maven-settings-security>]
                     [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                     [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]

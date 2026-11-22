@@ -77,6 +77,7 @@ camel debug [options]
 | `--openapi-ui` | Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default) | false | boolean
 | `--output` | File to store the current message body (will override). This allows for manual inspecting the message later. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
+| `--packaging` | Project packaging (jar or war; WAR requires --runtime=spring-boot) | jar | String
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
 | `--profile` | Profile to run (dev, test, prod). | dev | String
