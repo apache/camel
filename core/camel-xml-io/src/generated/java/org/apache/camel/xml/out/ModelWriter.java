@@ -2293,6 +2293,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("escape", def.getEscape(), null);
         doWriteAttribute("headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute("header", def.getHeader(), null);
+        doWriteAttribute("headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute("allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute("ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);

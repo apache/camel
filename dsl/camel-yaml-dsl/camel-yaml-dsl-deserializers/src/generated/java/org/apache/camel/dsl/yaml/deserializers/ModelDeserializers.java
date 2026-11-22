@@ -2732,6 +2732,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "format", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180", defaultValue = "DEFAULT", description = "The format to use.", displayName = "Format"),
                     @YamlProperty(name = "header", type = "string", description = "To configure the CSV headers. Multiple headers can be separated by comma.", displayName = "Header"),
                     @YamlProperty(name = "headerDisabled", type = "boolean", defaultValue = "false", description = "Whether to disable headers.", displayName = "Header Disabled"),
+                    @YamlProperty(name = "headerFromMapKeys", type = "boolean", defaultValue = "false", description = "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.", displayName = "Header From Map Keys"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreEmptyLines", type = "boolean", defaultValue = "false", description = "Whether to ignore empty lines.", displayName = "Ignore Empty Lines"),
                     @YamlProperty(name = "ignoreHeaderCase", type = "boolean", defaultValue = "false", description = "Whether to ignore case when accessing header names.", displayName = "Ignore Header Case"),
@@ -2821,6 +2822,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "headerDisabled": {
                     String val = asText(node);
                     target.setHeaderDisabled(val);
+                    break;
+                }
+                case "headerFromMapKeys": {
+                    String val = asText(node);
+                    target.setHeaderFromMapKeys(val);
                     break;
                 }
                 case "id": {

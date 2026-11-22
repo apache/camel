@@ -2967,6 +2967,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "escape", def.getEscape(), null);
         doWriteAttribute(sb, "headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute(sb, "header", def.getHeader(), null);
+        doWriteAttribute(sb, "headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute(sb, "allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute(sb, "ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute(sb, "ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);

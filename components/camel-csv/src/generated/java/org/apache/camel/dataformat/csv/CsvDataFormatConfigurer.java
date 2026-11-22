@@ -33,6 +33,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         map.put("Format", java.lang.String.class);
         map.put("Header", java.lang.String.class);
         map.put("HeaderDisabled", boolean.class);
+        map.put("HeaderFromMapKeys", boolean.class);
         map.put("IgnoreEmptyLines", java.lang.Boolean.class);
         map.put("IgnoreHeaderCase", java.lang.Boolean.class);
         map.put("IgnoreSurroundingSpaces", java.lang.Boolean.class);
@@ -72,6 +73,8 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "header": target.setHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdisabled":
         case "headerDisabled": target.setHeaderDisabled(property(camelContext, boolean.class, value)); return true;
+        case "headerfrommapkeys":
+        case "headerFromMapKeys": target.setHeaderFromMapKeys(property(camelContext, boolean.class, value)); return true;
         case "ignoreemptylines":
         case "ignoreEmptyLines": target.setIgnoreEmptyLines(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "ignoreheadercase":
@@ -130,6 +133,8 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "header": return java.lang.String.class;
         case "headerdisabled":
         case "headerDisabled": return boolean.class;
+        case "headerfrommapkeys":
+        case "headerFromMapKeys": return boolean.class;
         case "ignoreemptylines":
         case "ignoreEmptyLines": return java.lang.Boolean.class;
         case "ignoreheadercase":
@@ -184,6 +189,8 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "header": return target.getHeader();
         case "headerdisabled":
         case "headerDisabled": return target.isHeaderDisabled();
+        case "headerfrommapkeys":
+        case "headerFromMapKeys": return target.isHeaderFromMapKeys();
         case "ignoreemptylines":
         case "ignoreEmptyLines": return target.getIgnoreEmptyLines();
         case "ignoreheadercase":
