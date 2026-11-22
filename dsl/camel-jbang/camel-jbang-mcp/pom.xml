@@ -127,12 +127,12 @@
             <artifactId>camel-yaml-dsl</artifactId>
         </dependency>
 
-        <!-- rest-openapi component: the OpenAPI tools follow its rules (generated operation ids) -->
         <!-- the wsdl tools -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-wsdl</artifactId>
         </dependency>
+        <!-- rest-openapi component: the OpenAPI tools follow its rules (generated operation ids) -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rest-openapi</artifactId>

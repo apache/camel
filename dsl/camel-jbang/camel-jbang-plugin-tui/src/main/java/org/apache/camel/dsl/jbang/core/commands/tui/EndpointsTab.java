@@ -466,7 +466,6 @@ class EndpointsTab extends AbstractTableTab {
         }
     }
 
-    /** The endpoint selected in the table, as filtered and sorted. */
     /** Whether the bottom panel is the detail or the WSDL of the endpoint (text with focus and scroll). */
     private boolean isTextPanel() {
         return panelMode == PANEL_DETAIL || panelMode == PANEL_WSDL;
@@ -514,6 +513,7 @@ class EndpointsTab extends AbstractTableTab {
                 area);
     }
 
+    /** The endpoint selected in the table, as filtered and sorted. */
     private EndpointInfo selectedEndpoint(IntegrationInfo info) {
         Integer sel = tableState.selected();
         if (info == null || sel == null) {
