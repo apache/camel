@@ -1295,6 +1295,26 @@ A route that relied on one of these headers being returned can return it under a
 `cxfBinding` option to a subclass of `DefaultCxfBinding` that overrides `isHttpRequestHeader` and returns `false` for
 the header.
 
+=== camel-cxf - in Camel JBang a cxf consumer is served on the platform-http server, and its address is a path
+
+In Camel JBang (the Camel CLI), a `cxf` consumer (a SOAP service) is now served on the platform-http server, the
+Vert.x HTTP server that also serves REST, platform-http routes and the health checks, with its port, bind address, TLS
+and authentication (`camel.server.*`). Camel JBang no longer downloads `cxf-rt-transports-http-undertow` to start a
+separate server on the port of the address, also not when Jetty or Undertow is on the classpath.
+
+The address of a consumer is now a path, served under `/services` (option `camel.cxf.path`), the same as `cxf.path` on
+Spring Boot and `quarkus.cxf.path` on Quarkus. Change `cxf:http://0.0.0.0:9000/orders` to `cxf:/orders`; the
+service is then at `\http://localhost:8080/services/orders` (with `camel.server.port`). A consumer with an address with a
+scheme and a host fails when the route starts. The `cxf` producer (a SOAP client) is not changed and still takes a full
+URL.
+
+`camel export` to Camel Main adds `camel-cxf-platform-http` and `camel-platform-http-main` for an integration with
+`camel-cxf-soap`, and turns on the HTTP server. The export to Spring Boot and Quarkus uses their CXF starter and
+extension, as before, with `camel.cxf.path` mapped to `cxf.path` and `quarkus.cxf.path`.
+
+A Camel Main application is not changed: it serves a cxf consumer with the transport it brings (Jetty or Undertow),
+unless it adds `camel-cxf-platform-http`.
+
 === camel-snmp - the trap consumer receives only the traps of its snmpVersion
 
 The trap consumer (`type=TRAP`) now receives only the traps of the `snmpVersion` of its endpoint. With `snmpVersion=0`

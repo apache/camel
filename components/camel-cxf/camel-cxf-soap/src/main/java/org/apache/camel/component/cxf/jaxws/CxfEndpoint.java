@@ -97,6 +97,8 @@ import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.endpoint.ServerLifeCycleListener;
+import org.apache.cxf.endpoint.ServerLifeCycleManager;
 import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
@@ -594,6 +596,18 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         var factories = getCamelContext().getRegistry().findByType(HttpDestinationFactory.class);
         for (var factory : factories) {
             sfb.getBus().setExtension(factory, HttpDestinationFactory.class);
+        }
+        // add custom server lifecycle listeners (such as camel-cxf-platform-http, which serves the endpoint on the
+        // platform-http server when the server starts)
+        var listeners = getCamelContext().getRegistry().findByType(ServerLifeCycleListener.class);
+        if (!listeners.isEmpty()) {
+            ServerLifeCycleManager manager = sfb.getBus().getExtension(ServerLifeCycleManager.class);
+            if (manager != null) {
+                for (var listener : listeners) {
+                    // a listener that is already registered (a shared bus) is not added again
+                    manager.registerListener(listener);
+                }
+            }
         }
 
         getNullSafeCxfConfigurer().configure(sfb);

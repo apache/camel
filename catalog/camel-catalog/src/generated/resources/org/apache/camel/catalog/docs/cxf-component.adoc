@@ -129,6 +129,30 @@ Using CXF with Spring Boot or Quarkus comes automatic integrated with the embedd
 
 See more details in the https://cxf.apache.org/docs/http-transport.html[CXF Transport] documentation.
 
+=== Camel JBang and Camel Main: the platform-http server
+
+In Camel JBang (the Camel CLI), a cxf consumer is served on the platform-http server, the same Vert.x HTTP server
+(port, bind address, TLS and authentication of `camel.server.*`) that serves REST and platform-http routes. In a Camel
+Main application, add the `camel-cxf-platform-http` dependency (with `camel-platform-http-main`) to do the same. See
+xref:others:cxf-platform-http.adoc[CXF Platform HTTP].
+
+The address of the consumer is then a path, served under `/services` (the `camel.cxf.path` option), as on Spring Boot
+(`cxf.path`) and Quarkus (`quarkus.cxf.path`):
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf:/orders
+      parameters:
+        wsdlURL: classpath:orders.wsdl
+      steps:
+        - to: direct:order
+----
+
+The service is at `\http://localhost:8080/services/orders`. An address with a scheme and a host, such as
+`\http://0.0.0.0:9000/orders`, fails when the route starts. The cxf producer still takes a full URL.
+
 == WS-Security UsernameToken
 
 The `wsSecurity` options set up a WS-Security UsernameToken without Java code. The producer sends a UsernameToken in

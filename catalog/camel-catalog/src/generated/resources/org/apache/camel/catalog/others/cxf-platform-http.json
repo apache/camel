@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cxf-platform-http",
+    "title": "CXF Platform HTTP",
+    "description": "Serve the SOAP services of cxf consumers on the platform-http server (Vert.x) in Camel Main and Camel JBang",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "soap,webservice,http",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cxf-platform-http",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

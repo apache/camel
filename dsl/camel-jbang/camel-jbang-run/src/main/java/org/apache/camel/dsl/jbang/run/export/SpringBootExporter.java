@@ -579,6 +579,16 @@ class SpringBootExporter extends Exporter {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
+        if (key.startsWith("camel.cxf.")) {
+            // the options of camel-cxf-platform-http (camel-main) are those of the CXF servlet on Spring Boot
+            if (CXF_PATH.equals(key)) {
+                return super.applicationPropertyLine("cxf.path", value);
+            }
+            if (isCxfUseXForwardedHeaders(key)) {
+                return super.applicationPropertyLine("cxf.servlet.init.use-x-forwarded-headers", value);
+            }
+            return null;
+        }
         if (key.startsWith("camel.server.") || key.startsWith("camel.management.")) {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
