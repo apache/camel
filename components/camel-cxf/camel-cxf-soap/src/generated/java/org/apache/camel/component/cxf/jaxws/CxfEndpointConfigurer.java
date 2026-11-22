@@ -90,6 +90,16 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "wrapped": target.setWrapped(property(camelContext, boolean.class, value)); return true;
         case "wrappedstyle":
         case "wrappedStyle": target.setWrappedStyle(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "wssecuritycallbackhandler":
+        case "wsSecurityCallbackHandler": target.setWsSecurityCallbackHandler(property(camelContext, javax.security.auth.callback.CallbackHandler.class, value)); return true;
+        case "wssecuritycredentials":
+        case "wsSecurityCredentials": target.setWsSecurityCredentials(property(camelContext, java.util.Map.class, value)); return true;
+        case "wssecuritypassword":
+        case "wsSecurityPassword": target.setWsSecurityPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "wssecuritypasswordtype":
+        case "wsSecurityPasswordType": target.setWsSecurityPasswordType(property(camelContext, java.lang.String.class, value)); return true;
+        case "wssecurityusername":
+        case "wsSecurityUsername": target.setWsSecurityUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "wsdlurl":
         case "wsdlURL": target.setWsdlURL(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -165,6 +175,16 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "wrapped": return boolean.class;
         case "wrappedstyle":
         case "wrappedStyle": return java.lang.Boolean.class;
+        case "wssecuritycallbackhandler":
+        case "wsSecurityCallbackHandler": return javax.security.auth.callback.CallbackHandler.class;
+        case "wssecuritycredentials":
+        case "wsSecurityCredentials": return java.util.Map.class;
+        case "wssecuritypassword":
+        case "wsSecurityPassword": return java.lang.String.class;
+        case "wssecuritypasswordtype":
+        case "wsSecurityPasswordType": return java.lang.String.class;
+        case "wssecurityusername":
+        case "wsSecurityUsername": return java.lang.String.class;
         case "wsdlurl":
         case "wsdlURL": return java.lang.String.class;
         default: return null;
@@ -241,6 +261,16 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "wrapped": return target.isWrapped();
         case "wrappedstyle":
         case "wrappedStyle": return target.getWrappedStyle();
+        case "wssecuritycallbackhandler":
+        case "wsSecurityCallbackHandler": return target.getWsSecurityCallbackHandler();
+        case "wssecuritycredentials":
+        case "wsSecurityCredentials": return target.getWsSecurityCredentials();
+        case "wssecuritypassword":
+        case "wsSecurityPassword": return target.getWsSecurityPassword();
+        case "wssecuritypasswordtype":
+        case "wsSecurityPasswordType": return target.getWsSecurityPasswordType();
+        case "wssecurityusername":
+        case "wsSecurityUsername": return target.getWsSecurityUsername();
         case "wsdlurl":
         case "wsdlURL": return target.getWsdlURL();
         default: return null;
@@ -253,6 +283,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "properties": return java.lang.Object.class;
         case "serviceclass":
         case "serviceClass": return java.lang.Object.class;
+        case "wssecuritycredentials":
+        case "wsSecurityCredentials": return java.lang.String.class;
         default: return null;
         }
     }

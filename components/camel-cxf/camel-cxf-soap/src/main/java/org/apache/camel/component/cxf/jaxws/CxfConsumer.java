@@ -90,10 +90,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         ServerFactoryBean svrBean = cxfEndpoint.createServerFactoryBean();
         svrBean.setInvoker(new CxfConsumerInvoker(cxfEndpoint));
         final Server ret = svrBean.create();
-        // Apply the server configurer if it is possible
-        if (cxfEndpoint.getCxfConfigurer() != null) {
-            cxfEndpoint.getCxfConfigurer().configureServer(ret);
-        }
+        // apply the server configurers: the custom cxfConfigurer, and the ones of the endpoint options (WS-Security)
+        cxfEndpoint.getChainedCxfConfigurer().configureServer(ret);
         ret.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
             ret.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
