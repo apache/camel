@@ -7229,6 +7229,12 @@ The public method `MNSEndpoint.initClient()` now returns the `MNSClient` that th
 requests with, instead of `void`. A call that ignores the result compiles as before, but code compiled against an
 earlier version must be recompiled, and a subclass that overrides `initClient()` must return the client.
 
+=== camel-alibaba-mns - ClientConfigurations has only the operation, the queue name and the topic name
+
+`ClientConfigurations` of `camel-alibaba-mns` no longer has the record components `accessKey`, `secretKey`, `region` and
+`accountEndpoint`, which no code read. Code that creates the record, or calls one of these four accessors, needs a
+change. The producer no longer needs an AccessKey pair when the `mnsClient` option is set or autowired.
+
 === camel-minio - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to stat or get one of the listed objects (for example access denied, or

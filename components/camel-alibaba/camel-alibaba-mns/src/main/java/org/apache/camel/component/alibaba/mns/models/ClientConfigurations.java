@@ -18,10 +18,6 @@ package org.apache.camel.component.alibaba.mns.models;
 
 public record ClientConfigurations(
         String operation,
-        String accessKey,
-        String secretKey,
-        String region,
-        String accountEndpoint,
         String queueName,
         String topicName) {
 }
