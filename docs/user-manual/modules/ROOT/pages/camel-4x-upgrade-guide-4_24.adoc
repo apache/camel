@@ -5567,8 +5567,27 @@ charset. A body that cannot be converted, such as a `Map`, fails the exchange wi
 Before, such a body was sent as an empty MLLP message: with `InOut` the exchange then failed with a
 `MllpAcknowledgementTimeoutException` after the receive timeout, and with `InOnly` it completed without an error.
 
-After sending a `String` body, the `CamelCharsetName` exchange property is now the charset the message was sent in.
-Before, it was set to `charsetName` even when the charset of the exchange was used to encode the message.
+=== camel-mllp - the charset of a message is MSH-18, then charsetName, and no longer the CamelCharsetName exchange property
+
+The mllp producer now encodes a `String` body in the charset named in MSH-18 of the message, and in its `charsetName`
+when the message has no MSH-18 (or MSH-18 names a charset that is not supported), as the mllp consumer already
+decoded it. The `CamelCharsetName` header and exchange property no longer choose the charset of the producer, and the
+producer no longer sets the `CamelCharsetName` exchange property after sending. Before, the producer ignored MSH-18 and
+used the `CamelCharsetName` header, then the exchange property, then `charsetName`: a message marked `UNICODE UTF-8` in
+MSH-18 was sent in ISO-8859-1, and in a route from an mllp consumer to an mllp producer the `charsetName` of the
+producer was ignored. A text body of another type, such as a `Reader`, is converted in `charsetName` too. To send a
+message in a charset that is not its MSH-18, send it as a `byte[]`.
+
+The mllp consumer no longer sets the `CamelCharsetName` exchange property for a `String` body (the default,
+`stringPayload=true`), so its charset (ISO-8859-1 by default) is no longer used by the later steps of the route that
+turn text into bytes. With `stringPayload=false`, it sets the property to the charset of the `byte[]` body: the charset
+of MSH-18, and `charsetName` when the message has no MSH-18. Before, the property was always the `charsetName` of the
+consumer. An acknowledgement given as a `String` in the `CamelMllpAcknowledgement` or `CamelMllpAcknowledgementString`
+exchange property is encoded in the charset of its MSH-18, and else in the charset of the exchange, or `charsetName`.
+
+The `CamelMllpCharset` header of the consumer now holds the MSH-18 value of the message (such as `UNICODE UTF-8`), as
+documented. Before, it held the `charsetName` of the consumer (`ISO_8859_1` by default) whenever the message had an
+MSH-18.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
