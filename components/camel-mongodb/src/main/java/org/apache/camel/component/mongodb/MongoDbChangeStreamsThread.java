@@ -22,6 +22,7 @@ import com.mongodb.MongoCommandException;
 import com.mongodb.MongoException;
 import com.mongodb.MongoServerException;
 import com.mongodb.client.ChangeStreamIterable;
+import com.mongodb.client.MongoChangeStreamCursor;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
@@ -54,6 +55,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private static final int UNKNOWN_FIELD = 40415;
 
     private List<BsonDocument> bsonFilter;
+    // where a cursor opened again resumes: the token of the last event whose exchange completed or, once a getMore
+    // returned no event and the exchange of the last event read before it completed, the post batch resume token of
+    // the change stream
     private BsonDocument resumeToken;
     // the operation time read just before the change stream was opened without a resume token. Until an exchange
     // completed (and so there is a resume token), a cursor opened again starts at it instead of the current time, so
@@ -93,6 +97,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         try {
             return watch().resumeAfter(resumeToken).iterator();
         } catch (MongoCommandException e) {
+            if (isStartNotInOplog(e.getErrorCode())) {
+                return openWithoutTokenAfterHistoryLost(e);
+            }
             if (e.getErrorCode() != INVALID_RESUME_TOKEN) {
                 throw e;
             }
@@ -104,6 +111,12 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             MongoCursor cursor;
             try {
                 cursor = watch().startAfter(resumeToken).iterator();
+            } catch (MongoCommandException startAfterFailure) {
+                if (isStartNotInOplog(startAfterFailure.getErrorCode())) {
+                    return openWithoutTokenAfterHistoryLost(startAfterFailure);
+                }
+                startAfterFailure.addSuppressed(e);
+                throw startAfterFailure;
             } catch (RuntimeException startAfterFailure) {
                 startAfterFailure.addSuppressed(e);
                 throw startAfterFailure;
@@ -113,6 +126,23 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                     endpoint.getCollection(), e.getErrorMessage());
             return cursor;
         }
+    }
+
+    /**
+     * Opens the change stream at the current time when the oplog no longer has the resume token: it can never be
+     * resumed after it (the server answers the same for every attempt, and for every start of the route while the token
+     * is stored), and the changes after it that the oplog still has cannot be read either. The stored token is replaced
+     * by the next one the consumer commits.
+     */
+    private MongoCursor openWithoutTokenAfterHistoryLost(MongoCommandException e) {
+        log.warn("The change stream of collection {} cannot be resumed after its resume token, as the oplog no longer goes"
+                 + " back that far ({}). Started a new change stream at the current time, changes made since that token"
+                 + " may not have been consumed.",
+                endpoint.getCollection(), e.getErrorMessage());
+        resumeToken = null;
+        // the start time is older than the token, so the oplog does not have it either
+        startTime = null;
+        return openWithoutToken();
     }
 
     private MongoCursor openWithoutToken() {
@@ -210,8 +240,27 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     @Override
     protected void doRun() {
         try {
-            while (cursor.hasNext() && keepRunning) {
-                ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
+            // whether the exchange of the last event this cursor returned completed, so that the post batch resume
+            // token does not pass an event whose exchange failed. A failed event that a later one passed is not held
+            // back: the token of the later event, committed when its exchange completed, already passed it
+            boolean lastRouted = true;
+            while (keepRunning) {
+                // tryNext rather than hasNext: hasNext waits for the next event across the getMores that return none, and
+                // only after one of those does the cursor give the post batch resume token, the position up to which
+                // the change stream has read the oplog. Without an event a getMore waits on the server for up to its
+                // maxAwaitTime
+                ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.tryNext();
+                if (dbObj == null) {
+                    if (!keepRunning || cursor.getServerCursor() == null) {
+                        // the server closed the cursor (an invalidate event ended the change stream), where hasNext
+                        // returns false
+                        break;
+                    }
+                    if (lastRouted) {
+                        advanceToPostBatchResumeToken();
+                    }
+                    continue;
+                }
                 Exchange exchange = createMongoDbExchange(dbObj.getFullDocument());
 
                 Object documentId = readDocumentId(dbObj.getDocumentKey());
@@ -237,7 +286,8 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                     }
                     // a failed event does not advance the resume token itself, but a later event that
                     // succeeds commits its own, so the failure is reported rather than retried
-                    if (processExchange(exchange)) {
+                    lastRouted = processExchange(exchange);
+                    if (lastRouted) {
                         this.resumeToken = currentResumeToken;
                         commitManager.recordResumeToken(currentResumeToken);
                         commitManager.commit();
@@ -263,6 +313,31 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             } else {
                 throw e;
             }
+        }
+    }
+
+    /**
+     * Takes the post batch resume token of the cursor after a getMore that returned no event, as the token a cursor
+     * opened again resumes after, and commits it. On a collection that sees no change while the rest of the replica set
+     * is written, the token of the last event soon falls out of the oplog, and a change stream that the driver cannot
+     * resume itself (the server cannot be reached for longer than the server selection timeout) could then no longer be
+     * resumed, while this token still can. A filter of the change stream ({@code streamFilter}) does not hold it back
+     * either: it passes the events the filter left out.
+     */
+    private void advanceToPostBatchResumeToken() {
+        BsonDocument postBatchResumeToken = cursor instanceof MongoChangeStreamCursor<?> changeStreamCursor
+                ? changeStreamCursor.getResumeToken() : null;
+        // before the first reply with a post batch resume token (MongoDB 4.0.7 and later send one with every reply) the
+        // cursor gives the token it was opened with, or null when it was opened without one
+        if (postBatchResumeToken == null || postBatchResumeToken.equals(resumeToken)) {
+            return;
+        }
+        resumeToken = postBatchResumeToken;
+        try {
+            commitManager.recordResumeToken(postBatchResumeToken);
+            commitManager.commit();
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error committing the change stream resume token", e);
         }
     }
 

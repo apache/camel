@@ -923,6 +923,20 @@ A cql endpoint no longer closes a session given with `session` or `beanRef` when
 uses it is removed. It still closes a session it creates from its `hosts`, and creates a new one when it is started
 again. The application closes a session it gives to the endpoint, such as with a destroy method of its bean.
 
+=== camel-mongodb - the change streams consumer stores the post batch resume token
+
+While no change of its collection arrives, the change streams consumer now takes the post batch resume token of the
+change stream after each getMore that returns no change (about once a second), and stores it in the
+`changeStreamTokenRepository` when it differs from the stored token. A repository is therefore also written while the
+collection sees no change, at most about once a second. Before, only the token of the last change whose exchange
+completed was stored; on a collection that sees few changes, that token could fall out of the oplog, and the change
+stream could then no longer be resumed.
+
+A resume token that the oplog no longer has (MongoDB answers ChangeStreamHistoryLost), such as a token stored before
+the route was stopped for longer than the oplog window, or a `changeStreamToken` that old, no longer fails the start of
+the route, and the consumer no longer tries it again for as long as the route runs: it logs a WARN and opens the change
+stream at the current time, so the changes made since that token are not consumed.
+
 === camel-mina-sftp - checking whether a file exists takes one lstat request
 
 The `mina-sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,

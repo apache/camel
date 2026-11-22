@@ -1340,6 +1340,18 @@ from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=ticket
 
 You can use only endpoint options, only route-level resumable configuration, or both depending on your deployment requirements.
 
+While no change of the collection arrives, the change stream still reads the oplog, which the other collections of the
+replica set write. The consumer then takes the post batch resume token of the change stream, the position up to which
+it has read the oplog, after each getMore that returns no change (MongoDB waits up to one second for a change), as the
+token that a new change stream resumes after, and stores it in the `changeStreamTokenRepository`. It does so only when
+the exchange of the last change it read completed, so a change whose exchange failed is still read again by a new
+change stream, unless a later change completed (as before, the token of that change already passes the failed one).
+The token is not passed to a resume strategy, which only gets the tokens of the exchanges.
+
+If the oplog no longer has the token to resume after (MongoDB answers ChangeStreamHistoryLost), for example because the
+route was stopped for longer than the oplog window, the consumer logs a WARN and opens the change stream at the current
+time: the changes made since that token may not have been consumed.
+
 === Type conversions
 
 The `MongoDbBasicConverters` type converter included with the

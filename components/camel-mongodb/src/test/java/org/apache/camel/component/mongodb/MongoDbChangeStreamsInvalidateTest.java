@@ -149,7 +149,7 @@ class MongoDbChangeStreamsInvalidateTest {
      * manual, "Invalidate Events" and "Resume a Change Stream"):
      * <ul>
      * <li>without a resume option: the insert, the drop and the invalidate event; the server then closes the cursor, so
-     * {@code hasNext()} returns false;</li>
+     * {@code tryNext()} returns null and {@code getServerCursor()} null;</li>
      * <li>{@code resumeAfter} the token of the invalidate event: the aggregate command fails with InvalidResumeToken
      * (260), "Attempting to resume a change stream using 'resumeAfter' is not allowed from an invalidate notification",
      * which the driver throws from {@code iterator()} as a {@link MongoCommandException};</li>

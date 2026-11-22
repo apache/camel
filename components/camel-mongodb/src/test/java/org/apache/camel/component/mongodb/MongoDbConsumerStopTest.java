@@ -129,7 +129,10 @@ class MongoDbConsumerStopTest {
     @SuppressWarnings("unchecked")
     void changeStreamsConsumerStopsWhileItsThreadIsBlockedReadingTheCursor() throws Exception {
         MongoChangeStreamCursor<?> cursor = mock(MongoChangeStreamCursor.class);
-        when(cursor.hasNext()).thenAnswer(i -> readThatDoesNotReturn());
+        when(cursor.tryNext()).thenAnswer(i -> {
+            readThatDoesNotReturn();
+            return null;
+        });
         ChangeStreamIterable<Document> watch = mock(ChangeStreamIterable.class);
         when(collection.watch()).thenReturn(watch);
         when(watch.fullDocument(any(FullDocument.class))).thenReturn(watch);
