@@ -257,6 +257,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private void closeInternal() {
         releaseFileLock();
         closeLockFiles();
+        // Safe without stateLock: closeInternal() is only called from doStart() under contextStartLock,
+        // before the first scheduleTryLock(), so no concurrent acquireLock() writes lockPathKey here.
         unregisterLockPath(lockPathKey);
         lockPathKey = null;
     }
