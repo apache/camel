@@ -140,6 +140,8 @@ class CxfWsSecurityUsernameTokenTest extends CamelTestSupport {
         Exchange exchange = template.request(uri, e -> e.getIn().setBody(REQUEST));
         SoapFault fault = assertInstanceOf(SoapFault.class, exchange.getException());
         assertTrue(fault.getMessage().contains("security"), fault.getMessage());
+        // the code that the docs give for a refused UsernameToken (SOAP 1.1), which does not tell why
+        assertEquals("SecurityError", fault.getFaultCode().getLocalPart(), fault.getFaultCode().toString());
     }
 
     @Test

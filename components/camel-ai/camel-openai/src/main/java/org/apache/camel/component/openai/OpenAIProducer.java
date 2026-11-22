@@ -241,7 +241,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // Search installs a synthetic tool even when every real tool is omitted, so the agentic loop still runs.
             boolean agenticTools = toolSearchEnabled || hasMcpTools;
             if (Boolean.TRUE.equals(streaming) && agenticTools && config.isAutoToolExecution()) {
-                LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
+                LOG.info("Streaming with tools is not supported; falling back to non-streaming for the tool loop");
                 processNonStreaming(exchange, params, config);
             } else if (Boolean.TRUE.equals(streaming)) {
                 processStreaming(exchange, params);

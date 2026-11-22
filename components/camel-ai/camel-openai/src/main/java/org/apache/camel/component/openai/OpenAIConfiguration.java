@@ -261,7 +261,7 @@ public class OpenAIConfiguration implements Cloneable {
     private int maxToolIterations = 50;
 
     @UriParam(defaultValue = "0")
-    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the MCP agentic loop. "
+    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the tool loop. "
                             + "When 0 or negative, no token budget is enforced. Enforcement runs after each API call "
                             + "that requests further tool execution, so actual spend may exceed the configured budget "
                             + "by up to one call (typically the largest, as the prompt grows each iteration). "
@@ -269,13 +269,15 @@ public class OpenAIConfiguration implements Cloneable {
     private long maxAgenticTokens;
 
     @UriParam(defaultValue = "true")
-    @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
-                            + "and loop back to the model. When false, tool calls are returned as the message body for manual handling.")
+    @Metadata(description = "When true, run the tool calls the model asks for, both MCP tools (mcpServer.*) and route "
+                            + "tools (tags), and send the results back to the model until it answers. When false, the tool "
+                            + "calls are returned as the message body for the route to handle.")
     private boolean autoToolExecution = true;
 
     @UriParam
     @Metadata(description = "Comma-separated tags for discovering route-based tools registered via the ai-tool component. "
-                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools.")
+                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools, "
+                            + "and run in the same tool loop (see autoToolExecution). No MCP server is needed for route tools.")
     private String tags;
 
     @UriParam

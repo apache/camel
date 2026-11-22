@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DependencyDownloaderCxfTest {
 
     private static final String MODULE = "org.apache.camel:camel-cxf-platform-http";
+    private static final String WS_SECURITY = "org.apache.cxf:cxf-rt-ws-security";
 
     @Test
     void aRouteWithACxfConsumerDownloadsTheModuleAndSetsTheStarterOfTheHttpServer() throws Exception {
@@ -118,6 +119,126 @@ class DependencyDownloaderCxfTest {
     }
 
     @Test
+    void aCxfProducerWithAUsernameTokenDownloadsWsSecurity() throws Exception {
+        RecordingDownloader downloader = new RecordingDownloader();
+        FakeTransport transport = new FakeTransport();
+        try (CamelContext context = context(downloader, transport)) {
+            context.addService(new DependencyDownloaderCxf(context, true));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start")
+                            .to("cxf:http://localhost:9000/orders?serviceClass=org.example.Orders"
+                                + "&wsSecurityUsername=alice&wsSecurityPassword=RAW(se&cret)");
+                    from("direct:other")
+                            .to("cxf:http://localhost:9000/invoices?serviceClass=org.example.Invoices"
+                                + "&wsSecurityUsername=bob&wsSecurityPassword=secret");
+                }
+            });
+
+            // of the CXF version of Camel, once, and no platform-http for producers only
+            assertEquals(List.of(WS_SECURITY + ":${cxf-version}"), downloader.downloadedWithVersion);
+            assertNull(transport.starter);
+        }
+    }
+
+    @Test
+    void aCxfConsumerWithAUsernameTokenDownloadsWsSecurityToo() throws Exception {
+        RecordingDownloader downloader = new RecordingDownloader();
+        FakeTransport transport = new FakeTransport();
+        try (CamelContext context = context(downloader, transport)) {
+            context.addService(new DependencyDownloaderCxf(context, true));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("cxf:/orders?serviceClass=org.example.Orders&wsSecurityCallbackHandler=#myHandler")
+                            .to("log:orders");
+                }
+            });
+
+            assertEquals(List.of(MODULE, WS_SECURITY), downloader.downloaded);
+        }
+    }
+
+    @Test
+    void theWsSecurityOptionsThatDoNotTurnOnAUsernameTokenDownloadNothing() throws Exception {
+        RecordingDownloader downloader = new RecordingDownloader();
+        FakeTransport transport = new FakeTransport();
+        try (CamelContext context = context(downloader, transport)) {
+            context.addService(new DependencyDownloaderCxf(context, true));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start")
+                            .to("cxf:http://localhost:9000/orders?serviceClass=org.example.Orders"
+                                + "&wsSecurityUsername=&wsSecurityPasswordType=Digest")
+                            // not a cxf endpoint
+                            .to("log:foo?wsSecurityUsername=alice");
+                }
+            });
+
+            assertTrue(downloader.downloaded.isEmpty(), downloader.downloaded.toString());
+        }
+    }
+
+    @Test
+    void aKameletWithAnOptionalUsernameTokenDownloadsWsSecurityOnlyWhenItIsSet() throws Exception {
+        // as the soap-action Kamelet, whose uri always has the wsSecurity options, with optional parameters
+        RecordingDownloader downloader = new RecordingDownloader();
+        FakeTransport transport = new FakeTransport();
+        try (CamelContext context = context(downloader, transport)) {
+            context.addService(new DependencyDownloaderCxf(context, true));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("soap-action").templateParameter("address")
+                            .templateOptionalParameter("wsSecurityUsername")
+                            .templateOptionalParameter("wsSecurityPassword")
+                            .from("direct:{{address}}")
+                            .to("cxf://{{address}}?serviceClass=org.example.Orders"
+                                + "&wsSecurityUsername=RAW({{?wsSecurityUsername}})"
+                                + "&wsSecurityPassword=RAW({{?wsSecurityPassword}})");
+                }
+            });
+
+            context.addRouteFromTemplate("plain", "soap-action", Map.of("address", "http://localhost:9000/orders"));
+            assertTrue(downloader.downloaded.isEmpty(), downloader.downloaded.toString());
+
+            context.addRouteFromTemplate("secured", "soap-action",
+                    Map.of("address", "http://localhost:9000/invoices", "wsSecurityUsername", "alice",
+                            "wsSecurityPassword", "secret"));
+            assertEquals(List.of(WS_SECURITY), downloader.downloaded);
+            // the local properties of the template are not left behind
+            assertNull(context.getPropertiesComponent().getLocalProperties());
+        }
+    }
+
+    @Test
+    void aUsernameTokenFromAPropertyPlaceholder() throws Exception {
+        RecordingDownloader downloader = new RecordingDownloader();
+        FakeTransport transport = new FakeTransport();
+        try (CamelContext context = context(downloader, transport)) {
+            Properties props = new Properties();
+            props.setProperty("soap.user", "alice");
+            context.getPropertiesComponent().setInitialProperties(props);
+            context.addService(new DependencyDownloaderCxf(context, true));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:none")
+                            .to("cxf:http://localhost:9000/orders?serviceClass=org.example.Orders"
+                                + "&wsSecurityUsername={{?soap.none}}");
+                    from("direct:start")
+                            .to("cxf:http://localhost:9000/orders?serviceClass=org.example.Orders"
+                                + "&wsSecurityUsername={{soap.user}}");
+                }
+            });
+
+            assertEquals(List.of(WS_SECURITY), downloader.downloaded);
+        }
+    }
+
+    @Test
     void isCxfConsumer() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             Properties props = new Properties();
@@ -159,6 +280,7 @@ class DependencyDownloaderCxfTest {
     private static class RecordingDownloader extends MavenDependencyDownloader {
 
         private final List<String> downloaded = new CopyOnWriteArrayList<>();
+        private final List<String> downloadedWithVersion = new CopyOnWriteArrayList<>();
 
         @Override
         protected void doBuild() {
@@ -183,6 +305,7 @@ class DependencyDownloaderCxfTest {
         @Override
         public void downloadDependency(String groupId, String artifactId, String version) {
             downloaded.add(groupId + ":" + artifactId);
+            downloadedWithVersion.add(groupId + ":" + artifactId + ":" + version);
         }
     }
 }

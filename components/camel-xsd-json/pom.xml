@@ -62,4 +62,44 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <!-- the tests use the StAX writer of the JDK, except XsdJsonWoodstoxTest -->
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/XsdJsonWoodstoxTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <!-- the StAX writer that CXF brings, which fails to close a document that is not complete -->
+                    <execution>
+                        <id>woodstox</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/XsdJsonWoodstoxTest.java</include>
+                            </includes>
+                            <excludes combine.self="override"/>
+                            <additionalClasspathDependencies>
+                                <additionalClasspathDependency>
+                                    <groupId>com.fasterxml.woodstox</groupId>
+                                    <artifactId>woodstox-core</artifactId>
+                                    <version>${woodstox-core-version}</version>
+                                </additionalClasspathDependency>
+                            </additionalClasspathDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

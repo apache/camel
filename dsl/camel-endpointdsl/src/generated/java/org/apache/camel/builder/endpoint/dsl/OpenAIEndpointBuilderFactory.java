@@ -379,9 +379,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -396,9 +397,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1057,7 +1059,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -1078,7 +1080,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -1873,7 +1875,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2941,9 +2945,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2958,9 +2963,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3619,7 +3625,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -3640,7 +3646,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -4435,7 +4441,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5352,9 +5360,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5369,9 +5378,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -6030,7 +6040,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -6051,7 +6061,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -6846,7 +6856,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

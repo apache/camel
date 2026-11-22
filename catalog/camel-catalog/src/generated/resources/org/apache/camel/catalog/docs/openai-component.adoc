@@ -1379,7 +1379,7 @@ The `streaming=true` option returns an `Iterator<ChatCompletionChunk>` that can 
 
 For user-facing scenarios that require Server-Sent Events (SSE) or WebSocket delivery to a browser, see xref:ai-llm-integration-guide.adoc#_streaming_responses[LLM Integration Guide — Streaming responses] for platform-http patterns and when to stream through Camel vs. a dedicated handler.
 
-NOTE: When MCP tools with `autoToolExecution` are active, streaming automatically falls back to non-streaming to allow the agentic tool-calling loop to function. See xref:others:openai-mcp.adoc[MCP Tool Calling] for details.
+NOTE: When tools (MCP tools or route tools from `tags`) with `autoToolExecution` are active, streaming automatically falls back to non-streaming to allow the agentic tool-calling loop to function. See xref:others:openai-mcp.adoc[MCP Tool Calling] for details.
 
 == Sub-Pages
 
