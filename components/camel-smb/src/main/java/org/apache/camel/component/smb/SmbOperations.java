@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import com.hierynomus.msdtyp.AccessMask;
@@ -157,8 +159,15 @@ public class SmbOperations implements SmbFileOperations {
             close(currentConnection, currentSession, currentShare);
             return;
         }
+        // the SMB client of the connection, when the disconnect does not wait for it: closed once the connection is
+        AtomicReference<SMBClient> abandonedClient = new AtomicReference<>();
+        AtomicBoolean closed = new AtomicBoolean();
         Thread disconnector = endpoint.getCamelContext().getExecutorServiceManager()
-                .newThread("SmbDisconnect", () -> close(currentConnection, currentSession, currentShare));
+                .newThread("SmbDisconnect", () -> {
+                    close(currentConnection, currentSession, currentShare);
+                    closed.set(true);
+                    close(abandonedClient.getAndSet(null));
+                });
         disconnector.start();
         try {
             disconnector.join(DISCONNECT_WAIT_MILLIS);
@@ -171,13 +180,20 @@ public class SmbOperations implements SmbFileOperations {
                     configuration.getHostname(), configuration.getPort());
             // the SMB client hands out its open connection again to the next connect, until the connection is closed
             if (smbClient != null) {
+                abandonedClient.set(smbClient);
                 smbClient = createSmbClient();
+                if (closed.get()) {
+                    // the background thread completed meanwhile, and may not have seen the client
+                    close(abandonedClient.getAndSet(null));
+                }
             }
         }
     }
 
     /**
-     * Closes the share, the session and the connection, in this order, ignoring failures.
+     * Closes the share, the session and the connection, in this order. {@link #disconnect()} calls it from a background
+     * thread, as each close can wait for the server to answer. It never throws: the failures are ignored (the leased
+     * directories are logged at DEBUG), so a server that went away cannot keep the session or the connection open.
      */
     static void close(Connection connection, Session session, DiskShare share) {
         if (connection != null && share != null && share.isConnected()) {
@@ -216,6 +232,19 @@ public class SmbOperations implements SmbFileOperations {
                 }
             } catch (Exception e) {
                 // ignore
+            }
+        }
+    }
+
+    /**
+     * Closes the SMB client and the connections it still has, ignoring failures.
+     */
+    private static void close(SMBClient client) {
+        if (client != null) {
+            try {
+                client.close();
+            } catch (Exception e) {
+                LOG.debug("Error closing the SMB client due to: {}. This exception is ignored.", e.getMessage(), e);
             }
         }
     }

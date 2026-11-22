@@ -40,12 +40,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Disconnecting from a server that does not answer no longer holds the poll and the stop of the route, and the
- * directories smbj holds a lease on are closed while the share is open.
+ * Disconnecting from a server that does not answer no longer holds the poll and the stop of the route, and does not
+ * leak the SMB client it gives up on; the directories smbj holds a lease on are closed while the share is open.
  */
 class SmbOperationsDisconnectTest extends CamelTestSupport {
 
@@ -81,6 +82,8 @@ class SmbOperationsDisconnectTest extends CamelTestSupport {
         order.verify(share).close();
         order.verify(session).close();
         order.verify(connection).close();
+        // the client is used again for the next connect
+        verify(client, never()).close();
     }
 
     @Test
@@ -95,10 +98,14 @@ class SmbOperationsDisconnectTest extends CamelTestSupport {
 
         assertTrue(taken < SmbOperations.DISCONNECT_WAIT_MILLIS + 5000, "disconnect took " + taken + " ms");
         assertFalse(operations.isConnected());
+        verify(client, never()).close();
 
-        // the disconnect completes in the background once the server answers
+        // the disconnect completes in the background once the server answers, and then closes the abandoned client
         answer.countDown();
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(connection).close());
-        verify(session).close();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(client).close());
+        InOrder order = inOrder(session, connection, client);
+        order.verify(session).close();
+        order.verify(connection).close();
+        order.verify(client).close();
     }
 }
