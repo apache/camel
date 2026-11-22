@@ -27,29 +27,22 @@ camel kubernetes run * --runtime=spring-boot --name=my-app
 ----
 
 This exports a Spring Boot project named `my-app`, builds the container image, pushes it, and deploys it to the cluster
-`kubectl` is connected to. The runtime is one of `spring-boot`, `quarkus` (the default), `main` or `tomcat`.
+`kubectl` is connected to. The runtime is one of `spring-boot`, `quarkus` (the default), or `main`.
 
-For `--runtime=tomcat`, Camel exports the application as a WAR and builds an image
-that runs it in an external Apache Tomcat server. Spring Boot 4.x uses Tomcat 11
-by default; Spring Boot 3.x uses Tomcat 10.1. Spring Boot 3.x also requires a
-compatible Camel Spring Boot BOM. Camel Spring Boot 4.19 moved to Spring Boot 4,
-so for Camel 4.24 use Camel Spring Boot 4.18.x (for example, 4.18.1):
+To build a WAR image for an external Tomcat deployment, use
+`camel kubernetes export` with `--runtime=spring-boot --packaging=war`.
+Spring Boot 4.x targets Tomcat 11. Spring Boot 3.x targets Tomcat 10.1 and
+requires a compatible Camel Spring Boot BOM (for Camel 4.24, use 4.18.1).
 
-[source,bash]
-----
-camel kubernetes run * --runtime=tomcat --name=my-app
-----
-
-To select Spring Boot 3.x explicitly:
+The WAR is assembled as `ROOT.war` in the Tomcat image's `webapps` directory.
+The WAR-based image assembly supports the `jib` and `docker` image builders;
+S2I is not supported.
 
 [source,bash]
 ----
-camel kubernetes run * --runtime=tomcat --spring-boot-version=3.5.0 \
-    --camel-spring-boot-version=4.18.1 --name=my-app
+camel kubernetes export * --runtime=spring-boot --packaging=war --name=my-app
 ----
 
-The Tomcat target uses the `jib` or `docker` image builder. S2I is not supported
-for this WAR-based image assembly.
 
 Minikube and OpenShift are detected, and the image build and registry are configured for them.
 Use `--cluster-type` to set the cluster type explicitly (for example `--cluster-type=kind`, which is not detected),
@@ -121,20 +114,23 @@ cd ../my-app
 ./mvnw package k8s:deploy
 ----
 
-For `--runtime=tomcat`, the generated Maven project is packaged as a WAR and
-the JKube image assembly copies it to `ROOT.war` in the Tomcat image's
-`webapps` directory. Spring Boot 4.x uses a Tomcat 11 base image; Spring Boot
-3.x uses Tomcat 10.1 and requires a compatible Camel Spring Boot BOM. For Camel
-4.24, specify `--camel-spring-boot-version=4.18.1`. You can override the default
-image with `--base-image` when exporting, provided the image is compatible with
-the selected Servlet API and has the standard Tomcat installation layout.
+For `--runtime=spring-boot --packaging=war`, the generated Maven project is
+packaged as a WAR and the JKube image assembly copies it to `ROOT.war` in the
+Tomcat image's `webapps` directory. Spring Boot 4.x uses a Tomcat 11 base image;
+Spring Boot 3.x uses Tomcat 10.1 and requires a compatible Camel Spring Boot
+BOM. For Camel 4.24, specify `--camel-spring-boot-version=4.18.1`. You can
+override the default image with `--base-image` when exporting, provided the
+image is compatible with the selected Servlet API and has the standard Tomcat
+installation layout.
 
 For example:
 
 [source,bash]
 ----
-camel kubernetes export * --runtime=tomcat --gav=com.example:my-app:1.0.0 --dir=../my-app
+camel kubernetes export * --runtime=spring-boot --packaging=war \
+    --gav=com.example:my-app:1.0.0 --dir=../my-app
 ----
+
 
 A `*.jkube.yaml` (or `*.jkube.yml`) file among the files to export is a JKube resource fragment, which JKube merges
 into the manifest it generates. The export puts it in `src/main/jkube` by its file name, without the `.jkube` part,

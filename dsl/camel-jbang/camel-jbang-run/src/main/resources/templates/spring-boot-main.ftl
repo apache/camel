@@ -20,13 +20,13 @@ package [=PackageName];
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-[#if Tomcat?? && Tomcat]
+[#if War?? && War]
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 [/#if]
 
 @SpringBootApplication
-[#if Tomcat?? && Tomcat]
+[#if War?? && War]
 public class [=MainClassname] extends SpringBootServletInitializer {
 [#else]
 public class [=MainClassname] {
@@ -36,7 +36,7 @@ public class [=MainClassname] {
         SpringApplication.run([=MainClassname].class, args);
     }
 
-    [#if Tomcat?? && Tomcat]
+    [#if War?? && War]
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources([=MainClassname].class);

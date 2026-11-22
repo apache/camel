@@ -28,7 +28,6 @@ public enum RuntimeType {
      */
     jbang,
     springBoot,
-    tomcat,
     quarkus,
     main;
 
@@ -41,7 +40,6 @@ public enum RuntimeType {
         return switch (value) {
             case "jbang", "camel-jbang" -> RuntimeType.jbang;
             case "spring", "spring-boot", "camel-spring-boot" -> RuntimeType.springBoot;
-            case "tomcat" -> RuntimeType.tomcat;
             case "quarkus", "camel-quarkus" -> RuntimeType.quarkus;
             case "main", "camel-main", "camel" -> RuntimeType.main;
             default -> throw new IllegalArgumentException("Unsupported runtime " + value);
@@ -60,7 +58,6 @@ public enum RuntimeType {
         return switch (this) {
             case jbang -> "jbang";
             case springBoot -> "spring-boot";
-            case tomcat -> "tomcat";
             case quarkus -> "quarkus";
             case main -> "main";
         };
@@ -68,7 +65,7 @@ public enum RuntimeType {
 
     public String version() {
         return switch (this) {
-            case springBoot, tomcat -> SPRING_BOOT_VERSION;
+            case springBoot -> SPRING_BOOT_VERSION;
             case quarkus -> throw new UnsupportedOperationException("There is no built in version for Quarkus Runtime. The caller should resolve it at runtime using QuarkusPlatformMixin.resolve()");
             case main, jbang -> new DefaultCamelCatalog().getCatalogVersion();
         };

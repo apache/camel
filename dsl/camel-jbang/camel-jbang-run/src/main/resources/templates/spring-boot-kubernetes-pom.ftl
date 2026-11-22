@@ -40,7 +40,7 @@
     <groupId>[=GroupId]</groupId>
     <artifactId>[=ArtifactId]</artifactId>
     <version>[=Version]</version>
-[#if Tomcat]
+[#if War]
     <packaging>war</packaging>
 [/#if]
 
@@ -110,9 +110,9 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>[#if Tomcat][=SpringBootWebStarter][#else]spring-boot-starter-web[/#if]</artifactId>
+            <artifactId>[#if War][=SpringBootWebStarter][#else]spring-boot-starter-web[/#if]</artifactId>
         </dependency>
-[#if Tomcat]
+[#if War]
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -168,7 +168,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-[#if Tomcat]
+[#if War]
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -188,7 +188,7 @@
                         <image>
                             <build>
                                 <from>${jkube.container-image.from}</from>
-[#if !Tomcat]
+[#if !War]
                                 <entryPoint>
                                     <exec>
                                         <arg>/maven/run-java.sh</arg>
@@ -197,7 +197,7 @@
                                 </entryPoint>
 [/#if]
                                 <assembly>
-[#if Tomcat]
+[#if War]
                                     <targetDir>/usr/local/tomcat/webapps</targetDir>
                                     <layers>
                                         <layer>
@@ -275,7 +275,7 @@
         </plugins>
     </build>
 
-[#if !Tomcat]
+[#if !War]
     <profiles>
         <profile>
             <id>camel.debug</id>

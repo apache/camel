@@ -415,7 +415,7 @@ abstract class Exporter {
             } else if (line.startsWith(DEPENDENCIES_MAIN + "=") && request.runtime == RuntimeType.main) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_MAIN + "="), answer);
             } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=")
-                    && (request.runtime == RuntimeType.springBoot || request.runtime == RuntimeType.tomcat)) {
+                    && (request.runtime == RuntimeType.springBoot)) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_SPRING_BOOT + "="), answer);
             } else if (line.startsWith(DEPENDENCIES_QUARKUS + "=") && request.runtime == RuntimeType.quarkus) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_QUARKUS + "="), answer);
@@ -1568,7 +1568,7 @@ abstract class Exporter {
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
         model.put("AppRuntimeJar", appJar);
-        model.put("Tomcat", request.runtime == RuntimeType.tomcat);
+        model.put("War", request.isWarPackaging());
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);

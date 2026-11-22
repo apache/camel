@@ -40,6 +40,16 @@ class TomcatVersionHelperTest {
     }
 
     @Test
+    void requiresAnExplicitCompatibleCamelVersionForSpringBoot3WhenUnset() {
+        assertThat(TomcatVersionHelper.compatibilityError("3.5.0", null))
+                .contains("--camel-spring-boot-version=4.18.1")
+                .contains("--camel-version=4.18.1");
+
+        assertThat(TomcatVersionHelper.compatibilityError("3.5.0", " "))
+                .contains("--camel-spring-boot-version=4.18.1");
+    }
+
+    @Test
     void validatesSpringBootAndCamelSpringBootCompatibility() {
         assertThat(TomcatVersionHelper.compatibilityError("3.5.0", "4.24.0"))
                 .contains("earlier than 4.19.0");

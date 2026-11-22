@@ -16,13 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.nio.file.Path;
-
 import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
-import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 
-@CommandDefinition(name = "export", description = "Export to other runtimes (Camel Main, Spring Boot, Tomcat WAR, or Quarkus)",
+@CommandDefinition(name = "export", description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)",
                    generateHelp = true,
                    footer = {
                            "Examples:",
@@ -31,60 +29,18 @@ import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
                            "  camel export --runtime=quarkus *",
                            "  camel export --gav=com.example:myapp:1.0 hello.java",
                            "  camel export --dry-run hello.java" })
-public class Export extends ExportBaseCommand {
+public class Export extends ExportCommandBase {
+
+    @Option(name = "packaging",
+            description = "Project packaging (jar or war; WAR requires --runtime=spring-boot)",
+            defaultValue = "jar")
+    protected String packaging = "jar";
 
     @Override
-    public boolean disarrangeLogging() {
-        return false; // export logs specially to a camel-export.log
+    protected ExportRequest toRequest() {
+        ExportRequest request = super.toRequest();
+        request.packaging = this.packaging;
+        return request;
     }
 
-    @Override
-    protected Integer export() throws Exception {
-        int answer = doExport();
-        if (answer == 0 && !quiet) {
-            printer().println("Project export successful!");
-        }
-        return answer;
-    }
-
-    protected Integer doExport() throws Exception {
-        ExportRequest request = toRequest();
-        ProjectExporter exporter = new ProjectExporter(exportContext());
-        Path baseDir = exporter.prepare(request);
-        applySystemProperties(request);
-        // the options from application.properties, the profile and the system properties
-        fromRequest(request);
-
-        if (runtime == null) {
-            printer().printErr("The runtime option must be specified");
-            return 1;
-        }
-
-        if (gav == null) {
-            String pn = getProjectName();
-            if (pn == null) {
-                printer().printErr("Failed to resolve project name: Please provide --name, --gav or source file");
-                return 1;
-            }
-            gav = "org.example.project:%s:%s".formatted(pn, getVersion());
-            request.gav = gav;
-        }
-
-        customizeRequest(request);
-        return exporter.export(baseDir, request);
-    }
-
-    /**
-     * To customize the request before it is exported, such as the pom template to use.
-     */
-    protected void customizeRequest(ExportRequest request) {
-    }
-
-    protected String getProjectName() {
-        return ProjectExporter.projectName(name, gav, files);
-    }
-
-    protected String getVersion() {
-        return ProjectExporter.projectVersion(gav);
-    }
 }

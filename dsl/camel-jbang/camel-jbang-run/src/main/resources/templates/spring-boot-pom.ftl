@@ -40,7 +40,7 @@
     <groupId>[=GroupId]</groupId>
     <artifactId>[=ArtifactId]</artifactId>
     <version>[=Version]</version>
-[#if Tomcat]
+[#if War]
     <packaging>war</packaging>
 [/#if]
 
@@ -117,7 +117,7 @@
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
-[#if Tomcat]
+[#if War]
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>[=SpringBootWebStarter]</artifactId>
@@ -169,7 +169,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-[#if Tomcat]
+[#if War]
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -236,7 +236,7 @@
             </build>
         </profile>
 
-[#if !Tomcat]
+[#if !War]
         <profile>
             <id>jib</id>
             <activation>

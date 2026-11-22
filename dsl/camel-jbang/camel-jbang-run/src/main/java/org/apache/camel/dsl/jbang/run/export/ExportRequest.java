@@ -58,6 +58,41 @@ public class ExportRequest {
     public RuntimeType runtime;
 
     /**
+     * Maven project packaging: jar (default) or war.
+     */
+    public String packaging = "jar";
+
+    /**
+     * Whether the project is packaged as a WAR.
+     */
+    public boolean isWarPackaging() {
+        return "war".equalsIgnoreCase(packaging);
+    }
+
+    /**
+     * Validates the packaging against the selected runtime.
+     *
+     * @return an error message, or null when the packaging is valid
+     */
+    public String packagingError() {
+        return packagingError(packaging, runtime);
+    }
+
+    public static String packagingError(String packaging, RuntimeType runtime) {
+        String value = packaging == null || packaging.isBlank() ? "jar" : packaging.trim();
+
+        if (!"jar".equalsIgnoreCase(value) && !"war".equalsIgnoreCase(value)) {
+            return "Unsupported packaging: " + value + ". Supported values are: jar, war.";
+        }
+
+        if ("war".equalsIgnoreCase(value) && runtime != RuntimeType.springBoot) {
+            return "--packaging=war is only supported with --runtime=spring-boot.";
+        }
+
+        return null;
+    }
+
+    /**
      * The integration name. Use this when the name should not get derived otherwise.
      */
     public String name;
@@ -334,6 +369,7 @@ public class ExportRequest {
         this.files = other.files;
         this.dependencies = other.dependencies;
         this.runtime = other.runtime;
+        this.packaging = other.packaging;
         this.name = other.name;
         this.port = other.port;
         this.managementPort = other.managementPort;

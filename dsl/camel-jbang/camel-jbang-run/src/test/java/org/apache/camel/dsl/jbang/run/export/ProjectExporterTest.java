@@ -121,20 +121,21 @@ class ProjectExporterTest {
 
     @Test
     void exportsTomcatWarProjectWithSpringBoot4() throws Exception {
-        assertTomcatWarProject("4.2.0", "spring-boot-starter-webmvc", null);
+        assertSpringBootWarProject("4.2.0", "spring-boot-starter-webmvc", null);
     }
 
     @Test
     void exportsTomcatWarProjectWithSpringBoot3() throws Exception {
-        assertTomcatWarProject("3.5.0", "spring-boot-starter-web", "4.18.1");
+        assertSpringBootWarProject("3.5.0", "spring-boot-starter-web", "4.18.1");
     }
 
-    private void assertTomcatWarProject(
+    private void assertSpringBootWarProject(
             String bootVersion, String expectedWebStarter, String camelSpringBootVersion)
             throws Exception {
         Path exportDir = dir.resolve("tomcat-export-" + bootVersion.replace('.', '-'));
         ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
-        request.runtime = RuntimeType.tomcat;
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
         request.springBootVersion = bootVersion;
         request.camelSpringBootVersion = camelSpringBootVersion;
 
@@ -179,10 +180,11 @@ class ProjectExporterTest {
     }
 
     @Test
-    void exportsTomcatWithSpringBootSpecificDependencies() throws Exception {
+    void exportsSpringBootWarWithSpringBootSpecificDependencies() throws Exception {
         Path exportDir = dir.resolve("tomcat-runtime-dependencies");
         ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
-        request.runtime = RuntimeType.tomcat;
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
         request.springBootVersion = "4.2.0";
         request.camelVersion = "4.23.0";
         request.camelSpringBootVersion = "4.23.0";
@@ -211,13 +213,15 @@ class ProjectExporterTest {
     }
 
     @Test
-    void rejectsTlsFilesForTomcatExport() throws Exception {
+    void rejectsTlsFilesForKubernetesWarExport() throws Exception {
         Path exportDir = dir.resolve("tomcat-tls-export");
         ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
-        request.runtime = RuntimeType.tomcat;
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
         request.springBootVersion = "4.2.0";
         request.camelVersion = "4.23.0";
         request.camelSpringBootVersion = "4.23.0";
+        request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
 
         DependencyResolver withTlsFiles = r -> {
             int result = resolver.resolve(r);
@@ -235,14 +239,16 @@ class ProjectExporterTest {
 
         assertThat(exit).isNotZero();
         assertThat(printer.getOutput())
-                .contains("TLS files configured with camel.jbang.tlsFiles are not supported with --runtime=tomcat");
+                .contains(
+                        "TLS files configured with camel.jbang.tlsFiles are not supported with --packaging=war for Kubernetes export");
     }
 
     @Test
-    void rejectsCustomTomcatPomTemplate() throws Exception {
+    void rejectsCustomWarPomTemplate() throws Exception {
         Path exportDir = dir.resolve("tomcat-custom-pom-export");
         ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
-        request.runtime = RuntimeType.tomcat;
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
         request.pomTemplateName = "custom-spring-boot-pom.ftl";
 
         StringPrinter printer = new StringPrinter();
@@ -252,7 +258,7 @@ class ProjectExporterTest {
 
         assertThat(exit).isNotZero();
         assertThat(printer.getOutput())
-                .contains("Custom POM templates are not supported with --runtime=tomcat");
+                .contains("Custom POM templates are not supported with --packaging=war");
     }
 
     @ParameterizedTest

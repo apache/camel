@@ -17,7 +17,7 @@
 package org.apache.camel.dsl.jbang.run.common;
 
 /**
- * Version compatibility and image selection for the external Tomcat export target.
+ * Tomcat image selection and version compatibility for Spring Boot WAR exports.
  */
 public final class TomcatVersionHelper {
 
@@ -62,8 +62,16 @@ public final class TomcatVersionHelper {
     public static String compatibilityError(
             String springBootVersion, String camelSpringBootVersion) {
 
-        if (springBootVersion == null || camelSpringBootVersion == null
-                || camelSpringBootVersion.isBlank()) {
+        if (springBootVersion == null) {
+            return "A Spring Boot version must be specified.";
+        }
+
+        if (camelSpringBootVersion == null || camelSpringBootVersion.isBlank()) {
+            if (springBootVersion.startsWith("3.")) {
+                return "Spring Boot 3.x requires an explicitly selected compatible Camel version. "
+                       + "Use --camel-spring-boot-version=4.18.1 or specify a compatible "
+                       + "--camel-version=4.18.1.";
+            }
             return "A compatible Camel Spring Boot version must be specified.";
         }
 

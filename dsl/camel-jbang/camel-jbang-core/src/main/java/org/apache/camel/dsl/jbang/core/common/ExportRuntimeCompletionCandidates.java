@@ -29,7 +29,7 @@ public class ExportRuntimeCompletionCandidates extends CompletionCandidates {
 
     @Override
     public Iterator<String> iterator() {
-        return List.of("camel-main", "spring-boot", "tomcat", "quarkus").iterator();
+        return List.of("camel-main", "spring-boot", "quarkus").iterator();
     }
 
 }

@@ -36,7 +36,7 @@ If you are an AI coding assistant working on this project, start from the Apache
 ./mvnw clean package
 ```
 
-[#if Tomcat?? && Tomcat]
+[#if War?? && War]
 ## Deploy to an external Apache Tomcat
 
 Copy the generated WAR file to the webapps directory of your Tomcat installation:

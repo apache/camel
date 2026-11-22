@@ -185,20 +185,12 @@ public class CatalogService {
         if (runtime == null || runtime.isBlank() || "main".equalsIgnoreCase(runtime)) {
             return RuntimeType.main;
         }
-        RuntimeType resolved;
         try {
-            resolved = RuntimeType.fromValue(runtime);
+            return RuntimeType.fromValue(runtime);
         } catch (IllegalArgumentException e) {
             throw new ToolCallException(
                     "Unsupported runtime: " + runtime + ". Supported values are: main, spring-boot, quarkus", null);
         }
-
-        if (resolved == RuntimeType.tomcat) {
-            throw new ToolCallException(
-                    "Tomcat is an export target, not a catalog runtime", null);
-        }
-
-        return resolved;
     }
 
     private CamelCatalog doLoadCatalog(

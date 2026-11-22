@@ -66,12 +66,12 @@ class SpringBootExporter extends Exporter {
 
     @Override
     public Integer export() throws Exception {
-        if (request.runtime == RuntimeType.tomcat) {
+        if (request.isWarPackaging()) {
             if (!"spring-boot-pom.ftl".equals(request.pomTemplateName)
                     && !"spring-boot-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
                 printer().printErr(
-                        "Custom POM templates are not supported with --runtime=tomcat. "
-                                   + "The Tomcat target requires the built-in WAR-capable Spring Boot template.");
+                        "Custom POM templates are not supported with --packaging=war. "
+                                   + "WAR packaging requires the built-in Spring Boot POM template.");
                 return 1;
             }
 
@@ -84,9 +84,16 @@ class SpringBootExporter extends Exporter {
                 return 1;
             }
 
-            String camelSpringBootVersion = Objects.requireNonNullElse(
-                    request.camelSpringBootVersion,
-                    Objects.requireNonNullElse(request.camelVersion, RuntimeType.main.version()));
+            String camelSpringBootVersion = request.camelSpringBootVersion != null
+                    ? request.camelSpringBootVersion
+                    : request.camelVersion;
+
+            // Keep the current Camel default for Spring Boot 4. For Spring Boot 3,
+            // require an explicitly selected compatible Camel Spring Boot or Camel version.
+            if (camelSpringBootVersion == null
+                    && (bootVersion == null || !bootVersion.startsWith("3."))) {
+                camelSpringBootVersion = RuntimeType.main.version();
+            }
             String compatibilityError = TomcatVersionHelper.compatibilityError(
                     bootVersion, camelSpringBootVersion);
             if (compatibilityError != null) {
@@ -96,10 +103,9 @@ class SpringBootExporter extends Exporter {
 
             String tomcatVersion = TomcatVersionHelper.tomcatVersion(bootVersion);
             printer().println(
-                    "External Tomcat target: Spring Boot " + bootVersion
-                              + " with Apache Tomcat " + tomcatVersion + ".");
+                    "Spring Boot WAR packaging targets Apache Tomcat " + tomcatVersion + ".");
             printer().println(
-                    "Docker and Jib files are not generated for external Tomcat WAR exports.");
+                    "Docker and Jib files are not generated for Spring Boot WAR exports.");
         }
 
         try {
@@ -139,7 +145,8 @@ class SpringBootExporter extends Exporter {
 
         // Never place TLS private keys or certificates inside the Tomcat webapps
         // directory. Externalize them and mount them outside webapps at runtime.
-        if (request.runtime == RuntimeType.tomcat) {
+        if (request.isWarPackaging()
+                && "spring-boot-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
             String tlsFilesProperty = CamelJBangConstants.TLS_FILES + "=";
             boolean tlsFilesConfigured = RuntimeUtil.loadPropertiesLines(settings).stream()
                     .filter(line -> line.startsWith(tlsFilesProperty))
@@ -148,14 +155,14 @@ class SpringBootExporter extends Exporter {
             if (tlsFilesConfigured) {
                 printer().printErr(
                         "TLS files configured with " + CamelJBangConstants.TLS_FILES
-                                   + " are not supported with --runtime=tomcat. "
+                                   + " are not supported with --packaging=war for Kubernetes export. "
                                    + "Provision TLS material separately and mount it outside Tomcat webapps.");
                 return 1;
             }
         }
 
         printer().println(
-                (request.runtime == RuntimeType.tomcat
+                (request.isWarPackaging()
                         ? "Exporting as Spring Boot WAR project to: "
                         : "Exporting as Spring Boot project to: ") + request.exportDir);
 
@@ -255,11 +262,11 @@ class SpringBootExporter extends Exporter {
             copyCamelWrapper();
         }
         // Existing Docker and Jib templates are executable-JAR based.
-        if (request.docker && request.runtime != RuntimeType.tomcat) {
+        if (request.docker && !request.isWarPackaging()) {
             copyDockerFiles(buildDir.toString());
         }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2]
-                        + (request.runtime == RuntimeType.tomcat ? ".war" : ".jar");
+                        + (request.isWarPackaging() ? ".war" : ".jar");
         copyReadme(buildDir.toString(), appJar);
         if (cleanExportDir() != 0) {
             return 1;
@@ -294,9 +301,9 @@ class SpringBootExporter extends Exporter {
 
         // Check if catalog provides a custom template (backward compatibility)
         // Also check old .tmpl name for catalogs that haven't been updated
-        InputStream catalogTemplate = request.runtime == RuntimeType.tomcat
+        InputStream catalogTemplate = request.isWarPackaging()
                 ? null : catalog.loadResource("camel-jbang", request.pomTemplateName);
-        if (request.runtime != RuntimeType.tomcat && catalogTemplate == null) {
+        if (!request.isWarPackaging() && catalogTemplate == null) {
             catalogTemplate = catalog.loadResource(
                     "camel-jbang", request.pomTemplateName.replace(".ftl", ".tmpl"));
         }
@@ -316,7 +323,7 @@ class SpringBootExporter extends Exporter {
         model.put("GroupId", ids[0]);
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
-        model.put("Tomcat", request.runtime == RuntimeType.tomcat);
+        model.put("War", request.isWarPackaging());
         model.put("SpringBootWebStarter",
                 request.springBootVersion != null
                         && VersionHelper.isGE(request.springBootVersion, "4.0.0")
@@ -554,7 +561,7 @@ class SpringBootExporter extends Exporter {
         Map<String, Object> model = new HashMap<>();
         model.put("PackageName", packageName);
         model.put("MainClassname", mainClassname);
-        model.put("Tomcat", request.runtime == RuntimeType.tomcat);
+        model.put("War", request.isWarPackaging());
 
         String content = TemplateHelper.processTemplate("spring-boot-main.ftl", model);
         IOHelper.writeText(content, Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));

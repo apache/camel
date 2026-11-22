@@ -121,7 +121,7 @@ public class KubernetesExport extends Export {
     protected String[] imagePlatforms;
 
     @Option(name = "base-image",
-            description = "The base image used to build the container image. The default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>, or mirror.gcr.io/library/tomcat:<tomcat-version>-jdk<java-version>-temurin for Tomcat.")
+            description = "The base image used to build the container image. The default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>, or mirror.gcr.io/library/tomcat:<tomcat-version>-jdk<java-version>-temurin for Spring Boot WAR packaging.")
     protected String baseImage;
 
     @Option(name = "registry-mirror",
@@ -187,6 +187,12 @@ public class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
+        String packagingError = ExportRequest.packagingError(packaging, runtime);
+        if (packagingError != null) {
+            printer().printErr(packagingError);
+            return 1;
+        }
+
         // special if user type: camel run . or camel run dirName
         if (files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
@@ -231,7 +237,7 @@ public class KubernetesExport extends Export {
                             mavenResolver.fresh())
                     .quarkusCamelBom();
             catalog = CatalogLoader.loadQuarkusCatalog(camelQuarkusBom, mavenResolver.downloader()::resolveArtifact);
-        } else if (runtime == RuntimeType.springBoot || runtime == RuntimeType.tomcat) {
+        } else if (runtime == RuntimeType.springBoot) {
             catalog = CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelSpringBootVersion,
                     mavenResolver.download());
         } else if (runtime == RuntimeType.main) {
@@ -242,7 +248,7 @@ public class KubernetesExport extends Export {
 
         List<Source> sources;
         try {
-            if (runtime != RuntimeType.tomcat) {
+            if (!isWarPackaging()) {
                 addFile(RunPipeline.RUN_JAVA_SH);
             }
             sources = SourceHelper.resolveSources(files);
@@ -339,15 +345,15 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));
         }
 
-        if (runtime == RuntimeType.tomcat && !"docker".equals(imageBuilder) && !"jib".equals(imageBuilder)) {
+        if (isWarPackaging() && !"docker".equals(imageBuilder) && !"jib".equals(imageBuilder)) {
             printer().printErr(
-                    "The Tomcat Kubernetes target supports the docker and jib image builders. "
+                    "Spring Boot WAR Kubernetes export supports the docker and jib image builders. "
                                + "Use --image-builder=docker or --image-builder=jib.");
             return 1;
         }
 
         if (baseImage == null) {
-            if (runtime == RuntimeType.tomcat) {
+            if (isWarPackaging()) {
                 baseImage = TomcatVersionHelper.defaultBaseImage(springBootVersion, javaVersion);
             } else {
                 // use default base image with java version
@@ -442,9 +448,6 @@ public class KubernetesExport extends Export {
         if (runtime == RuntimeType.springBoot) {
             request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
-        if (runtime == RuntimeType.tomcat) {
-            request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
-        }
         if (runtime == RuntimeType.main) {
             request.pomTemplateName = "main-kubernetes-pom.ftl";
         }
@@ -524,6 +527,10 @@ public class KubernetesExport extends Export {
         return null;
     }
 
+    private boolean isWarPackaging() {
+        return "war".equalsIgnoreCase(packaging);
+    }
+
     private void setContainerHealthPaths(int port) {
         // the camel-observability-services artifact is added as dependency if observe=true in run command
         // it renames the container health base path to /observe, so this has to be in the container health probes http path
@@ -534,7 +541,7 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.enricher.jkube-healthcheck-quarkus.port=" + probePort);
             buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
             addToApplicationProperties("quarkus.management.port=" + probePort);
-        } else if (RuntimeType.tomcat == runtime) {
+        } else if (RuntimeType.springBoot == runtime && isWarPackaging()) {
             // The WAR runs inside the external Tomcat image. Keep the management endpoints
             // on the same port as the application; a separate Boot management server would
             // require another embedded servlet container.

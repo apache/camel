@@ -76,7 +76,7 @@ public class TomcatExportITCase extends JBangTestSupport {
                         .formatted(springBootVersion, camelSpringBootVersion);
 
         execute(String.format(
-                "export %s --runtime=tomcat %s"
+                "export %s --runtime=spring-boot --packaging=war %s"
                               + "--gav=com.example:%s:1.0-SNAPSHOT "
                               + "--directory=%s",
                 routeFile, bootOptions, ARTIFACT_ID, exportDirectory));

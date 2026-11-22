@@ -44,7 +44,7 @@ import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
                            "  camel sbom hello.java",
                            "  camel sbom hello.java --sbom-format=spdx",
                            "  camel sbom hello.java --sbom-output-format=xml" })
-public class SBOMGenerator extends Export {
+public class SBOMGenerator extends ExportCommandBase {
 
     protected static String tempExportDir() {
         return CommandLineHelper.getWorkDir().resolve("export").toString();

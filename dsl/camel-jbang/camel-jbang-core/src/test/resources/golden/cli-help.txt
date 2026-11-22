@@ -2035,7 +2035,8 @@ Usage: camel debug [-h] [--remote-attach] [--breakpoint=<breakpoint>]
                     [--quarkus-version=<quarkus-version>]
                     [--quarkus-ext-registry=<quarkus-ext-registry>]
                     [--spring-boot-version=<spring-boot-version>]
-                    [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
+                    [--packaging=<packaging>] [--profile=<profile>]
+                    [--dep=<dep>] [--gav=<gav>]
                     [--maven-settings=<maven-settings>]
                     [--maven-settings-security=<maven-settings-security>]
                     [--maven-central-enabled] [--maven-apache-snapshot-enabled]
@@ -2165,6 +2166,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -2410,8 +2415,8 @@ Usage: camel dependency audit [-hy] [--integration=<integration>]
                                [--fail-on-error] [--osv-database]
                                [--osv-database-url=<osv-database-url>]
                                [--output=<output>] [--dep=<dep>]
-                               [--runtime=<runtime>] [--name=<name>]
-                               [--port=<port>]
+                               [--runtime=<runtime>] [--packaging=<packaging>]
+                               [--name=<name>] [--port=<port>]
                                [--management-port=<management-port>]
                                [--gav=<gav>] [--parent-pom=<parent-pom>]
                                [--exclude=<exclude>]
@@ -2483,7 +2488,11 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -2659,8 +2668,8 @@ Examples:
 Copies all Camel dependencies required to run to a specific directory
 Usage: camel dependency copy [-hy] [--output-directory=<output-directory>]
                               [--output=<output>] [--dep=<dep>]
-                              [--runtime=<runtime>] [--name=<name>]
-                              [--port=<port>]
+                              [--runtime=<runtime>] [--packaging=<packaging>]
+                              [--name=<name>] [--port=<port>]
                               [--management-port=<management-port>]
                               [--gav=<gav>] [--parent-pom=<parent-pom>]
                               [--exclude=<exclude>]
@@ -2703,7 +2712,11 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -2867,8 +2880,8 @@ Examples:
 == camel dependency list --help
 Displays all Camel dependencies required to run
 Usage: camel dependency list [-hy] [--output=<output>] [--dep=<dep>]
-                              [--runtime=<runtime>] [--name=<name>]
-                              [--port=<port>]
+                              [--runtime=<runtime>] [--packaging=<packaging>]
+                              [--name=<name>] [--port=<port>]
                               [--management-port=<management-port>]
                               [--gav=<gav>] [--parent-pom=<parent-pom>]
                               [--exclude=<exclude>]
@@ -2908,7 +2921,11 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -3077,7 +3094,8 @@ Usage: camel dependency outdated [-hy] [--integration=<integration>]
                                   [--transitive] [--all] [--offline] [--json]
                                   [--fail-on=<fail-on>] [--output=<output>]
                                   [--dep=<dep>] [--runtime=<runtime>]
-                                  [--name=<name>] [--port=<port>]
+                                  [--packaging=<packaging>] [--name=<name>]
+                                  [--port=<port>]
                                   [--management-port=<management-port>]
                                   [--gav=<gav>] [--parent-pom=<parent-pom>]
                                   [--exclude=<exclude>]
@@ -3136,6 +3154,10 @@ Options:
       --dep, --dependency=<dep>
                             Add additional dependencies
       --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -3334,8 +3356,8 @@ Examples:
 Updates dependencies in Maven pom.xml or Java source files (JBang style)
 Usage: camel dependency update [-hy] [--clean] [--scan-routes]
                                 [--output=<output>] [--dep=<dep>]
-                                [--runtime=<runtime>] [--name=<name>]
-                                [--port=<port>]
+                                [--runtime=<runtime>] [--packaging=<packaging>]
+                                [--name=<name>] [--port=<port>]
                                 [--management-port=<management-port>]
                                 [--gav=<gav>] [--parent-pom=<parent-pom>]
                                 [--exclude=<exclude>]
@@ -3381,7 +3403,11 @@ Options:
                             Default: gav
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -3556,8 +3582,8 @@ Usage: camel dev [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--quarkus-version=<quarkus-version>]
                   [--quarkus-ext-registry=<quarkus-ext-registry>]
                   [--spring-boot-version=<spring-boot-version>]
-                  [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                  [--maven-settings=<maven-settings>]
+                  [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                  [--gav=<gav>] [--maven-settings=<maven-settings>]
                   [--maven-settings-security=<maven-settings-security>]
                   [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                   [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]
@@ -3646,6 +3672,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -4081,10 +4111,11 @@ Examples:
 
 == camel export --help
 Export to other runtimes (Camel Main, Spring Boot, Tomcat WAR, or Quarkus)
-Usage: camel export [-hy] [--dep=<dep>] [--runtime=<runtime>] [--name=<name>]
-                     [--port=<port>] [--management-port=<management-port>]
-                     [--gav=<gav>] [--parent-pom=<parent-pom>]
-                     [--exclude=<exclude>] [--maven-settings=<maven-settings>]
+Usage: camel export [-hy] [--dep=<dep>] [--runtime=<runtime>]
+                     [--packaging=<packaging>] [--name=<name>] [--port=<port>]
+                     [--management-port=<management-port>] [--gav=<gav>]
+                     [--parent-pom=<parent-pom>] [--exclude=<exclude>]
+                     [--maven-settings=<maven-settings>]
                      [--maven-settings-security=<maven-settings-security>]
                      [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                      [--main-classname=<main-classname>]
@@ -4116,7 +4147,11 @@ Options:
   -h, --help                Display this help and exit
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -5977,8 +6012,8 @@ Usage: camel run [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--quarkus-version=<quarkus-version>]
                   [--quarkus-ext-registry=<quarkus-ext-registry>]
                   [--spring-boot-version=<spring-boot-version>]
-                  [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                  [--maven-settings=<maven-settings>]
+                  [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                  [--gav=<gav>] [--maven-settings=<maven-settings>]
                   [--maven-settings-security=<maven-settings-security>]
                   [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                   [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]
@@ -6067,6 +6102,10 @@ Options:
       --spring-boot-version=<spring-boot-version>
                             Spring Boot version
                             Default: ${spring-boot-version}
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --profile=<profile>   Profile to run (dev, test, prod).
                             Default: dev
       --dep, --dependency=<dep>
@@ -6296,7 +6335,8 @@ Usage: camel sbom [-hy] [--output-directory=<output-directory>]
                    [--spdx-plugin-version=<spdx-plugin-version>]
                    [--sbom-format=<sbom-format>]
                    [--sbom-output-format=<sbom-output-format>] [--dep=<dep>]
-                   [--runtime=<runtime>] [--name=<name>] [--port=<port>]
+                   [--runtime=<runtime>] [--packaging=<packaging>]
+                   [--name=<name>] [--port=<port>]
                    [--management-port=<management-port>] [--gav=<gav>]
                    [--parent-pom=<parent-pom>] [--exclude=<exclude>]
                    [--maven-settings=<maven-settings>]
@@ -6349,7 +6389,11 @@ Options:
                             Default: json
       --dep, --dependency=<dep>
                             Add additional dependencies
-      --runtime=<runtime>   Runtime (camel-main, spring-boot, tomcat, quarkus)
+      --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
+      --packaging=<packaging>
+                            Project packaging (jar or war; WAR requires
+                            --runtime=spring-boot)
+                            Default: jar
       --name=<name>         The integration name. Use this when the name should
                             not get derived otherwise.
       --port=<port>         Embeds a local HTTP server on this port
@@ -7495,8 +7539,8 @@ stderr:
                     [--quarkus-version=<quarkus-version>]
                     [--quarkus-ext-registry=<quarkus-ext-registry>]
                     [--spring-boot-version=<spring-boot-version>]
-                    [--profile=<profile>] [--dep=<dep>] [--gav=<gav>]
-                    [--maven-settings=<maven-settings>]
+                    [--packaging=<packaging>] [--profile=<profile>] [--dep=<dep>]
+                    [--gav=<gav>] [--maven-settings=<maven-settings>]
                     [--maven-settings-security=<maven-settings-security>]
                     [--maven-central-enabled] [--maven-apache-snapshot-enabled]
                     [--download] [--repo=<repo>] [--fresh] [--package-scan-jars]

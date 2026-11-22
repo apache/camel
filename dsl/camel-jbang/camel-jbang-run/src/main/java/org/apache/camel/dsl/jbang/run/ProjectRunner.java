@@ -131,6 +131,10 @@ public class ProjectRunner extends ProjectExporter {
         // camel run . or camel run dirName, and the runtime of an existing Maven project, which cannot run in this JVM
         Path dir = RunPipeline.detectDirectory(request);
         RunPipeline.detectRuntime(request);
+        String packagingError = request.packagingError();
+        if (packagingError != null) {
+            throw new IllegalArgumentException(packagingError);
+        }
         if (request.runtime == RuntimeType.main) {
             return new CamelMainRunner(this, request).start();
         } else if (request.runtime == RuntimeType.quarkus) {

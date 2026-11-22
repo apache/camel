@@ -68,7 +68,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
             completer = ExportRuntimeCompletionCandidates.class,
             converter = ExportRuntimeTypeConverter.class)
     protected RuntimeType runtime;
-
     @Option(name = "name", description = "The integration name. Use this when the name should not get derived otherwise.")
     protected String name;
 

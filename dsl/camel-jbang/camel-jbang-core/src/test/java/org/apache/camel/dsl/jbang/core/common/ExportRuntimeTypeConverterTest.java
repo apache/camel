@@ -16,25 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ExportRuntimeTypeConverterTest {
 
     @Test
-    void tomcatIsSupportedOnlyByTheExportConverter() throws Exception {
-        assertThat(new ExportRuntimeTypeConverter().convert("tomcat"))
-                .isEqualTo(RuntimeType.tomcat);
-
-        assertThatThrownBy(() -> new RuntimeTypeConverter().convert("tomcat"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("camel export");
-
-        assertThatThrownBy(() -> new RunRuntimeTypeConverter().convert("tomcat"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("camel run");
+    void tomcatIsNotARuntime() {
+        assertThatThrownBy(() -> new ExportRuntimeTypeConverter().convert("tomcat"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

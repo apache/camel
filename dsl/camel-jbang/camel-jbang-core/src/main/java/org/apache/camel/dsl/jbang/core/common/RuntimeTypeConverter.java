@@ -26,10 +26,6 @@ public class RuntimeTypeConverter extends StringConverter<RuntimeType> {
 
     public RuntimeType convert(String value) throws Exception {
         RuntimeType runtime = RuntimeType.fromValue(value);
-        if (runtime == RuntimeType.tomcat) {
-            throw new IllegalArgumentException(
-                    "Tomcat is an export target; use --runtime=tomcat with camel export");
-        }
         return runtime.exportRuntime();
     }
 }

@@ -1051,20 +1051,20 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
     }
 
     @Test
-    public void shouldGenerateTomcatWarForSpringBoot4() throws Exception {
-        assertTomcatWarKubernetesProject(
+    public void shouldGenerateSpringBootWarForSpringBoot4() throws Exception {
+        assertSpringBootWarKubernetesProject(
                 "4.2.0", "spring-boot-starter-webmvc",
                 "mirror.gcr.io/library/tomcat:11.0-jdk21-temurin", null);
     }
 
     @Test
-    public void shouldGenerateTomcatWarForSpringBoot3() throws Exception {
-        assertTomcatWarKubernetesProject(
+    public void shouldGenerateSpringBootWarForSpringBoot3() throws Exception {
+        assertSpringBootWarKubernetesProject(
                 "3.5.0", "spring-boot-starter-web",
                 "mirror.gcr.io/library/tomcat:10.1-jdk21-temurin", "4.18.1");
     }
 
-    private void assertTomcatWarKubernetesProject(
+    private void assertSpringBootWarKubernetesProject(
             String springBootVersion, String expectedWebStarter, String expectedTomcatImage,
             String camelSpringBootVersion)
             throws Exception {
@@ -1072,13 +1072,15 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         String[] options = camelSpringBootVersion == null
                 ? new String[] {
                         "--gav=examples:route:1.0.0",
-                        "--runtime=tomcat",
+                        "--runtime=spring-boot",
+                        "--packaging=war",
                         "--spring-boot-version=" + springBootVersion,
                         "--observe=true"
                 }
                 : new String[] {
                         "--gav=examples:route:1.0.0",
-                        "--runtime=tomcat",
+                        "--runtime=spring-boot",
+                        "--packaging=war",
                         "--spring-boot-version=" + springBootVersion,
                         "--camel-spring-boot-version=" + camelSpringBootVersion,
                         "--observe=true"
@@ -1147,7 +1149,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
                 "true", applicationProperties.getProperty("management.endpoint.health.probes.enabled"));
         Assertions.assertNull(applicationProperties.getProperty("management.server.port"));
 
-        Deployment deployment = getDeployment(RuntimeType.tomcat);
+        Deployment deployment = getDeployment(RuntimeType.springBoot);
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals(1, containers.size());
 

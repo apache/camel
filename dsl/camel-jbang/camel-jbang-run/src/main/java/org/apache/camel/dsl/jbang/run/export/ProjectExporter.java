@@ -171,6 +171,12 @@ public class ProjectExporter {
             return 1;
         }
 
+        String packagingError = request.packagingError();
+        if (packagingError != null) {
+            printer().printErr(packagingError);
+            return 1;
+        }
+
         try {
             verifyExportFiles(request.files);
         } catch (FileNotFoundException ex) {
@@ -201,7 +207,7 @@ public class ProjectExporter {
      */
     Exporter createExporter(ExportRequest request) {
         return switch (request.runtime) {
-            case springBoot, tomcat -> new SpringBootExporter(request, context);
+            case springBoot -> new SpringBootExporter(request, context);
             case quarkus -> new QuarkusExporter(request, context);
             case main -> new CamelMainExporter(request, context);
             default -> null;
