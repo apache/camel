@@ -96,22 +96,27 @@ public final class YamlSupport {
 
         final String scheme = uri.contains(":") ? StringHelper.before(uri, ":") : uri;
         final EndpointUriFactory factory = context.getCamelContextExtension().getEndpointUriFactory(scheme);
+        final boolean enabled = factory != null && factory.isEnabled(scheme);
+
+        // the option names in camelCase, but not the part after a multiValue prefix
+        final Map<String, Object> named
+                = optionNames(parameters, enabled ? factory.multiValuePrefixes().values() : Set.of());
 
         try {
-            if (factory != null && factory.isEnabled(scheme)) {
+            if (enabled) {
                 if (scheme.equals(uri)) {
                     //
                     // if the uri is expressed as simple scheme, then we can use the
                     // discovered EndpointUriFactory to build the uri
                     //
-                    answer = buildUri(factory, scheme, parameters);
+                    answer = buildUri(factory, scheme, named);
                 } else {
                     //
                     // otherwise we have to compose it but we can still leverage the
                     // discovered EndpointUriFactory to properly handle secrets
                     //
                     // in the order the parameters are written
-                    Map<String, Object> options = new LinkedHashMap<>(parameters);
+                    Map<String, Object> options = new LinkedHashMap<>(named);
 
                     for (String secretParameter : factory.secretPropertyNames()) {
                         Object val = options.get(secretParameter);
@@ -144,13 +149,50 @@ public final class YamlSupport {
                     answer += "?" + URISupport.createQueryString(flat, false);
                 }
             } else {
-                answer += "?" + createQueryString(parameters);
+                answer += "?" + createQueryString(named);
             }
         } catch (URISyntaxException e) {
             throw new InvalidEndpointException(node, "Error creating query", e);
         }
 
         return answer;
+    }
+
+    /**
+     * The parameters with the option names in camelCase, so an option can be written in dash form (bridge-endpoint). A
+     * key that starts with a multiValue prefix (such as properties.) is an entry of a map option: only the prefix is in
+     * camelCase, and the rest is kept as written, as it is passed on as it is (properties.ws-security.username). The
+     * keys of a map value are kept as written as well. The parameters keep their order, when they have one.
+     */
+    private static Map<String, Object> optionNames(Map<String, Object> parameters, Collection<String> prefixes) {
+        Map<String, Object> answer = parameters instanceof LinkedHashMap ? new LinkedHashMap<>() : new HashMap<>();
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            answer.put(optionName(entry.getKey(), prefixes), entry.getValue());
+        }
+        return answer;
+    }
+
+    /**
+     * The option name of a key in camelCase, but only the multiValue prefix of a key that starts with one.
+     *
+     * @param  key      the key as written
+     * @param  prefixes the multiValue prefixes of the component (such as properties.)
+     * @return          the option name
+     */
+    static String optionName(String key, Collection<String> prefixes) {
+        // the longest multiValue prefix (there are nested prefixes such as ftpClient. and ftpClient.keyStore.),
+        // written as it is or in dash form (a prefix can have a dash itself, such as request-model.)
+        for (int i = key.lastIndexOf('.'); i > 0; i = key.lastIndexOf('.', i - 1)) {
+            String head = key.substring(0, i + 1);
+            if (prefixes.contains(head)) {
+                return key;
+            }
+            String camel = StringHelper.dashToCamelCase(head);
+            if (prefixes.contains(camel)) {
+                return camel + key.substring(i + 1);
+            }
+        }
+        return StringHelper.dashToCamelCase(key);
     }
 
     /**
@@ -299,7 +341,8 @@ public final class YamlSupport {
                     final Node val = tuple.getValueNode();
 
                     if (val.getNodeType() == NodeType.SCALAR) {
-                        parameters.put(StringHelper.dashToCamelCase(key), YamlDeserializerSupport.asText(val));
+                        // the option names are turned into camelCase when the uri is created
+                        parameters.put(key, YamlDeserializerSupport.asText(val));
                     } else {
                         throw new InvalidNodeTypeException(node, NodeType.SCALAR);
                     }
