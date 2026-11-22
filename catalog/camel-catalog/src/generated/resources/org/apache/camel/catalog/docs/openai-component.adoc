@@ -877,7 +877,8 @@ that meets its rules, and answers any other with HTTP 400 (`BadRequestException`
 }
 ----
 
-The option is off by default, and then `strict` is not sent. Other OpenAI-compatible servers may ignore it. With
+The option is off by default, and then `strict` is not sent. The `CamelOpenAIJsonSchemaStrict` header sets it per
+message, as `CamelOpenAIJsonSchema` does for the schema. Other OpenAI-compatible servers may ignore it. With
 `outputClass`, the openai-java SDK builds a strict schema from the class itself.
 
 == Conversation Memory

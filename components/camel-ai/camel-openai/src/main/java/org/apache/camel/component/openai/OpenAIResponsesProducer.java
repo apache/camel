@@ -128,6 +128,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         Integer maxTokens = resolveParameter(in, OpenAIConstants.MAX_TOKENS, config.getMaxTokens(), Integer.class);
         String outputClass = resolveParameter(in, OpenAIConstants.OUTPUT_CLASS, config.getOutputClass(), String.class);
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
+        boolean jsonSchemaStrict
+                = resolveParameter(in, OpenAIConstants.JSON_SCHEMA_STRICT, config.isJsonSchemaStrict(), Boolean.class);
         String previousResponseId = resolveParameter(in, OpenAIConstants.PREVIOUS_RESPONSE_ID,
                 config.getPreviousResponseId(), String.class);
         if (ObjectHelper.isEmpty(previousResponseId) && config.isConversationMemory()) {
@@ -217,7 +219,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 params = paramsBuilder.text(responseClass).build().rawParams();
             } else {
                 if (ObjectHelper.isNotEmpty(jsonSchema)) {
-                    OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema, config.isJsonSchemaStrict());
+                    OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema, jsonSchemaStrict);
                 }
                 params = paramsBuilder.build();
             }

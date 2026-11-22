@@ -7863,6 +7863,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIJsonSchema";
         }
         /**
+         * Whether the model must follow the JSON schema exactly (strict
+         * structured outputs), in place of the jsonSchemaStrict option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code OpenAIJsonSchemaStrict}.
+         */
+        public String openAIJsonSchemaStrict() {
+            return "CamelOpenAIJsonSchemaStrict";
+        }
+        /**
          * Whether to strip ... blocks from the response body.
          * 
          * The option is a: {@code Boolean} type.

@@ -337,7 +337,7 @@ public class OpenAIBatchProducer extends DefaultProducer {
             ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema.builder()
                     .name("camel_schema")
                     .schema(schema(jsonSchema));
-            if (config.isJsonSchemaStrict()) {
+            if (in.getHeader(OpenAIConstants.JSON_SCHEMA_STRICT, config.isJsonSchemaStrict(), Boolean.class)) {
                 jsonSchemaBuilder.strict(true);
             }
             builder.responseFormat(ResponseFormatJsonSchema.builder().jsonSchema(jsonSchemaBuilder.build()).build());
@@ -386,7 +386,8 @@ public class OpenAIBatchProducer extends DefaultProducer {
         }
         String jsonSchema = in.getHeader(OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
         if (ObjectHelper.isNotEmpty(jsonSchema)) {
-            OpenAIResponsesSupport.applyJsonSchemaTextFormat(builder, jsonSchema, config.isJsonSchemaStrict());
+            OpenAIResponsesSupport.applyJsonSchemaTextFormat(builder, jsonSchema,
+                    in.getHeader(OpenAIConstants.JSON_SCHEMA_STRICT, config.isJsonSchemaStrict(), Boolean.class));
         }
         return builder.build()._body();
     }

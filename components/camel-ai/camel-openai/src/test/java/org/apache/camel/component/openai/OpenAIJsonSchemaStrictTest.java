@@ -120,4 +120,17 @@ public class OpenAIJsonSchemaStrictTest extends CamelTestSupport {
         template.requestBody("direct:responsesStrict", "Name a camel");
         assertThat(bodies.get("/v1/responses")).contains("\"type\":\"json_schema\"", "\"strict\":true");
     }
+
+    @Test
+    void theHeaderOverridesTheOption() {
+        // the header turns strict on for an endpoint without the option, and off for one with it
+        template.requestBodyAndHeader("direct:chat", "Name a camel", OpenAIConstants.JSON_SCHEMA_STRICT, true);
+        assertThat(bodies.get("/v1/chat/completions")).contains("\"strict\":true");
+
+        template.requestBodyAndHeader("direct:chatStrict", "Name a camel", OpenAIConstants.JSON_SCHEMA_STRICT, false);
+        assertThat(bodies.get("/v1/chat/completions")).doesNotContain("\"strict\"");
+
+        template.requestBodyAndHeader("direct:responses", "Name a camel", OpenAIConstants.JSON_SCHEMA_STRICT, "true");
+        assertThat(bodies.get("/v1/responses")).contains("\"strict\":true");
+    }
 }
