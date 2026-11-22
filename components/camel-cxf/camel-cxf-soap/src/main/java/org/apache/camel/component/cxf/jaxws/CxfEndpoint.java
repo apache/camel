@@ -604,6 +604,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             ServerLifeCycleManager manager = sfb.getBus().getExtension(ServerLifeCycleManager.class);
             if (manager != null) {
                 for (var listener : listeners) {
+                    // a listener that is already registered (a shared bus) is not added again
                     manager.registerListener(listener);
                 }
             }

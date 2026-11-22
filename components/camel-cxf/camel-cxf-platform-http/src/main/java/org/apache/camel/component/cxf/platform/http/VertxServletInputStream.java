@@ -194,6 +194,7 @@ final class VertxServletInputStream extends ServletInputStream {
             closed = true;
             queue.clear();
             current = null;
+            changed.signalAll();
         } finally {
             lock.unlock();
         }

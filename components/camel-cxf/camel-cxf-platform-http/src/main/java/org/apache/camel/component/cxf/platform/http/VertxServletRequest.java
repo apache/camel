@@ -233,7 +233,8 @@ final class VertxServletRequest implements HttpServletRequest {
     public String getServerName() {
         String host = forwarded("X-Forwarded-Host");
         if (host != null) {
-            return HostAndPort.parseAuthority(host, -1) != null ? HostAndPort.parseAuthority(host, -1).host() : host;
+            HostAndPort hp = HostAndPort.parseAuthority(host, -1);
+            return hp != null ? hp.host() : host;
         }
         HostAndPort authority = request.authority();
         if (authority != null) {
