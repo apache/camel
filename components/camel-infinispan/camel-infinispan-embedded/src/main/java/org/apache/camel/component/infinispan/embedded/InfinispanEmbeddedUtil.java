@@ -16,14 +16,21 @@
  */
 package org.apache.camel.component.infinispan.embedded;
 
+import java.util.List;
+
 import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.Cache;
+import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.query.Query;
+import org.infinispan.configuration.cache.CacheMode;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.StoreConfiguration;
 import org.infinispan.context.Flag;
+import org.infinispan.remoting.transport.Address;
 
 public final class InfinispanEmbeddedUtil extends InfinispanUtil {
 
@@ -35,6 +42,30 @@ public final class InfinispanEmbeddedUtil extends InfinispanUtil {
         final Cache<K, V> cache = manager.getCache(cacheName, Cache.class);
 
         return flags == null || flags.length == 0 ? cache : cache.getAdvancedCache().withFlags(flags);
+    }
+
+    /**
+     * Whether the cache keeps its entries only in the memory of this JVM, so they are lost when the application stops.
+     * A cache store keeps them, unless it purges on startup. A replicated cache, or a distributed one with more than
+     * one owner, keeps copies on the other nodes of the cluster, when there are any. A local cache without a store
+     * loses them, which is the default.
+     */
+    public static boolean isInMemory(BasicCache<?, ?> cache) {
+        if (!(cache instanceof Cache<?, ?> embedded)) {
+            return false;
+        }
+        Configuration configuration = embedded.getCacheConfiguration();
+        for (StoreConfiguration store : configuration.persistence().stores()) {
+            if (!store.purgeOnStartup()) {
+                return false;
+            }
+        }
+        CacheMode mode = configuration.clustering().cacheMode();
+        if (mode.isReplicated() || mode.isDistributed() && configuration.clustering().hash().numOwners() > 1) {
+            List<Address> members = embedded.getCacheManager().getMembers();
+            return members == null || members.size() <= 1;
+        }
+        return true;
     }
 
     public static Query<?> buildQuery(

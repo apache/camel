@@ -27,6 +27,8 @@ import org.apache.camel.util.ReferenceCount;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.ResourcePools;
+import org.ehcache.config.ResourceType;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.spi.service.ServiceConfiguration;
@@ -182,6 +184,27 @@ public class EhcacheManager extends ServiceSupport {
             }
             return existing;
         }
+    }
+
+    /**
+     * Whether the cache keeps its entries only in memory, so they are lost when the application stops. This is read
+     * from the resource pools of the cache: the heap, the off-heap and a disk tier that is not persistent lose the
+     * entries; a persistent disk tier, or a tier of another kind such as a clustered one, keeps them. False when the
+     * cache is not known yet, as the repository is not started.
+     */
+    public static boolean isInMemory(Cache<?, ?> cache) {
+        if (cache == null) {
+            return false;
+        }
+        ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
+        for (ResourceType<?> type : pools.getResourceTypeSet()) {
+            boolean memory = type == ResourceType.Core.HEAP || type == ResourceType.Core.OFFHEAP
+                    || type == ResourceType.Core.DISK && !pools.getPoolForResource(type).isPersistent();
+            if (!memory) {
+                return false;
+            }
+        }
+        return true;
     }
 
     CacheManager getCacheManager() {

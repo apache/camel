@@ -23,8 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -41,7 +44,8 @@ import org.slf4j.LoggerFactory;
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based aggregation repository")
-public class EhcacheAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+public class EhcacheAggregationRepository extends ServiceSupport
+        implements RecoverableAggregationRepository, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(EhcacheAggregationRepository.class);
 
@@ -77,6 +81,12 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the aggregates are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return EhcacheManager.isInMemory(cache);
     }
 
     public CacheManager getCacheManager() {

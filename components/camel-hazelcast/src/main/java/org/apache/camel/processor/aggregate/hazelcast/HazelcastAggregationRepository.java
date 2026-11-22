@@ -32,7 +32,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
+import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -60,7 +62,7 @@ import org.slf4j.LoggerFactory;
 @Configurer(metadataOnly = true)
 public class HazelcastAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository,
-        OptimisticLockingAggregationRepository {
+        OptimisticLockingAggregationRepository, InMemoryStrategy {
 
     protected static final String COMPLETED_SUFFIX = "-completed";
 
@@ -476,6 +478,16 @@ public class HazelcastAggregationRepository extends ServiceSupport
     @Override
     public Set<String> getKeys() {
         return Collections.unmodifiableSet(cache.keySet());
+    }
+
+    /**
+     * Whether the aggregates, and the completed exchanges kept for recovery, are kept only in memory, decided when
+     * asked as the cluster changes; see {@link HazelcastUtil#isInMemory(HazelcastInstance, String)}.
+     */
+    @Override
+    public boolean isInMemory() {
+        return cache != null && HazelcastUtil.isInMemory(hazelcastInstance, mapName)
+                && (!useRecovery || HazelcastUtil.isInMemory(hazelcastInstance, persistenceMapName));
     }
 
     /**
