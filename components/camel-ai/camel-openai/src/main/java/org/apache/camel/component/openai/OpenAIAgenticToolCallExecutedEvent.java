@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ai.AiEvent;
 
 /**
- * Fired after a single tool call completes during an OpenAI MCP agentic loop.
+ * Fired after a single tool call completes during an OpenAI agentic loop (MCP and route tools).
  *
  * @since 4.23
  */

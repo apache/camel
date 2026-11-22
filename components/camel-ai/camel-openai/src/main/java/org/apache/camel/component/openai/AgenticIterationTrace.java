@@ -19,7 +19,7 @@ package org.apache.camel.component.openai;
 import java.util.List;
 
 /**
- * Trace entry for one iteration of the OpenAI MCP agentic loop.
+ * Trace entry for one iteration of the OpenAI agentic loop (MCP and route tools).
  *
  * @param iteration        1-based sequence number for each model call in the agentic loop
  * @param toolCalls        tool calls executed in this iteration, empty when the model produced a final answer
