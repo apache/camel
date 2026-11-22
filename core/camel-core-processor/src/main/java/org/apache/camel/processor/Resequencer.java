@@ -26,7 +26,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -43,6 +42,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
@@ -399,7 +399,7 @@ public class Resequencer extends BaseProcessorSupport
             // validate that the exchange can be used
             if (!isRunAllowed()) {
                 // no sender would deliver the exchange unless the route is started again
-                throw new RejectedExecutionException("Resequencer is stopped: " + this);
+                throw new RouteStoppingException("Resequencer is stopped: " + this);
             } else if (!isValid(exchange)) {
                 if (isIgnoreInvalidExchanges()) {
                     LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
