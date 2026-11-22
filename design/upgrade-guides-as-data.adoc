@@ -5,7 +5,7 @@ authors:
 reviewers: []
 approvers: []
 creation-date: 2026-11-21
-last-updated: 2026-11-21
+last-updated: 2026-11-22
 status: proposed
 see-also:
   - "CAMEL-27359"
@@ -28,7 +28,8 @@ This proposal adds a build step that turns the guides into JSON, one entry per c
 [source,json]
 ----
 {
-  "id": "camel-ftp-sftp-uses-remote-file-and-directory-names-as-given",
+  "id": "4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given",
+  "change": "4.24/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given",
   "guide": "4.22",
   "from": "4.22.2",
   "to": "4.22.3",
@@ -143,8 +144,8 @@ catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/upgrade-g
 }
 ----
 
-Each guide file is a JSON array of entries. The 4.x guides are 2 MB of AsciiDoc. As JSON with Markdown text they are
-about the same size, and about 600 KB compressed in the JAR.
+Each guide file is a JSON array of entries. The 4.x guides are 2 MB of AsciiDoc. The JSON, with the text as Markdown,
+is about 2 MB too, and about 600 KB as stored (compressed) in the JAR.
 
 === The entry
 
@@ -154,9 +155,18 @@ about the same size, and about 600 KB compressed in the JAR.
 
 | `id`
 | string
-| The id of the change: the title, lower case, with each run of characters that are not a letter or a digit replaced
-  by `-`. The entries of a backported change have the same title in every guide, so they share the id (see
-  <<Which entries apply to an upgrade>>).
+| The id of the entry, unique in the catalog: the release of its section, `/`, and the slug of its title. The release
+  is the `to` of the section: `4.24` for a minor section, `4.22.3` for a patch section. The slug is the title in lower
+  case, with each run of characters that are not `a-z` or `0-9` replaced by one `-`, and no `-` at the start or the
+  end. It has no maximum length. A second entry with the same title in one section gets `-2` (and a warning, see
+  <<Checks in the build>>). Example: `4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given`.
+
+| `change`
+| string
+| The id of the change the entry is about. For an entry of a minor section, its own `id`: each change lands on `main`
+  once, in one minor release. For an entry of a patch section, the `id` of the minor entry it is a backport of (see
+  <<Backports>>), or its own `id` when there is none. The rule of <<Which entries apply to an upgrade>> works on
+  `change`.
 
 | `guide`
 | string
@@ -183,12 +193,15 @@ about the same size, and about 600 KB compressed in the JAR.
 
 | `eips`
 | array of strings, optional
-| The EIPs an entry is about, by their model name (`split`, `recipientList`), when the heading names them:
-  `=== Recipient List, Split and Multicast EIP`.
+| The EIPs an entry is about, when the heading names them (`=== Recipient List, Split and Multicast EIP`). A value is
+  the `name` of the EIP model in the catalog (`models/split.json`, `CamelCatalog.findModelNames()`): case-sensitive,
+  in camel case, such as `split` and `recipientList`.
 
 | `kind`
 | string
-| `change`, `deprecation` or `removal`.
+| `change`, `deprecation` or `removal`. A rename (of an option, a header, a page, a class) is a `change`, with the old
+  and the new name in the text. There is no `addition`: the upgrade guides are for migration only, not for new
+  features (the upgrade guide rule of `CLAUDE.md`), so an entry about a new feature is a `change` too.
 
 | `breaking`
 | boolean
@@ -258,8 +271,9 @@ blocks, tables, admonitions, `xref:`), and the line reader that `MigrationData` 
 
 `text` is the entry as Markdown: a source block becomes a fenced code block with its language, an admonition a quote
 starting with `**NOTE:**`, an `xref:` a link to the page on the website, and a table a GitHub table. A table that has
-blocks inside a cell (lists, code), which Markdown tables cannot hold, is kept as a preformatted block of the
-AsciiDoc. Today the 4.x guides have 294 source blocks, 121 tables, 51 admonitions and 88 `xref:` links.
+blocks inside a cell (lists, code), which Markdown tables cannot hold, becomes a fenced code block with the language
+`asciidoc`. So `text` is always Markdown, and the exception is marked the way Markdown marks any code: a tool that
+renders Markdown shows the table as source, and a tool that wants it can find it by the language. Today the 4.x guides have 294 source blocks, 121 tables, 51 admonitions and 88 `xref:` links.
 
 Markdown reads well in a terminal, in an IDE tooltip and in a prompt for an AI, and most tools can render it. The
 alternative, the raw AsciiDoc, is in <<Open questions>>.
@@ -274,8 +288,13 @@ A version `V` on the line `L` (its major and minor: `4.18.2` is on the line `4.1
 * `e` is in a minor section and `e.to` is `L` or older, or
 * `e` is in a patch section of the guide of `L` and `e.to` is `V` or older.
 
-The entries of an upgrade from `A` to `B` are the entries `B` has whose `id` no entry of `A` has. When several of them
-share an `id`, the one of the guide of `B`'s line is listed, else the one of the oldest minor section.
+`V` *has* a change when it has an entry with that `change`. Versions are compared as numbers, part by part
+(`4.22.10` is newer than `4.22.9`).
+
+The entries of an upgrade from `A` to `B` are, for each change `B` has and `A` does not, one entry: the entry of the
+patch sections of `B`'s line when there is one (its text speaks of that line), else the entry of the minor section. A
+change has one entry in a minor section and at most one in the patch sections of each line, so there is no other
+choice to make.
 
 An example, from 4.18.2 to 4.22.3:
 
@@ -283,28 +302,49 @@ An example, from 4.18.2 to 4.22.3:
 * The entries of the patch sections 4.22.0 to 4.22.3 are listed.
 * The entries of the patch sections 4.18.3 to 4.18.6 are not listed for what they are: they are changes of the 4.18
   line, and 4.22.3 has them only if they went into 4.22 as well, which its own entries say.
-* An entry of 4.19 whose change was backported to 4.18.1 is not listed: 4.18.2 has it already, from the 4.18.1 patch
-  section, with the same `id`.
+* An entry of 4.19 whose change was backported to 4.18.1 is not listed: 4.18.2 has the change already, from the
+  4.18.1 patch section, whose entry has the same `change`.
+* The `=== camel-jbang` entries of 4.20 and 4.21 are both listed. They are two changes with the same title, and each
+  has its own `change`.
 * `camel-ftp - sftp uses remote file and directory names as given` is in the 4.18.6, 4.22.3 and 4.24 sections. 4.22.3
   has it and 4.18.2 does not, so it is listed once, with the text of the 4.22.3 entry.
 
 The rule also answers a question an upgrade tool should ask: does `B` lack a change `A` has? From 4.18.6 to 4.22.2,
 the sftp change above is in `A` and not in `B`, because it went into 4.22.3. A tool can say "4.22.2 does not have
-this fix from 4.18.6 yet, take 4.22.3".
+this fix from 4.18.6 yet, take 4.22.3". This is information for the user, as the entries are: each tool decides how
+to show it (a line in the CLI output, a row in a view, a field in an MCP answer). It is not an error.
 
 A downgrade (`B` older than `A`) has no entries. A tool says so instead of listing nothing.
 
-The `id` works only if the entries of a backported change have the same title in each guide. Today 273 of the 356
-entries of patch sections have an entry with the same title in a minor section. The other 83 are listed as their own
-entries (a tool lists one entry too many, not one too few), and the goal warns about them, so the titles can be
-aligned (see <<Checks in the build>>).
+==== Backports
+
+The goal finds the minor entry of a patch entry by its title: the backport of a change has the same heading as the
+entry of the minor release where the change landed on `main`. That release is newer than the line of the patch
+section, so only the minor sections of newer guides are searched. Titles such as `=== camel-kafka` are in many guides
+(246 minor entries share their title with an entry of another minor guide), which is why the id of an entry is not its
+title alone, and why the match must find exactly one entry.
+
+When the title cannot be the same, an AsciiDoc comment under the heading names the minor entry. A comment is not
+shown on the website, and does not change the anchor of the heading:
+
+[source,asciidoc]
+----
+=== camel-ftp - sftp no longer treats * and ? in a name as wildcards
+// upgrade-guide-change: 4.24/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given
+----
+
+Today 242 of the 356 entries of patch sections match exactly one minor entry. 27 match several, and 87 match none.
+An entry with no match, or with several, is its own change: a tool lists it next to the minor entry, one entry too
+many rather than one too few. The goal warns about both, and the pass over the guides fixes them (see
+<<Checks in the build>>).
 
 === Which catalog to read
 
-The entries of an LTS line are added on `main` (the upgrade guide rule of `CLAUDE.md`), so the newest catalog knows
-the most: the 4.24 catalog has the entries of 4.22.3, and the 4.22.3 catalog does not have those of 4.22.4. A tool
-reads the catalog it ships with, and loads the catalog of the target version (`CatalogLoader`) only when the target is
-newer than its own catalog.
+The entries of an LTS line are added on `main` (the upgrade guide rule of `CLAUDE.md`), so a catalog knows the
+entries of the releases made before it: the 4.24.0 catalog has the entries of 4.22.3, and not those of 4.22.4 if that
+comes later. A tool reads the catalog it ships with. When the target version is newer than the version of that
+catalog, compared by the full version (a 4.22.2 catalog and a 4.22.3 target count), the tool also loads the catalog of
+the target (`CatalogLoader`), and uses the entries of both, one per `id`, the newer catalog first.
 
 === Checks in the build
 
@@ -318,13 +358,18 @@ the parser, so the website and the JSON say the same. The goal checks:
 * A heading whose components it cannot place: a name that starts with `camel-` and is neither an artifact id, an
   alias, nor a removed component.
 * A heading that starts with a component and goes on with no ` - ` before the summary (`=== camel-stomp removal`).
-* An entry of a patch section with no entry of the same title in a minor section (83 today).
+* An entry of a patch section that matches no minor entry (87 today), or several (27 today), see <<Backports>>.
+* An `upgrade-guide-change` comment that names no entry.
 * Two entries with the same title in one section (5 today), which share an anchor on the website only by luck of
   order.
 
-The checks start as warnings. A pass over the guides fixes what they find (see <<Mistakes in the guides today>>), and
-then the build is strict on `main` (`-Dcamel.upgrade-guides.strict=true` by default), so a new mistake fails the pull
-request that brings it, as a missing generated file does today.
+Some mistakes always fail the build, as they also break the page on the website: a delimited block that is not
+closed, and a guide that is not valid UTF-8. A heading with no text under it gives no entry, and a warning.
+
+The other checks start as warnings. Step 3 of <<Order of work>>, the pass over the guides, fixes what they find (see
+<<Mistakes in the guides today>>), and the last pull request of that step makes the build strict on `main`
+(`-Dcamel.upgrade-guides.strict=true` by default). From then on, a new mistake fails the pull request that brings it,
+as a missing generated file does today. Until then, nobody has to fix a warning before their pull request is merged.
 
 === Mistakes in the guides today
 
@@ -333,9 +378,9 @@ A prototype of the parser and the checks, run on the 4.x guides of `main` (2031 
 * The 4.14 guide has a section `== Upgrading from 4.10.0 to 4.10.1` ("No changes"), copied from the 4.10 guide. It
   should be 4.14.0 to 4.14.1. As it is, a tool would give the 4.10.1 release a section in the 4.14 guide.
 * The 4.8 guide has no section from 4.8.3 to 4.8.4: it goes from `4.8.2 to 4.8.3` to `4.8.4 to 4.8.7`.
-* 83 of the 356 entries of patch sections have no entry of the same title in a minor section. Some are titles that
-  changed when the entry was copied. Some may be backports whose entry on the minor guide is missing, which the pass
-  checks one by one, against the commits.
+* 87 of the 356 entries of patch sections match no minor entry, and 27 match several. Some are titles that changed
+  when the entry was copied, some are generic titles (`=== camel-kafka`). Some may be backports whose entry on the
+  minor guide is missing, which the pass checks one by one, against the commits.
 * Headings that name a component in a form the parser cannot split: `camel-stomp removal`,
   `camel-vertx-websocket clientOptions type changed from HttpClientOptions to WebSocketClientOptions`,
   `camel-opentelemetry2 — Embedded OTLP receiver ...` (an em dash), `camel-dynamic-router EIP component`.
@@ -357,7 +402,8 @@ What most entries do already, written down:
 
 * Start the heading with the artifact id, then ` - ` and what changed: `=== camel-ftp - sftp uses remote file and
   directory names as given`. Several components are separated by `,`.
-* Give a backported change the same heading in every guide.
+* Give a backported change the same heading in every guide, and a heading that says what changed, not only the
+  component, so it matches one entry.
 * Mark a deprecation or a removal in the heading: `(Deprecation)`, `(Removal)`, or group the entries under a
   `Deprecated` or `Removed` heading.
 
@@ -386,7 +432,7 @@ language reads the JSON from the `camel-catalog` JAR and follows the rule as wri
   over the entries, and its results gain the components and the link.
 * `camel update check` and the upgrade view of CAMEL-27352: the entries between the version in use and the target,
   the ones about the components the integration uses first.
-* The Camel Upgrade Recipes could name the `id` of the entries a recipe covers, so a tool can say which entries are
+* The Camel Upgrade Recipes could name the `change` of the entries a recipe covers, so a tool can say which entries are
   automated.
 * An IDE plugin could show the entries of a component when the user changes its version.
 
