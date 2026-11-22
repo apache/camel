@@ -41,7 +41,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
     MllpTcpServerConsumer consumer;
-    boolean running;
+    // true from the start, so a stop() before run() is not undone; written by the stopping thread
+    volatile boolean running = true;
 
     private final String localAddress;
     private final String remoteAddress;
@@ -122,7 +123,6 @@ public class TcpSocketConsumerRunnable implements Runnable {
     @SuppressWarnings("deprecation")
     // MDC deprecated since 4.19.0, use camel-mdc instead
     public void run() {
-        running = true;
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName());
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());

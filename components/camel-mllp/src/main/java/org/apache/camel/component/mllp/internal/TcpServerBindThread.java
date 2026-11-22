@@ -34,6 +34,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,10 +116,14 @@ public class TcpServerBindThread extends Thread {
                     .build();
 
             if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
+                // closes the socket instead when the consumer stopped in the meantime
                 consumer.startAcceptThread(serverSocket);
             } else {
                 log.error("Failed to bind to address {} within timeout {}", socketAddress,
                         consumer.getConfiguration().getBindTimeout());
+                // no accept thread closes this socket: a bind attempt that was still running when the task gave up (the
+                // consumer stopped) can have bound it, and would hold the port
+                IOHelper.close(serverSocket);
             }
         } finally {
             consumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(ses);

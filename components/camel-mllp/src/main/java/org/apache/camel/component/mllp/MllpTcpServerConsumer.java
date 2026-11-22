@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -55,6 +57,7 @@ import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +76,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     ExecutorService consumerExecutor;
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
+    // the bind thread starts the accept thread, doStop stops it: the lock makes the check of the consumer state in
+    // startAcceptThread and the start atomic with respect to doStop
+    private final Lock acceptThreadLock = new ReentrantLock();
 
     Map<TcpSocketConsumerRunnable, Long> consumerRunnables = new ConcurrentHashMap<>();
 
@@ -137,15 +143,25 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerClientSocketThread.stop();
         }
 
-        if (acceptThread != null) {
-            acceptThread.interrupt();
-            acceptThread = null;
+        acceptThreadLock.lock();
+        try {
+            if (acceptThread != null) {
+                acceptThread.interrupt();
+                acceptThread = null;
+            }
+        } finally {
+            acceptThreadLock.unlock();
         }
 
         if (bindThread != null) {
             bindThread.interrupt();
             bindThread = null;
         }
+
+        // the executors of this start (doStart creates new ones): running runnables end on their own, and a connection
+        // still being validated is reset by startConsumer
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(validationExecutor);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(consumerExecutor);
 
         super.doStop();
     }
@@ -236,8 +252,21 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startAcceptThread(ServerSocket serverSocket) {
-        acceptThread = new TcpServerAcceptThread(this, serverSocket);
-        acceptThread.start();
+        acceptThreadLock.lock();
+        try {
+            if (!isRunAllowed()) {
+                // with lenientBind the bind thread can bind while the consumer stops, after doStop looked for an
+                // accept thread to stop: do not start one after the stop, and release the port
+                log.debug("startAcceptThread({}) - the consumer is stopping or stopped, closing the server socket",
+                        serverSocket);
+                IOHelper.close(serverSocket);
+                return;
+            }
+            acceptThread = new TcpServerAcceptThread(this, serverSocket);
+            acceptThread.start();
+        } finally {
+            acceptThreadLock.unlock();
+        }
     }
 
     /**
@@ -253,6 +282,13 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 this, clientSocket, mllpBuffer, hl7Util, logPhi);
 
         consumerRunnables.put(client, System.currentTimeMillis());
+        if (!isRunAllowed()) {
+            // the consumer is stopping or stopped (the connection was accepted just before): do not serve it. The check
+            // comes after the put, so the runnable is either seen by the loop of doStop, or not started here
+            consumerRunnables.remove(client);
+            mllpBuffer.resetSocket(clientSocket, "Consumer is stopped");
+            return;
+        }
         try {
             log.info("startConsumer({}) - starting consumer", clientSocket);
             consumerExecutor.submit(client);
