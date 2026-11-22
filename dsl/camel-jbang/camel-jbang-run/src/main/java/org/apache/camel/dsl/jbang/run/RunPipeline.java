@@ -55,6 +55,7 @@ import org.apache.camel.main.SimpleMainShutdownStrategy;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -1066,7 +1067,7 @@ public class RunPipeline {
             answer = System.getProperty(key);
         }
         if (answer == null) {
-            answer = System.getenv(key.toUpperCase(Locale.ROOT).replace('.', '_').replace('-', '_'));
+            answer = IOHelper.lookupEnvironmentVariable(key);
         }
         if (answer == null && profileProperties != null) {
             answer = profileProperties.getProperty(key);
@@ -1123,15 +1124,11 @@ public class RunPipeline {
     }
 
     private String argumentOrProfileProperty(Properties profileProperties, String key) {
-        if (request.applicationProperties != null) {
-            for (String p : request.applicationProperties) {
-                String k = StringHelper.before(p, "=");
-                if (k != null && key.equals(k.trim())) {
-                    return StringHelper.after(p, "=");
-                }
-            }
+        String answer = argumentProperty(request, key);
+        if (answer == null && profileProperties != null) {
+            answer = profileProperties.getProperty(key);
         }
-        return profileProperties != null ? profileProperties.getProperty(key) : null;
+        return answer;
     }
 
     private static boolean isTrue(String value) {

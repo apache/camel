@@ -224,8 +224,10 @@ On Camel JBang (`camel run`), `camel.server.mcp-enabled = true` turns the HTTP s
 `camel.server.enabled = true` can be left out, and `camel-mcp-server` and `camel-platform-http-main` are downloaded on
 demand. As `camel.server.enabled`, the `camel.server.mcp-*` options work from every property source:
 `application.properties`, `--prop`, JVM system properties (`-D`) and environment variables, for example
-`camel run tools.yaml --prop camel.server.mcp-enabled=true --mcp-tags=crm`. Set `camel.server.enabled = false` to keep
-the HTTP server off. On Camel Main, set `camel.server.enabled = true` as shown above. Any MCP client can connect over streamable HTTP, for
+`camel run tools.yaml --prop camel.server.mcp-enabled=true --mcp-tags=crm`. To keep the HTTP server off, set
+`camel.server.enabled = false`.
+
+On Camel Main, the HTTP server is not turned on by itself: set `camel.server.enabled = true` as shown above. Any MCP client can connect over streamable HTTP, for
 example another Camel integration using the
 xref:ROOT:openai-component.adoc[camel-openai] MCP client:
 
