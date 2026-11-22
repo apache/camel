@@ -61,7 +61,10 @@ public class AiToolConfiguration implements Cloneable {
 
     @UriParam(description = "Raw JSON Schema for tool input parameters. Supports inline JSON and resource "
                             + "references (classpath:, file:, resource:). Mutually exclusive with the parameter "
-                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas.")
+                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas. "
+                            + "When the schema does not set additionalProperties, Camel adds additionalProperties: false, "
+                            + "so a client that validates the input (such as the MCP server) refuses an undeclared "
+                            + "argument.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
 

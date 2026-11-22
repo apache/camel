@@ -313,6 +313,61 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
+    void testResolveArgSchemaAddsAdditionalPropertiesFalseWhenNotSet() throws Exception {
+        String resolved = AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"city\"]}");
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(resolved);
+        assertThat(root.get("additionalProperties"))
+                .as("additionalProperties: false is added like for parameter.*")
+                .isEqualTo(false);
+        assertThat((JsonObject) root.get("properties")).containsOnlyKeys("city");
+        assertThat((JsonArray) root.get("required")).containsExactly("city");
+    }
+
+    @Test
+    void testResolveArgSchemaAddsAdditionalPropertiesFalseWithoutRootType() throws Exception {
+        String resolved = AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"properties\":{\"city\":{\"type\":\"string\"}}}");
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(resolved);
+        assertThat(root.get("additionalProperties")).isEqualTo(false);
+    }
+
+    @Test
+    void testResolveArgSchemaKeepsAdditionalPropertiesTrue() throws Exception {
+        String resolved = AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"additionalProperties\":true}");
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(resolved);
+        assertThat(root.get("additionalProperties"))
+                .as("a schema that sets additionalProperties is kept as written")
+                .isEqualTo(true);
+    }
+
+    @Test
+    void testResolveArgSchemaKeepsSchemaValuedAdditionalProperties() throws Exception {
+        String resolved = AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},"
+                                                                               + "\"additionalProperties\":{\"type\":\"string\"}}");
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(resolved);
+        assertThat((JsonObject) root.get("additionalProperties")).containsEntry("type", "string");
+    }
+
+    @Test
+    void testResolveArgSchemaDoesNotChangeNestedObjects() throws Exception {
+        String resolved = AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"customer\":{\"type\":\"object\","
+                                                                               + "\"properties\":{\"id\":{\"type\":\"string\"}}}}}");
+
+        JsonObject root = (JsonObject) Jsoner.deserialize(resolved);
+        JsonObject customer = (JsonObject) ((JsonObject) root.get("properties")).get("customer");
+        assertThat(customer).doesNotContainKey("additionalProperties");
+        assertThat(root.get("additionalProperties")).isEqualTo(false);
+    }
+
+    @Test
     void testResolveArgSchemaRejectsJsonNull() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "null"))
                 .isInstanceOf(IllegalArgumentException.class)
