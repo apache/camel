@@ -222,7 +222,10 @@ public interface Aws2EventbridgeComponentBuilderFactory {
         
         /**
          * Whether to delete the auto-created SQS queue and remove the
-         * EventBridge target on shutdown.
+         * EventBridge target on shutdown. When false, the queue and its target
+         * are kept, so the queue collects the events while the consumer is
+         * stopped, and the queue name is derived from the event bus and the
+         * rule name, so the next start reuses the queue.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

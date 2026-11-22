@@ -419,20 +419,82 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDeleteQueueOnShutdownFalseKeepsQueue() throws Exception {
+    public void testDeleteQueueOnShutdownFalseKeepsQueueAndTarget() throws Exception {
         stubAutoCreateQueue();
         stubPutTargetsSuccess();
-        when(eventBridgeClient.removeTargets(any(RemoveTargetsRequest.class)))
-                .thenReturn(RemoveTargetsResponse.builder().build());
 
         EventbridgeConsumer consumer = createConsumer("test-rule", null, true, false);
         consumer.start();
         consumer.stop();
 
-        // Target is still removed
-        verify(eventBridgeClient).removeTargets(any(RemoveTargetsRequest.class));
-        // But queue is NOT deleted
+        // the queue and its target stay, so the queue keeps collecting the events of the rule until the next start
+        verify(eventBridgeClient, never()).removeTargets(any(RemoveTargetsRequest.class));
         verify(sqsClient, never()).deleteQueue(any(DeleteQueueRequest.class));
+
+        ArgumentCaptor<PutTargetsRequest> captor = ArgumentCaptor.forClass(PutTargetsRequest.class);
+        verify(eventBridgeClient).putTargets(captor.capture());
+        assertEquals(EventbridgeConsumer.targetIdForQueue(TEST_QUEUE_ARN), captor.getValue().targets().get(0).id());
+    }
+
+    @Test
+    public void testDeleteQueueOnShutdownFalseReusesQueueOnRestart() throws Exception {
+        stubAutoCreateQueue();
+        stubPutTargetsSuccess();
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, false);
+        consumer.start();
+        consumer.stop();
+        consumer.start();
+        consumer.stop();
+
+        // both starts ask for the same queue name, so CreateQueue returns the queue of the first start
+        ArgumentCaptor<CreateQueueRequest> create = ArgumentCaptor.forClass(CreateQueueRequest.class);
+        verify(sqsClient, times(2)).createQueue(create.capture());
+        String name = EventbridgeConsumer.durableQueueName("default", "test-rule");
+        assertEquals(List.of(name, name), create.getAllValues().stream().map(CreateQueueRequest::queueName).toList());
+
+        // and update the same target
+        ArgumentCaptor<PutTargetsRequest> put = ArgumentCaptor.forClass(PutTargetsRequest.class);
+        verify(eventBridgeClient, times(2)).putTargets(put.capture());
+        assertEquals(put.getAllValues().get(0).targets().get(0).id(), put.getAllValues().get(1).targets().get(0).id());
+    }
+
+    @Test
+    public void testDeleteQueueOnShutdownTrueCreatesOwnQueuePerStart() throws Exception {
+        stubAutoCreateQueue();
+        stubPutTargetsSuccess();
+        when(eventBridgeClient.removeTargets(any(RemoveTargetsRequest.class)))
+                .thenReturn(RemoveTargetsResponse.builder().build());
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, true);
+        consumer.start();
+        consumer.stop();
+        consumer.start();
+        consumer.stop();
+
+        ArgumentCaptor<CreateQueueRequest> create = ArgumentCaptor.forClass(CreateQueueRequest.class);
+        verify(sqsClient, times(2)).createQueue(create.capture());
+        String first = create.getAllValues().get(0).queueName();
+        String second = create.getAllValues().get(1).queueName();
+        assertTrue(first.startsWith("camel-eventbridge-test-rule-"), first);
+        assertNotEquals(first, second);
+    }
+
+    @Test
+    public void testDurableQueueName() {
+        String name = EventbridgeConsumer.durableQueueName("default", "test-rule");
+        assertTrue(name.matches("camel-eventbridge-test-rule-[0-9a-f]{16}"), name);
+        assertEquals(name, EventbridgeConsumer.durableQueueName("default", "test-rule"));
+        // a rule with the same name on another event bus gets another queue
+        assertNotEquals(name, EventbridgeConsumer.durableQueueName("orders", "test-rule"));
+
+        // a queue name has at most 80 characters of [-_A-Za-z0-9]; a rule name has up to 64 characters, dots too
+        String longRule = "a.b".repeat(21) + "x";
+        String longName = EventbridgeConsumer.durableQueueName("default", longRule);
+        assertTrue(longName.length() <= 80, longName);
+        assertTrue(longName.matches("[-_A-Za-z0-9]+"), longName);
+        // rules that differ after the cut get other queues
+        assertNotEquals(longName, EventbridgeConsumer.durableQueueName("default", "a.b".repeat(21) + "y"));
     }
 
     @Test
