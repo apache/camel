@@ -160,7 +160,7 @@ import org.slf4j.LoggerFactory;
                                                           carriers = { Carrier.BYTES, Carrier.TEXT, Carrier.LIST }) },
                                    description = "The answer of chat-completion as text, also with outputClass or"
                                                  + " jsonSchema, where it is JSON text: unmarshal it to read its fields."
-                                                 + " With streaming, an Iterator of the chunks (text when MCP tools run in"
+                                                 + " With streaming, an Iterator of the chunks (text when tools run in"
                                                  + " a loop). With autoToolExecution=false, the tool calls the model asks"
                                                  + " for: an Optional of the List of tool calls, or a List of the function"
                                                  + " calls for responses. embeddings gives a vector (a List of Float), or a"
