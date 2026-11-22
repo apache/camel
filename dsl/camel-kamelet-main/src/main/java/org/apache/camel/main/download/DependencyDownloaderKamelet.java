@@ -16,25 +16,39 @@
  */
 package org.apache.camel.main.download;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kamelet.Kamelet;
 import org.apache.camel.component.kamelet.KameletComponent;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoaderSupport;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.main.util.VersionHelper;
+import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -46,13 +60,21 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
 /**
  * To automatic downloaded dependencies that Kamelets requires.
+ *
+ * The dependencies of a Kamelet are downloaded when a route that uses the Kamelet is added, before the route is
+ * created: the route can then use the classes of these dependencies, such as an exception class in a doCatch. The route
+ * of the Kamelet itself is created later, when the CamelContext is initialized.
  */
 public final class DependencyDownloaderKamelet extends ServiceSupport
-        implements CamelContextAware, RouteTemplateLoaderListener {
+        implements CamelContextAware, RouteTemplateLoaderListener, ModelLifecycleStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DependencyDownloaderKamelet.class);
 
     private String kameletsVersion;
     private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
+    // the Kamelets whose dependencies are downloaded already, when a route that uses them is added
+    private final Set<String> kamelets = ConcurrentHashMap.newKeySet();
 
     public DependencyDownloaderKamelet(CamelContext camelContext, String kameletsVersion) {
         this.camelContext = camelContext;
@@ -74,6 +96,9 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         var comp = camelContext.getComponent("kamelet");
         if (comp instanceof KameletComponent kc) {
             kc.setRouteTemplateLoaderListener(this);
+        }
+        if (camelContext instanceof ModelCamelContext mcc) {
+            mcc.addModelLifecycleStrategy(this);
         }
     }
 
@@ -107,6 +132,131 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public void onAddRouteDefinition(RouteDefinition routeDefinition) {
+        // the Kamelets of the route are created after all the routes, when the CamelContext is initialized: their
+        // dependencies are downloaded now, so the route can use their classes (CAMEL-27364)
+        if (downloader == null) {
+            return;
+        }
+        List<String> uris = new ArrayList<>();
+        if (routeDefinition.getInput() != null) {
+            uris.add(routeDefinition.getInput().getEndpointUri());
+        }
+        for (EndpointRequiredDefinition erd : ProcessorDefinitionHelper.filterTypeInOutputs(routeDefinition.getOutputs(),
+                EndpointRequiredDefinition.class)) {
+            uris.add(erd.getEndpointUri());
+        }
+        for (String uri : uris) {
+            String name = kameletName(uri);
+            if (name != null && kamelets.add(name)) {
+                try {
+                    Resource resource = resolveKamelet(name, kameletLocation(uri));
+                    if (resource != null) {
+                        LOG.debug("Downloading the dependencies of Kamelet: {} used by route: {}", name,
+                                routeDefinition.getRouteId());
+                        loadRouteTemplate(resource);
+                    }
+                } catch (Exception e) {
+                    // the dependencies are then downloaded when the Kamelet is loaded, which reports the error
+                    LOG.debug("Cannot download the dependencies of Kamelet: {} due to: {}", name, e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRemoveRouteDefinition(RouteDefinition routeDefinition) {
+        // noop
+    }
+
+    @Override
+    public void onAddRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) {
+        // noop
+    }
+
+    @Override
+    public void onRemoveRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) {
+        // noop
+    }
+
+    /**
+     * The name of the Kamelet of a kamelet: endpoint uri, or null when it is not one, it is kamelet:source or
+     * kamelet:sink (the template of a Kamelet), or the name is a placeholder or an expression.
+     */
+    static String kameletName(String uri) {
+        if (uri == null || !uri.startsWith("kamelet:")) {
+            return null;
+        }
+        String name = FileUtil.stripLeadingSeparator(uri.substring("kamelet:".length()));
+        int q = name.indexOf('?');
+        if (q >= 0) {
+            name = name.substring(0, q);
+        }
+        int slash = name.indexOf('/');
+        if (slash >= 0) {
+            // kamelet:name/routeId
+            name = name.substring(0, slash);
+        }
+        if (name.isEmpty() || Kamelet.SOURCE_ID.equals(name) || Kamelet.SINK_ID.equals(name)
+                || name.contains("{{") || name.contains("${")) {
+            return null;
+        }
+        return name;
+    }
+
+    /**
+     * The location of the Kamelets: the location option of the endpoint, otherwise the one of the kamelet component.
+     */
+    private String kameletLocation(String uri) {
+        int q = uri.indexOf('?');
+        if (q >= 0) {
+            try {
+                Map<String, Object> parameters = URISupport.parseQuery(uri.substring(q + 1));
+                Object loc = parameters.get(Kamelet.PARAM_LOCATION);
+                if (loc != null) {
+                    return loc.toString();
+                }
+            } catch (Exception e) {
+                // use the location of the component
+            }
+        }
+        if (camelContext.getComponent("kamelet") instanceof KameletComponent kc) {
+            return kc.getLocation();
+        }
+        return Kamelet.DEFAULT_LOCATION;
+    }
+
+    /**
+     * The Kamelet file in the location, as the kamelet component finds it (RouteTemplateHelper), or null when it is not
+     * there.
+     */
+    private Resource resolveKamelet(String name, String location) {
+        if (location == null) {
+            return null;
+        }
+        ResourceLoader resourceLoader = PluginHelper.getResourceLoader(camelContext);
+        for (String path : location.split(",")) {
+            // using dot as current dir must be expanded into absolute path
+            if (".".equals(path) || "file:.".equals(path)) {
+                path = "file:" + FileUtil.onlyPath(new File(".").getAbsolutePath());
+            }
+            Resource res = null;
+            // a path with an extension is the Kamelet file itself
+            String ext = FileUtil.onlyExt(path);
+            if (ext != null && !ext.isEmpty()) {
+                res = resourceLoader.resolveResource(path);
+            }
+            if (res == null || !res.exists()) {
+                res = resourceLoader.resolveResource((path.endsWith("/") ? path : path + "/") + name + ".kamelet.yaml");
+            }
+            if (res != null && res.exists()) {
+                return res;
+            }
+        }
+        return null;
     }
 
     /**
