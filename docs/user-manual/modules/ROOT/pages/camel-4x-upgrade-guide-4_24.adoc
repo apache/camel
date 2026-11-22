@@ -2600,6 +2600,17 @@ milliseconds per request, 14 to 17.5 seconds for 10,000 records), and a record t
 next records of its request. A redelivery of the exchange still sends the whole batch again: see the Batch Producer
 section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 
+=== camel-aws2-eventbridge - the queue the consumer creates accepts only the events of its rule
+
+With `autoCreateQueue` (the default when no `queueUrl` is given), the policy of the SQS queue the consumer creates now
+allows `sqs:SendMessage` only for the EventBridge rule of the consumer (an `aws:SourceArn` condition with the rule
+ARN). Before, the policy allowed `events.amazonaws.com` without a condition, so any EventBridge rule could send to
+the queue.
+
+To get the rule ARN, the consumer calls `DescribeRule` before it creates the queue, so the IAM principal of the
+consumer now also needs `events:DescribeRule` on the rule. A rule that does not exist now fails the consumer start
+before a queue is created. A queue given with `queueUrl` keeps its own policy, as before.
+
 === camel-azure-storage-blob - copyBlob validates the source account and container name
 
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`

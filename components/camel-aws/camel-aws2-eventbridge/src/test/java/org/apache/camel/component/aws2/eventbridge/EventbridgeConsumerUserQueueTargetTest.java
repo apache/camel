@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
@@ -76,6 +78,8 @@ class EventbridgeConsumerUserQueueTargetTest extends CamelTestSupport {
                 .thenReturn(CreateQueueResponse.builder().queueUrl(AUTO_QUEUE_URL).build());
         when(sqsClient.setQueueAttributes(any(SetQueueAttributesRequest.class)))
                 .thenReturn(SetQueueAttributesResponse.builder().build());
+        when(eventBridgeClient.describeRule(any(DescribeRuleRequest.class))).thenReturn(
+                DescribeRuleResponse.builder().arn("arn:aws:events:us-east-1:123456789:rule/test-rule").build());
         when(eventBridgeClient.putTargets(any(PutTargetsRequest.class))).thenAnswer(inv -> {
             PutTargetsRequest req = inv.getArgument(0);
             for (Target target : req.targets()) {

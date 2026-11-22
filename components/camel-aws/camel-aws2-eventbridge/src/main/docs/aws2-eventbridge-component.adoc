@@ -615,7 +615,9 @@ This is the standard AWS pattern for programmatically consuming EventBridge even
 === How It Works
 
 1. On startup the consumer creates an SQS queue (unless you provide one via `queueUrl`).
-2. It sets an SQS queue policy that allows EventBridge to send messages.
+2. It sets an SQS queue policy that allows only the EventBridge rule given by `ruleName` to send messages (an
+`aws:SourceArn` condition with the ARN of the rule, which the consumer gets with `DescribeRule`). A queue given with
+`queueUrl` keeps its own policy.
 3. It adds the queue as a target of the EventBridge rule specified by `ruleName`.
 4. It polls the SQS queue on schedule, delivering each event into the Camel route.
 5. Successfully processed messages are deleted from the queue; failed messages remain for retry.
@@ -827,6 +829,7 @@ YAML::
 The consumer's IAM principal needs the following permissions:
 
 - `events:PutTargets` and `events:RemoveTargets` on the EventBridge rule
+- `events:DescribeRule` on the EventBridge rule (if auto-creating)
 - `sqs:CreateQueue`, `sqs:DeleteQueue`, `sqs:SetQueueAttributes`, `sqs:GetQueueAttributes` (if auto-creating)
 - `sqs:ReceiveMessage`, `sqs:DeleteMessage` on the SQS queue
 
