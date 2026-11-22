@@ -395,7 +395,7 @@ The plugins of the Apache Camel project:
 | kubernetes | `camel kubernetes`: deploy to Kubernetes, see xref:camel-jbang-kubernetes.adoc[Kubernetes Plugin]
 | test | `camel test`: Citrus tests, see xref:camel-jbang-test.adoc[Testing Plugin]
 | validate | `camel validate`: check source files, see xref:camel-jbang-validation.adoc[Validation]
-| generate | `camel generate`: REST DSL and DTOs from OpenAPI, JSON schemas (see below)
+| generate | `camel generate`: REST DSL and DTOs from OpenAPI, cxf routes from a WSDL, JSON schemas (see below)
 | tui | `camel tui`: the xref:camel-jbang-tui.adoc[Camel TUI]
 | mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 | edit | `camel edit`: edit a Camel file in the terminal with suggestions and diagnostics
@@ -559,6 +559,61 @@ camel generate rest --input=petstore.yaml --dto --runtime=quarkus --package=com.
 `--routes` also generates a route for each operation (YAML only), and `--dto` generates Java data objects
 for the schemas of the specification. Each generated route has a `log` step that says it is not implemented yet: the
 routes run as they are (`camel run petstore-rest.yaml`), and you replace that step with the implementation.
+
+=== SOAP routes from a WSDL
+
+List the services, ports and operations of a WSDL 1.1 document (a file or a http(s) URL) with SOAP 1.1 or SOAP 1.2
+bindings:
+
+[source,bash]
+----
+camel generate wsdl orders.wsdl
+camel generate wsdl http://localhost:8080/orders?wsdl --json
+----
+
+The listing has a block per port (the service, port, binding, SOAP version, style, address and namespace), and a row per
+operation with its SOAP action, request and response elements, and faults:
+
+[source,text]
+----
+SERVICE    OrderService
+PORT       OrderPort
+BINDING    OrderSoapBinding
+SOAP       1.1
+STYLE      document/literal
+ADDRESS    http://localhost:18081/orders
+NAMESPACE  http://example.com/orders
+
+ OPERATION   SOAP ACTION                           INPUT       OUTPUT              FAULTS
+ getOrder    http://example.com/orders/getOrder    getOrder    getOrderResponse    orderNotFound
+ placeOrder  http://example.com/orders/placeOrder  placeOrder  placeOrderResponse
+----
+
+With `--json`, each port also has the values of the xref:components::cxf-component.adoc[CXF] endpoint options
+(`serviceName`, `portName`, `wsdlURL`, `address` and `defaultOperationNamespace`), ready to copy into a route or a
+Kamelet. The user info of an address (`user:password@`) is masked.
+
+`--route` scaffolds a YAML route in `PAYLOAD` mode, which needs no generated Java classes:
+
+[source,bash]
+----
+camel generate wsdl orders.wsdl --route=consumer --output=orders-service.camel.yaml
+camel generate wsdl orders.wsdl --route=producer --operation=getOrder --output=orders-client.camel.yaml
+----
+
+* `consumer` is a SOAP service: a `cxf:` consumer with schema validation, and a `choice` with a `when` per operation
+(on the `CamelCxfOperationName` header) that logs the request and returns a placeholder response element. The response
+is validated against the schema too, so until you fill in the placeholder the caller gets a SOAP fault that names the
+first element it misses. With `--runtime=camel-main` (the default) the consumer listens on `0.0.0.0` and the port and
+path of the address of the WSDL, so `camel run` serves it as it is; with `spring-boot` or `quarkus` it uses the path,
+which the CXF servlet of the runtime serves.
+* `producer` is a SOAP client: a route `direct:<operation>` per operation, which takes the request element (XML) as
+the body and returns the response element. It removes the `Camel*` headers and the CXF operation headers first, so a
+caller cannot choose another operation or address (such as with `CamelDestinationOverrideUrl`).
+
+When the WSDL has more than one port, choose one with `--service` and `--port`. A remote WSDL may only import documents
+over http(s), and a local one only files. The rpc style is listed but not scaffolded, and WSDL 2.0 and bindings that are
+not SOAP (such as HTTP GET) are not supported.
 
 === JSON schema
 

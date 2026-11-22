@@ -1,0 +1,11 @@
+SERVICE    OrderService
+PORT       OrderPort
+BINDING    OrderSoapBinding
+SOAP       1.1
+STYLE      document/literal
+ADDRESS    http://localhost:18081/orders
+NAMESPACE  http://example.com/orders
+
+ OPERATION   SOAP ACTION                           INPUT       OUTPUT              FAULTS
+ getOrder    http://example.com/orders/getOrder    getOrder    getOrderResponse    orderNotFound
+ placeOrder  http://example.com/orders/placeOrder  placeOrder  placeOrderResponse
