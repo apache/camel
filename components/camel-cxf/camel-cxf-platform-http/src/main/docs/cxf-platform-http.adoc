@@ -1,0 +1,91 @@
+= CXF Platform HTTP Component
+:doctitle: CXF Platform HTTP
+:shortname: cxf-platform-http
+:artifactid: camel-cxf-platform-http
+:description: Serve the SOAP services of cxf consumers on the platform-http server (Vert.x) in Camel Main and Camel JBang
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `camel-cxf-platform-http` module serves the SOAP services of the xref:ROOT:cxf-component.adoc[cxf] consumers of a
+Camel Main or Camel JBang application on its platform-http server (xref:platform-http-main.adoc[Platform HTTP Main]),
+the Vert.x HTTP server that also serves REST, platform-http routes, the health checks and the dev consoles. The SOAP
+services use the same port, bind address, TLS and authentication (`camel.server.*`), and no HTTP server of their own
+(such as Jetty or Undertow) is needed.
+
+It works the way the CXF extension of Quarkus serves SOAP services on the Vert.x server of Quarkus.
+
+Camel JBang uses it for every cxf consumer. In a Camel Main application, add the dependency, with
+`camel-platform-http-main`, and turn on the HTTP server:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cxf-platform-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+[source,properties]
+----
+camel.server.enabled=true
+camel.server.port=8080
+----
+
+On Spring Boot and Quarkus, use their own transport instead: `camel-cxf-soap-starter` serves the services through the
+CXF servlet under `cxf.path`, and the CXF extension of Quarkus under `quarkus.cxf.path` (both default `/services`).
+
+== The address of a service
+
+The address of a cxf consumer is a path, such as `/orders`. The service is served under a base path, default
+`/services`, the same as `cxf.path` on Spring Boot and `quarkus.cxf.path` on Quarkus, so the URL of the service stays the
+same after a `camel export`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf:/orders
+      parameters:
+        wsdlURL: classpath:orders.wsdl
+        dataFormat: PAYLOAD
+      steps:
+        - to: direct:order
+----
+
+With the default port, the service is at `\http://localhost:8080/services/orders`, and its WSDL at
+`\http://localhost:8080/services/orders?wsdl`. With `camel.server.path` set, it is under that path too.
+
+An address with a scheme and a host, such as `\http://0.0.0.0:9000/orders`, fails when the route starts, as the host and
+port are those of the platform-http server. The cxf producer (a SOAP client) is not changed and still takes a full URL.
+
+Each request runs on a worker thread, as CXF is blocking. The request and the response are streamed, so a large message
+or an MTOM attachment is not held in memory as a whole.
+
+== Options
+
+[width="100%",cols="2,1,5",options="header"]
+|===
+| Option | Default | Description
+| `camel.cxf.path` | `/services` | The path that the services are served under on the platform-http server. A service with
+address `/orders` is at `<path>/orders`. `camel export` sets `cxf.path` (Spring Boot) or `quarkus.cxf.path` (Quarkus)
+to it.
+| `camel.cxf.useXForwardedHeaders` | `false` | Whether the scheme, host and port of the request URL come from the
+`X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port` headers, and the client address from `X-Forwarded-For`.
+The request URL is the base of the address that the WSDL at `?wsdl` gives. Turn it on only behind a proxy that sets
+these headers, as a client can set them too.
+|===
+
+The address in the WSDL comes from the URL of the request, unless the endpoint has the `publishedEndpointUrl` option.
+
+== Security
+
+The authentication of the platform-http server (`camel.server.authenticationEnabled`) applies to the SOAP services too;
+the name of the user is the principal of the request, which CXF gives the service. Message security, such as
+WS-Security, is configured on the cxf endpoint as before.
+
+HTTP sessions are not supported, and the roles of the user are not known to CXF (`isUserInRole` is false).

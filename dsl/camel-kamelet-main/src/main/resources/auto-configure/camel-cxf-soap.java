@@ -15,30 +15,36 @@
  * limitations under the License.
  */
 
-// check if we already have CXF transport on classpath
-org.apache.camel.main.download.MavenDependencyDownloader downloader = context.hasService(org.apache.camel.main.download.MavenDependencyDownloader.class);
-var cxfVersion = downloader.getVersionResolver().resolve("${cxf-version}");
-boolean jetty = downloader.alreadyOnClasspath("org.apache.cxf", "cxf-rt-transports-http-jetty", cxfVersion);
-boolean undertow = downloader.alreadyOnClasspath("org.apache.cxf", "cxf-rt-transports-http-undertow", cxfVersion);
-if (jetty || undertow){
-    return null;
+// a cxf consumer is served on the platform-http server (camel-cxf-platform-http), as the CXF extension of Quarkus does
+// on the Vert.x server of Quarkus; the address of a consumer is a path, served under /services (camel.cxf.path)
+//
+// only the Camel API is used directly: the classes of the Camel CLI are not visible to the compiler of this script
+// when it runs from the launcher, so they are called by reflection
+var resolver = context.getClassResolver();
+Class downloaderType = resolver.resolveMandatoryClass("org.apache.camel.main.download.DependencyDownloader");
+Object downloader = context.hasService(downloaderType);
+downloaderType.getMethod("downloadHiddenDependency", String.class, String.class, String.class)
+        .invoke(downloader, "org.apache.camel", "camel-cxf-platform-http", context.getVersion());
+
+Class transportType = resolver.resolveMandatoryClass("org.apache.camel.component.cxf.platform.http.CxfPlatformHttpTransport");
+Object transport = context.getRegistry().lookupByName("camelCxfPlatformHttpTransport");
+if (transport == null) {
+    transport = transportType.getConstructor().newInstance();
+    transportType.getMethod("setCamelContext", org.apache.camel.CamelContext.class).invoke(transport, context);
+    context.getRegistry().bind("camelCxfPlatformHttpTransport", transport);
 }
 
-// automatic download cxf transport for undertow and register this with CXF
-context.getRegistry().bind("camelCxfUndertowHttpTransportDownloader", new org.apache.cxf.transport.http.HttpDestinationFactory() {
-    public org.apache.cxf.transport.http.AbstractHTTPDestination createDestination(org.apache.cxf.service.model.EndpointInfo endpointInfo, org.apache.cxf.Bus bus, org.apache.cxf.transport.http.DestinationRegistry registry) throws java.io.IOException {
-        downloader.downloadDependency("org.apache.cxf", "cxf-rt-transports-http-undertow", cxfVersion);
-        try {
-            Class c = context.getClassResolver().resolveClass("org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory");
-            Object o = c.getConstructor(org.apache.cxf.Bus.class).newInstance(bus);
-            Class c2 = context.getClassResolver().resolveClass("org.apache.cxf.transport.http_undertow.UndertowHTTPDestination");
-            Object o2 = c2.getConstructor(org.apache.cxf.Bus.class, org.apache.cxf.transport.http.DestinationRegistry.class, org.apache.cxf.service.model.EndpointInfo.class, c)
-                    .newInstance(bus, registry, endpointInfo, o);
-            return (org.apache.cxf.transport.http.AbstractHTTPDestination) o2;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+// start the platform-http server when the first cxf consumer starts (not for a cxf producer only)
+java.lang.reflect.Method setup = resolver.resolveMandatoryClass("org.apache.camel.main.download.MainHttpServerFactory")
+        .getMethod("setupHttpServer", org.apache.camel.CamelContext.class, boolean.class);
+Runnable starter = () -> {
+    try {
+        setup.invoke(null, context, false);
+    } catch (Exception e) {
+        throw new IllegalStateException("Cannot start the platform-http server for the cxf consumers", e);
     }
-});
+};
+transportType.getMethod("setHttpServerStarter", Runnable.class).invoke(transport, starter);
 
-return "Camel CLI will automatic download org.apache.cxf:cxf-rt-transports-http-undertow:" + cxfVersion + " if needed by camel-cxf-soap";
+return "Camel CLI serves cxf consumers on the platform-http server under "
+       + context.resolvePropertyPlaceholders("{{camel.cxf.path:/services}}");
