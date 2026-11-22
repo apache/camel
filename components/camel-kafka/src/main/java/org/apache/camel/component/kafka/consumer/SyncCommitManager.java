@@ -85,4 +85,9 @@ public class SyncCommitManager extends AbstractCommitManager {
     public void recordOffset(TopicPartition partition, long partitionLastOffset) {
         offsetCache.recordOffset(partition, partitionLastOffset);
     }
+
+    @Override
+    public void discardRecordedOffset(TopicPartition partition) {
+        offsetCache.remove(partition);
+    }
 }
