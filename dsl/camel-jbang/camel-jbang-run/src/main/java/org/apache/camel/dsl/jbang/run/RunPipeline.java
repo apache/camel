@@ -1005,7 +1005,7 @@ public class RunPipeline {
     }
 
     private boolean isMcpStdioEnabled(Properties profileProperties) {
-        return isMcpStdioEnabled(request.mcpStdio, profileProperties);
+        return isMcpStdioEnabled(request, profileProperties);
     }
 
     /**
@@ -1020,12 +1020,70 @@ public class RunPipeline {
                 && "stdio".equalsIgnoreCase(profileProperties.getProperty("camel.server.mcp-transport", "").trim());
     }
 
+    /**
+     * Whether the ai-tool routes are served over MCP stdio: with the option, or with camel.server.mcp-transport=stdio
+     * from any property source that the run reads up front: --prop, a JVM system property, an environment variable or
+     * the profile properties (CAMEL-27404). The run decides it before starting, as it logs to stderr then.
+     */
+    public static boolean isMcpStdioEnabled(RunRequest request, Properties profileProperties) {
+        if (request.mcpStdio) {
+            return true;
+        }
+        String transport = serverProperty(request, profileProperties, "mcp-transport", "mcpTransport");
+        return transport != null && "stdio".equalsIgnoreCase(transport.trim());
+    }
+
+    /**
+     * Whether the ai-tool routes are served over MCP, with camel.server.mcp-enabled from --prop, a JVM system property,
+     * an environment variable or the profile properties. Over HTTP, the run does not depend on it: camel-main resolves
+     * it at runtime, turns the HTTP server on and downloads camel-mcp-server and camel-platform-http-main on demand.
+     */
     boolean isAiToolMcpServerEnabled(Properties profileProperties) {
         if (isMcpStdioEnabled(profileProperties)) {
             return true;
         }
-        return profileProperties != null
-                && "true".equalsIgnoreCase(profileProperties.getProperty("camel.server.mcp-enabled", "").trim());
+        return isTrue(serverProperty(request, profileProperties, "mcp-enabled", "mcpEnabled"));
+    }
+
+    /**
+     * A camel.server option (by its dashed or camelCase name) from the sources that camel-main reads, in the order that
+     * wins there: --prop, JVM system property, environment variable, profile properties.
+     */
+    static String serverProperty(RunRequest request, Properties profileProperties, String dashed, String camelCase) {
+        String answer = null;
+        for (String option : new String[] { dashed, camelCase }) {
+            answer = propertyOfAnySource(request, profileProperties, "camel.server." + option);
+            if (answer != null) {
+                break;
+            }
+        }
+        return answer;
+    }
+
+    private static String propertyOfAnySource(RunRequest request, Properties profileProperties, String key) {
+        String answer = argumentProperty(request, key);
+        if (answer == null) {
+            answer = System.getProperty(key);
+        }
+        if (answer == null) {
+            answer = System.getenv(key.toUpperCase(Locale.ROOT).replace('.', '_').replace('-', '_'));
+        }
+        if (answer == null && profileProperties != null) {
+            answer = profileProperties.getProperty(key);
+        }
+        return answer;
+    }
+
+    private static String argumentProperty(RunRequest request, String key) {
+        if (request.applicationProperties != null) {
+            for (String p : request.applicationProperties) {
+                String k = StringHelper.before(p, "=");
+                if (k != null && key.equals(k.trim())) {
+                    return StringHelper.after(p, "=");
+                }
+            }
+        }
+        return null;
     }
 
     void applyMcpTagsOverride(KameletMain main) {
@@ -1107,6 +1165,7 @@ public class RunPipeline {
         } else {
             writeSetting(main, profileProperties, "camel.server.mcp-enabled", "true");
             writeSetting(main, profileProperties, "camel.server.mcp-transport", "stdio");
+            applyMcpTagsOverride(main);
         }
         main.addOverrideProperty("camel.main.startupSummaryLevel", "Off");
         main.setSilent(true);

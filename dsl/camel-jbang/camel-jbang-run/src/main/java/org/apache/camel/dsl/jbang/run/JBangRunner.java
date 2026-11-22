@@ -66,7 +66,7 @@ final class JBangRunner {
             });
         }
         Properties profileProperties = !request.empty ? properties : null;
-        context.onPrepared(request, properties, RunPipeline.isMcpStdioEnabled(request.mcpStdio, profileProperties));
+        context.onPrepared(request, properties, RunPipeline.isMcpStdioEnabled(request, profileProperties));
 
         // the printer of the caller once it knows how the run logs (such as quiet with MCP over stdio)
         Printer printer = context.getPrinter();
