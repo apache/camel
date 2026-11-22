@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.share;
 
 import java.util.Properties;
 
+import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.consumer.ShareConsumer;
 
 /**
@@ -32,6 +33,18 @@ public interface KafkaShareClientFactory {
      * @return            an instance of Kafka share consumer.
      */
     ShareConsumer<Object, Object> getShareConsumer(Properties kafkaProps);
+
+    /**
+     * Creates a new instance of the Kafka {@link Admin} client, which the consumer uses to set the configuration of its
+     * share group (the shareAutoOffsetReset option).
+     *
+     * @param  kafkaProps The admin client configs.
+     * @return            an instance of Kafka admin client.
+     * @since             4.24
+     */
+    default Admin getAdmin(Properties kafkaProps) {
+        return Admin.create(kafkaProps);
+    }
 
     /**
      * URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers
