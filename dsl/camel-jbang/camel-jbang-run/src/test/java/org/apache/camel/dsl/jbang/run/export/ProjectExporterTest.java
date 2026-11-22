@@ -478,12 +478,14 @@ class ProjectExporterTest {
     @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
     void cxfConsumerIsServedOnTheHttpServerOfTheRuntime(RuntimeType runtime) throws Exception {
         Path route = writeRoute("soap");
+        // camel run adds camel-cxf-platform-http for a route with a cxf consumer
         DependencyResolver cxf = r -> {
             Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
             Files.createDirectories(settings.getParent());
             Files.writeString(settings, """
                     camel.main.routesIncludePattern=file:%s
                     dependency=camel:cxf-soap
+                    dependency=camel:cxf-platform-http
                     """.formatted(route));
             return 0;
         };
@@ -521,6 +523,35 @@ class ProjectExporterTest {
                         .doesNotContain("camel.cxf.");
             }
         }
+    }
+
+    @Test
+    void cxfProducersOnlyNeedNoHttpServer() throws Exception {
+        // CAMEL-27391: camel run adds camel-cxf-platform-http only for a cxf consumer
+        Path route = writeRoute("soap");
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = RuntimeType.main;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains("<artifactId>camel-cxf-soap</artifactId>")
+                .doesNotContain("camel-cxf-platform-http", "camel-platform-http-main");
+        assertThat(exportDir.resolve("src/main/resources/application.properties")).content()
+                .doesNotContain("camel.server.enabled");
     }
 
     @ParameterizedTest

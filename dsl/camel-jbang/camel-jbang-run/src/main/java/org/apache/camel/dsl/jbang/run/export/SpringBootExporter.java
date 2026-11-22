@@ -515,6 +515,9 @@ class SpringBootExporter extends Exporter {
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
+        // camel run serves a cxf consumer with camel-cxf-platform-http (camel-main); the runtime serves it with its
+        // CXF starter or extension
+        removeCamelArtifact(answer, "camel-cxf-platform-http");
 
         boolean http = hasCamelArtifact(answer, "camel-platform-http")
                 || hasCamelArtifact(answer, "camel-platform-http-vertx");
