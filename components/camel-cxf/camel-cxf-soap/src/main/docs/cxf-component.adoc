@@ -275,6 +275,67 @@ The same configuration in Spring XML:
 </cxf:cxfEndpoint>
 ----
 
+=== HTTP headers of the reply
+
+The `cxf` consumer returns the headers of the reply message as HTTP response headers, except the ones the
+`headerFilterStrategy` filters, such as the `Camel*` headers. The headers of the request stay on the message unless
+the route removes them, so the consumer also leaves out the common HTTP request headers, such as `Authorization`,
+`Cookie`, `Host`, `User-Agent` and the `Accept` and `If-*` headers (the same list as `platform-http`), compared
+without regard to case.
+
+The other headers are returned, both the ones the route set for the reply and the other headers of the request, such
+as a custom `X-` header, as well as the headers that a producer in the route received, for example from a backend
+service. A route that should not return them removes them before the reply, for example with `removeHeaders`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("cxf:bean:serviceEndpoint")
+    .to("cxf:bean:backendEndpoint")
+    .removeHeaders("X-*")
+    .setHeader("X-Reply", constant("done"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="cxf:bean:serviceEndpoint"/>
+    <to uri="cxf:bean:backendEndpoint"/>
+    <removeHeaders pattern="X-*"/>
+    <setHeader name="X-Reply">
+        <constant>done</constant>
+    </setHeader>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf:bean:serviceEndpoint
+      steps:
+        - to:
+            uri: cxf:bean:backendEndpoint
+        - removeHeaders:
+            pattern: "X-*"
+        - setHeader:
+            name: X-Reply
+            constant:
+              expression: done
+----
+====
+
+To return one of the common request headers anyway, set it under another name, or set the `cxfBinding` option to a
+subclass of `DefaultCxfBinding` that overrides `isHttpRequestHeader`. The `cxf` producer sends the headers of the
+message to the service, the common request headers such as `Authorization` included.
+
 === Description of CxfHeaderFilterStrategy options
 
 There are _in-band_ and _out-of-band_ on-the-wire headers from the

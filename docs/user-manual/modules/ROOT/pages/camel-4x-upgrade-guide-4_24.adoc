@@ -1267,6 +1267,19 @@ that header, and says when `operationName` is set, in place of `Cannot find meth
 no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
 response header.
 
+=== camel-cxf - the consumer does not return the common HTTP request headers as response headers
+
+The `cxf` consumer returns the headers of the reply message as HTTP response headers. As the headers of the request
+stay on the message unless the route removes them, the request headers were sent back with the response. The consumer
+now leaves out the common HTTP request headers, such as `Authorization`, `Cookie`, `Host`, `User-Agent` and the
+`Accept` and `If-*` headers, compared without regard to case. This is the same list as `platform-http`, which keeps
+these headers off its responses too. Other headers of the request, such as custom `X-` headers, are still returned
+unless the route removes them. The `cxf` producer is not changed, and still sends these headers to the service.
+
+A route that relied on one of these headers being returned can return it under another name, or set the
+`cxfBinding` option to a subclass of `DefaultCxfBinding` that overrides `isHttpRequestHeader` and returns `false` for
+the header.
+
 === camel-snmp - the trap consumer receives only the traps of its snmpVersion
 
 The trap consumer (`type=TRAP`) now receives only the traps of the `snmpVersion` of its endpoint. With `snmpVersion=0`
