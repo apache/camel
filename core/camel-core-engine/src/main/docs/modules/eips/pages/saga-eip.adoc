@@ -393,6 +393,8 @@ so it should take into account that it may be triggered multiple times and shoul
 If compensation cannot be done after all retries, a manual intervention process should be triggered.
 The in-memory Saga service logs a warning, marks the Saga as failed, and keeps the exception that caused the compensation
 on the exchange, with the compensation failure added to it as a suppressed exception.
+A compensation or completion asked for while the in-memory Saga service already compensates or completes the Saga
+(because of the timeout of a step, or another caller such as `saga:compensate`) waits for it and gets its outcome.
 
 [NOTE]
 ====
