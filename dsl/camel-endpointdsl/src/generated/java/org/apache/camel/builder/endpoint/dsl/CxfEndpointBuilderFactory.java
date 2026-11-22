@@ -2979,8 +2979,10 @@ public interface CxfEndpointBuilderFactory {
          * Path parameter: address
          * The service address, for example http://localhost:9000/orders. The
          * consumer receives requests at this address, and the producer sends
-         * requests to it. The CamelDestinationOverrideUrl header replaces this
-         * address for a request that the producer sends over HTTP.
+         * requests to it. A producer with no address sends requests to the
+         * address that the WSDL (see wsdlURL) gives for the port. The
+         * CamelDestinationOverrideUrl header replaces this address for a
+         * request that the producer sends over HTTP.
          * 
          * @param path beanId:address
          * @return the dsl builder
@@ -3010,8 +3012,10 @@ public interface CxfEndpointBuilderFactory {
          * Path parameter: address
          * The service address, for example http://localhost:9000/orders. The
          * consumer receives requests at this address, and the producer sends
-         * requests to it. The CamelDestinationOverrideUrl header replaces this
-         * address for a request that the producer sends over HTTP.
+         * requests to it. A producer with no address sends requests to the
+         * address that the WSDL (see wsdlURL) gives for the port. The
+         * CamelDestinationOverrideUrl header replaces this address for a
+         * request that the producer sends over HTTP.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

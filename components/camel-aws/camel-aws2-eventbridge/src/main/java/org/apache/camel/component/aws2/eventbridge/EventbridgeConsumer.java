@@ -38,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
@@ -161,6 +162,10 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
             queueAutoCreated = false;
             queueArn = getQueueArn(queueUrl);
         } else if (config.isAutoCreateQueue()) {
+            // The queue policy only lets the rule of this consumer send to the queue, so look up the rule first: a
+            // missing rule then fails before a queue is created
+            String ruleArn = getRuleArn(ruleName, config.getEventbusName());
+
             // Auto-create queue
             String queueName
                     = "camel-eventbridge-" + ruleName + "-" + UUID.randomUUID().toString().substring(0, 8);
@@ -174,8 +179,8 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
             queueAutoCreated = true;
             queueArn = getQueueArn(queueUrl);
 
-            // Set queue policy to allow EventBridge to send messages
-            String policy = buildQueuePolicy(queueArn);
+            // Set queue policy to allow the EventBridge rule to send messages
+            String policy = buildQueuePolicy(queueArn, ruleArn);
             sqsClient.setQueueAttributes(
                     SetQueueAttributesRequest.builder()
                             .queueUrl(queueUrl)
@@ -296,12 +301,30 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
         return response.attributes().get(QueueAttributeName.QUEUE_ARN);
     }
 
-    private String buildQueuePolicy(String queueArn) {
+    private String getRuleArn(String ruleName, String eventBusName) {
+        String ruleArn = getEndpoint().getEventbridgeClient().describeRule(
+                DescribeRuleRequest.builder()
+                        .name(ruleName)
+                        .eventBusName(eventBusName)
+                        .build())
+                .arn();
+        if (ObjectHelper.isEmpty(ruleArn)) {
+            throw new IllegalStateException("Cannot get the ARN of the EventBridge rule " + ruleName);
+        }
+        return ruleArn;
+    }
+
+    /**
+     * The policy of an auto-created queue: only the EventBridge rule of the consumer may send messages to the queue
+     * (aws:SourceArn), not every rule of every account.
+     */
+    static String buildQueuePolicy(String queueArn, String ruleArn) {
         return "{\"Version\":\"2012-10-17\","
                + "\"Statement\":[{\"Sid\":\"AllowEventBridgeToSendMessage\","
                + "\"Effect\":\"Allow\","
                + "\"Principal\":{\"Service\":\"events.amazonaws.com\"},"
                + "\"Action\":\"sqs:SendMessage\","
-               + "\"Resource\":\"" + queueArn + "\"}]}";
+               + "\"Resource\":\"" + queueArn + "\","
+               + "\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"" + ruleArn + "\"}}}]}";
     }
 }

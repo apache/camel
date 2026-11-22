@@ -54,6 +54,14 @@ cxf://someAddress[?options]
 Where `someAddress` specifies the CXF endpoint's address. With this URI
 format, most of the endpoint details are specified using options.
 
+A producer can leave out the address when it has a `wsdlURL`: it then sends the requests to the address that the
+WSDL gives for the port (the `location` of its `soap:address`). Set `serviceName` and `portName` when the WSDL has
+more than one service or port:
+
+----
+cxf://?wsdlURL=classpath:wsdl/orders.wsdl&serviceName={http://example.com/orders}OrderService&portName={http://example.com/orders}OrderPort&dataFormat=PAYLOAD
+----
+
 For either style above, you can append options to the URI as follows:
 
 ----
@@ -916,6 +924,24 @@ Then throw it as you like:
 [source,java]
 ----
 from(routerEndpointURI).process(exchange -> exchange.getMessage().setBody(SOAP_FAULT));
+----
+
+In the `PAYLOAD` data format, the route can also reply with the SOAP Fault element itself, as a `String`, a DOM
+`Document` or `Element`, or a `CxfPayload`. A `Fault` element in the SOAP 1.1 or SOAP 1.2 envelope namespace is sent
+to the client as a SOAP fault (HTTP status 500), with its fault code, fault string (or reason) and detail:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf://http://localhost:9000/orders
+      parameters:
+        wsdlURL: classpath:wsdl/orders.wsdl
+        dataFormat: PAYLOAD
+      steps:
+        - setBody:
+            constant:
+              expression: '<soap:Fault xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><faultcode>soap:Client</faultcode><faultstring>No such order</faultstring></soap:Fault>'
 ----
 
 

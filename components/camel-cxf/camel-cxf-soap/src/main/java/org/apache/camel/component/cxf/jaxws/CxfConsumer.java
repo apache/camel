@@ -25,7 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.xml.ws.WebFault;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -157,6 +159,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
         private static final String COMPLETED = "org.apache.camel.component.cxf.jaxws.completed";
         private static final String MUTED_FAULT_MESSAGE = "Exchange processing failed";
+        private static final String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+        private static final String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
 
         private final CxfEndpoint endpoint;
 
@@ -389,7 +393,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             // an exception set on the exchange is a route failure; one carried in the body is a fault the route
             // chose to return, and stays part of the contract either way
             final Throwable routeFailure = camelExchange.getException();
-            final Throwable t = routeFailure != null ? routeFailure : extractFromBody(camelExchange, null);
+            final Throwable t = routeFailure != null ? routeFailure : extractFromBody(camelExchange);
 
             if (t != null) {
                 cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
@@ -465,15 +469,39 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         /**
          * SOAP faults can be stored as exceptions as message body (to be backwards compatible).
          */
-        private static Throwable extractFromBody(org.apache.camel.Exchange camelExchange, Throwable t) {
+        private static Throwable extractFromBody(org.apache.camel.Exchange camelExchange) {
             Object body = camelExchange.getMessage().getBody();
             if (body instanceof Throwable throwable) {
-                t = throwable;
+                return throwable;
             } else if (body instanceof CxfPayload<?> payload) {
                 // Check if the CxfPayload contains a SOAP Fault element set directly as body
-                t = extractFaultFromPayload(payload);
+                return extractFaultFromPayload(payload);
+            } else if (camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class) == DataFormat.PAYLOAD) {
+                // the binding converts the body into a CxfPayload only for the response it writes, so a SOAP Fault
+                // element in a String or DOM body is detected here
+                return extractFault(faultElementCandidate(camelExchange, body));
             }
-            return t;
+            return null;
+        }
+
+        /**
+         * The root element of a String or DOM body that may be a SOAP Fault. A String is only parsed when it mentions a
+         * Fault in a SOAP envelope namespace, and a stream is never read here, as that would consume it.
+         */
+        private static Element faultElementCandidate(org.apache.camel.Exchange camelExchange, Object body) {
+            Node node = null;
+            if (body instanceof Node n) {
+                node = n;
+            } else if (body instanceof DOMSource source) {
+                node = source.getNode();
+            } else if (body instanceof String text && text.contains("Fault")
+                    && (text.contains(SOAP11_ENVELOPE_NS) || text.contains(SOAP12_ENVELOPE_NS))) {
+                node = camelExchange.getContext().getTypeConverter().tryConvertTo(Document.class, camelExchange, text);
+            }
+            if (node instanceof Document document) {
+                return document.getDocumentElement();
+            }
+            return node instanceof Element element ? element : null;
         }
 
         /**
@@ -487,13 +515,18 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             if (elements == null || elements.size() != 1) {
                 return null;
             }
-            Element element = elements.get(0);
-            if (!"Fault".equals(element.getLocalName())) {
+            return extractFault(elements.get(0));
+        }
+
+        /**
+         * Converts a SOAP 1.1 or 1.2 Fault element to a SoapFault, or returns null when the element is no SOAP Fault.
+         */
+        private static SoapFault extractFault(Element element) {
+            if (element == null || !"Fault".equals(element.getLocalName())) {
                 return null;
             }
             String nsUri = element.getNamespaceURI();
-            if (!"http://schemas.xmlsoap.org/soap/envelope/".equals(nsUri)
-                    && !"http://www.w3.org/2003/05/soap-envelope".equals(nsUri)) {
+            if (!SOAP11_ENVELOPE_NS.equals(nsUri) && !SOAP12_ENVELOPE_NS.equals(nsUri)) {
                 return null;
             }
 

@@ -255,8 +255,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private DataFormat dataFormat = DataFormat.POJO;
     @UriPath(label = "service",
              description = "The service address, for example http://localhost:9000/orders. The consumer receives requests at"
-                           + " this address, and the producer sends requests to it. The CamelDestinationOverrideUrl header"
-                           + " replaces this address for a request that the producer sends over HTTP.")
+                           + " this address, and the producer sends requests to it. A producer with no address sends"
+                           + " requests to the address that the WSDL (see wsdlURL) gives for the port. The"
+                           + " CamelDestinationOverrideUrl header replaces this address for a request that the producer"
+                           + " sends over HTTP.")
     private String address;
     @UriParam(label = "service")
     private String wsdlURL;
@@ -744,8 +746,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             setServiceFactory(factoryBean, serviceFactoryBean);
         }
 
-        // address
-        factoryBean.setAddress(getAddress());
+        // address: an empty address (cxf:// with no address) is no address, so CXF uses the address of the port in
+        // the WSDL instead of overriding it with an empty one
+        String address = getAddress();
+        factoryBean.setAddress(ObjectHelper.isEmpty(address) ? null : address);
 
         // wsdl url
         if (getWsdlURL() != null) {
