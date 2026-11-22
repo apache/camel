@@ -161,6 +161,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Boolean streaming = resolveParameter(in, OpenAIConstants.STREAMING, config.isStreaming(), Boolean.class);
         String outputClass = resolveParameter(in, OpenAIConstants.OUTPUT_CLASS, config.getOutputClass(), String.class);
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
+        boolean jsonSchemaStrict
+                = resolveParameter(in, OpenAIConstants.JSON_SCHEMA_STRICT, config.isJsonSchemaStrict(), Boolean.class);
 
         List<ChatCompletionMessageParam> messages = buildMessages(exchange, config);
 
@@ -196,10 +198,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // Build OpenAI JSON schema response format from provided schema string
             try {
                 ResponseFormatJsonSchema.JsonSchema.Schema schema = buildSchemaFromJson(jsonSchema);
-                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = ResponseFormatJsonSchema.JsonSchema.builder()
+                ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema.builder()
                         .name("camel_schema")
-                        .schema(schema)
-                        .build();
+                        .schema(schema);
+                if (jsonSchemaStrict) {
+                    // without the option, strict is left out of the request, as before
+                    jsonSchemaBuilder.strict(true);
+                }
+                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = jsonSchemaBuilder.build();
                 paramsBuilder.responseFormat(
                         ResponseFormatJsonSchema.builder()
                                 .jsonSchema(jsonSchemaObj)

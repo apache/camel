@@ -176,7 +176,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1055,6 +1057,50 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointConsumerBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
             return this;
         }
         /**
@@ -2742,7 +2788,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3621,6 +3669,50 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointProducerBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
             return this;
         }
         /**
@@ -5157,7 +5249,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6036,6 +6130,50 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
             return this;
         }
         /**
@@ -7723,6 +7861,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIJsonSchema() {
             return "CamelOpenAIJsonSchema";
+        }
+        /**
+         * Whether the model must follow the JSON schema exactly (strict
+         * structured outputs), in place of the jsonSchemaStrict option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code OpenAIJsonSchemaStrict}.
+         */
+        public String openAIJsonSchemaStrict() {
+            return "CamelOpenAIJsonSchemaStrict";
         }
         /**
          * Whether to strip ... blocks from the response body.

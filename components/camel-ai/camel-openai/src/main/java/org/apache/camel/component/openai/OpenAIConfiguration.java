@@ -54,7 +54,10 @@ public class OpenAIConfiguration implements Cloneable {
     private int webhookMaxPayloadSize = 1048576;
 
     @UriParam(security = "secret")
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable. Optional for a"
+                            + " server that checks no key, such as a local Ollama, vLLM or LM Studio (with baseUrl): without"
+                            + " a key (and no oauthProfile), the requests are sent without an Authorization header.",
+              security = "secret")
     private String apiKey;
 
     @UriParam(label = "security")
@@ -133,6 +136,16 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "JSON schema for structured output validation", supportFileReference = true, largeInput = true,
               inputLanguage = "json")
     private String jsonSchema;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(defaultValue = "false",
+              description = "Whether the model must follow jsonSchema exactly (strict structured outputs): sets strict to"
+                            + " true in the JSON schema response format of chat-completion, the Responses API and batch."
+                            + " OpenAI then only accepts a schema that meets its rules, every property of each object listed"
+                            + " in required and additionalProperties false on every object, and rejects any other with HTTP"
+                            + " 400. Without it, OpenAI takes the schema as a hint, and the answer can miss required fields"
+                            + " or have others. Other OpenAI-compatible servers may ignore it.")
+    private boolean jsonSchemaStrict;
 
     @UriParam
     @Metadata(description = "Previous response id for OpenAI server-side conversation state (Responses API only)")
@@ -784,6 +797,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setJsonSchema(String jsonSchema) {
         this.jsonSchema = jsonSchema;
+    }
+
+    public boolean isJsonSchemaStrict() {
+        return jsonSchemaStrict;
+    }
+
+    public void setJsonSchemaStrict(boolean jsonSchemaStrict) {
+        this.jsonSchemaStrict = jsonSchemaStrict;
     }
 
     public boolean isConversationMemory() {

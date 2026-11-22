@@ -132,7 +132,9 @@ API key resolution order:
 
 [NOTE]
 ====
-The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
+The API key can be omitted for an OpenAI-compatible server that checks no key, such as a local Ollama, vLLM or LM
+Studio: when none of the above is set (and no `oauthProfile`), the requests are sent without an `Authorization` header.
+A server that needs a key then answers with HTTP 401 (`UnauthorizedException`).
 ====
 
 ==== OAuth Authentication
@@ -619,7 +621,7 @@ from("direct:structured")
 
 === Structured Output with JSON Schema
 
-The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema:
+The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema (see `jsonSchemaStrict` below to have the model follow it exactly):
 
 [tabs]
 ====
@@ -850,6 +852,34 @@ The model is instructed to return JSON matching the specified class, but the res
 The `jsonSchema` option instructs the model to return JSON conforming to the provided schema. The response will be valid JSON but is not automatically validated against the schema. For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
 
 The JSON schema must be a valid JSON object. Invalid schema strings will result in an `IllegalArgumentException`.
+
+==== Strict schema (jsonSchemaStrict)
+
+Without more, OpenAI takes the schema as a hint: the answer is JSON, but it can miss required fields or have others.
+With `jsonSchemaStrict=true`, the JSON schema response format of `chat-completion`, `responses` and `batch` has
+`strict: true` (strict structured outputs), and the model follows the schema exactly. OpenAI then only accepts a schema
+that meets its rules, and answers any other with HTTP 400 (`BadRequestException`):
+
+* every property of each object is listed in `required` (an optional field is a required one whose type allows `null`,
+  such as `"type": ["string", "null"]`)
+* every object has `"additionalProperties": false`
+
+[source,json]
+----
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "price": { "type": ["number", "null"] }
+  },
+  "required": ["name", "price"],
+  "additionalProperties": false
+}
+----
+
+The option is off by default, and then `strict` is not sent. The `CamelOpenAIJsonSchemaStrict` header sets it per
+message, as `CamelOpenAIJsonSchema` does for the schema. Other OpenAI-compatible servers may ignore it. With
+`outputClass`, the openai-java SDK builds a strict schema from the class itself.
 
 == Conversation Memory
 
