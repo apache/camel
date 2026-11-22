@@ -49,4 +49,6 @@ holds that topic, the producer sends to the topic of its endpoint, so a route fr
 message to the second topic, not back to the first one. A topic header set by the route is used. To send a received
 message back to its topic through the header, remove the `CamelIgniteMessagingReceivedTopic` exchange property (which
 the consumer sets to the received topic) before the producer, such as with
-`.removeProperty(IgniteConstants.IGNITE_MESSAGING_RECEIVED_TOPIC)`.
+`.removeProperty(IgniteConstants.IGNITE_MESSAGING_RECEIVED_TOPIC)` in Java. The property name is
+`CamelIgniteMessagingReceivedTopic`, so in YAML it is a `removeProperty` step with
+`name: CamelIgniteMessagingReceivedTopic`, and in XML `<removeProperty name="CamelIgniteMessagingReceivedTopic"/>`.
