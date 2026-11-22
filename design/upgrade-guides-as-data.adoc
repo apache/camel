@@ -158,8 +158,9 @@ is about 2 MB too, and about 600 KB as stored (compressed) in the JAR.
 | The id of the entry, unique in the catalog: the release of its section, `/`, and the slug of its title. The release
   is the `to` of the section: `4.24` for a minor section, `4.22.3` for a patch section. The slug is the title in lower
   case, with each run of characters that are not `a-z` or `0-9` replaced by one `-`, and no `-` at the start or the
-  end. It has no maximum length. A second entry with the same title in one section gets `-2` (and a warning, see
-  <<Checks in the build>>). Example: `4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given`.
+  end. It has no maximum length. A second entry with the same title in one section gets `-2`, a third `-3`, and so
+  on (each with a warning, see <<Checks in the build>>).
+  Example: `4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given`.
 
 | `change`
 | string
@@ -273,7 +274,8 @@ blocks, tables, admonitions, `xref:`), and the line reader that `MigrationData` 
 starting with `**NOTE:**`, an `xref:` a link to the page on the website, and a table a GitHub table. A table that has
 blocks inside a cell (lists, code), which Markdown tables cannot hold, becomes a fenced code block with the language
 `asciidoc`. So `text` is always Markdown, and the exception is marked the way Markdown marks any code: a tool that
-renders Markdown shows the table as source, and a tool that wants it can find it by the language. Today the 4.x guides have 294 source blocks, 121 tables, 51 admonitions and 88 `xref:` links.
+renders Markdown shows the table as source, and a tool that wants it can find it by the language.
+Today the 4.x guides have 294 source blocks, 121 tables, 51 admonitions and 88 `xref:` links.
 
 Markdown reads well in a terminal, in an IDE tooltip and in a prompt for an AI, and most tools can render it. The
 alternative, the raw AsciiDoc, is in <<Open questions>>.
