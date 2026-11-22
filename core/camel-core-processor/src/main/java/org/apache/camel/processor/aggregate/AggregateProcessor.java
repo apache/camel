@@ -2007,8 +2007,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                 // must catch and log exception (also an Error) otherwise the executor will not schedule next recover task
                 LOG.warn("Error during recover task. This exception is ignored.", e);
             } finally {
-                recoveryInProgress.set(false);
+                // clear the snapshot before a recover check of a new start can begin: it takes its own snapshot then
                 inProgressCompleteExchangesForRecoveryTask.clear();
+                recoveryInProgress.set(false);
             }
             LOG.trace("Recover check complete");
         }
