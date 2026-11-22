@@ -262,20 +262,31 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     }
 
     /**
-     * The key of the lock file in the JVM-wide registry: its absolute path, with the symbolic links of the directory
-     * resolved when it exists, so that two services configured with different paths to one directory share the key.
+     * The key of the lock file in the JVM-wide registry (see {@link #resolveLockPathKey()}). Resolving it reads the
+     * file system, so it runs through the cluster task executor with the cluster data task timeout and attempts, like
+     * the other file I/O of the leadership check: on a hung network mount the attempt fails instead of blocking the
+     * check (and the other checks of the service, which share its scheduler thread). Returns null if the check was
+     * interrupted.
      */
-    private Path lockPathKey() {
+    private Path lockPathKey() throws ExecutionException, TimeoutException {
+        return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Path, Throwable>() {
+            @Override
+            public Path get() throws Throwable {
+                return resolveLockPathKey();
+            }
+        }));
+    }
+
+    /**
+     * The absolute path of the lock file, with the symbolic links of its directory resolved, so that two services
+     * configured with different paths to one directory share the key. If the directory cannot be resolved, the attempt
+     * fails rather than use a key that may differ from the key of another view (opening the lock file would fail
+     * without the directory anyway).
+     */
+    Path resolveLockPathKey() throws IOException {
         Path path = leaderLockPath.toAbsolutePath().normalize();
         Path parent = path.getParent();
-        if (parent != null) {
-            try {
-                return parent.toRealPath().resolve(path.getFileName());
-            } catch (IOException e) {
-                LOGGER.trace("Cannot resolve the real path of {}", parent, e);
-            }
-        }
-        return path;
+        return parent != null ? parent.toRealPath().resolve(path.getFileName()) : path;
     }
 
     private void unregisterLockPath(Path key) {
@@ -435,7 +446,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             // stopped while the cluster data was read: do not take the lock, even briefly
             return false;
         }
+        // resolved before the key is registered, so a timeout leaves nothing in LOCK_PATHS
         Path key = lockPathKey();
+        if (key == null) {
+            // interrupted while resolving the key
+            return false;
+        }
         FileLockClusterView holder = LOCK_PATHS.putIfAbsent(key, this);
         if (holder != null) {
             // another view of this JVM holds (or is trying) the lock: trying it here would fail anyway, and closing

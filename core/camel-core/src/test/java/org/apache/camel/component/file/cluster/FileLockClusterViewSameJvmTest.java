@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.cluster;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -116,6 +118,91 @@ class FileLockClusterViewSameJvmTest {
         contextA.stop();
         await().atMost(10, TimeUnit.SECONDS).until(() -> viewB.getLocalMember().isLeader());
         assertFalse(viewA.getLocalMember().isLeader());
+    }
+
+    @Test
+    void leadershipCheckGoesOnWhileResolvingTheLockPathHangs() throws Exception {
+        // resolving the real path of the lock file directory hangs, as on a hung NFS mount
+        CountDownLatch hang = new CountDownLatch(1);
+        AtomicInteger resolutions = new AtomicInteger();
+        FileLockClusterService service = newService(new FileLockClusterService() {
+            @Override
+            protected FileLockClusterView createView(String namespace) {
+                return new FileLockClusterView(this, namespace) {
+                    @Override
+                    Path resolveLockPathKey() throws IOException {
+                        resolutions.incrementAndGet();
+                        try {
+                            hang.await(30, TimeUnit.SECONDS);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        return super.resolveLockPathKey();
+                    }
+                };
+            }
+        }, "A");
+        service.setClusterDataTaskTimeout(200, TimeUnit.MILLISECONDS);
+        service.setClusterDataTaskMaxAttempts(1);
+        CamelContext context = startContext();
+        context.addService(service);
+        CamelClusterView view = service.getView(NAMESPACE);
+
+        try {
+            // each check times out resolving the key and schedules the next check, instead of blocking for good. Each
+            // hung resolution keeps one of the 5 threads of the cluster data task pool, so wait for fewer than 5
+            await().atMost(10, TimeUnit.SECONDS).until(() -> resolutions.get() >= 3);
+            assertFalse(view.getLocalMember().isLeader());
+        } finally {
+            hang.countDown();
+        }
+
+        // the checks that timed out registered nothing, so the view takes the lock once the key resolves
+        await().atMost(10, TimeUnit.SECONDS).until(() -> view.getLocalMember().isLeader());
+    }
+
+    @Test
+    void lockFileIsNotOpenedWhileTheKeyCannotBeResolved() throws Exception {
+        // a key from the unresolved path could differ from the key of another view of the JVM, so the view must not
+        // open the lock file without a resolved key
+        AtomicBoolean failing = new AtomicBoolean(true);
+        AtomicInteger resolutions = new AtomicInteger();
+        AtomicInteger lockFileOpens = new AtomicInteger();
+        FileLockClusterService service = newService(new FileLockClusterService() {
+            @Override
+            protected FileLockClusterView createView(String namespace) {
+                return new FileLockClusterView(this, namespace) {
+                    @Override
+                    Path resolveLockPathKey() throws IOException {
+                        resolutions.incrementAndGet();
+                        if (failing.get()) {
+                            throw new IOException("Simulated failure resolving the lock file directory");
+                        }
+                        return super.resolveLockPathKey();
+                    }
+
+                    @Override
+                    RandomAccessFile createRandomAccessFile(Path path) throws ExecutionException, TimeoutException {
+                        if (path.getFileName().toString().equals(NAMESPACE)) {
+                            lockFileOpens.incrementAndGet();
+                        }
+                        return super.createRandomAccessFile(path);
+                    }
+                };
+            }
+        }, "A");
+        service.setClusterDataTaskMaxAttempts(1);
+        CamelContext context = startContext();
+        context.addService(service);
+        CamelClusterView view = service.getView(NAMESPACE);
+
+        // a check that opened the lock file anyway would become leader and stop resolving the key
+        await().atMost(10, TimeUnit.SECONDS).until(() -> resolutions.get() >= 2 || lockFileOpens.get() > 0);
+        assertEquals(0, lockFileOpens.get(), "the lock file was opened without a resolved key");
+        assertFalse(view.getLocalMember().isLeader());
+
+        failing.set(false);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> view.getLocalMember().isLeader());
     }
 
     private CamelContext startContext() {
