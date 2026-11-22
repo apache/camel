@@ -49,6 +49,7 @@ import org.apache.camel.main.download.DependencyDownloadFactoryFinderResolver;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DependencyDownloaderClassResolver;
 import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
+import org.apache.camel.main.download.DependencyDownloaderCxf;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
@@ -769,6 +770,8 @@ public class KameletMain extends MainCommandLineSupport {
             Object kameletsVersion = getInitialProperties().get(getInstanceType() + ".kameletsVersion");
             answer.addService(new DependencyDownloaderKamelet(
                     answer, kameletsVersion != null ? kameletsVersion.toString() : null));
+            // a cxf consumer is served on the platform-http server
+            answer.addService(new DependencyDownloaderCxf(answer, silent));
             answer.addService(new DependencyDownloaderPropertiesComponent(answer, knownDeps, silent));
 
             // reloader

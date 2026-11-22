@@ -1308,9 +1308,10 @@ service is then at `\http://localhost:8080/services/orders` (with `camel.server.
 scheme and a host fails when the route starts. The `cxf` producer (a SOAP client) is not changed and still takes a full
 URL.
 
-`camel export` to Camel Main adds `camel-cxf-platform-http` and `camel-platform-http-main` for an integration with
-`camel-cxf-soap`, and turns on the HTTP server. The export to Spring Boot and Quarkus uses their CXF starter and
-extension, as before, with `camel.cxf.path` mapped to `cxf.path` and `quarkus.cxf.path`.
+`camel export` to Camel Main adds `camel-cxf-platform-http` and `camel-platform-http-main` for an integration with a
+`cxf` consumer, and turns on the HTTP server. An integration with only `cxf` producers gets neither. The export to
+Spring Boot and Quarkus uses their CXF starter and extension, as before, with `camel.cxf.path` mapped to `cxf.path` and
+`quarkus.cxf.path`.
 
 A Camel Main application is not changed: it serves a cxf consumer with the transport it brings (Jetty or Undertow),
 unless it adds `camel-cxf-platform-http`.
