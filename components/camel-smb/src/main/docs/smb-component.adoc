@@ -156,6 +156,15 @@ To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has bee
 ====
 
 
+== Login
+
+The component logs in with the `username`, `password` and `domain` options. A `username` without a `password`
+logs in with an empty password, so `username=Guest` without a password is a guest login, when the server allows
+guest access (for Samba: `map to guest` and `guest ok = yes` on the share).
+
+The `username` is required: an anonymous login (no username) is not supported, and the connection fails with
+a message that no username is set.
+
 == Permissions
 
 The Camel SMB component requires the authenticated user to have appropriate permissions on the SMB share.
