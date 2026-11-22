@@ -1016,4 +1016,17 @@ public class URISupportTest {
         assertThat(URISupport.textBlockToSingleLine(uri)).isSameAs(uri);
     }
 
+    @Test
+    public void testIndexOfQuestionMark() {
+        assertThat(URISupport.indexOfQuestionMark(null)).isEqualTo(-1);
+        assertThat(URISupport.indexOfQuestionMark("smb:host:445/share")).isEqualTo(-1);
+        assertThat(URISupport.indexOfQuestionMark("timer:foo?period=5000")).isEqualTo(9);
+        // the ? of an optional property placeholder is not the start of the query (CAMEL-27361)
+        assertThat(URISupport.indexOfQuestionMark("smb:host:445/share/{{?directoryName}}")).isEqualTo(-1);
+        assertThat(URISupport.indexOfQuestionMark("smb:{{host}}/{{?dir}}?password=RAW(a?b)")).isEqualTo(21);
+        assertThat(URISupport.indexOfQuestionMark("file:{{?a:{{?b}}}}/x?noop=true")).isEqualTo(20);
+        // a ? in the context path outside of a placeholder still counts
+        assertThat(URISupport.indexOfQuestionMark("http:host/path?q={{?x}}")).isEqualTo(14);
+    }
+
 }

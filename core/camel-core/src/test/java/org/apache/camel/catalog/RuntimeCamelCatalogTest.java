@@ -82,6 +82,24 @@ public class RuntimeCamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriOptionalPlaceholderInPath() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        map.put("directoryName", "src/data/{{?subDir}}");
+        map.put("noop", "true");
+
+        // the ? of an optional placeholder in the path is not the start of the query (CAMEL-27361)
+        String uri = catalog.asEndpointUri("file", map, false);
+        assertEquals("file:src/data/{{?subDir}}?noop=true", uri);
+
+        // some options of the syntax are missing
+        map = new HashMap<>();
+        map.put("languageName", "{{?lang}}");
+        map.put("contentCache", "true");
+        uri = catalog.asEndpointUri("language", map, false);
+        assertEquals("language:{{?lang}}?contentCache=true", uri);
+    }
+
+    @Test
     public void testAsEndpointUriBeanLookup() throws Exception {
         Map<String, String> map = new HashMap<>();
         map.put("resourceUri", "foo.xslt");

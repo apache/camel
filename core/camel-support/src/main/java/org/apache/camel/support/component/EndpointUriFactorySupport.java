@@ -154,7 +154,8 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
         if (ObjectHelper.isNotEmpty(query)) {
             // there may be a ? sign in the context path then use & instead
             // (this is not correct but lets deal with this as the camel-catalog handled this)
-            boolean questionMark = uri.indexOf('?') != -1;
+            // but not the ? of an optional property placeholder {{?name}} in a path parameter (CAMEL-27361)
+            boolean questionMark = URISupport.indexOfQuestionMark(uri) != -1;
             if (questionMark) {
                 uri = uri + "&" + query;
             } else {

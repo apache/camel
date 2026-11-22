@@ -67,6 +67,18 @@ class EndpointDslTest {
     }
 
     @Test
+    void optionalPlaceholderInPath() {
+        // the ? of an optional placeholder in the path is not the start of the query (CAMEL-27361)
+        JavaParseResult result = new LwJavaParser().parse("""
+                import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.*;
+                from(file("inbox/{{?subDir}}").noop(true)).to(http("host/path?q=1").connectTimeout(500));
+                """);
+        assertThat(uris(result)).containsExactly(
+                "file://inbox/{{?subDir}}?noop=true",
+                "http://host/path?q=1&connectTimeout=500");
+    }
+
+    @Test
     void multiValueOptionsNeedTheCatalog() {
         JavaParseResult result = new LwJavaParser().parse("""
                 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.*;
