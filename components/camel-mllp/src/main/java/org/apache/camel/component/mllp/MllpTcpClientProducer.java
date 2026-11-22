@@ -43,7 +43,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -169,19 +168,16 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 } else if (messageBody instanceof byte[]) {
                     hl7MessageBytes = (byte[]) messageBody;
                 } else if (messageBody instanceof CharSequence) {
-                    String stringBody = messageBody.toString();
-                    Charset usedCharset = MllpCharsetHelper.getCharset(exchange, charset);
-                    hl7MessageBytes = stringBody.getBytes(usedCharset);
-                    if (getConfiguration().hasCharsetName()) {
-                        // the charset the message was sent in
-                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, usedCharset.name());
-                    }
+                    // the text is encoded in the charset of MSH-18, or charsetName when the message has no MSH-18;
+                    // not in the charset of the exchange, which may come from another endpoint, such as an mllp consumer
+                    hl7MessageBytes = MllpCharsetHelper.encode(messageBody.toString(), hl7Util, charset);
                 } else {
-                    // another body, such as a stream: convert it, with text in the same charset as a String body,
-                    // and only for the conversion when the exchange has no charset of its own
-                    boolean tempCharset = ExchangeHelper.getCharsetName(exchange, false) == null;
-                    if (tempCharset) {
-                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset.name());
+                    // another body, such as a stream: convert it, with text in charsetName, for the conversion only
+                    String originalCharsetProperty = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
+                    Object originalCharsetHeader = message.getHeader(Exchange.CHARSET_NAME);
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset.name());
+                    if (originalCharsetHeader != null) {
+                        message.setHeader(Exchange.CHARSET_NAME, charset.name());
                     }
                     try {
                         hl7MessageBytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange,
@@ -194,8 +190,13 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 new MllpInvalidMessageException(exceptionMessage, null, conversionEx, logPhi));
                         return;
                     } finally {
-                        if (tempCharset) {
+                        if (originalCharsetProperty != null) {
+                            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, originalCharsetProperty);
+                        } else {
                             exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+                        }
+                        if (originalCharsetHeader != null) {
+                            message.setHeader(Exchange.CHARSET_NAME, originalCharsetHeader);
                         }
                     }
                 }
@@ -332,7 +333,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
                                 message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, new String(
                                         acknowledgementBytes,
-                                        MllpCharsetHelper.getCharset(exchange, acknowledgementBytes, hl7Util, charset)));
+                                        MllpCharsetHelper.getMsh18Charset(acknowledgementBytes, hl7Util, charset)));
                             } else {
                                 message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
                             }
