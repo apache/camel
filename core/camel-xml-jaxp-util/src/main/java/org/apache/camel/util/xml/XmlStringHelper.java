@@ -205,7 +205,8 @@ public final class XmlStringHelper {
     }
 
     private static SAXParser newParser() throws SAXException {
-        // the parser of the JDK, whichever parser is on the classpath, so all the features below are known to it
+        // the built-in SAX parser of the JDK, regardless of the SAX parsers on the classpath, so all the features below
+        // are known to it
         SAXParserFactory factory = SAXParserFactory.newDefaultInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
