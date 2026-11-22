@@ -682,6 +682,29 @@ default port. See xref:next@components:others:cxf-platform-http.adoc[CXF Platfor
 the body and returns the response element. It removes the `Camel*` headers and the CXF operation headers first, so a
 caller cannot choose another operation or address (such as with `CamelDestinationOverrideUrl`).
 
+`--samples` writes a sample request, response and faults of each operation (or those of `--operation`), to call a
+SOAP service from a route, or to test a SOAP service that a route serves:
+
+[source,bash]
+----
+camel generate wsdl orders.wsdl --samples --operation=getOrder
+camel generate wsdl orders.wsdl --samples --output=samples
+----
+
+Each message is written as XML, and as JSON in the form that the
+xref:next@components:dataformats:xsdJson-dataformat.adoc[XSD JSON] data format reads and writes. The request is also
+written in a SOAP envelope of the SOAP version of the port, with a `curl` command that posts it to the address of the
+WSDL, with the SOAP action in the `SOAPAction` header (SOAP 1.1) or the content type (SOAP 1.2). Every element and
+attribute has a value of its type: the first value of an enumeration, a date for `xs:date`, `1` for `xs:int`, and so on.
+A repeating element has one item, and of an `xs:choice` only the first member is filled in. A value does not follow the
+other facets of its type, such as a pattern or a length.
+
+Without `--output` the samples are printed. With `--output=<dir>` they are written as files, such as
+`getOrder-request.xml`, `getOrder-request.json`, `getOrder-request.soap.xml`, `getOrder-response.json` and
+`getOrder-fault-orderNotFound.xml`, and the `curl` commands, which post the `.soap.xml` files, are printed. With
+`--json` the samples are in the listing, per operation. The XML schema is the `xs:schema` in the `wsdl:types` of the
+WSDL and what it imports; of a remote WSDL, it is read with the same rules as an import of the WSDL (see below).
+
 When the WSDL has more than one port, choose one with `--service` and `--port`. A local WSDL may only import files, and
 a remote one only documents on its own host, over http or https (not from https down to http). A redirect is only
 followed to the same scheme, host and port; for another one the command names the new location, so you can use it if
