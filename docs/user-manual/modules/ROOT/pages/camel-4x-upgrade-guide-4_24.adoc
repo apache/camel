@@ -587,6 +587,15 @@ A route that relied on a Simple expression in a header tag or attribute should u
 option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
 setting the header.
 
+=== camel-micrometer, camel-opentelemetry-metrics - a route cannot have both route policies
+
+A route that has both the `MicrometerRoutePolicy` and the `OpenTelemetryRoutePolicy` now fails to start, with an
+error that names both policies. Before, the route started, but the two policies kept their timers in the same exchange
+property, so most of the timings were lost and a `ClassCastException` was logged for every exchange. Use the route
+policy of only one of the two components. With Camel Main, `camel.metrics.enabled=true`, which
+camel-observability-services also sets, adds the Micrometer route policy to every route;
+`camel.metrics.enableRoutePolicy=false` keeps the other Micrometer metrics without it.
+
 === camel-elasticsearch-rest-client - the document id and the index name are each sent as one path segment
 
 The producer now percent-encodes the document id and the index name, so each is sent as one path segment of the

@@ -715,6 +715,9 @@ You can define a dedicated `OpenTelemetryRoutePolicy` per route you want to inst
 in case you only want to instrument a few selected routes.
 ====
 
+The `OpenTelemetryRoutePolicy` cannot be combined with the `MicrometerRoutePolicy` of the
+xref:components::micrometer-component.adoc[Micrometer] component: a route that has both fails to start.
+
 Camel specific metrics that are available via the `OpenTelemetryRoutePolicy`:
 [width="100%",options="header"]
 |=====================================================

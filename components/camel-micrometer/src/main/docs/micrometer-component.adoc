@@ -747,6 +747,10 @@ dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you 
 want to instrument a few selected routes.
 ====
 
+The `MicrometerRoutePolicy` cannot be combined with the `OpenTelemetryRoutePolicy` of the
+xref:components::opentelemetry-metrics-component.adoc[OpenTelemetry Metrics] component:
+a route that has both fails to start.
+
 From Java, you add the factory to the `CamelContext` as shown below:
 
 ._Java-only: adding MicrometerRoutePolicyFactory to the CamelContext_
