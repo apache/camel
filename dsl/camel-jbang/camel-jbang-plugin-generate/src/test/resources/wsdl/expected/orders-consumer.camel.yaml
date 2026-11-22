@@ -21,11 +21,13 @@
 # Each operation returns a placeholder response: replace it with the response element.
 # The request and the response are validated against the schema of the WSDL (schemaValidationEnabled):
 # until it is filled in, the placeholder gives a SOAP fault that names the first element it misses.
+# The address is the path /orders of the WSDL address: the HTTP server of the runtime serves it under /services,
+# such as http://localhost:8080/services/orders with the default port.
 - route:
     id: OrderService
     description: The OrderService SOAP service, port OrderPort
     from:
-      uri: cxf://http://0.0.0.0:18081/orders
+      uri: cxf:/orders
       parameters:
         wsdlURL: file:src/test/resources/wsdl/orders.wsdl
         serviceName: '{http://example.com/orders}OrderService'

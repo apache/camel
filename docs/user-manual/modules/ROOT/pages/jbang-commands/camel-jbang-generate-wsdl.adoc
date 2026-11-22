@@ -26,7 +26,6 @@ camel generate wsdl [options]
 | `--output` | The file to write the route to (default: stdout) |  | String
 | `--port` | The port (its name), when the service has more than one |  | String
 | `--route` | Scaffold a YAML route (consumer or producer) instead of listing the WSDL |  | String
-| `--runtime` | The runtime the route is for (camel-main, spring-boot, quarkus): camel-main listens on the address of the WSDL, spring-boot and quarkus on its path in their CXF servlet | camel-main | RuntimeType
 | `--service` | The service (its name), when the WSDL has more than one |  | String
 | `-h,--help` | Display this help and exit |  | boolean
 |===
