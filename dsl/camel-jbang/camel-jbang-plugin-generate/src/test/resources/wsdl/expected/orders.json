@@ -1,0 +1,57 @@
+{
+  "wsdl": "src\/test\/resources\/wsdl\/orders.wsdl",
+  "targetNamespace": "http:\/\/example.com\/orders",
+  "services": [
+    {
+      "name": "OrderService",
+      "namespace": "http:\/\/example.com\/orders",
+      "ports": [
+        {
+          "name": "OrderPort",
+          "binding": "{http:\/\/example.com\/orders}OrderSoapBinding",
+          "soapVersion": "1.1",
+          "style": "document",
+          "transport": "http:\/\/schemas.xmlsoap.org\/soap\/http",
+          "address": "http:\/\/localhost:18081\/orders",
+          "namespace": "http:\/\/example.com\/orders",
+          "cxf": {
+            "serviceName": "{http:\/\/example.com\/orders}OrderService",
+            "portName": "{http:\/\/example.com\/orders}OrderPort",
+            "wsdlURL": "file:src\/test\/resources\/wsdl\/orders.wsdl",
+            "address": "http:\/\/localhost:18081\/orders",
+            "defaultOperationNamespace": "http:\/\/example.com\/orders"
+          },
+          "operations": [
+            {
+              "name": "getOrder",
+              "soapAction": "http:\/\/example.com\/orders\/getOrder",
+              "style": "document",
+              "use": "literal",
+              "oneWay": false,
+              "input": "{http:\/\/example.com\/orders}getOrder",
+              "output": "{http:\/\/example.com\/orders}getOrderResponse",
+              "faults": [
+                {
+                  "name": "orderNotFound",
+                  "element": "{http:\/\/example.com\/orders}orderNotFound"
+                }
+              ]
+            },
+            {
+              "name": "placeOrder",
+              "soapAction": "http:\/\/example.com\/orders\/placeOrder",
+              "style": "document",
+              "use": "literal",
+              "oneWay": false,
+              "input": "{http:\/\/example.com\/orders}placeOrder",
+              "output": "{http:\/\/example.com\/orders}placeOrderResponse",
+              "faults": [
+
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

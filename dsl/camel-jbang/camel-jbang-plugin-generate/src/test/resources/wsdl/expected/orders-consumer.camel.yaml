@@ -1,0 +1,61 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# A cxf: consumer in PAYLOAD mode for the service OrderService, port OrderPort (SOAP 1.1)
+# Scaffolded by: camel generate wsdl --route=consumer
+#
+# Each operation returns a placeholder response: replace it with the response element.
+# The request and the response are validated against the schema of the WSDL (schemaValidationEnabled):
+# until it is filled in, the placeholder gives a SOAP fault that names the first element it misses.
+- route:
+    id: OrderService
+    description: The OrderService SOAP service, port OrderPort
+    from:
+      uri: cxf://http://0.0.0.0:18081/orders
+      parameters:
+        wsdlURL: file:src/test/resources/wsdl/orders.wsdl
+        serviceName: '{http://example.com/orders}OrderService'
+        portName: '{http://example.com/orders}OrderPort'
+        dataFormat: PAYLOAD
+        schemaValidationEnabled: true
+      steps:
+        - convertBodyTo:
+            type: java.lang.String
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: ${header.CamelCxfOperationName} == 'getOrder'
+                steps:
+                  - log:
+                      message: 'getOrder request: ${body}'
+                  - setBody:
+                      note: 'TODO: build the getOrderResponse response'
+                      expression:
+                        constant:
+                          expression: <getOrderResponse xmlns="http://example.com/orders"><!-- TODO --></getOrderResponse>
+              - expression:
+                  simple:
+                    expression: ${header.CamelCxfOperationName} == 'placeOrder'
+                steps:
+                  - log:
+                      message: 'placeOrder request: ${body}'
+                  - setBody:
+                      note: 'TODO: build the placeOrderResponse response'
+                      expression:
+                        constant:
+                          expression: <placeOrderResponse xmlns="http://example.com/orders"><!-- TODO --></placeOrderResponse>

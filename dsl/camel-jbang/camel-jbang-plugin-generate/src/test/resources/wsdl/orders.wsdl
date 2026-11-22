@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- A small document/literal wrapped SOAP 1.1 service, written for the soap-source / soap-action prototype. -->
+<wsdl:definitions name="OrderService"
+    targetNamespace="http://example.com/orders"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com/orders">
+
+  <wsdl:types>
+    <xs:schema targetNamespace="http://example.com/orders" elementFormDefault="qualified">
+      <xs:complexType name="Item">
+        <xs:sequence>
+          <xs:element name="sku" type="xs:string"/>
+          <xs:element name="quantity" type="xs:int"/>
+          <xs:element name="price" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Order">
+        <xs:sequence>
+          <xs:element name="orderId" type="xs:string"/>
+          <xs:element name="customer" type="xs:string"/>
+          <xs:element name="status" type="xs:string"/>
+          <xs:element name="item" type="tns:Item" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:element name="getOrder">
+        <xs:complexType><xs:sequence>
+          <xs:element name="orderId" type="xs:string"/>
+        </xs:sequence></xs:complexType>
+      </xs:element>
+      <xs:element name="getOrderResponse">
+        <xs:complexType><xs:sequence>
+          <xs:element name="order" type="tns:Order"/>
+        </xs:sequence></xs:complexType>
+      </xs:element>
+
+      <xs:element name="placeOrder">
+        <xs:complexType><xs:sequence>
+          <xs:element name="customer" type="xs:string"/>
+          <xs:element name="item" type="tns:Item" maxOccurs="unbounded"/>
+        </xs:sequence></xs:complexType>
+      </xs:element>
+      <xs:element name="placeOrderResponse">
+        <xs:complexType><xs:sequence>
+          <xs:element name="orderId" type="xs:string"/>
+          <xs:element name="status" type="xs:string"/>
+        </xs:sequence></xs:complexType>
+      </xs:element>
+
+      <xs:element name="orderNotFound">
+        <xs:complexType><xs:sequence>
+          <xs:element name="orderId" type="xs:string"/>
+        </xs:sequence></xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:message name="getOrderRequest"><wsdl:part name="parameters" element="tns:getOrder"/></wsdl:message>
+  <wsdl:message name="getOrderResponse"><wsdl:part name="parameters" element="tns:getOrderResponse"/></wsdl:message>
+  <wsdl:message name="placeOrderRequest"><wsdl:part name="parameters" element="tns:placeOrder"/></wsdl:message>
+  <wsdl:message name="placeOrderResponse"><wsdl:part name="parameters" element="tns:placeOrderResponse"/></wsdl:message>
+  <wsdl:message name="orderNotFoundFault"><wsdl:part name="fault" element="tns:orderNotFound"/></wsdl:message>
+
+  <wsdl:portType name="OrderPortType">
+    <wsdl:operation name="getOrder">
+      <wsdl:input message="tns:getOrderRequest"/>
+      <wsdl:output message="tns:getOrderResponse"/>
+      <wsdl:fault name="orderNotFound" message="tns:orderNotFoundFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="placeOrder">
+      <wsdl:input message="tns:placeOrderRequest"/>
+      <wsdl:output message="tns:placeOrderResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="OrderSoapBinding" type="tns:OrderPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getOrder">
+      <soap:operation soapAction="http://example.com/orders/getOrder"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+      <wsdl:fault name="orderNotFound"><soap:fault name="orderNotFound" use="literal"/></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="placeOrder">
+      <soap:operation soapAction="http://example.com/orders/placeOrder"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="OrderService">
+    <wsdl:port name="OrderPort" binding="tns:OrderSoapBinding">
+      <soap:address location="http://localhost:18081/orders"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
