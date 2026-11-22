@@ -11262,8 +11262,8 @@ The sink Kamelets:
   route that removed the quotes itself, or compared the body with `"ORD-1"`, must change.
 * `solr-source` gives JSON text, with `Content-Type: application/json`, instead of a SolrJ object. A route that read
   the fields of the object must read the JSON instead, for example with `jsonpath`.
-* The SQL Kamelets and `cassandra-sink` send a query with `+` to the database unchanged. A query that worked around this, for
-  example with `%2B`, now sends a literal `%2B`.
+* The SQL Kamelets and `cassandra-sink` send a query with `+` to the database unchanged. A query that worked around
+  this, for example with `%2B`, now sends a literal `%2B`.
 * `google-sheets-source` with `majorDimension=COLUMNS` reads columns.
 * `mongodb-changes-stream-source` sends the whole document for an update, read again from the collection, instead of
   `null`. Set the new `fullDocument` option to `default` for the old behaviour.
