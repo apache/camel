@@ -112,6 +112,18 @@ public class ProtobufSchemaDynamicMessageTest extends CamelTestSupport {
     }
 
     @Test
+    public void importOfFieldMaskSaysOnlyTheWellKnownTypesCanBeImported() {
+        // Wire does not ship google/protobuf/field_mask.proto: if a Wire upgrade does, it can be added to the list
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new WireProtobufSchemaParser().parse(
+                        "syntax = \"proto3\"; import \"google/protobuf/field_mask.proto\"; message A { string x = 1; }",
+                        null));
+        assertTrue(e.getMessage().startsWith("Cannot read the protobuf schema: it imports google/protobuf/field_mask.proto,"
+                                             + " but only the well-known types of google/protobuf can be imported"),
+                e.getMessage());
+    }
+
+    @Test
     public void wellKnownTypesCanBeImported() {
         Descriptor d = new WireProtobufSchemaParser().parse(
                 "syntax = \"proto3\"; import \"google/protobuf/timestamp.proto\";"

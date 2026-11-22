@@ -28,7 +28,6 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FileDescriptor;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Empty;
-import com.google.protobuf.FieldMask;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Timestamp;
@@ -130,7 +129,7 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
                 }
                 try {
                     return core.load(path);
-                } catch (RuntimeException e) {
+                } catch (IllegalStateException e) {
                     // the core loader of Wire only has its own files, and says "unexpected load: shop/common.proto"
                     throw new IllegalArgumentException(unsupportedImport(path), e);
                 }
@@ -177,14 +176,14 @@ public class WireProtobufSchemaParser implements ProtobufSchemaParser {
 
     /**
      * The well-known types compiled into protobuf-java, so that JsonFormat prints and parses them in their JSON form,
-     * such as a Timestamp as RFC 3339 text.
+     * such as a Timestamp as RFC 3339 text. These are the google/protobuf files that the core loader of Wire ships:
+     * field_mask.proto is not one of them, so its import fails in the loader already.
      */
     private static FileDescriptor wellKnownType(String path) {
         return switch (path) {
             case "google/protobuf/any.proto" -> Any.getDescriptor().getFile();
             case "google/protobuf/duration.proto" -> Duration.getDescriptor().getFile();
             case "google/protobuf/empty.proto" -> Empty.getDescriptor().getFile();
-            case "google/protobuf/field_mask.proto" -> FieldMask.getDescriptor().getFile();
             case "google/protobuf/struct.proto" -> Struct.getDescriptor().getFile();
             case "google/protobuf/timestamp.proto" -> Timestamp.getDescriptor().getFile();
             case "google/protobuf/wrappers.proto" -> StringValue.getDescriptor().getFile();
