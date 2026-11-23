@@ -19,11 +19,13 @@ package org.apache.camel.support.cache;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
@@ -58,6 +60,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     // the evicted single pools whose service is still in use, by service: they are no longer in the pool map, and the
     // last release of the service stops it (for multi pool then they have their own house-keeping for evictions)
     private final ConcurrentMap<S, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
+    // the single pools evicted by the LRU cache, whose service is stopped (if idle) after the cache operation: the
+    // cache calls onEvict under its write lock, which must not be held while a service is stopped or the lock of this
+    // pool is taken (the stop of this pool holds that lock and clears the cache)
+    private final Queue<SinglePool> evictedToStop = new ConcurrentLinkedQueue<>();
     private final int capacity;
     private final Map<S, S> cache;
 
@@ -96,8 +102,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * This callback is invoked by LRUCache when it evicts a service, which may be in use at the same time. Therefore,
      * the pools do not stop a service that is in use: SinglePool takes its (shared) service out of use at once, and
-     * stops it when its last user releases it, and MultiPool stops an evicted service when it is idle, on acquire or
-     * release.
+     * stops it when its last user releases it (or after the cache operation, see {@link #stopEvictedPools()}, when it
+     * is idle), and MultiPool stops an evicted service when it is idle, on acquire or release.
      */
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
@@ -135,9 +141,25 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             s = getOrCreatePool(endpoint).acquire();
         }
         if (cache != null) {
-            cache.putIfAbsent(s, s);
+            try {
+                cache.putIfAbsent(s, s);
+            } finally {
+                stopEvictedPools();
+            }
         }
         return s;
+    }
+
+    /**
+     * Stops the services of the single pools that the LRU cache has evicted, if they are idle (otherwise their last
+     * release stops them). Called after each operation on the cache, by the thread that did it (the one that evicts),
+     * as the cache calls onEvict under its write lock: a slow stop there would hold up every acquire of this pool, and
+     * the stop of the endpoint takes the lock of this pool, which its stop holds while it clears the cache.
+     */
+    private void stopEvictedPools() {
+        for (SinglePool p = evictedToStop.poll(); p != null; p = evictedToStop.poll()) {
+            p.stopEvicted();
+        }
     }
 
     /**
@@ -213,8 +235,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * Cleanup the pool (removing stale instances that should be evicted)
      */
     public void cleanUp() {
-        if (cache instanceof LRUCache lru) {
-            lru.cleanUp();
+        try {
+            if (cache instanceof LRUCache lru) {
+                lru.cleanUp();
+            }
+        } finally {
+            stopEvictedPools();
         }
         pool.values().forEach(Pool::cleanUp);
     }
@@ -409,7 +435,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             singlePoolEvicted.put(s, this);
             pool.remove(endpoint, this);
             evicted = true;
-            stopEvicted();
+            // stopped after the cache operation (if idle), not here under the write lock of the cache
+            evictedToStop.add(this);
         }
 
         /**
@@ -452,7 +479,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void cleanUp() {
-            // noop: an evicted service is stopped by the eviction, or by its last release
+            // noop: an evicted service is stopped after the cache operation that evicted it, or by its last release
         }
 
         void doStop(Service s) {

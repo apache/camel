@@ -280,7 +280,9 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
         }
 
         void evict(AsyncProducer producer) {
+            // as the LRU cache: onEvict, then the evicted idle producer is stopped after the cache operation
             onEvict(producer);
+            cleanUp();
         }
     }
 
