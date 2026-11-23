@@ -1500,6 +1500,21 @@ Invalid chmodDirectory value: '888'. Must be an octal number between 000 and 777
 
 This early validation helps catch configuration errors before any file operations are attempted.
 
+== Writing files from an endpoint without a directory
+
+With `jailStartingDirectory` enabled (the default), the producer writes files within the starting directory of the
+endpoint. An endpoint without a directory in its URI, such as `mina-sftp://user@host`, writes into the login directory,
+and an absolute file name, such as `/data/out/report.csv`, is written to that absolute path on the server.
+
+If the file name can come from untrusted input, configure a directory on the endpoint, or reduce the name to a single
+path segment, for example with the `flatten` option, which strips any leading path from the file name:
+
+[source,java]
+----
+from("direct:upload")
+    .to("mina-sftp://user@host/upload?password=secret&flatten=true");
+----
+
 == Symbolic Links
 
 The consumer follows symbolic links to their target files, within the starting directory unless `jailStartingDirectory=false` (see below). The producer writes to symlink targets.
