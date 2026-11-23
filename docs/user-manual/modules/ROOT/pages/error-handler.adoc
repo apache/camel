@@ -221,6 +221,11 @@ Depending on the error handler, the `Error` reaches the caller (and the exchange
 inflight), or it is only logged and the route continues as if the processor had succeeded
 |===
 
+When the `VirtualMachineError` reaches a scheduled poll consumer (such as `file`, `ftp` or `scheduler`), the
+scheduled task that ran the poll stops polling, and the health check of the consumer is DOWN until the route is
+restarted. As the exchange may stay inflight, restarting or stopping the route then waits for the shutdown timeout of
+the xref:graceful-shutdown.adoc[Graceful Shutdown] before the consumer is stopped.
+
 An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
 `OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
 `-XX:+CrashOnOutOfMemoryError` (these options do not cover a `StackOverflowError`, or an `OutOfMemoryError` that code
