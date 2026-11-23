@@ -855,6 +855,15 @@ Apache MINA SSHD leaves it off by default, so a small request, such as one that 
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
 
+=== camel-mllp - maxConcurrentConsumers limits the connections again
+
+The MLLP consumer resets a new connection when `maxConcurrentConsumers` connections are already being served, as the
+option documents. Since Camel 4.18 the consumer thread pool ran such a connection on the thread that validated it
+instead, so the option had no effect. A client that opened more connections than `maxConcurrentConsumers` (default 5)
+now gets the extra ones reset. To serve more connections at the same time, set `maxConcurrentConsumers` to the number
+of connections the clients open. With virtual threads enabled and `maxConcurrentConsumers` above 1, the consumer pool
+has no limit, as before.
+
 === camel-atmosphere-websocket - events carry the query parameters of their own connection
 
 With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
