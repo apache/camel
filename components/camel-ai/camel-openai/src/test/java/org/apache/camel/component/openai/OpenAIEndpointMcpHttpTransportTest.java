@@ -77,6 +77,8 @@ class OpenAIEndpointMcpHttpTransportTest {
     private static McpStatelessSyncServer mcpServer;
     private static String serverUrl;
 
+    private DefaultCamelContext camelContext;
+
     private record RecordedRequest(String httpMethod, String path, String query) {
     }
 
@@ -132,6 +134,13 @@ class OpenAIEndpointMcpHttpTransportTest {
     @AfterEach
     void endSseStreams() {
         transport.endSseStreams();
+    }
+
+    @AfterEach
+    void stopCamelContext() {
+        if (camelContext != null) {
+            camelContext.stop();
+        }
     }
 
     /**
@@ -190,8 +199,8 @@ class OpenAIEndpointMcpHttpTransportTest {
         assertThat(resolved.getRawPath()).isEqualTo("//mcp.invalid/api/mcp");
     }
 
-    private static OpenAIEndpoint createEndpoint() {
-        DefaultCamelContext camelContext = new DefaultCamelContext();
+    private OpenAIEndpoint createEndpoint() {
+        camelContext = new DefaultCamelContext();
         OpenAIComponent component = new OpenAIComponent();
         component.setCamelContext(camelContext);
         OpenAIConfiguration configuration = new OpenAIConfiguration();
