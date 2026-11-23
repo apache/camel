@@ -38,7 +38,7 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The prompt template with placeholders for variable substitution", javaType = "String")
     public static final String PROMPT_TEMPLATE = "CamelSpringAiChatPromptTemplate";
 
-    @Metadata(description = "Augmented data for RAG as List<org.springframework.ai.document.Document>",
+    @Metadata(description = "Augmented data for RAG, as a List of org.springframework.ai.document.Document",
               javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String AUGMENTED_DATA = "CamelSpringAiChatAugmentedData";
 
