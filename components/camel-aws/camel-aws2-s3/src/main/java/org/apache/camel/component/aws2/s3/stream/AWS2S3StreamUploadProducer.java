@@ -360,6 +360,18 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         // Calculate the timestamp window
         long timestampWindow = getTimestampWindow(messageTimestamp);
 
+        // one exchange at a time, as without timestamp grouping: the bytes of an exchange are written to the upload of
+        // its window whole, and neither another exchange nor the timeout flush can write or upload between its chunks
+        lock.lock();
+        try {
+            writeWithTimestampGrouping(exchange, is, timestampWindow);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void writeWithTimestampGrouping(final Exchange exchange, final InputStream is, final long timestampWindow)
+            throws Exception {
         byte[] b;
         int maxRead = (getConfiguration().isMultiPartUpload()
                 ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
@@ -376,7 +388,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             if (getConfiguration().isMultiPartUpload())
                 maxRead -= b.length;
 
-            lock.lock();
             try {
                 // Get or create upload state for this timestamp window
                 if (!timestampBasedUploads.containsKey(timestampWindow)) {
@@ -459,8 +470,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     timestampBasedUploads.remove(timestampWindow);
                 }
                 throw e;
-            } finally {
-                lock.unlock();
             }
         }
     }
