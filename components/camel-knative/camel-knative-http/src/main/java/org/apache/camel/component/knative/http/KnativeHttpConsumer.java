@@ -245,7 +245,6 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // With the endpoint option synchronous=true, the worker thread runs the route with the
         // synchronous processor, so it is held until the route completes, and the worker pool
         // bounds the requests in flight.
-        Context context = routingContext.vertx().getOrCreateContext();
         if (((KnativeEndpoint) getEndpoint()).isSynchronous()) {
             // synchronous path: run on worker, block until done
             routingContext.vertx().executeBlocking(() -> {
@@ -257,6 +256,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             });
         } else {
             // async path: Promise + runOnContext
+            Context context = routingContext.vertx().getOrCreateContext();
             Promise<Void> done = Promise.promise();
             try {
                 routingContext.vertx().executeBlocking(() -> {

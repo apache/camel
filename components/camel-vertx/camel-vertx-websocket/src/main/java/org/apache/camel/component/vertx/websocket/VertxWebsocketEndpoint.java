@@ -82,7 +82,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     @UriParam
     private VertxWebsocketConfiguration configuration;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer", defaultValue = "false",
               description = "Whether the consumer routes each message synchronously. When true, the route runs on a thread of the"
                             + " Vert.x worker pool, which waits until the route is complete, so the size of the worker pool limits"
                             + " how many messages are routed at the same time. When false, the route starts on a worker thread"
