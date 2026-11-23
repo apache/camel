@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.messaging.eventhubs.models.PartitionContext;
 import org.apache.camel.AsyncProcessor;
@@ -61,6 +62,7 @@ class EventHubsConsumerCheckpointWindowTest {
     private final ScheduledFuture scheduledFuture = mock(ScheduledFuture.class);
 
     private EventHubsConsumer consumer;
+    private long sequenceNumber;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -139,6 +141,7 @@ class EventHubsConsumerCheckpointWindowTest {
     }
 
     private void complete(EventContext eventContext) throws Exception {
+        consumer.processDelivered(eventContext);
         consumer.processCommit(DefaultExchange.newFromEndpoint(endpoint), eventContext);
     }
 
@@ -156,11 +159,14 @@ class EventHubsConsumerCheckpointWindowTest {
         }
     }
 
-    private static EventContext eventContext() {
+    private EventContext eventContext() {
         EventContext eventContext = mock(EventContext.class);
         PartitionContext partitionContext = mock(PartitionContext.class);
         when(partitionContext.getPartitionId()).thenReturn("0");
         when(eventContext.getPartitionContext()).thenReturn(partitionContext);
+        EventData eventData = mock(EventData.class);
+        when(eventData.getSequenceNumber()).thenReturn(sequenceNumber++);
+        when(eventContext.getEventData()).thenReturn(eventData);
         when(eventContext.updateCheckpointAsync()).thenReturn(Mono.empty());
         return eventContext;
     }

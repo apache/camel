@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.messaging.eventhubs.models.PartitionContext;
 import org.apache.camel.AsyncProcessor;
@@ -63,6 +64,7 @@ class EventHubsConsumerCheckpointAfterBatchSizeTest {
 
     private EventHubsConsumer consumer;
     private Method processCommit;
+    private long sequenceNumber;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -207,6 +209,7 @@ class EventHubsConsumerCheckpointAfterBatchSizeTest {
         stored.tryEmitError(new IllegalStateException("store failed"));
 
         Exchange exchange = DefaultExchange.newFromEndpoint(endpoint);
+        consumer.processDelivered(fourth);
         processCommit.invoke(consumer, exchange, fourth);
 
         verify(fourth, times(1)).updateCheckpointAsync();
@@ -215,14 +218,18 @@ class EventHubsConsumerCheckpointAfterBatchSizeTest {
     }
 
     private void complete(EventContext eventContext) throws Exception {
+        consumer.processDelivered(eventContext);
         processCommit.invoke(consumer, DefaultExchange.newFromEndpoint(endpoint), eventContext);
     }
 
-    private static EventContext eventContext(String partitionId) {
+    private EventContext eventContext(String partitionId) {
         EventContext eventContext = mock(EventContext.class);
         PartitionContext partitionContext = mock(PartitionContext.class);
         when(partitionContext.getPartitionId()).thenReturn(partitionId);
         when(eventContext.getPartitionContext()).thenReturn(partitionContext);
+        EventData eventData = mock(EventData.class);
+        when(eventData.getSequenceNumber()).thenReturn(sequenceNumber++);
+        when(eventContext.getEventData()).thenReturn(eventData);
         when(eventContext.updateCheckpointAsync()).thenReturn(Mono.empty());
         return eventContext;
     }

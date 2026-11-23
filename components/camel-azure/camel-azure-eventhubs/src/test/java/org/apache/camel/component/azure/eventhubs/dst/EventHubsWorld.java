@@ -37,6 +37,7 @@ import com.azure.messaging.eventhubs.models.PartitionOwnership;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.azure.eventhubs.EventHubsConstants;
 import org.apache.camel.component.azure.eventhubs.EventHubsConsumer;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -53,8 +54,6 @@ import org.mockito.Mockito;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.mockito.ArgumentMatchers.any;
-
 /**
  * The world around a camel-azure-eventhubs consumer: a fake Event Hubs SDK that delivers events per partition (bursts
  * and quiet periods chosen by the seed), an asynchronous downstream step with latency and failures, and a fake
@@ -70,7 +69,10 @@ import static org.mockito.ArgumentMatchers.any;
           faults = {
                   "the downstream step answers slowly", "the downstream step fails",
                   "the checkpoint store answers slowly", "the checkpoint store fails" },
-          invariants = "every completed message is acknowledged when the partition goes quiet",
+          invariants = {
+                  "every completed message is acknowledged when the partition goes quiet",
+                  "a stored checkpoint never passes an event still in flight",
+                  "the stored checkpoint of a partition never goes back" },
           issues = { "CAMEL-25683", "CAMEL-25738", "CAMEL-25781" })
 final class EventHubsWorld {
 
@@ -92,6 +94,10 @@ final class EventHubsWorld {
     private int inflight;
     private int arrivalsLeft;
     private final Map<String, Integer> sizeCheckpoints = new TreeMap<>();
+    // per partition: the sequence numbers of the events in flight, and the stored checkpoint (the store answered OK)
+    private final Map<String, TreeSet<Long>> inflightByPartition = new TreeMap<>();
+    private final Map<String, Long> storedByPartition = new TreeMap<>();
+    private final List<String> storeViolations = new ArrayList<>();
     private final DstExecutor store;
 
     private final boolean countProbes;
@@ -133,9 +139,12 @@ final class EventHubsWorld {
                                 // a non-blocking downstream call: answers after a latency chosen by the seed
                                 String id = exchange.getMessage().getBody(String.class);
                                 String partition = partitionOf(id);
+                                long sequenceNumber
+                                        = exchange.getMessage().getHeader(EventHubsConstants.SEQUENCE_NUMBER, Long.class);
                                 long latency = dst.chance(0.1)
                                         ? dst.between(timeout / 2, 2 * timeout) : dst.between(0, timeout / 2);
                                 downstream.schedule("downstream answer " + id, latency, () -> {
+                                    inflightByPartition.get(partition).remove(sequenceNumber);
                                     if (dst.chance(0.05)) {
                                         exchange.setException(
                                                 Dst.injected(new IllegalStateException("downstream failed for " + id)));
@@ -152,12 +161,15 @@ final class EventHubsWorld {
                         });
             }
         });
-        try (MockedStatic<EventHubsClientFactory> factory = Mockito.mockStatic(EventHubsClientFactory.class)) {
-            factory.when(() -> EventHubsClientFactory.createEventProcessorClient(any(), any(), any()))
-                    .thenAnswer(inv -> {
-                        processEvent = inv.getArgument(1);
-                        return Mockito.mock(EventProcessorClient.class);
-                    });
+        // the consumer creates its event processor client with the event handler as the second argument (whichever
+        // overload it calls)
+        try (MockedStatic<EventHubsClientFactory> factory = Mockito.mockStatic(EventHubsClientFactory.class, inv -> {
+            if ("createEventProcessorClient".equals(inv.getMethod().getName())) {
+                processEvent = inv.getArgument(1);
+                return Mockito.mock(EventProcessorClient.class);
+            }
+            return null;
+        })) {
             context.start();
             consumer = (EventHubsConsumer) context.getRoute(ROUTE).getConsumer();
             try {
@@ -167,7 +179,9 @@ final class EventHubsWorld {
                 // completed event must have been checkpointed
                 dst.trace("quiet");
                 dst.runFor(timeout + maxStoreLatency + 100);
-                dst.check(withProbes(Invariants.lastCompletedAcknowledgedWhenQuiet(ledger, "completed", "checkpoint")));
+                dst.check(withProbes(Invariants.lastCompletedAcknowledgedWhenQuiet(ledger, "completed", "checkpoint")),
+                        Invariants.of("a stored checkpoint never passes an event still in flight and never goes back",
+                                () -> storeViolations.isEmpty() ? null : String.join("; ", storeViolations)));
             } finally {
                 dst.dropPending();
                 context.stop();
@@ -196,9 +210,10 @@ final class EventHubsWorld {
             for (int b = 0; b < bursts; b++) {
                 int size = (int) dst.between(1, 2L * batchSize + 1);
                 for (int i = 0; i < size; i++) {
-                    String id = "p" + partition + "-e" + n++;
+                    long sequenceNumber = n++;
+                    String id = "p" + partition + "-e" + sequenceNumber;
                     arrivalsLeft++;
-                    sdk.schedule("deliver " + id, t, () -> deliver(partition, id));
+                    sdk.schedule("deliver " + id, t, () -> deliver(partition, id, sequenceNumber));
                     t += dst.between(0, 20);
                 }
                 t += dst.between(0, 3 * timeout);
@@ -206,12 +221,20 @@ final class EventHubsWorld {
         }
     }
 
-    private void deliver(String partition, String id) {
+    private void deliver(String partition, String id, long sequenceNumber) {
         arrivalsLeft--;
         inflight++;
         PartitionContext pc = new PartitionContext("dstns.servicebus.windows.net", "dsthub", "$Default", partition);
-        EventContext ctx = new EventContext(pc, new EventData(id), new FakeCheckpointStore(partition, id), null);
+        // the SDK delivers the events of a partition in the order of their sequence numbers
+        EventData data = new EventData(id) {
+            @Override
+            public Long getSequenceNumber() {
+                return sequenceNumber;
+            }
+        };
+        EventContext ctx = new EventContext(pc, data, new FakeCheckpointStore(partition, id, sequenceNumber), null);
         ledger.record("delivered", partition, id);
+        inflightByPartition.computeIfAbsent(partition, p -> new TreeSet<>()).add(sequenceNumber);
         processEvent.accept(ctx);
     }
 
@@ -265,14 +288,34 @@ final class EventHubsWorld {
         }
     }
 
-    /** A checkpoint store fake per event, so the trace says which event's offset is checkpointed. */
+    /**
+     * A checkpoint store fake per event, so the trace says which event's offset is checkpointed. Like the blob
+     * checkpoint store, a write stores the sequence number of its event whatever is stored already: the write that
+     * answers last wins.
+     */
     private final class FakeCheckpointStore implements CheckpointStore {
         private final String partition;
         private final String id;
+        private final long sequenceNumber;
 
-        FakeCheckpointStore(String partition, String id) {
+        FakeCheckpointStore(String partition, String id, long sequenceNumber) {
             this.partition = partition;
             this.id = id;
+            this.sequenceNumber = sequenceNumber;
+        }
+
+        /** The write of this event's checkpoint answered OK: it is the stored checkpoint of the partition now. */
+        private void stored() {
+            TreeSet<Long> inflight = inflightByPartition.get(partition);
+            if (inflight != null && !inflight.isEmpty() && inflight.first() <= sequenceNumber) {
+                storeViolations.add("partition " + partition + ": checkpoint " + id + " stored while e"
+                                    + inflight.first() + " is in flight");
+            }
+            Long before = storedByPartition.put(partition, sequenceNumber);
+            if (before != null && before > sequenceNumber) {
+                storeViolations.add("partition " + partition + ": stored checkpoint went back from e" + before + " to "
+                                    + id);
+            }
         }
 
         @Override
@@ -294,6 +337,7 @@ final class EventHubsWorld {
                             if (fail) {
                                 sink.error(Dst.injected(new IllegalStateException("checkpoint store unavailable")));
                             } else {
+                                stored();
                                 sink.success();
                             }
                             int after = count();

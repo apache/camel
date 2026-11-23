@@ -38,6 +38,8 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
     private final Lock lock;
     // set when the task has taken the count of its window, or was cancelled; read and written under the lock only
     private boolean done;
+    // the checkpoint of the consumer, run under its lock instead of taking the count and the event context here
+    private final Runnable checkpoint;
 
     /**
      * Creates a task that synchronizes on a private lock of its own, unrelated to any consumer: for standalone or test
@@ -56,6 +58,18 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
         this.eventContext = eventContext;
         this.processedEvents = processedEvents;
         this.lock = lock;
+        this.checkpoint = null;
+    }
+
+    /**
+     * Creates the task of a window of {@link EventHubsConsumer}: when it runs, unless it was cancelled, it runs the
+     * checkpoint of the consumer under the lock of the consumer, which decides what to checkpoint.
+     */
+    EventHubsCheckpointUpdaterTask(Lock lock, Runnable checkpoint) {
+        this.eventContext = null;
+        this.processedEvents = null;
+        this.lock = lock;
+        this.checkpoint = checkpoint;
     }
 
     @Override
@@ -73,6 +87,10 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
                 return;
             }
             done = true;
+            if (checkpoint != null) {
+                checkpoint.run();
+                return;
+            }
             processed = processedEvents.getAndSet(0);
             context = eventContext;
         } finally {

@@ -31,7 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Deterministic simulation test of the checkpointing of camel-azure-eventhubs under seeded event bursts, downstream
  * latency and failures, and slow or failing checkpoint store answers: every completed event is checkpointed when the
  * partition goes quiet. Regression test for CAMEL-25683 (apache/camel#27922): before that fix 2064 of 5000 seeds fail.
- * A failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
+ * Each successful answer of the checkpoint store is checked too: the stored checkpoint of a partition never passes an
+ * event still in flight (the asynchronous downstream step completes the events in any order) and never goes back. A
+ * failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
  * <p>
  * Seed 3042 (of 5000) failed before CAMEL-25781 and is pinned below: an event that completed in the millisecond in
  * which the timer of its window ran joined that window after the timer had taken its count, so it was not checkpointed
