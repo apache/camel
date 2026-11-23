@@ -118,6 +118,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private boolean halfOpenStopped;
     private volatile long lastFailure;
     private volatile long openedAt;
+    // set while the open circuit is half opened or closed (under lock), as this policy then lets go of the consumer
+    private volatile boolean releasingConsumer;
     // the times of the most recent failures (at most failureThreshold of them), oldest first, guarded by failureLock
     // (not by lock, which is held while the consumer is suspended or resumed)
     private final Lock failureLock = new ReentrantLock();
@@ -476,6 +478,18 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return output;
     }
 
+    /**
+     * While the circuit is open, this policy keeps the consumer suspended: another policy of the route, such as
+     * {@link ThrottlingInflightRoutePolicy}, does not resume it then.
+     */
+    @Override
+    protected boolean isConsumerKeptSuspended(Route route) {
+        // releasingConsumer is read before the state: while it is set, the state changes from open to half open or
+        // closed. Reading the state first could see it still open, and then the flag already cleared, so a policy that
+        // let go of the consumer at the same time would not resume it either
+        return !releasingConsumer && state.get() == STATE_OPEN;
+    }
+
     protected void openCircuit(Route route) {
         try {
             lock.lock();
@@ -555,8 +569,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void halfOpenCircuit(Route route) {
         try {
             lock.lock();
-            // do not resume the consumer if the route controller has suspended or stopped the route in the meantime
-            if (isResumeOrStartConsumerAllowed(route)) {
+            // this policy lets go of the consumer before it checks the other policies of the route, so that when one of them
+            // lets go at the same time, at least one of the two resumes the consumer (if resuming fails, the circuit
+            // stays open and keeps the consumer suspended again)
+            releasingConsumer = true;
+            // do not resume the consumer if the route controller has suspended or stopped the route in the meantime,
+            // or if another policy (such as ThrottlingInflightRoutePolicy) still keeps it suspended, as that policy
+            // resumes it when it lets go
+            if (isResumeOrStartConsumerAllowed(route) && !isConsumerKeptSuspendedByAnotherPolicy(route)) {
                 resumeOrStartConsumer(route.getConsumer());
             }
             state.set(STATE_HALF_OPEN);
@@ -564,6 +584,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         } catch (Exception e) {
             handleException(e);
         } finally {
+            releasingConsumer = false;
             lock.unlock();
         }
     }
@@ -571,10 +592,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void closeCircuit(Route route) {
         try {
             lock.lock();
+            // this policy lets go of the consumer before it checks the other policies of the route (as when half opening)
+            releasingConsumer = true;
             // only resume the consumer when the circuit is open, as then this policy has suspended the consumer
             // (when half open the consumer has already been resumed, so if it is suspended now, then by the route
-            // controller), and not if the route controller has suspended or stopped the route in the meantime
-            if (state.get() == STATE_OPEN && isResumeOrStartConsumerAllowed(route)) {
+            // controller or another policy), and not if the route controller has suspended or stopped the route in the
+            // meantime, or another policy still keeps it suspended
+            if (state.get() == STATE_OPEN && isResumeOrStartConsumerAllowed(route)
+                    && !isConsumerKeptSuspendedByAnotherPolicy(route)) {
                 resumeOrStartConsumer(route.getConsumer());
             }
             failures.set(0);
@@ -587,6 +612,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         } catch (Exception e) {
             handleException(e);
         } finally {
+            releasingConsumer = false;
             lock.unlock();
         }
     }

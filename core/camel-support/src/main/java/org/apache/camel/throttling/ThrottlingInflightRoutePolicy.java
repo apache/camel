@@ -142,6 +142,12 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         routeControllerTookOver(route);
     }
 
+    @Override
+    protected boolean isConsumerKeptSuspended(Route route) {
+        Consumer consumer = route.getConsumer();
+        return consumer != null && suspendedConsumers.contains(consumer);
+    }
+
     private void routeControllerTookOver(Route route) {
         // the route controller has started, stopped, suspended or resumed the consumer, so it is no longer suspended by
         // this policy
@@ -321,8 +327,22 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         if (!suspendedConsumers.contains(consumer) || !isResumeOrStartConsumerAllowed(route)) {
             return;
         }
-        boolean started = resumeOrStartConsumer(consumer);
+        // this policy lets go of the consumer before it checks the other policies of the route, so that when one of them
+        // lets go at the same time, at least one of the two resumes the consumer
         suspendedConsumers.remove(consumer);
+        if (isConsumerKeptSuspendedByAnotherPolicy(route)) {
+            // such as ThrottlingExceptionRoutePolicy with an open circuit: that policy resumes the consumer
+            LOG.debug("Not resuming consumer: {} as another route policy keeps it suspended", consumer);
+            return;
+        }
+        boolean started;
+        try {
+            started = resumeOrStartConsumer(consumer);
+        } catch (Exception e) {
+            // still suspended by this policy, so the next exchange that is done tries again
+            suspendedConsumers.add(consumer);
+            throw e;
+        }
         if (started) {
             getLogger().log("Throttling consumer: " + size + " <= " + resumeInflight
                             + " inflight exchange by resuming consumer: " + consumer);
