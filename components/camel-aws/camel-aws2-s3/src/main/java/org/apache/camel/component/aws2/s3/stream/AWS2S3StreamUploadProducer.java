@@ -116,6 +116,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
+        // stop the timeout task first, so that it does not run after the stop whether or not the uploads below fail
+        shutdownTimeoutChecker();
         lock.lock();
         try {
             if (ObjectHelper.isNotEmpty(uploadAggregate)) {
@@ -132,16 +134,33 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
                 }
             }
-            timestampBasedUploads.clear();
         } finally {
+            // the uploads are completed, or failed and reported by the stop: when started again, the producer
+            // starts new uploads and does not add to these
+            uploadAggregate = null;
+            timestampBasedUploads.clear();
             lock.unlock();
-        }
-        if (timeoutCheckerExecutorService != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
-            timeoutCheckerExecutorService = null;
         }
         super.doStop();
 
+    }
+
+    private void shutdownTimeoutChecker() {
+        ScheduledExecutorService executor = timeoutCheckerExecutorService;
+        if (executor != null) {
+            timeoutCheckerExecutorService = null;
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
+            // wait for a flush the task is running, so that it ends before the stop uploads what is left
+            long timeout = getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination();
+            try {
+                if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
+                    LOG.warn("The streamingUploadTimeout task of {} is still running after {} ms, the stop goes on",
+                            getConfiguration().getKeyName(), timeout);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     /**
