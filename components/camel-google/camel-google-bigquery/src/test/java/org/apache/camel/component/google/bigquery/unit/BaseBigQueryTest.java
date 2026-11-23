@@ -42,6 +42,7 @@ public abstract class BaseBigQueryTest extends CamelTestSupport {
     @BeforeEach
     public void init() throws Exception {
         setupBigqueryMock();
+        when(endpoint.getCamelContext()).thenReturn(context);
         producer = createProducer();
 
     }
