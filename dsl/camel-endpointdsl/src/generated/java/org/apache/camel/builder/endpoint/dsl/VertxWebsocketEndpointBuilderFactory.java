@@ -230,7 +230,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * thread (such as an asynchronous producer), so the worker pool no
          * longer limits the messages in flight. Keep it false for a route that
          * calls an asynchronous producer using the same Vert.x (such as
-         * vertx-http): with true, such requests can occupy every worker thread
+         * vertx-http): with true, such messages can occupy every worker thread
          * while their producers need a worker thread to complete, and then no
          * message completes.
          * 
@@ -256,7 +256,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * thread (such as an asynchronous producer), so the worker pool no
          * longer limits the messages in flight. Keep it false for a route that
          * calls an asynchronous producer using the same Vert.x (such as
-         * vertx-http): with true, such requests can occupy every worker thread
+         * vertx-http): with true, such messages can occupy every worker thread
          * while their producers need a worker thread to complete, and then no
          * message completes.
          * 
