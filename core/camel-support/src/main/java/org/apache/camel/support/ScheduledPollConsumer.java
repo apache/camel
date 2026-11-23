@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -83,6 +84,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private final AtomicLong successCounter = new AtomicLong();
     private volatile Throwable lastError;
     private volatile Map<String, Object> lastErrorDetails;
+    // the first Error a poll threw since the consumer was started: unlike lastError, a successful poll (such as by
+    // another task when scheduler.concurrentConsumers > 1) does not clear it, only stopping the consumer does
+    private final AtomicReference<Throwable> fatalError = new AtomicReference<>();
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean firstPollDone;
     // the error counter when the last backoff finished (the error threshold of the backoff counts from this)
@@ -154,7 +158,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
         } catch (Error e) {
             // need to log so there is visibility as otherwise the user may not see anything in logs
-            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
+            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}."
+                      + " The scheduled task has stopped polling and will not run again until the route is restarted.",
                     this.getEndpoint(), e.getMessage(), e);
             throw e;
         } catch (Throwable e) {
@@ -364,13 +369,20 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
             // now first pool is done after the poll is complete
             firstPollDone = true;
+
+            if (cause instanceof Error) {
+                // keep the error until the consumer is stopped, so the health check stays DOWN even if other tasks
+                // (scheduler.concurrentConsumers > 1) keep polling successfully. Under the lock, so a stop and start
+                // after the generation check cannot leave the marker on the restarted consumer
+                fatalError.compareAndSet(null, cause);
+            }
         } finally {
             stateLock.unlock();
         }
 
         if (cause instanceof Error error) {
-            // the JVM may be in an unknown state, so stop polling for good: run() logs and rethrows this,
-            // and as no further poll resets errorCounter/lastError, the health check stays DOWN
+            // the JVM may be in an unknown state, so this task stops polling for good: run() logs and rethrows this,
+            // which ends the scheduled task
             throw error;
         }
 
@@ -663,6 +675,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
+     * The first {@link Error} (such as an {@link OutOfMemoryError}) a poll threw since the consumer was started, or
+     * null if none. The scheduled task that polled stops polling after an Error, so unlike {@link #getLastError()} this
+     * is not cleared by a later successful poll, only when the consumer is stopped (such as by restarting the route).
+     *
+     * @since 4.24
+     */
+    public Throwable getFatalError() {
+        return fatalError.get();
+    }
+
+    /**
      * Whether a first pool attempt has been done (also if the consumer has been restarted).
      */
     public boolean isFirstPollDone() {
@@ -925,6 +948,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             forceReady = false;
             lastError = null;
             lastErrorDetails = null;
+            fatalError.set(null);
         } finally {
             stateLock.unlock();
         }
