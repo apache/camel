@@ -11,6 +11,21 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.22.3 to 4.22.4
+
+=== camel-openai, camel-spring-ai-chat - the path of the mcpServer url is the endpoint of the MCP server
+
+With `transportType=streamableHttp` (camel-openai) or `transportType=sse` (camel-openai and camel-spring-ai-chat), the
+path and the query of `mcpServer.<name>.url` are now used: the Streamable HTTP requests, and the request that opens the
+SSE stream, go to that URL. The SSE messages still go to the message endpoint that the server sends. Before, the MCP SDK
+replaced the path of the URL with `/mcp` (Streamable HTTP) or `/sse` (SSE) and dropped its query, so
+`url=http://host:8080/api/mcp` sent the requests to `http://host:8080/mcp`, and an MCP server on another path could not
+be reached. A URL without a path, such as `http://host:8080`, still uses `/mcp` or `/sse`.
+
+A URL whose path is not the endpoint of the server, such as `http://host:8080/v1` for a server on `/mcp`, worked
+because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
+path. The URL must be absolute, with a scheme and a host.
+
 == Upgrading from 4.22.2 to 4.22.3
 
 === Undertow servlet implementation
@@ -56,19 +71,6 @@ Under the MCP specification an omitted `destructiveHint` or `openWorldHint` mean
 treat such a tool as destructive and open-world. To keep advertising a tool as read-only or non-destructive, configure
 the hint on the endpoint, for example `ai-tool:myTool?destructiveHint=false`, or for all tools with
 `camel.component.ai-tool.destructive-hint=false`.
-
-=== camel-openai, camel-spring-ai-chat - the path of the mcpServer url is the endpoint of the MCP server
-
-With `transportType=streamableHttp` (camel-openai) or `transportType=sse` (camel-openai and camel-spring-ai-chat), the
-path and the query of `mcpServer.<name>.url` are now used: the Streamable HTTP requests, and the request that opens the
-SSE stream, go to that URL. The SSE messages still go to the message endpoint that the server sends. Before, the MCP SDK
-replaced the path of the URL with `/mcp` (Streamable HTTP) or `/sse` (SSE) and dropped its query, so
-`url=http://host:8080/api/mcp` sent the requests to `http://host:8080/mcp`, and an MCP server on another path could not
-be reached. A URL without a path, such as `http://host:8080`, still uses `/mcp` or `/sse`.
-
-A URL whose path is not the endpoint of the server, such as `http://host:8080/v1` for a server on `/mcp`, worked
-because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
-path. The URL must be absolute, with a scheme and a host.
 
 === camel-as2 - server/listen - signature and MIC over the message as received
 
