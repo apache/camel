@@ -1,0 +1,552 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.openfga;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import dev.openfga.sdk.api.client.OpenFgaClient;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckSingleResponse;
+import dev.openfga.sdk.api.client.model.ClientCheckRequest;
+import dev.openfga.sdk.api.client.model.ClientCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientWriteRequest;
+import dev.openfga.sdk.api.client.model.ClientWriteResponse;
+import dev.openfga.sdk.api.configuration.ClientWriteOptions;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.security.AuthorizationDecisionEvent;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+class OpenFgaAsyncProducerTest {
+    @Test
+    void asyncNativeBatchCorrelatesDuplicateObjectsRatherThanUsingClientFanout() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.batchCheck(any(), any())).thenReturn(CompletableFuture.completedFuture(
+                new ClientBatchCheckResponse(
+                        List.of(
+                                new ClientBatchCheckSingleResponse(false, null, "1", null),
+                                new ClientBatchCheckSingleResponse(true, null, "0", null)))));
+        try (Fixture fixture = new Fixture(
+                client, c -> c.setBatchCheckMode(OpenFgaBatchCheckMode.server),
+                OpenFgaOperation.batchCheck)) {
+            Exchange exchange = fixture.exchange();
+            exchange.getMessage().setBody(List.of("document:a", "document:a"));
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody(List.class)).containsExactly("document:a");
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+        }
+    }
+
+    @Test
+    void asyncCombinedWritePreservesAtomicRequestAndOriginalBody() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.write(any(), any()))
+                .thenReturn(CompletableFuture.completedFuture(new ClientWriteResponse(List.of(), List.of())));
+        try (Fixture fixture = new Fixture(client, c -> {
+            c.setUser(null);
+            c.setRelation(null);
+            c.setObject(null);
+            c.setOnDuplicate(OpenFgaWriteConflictMode.ignore);
+            c.setOnMissing(OpenFgaWriteConflictMode.ignore);
+        }, OpenFgaOperation.write)) {
+            Exchange exchange = fixture.exchange();
+            Object body = Map.of("writes", List.of(Map.of("user", "user:anne", "relation", "writer", "object", "document:a")),
+                    "deletes", List.of(Map.of("user", "user:anne", "relation", "reader", "object", "document:a")));
+            exchange.getMessage().setBody(body);
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(body);
+            ArgumentCaptor<ClientWriteRequest> request = ArgumentCaptor.captor();
+            ArgumentCaptor<ClientWriteOptions> options = ArgumentCaptor.captor();
+            verify(client).write(request.capture(), options.capture());
+            assertThat(options.getValue().isTransactionsEnabled()).isTrue();
+            assertThat(request.getValue().getWrites()).hasSize(1);
+            assertThat(request.getValue().getDeletes()).hasSize(1);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+        }
+    }
+
+    @Test
+    void stoppedProducerClearsClaimedDecisionHeadersBeforeRejectingEachDecisionOperation() throws Exception {
+        for (OpenFgaOperation operation : List.of(OpenFgaOperation.check, OpenFgaOperation.batchCheck,
+                OpenFgaOperation.listObjects, OpenFgaOperation.listRelations, OpenFgaOperation.listUsers,
+                OpenFgaOperation.expand)) {
+            OpenFgaClient client = mock(OpenFgaClient.class);
+            try (Fixture fixture = new Fixture(client, configuration -> configuration.setFailOpen(true), operation)) {
+                fixture.producer.stop();
+                Exchange exchange = fixture.exchange();
+                exchange.getMessage().setBody("payload");
+                exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, true);
+                exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
+                exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "claimed-reason");
+                exchange.getMessage().setHeader(OpenFgaConstants.USER, "user:claimed");
+                exchange.getMessage().setHeader(OpenFgaConstants.OBJECT, "document:claimed");
+                exchange.getMessage().setHeader(OpenFgaConstants.RELATION, "claimed-relation");
+                exchange.getMessage().setHeader(OpenFgaConstants.STORE_ID, "claimed-store");
+                AtomicInteger callbacks = new AtomicInteger();
+
+                assertThat(fixture.producer.process(exchange, doneSync -> {
+                    assertThat(doneSync).isTrue();
+                    callbacks.incrementAndGet();
+                })).as(operation.name()).isTrue();
+
+                assertThat(callbacks).hasValue(1);
+                assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+                assertThat(exchange.getMessage().getBody()).isEqualTo("payload");
+                for (String header : List.of(OpenFgaConstants.ALLOWED, OpenFgaConstants.FAILED_OPEN,
+                        OpenFgaConstants.DENY_REASON, OpenFgaConstants.USER, OpenFgaConstants.OBJECT,
+                        OpenFgaConstants.RELATION, OpenFgaConstants.STORE_ID)) {
+                    assertThat(exchange.getMessage().getHeader(header)).as(operation + " " + header).isNull();
+                }
+                verifyNoInteractions(client);
+            }
+        }
+    }
+
+    @Test
+    void oneSubmissionWorkerCanHaveMultipleSdkRequestsPendingWithIndependentCapturedInputs() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        var first = new CompletableFuture<ClientCheckResponse>();
+        var second = new CompletableFuture<ClientCheckResponse>();
+        CountDownLatch submitted = new CountDownLatch(2);
+        ConcurrentHashMap<String, String> users = new ConcurrentHashMap<>();
+        when(client.check(any(), any())).thenAnswer(invocation -> {
+            ClientCheckRequest request = invocation.getArgument(0);
+            users.put(request.getObject(), request.getUser());
+            submitted.countDown();
+            return request.getObject().equals("document:first") ? first : second;
+        });
+        try (Fixture fixture = new Fixture(client, configuration -> {
+            configuration.setUser("${header.subject}");
+            configuration.setObject("${header.resource}");
+        })) {
+            Exchange a = fixture.exchange();
+            a.getMessage().setHeader("subject", "user:anne");
+            a.getMessage().setHeader("resource", "document:first");
+            Exchange b = fixture.exchange();
+            b.getMessage().setHeader("subject", "user:bob");
+            b.getMessage().setHeader("resource", "document:second");
+            CountDownLatch completed = new CountDownLatch(2);
+            AtomicInteger calls = new AtomicInteger();
+            assertThat(fixture.producer.process(a, doneSync -> {
+                calls.incrementAndGet();
+                completed.countDown();
+            })).isFalse();
+            assertThat(fixture.producer.process(b, doneSync -> {
+                calls.incrementAndGet();
+                completed.countDown();
+            })).isFalse();
+            a.getMessage().setHeader("subject", "user:changed-after-admission");
+            assertThat(submitted.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(calls).hasValue(0);
+            assertThat(users).containsEntry("document:first", "user:anne").containsEntry("document:second", "user:bob");
+            second.complete(answer(false));
+            first.complete(answer(true));
+            assertThat(completed.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(calls).hasValue(2);
+            assertThat(a.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+            assertThat(b.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(false);
+        }
+    }
+
+    @Test
+    void sdkFailureAndFailedOpenRemainEquivalentToTheSynchronousDecision() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.check(any(), any())).thenReturn(CompletableFuture.failedFuture(new IOException("offline")));
+        try (Fixture fixture = new Fixture(client, configuration -> configuration.setFailOpen(true))) {
+            Exchange result = fixture.producer.processAsync(fixture.exchange()).get(5, TimeUnit.SECONDS);
+            assertThat(result.getException()).isNull();
+            assertThat(result.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+            assertThat(result.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isEqualTo(true);
+        }
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        })) {
+            Exchange result = fixture.producer.processAsync(fixture.exchange()).get(5, TimeUnit.SECONDS);
+            assertThat(result.getException()).isInstanceOf(OpenFgaEvaluationException.class).hasRootCauseMessage("offline");
+            assertThat(result.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+        }
+    }
+
+    @Test
+    void explicitCancellationPropagatesThroughMappedStagesToTheSdkFuture() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<ClientCheckResponse> pending = new CompletableFuture<>();
+        CountDownLatch submitted = new CountDownLatch(1);
+        when(client.check(any(), any())).thenAnswer(invocation -> {
+            submitted.countDown();
+            return pending;
+        });
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        })) {
+            Exchange exchange = fixture.exchange();
+            var result = fixture.producer.processAsync(exchange);
+            assertThat(submitted.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(result.cancel(true)).isTrue();
+            await().atMost(5, TimeUnit.SECONDS).until(pending::isCancelled);
+            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+        }
+    }
+
+    @Test
+    void totalDeadlineFailsClosedAndBoundsOutstandingRequests() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<ClientCheckResponse> pending = new CompletableFuture<>();
+        when(client.check(any(), any())).thenReturn(pending);
+        try (Fixture fixture = new Fixture(client, configuration -> {
+            configuration.setAsyncTimeout(200);
+            configuration.setFailOpen(true);
+        })) {
+            Exchange exchange = fixture.producer.processAsync(fixture.exchange()).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isNull();
+            assertThat(pending.isCancelled()).isTrue();
+        }
+    }
+
+    @Test
+    void pendingFuturesConsumeBoundedCapacityAndStopCancelsEachExactlyOnce() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        var a = new CompletableFuture<ClientCheckResponse>();
+        var b = new CompletableFuture<ClientCheckResponse>();
+        when(client.check(any(), any())).thenReturn(a).thenReturn(b);
+        try (Fixture fixture = new Fixture(client, configuration -> configuration.setAsyncQueueSize(1))) {
+            CountDownLatch completed = new CountDownLatch(2);
+            AtomicInteger callbacks = new AtomicInteger();
+            Exchange first = fixture.exchange();
+            Exchange second = fixture.exchange();
+            fixture.producer.process(first, doneSync -> {
+                callbacks.incrementAndGet();
+                completed.countDown();
+            });
+            fixture.producer.process(second, doneSync -> {
+                callbacks.incrementAndGet();
+                completed.countDown();
+            });
+            Exchange third = fixture.exchange();
+            AtomicInteger rejected = new AtomicInteger();
+            assertThat(fixture.producer.process(third, doneSync -> rejected.incrementAndGet())).isTrue();
+            assertThat(third.getException()).isInstanceOf(RejectedExecutionException.class);
+            fixture.producer.stop();
+            assertThat(completed.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(callbacks).hasValue(2);
+            assertThat(rejected).hasValue(1);
+            assertThat(first.getException()).isInstanceOf(CancellationException.class);
+            assertThat(second.getException()).isInstanceOf(CancellationException.class);
+        }
+    }
+
+    @Test
+    void synchronousTemplateFacadeUsesTheFutureBridge() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        ClientCheckResponse allowed = answer(true);
+        when(client.check(any(), any())).thenReturn(CompletableFuture.completedFuture(allowed));
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        }); var template = fixture.context.createProducerTemplate()) {
+            Exchange result = template.request(fixture.endpoint, exchange -> exchange.getMessage().setBody("payload"));
+            assertThat(result.getException()).isNull();
+            assertThat(result.getMessage().getBody()).isEqualTo("payload");
+            assertThat(result.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+        }
+    }
+
+    @Test
+    void queryAndMutationOperationsPreserveTheirResponseContracts() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        var objects = mock(dev.openfga.sdk.api.client.model.ClientListObjectsResponse.class);
+        when(objects.getObjects()).thenReturn(List.of("document:a"));
+        when(client.listObjects(any(), any())).thenReturn(CompletableFuture.completedFuture(objects));
+        var relations = mock(dev.openfga.sdk.api.client.model.ClientListRelationsResponse.class);
+        when(relations.getRelations()).thenReturn(List.of("writer", "reader"));
+        when(client.listRelations(any(), any())).thenReturn(CompletableFuture.completedFuture(relations));
+        var users = mock(dev.openfga.sdk.api.client.model.ClientListUsersResponse.class);
+        var user = mock(dev.openfga.sdk.api.model.User.class);
+        when(user.getObject()).thenReturn(new dev.openfga.sdk.api.model.FgaObject().type("user").id("anne"));
+        when(users.getUsers()).thenReturn(List.of(user));
+        when(client.listUsers(any(), any())).thenReturn(CompletableFuture.completedFuture(users));
+        var tuples = mock(dev.openfga.sdk.api.client.model.ClientReadResponse.class);
+        when(tuples.getTuples()).thenReturn(List.of(new dev.openfga.sdk.api.model.Tuple()
+                .key(new dev.openfga.sdk.api.model.TupleKey().user("user:anne").relation("reader")._object("document:a"))));
+        when(tuples.getContinuationToken()).thenReturn("tuple-next");
+        when(client.read(any(), any())).thenReturn(CompletableFuture.completedFuture(tuples));
+        var changes = mock(dev.openfga.sdk.api.client.model.ClientReadChangesResponse.class);
+        when(changes.getChanges()).thenReturn(List.of(new dev.openfga.sdk.api.model.TupleChange()
+                .tupleKey(new dev.openfga.sdk.api.model.TupleKey().user("user:anne").relation("reader")._object("document:a"))
+                .operation(dev.openfga.sdk.api.model.TupleOperation.WRITE)));
+        when(changes.getContinuationToken()).thenReturn("changes-next");
+        when(client.readChanges(any(), any())).thenReturn(CompletableFuture.completedFuture(changes));
+        var expanded = mock(dev.openfga.sdk.api.client.model.ClientExpandResponse.class);
+        var tree = new dev.openfga.sdk.api.model.UsersetTree();
+        when(expanded.getTree()).thenReturn(tree);
+        when(client.expand(any(), any())).thenReturn(CompletableFuture.completedFuture(expanded));
+        var write = mock(dev.openfga.sdk.api.client.model.ClientWriteResponse.class);
+        when(client.writeTuples(any())).thenReturn(CompletableFuture.completedFuture(write));
+        when(client.deleteTuples(any())).thenReturn(CompletableFuture.completedFuture(write));
+        for (OpenFgaOperation operation : List.of(OpenFgaOperation.listObjects, OpenFgaOperation.listRelations,
+                OpenFgaOperation.listUsers, OpenFgaOperation.readTuples, OpenFgaOperation.readChanges,
+                OpenFgaOperation.expand, OpenFgaOperation.writeTuples, OpenFgaOperation.deleteTuples)) {
+            try (Fixture fixture = new Fixture(client, configuration -> {
+            }, operation)) {
+                Exchange exchange = fixture.exchange();
+                exchange.getMessage().setBody("unchanged");
+                Exchange result = fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+                assertThat(result.getException()).as(operation.name()).isNull();
+                switch (operation) {
+                    case listObjects -> assertThat(result.getMessage().getBody()).isEqualTo(List.of("document:a"));
+                    case listRelations -> assertThat(result.getMessage().getBody()).isEqualTo(List.of("reader", "writer"));
+                    case listUsers -> assertThat(result.getMessage().getBody()).isEqualTo(List.of("user:anne"));
+                    case readTuples -> {
+                        assertThat(result.getMessage().getBody(List.class)).hasSize(1);
+                        assertThat(result.getMessage().getHeader(OpenFgaConstants.CONTINUATION_TOKEN)).isEqualTo("tuple-next");
+                    }
+                    case readChanges -> {
+                        assertThat(result.getMessage().getBody(List.class)).hasSize(1);
+                        assertThat(result.getMessage().getHeader(OpenFgaConstants.CONTINUATION_TOKEN))
+                                .isEqualTo("changes-next");
+                    }
+                    case expand -> assertThat(result.getMessage().getBody()).isSameAs(tree);
+                    case writeTuples -> {
+                        assertThat(result.getMessage().getBody()).isEqualTo("unchanged");
+                        assertThat(result.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
+                    }
+                    case deleteTuples -> {
+                        assertThat(result.getMessage().getBody()).isEqualTo("unchanged");
+                        assertThat(result.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+                    }
+                    default -> throw new AssertionError(operation);
+                }
+            }
+        }
+    }
+
+    @Test
+    void asynchronousBatchPreservesDuplicatesAndFailsOnPartialSdkFailure() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        var permitted = mock(ClientBatchCheckClientResponse.class);
+        when(permitted.getRequest()).thenReturn(new ClientCheckRequest()._object("document:a"));
+        when(permitted.getAllowed()).thenReturn(true);
+        var denied = mock(ClientBatchCheckClientResponse.class);
+        when(denied.getRequest()).thenReturn(new ClientCheckRequest()._object("document:b"));
+        when(denied.getAllowed()).thenReturn(false);
+        var failed = mock(ClientBatchCheckClientResponse.class);
+        when(failed.getThrowable()).thenReturn(new IOException("partial failure"));
+        when(client.clientBatchCheck(anyList(), any()))
+                .thenReturn(CompletableFuture.completedFuture(List.of(denied, permitted)))
+                .thenReturn(CompletableFuture.completedFuture(List.of(permitted, failed)));
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        }, OpenFgaOperation.batchCheck)) {
+            Exchange first = fixture.exchange();
+            first.getMessage().setBody(List.of("document:a", "document:b", "document:a"));
+            fixture.producer.processAsync(first).get(5, TimeUnit.SECONDS);
+            assertThat(first.getException()).isNull();
+            assertThat(first.getMessage().getBody()).isEqualTo(List.of("document:a", "document:a"));
+            Exchange second = fixture.exchange();
+            second.getMessage().setBody(List.of("document:a", "document:b"));
+            fixture.producer.processAsync(second).get(5, TimeUnit.SECONDS);
+            assertThat(second.getException()).isInstanceOf(OpenFgaEvaluationException.class)
+                    .hasRootCauseMessage("partial failure");
+            assertThat(second.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+        }
+    }
+
+    @Test
+    void sdkCompletionCannotOverwriteAnAlreadyInterruptedCamelWait() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<ClientCheckResponse> pending = new CompletableFuture<>();
+        CountDownLatch submitted = new CountDownLatch(1);
+        when(client.check(any(), any())).thenAnswer(invocation -> {
+            submitted.countDown();
+            return pending;
+        });
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        })) {
+            Exchange exchange = fixture.exchange();
+            var completion = fixture.producer.processAsync(exchange);
+            assertThat(submitted.await(5, TimeUnit.SECONDS)).isTrue();
+            exchange.setException(new InterruptedException("Caller stopped waiting"));
+            pending.complete(answer(true));
+            completion.get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(InterruptedException.class);
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+        }
+    }
+
+    private static ClientCheckResponse answer(boolean allowed) {
+        ClientCheckResponse answer = mock(ClientCheckResponse.class);
+        when(answer.getAllowed()).thenReturn(allowed);
+        return answer;
+    }
+
+    @Test
+    void asynchronousCheckPublishesTheSameDecisionEventAsTheSynchronousOne() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        ClientCheckResponse allowed = mock(ClientCheckResponse.class);
+        when(allowed.getAllowed()).thenReturn(true);
+        ClientCheckResponse denied = mock(ClientCheckResponse.class);
+        when(denied.getAllowed()).thenReturn(false);
+        when(client.check(any(), any())).thenReturn(CompletableFuture.completedFuture(allowed))
+                .thenReturn(CompletableFuture.completedFuture(denied));
+        try (Fixture fixture = new Fixture(client, configuration -> configuration.setAuthorizationModelId("model-1"))) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange first = fixture.exchange();
+            fixture.producer.processAsync(first).get(5, TimeUnit.SECONDS);
+            Exchange second = fixture.exchange();
+            fixture.producer.processAsync(second).get(5, TimeUnit.SECONDS);
+            assertThat(first.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+            assertThat(second.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(false);
+            assertThat(events).hasSize(2);
+            assertThat(events.get(0).getEngine()).isEqualTo(AuthorizationDecisionEvent.Engine.OPENFGA);
+            assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.DECISION);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ALLOW);
+            assertThat(events.get(0).getRevision()).isEqualTo("model-1");
+            assertThat(events.get(0).getExchangeId()).isEqualTo(first.getExchangeId());
+            assertThat(events.get(1).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.DENY);
+            assertThat(events.get(1).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.NONE);
+        }
+    }
+
+    @Test
+    void asynchronousBatchPublishesOneBatchEventWithItsCounts() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        var permitted = mock(ClientBatchCheckClientResponse.class);
+        when(permitted.getRequest()).thenReturn(new ClientCheckRequest()._object("document:a"));
+        when(permitted.getAllowed()).thenReturn(true);
+        var denied = mock(ClientBatchCheckClientResponse.class);
+        when(denied.getRequest()).thenReturn(new ClientCheckRequest()._object("document:b"));
+        when(denied.getAllowed()).thenReturn(false);
+        var failed = mock(ClientBatchCheckClientResponse.class);
+        when(failed.getThrowable()).thenReturn(new IOException("partial failure"));
+        when(client.clientBatchCheck(anyList(), any()))
+                .thenReturn(CompletableFuture.completedFuture(List.of(denied, permitted)))
+                .thenReturn(CompletableFuture.completedFuture(List.of(permitted, failed)));
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        }, OpenFgaOperation.batchCheck)) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange first = fixture.exchange();
+            first.getMessage().setBody(List.of("document:a", "document:b", "document:a"));
+            fixture.producer.processAsync(first).get(5, TimeUnit.SECONDS);
+            assertThat(first.getMessage().getBody()).isEqualTo(List.of("document:a", "document:a"));
+            Exchange second = fixture.exchange();
+            second.getMessage().setBody(List.of("document:a", "document:b"));
+            fixture.producer.processAsync(second).get(5, TimeUnit.SECONDS);
+            assertThat(second.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+            assertThat(events).hasSize(2);
+            AuthorizationDecisionEvent batch = events.get(0);
+            assertThat(batch.getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
+            // one answer per object the SDK answered, and the unanswered duplicate counted as denied
+            assertThat(batch.getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.DENY);
+            assertThat(batch.getCounts().allowed()).isEqualTo(1);
+            assertThat(batch.getCounts().denied()).isEqualTo(2);
+            // an unanswered check in the batch is the decision point not answering: unavailable, like the synchronous
+            // batch, with the objects that got no answer counted as such
+            AuthorizationDecisionEvent failure = events.get(1);
+            assertThat(failure.getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
+            assertThat(failure.getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.UNAVAILABLE);
+            assertThat(failure.getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.UNAVAILABLE);
+            assertThat(failure.getCounts().allowed()).isEqualTo(1);
+            assertThat(failure.getCounts().unavailable()).isEqualTo(1);
+        }
+    }
+
+    private static class Fixture implements AutoCloseable {
+        final DefaultCamelContext context = new DefaultCamelContext();
+        final OpenFgaEndpoint endpoint;
+        final OpenFgaProducer producer;
+
+        Fixture(OpenFgaClient client, Consumer<OpenFgaConfiguration> configure) throws Exception {
+            this(client, configure, OpenFgaOperation.check);
+        }
+
+        Fixture(OpenFgaClient client, Consumer<OpenFgaConfiguration> configure,
+                OpenFgaOperation operation) throws Exception {
+            context.start();
+            var configuration = new OpenFgaConfiguration();
+            configuration.setOpenFgaClient(client);
+            configuration.setAsyncProcessing(true);
+            configuration.setAsyncPoolSize(1);
+            configuration.setAsyncQueueSize(2);
+            configuration.setUser("user:anne");
+            configuration.setRelation("reader");
+            configuration.setObject("document:a");
+            configuration.setType("document");
+            configuration.setRelations("reader,writer");
+            configure.accept(configuration);
+            endpoint = new OpenFgaEndpoint("openfga:" + operation, new OpenFgaComponent(context), configuration);
+            endpoint.setOperation(operation);
+            endpoint.start();
+            producer = new OpenFgaProducer(endpoint);
+            producer.start();
+        }
+
+        Exchange exchange() {
+            return new DefaultExchange(context);
+        }
+
+        @Override
+        public void close() throws Exception {
+            producer.stop();
+            endpoint.stop();
+            context.close();
+        }
+    }
+
+    private static List<AuthorizationDecisionEvent> observe(CamelContext context) {
+        List<AuthorizationDecisionEvent> events = new CopyOnWriteArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof AuthorizationDecisionEvent;
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+                events.add((AuthorizationDecisionEvent) event);
+            }
+        });
+        return events;
+    }
+}

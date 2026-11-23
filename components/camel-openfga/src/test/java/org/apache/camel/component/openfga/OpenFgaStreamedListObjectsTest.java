@@ -44,6 +44,41 @@ import static org.mockito.Mockito.when;
 
 class OpenFgaStreamedListObjectsTest {
     @Test
+    void asyncOptionStillHandsOffTheLazyIteratorInlineWithoutOpeningARequest() throws Exception {
+        OpenFgaConfiguration configuration = configuration();
+        configuration.setAsyncProcessing(true);
+        AtomicInteger requests = new AtomicInteger();
+        configuration.setStreamingClient((store, query) -> {
+            requests.incrementAndGet();
+            return response(
+                    new ByteArrayInputStream("{\"result\":{\"object\":\"document:one\"}}\n".getBytes(StandardCharsets.UTF_8)));
+        });
+        try (var context = new DefaultCamelContext()) {
+            var endpoint = endpoint(context, configuration);
+            endpoint.start();
+            var producer = new OpenFgaProducer(endpoint);
+            producer.start();
+            try {
+                Exchange exchange = new DefaultExchange(context);
+                AtomicInteger callbacks = new AtomicInteger();
+                assertThat(producer.process(exchange, doneSync -> {
+                    assertThat(doneSync).isTrue();
+                    callbacks.incrementAndGet();
+                })).isTrue();
+                assertThat(callbacks).hasValue(1);
+                assertThat(requests).hasValue(0);
+                try (var iterator = exchange.getMessage().getBody(OpenFgaObjectIterator.class)) {
+                    assertThat(iterator.next()).isEqualTo("document:one");
+                    assertThat(requests).hasValue(1);
+                }
+            } finally {
+                producer.stop();
+                endpoint.stop();
+            }
+        }
+    }
+
+    @Test
     void ownedTransportUsesSdkRequestAuthenticationAndClosesStalledBody() throws Exception {
         var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         var release = new CountDownLatch(1);
