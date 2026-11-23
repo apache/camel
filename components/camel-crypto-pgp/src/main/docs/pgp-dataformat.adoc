@@ -16,8 +16,20 @@ Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshal
 and unmarshal formatting mechanism. It assumes marshalling to mean
 encryption to ciphertext and unmarshalling to mean decryption back to
-the original plaintext. This data format implements only symmetric
-(shared-key) encryption and decryption.
+the original plaintext.
+
+PGP uses public-key encryption: the message is encrypted with a random
+session key and a symmetric cipher, and the session key is encrypted with
+the public key of each recipient, so only the holder of a matching private
+key can decrypt the message. Optionally the message is signed with the
+private key of the sender and the signature is verified with the public key
+of the sender.
+
+When decrypting, the message must be integrity protected by default
+(`requireIntegrityProtection`). Both a symmetrically encrypted integrity
+protected data packet and an AEAD encrypted packet, such as the OCB
+encrypted data packet that GnuPG 2.4 and later writes, are integrity
+protected.
 
 == PGPDataFormat Options
 
