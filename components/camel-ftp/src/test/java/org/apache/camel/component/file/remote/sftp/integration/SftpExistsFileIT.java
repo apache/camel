@@ -405,15 +405,6 @@ class SftpExistsFileIT extends CamelTestSupport {
             entriesListed.set(0);
         }
 
-        /**
-         * Returns the number of SSH_FXP_REALPATH requests the server received. The sendNoop() method in SftpOperations
-         * sends a REALPATH round-trip, so this counts the noop probes (plus any other REALPATH requests, such as the
-         * initial getHome() during connect).
-         */
-        int noopRealpath() {
-            return requests(SftpConstants.SSH_FXP_REALPATH);
-        }
-
         int requests(int type) {
             AtomicInteger count = requests.get(SftpConstants.getCommandMessageName(type));
             return count != null ? count.get() : 0;

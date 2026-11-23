@@ -44,14 +44,16 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
-        // Restart the SFTP server. Wait until the new server is accepting connections before the
-        // second upload. This also gives JSch enough time to process the EOF/RST from the old
-        // server's connection, so that isConnected() returns false, isRecentlyUsed() returns false,
-        // and the producer sends a noop that detects the stale session and reconnects.
+        // Restart the SFTP server. Wait at least 1100 ms before the second upload so that
+        // isRecentlyUsed() (which caches the last-used timestamp for 1 second) returns false
+        // regardless of whether JSch has already processed the EOF from the old connection.
+        // With isRecentlyUsed() returning false, preWriteCheck() calls sendNoop(), which does a
+        // round-trip REALPATH that detects the stale session and triggers a reconnect.
         service.tearDownServer();
         service.setUpServer();
         int port = service.getPort();
-        await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS)
+        await().pollDelay(1100, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
+                .pollInterval(50, TimeUnit.MILLISECONDS)
                 .until(() -> {
                     try (Socket s = new Socket()) {
                         s.connect(new InetSocketAddress("localhost", port), 100);

@@ -77,11 +77,13 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     public void testSendNoopDifference() throws Exception {
         // --- Run with sendNoop=false (baseline) ---
         consumeFileAndPollAgain("sendNoopFalse");
+        // Stop the route before reading the counter: the consumer polls every 100 ms and may
+        // still be in flight. Reading the counter while the route is running risks a race where
+        // sendNoop=false accumulates extra REALPATH requests from JSch's internal cd/ls calls
+        // between assertIsSatisfied() returning and the route actually stopping.
+        context.getRouteController().stopRoute("sendNoopFalse");
         int realpathWithNoopFalse = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
         assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=false)");
-
-        // stop the route so we can run the next one
-        context.getRouteController().stopRoute("sendNoopFalse");
 
         // reset counters and login count for the second run
         countingService().reset();
@@ -89,6 +91,8 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
         // --- Run with sendNoop=true (default) ---
         consumeFileAndPollAgain("sendNoopDefault");
+        // Stop the route before reading, same reason as for the sendNoop=false run above.
+        context.getRouteController().stopRoute("sendNoopDefault");
         int realpathWithNoopTrue = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
         assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=true)");
 
