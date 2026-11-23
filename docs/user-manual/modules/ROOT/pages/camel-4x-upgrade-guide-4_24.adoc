@@ -7114,6 +7114,35 @@ with the stack trace, at every poll that lists the object). Before, the poll fai
 page again, so one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got, and the next poll then reads the next page of the listing.
 
+=== camel-alibaba-oss - region, accessKey and secretKey are no longer marked as required
+
+The `region`, `accessKey` and `secretKey` options of `alibaba-oss` are no longer marked as required. To create the
+client, the Camel endpoint needs the `region` or the `endpoint` option. It takes each key of the AccessKey pair from its
+own option or from the `serviceKeys` option. It needs none of these options when the `ossClient` option is set or
+autowired. So the endpoint validation of the catalog no longer reports a URI without them as missing required options.
+The behavior of the component at runtime does not change.
+
+=== camel-alibaba-oss - objectName and maxKeys are producer options, and prefix is also a producer option
+
+The `objectName` option of the `alibaba-oss` endpoint now has the label `producer`, as only the producer uses it. In the
+Endpoint DSL, `OSSEndpointConsumerBuilder` no longer has its method. So `from(alibabaOss(...).objectName(...))` no
+longer compiles. Code compiled against an earlier version that calls it on the `alibabaOss(...)` builder must be
+recompiled. Remove the option from consumer endpoints, where it had no effect. The endpoint validation of the catalog
+now reports it in consumer-only mode.
+
+The `prefix` option no longer has the label `consumer`, as the producer uses it too for `listObjects`. The `maxKeys`
+option now has only the label `producer`, as the consumer does not use it. In the Endpoint DSL,
+`OSSEndpointProducerBuilder` now has the methods of both options. Before, it had neither, and no builder had `maxKeys`.
+The endpoint validation of the catalog no longer reports the two options in producer-only mode.
+
+The catalog and the Endpoint DSL now list six more headers, which only the producer reads. They are
+`CamelAlibabaOssOperation`, `CamelAlibabaOssObjectName`, `CamelAlibabaOssSourceBucketName`,
+`CamelAlibabaOssSourceObjectName`, `CamelAlibabaOssPrefix` and `CamelAlibabaOssMaxKeys`. `OSSHeaders` has a constant for
+each. The other nine headers now have the label `common` instead of `consumer`, as the producer sets them too for
+`getObject`.
+
+The behavior of the component at runtime does not change.
+
 === camel-alibaba-fc - invokeFunction sends a stream or a file as its bytes
 
 The `invokeFunction` operation of `alibaba-fc` now sends a stream or a file body (an `InputStream`, a `java.io.File`,
