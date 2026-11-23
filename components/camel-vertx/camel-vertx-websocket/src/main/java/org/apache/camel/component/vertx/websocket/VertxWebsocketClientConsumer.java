@@ -22,9 +22,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.vertx.core.Context;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
-import io.vertx.core.net.impl.ConnectionBase;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -229,21 +230,50 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
-                .onComplete(result -> {
-                    try {
-                        if (result.failed()) {
-                            Throwable cause = result.cause();
-                            getExceptionHandler().handleException(cause);
-                        }
-                    } finally {
-                        doneUoW(exchange);
-                        releaseExchange(exchange, false);
+        // ordered: Vert.x runs the blocking tasks of the WebSocket's context one after the other, so the messages reach
+        // the route in the order they are received
+        boolean ordered = !getEndpoint().getConfiguration().isParallelProcessing();
+        if (getEndpoint().isSynchronous()) {
+            // synchronous path: run on worker, block until done
+            vertx.executeBlocking(() -> {
+                createUoW(exchange);
+                getProcessor().process(exchange);
+                return null;
+            }, ordered).onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
                     }
-                });
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        } else {
+            // async path: Promise + runOnContext
+            Context context = vertx.getOrCreateContext();
+            Promise<Void> done = Promise.promise();
+            try {
+                vertx.executeBlocking(() -> {
+                    createUoW(exchange);
+                    getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+                    return null;
+                }, ordered).onFailure(done::tryFail);
+            } catch (Exception e) {
+                done.tryFail(e);
+            }
+            done.future().onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                    }
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        }
     }
 }
