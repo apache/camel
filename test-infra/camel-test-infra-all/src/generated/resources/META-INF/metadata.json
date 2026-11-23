@@ -128,7 +128,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-openfga",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.22.1",
+  "serviceVersion" : "v1.23.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.google.bigquery.services.GoogleBigQueryInfraService",
