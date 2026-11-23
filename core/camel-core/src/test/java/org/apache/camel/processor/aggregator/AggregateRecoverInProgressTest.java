@@ -45,7 +45,6 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -156,9 +155,10 @@ public class AggregateRecoverInProgressTest extends ContextTestSupport {
     }
 
     @Test
-    public void testForceDiscardingNotConfirmedIsRecovered() throws Exception {
+    public void testForceDiscardingNotConfirmedIsConfirmedAgain() throws Exception {
         // a force discarded group is not sent, so it must not be left marked as being completed: if it could not be
-        // confirmed, it is still in the completed store, and the recover task must recover it
+        // confirmed, it is still in the completed store, and the recover task must confirm it again, without sending
+        // it (as a processed exchange whose confirm failed, CAMEL-26995)
         AggregateController controller = new DefaultAggregateController();
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -171,17 +171,18 @@ public class AggregateRecoverInProgressTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("A");
-        mock.expectedHeaderReceived(Exchange.REDELIVERED, true);
+        mock.expectedMessageCount(0);
 
         send("A", "1");
         repository.failConfirm.set(true);
-        assertThrows(IllegalStateException.class, () -> controller.forceDiscardingOfGroup("1"));
-        assertFalse(repository.completed.isEmpty(), "The discarded exchange should still be in the completed store");
+        assertEquals(1, controller.forceDiscardingOfGroup("1"));
+        assertFalse(repository.failConfirm.get(), "The confirm of the discarded exchange should have failed");
 
-        assertMockEndpointsSatisfied();
         await().atMost(20, TimeUnit.SECONDS).until(repository.completed::isEmpty);
-        assertEquals(1, repository.recovered.get());
+        int scans = repository.scans.get();
+        await().atMost(20, TimeUnit.SECONDS).until(() -> repository.scans.get() >= scans + 2);
+        assertEquals(0, repository.recovered.get(), "The discarded exchange should not be recovered");
+        assertMockEndpointsSatisfied();
     }
 
     private void assertNotRecoveredWhilePaused(Thread producer) throws Exception {

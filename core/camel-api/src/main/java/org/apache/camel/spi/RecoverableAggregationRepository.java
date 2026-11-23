@@ -141,11 +141,12 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * <p>
      * It is not invoked for a group that was completed by its first exchange (for example with a completion size of 1),
      * as such a group was never added to the repository, so there is nothing to confirm. It is also invoked for a
-     * recovered exchange that was moved to the dead letter channel.
+     * recovered exchange that was moved to the dead letter channel, and for an exchange that was discarded (by
+     * discardOnCompletionTimeout, discardOnAggregationFailure or force discarding with an AggregateController).
      * <p>
-     * When it returns false or throws an exception, the exchange (which was processed, or moved to the dead letter
-     * channel) is kept as not confirmed: the recover task does not recover it, and invokes this method again for it, as
-     * long as {@link #scan(CamelContext)} returns its exchange id.
+     * When it returns false or throws an exception, the exchange (which was processed, moved to the dead letter
+     * channel, or discarded) is kept as not confirmed: the recover task does not recover it, and invokes this method
+     * again for it, as long as {@link #scan(CamelContext)} returns its exchange id.
      *
      * @param  camelContext the current CamelContext
      * @param  exchangeId   exchange id to confirm
