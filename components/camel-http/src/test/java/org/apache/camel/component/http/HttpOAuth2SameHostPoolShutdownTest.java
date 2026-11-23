@@ -76,6 +76,11 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
         localServer.start();
     }
 
+    @Override
+    public void cleanupResources() throws Exception {
+        closeImmediately(localServer).close();
+    }
+
     /**
      * Sending requests through an OAuth2-configured endpoint whose token URL lives on the same host and port as the API
      * must succeed. Before the fix, the connection manager shared between the token client and the API client was shut
@@ -135,8 +140,11 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
             // The endpoint's connection pool must still be functional after the token client closed
             var route = new HttpRoute(new HttpHost("localhost", 8080));
             var future = endpointConnManager.lease("test", route, null);
-            future.cancel();  // just checking it doesn't throw
-            // If pool were shut down, lease() would throw IllegalStateException
+            try {
+                // just checking lease() doesn't throw — a shut-down pool would throw IllegalStateException here
+            } finally {
+                future.cancel();
+            }
         } finally {
             endpointClient.close();
             endpointConnManager.close();
