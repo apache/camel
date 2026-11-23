@@ -7162,6 +7162,17 @@ other shards of the poll have been read and routed, with the exception of that s
 are added as suppressed exceptions). Before, the poll failed as soon as one shard failed, with the exception wrapped
 by the parallel stream, while the other shards were still being read.
 
+=== camel-aws2-kinesis - the consumer is not ready before it has listed the shards
+
+The consumer (without `useKclConsumers`) reads the shards that its shard monitor lists with `ListShards`. Until that
+listing has succeeded once, the consumer is no longer reported ready, and a poll fails with an
+`IllegalStateException` whose cause is the error of the last `ListShards` (for example an `AccessDeniedException`
+without the `kinesis:ListShards` permission, or a `ResourceNotFoundException` for a stream that does not exist). The
+consumer health check (a readiness check) is then DOWN with that error, and each poll is reported to the exception
+handler of the consumer (with `bridgeErrorHandler`, to the error handler of the route), as for other poll failures;
+`backoffErrorThreshold` and `backoffMultiplier` make the consumer poll less often meanwhile. Before, such a consumer
+read nothing and was reported UP, and only the shard monitor logged a WARN.
+
 === camel-graphql - the credentials are only sent to the authority of httpUri
 
 The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the

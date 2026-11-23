@@ -93,6 +93,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // appeared after the first list as the child of a listed shard (resharding).
     private final Set<String> knownShardIds = ConcurrentHashMap.newKeySet();
     private final Set<String> childShardIds = ConcurrentHashMap.newKeySet();
+    // The failure of the last ListShards of the shard monitor, null once a ListShards succeeded. While the shards have
+    // not been listed, poll() reports it, so that a consumer that cannot list the shards (no permission, no such
+    // stream) is not seen healthy while it reads nothing.
+    private volatile Exception shardListError;
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
@@ -119,6 +123,19 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     protected int poll() throws Exception {
         var processedExchangeCount = new AtomicInteger(0);
 
+        List<Shard> shardList = getCurrentShardList();
+        if (shardList.isEmpty()) {
+            // the shard monitor has not listed the shards yet, so there is nothing to read
+            Exception error = shardListError;
+            if (error != null) {
+                throw new IllegalStateException(
+                        "Cannot list the shards of stream " + getEndpoint().getConfiguration().getStreamName() + ": "
+                                                + error,
+                        error);
+            }
+            return 0;
+        }
+
         String shardId = getEndpoint().getConfiguration().getShardId();
         if (!shardId.isEmpty()) {
             // skip if the shard is closed
@@ -131,7 +148,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             // Use the cached shard list from ShardMonitor instead of calling DescribeStream
             // on every poll. ShardMonitor uses ListShards (paginated, 100 TPS limit) vs
             // DescribeStream (unpaginated, 10 TPS limit).
-            Shard shard = getCurrentShardList().stream()
+            Shard shard = shardList.stream()
                     .filter(s -> s.shardId().equalsIgnoreCase(shardId))
                     .findFirst()
                     .orElse(null);
@@ -149,7 +166,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             // other shards still read and route, and the next poll could start before they are done. The poll fails
             // only once all the shards of the list have been read.
             Queue<RuntimeException> failures = new ConcurrentLinkedQueue<>();
-            getCurrentShardList()
+            shardList
                     .parallelStream()
                     .forEach(shard -> {
                         try {
@@ -280,6 +297,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             processedExchanges++;
         }
         return processedExchanges;
+    }
+
+    /**
+     * Not ready before the shard monitor has listed the shards of the stream: until then a poll reads nothing.
+     */
+    @Override
+    public boolean isConsumerReady() {
+        return !getCurrentShardList().isEmpty() && super.isConsumerReady();
     }
 
     @Override
@@ -543,11 +568,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.currentShardList = List.copyOf(latestShardList);
     }
 
-    private class ShardMonitor implements Runnable {
+    // package-private for tests, which run the monitor themselves
+    class ShardMonitor implements Runnable {
         @Override
         public void run() {
             try {
                 List<Shard> latestShardList = getShardList(connection);
+                shardListError = null;
                 if (ObjectHelper.isNotEmpty(latestShardList)) {
                     // before the list is published, so that poll() knows the child shards of the list it reads
                     trackChildShards(latestShardList);
@@ -555,6 +582,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 }
             } catch (Exception e) {
                 LOG.warn("Exception getting latest shard list", e);
+                shardListError = e;
             }
         }
 
