@@ -2492,6 +2492,15 @@ changes:
 See the https://github.com/mariadb-corporation/mariadb-connector-j/blob/main/CHANGELOG.md[MariaDB Connector/J changelog]
 for the other changes.
 
+=== camel-jbang - camel run uses the Microsoft SQL Server JDBC driver 13
+
+`camel run` downloads the Microsoft SQL Server JDBC driver 13.6 (`com.microsoft.sqlserver:mssql-jdbc`), instead of
+12.10, for a route or application that uses it. Since 13.2, the driver reads a column of the SQL Server `vector` type
+as a vector, where 12.x read it as a JSON string. Set `vectorTypeSupport=off` in the JDBC URL to keep reading it as a
+JSON string.
+
+See the https://github.com/microsoft/mssql-jdbc/releases[mssql-jdbc release notes] for the other changes.
+
 === camel-jbang - the Camel CLI uses aesh instead of picocli
 
 The Camel CLI parses its command lines, prints its help and completes its commands with
