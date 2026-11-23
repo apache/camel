@@ -26,6 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncProducer;
@@ -100,6 +102,30 @@ class NettyTimeoutCorrelationManagerStopTest extends CamelTestSupport {
         // a worker pool that no longer takes tasks (as an owned pool after the producer stopped): the timeout is
         // completed in the thread that evicted it
         ExecutorService workerPool = Executors.newSingleThreadExecutor();
+        workerPool.shutdown();
+        rejectingManager.setWorkerPool(workerPool);
+        CountDownLatch requestsReceived = new CountDownLatch(1);
+        startSilentServer(requestsReceived);
+        producer = context.getEndpoint("netty:tcp://localhost:" + server.getLocalPort()
+                                       + "?textline=true&sync=true&correlationManager=#rejectingManager")
+                .createAsyncProducer();
+        ServiceHelper.startService(producer);
+
+        Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
+        exchange.getMessage().setBody("abc-hello");
+        CountDownLatch done = new CountDownLatch(1);
+        producer.process(exchange, doneSync -> done.countDown());
+
+        assertTrue(done.await(10, TimeUnit.SECONDS), "the request should be completed by its timeout");
+        assertInstanceOf(ExchangeTimedOutException.class, exchange.getException());
+    }
+
+    @Test
+    void testTimeoutDiscardedByShutDownCallerRunsWorkerPoolCompletesTheRequest() throws Exception {
+        // a shut-down pool with the CallerRunsPolicy (the default of Camel thread pools) does not throw: it silently
+        // discards the task, so the timeout must still be completed in the thread that evicted it
+        ExecutorService workerPool = new ThreadPoolExecutor(
+                1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
         workerPool.shutdown();
         rejectingManager.setWorkerPool(workerPool);
         CountDownLatch requestsReceived = new CountDownLatch(1);

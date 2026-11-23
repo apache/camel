@@ -270,9 +270,10 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
             }
         }
         if (pool == null || pool.isShutdown()) {
-            // the manager is stopping (an entry the purge task evicted while the producer stopped): the pool may have
-            // discarded the task, as its CallerRuns policy drops the tasks of a shut-down pool, so run it here as well;
-            // it completes the exchange at most once
+            // the manager is stopping (an entry the purge task evicted while the producer stopped). A shut-down pool
+            // with the CallerRunsPolicy (the default rejection policy of Camel thread pools) discards the task without
+            // throwing, so submit can return normally while the task never runs. Run it here as well: markDone makes
+            // sure the exchange is completed at most once
             task.run();
         }
     }
