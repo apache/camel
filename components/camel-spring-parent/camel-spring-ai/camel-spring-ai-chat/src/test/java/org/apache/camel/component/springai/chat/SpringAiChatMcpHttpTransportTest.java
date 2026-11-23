@@ -133,11 +133,11 @@ class SpringAiChatMcpHttpTransportTest extends CamelTestSupport {
     }
 
     /**
-     * The sse transport opens the stream at the path of the URL, and at /sse when the URL has no path.
+     * The sse transport opens the stream at the path and query of the URL, and at /sse when the URL has no path.
      */
     @ParameterizedTest
-    @CsvSource({ "/custom/sse, /custom/sse", "'', /sse" })
-    void sseOpensTheStreamAtThePathOfTheUrl(String urlPath, String expectedPath) throws Exception {
+    @CsvSource({ "/custom/sse?tenant=acme, /custom/sse, tenant=acme", "'', /sse," })
+    void sseOpensTheStreamAtThePathOfTheUrl(String urlPath, String expectedPath, String expectedQuery) throws Exception {
         SpringAiChatMcpManager manager = new SpringAiChatMcpManager();
         try {
             manager.initialize(Map.<String, Object> of("local.transportType", "sse", "local.url", serverUrl + urlPath), 10,
@@ -146,8 +146,10 @@ class SpringAiChatMcpHttpTransportTest extends CamelTestSupport {
             assertThat(callbackNames(manager)).containsExactly("echo");
             assertThat(REQUESTS).filteredOn(request -> "GET".equals(request.httpMethod()))
                     .singleElement()
-                    .extracting(RecordedRequest::path)
-                    .isEqualTo(expectedPath);
+                    .satisfies(request -> {
+                        assertThat(request.path()).isEqualTo(expectedPath);
+                        assertThat(request.query()).isEqualTo(expectedQuery);
+                    });
         } finally {
             manager.close();
         }
