@@ -11199,3 +11199,36 @@ or a negative value, `extendMessageVisibility` was silently ignored.
 The consumer also logs a warning at startup when `visibilityTimeout` is below 10 seconds, as the extension then has only 1
 to 2 seconds before the message becomes visible again. Use a `visibilityTimeout` of 10 seconds or more with
 `extendMessageVisibility`.
+
+=== camel-crypto-pgp - AES-256 and SHA-256 are the default algorithms
+
+The `pgp` data format now encrypts with AES-256 (`algorithm=9`) instead of CAST5 (`algorithm=3`), and signs with the
+SHA-256 hash (`hashAlgorithm=8`) instead of SHA-1 (`hashAlgorithm=2`). CAST5 is a cipher with a 64-bit block, and SHA-1
+is no longer collision resistant; current OpenPGP implementations such as GnuPG prefer AES and the SHA-2 hashes.
+
+Decrypting and verifying are not affected, as the algorithms of a message are read from the message itself: messages
+made with CAST5 or SHA-1 are still decrypted and verified.
+
+A receiver that only supports CAST5 or SHA-1 needs the old values set on the data format that encrypts or signs, for
+example in Java with `setAlgorithm(SymmetricKeyAlgorithmTags.CAST5)` and `setHashAlgorithm(HashAlgorithmTags.SHA1)`,
+or in XML and YAML with:
+
+[source,xml]
+----
+<marshal>
+  <pgp keyFileName="pubring.gpg" keyUserid="alice@example.com" algorithm="3" hashAlgorithm="2"/>
+</marshal>
+----
+
+[source,yaml]
+----
+- marshal:
+    pgp:
+      keyFileName: pubring.gpg
+      keyUserid: alice@example.com
+      algorithm: 3
+      hashAlgorithm: 2
+----
+
+The `CamelPGPDataFormatEncryptionAlgorithm` and `CamelPGPDataFormatSignatureHashAlgorithm` headers still override
+these options for a single message.

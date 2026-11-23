@@ -9765,8 +9765,8 @@ IAIK JCE provider.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only
-relevant for encrypting.
+Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for
+example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting. Default value: 9
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9785,8 +9785,8 @@ encrypting.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for
-signing.
+Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (=
+SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing. Default value: 8
 ]]>
             </xs:documentation>
           </xs:annotation>

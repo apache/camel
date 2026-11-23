@@ -153,9 +153,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private boolean armored; // for encryption
     private boolean integrity = true; // for encryption
 
-    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for signature
+    private int hashAlgorithm = HashAlgorithmTags.SHA256; // for signature
 
-    private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
+    private int algorithm = SymmetricKeyAlgorithmTags.AES_256; // for encryption
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
 
@@ -666,7 +666,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     /**
      * Digest algorithm for signing (marshaling). Possible values are defined in {@link HashAlgorithmTags}. Default
-     * value is SHA1.
+     * value is SHA256.
      */
     public void setHashAlgorithm(int hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
@@ -678,7 +678,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     /**
      * Symmetric key algorithm for encryption (marshaling). Possible values are defined in
-     * {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
+     * {@link SymmetricKeyAlgorithmTags}. Default value is AES_256.
      */
     public void setAlgorithm(int algorithm) {
         this.algorithm = algorithm;

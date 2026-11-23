@@ -11293,10 +11293,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "algorithm", type = "number", description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting.", displayName = "Algorithm"),
+                    @YamlProperty(name = "algorithm", type = "number", defaultValue = "9", description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.", displayName = "Algorithm"),
                     @YamlProperty(name = "armored", type = "boolean", defaultValue = "false", description = "This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.", displayName = "Armored"),
                     @YamlProperty(name = "compressionAlgorithm", type = "number", description = "Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags. Only relevant for encrypting.", displayName = "Compression Algorithm"),
-                    @YamlProperty(name = "hashAlgorithm", type = "number", description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing.", displayName = "Hash Algorithm"),
+                    @YamlProperty(name = "hashAlgorithm", type = "number", defaultValue = "8", description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.", displayName = "Hash Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "integrity", type = "boolean", defaultValue = "true", description = "Adds an integrity check/sign into the encryption file.", displayName = "Integrity"),
                     @YamlProperty(name = "keyFileName", type = "string", description = "Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).", displayName = "Key File Name"),

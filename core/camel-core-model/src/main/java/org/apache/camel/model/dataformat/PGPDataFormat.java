@@ -69,9 +69,9 @@ public class PGPDataFormat extends DataFormatDefinition {
     @Metadata(description = "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.")
     private String provider;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer",
-              description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags."
-                            + " Only relevant for encrypting.")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "9",
+              description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;"
+                            + " for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.")
     private String algorithm;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer",
@@ -79,9 +79,9 @@ public class PGPDataFormat extends DataFormatDefinition {
                             + " Only relevant for encrypting.")
     private String compressionAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer",
-              description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags."
-                            + " Only relevant for signing.")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "8",
+              description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags;"
+                            + " for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.")
     private String hashAlgorithm;
     @XmlAttribute
     @Metadata(description = "Controls the behavior for verifying the signature during unmarshaling. Possible values: optional, required, ignore, no_signature_allowed.")
@@ -329,7 +329,8 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example
-         * 2 (= SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
+         * 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing. Default is 8
+         * (= SHA256).
          */
         public Builder hashAlgorithm(String hashAlgorithm) {
             this.hashAlgorithm = hashAlgorithm;
@@ -338,7 +339,8 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example
-         * 2 (= SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
+         * 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing. Default is 8
+         * (= SHA256).
          */
         public Builder hashAlgorithm(int hashAlgorithm) {
             this.hashAlgorithm = Integer.toString(hashAlgorithm);
@@ -402,8 +404,8 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Symmetric key encryption algorithm; possible values are defined in
-         * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6
-         * (= DES), 7 (= AES_128). Only relevant for encrypting.
+         * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3
+         * (= CAST5). Only relevant for encrypting. Default is 9 (= AES_256).
          */
         public Builder algorithm(String algorithm) {
             this.algorithm = algorithm;
@@ -412,8 +414,8 @@ public class PGPDataFormat extends DataFormatDefinition {
 
         /**
          * Symmetric key encryption algorithm; possible values are defined in
-         * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6
-         * (= DES), 7 (= AES_128). Only relevant for encrypting.
+         * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3
+         * (= CAST5). Only relevant for encrypting. Default is 9 (= AES_256).
          */
         public Builder algorithm(int algorithm) {
             this.algorithm = Integer.toString(algorithm);
