@@ -170,11 +170,14 @@ public class SpringAiChatConfiguration implements Cloneable {
     private int structuredOutputValidationMaxAttempts = 3;
 
     @UriParam(prefix = "mcpServer.", multiValue = true, label = "advanced",
-              description = "MCP server configurations. Define servers using prefix notation: "
-                            + "mcpServer.<name>.transportType=streamableHttp|stdio|sse (sse is deprecated), "
-                            + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
-                            + "mcpServer.<name>.url=<url> (streamableHttp/sse), "
-                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
+              description = "MCP server configurations. Define servers using prefix notation, where myServer stands for "
+                            + "the name of the server: "
+                            + "mcpServer.myServer.transportType=streamableHttp|stdio|sse (sse is deprecated), "
+                            + "mcpServer.myServer.command=npx (stdio), "
+                            + "mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated), "
+                            + "mcpServer.myServer.url=http://localhost:8080/mcp (streamableHttp/sse, the URL of the endpoint "
+                            + "of the server, path included, such as http://localhost:8080/sse for sse), "
+                            + "mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP auth, requires camel-oauth)")
     private Map<String, Object> mcpServer;
 
     @UriParam(label = "advanced", defaultValue = "20",

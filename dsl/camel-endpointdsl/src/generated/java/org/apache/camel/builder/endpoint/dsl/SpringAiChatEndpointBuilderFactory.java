@@ -769,12 +769,17 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=streamableHttp|stdio|sse (sse is
-         * deprecated), mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (streamableHttp/sse), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth). This is a multi-value
-         * option with prefix: mcpServer.
+         * MCP server configurations. Define servers using prefix notation,
+         * where myServer stands for the name of the server:
+         * mcpServer.myServer.transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (streamableHttp/sse,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -793,12 +798,17 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=streamableHttp|stdio|sse (sse is
-         * deprecated), mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (streamableHttp/sse), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth). This is a multi-value
-         * option with prefix: mcpServer.
+         * MCP server configurations. Define servers using prefix notation,
+         * where myServer stands for the name of the server:
+         * mcpServer.myServer.transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (streamableHttp/sse,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1454,7 +1464,8 @@ public interface SpringAiChatEndpointBuilderFactory {
             return "CamelSpringAiChatPromptTemplate";
         }
         /**
-         * Augmented data for RAG as List.
+         * Augmented data for RAG, as a List of
+         * org.springframework.ai.document.Document.
          * 
          * The option is a: {@code
          * java.util.List<org.springframework.ai.document.Document>} type.
