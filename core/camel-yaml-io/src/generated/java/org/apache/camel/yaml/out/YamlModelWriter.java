@@ -2628,9 +2628,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "armored", def.getArmored(), "false");
         doWriteAttribute(jo, "integrity", def.getIntegrity(), "true");
         doWriteAttribute(jo, "provider", def.getProvider(), null);
-        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), null);
+        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), "9");
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;

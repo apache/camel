@@ -2626,9 +2626,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("armored", def.getArmored(), "false");
         doWriteAttribute("integrity", def.getIntegrity(), "true");
         doWriteAttribute("provider", def.getProvider(), null);
-        doWriteAttribute("algorithm", def.getAlgorithm(), null);
+        doWriteAttribute("algorithm", def.getAlgorithm(), "9");
         doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         endElement(name);
