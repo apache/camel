@@ -35,8 +35,10 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -136,6 +138,82 @@ public class GenericFileHelperTest {
         // a target that still resolves upwards escapes even when no directory boundary is configured
         assertFalse(GenericFileHelper.isWithinDirectory("..", "", '/'));
         assertFalse(GenericFileHelper.isWithinDirectory("../secret.txt", "", '/'));
+    }
+
+    @Test
+    public void isWithinDirectoryRejectsAParentSegmentAnywhere() {
+        assertFalse(GenericFileHelper.isWithinDirectory("file:/../secret.txt", "", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory("poll/../secret.txt", "poll", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory("poll\\..\\secret.txt", "poll", '/'));
+        // a name that only contains two dots is not a parent segment
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/a..b", "poll", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/...txt", "poll", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/..txt", "poll", '/'));
+    }
+
+    @Test
+    public void compactPathForContainmentGivesNoMeaningToPrefixes() {
+        // a scheme or a drive is a segment like any other, as it is to a server
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("http:/../../other/secret.txt", '/'));
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("https:/../../other/secret.txt", '/'));
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("file:/../../other/secret.txt", '/'));
+        // file:.. is a name, not a .. segment, as it is to a server
+        assertEquals("secret.txt", GenericFileHelper.compactPathForContainment("file:../../secret.txt", '/'));
+        assertEquals("../secret.txt", GenericFileHelper.compactPathForContainment("file:../../../secret.txt", '/'));
+        assertEquals("../other/secret.txt",
+                GenericFileHelper.compactPathForContainment("classpath:/../../other/secret.txt", '/'));
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("a:/../../other/secret.txt", '/'));
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("C:/../../other/secret.txt", '/'));
+        assertEquals("../other/secret.txt", GenericFileHelper.compactPathForContainment("HTTP:/../../other/secret.txt", '/'));
+        // both separators separate segments
+        assertEquals("../other/secret.txt",
+                GenericFileHelper.compactPathForContainment("http:\\..\\..\\other\\secret.txt", '/'));
+        assertEquals("..\\other\\secret.txt",
+                GenericFileHelper.compactPathForContainment("sub/../../other/secret.txt", '\\'));
+
+        // a .. that stays inside, and . and empty segments
+        assertEquals("poll/secret.txt", GenericFileHelper.compactPathForContainment("poll/sub/../secret.txt", '/'));
+        assertEquals("poll/secret.txt", GenericFileHelper.compactPathForContainment("poll/./sub//../secret.txt", '/'));
+        assertEquals("http:/secret.txt", GenericFileHelper.compactPathForContainment("http:/sub/../secret.txt", '/'));
+        // a leading separator is kept, and a .. above it too
+        assertEquals("/poll/secret.txt", GenericFileHelper.compactPathForContainment("/poll/secret.txt", '/'));
+        assertEquals("/../secret.txt", GenericFileHelper.compactPathForContainment("/../secret.txt", '/'));
+        assertEquals("", GenericFileHelper.compactPathForContainment("", '/'));
+        assertEquals("", GenericFileHelper.compactPathForContainment("sub/..", '/'));
+        assertNull(GenericFileHelper.compactPathForContainment(null, '/'));
+    }
+
+    @Test
+    public void prefixedPathsEscapingTheDirectoryAreNotContained() {
+        String[] escaping = {
+                "http:/../../other/secret.txt", "https:/../../other/secret.txt", "file:/../../other/secret.txt",
+                "file:../../../other/secret.txt", "classpath:/../../other/secret.txt", "a:/../../other/secret.txt",
+                "C:/../../other/secret.txt", "HTTP:/../../other/secret.txt", "http:\\..\\..\\other\\secret.txt",
+                "sub/../../other/secret.txt", "../secret.txt" };
+        for (String name : escaping) {
+            // no directory configured
+            assertFalse(GenericFileHelper.isWithinRemoteDirectory(name, ""), name);
+            assertFalse(GenericFileHelper.isWithinRemoteDirectory(name, null), name);
+            assertFalse(GenericFileHelper.isWithinDirectory(
+                    GenericFileHelper.compactPathForContainment(name, '/'), "", '/'), name);
+            // a directory configured
+            assertFalse(GenericFileHelper.isWithinRemoteDirectory("poll/" + name, "poll"), name);
+        }
+    }
+
+    @Test
+    public void namesThatStayInsideAreContained() {
+        String[] inside = {
+                "secret.txt", "a:b.txt", "report 10:30.txt", "file:x.txt", "http:x.txt", "a..b", "...txt", "sub/../x",
+                "sub/file.txt", "http:/secret.txt", "C:/data/x.txt", "sub\\file.txt", "sub/a\\b.txt" };
+        for (String name : inside) {
+            assertTrue(GenericFileHelper.isWithinRemoteDirectory(name, ""), name);
+            assertTrue(GenericFileHelper.isWithinRemoteDirectory("poll/" + name, "poll"), name);
+            assertTrue(GenericFileHelper.isWithinRemoteDirectory("/poll/" + name, "/poll/"), name);
+        }
+        // a sibling whose name merely extends the directory name is not contained
+        assertFalse(GenericFileHelper.isWithinRemoteDirectory("pollute/file.txt", "poll"));
+        assertFalse(GenericFileHelper.isWithinRemoteDirectory(null, "poll"));
     }
 
     @Test
