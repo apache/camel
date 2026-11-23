@@ -416,8 +416,9 @@ public final class BodyFacts {
 
     /**
      * The step that set the body, from the message history: the last node reached with a body of another type, which
-     * ran on it and left this one. When every node was reached with this type, the consumer gave it. Empty when the
-     * message history is off.
+     * ran on it and left this one. When every node was reached with this type, the consumer gave it; or, for an item of
+     * a split, the split, as the split gives each item a message history of its own, which starts inside the split.
+     * Empty when the message history is off.
      */
     private static String setBy(Exchange exchange, Object body) {
         List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
@@ -439,7 +440,24 @@ public final class BodyFacts {
         if (!recorded || exchange.getFromEndpoint() == null) {
             return "";
         }
+        NamedNode split = splitAround(history.get(0).getNode());
+        if (split != null) {
+            return ", set by " + step(split);
+        }
         return ", unchanged since from: " + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+    }
+
+    /**
+     * The nearest split among the parents of a node, or null. The node itself does not count: a message that reached a
+     * split had its body before the split ran on it.
+     */
+    private static NamedNode splitAround(NamedNode node) {
+        for (NamedNode parent = node != null ? node.getParent() : null; parent != null; parent = parent.getParent()) {
+            if ("split".equals(parent.getShortName())) {
+                return parent;
+            }
+        }
+        return null;
     }
 
     /**
