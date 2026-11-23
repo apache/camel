@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.cache;
 
+import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
@@ -308,7 +309,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private volatile S s;
         // the acquires and the releases of s, counted apart without contention between the worker threads (the users of
-        // s are the difference)
+        // s are the difference). An increment of a LongAdder is only a release write, which a later read of evicted may
+        // pass, so retain() and unretain() have a full fence between them: either the user sees evicted, or the
+        // eviction (which writes evicted before it sums the counts) sees the increment
         private final LongAdder acquires = new LongAdder();
         private final LongAdder releases = new LongAdder();
         // s has been evicted: it is no longer handed out, and is stopped when it has no more users
@@ -373,6 +376,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         private boolean retain() {
             acquires.increment();
+            VarHandle.fullFence();
             if (evicted || stopped.get()) {
                 // evicted or stopped meanwhile (the eviction may have counted this acquire already, so it is released)
                 unretain();
@@ -383,6 +387,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         private void unretain() {
             releases.increment();
+            VarHandle.fullFence();
             if (evicted) {
                 stopEvicted();
             }
