@@ -197,7 +197,7 @@ class KameletInputTest {
                    "uri": "kamelet:my-log-sink"}]}]}
                 """, (JsonObject) null);
 
-        int added = KameletInput.addTo(structure, project(dir), CATALOG);
+        int added = KameletInput.addTo(structure, project(dir), CATALOG, null);
 
         assertThat(added).isEqualTo(3);
         List<JsonObject> code = ((JsonObject) ((JsonArray) structure.getCollection("routes")).get(0)).getCollection("code");

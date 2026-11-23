@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -1263,7 +1264,8 @@ public final class ToolRegistry {
 
     /**
      * The route structure with the data type each Kamelet a step calls turns the body into (kameletInput, CAMEL-27475),
-     * from the Kamelets of the project directory or of the catalog; as it is when it is not JSON or calls no Kamelet.
+     * from the Kamelets of the project directory or of the catalog the integration uses (camel run --kamelets-version);
+     * as it is when it is not JSON or calls no Kamelet.
      */
     static String withKameletInputs(String routeStructure, ToolContext ctx) {
         if (routeStructure == null || !routeStructure.contains("kamelet")) {
@@ -1271,7 +1273,9 @@ public final class ToolRegistry {
         }
         try {
             if (Jsoner.deserialize(routeStructure) instanceof JsonObject jo
-                    && KameletInput.addTo(jo, ctx.defaultDirectory(), ctx.catalog()) > 0) {
+                    && KameletInput.addTo(jo, ctx.defaultDirectory(), ctx.catalog(),
+                            ctx.pid() > 0 ? ActionClient.kameletsVersionOf(ctx.pid()) : null)
+                       > 0) {
                 return jo.toJson();
             }
         } catch (Exception e) {

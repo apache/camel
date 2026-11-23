@@ -131,6 +131,19 @@ public final class RouteDiagramHelper {
     }
 
     /** The strings of a JSON array, such as the body types of a step; empty when there are none. */
+    private static List<String> strings(Object array) {
+        if (!(array instanceof List<?> list) || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(list.size());
+        for (Object o : list) {
+            if (o != null) {
+                answer.add(o.toString());
+            }
+        }
+        return List.copyOf(answer);
+    }
+
     /**
      * The data type the Kamelet a step calls turns the body into, from the kameletInput of the route structure that the
      * Camel CLI adds (CAMEL-27475); null when the line has none.
@@ -144,19 +157,6 @@ public final class RouteDiagramHelper {
                 m.get("transformer") instanceof String t ? t : null,
                 m.get("description") instanceof String d ? d : null,
                 m.get("takesBody") instanceof Boolean b ? b : null);
-    }
-
-    private static List<String> strings(Object array) {
-        if (!(array instanceof List<?> list) || list.isEmpty()) {
-            return List.of();
-        }
-        List<String> answer = new ArrayList<>(list.size());
-        for (Object o : list) {
-            if (o != null) {
-                answer.add(o.toString());
-            }
-        }
-        return List.copyOf(answer);
     }
 
     static List<String> wrapText(String text, int maxWidth) {

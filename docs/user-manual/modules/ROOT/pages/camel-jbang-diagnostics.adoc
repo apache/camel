@@ -265,7 +265,7 @@ A step that calls a Kamelet shows the data type the Kamelet takes, which Camel t
 sees it: `body: LinkedHashMap → json` for `postgresql-sink`, whose data type transformer writes the `Map` as JSON, or
 `body: → json` before a message has reached it. A body the transformer does not take, as the catalog says, reads
 `→ text (text-plain does not take it)`. The Kamelets are looked up in the project directory, where the command runs,
-and in the Kamelet catalog of the Camel CLI.
+and in the Kamelet catalog the integration runs (`camel run --kamelets-version`).
 
 The JSON output (`--json`) has the types, kinds and formats of each step as `bodyTypes`, `bodyKinds` and
 `bodyFormats`, and the data type of the Kamelet a step calls as `kameletInput` (`dataType`, `transformer`,

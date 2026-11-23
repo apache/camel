@@ -34,6 +34,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
@@ -144,7 +145,9 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             // where the command runs, or of the catalog
             File source = new File(name);
             Path directory = source.isFile() ? source.getAbsoluteFile().toPath().getParent() : Path.of("");
-            KameletInput.addTo(jo, directory.toAbsolutePath(), new DefaultCamelCatalog(true));
+            // and of the Kamelets the integration runs (camel run --kamelets-version), which may not be the CLI's
+            String kameletsVersion = pid > 0 ? ActionClient.kameletsVersionOf(pid) : null;
+            KameletInput.addTo(jo, directory.toAbsolutePath(), new DefaultCamelCatalog(true), kameletsVersion);
         }
         if (varied) {
             jo = onlyVaried(jo);

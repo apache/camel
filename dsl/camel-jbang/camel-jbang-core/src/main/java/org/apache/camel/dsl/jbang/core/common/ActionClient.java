@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -396,6 +397,40 @@ public final class ActionClient {
             }
         } catch (Exception e) {
             // unknown
+        }
+        return null;
+    }
+
+    /**
+     * The version of the Kamelet catalog the integration with the given pid uses
+     * ({@code camel run --kamelets-version}), from the camel.jbang.kameletsVersion property in its status file, or
+     * <tt>null</tt> when it does not say.
+     */
+    public static String kameletsVersionOf(long pid) {
+        try {
+            Path f = CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
+            JsonObject status = Files.exists(f) ? Jsoner.deserialize(Files.readString(f), (JsonObject) null) : null;
+            return status != null ? kameletsVersionOf(status) : null;
+        } catch (Exception e) {
+            // unknown
+        }
+        return null;
+    }
+
+    /**
+     * The version of the Kamelet catalog an integration uses, from the camel.jbang.kameletsVersion property of its
+     * status, or <tt>null</tt> when it does not say.
+     */
+    static String kameletsVersionOf(JsonObject status) {
+        if (status.get("properties") instanceof JsonObject properties
+                && properties.get("properties") instanceof List<?> list) {
+            for (Object o : list) {
+                if (o instanceof JsonObject p && "camel.jbang.kameletsVersion".equals(p.getString("key"))
+                        && p.get("value") != null) {
+                    String value = p.get("value").toString();
+                    return value.isBlank() ? null : value;
+                }
+            }
         }
         return null;
     }

@@ -192,12 +192,14 @@ public record KameletInput(
      * type. With the body types the step has been reached with, {@code takesBody} says whether its transformer takes
      * them (false only when the catalog says it does not).
      *
-     * @param  routeStructure the output of the route-structure console
-     * @param  directory      the directory of the project, for its own Kamelets, or null
-     * @param  catalog        the catalog, for what the transformers take, or null
-     * @return                how many steps got a kameletInput
+     * @param  routeStructure  the output of the route-structure console
+     * @param  directory       the directory of the project, for its own Kamelets, or null
+     * @param  catalog         the catalog, for what the transformers take, or null
+     * @param  kameletsVersion the version of the Kamelet catalog the integration uses (camel run --kamelets-version),
+     *                         or null for the one of the Camel CLI
+     * @return                 how many steps got a kameletInput
      */
-    public static int addTo(JsonObject routeStructure, Path directory, CamelCatalog catalog) {
+    public static int addTo(JsonObject routeStructure, Path directory, CamelCatalog catalog, String kameletsVersion) {
         JsonArray routes = routeStructure != null ? routeStructure.getCollection("routes") : null;
         if (routes == null) {
             return 0;
@@ -216,7 +218,7 @@ public record KameletInput(
                     continue;
                 }
                 KameletInput in = known.computeIfAbsent(name, n -> {
-                    KameletDefinitions.Definition def = KameletDefinitions.find(n, directory);
+                    KameletDefinitions.Definition def = KameletDefinitions.find(n, directory, kameletsVersion);
                     return Optional.ofNullable(def != null ? of(def, catalog) : null);
                 }).orElse(null);
                 if (in != null) {
