@@ -62,7 +62,10 @@ public class KnativeConfiguration implements Cloneable {
                             + " how many requests are routed at the same time. When false, the route starts on a worker thread"
                             + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
                             + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
-                            + " requests in flight.")
+                            + " requests in flight. Keep it false for a route that calls an asynchronous producer using the same"
+                            + " Vert.x as the HTTP server (such as vertx-http in Camel Quarkus): with true, such requests can"
+                            + " occupy every worker thread while their producers need a worker thread to complete, and then no"
+                            + " request completes. (currently only supported by camel-knative-http)")
     private boolean synchronous;
 
     // ************************

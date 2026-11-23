@@ -54,6 +54,7 @@ class VertxWebsocketSharedVertxWorkerPoolTest {
     private final List<AsyncCallback> waiting = new ArrayList<>();
     private final Object waitingLock = new Object();
     private CountDownLatch arrivedLatch;
+    private CountDownLatch completedLatch;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +69,7 @@ class VertxWebsocketSharedVertxWorkerPoolTest {
     @Test
     void messagesAsManyAsWorkerThreadsComplete() throws Exception {
         arrivedLatch = new CountDownLatch(WORKERS);
+        completedLatch = new CountDownLatch(WORKERS);
         try (CamelContext context = new DefaultCamelContext()) {
             context.getShutdownStrategy().setTimeout(5);
             context.getRegistry().bind("vertx", vertx);
@@ -87,7 +89,8 @@ class VertxWebsocketSharedVertxWorkerPoolTest {
                                     }
                                     return false; // async: callback not called yet
                                 }
-                            });
+                            })
+                            .process(e -> completedLatch.countDown()); // mark route done
                 }
             });
             context.start();
@@ -124,6 +127,10 @@ class VertxWebsocketSharedVertxWorkerPoolTest {
                 for (CompletableFuture<Void> send : sends) {
                     send.get(10, TimeUnit.SECONDS);
                 }
+
+                // verify that all routes completed (not just frames written)
+                assertTrue(completedLatch.await(10, TimeUnit.SECONDS),
+                        "Routes did not complete within 10s");
             } finally {
                 template.stop();
                 senders.shutdown();

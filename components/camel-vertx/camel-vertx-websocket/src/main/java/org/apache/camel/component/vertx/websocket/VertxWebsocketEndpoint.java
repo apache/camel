@@ -88,7 +88,9 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                             + " how many messages are routed at the same time. When false, the route starts on a worker thread"
                             + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
                             + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
-                            + " messages in flight.")
+                            + " messages in flight. Keep it false for a route that calls an asynchronous producer using the same"
+                            + " Vert.x (such as vertx-http): with true, such requests can occupy every worker thread while their"
+                            + " producers need a worker thread to complete, and then no message completes.")
     private boolean synchronous;
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
