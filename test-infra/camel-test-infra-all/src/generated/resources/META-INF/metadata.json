@@ -447,7 +447,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-nats",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.15.1",
+  "serviceVersion" : "2.15.3",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
