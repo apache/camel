@@ -69,7 +69,15 @@ final class JsonToXml {
                         "The JSON is null, but the root element " + root.name + " is not nillable");
             }
         }
-        writeElement(root, value, "/" + root.jsonName(), 0);
+        try {
+            writeElement(root, value, "/" + root.jsonName(), 0);
+        } catch (StackOverflowError e) {
+            // the depth limit is checked per element, but a small thread stack can be exhausted before that limit
+            throw new IllegalArgumentException(
+                    "The JSON is nested too deep for the stack of the thread (the limit is " + XmlToJson.MAX_DEPTH
+                                               + " levels)",
+                    e);
+        }
     }
 
     private void writeElement(Element element, Object value, String path, int depth) throws XMLStreamException {
