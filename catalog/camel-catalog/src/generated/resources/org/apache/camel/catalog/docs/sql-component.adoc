@@ -910,6 +910,10 @@ You can use option `maximumRedeliveries` to limit the maximum number of
 redelivery attempts for a given recovered Exchange.
 You must also set the `deadLetterUri` option so Camel knows where to
 send the Exchange when the `maximumRedeliveries` was hit.
+The aggregator counts the redelivery attempts in memory: the count is kept
+when the route is stopped and started, but it starts again when the route is
+removed, when the CamelContext is stopped, or when the JVM is restarted. A
+recovered Exchange then gets up to `maximumRedeliveries` attempts again.
 
 You can see some examples in the unit tests of camel-sql, for example `JdbcAggregateRecoverDeadLetterChannelTest.java`
 
