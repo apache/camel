@@ -28,6 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.component.openfga.OpenFgaConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class OpenFgaAsyncSecurityPolicyTest {
@@ -78,9 +80,9 @@ class OpenFgaAsyncSecurityPolicyTest {
             fixture.processor.process(exchange, doneSync -> completed.countDown());
             assertThat(completed.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(exchange.getException()).isInstanceOf(CamelAuthorizationException.class);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.openfga.OpenFgaConstants.ALLOWED))
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED))
                     .isEqualTo(false);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.openfga.OpenFgaConstants.DENY_REASON))
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.DENY_REASON))
                     .isEqualTo("denied");
             assertThat(exchange.getMessage().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID))
                     .isEqualTo("OpenFgaSecurityPolicy");
@@ -94,17 +96,66 @@ class OpenFgaAsyncSecurityPolicyTest {
         try (Fixture fixture = new Fixture(client)) {
             fixture.processor.stop();
             Exchange exchange = new DefaultExchange(fixture.context);
-            exchange.getMessage().setHeader(org.apache.camel.component.openfga.OpenFgaConstants.ALLOWED, true);
-            exchange.getMessage().setHeader(org.apache.camel.component.openfga.OpenFgaConstants.FAILED_OPEN, true);
+            exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, true);
+            exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
             AtomicInteger callbacks = new AtomicInteger();
             assertThat(fixture.processor.process(exchange, sync -> callbacks.incrementAndGet())).isTrue();
             assertThat(callbacks).hasValue(1);
             assertThat(exchange.getException()).isInstanceOf(CamelAuthorizationException.class);
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.openfga.OpenFgaConstants.ALLOWED)).isNull();
-            assertThat(exchange.getMessage().getHeader(org.apache.camel.component.openfga.OpenFgaConstants.FAILED_OPEN))
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+            assertThat(exchange.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN))
                     .isNull();
             assertThat(fixture.forwarded.get()).isNull();
-            org.mockito.Mockito.verifyNoInteractions(client);
+            verifyNoInteractions(client);
+        }
+    }
+
+    @Test
+    void interruptedSynchronousCallerGetsTheDecisionOnItsOwnThread() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<ClientCheckResponse> pending = new CompletableFuture<>();
+        ClientCheckResponse allowed = mock(ClientCheckResponse.class);
+        when(allowed.getAllowed()).thenReturn(true);
+        CountDownLatch entered = new CountDownLatch(1);
+        AtomicInteger checks = new AtomicInteger();
+        when(client.check(any(), any())).thenAnswer(invocation -> {
+            entered.countDown();
+            return checks.getAndIncrement() == 0 ? pending : CompletableFuture.completedFuture(allowed);
+        });
+        try (Fixture fixture = new Fixture(client)) {
+            Exchange exchange = new DefaultExchange(fixture.context);
+            AtomicReference<Throwable> thrown = new AtomicReference<>();
+            Thread caller = new Thread(() -> {
+                try {
+                    fixture.processor.process(exchange);
+                } catch (Throwable e) {
+                    thrown.set(e);
+                }
+            }, "interrupted-caller");
+            caller.start();
+            assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+            caller.interrupt();
+            caller.join(TimeUnit.SECONDS.toMillis(5));
+            assertThat(caller.isAlive()).isFalse();
+            assertThat(thrown.get()).isNull();
+            // the caller's thread recorded the denied decision before process(Exchange) returned
+            Throwable failure = exchange.getException();
+            assertThat(failure).isInstanceOf(CamelAuthorizationException.class)
+                    .hasMessageContaining("Could not ask OpenFGA")
+                    .hasCauseInstanceOf(InterruptedException.class);
+            assertThat(exchange.getMessage().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID))
+                    .isEqualTo("OpenFgaSecurityPolicy");
+            assertThat(fixture.forwarded.get()).isNull();
+            // the claimed task cancels its request and frees its capacity without writing to the exchange again
+            Exchange next = new DefaultExchange(fixture.context);
+            assertThat(fixture.processor.process(next, doneSync -> {
+            })).isFalse();
+            assertThat(fixture.downstream.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(fixture.forwarded.get()).isSameAs(next);
+            assertThat(pending.isCancelled()).isTrue();
+            assertThat(exchange.getException()).isSameAs(failure);
+        } finally {
+            pending.cancel(true);
         }
     }
 

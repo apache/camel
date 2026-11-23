@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -124,7 +126,7 @@ class OpaAsyncProducerTest {
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
             exchange.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
-            exchange.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, java.util.List.of("forged"));
+            exchange.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, List.of("forged"));
             var future = fixture.producer.processAsync(exchange);
             assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(future.cancel(true)).isTrue();
@@ -174,7 +176,7 @@ class OpaAsyncProducerTest {
     void sdkUnavailabilityStillUsesTheConfiguredFailedOpenPolicy() throws Exception {
         OPAClient client = mock(OPAClient.class);
         when(client.evaluate(eq("authz/allow"), anyMap(), eq(Object.class)))
-                .thenThrow(new OPAException("offline", new java.io.IOException("connection lost")));
+                .thenThrow(new OPAException("offline", new IOException("connection lost")));
         try (Fixture fixture = new Fixture(client)) {
             Exchange result = fixture.producer.processAsync(new DefaultExchange(fixture.context)).get(5, TimeUnit.SECONDS);
             assertThat(result.getException()).isNull();

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.opa.security;
 
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
@@ -75,15 +74,25 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
-            if (executor != null) {
-                executor.cancel(exchange);
+            if (executor != null && executor.cancel(exchange, e)) {
+                denyInterrupted(exchange, e);
             }
             Thread.currentThread().interrupt();
             throw e;
         }
-        if (exchange.getException() instanceof InterruptedException && executor != null) {
-            executor.cancel(exchange, exchange.getException());
+        // the await manager records an interrupted wait on the exchange and returns. A claimed task leaves the exchange
+        // to this thread: the denied decision is recorded here, before the caller routes on, and the continuation pool
+        // does not write to the exchange again
+        if (exchange.getException() instanceof InterruptedException interrupted && executor != null
+                && executor.cancel(exchange, interrupted)) {
+            denyInterrupted(exchange, interrupted);
         }
+    }
+
+    private void denyInterrupted(Exchange exchange, InterruptedException cause) {
+        markFailure(exchange);
+        exchange.setException(new CamelAuthorizationException(
+                "Policy " + policy.getPolicyPath() + " could not be evaluated", exchange, cause));
     }
 
     @Override
@@ -97,7 +106,7 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
             OpaPolicyEvaluator.clearDecisionHeaders(exchange);
             AuthorizationAsyncExecutor executor = asyncExecutor;
             if (executor == null) {
-                exchange.setException(new CancellationException("Authorization policy is not started"));
+                exchange.setException(new CamelAuthorizationException("Authorization policy is not started", exchange));
                 markFailure(exchange);
                 callback.done(true);
                 return true;

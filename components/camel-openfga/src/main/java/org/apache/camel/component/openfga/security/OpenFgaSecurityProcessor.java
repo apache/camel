@@ -75,15 +75,25 @@ public class OpenFgaSecurityProcessor extends DelegateAsyncProcessor {
         try {
             super.process(exchange);
         } catch (InterruptedException e) {
-            if (executor != null) {
-                executor.cancel(exchange);
+            if (executor != null && executor.cancel(exchange, e)) {
+                denyInterrupted(exchange, e);
             }
             Thread.currentThread().interrupt();
             throw e;
         }
-        if (exchange.getException() instanceof InterruptedException && executor != null) {
-            executor.cancel(exchange, exchange.getException());
+        // the await manager records an interrupted wait on the exchange and returns. A claimed task leaves the exchange
+        // to this thread: the denied decision is recorded here, before the caller routes on, and the continuation pool
+        // does not write to the exchange again
+        if (exchange.getException() instanceof InterruptedException interrupted && executor != null
+                && executor.cancel(exchange, interrupted)) {
+            denyInterrupted(exchange, interrupted);
         }
+    }
+
+    private void denyInterrupted(Exchange exchange, InterruptedException cause) {
+        markFailure(exchange);
+        exchange.setException(
+                new CamelAuthorizationException("Could not ask OpenFGA whether the exchange may proceed", exchange, cause));
     }
 
     @Override

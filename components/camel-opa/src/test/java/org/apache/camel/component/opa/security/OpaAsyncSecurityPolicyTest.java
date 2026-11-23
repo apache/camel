@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.opa.security;
 
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +33,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ class OpaAsyncSecurityPolicyTest {
         OPAClient client = mock(OPAClient.class);
         CountDownLatch entered = new CountDownLatch(1);
         CountDownLatch release = new CountDownLatch(1);
-        when(client.evaluate(eq("authz/allow"), org.mockito.ArgumentMatchers.anyMap(), eq(Object.class)))
+        when(client.evaluate(eq("authz/allow"), anyMap(), eq(Object.class)))
                 .thenAnswer(invocation -> {
                     entered.countDown();
                     assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
@@ -74,7 +74,7 @@ class OpaAsyncSecurityPolicyTest {
     @Test
     void deniedGuardFailsClosedWithoutCallingDownstream() throws Exception {
         OPAClient client = mock(OPAClient.class);
-        when(client.evaluate(eq("authz/allow"), org.mockito.ArgumentMatchers.anyMap(), eq(Object.class))).thenReturn(false);
+        when(client.evaluate(eq("authz/allow"), anyMap(), eq(Object.class))).thenReturn(false);
         try (Fixture fixture = new Fixture(client)) {
             Exchange exchange = new DefaultExchange(fixture.context);
             CountDownLatch completed = new CountDownLatch(1);
@@ -102,10 +102,59 @@ class OpaAsyncSecurityPolicyTest {
             AtomicInteger callbacks = new AtomicInteger();
             assertThat(fixture.processor.process(exchange, ignored -> callbacks.incrementAndGet())).isTrue();
             assertThat(callbacks.get()).isEqualTo(1);
-            assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+            assertThat(exchange.getException()).isInstanceOf(CamelAuthorizationException.class);
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
             assertThat(exchange.getMessage().getHeader(OpaConstants.DECISION)).isNull();
             assertThat(fixture.forwarded.get()).isNull();
+        }
+    }
+
+    @Test
+    void interruptedSynchronousCallerGetsTheDecisionOnItsOwnThread() throws Exception {
+        OPAClient client = mock(OPAClient.class);
+        CountDownLatch entered = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        when(client.evaluate(eq("authz/allow"), anyMap(), eq(Object.class))).thenAnswer(invocation -> {
+            entered.countDown();
+            assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+            return true;
+        });
+        try (Fixture fixture = new Fixture(client)) {
+            Exchange exchange = new DefaultExchange(fixture.context);
+            AtomicReference<Throwable> thrown = new AtomicReference<>();
+            Thread caller = new Thread(() -> {
+                try {
+                    fixture.processor.process(exchange);
+                } catch (Throwable e) {
+                    thrown.set(e);
+                }
+            }, "interrupted-caller");
+            caller.start();
+            assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+            caller.interrupt();
+            caller.join(TimeUnit.SECONDS.toMillis(5));
+            assertThat(caller.isAlive()).isFalse();
+            assertThat(thrown.get()).isNull();
+            // the caller's thread recorded the denied decision before process(Exchange) returned
+            Throwable failure = exchange.getException();
+            assertThat(failure).isInstanceOf(CamelAuthorizationException.class)
+                    .hasMessageContaining("could not be evaluated")
+                    .hasCauseInstanceOf(InterruptedException.class);
+            assertThat(exchange.getMessage().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID))
+                    .isEqualTo("OpaSecurityPolicy");
+            assertThat(fixture.forwarded.get()).isNull();
+            release.countDown();
+            // the claimed task frees its capacity without writing to the exchange again: the next exchange is guarded
+            Exchange next = new DefaultExchange(fixture.context);
+            assertThat(fixture.processor.process(next, doneSync -> {
+            })).isFalse();
+            assertThat(fixture.downstream.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(fixture.forwarded.get()).isSameAs(next);
+            assertThat(exchange.getException()).isSameAs(failure);
+            assertThat(exchange.getMessage().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID))
+                    .isEqualTo("OpaSecurityPolicy");
+        } finally {
+            release.countDown();
         }
     }
 

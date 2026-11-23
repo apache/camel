@@ -53,11 +53,13 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
  * @since 4.24
  */
 public final class AuthorizationAsyncExecutor implements AutoCloseable {
+    /** The authorization request: runs on a worker thread and returns the future of the remote decision. */
     @FunctionalInterface
     public interface Action {
         CompletableFuture<?> run() throws Exception;
     }
 
+    /** Builds the {@link Action} for a snapshot of the exchange; runs on the admitting thread. */
     @FunctionalInterface
     public interface Preparation {
         Action prepare(Exchange snapshot) throws Exception;
@@ -74,6 +76,11 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
     private final Object lifecycle = new Object();
     private volatile boolean closed;
 
+    /**
+     * Creates an executor with {@code poolSize} workers, {@code queueSize} queued admissions and a {@code timeout} in
+     * milliseconds for each authorization. The pools come from the executor service manager of {@code context} on
+     * behalf of {@code owner}.
+     */
     public AuthorizationAsyncExecutor(CamelContext context, Object owner, int poolSize, int queueSize, long timeout) {
         if (poolSize <= 0 || queueSize <= 0 || timeout <= 0) {
             throw new IllegalArgumentException("asyncPoolSize, asyncQueueSize and asyncTimeout must be positive");
@@ -103,6 +110,11 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         return profile;
     }
 
+    /**
+     * Runs {@code processor} for {@code exchange} and completes the returned future with the exchange when the
+     * processor is done. Cancelling the future cancels the authorization that {@code executor} runs for the exchange: a
+     * claimed task leaves the exchange to the canceller, as described in {@link #cancel(Exchange, Throwable)}.
+     */
     public static CompletableFuture<Exchange> processFuture(
             Exchange exchange, AsyncProcessor processor,
             AuthorizationAsyncExecutor executor) {
@@ -125,6 +137,14 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         return result;
     }
 
+    /**
+     * Admits {@code original} for asynchronous authorization. A snapshot of the exchange is handed to
+     * {@code preparation} here, the action runs on a worker, and {@code callback} runs on the continuation pool once
+     * the decision is committed to the original exchange.
+     *
+     * @return {@code true} when the exchange was completed on the calling thread, because the capacity is exhausted,
+     *         the preparation failed or the executor is stopped
+     */
     public boolean process(Exchange original, AsyncCallback callback, Preparation preparation) {
         if (!permits.tryAcquire()) {
             original.setException(new RejectedExecutionException("Authorization capacity is exhausted"));
@@ -170,6 +190,10 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         }
     }
 
+    /**
+     * Bounds {@code source} by {@code timeoutMillis}: the returned future fails with a {@link TimeoutException} and
+     * cancels {@code source} when the deadline passes first, and cancelling it cancels {@code source}.
+     */
     public <T> CompletableFuture<T> bound(CompletableFuture<T> source, long timeoutMillis) {
         Objects.requireNonNull(source, "Authorization request future");
         RequestFuture<T> result = new RequestFuture<>(source);
@@ -218,22 +242,40 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         }
     }
 
-    public void cancel(Exchange exchange) {
-        cancel(exchange, new CancellationException("Asynchronous authorization cancelled"));
+    /**
+     * Cancels the pending authorization of {@code exchange} with a {@link CancellationException}.
+     *
+     * @return {@code true} when a pending task was claimed, see {@link #cancel(Exchange, Throwable)}
+     */
+    public boolean cancel(Exchange exchange) {
+        return cancel(exchange, new CancellationException("Asynchronous authorization cancelled"), null);
     }
 
-    public void cancel(Exchange exchange, Throwable failure) {
-        cancel(exchange, failure, null);
+    /**
+     * Cancels the pending authorization of {@code exchange}. A claimed task leaves the exchange to the calling thread:
+     * {@code failure} is set on the exchange before this method returns (an {@link InterruptedException} already on the
+     * exchange is kept), the pending request is cancelled and its worker interrupted from the continuation pool, and
+     * the callback given to {@link #process(Exchange, AsyncCallback, Preparation)} is not invoked, so a caller that
+     * already routes the exchange is not written to again.
+     *
+     * @return {@code true} when a pending task was claimed, {@code false} when it had already completed or the exchange
+     *         has no task
+     */
+    public boolean cancel(Exchange exchange, Throwable failure) {
+        return cancel(exchange, failure, null);
     }
 
-    private void cancel(Exchange exchange, Throwable failure, Runnable onClaim) {
-        tasks.forEach(task -> {
-            if (task.original == exchange) {
-                task.finish(failure, false, onClaim);
+    private boolean cancel(Exchange exchange, Throwable failure, Runnable onClaim) {
+        boolean claimed = false;
+        for (Task task : tasks) {
+            if (task.original == exchange && task.abandon(failure, onClaim)) {
+                claimed = true;
             }
-        });
+        }
+        return claimed;
     }
 
+    /** Stops the executor: pending tasks complete through their callbacks with a {@link CancellationException}. */
     @Override
     public void close() {
         synchronized (lifecycle) {
@@ -258,6 +300,7 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         return (Map<String, Object>) copyValue(values);
     }
 
+    /** Copies {@code value} the way a snapshot does: maps and lists recursively, other values are shared. */
     public static Object snapshotValue(Object value) {
         return copyValue(value);
     }
@@ -372,15 +415,8 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         }
 
         void finish(Throwable error, boolean doneSync) {
-            finish(error, doneSync, null);
-        }
-
-        void finish(Throwable error, boolean doneSync, Runnable onClaim) {
             if (!finished.compareAndSet(false, true)) {
                 return;
-            }
-            if (onClaim != null) {
-                onClaim.run();
             }
             if (deadline != null) {
                 deadline.cancel(false);
@@ -405,28 +441,10 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
                         }
                     } else {
                         original.setException(unwrap(failure));
-                        try {
-                            CompletableFuture<?> pending = request.get();
-                            if (pending != null) {
-                                pending.cancel(true);
-                            }
-                        } catch (Throwable ignored) {
-                            // Cancellation is best effort; a broken SDK future must not discard the caller's callback.
-                        } finally {
-                            synchronized (runnerLock) {
-                                Thread thread = runner.get();
-                                if (thread != null && thread != Thread.currentThread()) {
-                                    thread.interrupt();
-                                }
-                            }
-                        }
+                        cancelRequest();
                     }
                 } finally {
-                    // Authorization ends before the routing continuation; downstream work owns its own concurrency.
-                    decisionCommitted.set(true);
-                    tasks.remove(this);
-                    releasePermit();
-                    shutdownCompletionsIfDrained();
+                    release();
                 }
                 callback.done(doneSync);
             };
@@ -435,6 +453,63 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
             } else {
                 completions.execute(completion);
             }
+        }
+
+        /**
+         * Claims the task for a cancelling caller, which owns the exchange from now on: the failure is written here, on
+         * the calling thread, the continuation pool only cancels the request and releases the capacity, and the
+         * callback is not invoked.
+         */
+        boolean abandon(Throwable failure, Runnable onClaim) {
+            if (!finished.compareAndSet(false, true)) {
+                return false;
+            }
+            if (onClaim != null) {
+                onClaim.run();
+            }
+            if (deadline != null) {
+                deadline.cancel(false);
+            }
+            if (!(original.getException() instanceof InterruptedException)) {
+                original.setException(unwrap(failure));
+            }
+            if (executor instanceof ThreadPoolExecutor pool) {
+                pool.remove(this);
+            }
+            completions.execute(() -> {
+                try {
+                    cancelRequest();
+                } finally {
+                    release();
+                }
+            });
+            return true;
+        }
+
+        private void cancelRequest() {
+            try {
+                CompletableFuture<?> pending = request.get();
+                if (pending != null) {
+                    pending.cancel(true);
+                }
+            } catch (Throwable ignored) {
+                // Cancellation is best effort; a broken SDK future must not discard the caller's callback.
+            } finally {
+                synchronized (runnerLock) {
+                    Thread thread = runner.get();
+                    if (thread != null && thread != Thread.currentThread()) {
+                        thread.interrupt();
+                    }
+                }
+            }
+        }
+
+        private void release() {
+            // Authorization ends before the routing continuation; downstream work owns its own concurrency.
+            decisionCommitted.set(true);
+            tasks.remove(this);
+            releasePermit();
+            shutdownCompletionsIfDrained();
         }
 
         private void commitResults() {

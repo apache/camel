@@ -359,7 +359,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Lists the objects of the configured type the subject can reach through the relation.
+     * Checks the requests with the server-side BatchCheck API; the SDK chunks them by maxBatchSize.
      */
     private PreparedOperation prepareServerBatchCheck(
             Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests)

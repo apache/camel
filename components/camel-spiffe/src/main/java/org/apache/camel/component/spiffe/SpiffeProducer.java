@@ -38,6 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 public class SpiffeProducer extends DefaultAsyncProducer {
     private AuthorizationAsyncExecutor asyncExecutor;
     private final SpiffeId localSpiffeId;
+
+    /** Several producers of one endpoint register one check each; the id names the endpoint and numbers them. */
     private static final AtomicInteger HEALTH_CHECK_IDS = new AtomicInteger();
     private WritableHealthCheckRepository healthCheckRepository;
     private SpiffeProducerHealthCheck producerHealthCheck;

@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientBatchCheckResponse;
@@ -43,6 +45,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -142,7 +145,7 @@ class OpenFgaAsyncProducerTest {
         var first = new CompletableFuture<ClientCheckResponse>();
         var second = new CompletableFuture<ClientCheckResponse>();
         CountDownLatch submitted = new CountDownLatch(2);
-        java.util.concurrent.ConcurrentHashMap<String, String> users = new java.util.concurrent.ConcurrentHashMap<>();
+        ConcurrentHashMap<String, String> users = new ConcurrentHashMap<>();
         when(client.check(any(), any())).thenAnswer(invocation -> {
             ClientCheckRequest request = invocation.getArgument(0);
             users.put(request.getObject(), request.getUser());
@@ -364,7 +367,7 @@ class OpenFgaAsyncProducerTest {
         when(denied.getAllowed()).thenReturn(false);
         var failed = mock(dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse.class);
         when(failed.getThrowable()).thenReturn(new IOException("partial failure"));
-        when(client.clientBatchCheck(org.mockito.ArgumentMatchers.anyList(), any()))
+        when(client.clientBatchCheck(anyList(), any()))
                 .thenReturn(CompletableFuture.completedFuture(List.of(denied, permitted)))
                 .thenReturn(CompletableFuture.completedFuture(List.of(permitted, failed)));
         try (Fixture fixture = new Fixture(client, configuration -> {
@@ -416,11 +419,11 @@ class OpenFgaAsyncProducerTest {
         final OpenFgaEndpoint endpoint;
         final OpenFgaProducer producer;
 
-        Fixture(OpenFgaClient client, java.util.function.Consumer<OpenFgaConfiguration> configure) throws Exception {
+        Fixture(OpenFgaClient client, Consumer<OpenFgaConfiguration> configure) throws Exception {
             this(client, configure, OpenFgaOperation.check);
         }
 
-        Fixture(OpenFgaClient client, java.util.function.Consumer<OpenFgaConfiguration> configure,
+        Fixture(OpenFgaClient client, Consumer<OpenFgaConfiguration> configure,
                 OpenFgaOperation operation) throws Exception {
             context.start();
             var configuration = new OpenFgaConfiguration();

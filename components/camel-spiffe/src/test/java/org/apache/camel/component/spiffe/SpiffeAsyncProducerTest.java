@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spiffe;
 
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +70,7 @@ class SpiffeAsyncProducerTest {
         try (Fixture fixture = new Fixture(client)) {
             fixture.endpoint.getConfiguration().setPreserveBody(true);
             Exchange exchange = new DefaultExchange(fixture.context);
-            Object payload = java.util.List.of("request", "payload");
+            Object payload = List.of("request", "payload");
             exchange.getMessage().setBody(payload);
             exchange.getMessage().setHeader(SpiffeConstants.TOKEN, "token");
             fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
