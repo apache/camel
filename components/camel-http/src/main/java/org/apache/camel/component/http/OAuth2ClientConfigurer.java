@@ -107,6 +107,12 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         // when it is not the component's shared manager (CAMEL-27233).
         clientBuilder.setConnectionManagerShared(true);
         this.httpClient = clientBuilder.build();
+        // Restore connManagerShared=false so that the endpoint's own client, built from this same
+        // builder after all configurers have run (HttpEndpoint.createHttpClient()), does not suppress
+        // IdleConnectionEvictor when evictIdleConnections/evictExpiredConnections was configured.
+        // HttpEndpoint.createHttpClient() will set connManagerShared=true again on its own if it
+        // determines that the endpoint is using the component's shared connection manager.
+        clientBuilder.setConnectionManagerShared(false);
 
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
             URI requestUri = getUriFromRequest(request);
