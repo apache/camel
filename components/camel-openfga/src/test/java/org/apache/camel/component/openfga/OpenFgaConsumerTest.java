@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +46,10 @@ import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.support.processor.state.FileStateRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,6 +88,45 @@ class OpenFgaConsumerTest {
         assertThat(options.getAllValues().get(1).getContinuationToken()).isEqualTo("cursor-1");
         assertThat(delivered).hasValue(1);
         assertThat(repository.saved).containsExactly("cursor-1");
+    }
+
+    @Test
+    void startsAnUnstartedFileRepositoryAndResumesFromItsCheckpointAfterARestart(@TempDir Path dir) throws Exception {
+        File store = dir.resolve("checkpoints").toFile();
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.readChanges(any(), any())).thenReturn(CompletableFuture.completedFuture(page("cursor-1", true)));
+        FileStateRepository firstRun = FileStateRepository.fileStateRepository(store);
+        try (Fixture fixture = new Fixture(client, firstRun, exchange -> {
+        })) {
+            assertThat(firstRun.isStarted()).isTrue();
+            assertThat(fixture.consumer.poll()).isEqualTo(2);
+        }
+        assertThat(firstRun.isStopped()).isTrue();
+        // the restarted application registers a fresh repository on the same file and starts nothing itself
+        FileStateRepository secondRun = FileStateRepository.fileStateRepository(store);
+        when(client.readChanges(any(), any())).thenReturn(CompletableFuture.completedFuture(page("cursor-1", false)));
+        try (Fixture fixture = new Fixture(client, secondRun, exchange -> {
+        })) {
+            assertThat(fixture.consumer.poll()).isZero();
+        }
+        ArgumentCaptor<ClientReadChangesOptions> options = ArgumentCaptor.forClass(ClientReadChangesOptions.class);
+        verify(client, times(2)).readChanges(any(), options.capture());
+        assertThat(options.getAllValues().get(0).getContinuationToken()).isNull();
+        assertThat(options.getAllValues().get(1).getContinuationToken()).isEqualTo("cursor-1");
+    }
+
+    @Test
+    void leavesARepositoryTheApplicationStartedRunning() throws Exception {
+        Repository repository = new Repository();
+        repository.start();
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        when(client.readChanges(any(), any())).thenReturn(CompletableFuture.completedFuture(page("cursor-1", true)));
+        try (Fixture fixture = new Fixture(client, repository, exchange -> {
+        })) {
+            assertThat(fixture.consumer.poll()).isEqualTo(2);
+        }
+        assertThat(repository.isStarted()).isTrue();
+        repository.stop();
     }
 
     @Test
@@ -368,7 +411,7 @@ class OpenFgaConsumerTest {
         private final OpenFgaEndpoint endpoint;
         private final OpenFgaConsumer consumer;
 
-        Fixture(OpenFgaClient client, Repository repository, Processor processor) throws Exception {
+        Fixture(OpenFgaClient client, StateRepository<String, String> repository, Processor processor) throws Exception {
             context.setInflightRepository(new DefaultInflightRepository());
             context.start();
             var unitOfWorkFactory = new DefaultUnitOfWorkFactory();

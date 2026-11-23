@@ -28,16 +28,36 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** One change-log page per poll, acknowledged durably only after the complete page succeeds. */
 public class OpenFgaConsumer extends ScheduledPollConsumer {
+    private static final Logger LOG = LoggerFactory.getLogger(OpenFgaConsumer.class);
+
     private final OpenFgaEndpoint endpoint;
     private final AtomicReference<CompletableFuture<ClientReadChangesResponse>> pending = new AtomicReference<>();
+    private boolean stopRepository;
 
     public OpenFgaConsumer(OpenFgaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // a repository the application has not started, such as a FileStateRepository registered as a bean, is started
+        // here and stopped with the consumer, before the first poll reads it; a started one stays with the application
+        StateRepository<String, String> repository = endpoint.getConfiguration().getCheckpointRepository();
+        if (repository instanceof ServiceSupport service && !service.isStarted()) {
+            stopRepository = true;
+            LOG.debug("Starting checkpoint repository: {}", repository);
+            ServiceHelper.startService(repository);
+        }
+        super.doStart();
     }
 
     @Override
@@ -121,5 +141,11 @@ public class OpenFgaConsumer extends ScheduledPollConsumer {
             future.cancel(true);
         }
         super.doStop();
+        if (stopRepository) {
+            stopRepository = false;
+            StateRepository<String, String> repository = endpoint.getConfiguration().getCheckpointRepository();
+            LOG.debug("Stopping checkpoint repository: {}", repository);
+            ServiceHelper.stopAndShutdownService(repository);
+        }
     }
 }
