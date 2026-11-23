@@ -2927,6 +2927,29 @@ thread dumps and JMX change:
   Breaker no longer ran: in synchronous mode each call timed out (into the fallback, when there is one), and in
   asynchronous mode the exchange never completed.
 
+=== camel-resilience4j - a full thread pool rejects a call of the synchronous mode with a timeout
+
+A Circuit Breaker with `timeoutEnabled` and without `asynchronous` runs its calls on a thread pool that Camel creates
+from the default thread pool profile (10 threads, up to 20, and a queue of 1000 calls). When all its threads were busy
+and its queue was full, the call ran on the caller thread (the `CallerRuns` policy of the profile) before the timeout
+started: the call could not time out, a service that does not answer blocked the route thread for good, and the
+circuit breaker counted the call as successful, however long it took. Now the thread pool rejects the call: the
+exchange fails with a `RejectedExecutionException`, or the fallback runs, and the circuit breaker counts it as a
+failed call. The rejected policy of the default thread pool profile is not used for this thread pool.
+
+A call that times out while it waits in the queue now leaves the queue at once. Before, it kept its slot until a
+thread took it from the queue, so during a slowdown the queue filled with calls that had already timed out.
+
+With virtual threads (`camel.threads.virtual.enabled`), the thread pool runs up to 1000 calls at once (the queue size
+of the profile). A call over that waits for a free slot up to the keep alive time of the profile (60 seconds by
+default), as before, and is then rejected, where before it ran on the caller thread.
+
+A thread pool given with `timeoutExecutorService` keeps its own rejected policy. To keep the thread pool from filling
+up, enable the bulkhead with `bulkheadMaxConcurrentCalls` no larger than the queue size of the thread pool, or size the
+default thread pool profile for the load. To run such a call on the caller thread as before, give the Circuit Breaker
+a thread pool with the `CallerRuns` rejected policy with `timeoutExecutorService` (a thread pool bean, or the id of a
+thread pool profile).
+
 === camel-jbang - camel cmd send without a name sends to the integration that runs
 
 `camel cmd send` without an integration name started a Camel of its own, without routes, and sent from there. That is

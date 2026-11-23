@@ -154,6 +154,17 @@ YAML::
 In this example if calling the downstream service does not return a response within 2 seconds,
 a timeout is triggered, and the exchange will fail with a `TimeoutException`.
 
+The calls run on a thread pool of the Circuit Breaker, named `CircuitBreaker`, that Camel creates from the
+default thread pool profile (10 threads, up to 20, and a queue of 1000 calls; with virtual threads, up to 1000 calls
+at once). A call that timed out keeps its thread until the downstream service answers, so when the service is slow the
+thread pool can fill up. Then the next call is rejected: the exchange fails with a `RejectedExecutionException` (or the
+fallback runs), and the circuit breaker counts it as a failed call. With virtual threads, the call first waits for a
+free slot up to the keep alive time of the profile (60 seconds by default), and the timeout does not apply to that
+wait. To bound the calls in progress, enable the bulkhead with a `bulkheadMaxConcurrentCalls` no larger than the queue
+size of the thread pool, or size the default thread pool profile for the load. A thread pool of your own, given with
+`timeoutExecutorService`, is used with its own rejected policy: with `CallerRuns`, a call that the full thread pool
+rejects runs on the caller thread, where the timeout does not apply.
+
 === Asynchronous (non-blocking) processing
 
 By default, the Resilience4j circuit breaker processes exchanges synchronously,
