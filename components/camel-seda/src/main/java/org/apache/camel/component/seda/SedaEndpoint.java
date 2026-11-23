@@ -45,6 +45,7 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -72,7 +73,8 @@ import org.slf4j.LoggerFactory;
                                    description = "Unchanged for a message that expects no reply (InOnly). A message that"
                                                  + " expects one (InOut), or waitForTaskToComplete=Always, waits for the"
                                                  + " body the seda route ends with"))
-public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
+public class SedaEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
 
@@ -423,6 +425,22 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      */
     public void setSize(int size) {
         this.size = size;
+    }
+
+    /**
+     * Whether the messages waiting in the queue are kept only in memory, so they are lost when the application stops:
+     * the queues of the JDK, which the queue factories of Camel create, are. A queue of another kind, given with the
+     * queue option, can keep them elsewhere.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the messages waiting in the queue are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        BlockingQueue<Exchange> current = queue;
+        if (current != null) {
+            return current.getClass().getName().startsWith("java.util.concurrent.");
+        }
+        return queueFactory instanceof LinkedBlockingQueueFactory || queueFactory instanceof ArrayBlockingQueueFactory
+                || queueFactory instanceof PriorityBlockingQueueFactory;
     }
 
     @ManagedAttribute(description = "Current queue size")

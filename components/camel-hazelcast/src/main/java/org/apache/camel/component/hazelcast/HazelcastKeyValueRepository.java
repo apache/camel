@@ -31,6 +31,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.KeyValueRepositoryHelper;
@@ -60,7 +61,7 @@ import org.apache.camel.util.ObjectHelper;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Hazelcast based key-value repository")
-public class HazelcastKeyValueRepository extends ServiceSupport implements KeyValueRepository {
+public class HazelcastKeyValueRepository extends ServiceSupport implements KeyValueRepository, InMemoryStrategy {
 
     private boolean useLocalHzInstance;
     private IMap<String, byte[]> map;
@@ -211,6 +212,16 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
     public boolean delete(String key, Object expectedValue) {
         byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedValue);
         return map.remove(key, expectedBytes);
+    }
+
+    /**
+     * Whether the entries are kept only in memory, decided when asked as the cluster changes; see
+     * {@link HazelcastUtil#isInMemory(HazelcastInstance, String)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return map != null && HazelcastUtil.isInMemory(hazelcastInstance, mapName);
     }
 
     @Override

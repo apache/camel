@@ -28,6 +28,7 @@ import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based message id repository")
-public class JCacheIdempotentRepository extends ServiceSupport implements CamelContextAware, IdempotentRepository {
+public class JCacheIdempotentRepository extends ServiceSupport
+        implements CamelContextAware, IdempotentRepository, InMemoryStrategy {
 
     private CamelContext camelContext;
     private Cache<String, Boolean> cache;
@@ -107,6 +109,15 @@ public class JCacheIdempotentRepository extends ServiceSupport implements CamelC
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {
         return configuration.getCacheName();
+    }
+
+    /**
+     * Whether the keys are kept only in memory; see {@link JCacheHelper#isInMemory(Cache)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return JCacheHelper.isInMemory(cache);
     }
 
     @Override

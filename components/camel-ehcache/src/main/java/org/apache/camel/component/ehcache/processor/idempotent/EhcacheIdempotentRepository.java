@@ -22,6 +22,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.ehcache.Cache;
@@ -32,7 +33,7 @@ import org.ehcache.CacheManager;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based message id repository")
-public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
 
     @Metadata(description = "Name of cache", defaultValue = "EhcacheIdempotentRepository")
     private String cacheName;
@@ -55,6 +56,12 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {
         return cacheName;
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return EhcacheManager.isInMemory(cache);
     }
 
     @Override
