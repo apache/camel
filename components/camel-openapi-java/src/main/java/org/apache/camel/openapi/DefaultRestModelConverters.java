@@ -119,11 +119,6 @@ public class DefaultRestModelConverters implements RestModelConverters {
     private static class ClassNameExtensionModelResolver extends ModelResolver {
         private final ModelResolver delegate;
 
-        public ClassNameExtensionModelResolver() {
-            this(new ModelResolver(new ObjectMapper()));
-            ModelResolver.composedModelPropertiesAsSibling = true;
-        }
-
         public ClassNameExtensionModelResolver(ModelResolver delegate) {
             super(delegate.objectMapper());
             this.delegate = delegate;
