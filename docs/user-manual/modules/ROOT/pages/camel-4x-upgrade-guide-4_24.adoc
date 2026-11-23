@@ -3925,6 +3925,20 @@ The `Struct` to `Map` type converter now gives a `LinkedHashMap` in the order of
 of the columns of the table), nested `Struct` values included, so the JSON of the `Map` has the columns in that order.
 Before, it was a `HashMap` with no defined order.
 
+=== camel-debezium - the route fails to start when the Debezium engine cannot start
+
+A `debezium-*` consumer now waits, when it starts, until the Debezium engine has started the connector tasks (which is
+before an initial snapshot is done), and fails to start when the engine fails meanwhile, with the error of Debezium as
+the cause: for example a database that cannot be reached or refuses the TLS connection, a MySQL server with
+`binlog_format=STATEMENT`, or a lost schema history. The route, and so the application, then fails to start (with the
+supervising route controller, the route is started again later). Before, the route started, was never ready, and the
+only sign of the failure was a WARN in the log. The start waits as long as Debezium waits for the tasks to start
+(`internal.task.management.timeout.ms`, 40 seconds by default, for each task and once more for the connector); if the
+engine has not reported back by then, the route starts as before, with a WARN in the log.
+
+A failure of the engine after it has started is still reported to the consumer exception handler (to the error handler
+of the route with `bridgeErrorHandler=true`) and turns the health check of the route `DOWN`.
+
 === camel-debezium-mysql - a signed TINYINT column is a Byte
 
 Debezium has been upgraded to 3.7.0.Final, which maps a signed MySQL `TINYINT` column to the Kafka Connect `INT8`
