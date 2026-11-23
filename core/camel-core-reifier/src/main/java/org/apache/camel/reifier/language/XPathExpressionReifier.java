@@ -16,6 +16,10 @@
  */
 package org.apache.camel.reifier.language;
 
+import org.apache.camel.util.ObjectHelper;
+
+import java.util.LinkedHashMap;
+
 import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
@@ -35,8 +39,17 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
     }
 
     private Map<String, String> resolveNamespaces() {
+        // the inline namespaces: the mappings of namespaceMappings, and the namespace entries, which win for the same prefix
+        Map<String, String> inline = new LinkedHashMap<>();
+        String mappings = parseString(definition.getNamespaceMappings());
+        if (ObjectHelper.isNotEmpty(mappings)) {
+            inline.putAll(new Namespaces(mappings).getNamespaces());
+        }
         if (definition.getNamespaces() != null && !definition.getNamespaces().isEmpty()) {
-            return parseMap(definition.getNamespaces());
+            inline.putAll(parseMap(definition.getNamespaces()));
+        }
+        if (!inline.isEmpty()) {
+            return inline;
         }
         if (definition.getNamespacesRef() != null) {
             return parseMap(mandatoryLookup(definition.getNamespacesRef(), Namespaces.class).getNamespaces());

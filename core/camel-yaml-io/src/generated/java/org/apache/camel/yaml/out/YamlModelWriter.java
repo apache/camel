@@ -3057,6 +3057,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteNamespaceAwareExpressionAttributes(JsonObject jo, NamespaceAwareExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute(jo, "namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(JsonObject jo, NamespaceAwareExpression def) {
         doWriteChildList(jo, null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);

@@ -107,10 +107,43 @@ If an expression declares namespaces inline as well, then the inline namespaces 
 The `namespacesRef` option is also available on the xref:xquery-language.adoc[XQuery] and
 xref:xtokenize-language.adoc[XML Tokenize] languages.
 
-=== Several namespaces from one string
+=== Several namespaces in one string
 
-A `Namespaces` bean can also be created from a single string of `prefix=uri` mappings, separated by commas or new
-lines. This lets one property, such as a Kamelet option, carry any number of namespaces:
+The `namespaceMappings` option takes the namespaces inline, as one string of `prefix=uri` mappings separated by commas
+or new lines. The prefix ends at the first `=`. As one string, it can come from a property placeholder, such as a Kamelet
+option:
+
+[tabs]
+====
+XML::
++
+[source,xml]
+----
+<filter>
+  <xpath namespaceMappings="c=http://acme.com/cheese,w=http://acme.com/wine">/c:order/w:wine = 'Rioja'</xpath>
+  <to uri="mock:rioja"/>
+</filter>
+----
+
+YAML::
++
+[source,yaml]
+----
+- filter:
+    xpath:
+      expression: "/c:order/w:wine = 'Rioja'"
+      namespaceMappings: "{{namespaces}}"
+    steps:
+      - to: "mock:rioja"
+----
+====
+
+The mappings are read when the route is created, after the property placeholders are resolved, and a mapping without
+a prefix or a URI fails the route. When `namespace` entries are given as well, an entry wins over a mapping for the same
+prefix. `namespacesRef` is only used when neither is given.
+
+To share the mappings of one string between several expressions, a `Namespaces` bean can be created from the same
+string, and referred to with `namespacesRef`:
 
 [source,yaml]
 ----
@@ -120,9 +153,6 @@ lines. This lets one property, such as a Kamelet option, carry any number of nam
       constructors:
         0: "{{namespaces}}"
 ----
-
-With `namespaces=c=http://acme.com/cheese,w=http://acme.com/wine`, an xpath with `namespacesRef: "myNamespaces"` can
-use both the `c` and the `w` prefix. A mapping without a prefix or a URI fails when the bean is created.
 
 == Variables
 

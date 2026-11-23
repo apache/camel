@@ -15879,6 +15879,17 @@ Whether to validate the bean has the configured method. Default value: true
   <xs:complexType abstract="true" name="namespaceAwareExpression">
     <xs:simpleContent>
       <xs:extension base="tns:singleInputTypedExpressionDefinition">
+        <xs:attribute name="namespaceMappings" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by
+commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one
+property placeholder.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="namespacesRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

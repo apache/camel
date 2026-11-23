@@ -234,6 +234,10 @@ in the line with `xmlns:foo="http://example.com/person"`:
 
 This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to use this namespace.
 
+Several namespaces can also be given inline in one string, with the `namespaceMappings` option, such as
+`namespaceMappings: "c=http://acme.com/cheese,w=http://acme.com/wine"`. See the
+xref:xpath-language.adoc#_several_namespaces_in_one_string[XPath] language for the syntax.
+
 === Sharing namespaces via a registry bean
 
 Declaring the prefixes on the XML root tag only works when the route itself is written in XML.

@@ -13237,6 +13237,9 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
+            "namespaceMappings" : {
+              "type" : "string"
+            },
             "namespacesRef" : {
               "type" : "string",
               "title" : "Namespaces Ref",
@@ -13310,6 +13313,9 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string"
             },
             "namespacesRef" : {
               "type" : "string",
@@ -13403,6 +13409,9 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string"
             },
             "namespacesRef" : {
               "type" : "string",

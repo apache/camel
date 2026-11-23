@@ -3598,6 +3598,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteNamespaceAwareExpressionAttributes(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute(sb, "namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteChildList(sb, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
