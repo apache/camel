@@ -162,7 +162,11 @@ class KnativeHttpSynchronousTest {
                     .as("Timed out waiting for worker-bounded requests to arrive")
                     .isTrue();
             Awaitility.await().during(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(() -> assertThat(waiting).hasSize(WORKERS));
+                    .untilAsserted(() -> {
+                        synchronized (waitingLock) {
+                            assertThat(waiting).hasSize(WORKERS);
+                        }
+                    });
 
             // complete waiting callbacks
             List<AsyncCallback> toComplete;

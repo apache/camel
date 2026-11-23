@@ -112,8 +112,12 @@ class VertxWebsocketSynchronousTest {
                         "Not all worker-bounded messages arrived at the async step");
                 // give a moment for any extra message to erroneously arrive
                 Awaitility.await().during(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-                        .untilAsserted(() -> assertEquals(WORKERS, waiting.size(),
-                                "Worker pool did not bound messages in flight"));
+                        .untilAsserted(() -> {
+                            synchronized (waitingLock) {
+                                assertEquals(WORKERS, waiting.size(),
+                                        "Worker pool did not bound messages in flight");
+                            }
+                        });
 
                 // complete waiting callbacks to unblock and let the extra message through
                 List<AsyncCallback> toComplete;
