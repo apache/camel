@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
@@ -33,6 +35,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
@@ -45,10 +48,12 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -227,8 +232,34 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
         pool.stop();
     }
 
+    @Test
+    void testReacquireOfNullIsNotCountedAsAUser() throws Exception {
+        MyEndpoint a = (MyEndpoint) context.getEndpoint("my:a");
+        MyServicePool pool = new MyServicePool(1, p -> p != null ? p.getEndpoint() : a);
+        // the pool of a has no producer yet: creating it failed
+        a.failCreate = true;
+        assertThrows(IllegalStateException.class, () -> pool.acquire(a));
+        a.failCreate = false;
+
+        assertFalse(reacquire(pool, null), "A null producer should not be acquired");
+
+        // no user is left behind: the producer is stopped when it is evicted while idle
+        AsyncProducer pa = pool.acquire(a);
+        pool.release(a, pa);
+        pool.evict(pa);
+        assertTrue(isStopped(pa), "The evicted idle producer should be stopped");
+        pool.stop();
+    }
+
     private Endpoint b() {
         return context.getEndpoint("my:b");
+    }
+
+    private static boolean reacquire(ProducerServicePool pool, AsyncProducer producer) throws Exception {
+        // package-private in ServicePool, where DefaultProducerCache calls it
+        Method method = ProducerServicePool.class.getSuperclass().getDeclaredMethod("reacquire", Service.class);
+        method.setAccessible(true);
+        return (boolean) method.invoke(pool, producer);
     }
 
     private static boolean isStarted(AsyncProducer producer) {
@@ -242,7 +273,11 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
     private static final class MyServicePool extends ProducerServicePool {
 
         MyServicePool(int capacity) {
-            super(Endpoint::createAsyncProducer, Producer::getEndpoint, capacity);
+            this(capacity, Producer::getEndpoint);
+        }
+
+        MyServicePool(int capacity, Function<AsyncProducer, Endpoint> getEndpoint) {
+            super(Endpoint::createAsyncProducer, getEndpoint, capacity);
             start();
         }
 
@@ -282,6 +317,7 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
         volatile CountDownLatch inProcess;
         volatile CountDownLatch proceed;
         volatile MyProducer lastProducer;
+        volatile boolean failCreate;
 
         MyEndpoint(String uri, Component component) {
             super(uri, component);
@@ -289,6 +325,9 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
 
         @Override
         public Producer createProducer() {
+            if (failCreate) {
+                throw new IllegalStateException("Cannot create the producer");
+            }
             MyProducer producer = new MyProducer(this);
             lastProducer = producer;
             return producer;

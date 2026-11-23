@@ -318,7 +318,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public boolean reacquire(S s) {
-            return s == this.s && retain();
+            return s != null && s == this.s && retain();
         }
 
         @Override
