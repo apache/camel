@@ -417,9 +417,17 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             verifySignature(pgpFactory, signature);
             PGPPublicKeyEncryptedData pbe = encDataAndPbe.getPbe();
             if (pbe.isIntegrityProtected()) {
+                // symmetrically encrypted integrity protected data packet: version 1 carries a modification
+                // detection code, version 2 is AEAD; verify() reads the rest of the data and checks either
                 if (!pbe.verify()) {
                     throw new PGPException("Message failed integrity check");
                 }
+            } else if (pbe.isAEAD()) {
+                // OCB encrypted data packet (tag 20), written by GnuPG 2.4 and later. It is authenticated
+                // encryption: the decrypting stream checks the tag of every chunk and the final tag, and fails
+                // on a mismatch. verify() does not apply to this packet, so read the stream to its end, which
+                // makes sure the final tag is checked even if the literal data did not consume all of it.
+                encData.transferTo(OutputStream.nullOutputStream());
             } else if (requireIntegrityProtection) {
                 // Without a modification detection code the ciphertext is malleable, and whether the check runs
                 // would otherwise be decided by the packet type the sender chose - so a sender or an intermediary
@@ -708,10 +716,12 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
      * Whether a message must be integrity protected in order to be decrypted.
      * <p>
      * An OpenPGP symmetrically encrypted integrity protected data packet carries a modification detection code, which
-     * {@code unmarshal} verifies. The older symmetrically encrypted data packet carries none, and OpenPGP's CFB mode is
-     * malleable without it, so accepting such a message means accepting ciphertext that may have been altered. Since
-     * the packet type is chosen by whoever produced the message, leaving this off lets the sender - or anyone who can
-     * rewrite the message in transit - decide whether the check applies at all.
+     * {@code unmarshal} verifies. AEAD encrypted messages (version 2 of that packet, and the OCB encrypted data packet
+     * that GnuPG 2.4 and later writes) are authenticated by their encryption mode, so they are integrity protected as
+     * well. The older symmetrically encrypted data packet has no such protection, and OpenPGP's CFB mode is malleable
+     * without it, so accepting such a message means accepting ciphertext that may have been altered. Since the packet
+     * type is chosen by whoever produced the message, leaving this off lets the sender - or anyone who can rewrite the
+     * message in transit - decide whether the check applies at all.
      * <p>
      * Defaults to true. Set it to false only to interoperate with a sender that still emits the legacy packet.
      */
