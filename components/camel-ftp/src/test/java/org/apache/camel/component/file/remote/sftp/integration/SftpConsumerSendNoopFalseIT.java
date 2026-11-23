@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
-import org.apache.sshd.sftp.common.SftpConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -74,7 +73,7 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     public void testSendNoopFalse() throws Exception {
         consumeFileAndPollAgain("sendNoopFalse");
 
-        assertEquals(0, countingService().requests(SftpConstants.SSH_FXP_REALPATH),
+        assertEquals(0, countingService().noopRealpath(),
                 "The consumer should not send a noop REALPATH before a poll when sendNoop=false");
         assertEquals(1, logins.get(), "The consumer should stay connected between polls");
     }
@@ -85,7 +84,7 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
         // sendNoop=true (the default) uses an SFTP REALPATH round-trip to check the connection is alive before each
         // poll. At least one poll (5 or more empty-message polls happen) should have sent a REALPATH request.
-        assertTrue(countingService().requests(SftpConstants.SSH_FXP_REALPATH) > 0,
+        assertTrue(countingService().noopRealpath() > 0,
                 "The consumer should send a noop REALPATH before a poll by default");
         assertEquals(1, logins.get(), "The consumer should stay connected between polls");
     }

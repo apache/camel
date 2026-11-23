@@ -1920,7 +1920,12 @@ public class SftpOperations
     @Override
     public boolean isRecentlyUsed() {
         long last = lastCompletedNanos;
-        return last != 0 && System.nanoTime() - last < RECENTLY_USED_NANOS;
+        if (last == 0 || System.nanoTime() - last >= RECENTLY_USED_NANOS) {
+            return false;
+        }
+        // Even if recently used, verify the session is still connected: if the server restarted
+        // within the last second, JSch may have already seen the EOF and isConnected() returns false.
+        return isConnected();
     }
 
     @Override

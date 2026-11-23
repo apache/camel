@@ -40,6 +40,10 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
         // restart the SFTP server now
+        // The second upload works without Awaitility because isRecentlyUsed() checks isConnected():
+        // even though less than a second has passed since the first upload, JSch has already seen the
+        // EOF from the old server, so isConnected() returns false, isRecentlyUsed() returns false,
+        // and the producer sends a noop that triggers a reconnect to the new server.
         service.tearDownServer();
         service.setUpServer();
 
