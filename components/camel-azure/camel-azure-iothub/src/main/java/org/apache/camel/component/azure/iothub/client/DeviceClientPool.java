@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.LongSupplier;
 
@@ -44,10 +45,11 @@ import org.slf4j.LoggerFactory;
  * derived from the connection string instead of only the raw device id.
  *
  * <p>
- * Clients are created lazily, reused across messages, and evicted after an idle timeout. Connection status changes are
- * monitored through the Azure SDK callback, and disconnected clients are retired automatically; any in-use client is
- * closed only when the final lease is released. Callers may also remove a client from the pool explicitly during
- * cleanup.
+ * Clients are created lazily, reused across messages, and evicted after an idle timeout. A client is idle only while it
+ * has no lease, and its idle time counts from the last release (or from the end of its open, if it was never leased),
+ * so a long send or a slow open does not make it idle. Connection status changes are monitored through the Azure SDK
+ * callback, and disconnected clients are retired automatically; any in-use client is closed only when the final lease
+ * is released. Callers may also remove a client from the pool explicitly during cleanup.
  * </p>
  */
 public class DeviceClientPool {
@@ -61,18 +63,24 @@ public class DeviceClientPool {
 
     private static final class PooledClient {
         final DeviceClient client;
-        volatile long lastUsed;
+        // the last time the client was leased or released; the idle time of a client without a lease runs from here
+        final AtomicLong lastUsed;
         final AtomicInteger inUse = new AtomicInteger();
         volatile boolean retired;
         final AtomicBoolean closed = new AtomicBoolean();
 
         PooledClient(DeviceClient client, long nowMillis) {
             this.client = client;
-            this.lastUsed = nowMillis;
+            this.lastUsed = new AtomicLong(nowMillis);
         }
 
         void touch(long nowMillis) {
-            this.lastUsed = nowMillis;
+            // never move it back: a thread that read the clock earlier must not shorten the idle time
+            lastUsed.accumulateAndGet(nowMillis, Math::max);
+        }
+
+        boolean isIdle(long nowMillis, long idleTimeoutMillis) {
+            return inUse.get() == 0 && (nowMillis - lastUsed.get()) > idleTimeoutMillis;
         }
 
         void acquire() {
@@ -86,13 +94,11 @@ public class DeviceClientPool {
 
     public static final class Lease implements AutoCloseable {
         private final DeviceClientPool pool;
-        private final String poolKey;
         private final PooledClient pooled;
         private boolean closed;
 
-        private Lease(DeviceClientPool pool, String poolKey, PooledClient pooled) {
+        private Lease(DeviceClientPool pool, PooledClient pooled) {
             this.pool = pool;
-            this.poolKey = poolKey;
             this.pooled = pooled;
         }
 
@@ -110,12 +116,10 @@ public class DeviceClientPool {
                 return;
             }
             closed = true;
-            if (pooled.release()) {
-                if (pooled.retired) {
-                    pool.closeRetired(pooled);
-                } else {
-                    pool.touchAndMaybeEvict(poolKey);
-                }
+            // touch before the lease is given back, so the idle time of the client starts at the release
+            pooled.touch(pool.nowMillis());
+            if (pooled.release() && pooled.retired) {
+                pool.closeRetired(pooled);
             }
         }
     }
@@ -183,11 +187,10 @@ public class DeviceClientPool {
         }
 
         String poolKey = resolvePoolKey(deviceId, connectionString);
-        final long now = nowMillisSupplier.getAsLong();
 
         PooledClient existing = pool.get(poolKey);
         if (existing != null) {
-            existing.touch(now);
+            existing.touch(nowMillis());
             return existing.client;
         }
 
@@ -201,11 +204,12 @@ public class DeviceClientPool {
                     return rechecked.client;
                 }
                 DeviceClient client = createClient(deviceId, connectionString, protocol);
-                PooledClient pooled = new PooledClient(client, now);
+                // read the clock after open: opening can take longer than the idle timeout on a slow hub
+                PooledClient pooled = new PooledClient(client, nowMillis());
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
                 if (previous != null) {
                     client.close();
-                    previous.touch(now);
+                    previous.touch(nowMillis());
                     createdFuture.complete(previous.client);
                     return previous.client;
                 }
@@ -253,17 +257,13 @@ public class DeviceClientPool {
         }
 
         String poolKey = resolvePoolKey(deviceId, connectionString);
-        final long now = nowMillisSupplier.getAsLong();
 
         for (;;) {
+            // read the clock on every attempt: getOrCreate below can block for a whole open of the client
+            final long now = nowMillis();
             AtomicReference<PooledClient> evicted = new AtomicReference<>();
             PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
-                if (pooled.inUse.get() > 0) {
-                    pooled.touch(now);
-                    pooled.acquire();
-                    return pooled;
-                }
-                if ((now - pooled.lastUsed) > idleTimeout.toMillis()) {
+                if (pooled.isIdle(now, idleTimeout.toMillis())) {
                     evicted.set(pooled);
                     return null;
                 }
@@ -272,7 +272,7 @@ public class DeviceClientPool {
                 return pooled;
             });
             if (existing != null) {
-                return new Lease(this, poolKey, existing);
+                return new Lease(this, existing);
             }
             if (evicted.get() != null) {
                 closeQuietly(poolKey, evicted.get().client, "idle eviction");
@@ -280,18 +280,19 @@ public class DeviceClientPool {
             }
 
             DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+            final long afterCreate = nowMillis();
             AtomicReference<PooledClient> acquired = new AtomicReference<>();
             pool.computeIfPresent(poolKey, (key, pooled) -> {
                 if (pooled.client != client) {
                     return pooled;
                 }
-                pooled.touch(now);
+                pooled.touch(afterCreate);
                 pooled.acquire();
                 acquired.set(pooled);
                 return pooled;
             });
             if (acquired.get() != null) {
-                return new Lease(this, poolKey, acquired.get());
+                return new Lease(this, acquired.get());
             }
             // The pool entry may have been evicted or replaced between creation and the acquire step.
             // Loop back to retry instead of recursing to keep the stack depth constant.
@@ -499,28 +500,6 @@ public class DeviceClientPool {
         }
     }
 
-    private void touchAndMaybeEvict(String poolKey) {
-        long now = nowMillisSupplier.getAsLong();
-        AtomicReference<PooledClient> retired = new AtomicReference<>();
-        pool.computeIfPresent(poolKey, (key, current) -> {
-            if (current.inUse.get() > 0) {
-                current.touch(now);
-                return current;
-            }
-            if ((now - current.lastUsed) > idleTimeout.toMillis()) {
-                current.retired = true;
-                retired.set(current);
-                return null;
-            }
-            current.touch(now);
-            return current;
-        });
-        PooledClient expired = retired.get();
-        if (expired != null) {
-            closeRetired(expired);
-        }
-    }
-
     private void closeRetired(PooledClient pooled) {
         if (!pooled.closed.compareAndSet(false, true)) {
             return;
@@ -555,15 +534,12 @@ public class DeviceClientPool {
         if (shuttingDown.get()) {
             return;
         }
-        long now = nowMillisSupplier.getAsLong();
+        long now = nowMillis();
         for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
             String key = entry.getKey();
             AtomicReference<PooledClient> retired = new AtomicReference<>();
             pool.computeIfPresent(key, (k, current) -> {
-                if (current.inUse.get() > 0) {
-                    return current;
-                }
-                if ((now - current.lastUsed) > idleTimeout.toMillis()) {
+                if (current.isIdle(now, idleTimeout.toMillis())) {
                     current.retired = true;
                     retired.set(current);
                     return null;
@@ -575,6 +551,10 @@ public class DeviceClientPool {
                 closeRetired(expired);
             }
         }
+    }
+
+    private long nowMillis() {
+        return nowMillisSupplier.getAsLong();
     }
 
     public int getActiveClientCount() {
