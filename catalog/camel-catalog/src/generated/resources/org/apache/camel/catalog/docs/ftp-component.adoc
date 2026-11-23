@@ -279,6 +279,21 @@ a line feed cannot be sent as the argument of one command. The `ftp` and `ftps` 
 `GenericFileOperationFailedException` before they send any command for it, for example when the producer writes a file
 whose `CamelFileName` header has a line break. Remove or replace these characters in the name before the producer.
 
+=== Writing files from an endpoint without a directory
+
+With `jailStartingDirectory` enabled (the default), the producer writes files within the starting directory of the
+endpoint. An endpoint without a directory in its URI, such as `ftp://user@host`, writes into the login directory,
+and an absolute file name, such as `/data/out/report.csv`, is written to that absolute path on the server.
+
+If the file name can come from untrusted input, configure a directory on the endpoint, or reduce the name to a single
+path segment, for example with the `flatten` option, which strips any leading path from the file name:
+
+[source,java]
+----
+from("direct:upload")
+    .to("ftp://user@host/upload?password=secret&flatten=true");
+----
+
 [[FTP-DefaultWhenConsumingFiles]]
 === Default when consuming files
 
