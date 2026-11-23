@@ -143,7 +143,9 @@ public final class GoogleCredentialsHelper {
      *
      * @param  context          the Camel context for resource resolution
      * @param  config           the component configuration
-     * @param  scopes           OAuth scopes to apply
+     * @param  scopes           OAuth scopes to apply to service account and Application Default Credentials; ignored
+     *                          for OAuth 2.0 credentials (client ID/secret) because their granted scopes are fixed at
+     *                          consent time
      * @param  httpTransport    HTTP transport to use (pass null for default)
      * @param  jsonFactory      JSON factory to use (pass null for default)
      * @return                  Google credential for use with legacy API clients
@@ -186,7 +188,9 @@ public final class GoogleCredentialsHelper {
      *
      * @param  context     the Camel context for resource resolution
      * @param  config      the component configuration
-     * @param  scopes      OAuth scopes to apply
+     * @param  scopes      OAuth scopes to apply to service account and Application Default Credentials; ignored for
+     *                     OAuth 2.0 credentials (client ID/secret) because their granted scopes are fixed at consent
+     *                     time
      * @return             Google credential for use with legacy API clients
      * @throws IOException if credentials cannot be loaded
      */
