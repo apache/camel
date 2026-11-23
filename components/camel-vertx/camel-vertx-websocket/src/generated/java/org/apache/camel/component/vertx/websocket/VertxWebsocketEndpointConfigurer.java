@@ -63,6 +63,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "serverOptions": target.getConfiguration().setServerOptions(property(camelContext, io.vertx.core.http.HttpServerOptions.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -109,6 +110,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "serverOptions": return io.vertx.core.http.HttpServerOptions.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -156,6 +158,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "serverOptions": return target.getConfiguration().getServerOptions();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -24,7 +24,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(24);
         props.add("allowOriginHeader");
         props.add("allowedOriginPattern");
         props.add("bridgeErrorHandler");
@@ -48,6 +48,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         props.add("sendToAll");
         props.add("serverOptions");
         props.add("sslContextParameters");
+        props.add("synchronous");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();

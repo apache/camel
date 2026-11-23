@@ -39,6 +39,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "originheaderurl":
         case "originHeaderUrl": target.setOriginHeaderUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "router": target.setRouter(property(camelContext, io.vertx.ext.web.Router.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
@@ -66,6 +67,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "originheaderurl":
         case "originHeaderUrl": return java.lang.String.class;
         case "router": return io.vertx.ext.web.Router.class;
+        case "synchronous": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "vertx": return io.vertx.core.Vertx.class;
@@ -94,6 +96,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "originheaderurl":
         case "originHeaderUrl": return target.getOriginHeaderUrl();
         case "router": return target.getRouter();
+        case "synchronous": return target.isSynchronous();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "vertx": return target.getVertx();
