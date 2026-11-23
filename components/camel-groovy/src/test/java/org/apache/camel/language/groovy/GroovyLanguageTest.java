@@ -77,7 +77,7 @@ public class GroovyLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testValidateExpressionIndexWithLfAndCrLf() throws Exception {
+    public void testValidateExpressionIndexWithLineEnds() throws Exception {
         try (GroovyLanguage g = new GroovyLanguage()) {
             g.setCamelContext(context);
 
