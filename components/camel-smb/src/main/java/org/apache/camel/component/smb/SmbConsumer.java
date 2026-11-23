@@ -91,8 +91,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             return false;
         }
         return GenericFileHelper.isWithinDirectory(
-                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR),
-                FileUtil.compactPath(endpointPath, REMOTE_PATH_SEPARATOR), REMOTE_PATH_SEPARATOR);
+                GenericFileHelper.normalizeRemotePath(absoluteFilePath),
+                GenericFileHelper.normalizeRemotePath(endpointPath), REMOTE_PATH_SEPARATOR);
     }
 
     @Override

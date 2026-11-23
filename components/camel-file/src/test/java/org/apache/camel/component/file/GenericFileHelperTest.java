@@ -35,8 +35,10 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -136,6 +138,55 @@ public class GenericFileHelperTest {
         // a target that still resolves upwards escapes even when no directory boundary is configured
         assertFalse(GenericFileHelper.isWithinDirectory("..", "", '/'));
         assertFalse(GenericFileHelper.isWithinDirectory("../secret.txt", "", '/'));
+    }
+
+    @Test
+    public void normalizeRemotePathResolvesDotsAndDoubleDots() {
+        // basic normalization
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll/file.txt"));
+        assertEquals("poll/sub/file.txt", GenericFileHelper.normalizeRemotePath("poll/./sub/file.txt"));
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll/sub/../file.txt"));
+        assertEquals("/poll/file.txt", GenericFileHelper.normalizeRemotePath("/poll/sub/../file.txt"));
+
+        // leading '..' on a relative path: unresolvable '..' is dropped (no parent to pop)
+        assertEquals("secret.txt", GenericFileHelper.normalizeRemotePath("../secret.txt"));
+        assertEquals("shadow", GenericFileHelper.normalizeRemotePath("../../etc/../shadow"));
+
+        // leading '..' on an absolute path: at the root, '..' is a no-op
+        assertEquals("/etc/shadow", GenericFileHelper.normalizeRemotePath("/../etc/shadow"));
+
+        // null passthrough
+        assertNull(GenericFileHelper.normalizeRemotePath(null));
+    }
+
+    @Test
+    public void normalizeRemotePathDoesNotTreatUriSchemesSpecially() {
+        // URI scheme prefixes must not be preserved or stripped by normalizeRemotePath — they are plain path segments
+        assertEquals("http:/anything", GenericFileHelper.normalizeRemotePath("http:/anything"));
+        assertEquals("classpath:/config", GenericFileHelper.normalizeRemotePath("classpath:/config"));
+        assertEquals("file:/some/path", GenericFileHelper.normalizeRemotePath("file:/some/path"));
+        // double-slash after scheme is two empty segments, only the non-empty 'host' and 'path' are kept
+        assertEquals("https:/example.com/path", GenericFileHelper.normalizeRemotePath("https://example.com/path"));
+    }
+
+    @Test
+    public void normalizeRemotePathDoesNotTreatWindowsDriveLettersSpecially() {
+        // a segment like 'C:' on a remote path is just a file or directory name
+        assertEquals("C:/users/file.txt", GenericFileHelper.normalizeRemotePath("C:/users/file.txt"));
+        assertEquals("C:/file.txt", GenericFileHelper.normalizeRemotePath("C:/users/../file.txt"));
+    }
+
+    @Test
+    public void isWithinStartingDirectoryDoesNotBypassJailForUriSchemeLikePaths() {
+        // A file listed by a remote server with a name resembling a URI scheme must still pass the jail check.
+        // FileUtil.compactPath would return 'http:/anything' unchanged (skipping compaction);
+        // normalizeRemotePath treats it as a plain path so the jail check works correctly.
+        // With directory="" (login directory), only paths that do NOT navigate upward are allowed.
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("http:/anything"), "", '/'));
+        // if the path contains '..', normalizeRemotePath reduces it and the jail check can catch escapes
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("http:/../etc/passwd"), "/poll", '/'));
     }
 
     @Test

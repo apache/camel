@@ -572,15 +572,17 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
     }
 
     private static void jailedCheck(String answer, String baseDir) {
-        // check for file must be within starting directory (need to compact
+        // check for file must be within starting directory (need to normalize
         // first as the name can be using relative paths via ../ etc)
-        String compatchAnswer = FileUtil.compactPath(answer);
-        String compatchBaseDir = FileUtil.compactPath(baseDir);
-        if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
+        // Use normalizeRemotePath which does not give special meaning to URI
+        // schemes or Windows drive letters that are irrelevant to remote paths
+        String normalizedAnswer = GenericFileHelper.normalizeRemotePath(answer);
+        String normalizedBaseDir = GenericFileHelper.normalizeRemotePath(baseDir);
+        if (!GenericFileHelper.isWithinDirectory(normalizedAnswer, normalizedBaseDir)) {
             throw new IllegalArgumentException(
-                    "Cannot write file with name: " + compatchAnswer
+                    "Cannot write file with name: " + normalizedAnswer
                                                + " as the filename is jailed to the starting directory: "
-                                               + compatchBaseDir);
+                                               + normalizedBaseDir);
         }
     }
 

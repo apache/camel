@@ -30,7 +30,6 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,9 +80,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             return false;
         }
         String directory = getEndpoint().getConfiguration().getDirectory();
-        String compactDir = directory != null ? FileUtil.compactPath(directory, REMOTE_PATH_SEPARATOR) : "";
+        String normalizedDir = directory != null ? GenericFileHelper.normalizeRemotePath(directory) : "";
         return GenericFileHelper.isWithinDirectory(
-                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR), compactDir, REMOTE_PATH_SEPARATOR);
+                GenericFileHelper.normalizeRemotePath(absoluteFilePath), normalizedDir, REMOTE_PATH_SEPARATOR);
     }
 
     @Override

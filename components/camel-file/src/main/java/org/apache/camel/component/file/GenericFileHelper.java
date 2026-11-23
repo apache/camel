@@ -27,6 +27,9 @@ import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -225,6 +228,68 @@ public final class GenericFileHelper {
             dir = dir.substring(0, dir.length() - 1);
         }
         return compactTarget.equals(dir) || compactTarget.startsWith(dir + separator);
+    }
+
+    /**
+     * Normalizes a remote path by resolving {@code .} and {@code ..} segments lexically, using {@code /} as the
+     * separator, without any special handling of URI schemes (such as {@code http:}, {@code file:} or
+     * {@code classpath:}) or Windows drive letters. Remote file paths from an FTP, SFTP or SMB server are plain
+     * hierarchical paths, not URIs, so those prefixes must not be given special meaning.
+     *
+     * <p>
+     * Unlike {@link org.apache.camel.util.FileUtil#compactPath(String, char)}, this method:
+     * <ul>
+     * <li>always uses {@code /} as the separator,</li>
+     * <li>treats every path segment identically, with no scheme or drive-letter exceptions, and</li>
+     * <li>preserves a leading {@code /} for absolute paths.</li>
+     * </ul>
+     *
+     * @param  path the remote path to normalize; may be {@code null}
+     * @return      the normalized path, or {@code null} if the input is {@code null}
+     */
+    public static String normalizeRemotePath(String path) {
+        if (path == null) {
+            return null;
+        }
+
+        boolean absolute = path.startsWith("/");
+        boolean trailingSlash = path.endsWith("/") && path.length() > 1;
+
+        Deque<String> stack = new ArrayDeque<>();
+        for (String part : path.split("/", -1)) {
+            if (part.isEmpty() || part.equals(".")) {
+                // skip empty segments (from leading/trailing/double slashes) and '.' segments
+            } else if (part.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+                // if the stack is empty and the path is absolute, '..' at the root is a no-op;
+                // for relative paths an unresolved '..' is kept by not pushing anything
+            } else {
+                stack.push(part);
+            }
+        }
+
+        if (stack.isEmpty()) {
+            return absolute ? "/" : "";
+        }
+
+        StringBuilder sb = new StringBuilder(path.length());
+        if (absolute) {
+            sb.append('/');
+        }
+        boolean first = true;
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
+            if (!first) {
+                sb.append('/');
+            }
+            sb.append(it.next());
+            first = false;
+        }
+        if (trailingSlash) {
+            sb.append('/');
+        }
+        return sb.toString();
     }
 
     /**
