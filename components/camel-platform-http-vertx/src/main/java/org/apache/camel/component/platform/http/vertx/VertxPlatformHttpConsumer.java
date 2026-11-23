@@ -450,11 +450,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
         Context context = vertx.getOrCreateContext();
         Promise<Void> done = Promise.promise();
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
-            return null;
-        }, false).onFailure(done::tryFail);
+        try {
+            vertx.executeBlocking(() -> {
+                createUoW(exchange);
+                getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+                return null;
+            }, false).onFailure(done::tryFail);
+        } catch (Exception e) {
+            done.tryFail(e);
+        }
         return done.future();
     }
 

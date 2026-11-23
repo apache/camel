@@ -54,7 +54,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.knative.KnativeEnvironmentSupport.sourceEndpoint;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A knative-http consumer route that includes an asynchronous step must not hold the Vert.x worker thread while waiting
@@ -157,8 +156,9 @@ class KnativeHttpSharedVertxWorkerPoolTest {
             }
 
             // wait until all requests have arrived at the async step — deadlocks if workers are held
-            assertTrue(arrivedLatch.await(10, TimeUnit.SECONDS),
-                    "Timed out waiting for all requests to arrive at the async step");
+            assertThat(arrivedLatch.await(10, TimeUnit.SECONDS))
+                    .as("Timed out waiting for all requests to arrive at the async step")
+                    .isTrue();
             assertThat(waiting).hasSize(WORKERS);
 
             // complete all waiting callbacks on a Vert.x worker — fails with the old code
