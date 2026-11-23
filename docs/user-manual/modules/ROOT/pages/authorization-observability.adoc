@@ -157,12 +157,15 @@ YAML::
                           relation: reader
                           object: "document:${header.documentId}"
                     - filter:
-                        simple: "${header.CamelOpenFgaAllowed} == true"
+                        expression:
+                          simple:
+                            expression: "${header.CamelOpenFgaAllowed} == true"
                         steps:
-                          - to: direct:serveDocument
+                          - to:
+                              uri: direct:serveDocument
 ----
 ====
 
-See xref:components::spiffe-component.adoc[SPIFFE] for the verified TLS session
-requirements, xref:components::opa-component.adoc[OPA] for input selection, and
-xref:components::openfga-component.adoc[OpenFGA] for subject and model configuration.
+See xref:next@components::spiffe-component.adoc[SPIFFE] for the verified TLS session
+requirements, xref:next@components::opa-component.adoc[OPA] for input selection, and
+xref:next@components::openfga-component.adoc[OpenFGA] for subject and model configuration.

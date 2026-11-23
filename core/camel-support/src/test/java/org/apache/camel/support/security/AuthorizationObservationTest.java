@@ -19,6 +19,7 @@ package org.apache.camel.support.security;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -146,7 +147,7 @@ class AuthorizationObservationTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T proxy(Class<T> type, java.util.function.Function<String, Object> invocation) {
+    private static <T> T proxy(Class<T> type, Function<String, Object> invocation) {
         return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type },
                 (object, method, args) -> invocation.apply(method.getName()));
     }

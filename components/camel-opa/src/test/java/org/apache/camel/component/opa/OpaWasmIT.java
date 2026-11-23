@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -39,7 +40,10 @@ import org.apache.camel.component.opa.security.OpaSecurityPolicy;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.test.infra.opa.services.OpaWasmBundleBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -147,22 +151,18 @@ public class OpaWasmIT extends CamelTestSupport {
         return repository.stream().toList();
     }
 
-    /**
-     * In {@code wasm} mode the policy is evaluated in-process, so there is no OPA server to probe and no producer
-     * health check is registered (CAMEL-24743).
-     */
     @Test
-    void observesActualWasmPoolBorrowWithoutCreatingAnotherSpan() throws Exception {
-        var events = new java.util.ArrayList<org.apache.camel.support.security.AuthorizationDecisionEvent>();
-        var observer = new org.apache.camel.support.EventNotifierSupport() {
+    void wasmEvaluationPublishesOneDecisionEventWithItsPoolWait() throws Exception {
+        var events = new ArrayList<AuthorizationDecisionEvent>();
+        var observer = new EventNotifierSupport() {
             @Override
-            public boolean isEnabled(org.apache.camel.spi.CamelEvent event) {
-                return event instanceof org.apache.camel.support.security.AuthorizationDecisionEvent;
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof AuthorizationDecisionEvent;
             }
 
             @Override
-            public void notify(org.apache.camel.spi.CamelEvent event) {
-                events.add((org.apache.camel.support.security.AuthorizationDecisionEvent) event);
+            public void notify(CamelEvent event) {
+                events.add((AuthorizationDecisionEvent) event);
             }
         };
         context.getManagementStrategy().addEventNotifier(observer);
@@ -171,13 +171,17 @@ public class OpaWasmIT extends CamelTestSupport {
             assertThat(out.getException()).isNull();
             assertThat(events).hasSize(1);
             assertThat(events.getFirst().getEngine())
-                    .isEqualTo(org.apache.camel.support.security.AuthorizationDecisionEvent.Engine.OPA_WASM);
+                    .isEqualTo(AuthorizationDecisionEvent.Engine.OPA_WASM);
             assertThat(events.getFirst().getPoolWaitNanos()).isNotNegative();
         } finally {
             context.getManagementStrategy().removeEventNotifier(observer);
         }
     }
 
+    /**
+     * In {@code wasm} mode the policy is evaluated in-process, so there is no OPA server to probe and no producer
+     * health check is registered (CAMEL-24743).
+     */
     @Test
     void registersTheCheckForTheRestRouteButNotTheWasmRoute() {
         List<HealthCheck> checks = producerChecks();
