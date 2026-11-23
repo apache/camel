@@ -207,6 +207,28 @@ public class GenericFileHelperTest {
     }
 
     @Test
+    public void remotePathWithBackslashAndParentSegmentIsAmbiguous() {
+        // the FTP client on Linux compacts a path on / only, so a\b is one segment that one .. removes, and a server
+        // may take a\b as one name too, but a server on Windows takes it as two segments
+        assertTrue(GenericFileHelper.isAmbiguousRemotePath("poll/a\\b/../../secret.txt"));
+        assertTrue(GenericFileHelper.isAmbiguousRemotePath("a\\b/../../secret.txt"));
+        // the FTP client on Windows compacts a path on \ only, so poll/a/b is one segment that one .. removes
+        assertTrue(GenericFileHelper.isAmbiguousRemotePath("poll/a/b\\..\\secret.txt"));
+        assertTrue(GenericFileHelper.isAmbiguousRemotePath("sub\\..\\x.txt"));
+        // a backslash without a .. segment, and a .. segment without a backslash
+        assertFalse(GenericFileHelper.isAmbiguousRemotePath("poll/a\\b.txt"));
+        assertFalse(GenericFileHelper.isAmbiguousRemotePath("poll/a\\b/c.txt"));
+        assertFalse(GenericFileHelper.isAmbiguousRemotePath("poll/a/../b.txt"));
+        assertFalse(GenericFileHelper.isAmbiguousRemotePath("poll/a\\b..c.txt"));
+        assertFalse(GenericFileHelper.isAmbiguousRemotePath(null));
+
+        // a backslash separates segments, as / does, when the backslashes are replaced by / before the path is used
+        assertTrue(GenericFileHelper.isWithinRemoteDirectory("poll/a\\b/../../poll/secret.txt", "poll"));
+        assertTrue(GenericFileHelper.isWithinRemoteDirectory("poll/sub\\..\\x.txt", "poll"));
+        assertFalse(GenericFileHelper.isWithinRemoteDirectory("poll/a\\..\\..\\b.txt", "poll"));
+    }
+
+    @Test
     public void pathWithoutLinksIsBelowTheDirectoryWithoutResolving(@TempDir Path tmp) throws IOException {
         Path inbox = Files.createDirectories(tmp.resolve("inbox"));
         Files.createFile(inbox.resolve("hello.txt"));

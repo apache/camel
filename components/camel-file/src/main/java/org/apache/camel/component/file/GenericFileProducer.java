@@ -435,18 +435,35 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         return value;
     }
 
-    private static void jailedCheck(String answer, String baseDir) {
+    private void jailedCheck(String answer, String baseDir) {
         // check for file must be within starting directory (need to compact
         // first as the name can be using relative paths via ../ etc), the way
         // the file system or the remote server resolves the path
         String compatchAnswer = GenericFileHelper.compactPathForContainment(answer, File.separatorChar);
         String compatchBaseDir = GenericFileHelper.compactPathForContainment(baseDir, File.separatorChar);
-        if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
+        boolean within;
+        if (endpoint.getConfiguration().needToNormalize()) {
+            within = GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir);
+        } else {
+            // the path is used on a remote server, which may take a backslash in it as part of a name, unless the
+            // backslashes are replaced by / before the path is used
+            within = GenericFileHelper.isWithinRemoteDirectory(answer, baseDir)
+                    && (isBackslashNormalized() || !GenericFileHelper.isAmbiguousRemotePath(answer));
+        }
+        if (!within) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + compatchAnswer
                                                + " as the filename is jailed to the starting directory: "
                                                + compatchBaseDir);
         }
+    }
+
+    /**
+     * Whether a backslash in the name of a file to write is replaced by / before the name is used, so that it separates
+     * segments as / does. Only consulted for an endpoint whose names are not normalized for the platform Camel runs on.
+     */
+    protected boolean isBackslashNormalized() {
+        return false;
     }
 
     private String evaluateName(Exchange exchange, Expression expression, Object value) {
