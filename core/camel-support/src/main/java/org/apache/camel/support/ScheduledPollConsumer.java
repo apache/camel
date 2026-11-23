@@ -309,9 +309,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                     cause = t;
                     done = true;
                 }
+            } catch (Error error) {
+                cause = error;
+                done = true;
             }
 
-            if (cause != null && isRunAllowed()) {
+            if (cause != null && isRunAllowed() && !(cause instanceof Error)) {
                 // let exception handler deal with the caused exception
                 // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
                 try {
@@ -363,6 +366,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             firstPollDone = true;
         } finally {
             stateLock.unlock();
+        }
+
+        if (cause instanceof Error error) {
+            // the JVM may be in an unknown state, so stop polling for good: run() logs and rethrows this,
+            // and as no further poll resets errorCounter/lastError, the health check stays DOWN
+            throw error;
         }
 
         LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter.longValue(),
