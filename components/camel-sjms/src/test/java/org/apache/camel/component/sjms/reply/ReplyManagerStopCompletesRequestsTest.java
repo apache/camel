@@ -224,11 +224,13 @@ class ReplyManagerStopCompletesRequestsTest {
                 evicted.incrementAndGet();
             }
         });
-        // the first timeout task holds the only thread, the second fills the queue, the third is rejected
+        // the first timeout task holds the only thread, the second fills the queue, the third is rejected. Only the
+        // first task to run on the executor thread blocks: a task that runs in the timeout checker thread (the
+        // rejected one) must not block, or the checker could not evict the remaining entries
         AtomicBoolean first = new AtomicBoolean();
         CountDownLatch release = new CountDownLatch(1);
         Runnable blockOnce = () -> {
-            if (first.compareAndSet(false, true)) {
+            if (Thread.currentThread().getName().contains("OnTimeoutAbort") && first.compareAndSet(false, true)) {
                 awaitLatch(release);
             }
         };
