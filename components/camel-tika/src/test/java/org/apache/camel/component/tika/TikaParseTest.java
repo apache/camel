@@ -17,11 +17,17 @@
 package org.apache.camel.component.tika;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -31,12 +37,17 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.tika.config.loader.TikaLoader;
 import org.apache.tika.detect.universal.UniversalEncodingDetector;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.XHTMLContentHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -221,6 +232,87 @@ public class TikaParseTest extends CamelTestSupport {
         assertEmptyTitle(html);
     }
 
+    @Test
+    public void testHtmlParseWithInvalidXmlCharactersInMetadata() {
+        String input
+                = "<html><head><title>Test</title><meta name=\"description\" content=\"Invalid\u0000Meta\"/></head><body><p>Hello World</p></body></html>";
+        String html = template.requestBody("direct:html", input.getBytes(StandardCharsets.UTF_8), String.class);
+        assertThat(html, containsString("<title>Test</title>"));
+        assertThat(html, containsString("Invalid\uFFFDMeta"));
+        assertThat(html, containsString("Hello World"));
+        assertThat(html, not(containsString("\0")));
+    }
+
+    @Test
+    public void testXmlParseWithInvalidXmlCharactersInMetadata() {
+        String input
+                = "<html><head><title>Test</title><meta name=\"description\" content=\"Invalid\u0000Meta\"/></head><body><p>Hello World</p></body></html>";
+        String xml = template.requestBody("direct:xml", input.getBytes(StandardCharsets.UTF_8), String.class);
+        assertThat(xml, containsString("<title>Test</title>"));
+        assertThat(xml, containsString("Invalid\uFFFDMeta"));
+        assertThat(xml, containsString("Hello World"));
+        assertThat(xml, not(containsString("\0")));
+    }
+
+    @Test
+    public void testCustomParserWithInvalidXmlCharactersForXml() throws Exception {
+        TikaEndpoint endpoint = (TikaEndpoint) context.getEndpoint("tika:parse?tikaParseOutputFormat=xml");
+        Parser parser = createParserWithInvalidCharacters();
+
+        TikaProducer producer = new TikaProducer(endpoint, parser);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new ByteArrayInputStream(new byte[0]));
+        producer.process(exchange);
+
+        ByteArrayOutputStream result = (ByteArrayOutputStream) exchange.getMessage().getBody();
+        String output = result.toString(StandardCharsets.UTF_8);
+        assertThat(output, containsString("invalid\uFFFDattribute"));
+        assertThat(output, containsString("invalid\uFFFDtext"));
+        assertThat(output, not(containsString("\0")));
+    }
+
+    @Test
+    public void testCustomParserWithInvalidXmlCharactersForHtml() throws Exception {
+        TikaEndpoint endpoint = (TikaEndpoint) context.getEndpoint("tika:parse?tikaParseOutputFormat=html");
+        Parser parser = createParserWithInvalidCharacters();
+
+        TikaProducer producer = new TikaProducer(endpoint, parser);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new ByteArrayInputStream(new byte[0]));
+        producer.process(exchange);
+
+        ByteArrayOutputStream result = (ByteArrayOutputStream) exchange.getMessage().getBody();
+        String output = result.toString(StandardCharsets.UTF_8);
+        assertThat(output, containsString("invalid\uFFFDattribute"));
+        assertThat(output, containsString("invalid\uFFFDtext"));
+        assertThat(output, not(containsString("\0")));
+    }
+
+    private Parser createParserWithInvalidCharacters() {
+        return new Parser() {
+            @Override
+            public Set<MediaType> getSupportedTypes(ParseContext context) {
+                return Set.of(MediaType.APPLICATION_XML);
+            }
+
+            @Override
+            public void parse(
+                    TikaInputStream stream, ContentHandler handler, Metadata metadata, ParseContext context)
+                    throws IOException, SAXException, TikaException {
+                XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, metadata);
+                xhtml.startDocument();
+                AttributesImpl attrs = new AttributesImpl();
+                attrs.addAttribute("", "content", "content", "CDATA", "invalid\u0000attribute");
+                xhtml.startElement(XHTMLContentHandler.XHTML, "meta", "meta", attrs);
+                xhtml.endElement(XHTMLContentHandler.XHTML, "meta", "meta");
+                xhtml.startElement("p");
+                xhtml.characters("invalid\u0000text");
+                xhtml.endElement("p");
+                xhtml.endDocument();
+            }
+        };
+    }
+
     private static void assertEmptyTitle(String html) {
         // TIKA-725: browsers do not handle <title/>, so the empty title must be written with an end tag
         assertThat(html, containsString("<title></title>"));
@@ -276,6 +368,7 @@ public class TikaParseTest extends CamelTestSupport {
                 from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
                 from("direct:html").to("tika:parse?tikaParseOutputFormat=html");
+                from("direct:xml").to("tika:parse?tikaParseOutputFormat=xml");
                 from("direct:start5")
                         .to("tika:parse?tikaParseOutputFormat=text&tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
