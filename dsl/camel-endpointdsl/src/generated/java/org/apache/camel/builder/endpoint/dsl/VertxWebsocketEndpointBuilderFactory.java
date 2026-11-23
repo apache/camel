@@ -523,6 +523,42 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * When consumeAsClient is set to true, whether the received messages
+         * are routed in parallel, on the threads of the Vert.x worker pool, in
+         * any order. By default (false), the messages of the WebSocket are
+         * routed one after the other, in the order they are received.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder parallelProcessing(boolean parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true, whether the received messages
+         * are routed in parallel, on the threads of the Vert.x worker pool, in
+         * any order. By default (false), the messages of the WebSocket are
+         * routed one after the other, in the order they are received.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder parallelProcessing(String parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
+            return this;
+        }
+        /**
          * To use an existing vertx router for the HTTP server.
          * 
          * The option is a: <code>io.vertx.ext.web.Router</code> type.

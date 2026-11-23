@@ -55,6 +55,8 @@ public class VertxWebsocketConfiguration {
     private int reconnectInterval = 1000;
     @UriParam(label = "consumer")
     private int maxReconnectAttempts;
+    @UriParam(label = "consumer,advanced")
+    private boolean parallelProcessing;
     @UriParam(label = "producer,advanced")
     private WebSocketClientOptions clientOptions;
     @UriParam(label = "producer")
@@ -175,6 +177,19 @@ public class VertxWebsocketConfiguration {
      */
     public void setMaxReconnectAttempts(int maxReconnectAttempts) {
         this.maxReconnectAttempts = maxReconnectAttempts;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    /**
+     * When consumeAsClient is set to true, whether the received messages are routed in parallel, on the threads of the
+     * Vert.x worker pool, in any order. By default (false), the messages of the WebSocket are routed one after the
+     * other, in the order they are received.
+     */
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
     }
 
     /**
