@@ -564,6 +564,18 @@ current directory between two uploads is the directory of the last file, not the
 example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
 must change directory itself.
 
+=== camel-ftp, camel-sftp, camel-mina-sftp - an absolute file name is refused when the endpoint has no directory
+
+With the default `jailStartingDirectory=true`, a producer whose endpoint has no directory (for example
+`+sftp://user@host+`, which uploads into the home directory of the login) now refuses an absolute file name: a name
+starting with `/` or `\`, or with a drive such as `C:/`, `C:\` or `C:` alone, which a server on Windows takes as
+absolute (on other servers such a name was written as a relative name). The exchange fails with an
+`IllegalArgumentException` stating that the filename is jailed to the starting directory. A name such as `a:b.txt` is
+not refused.
+
+When the endpoint has a directory, an absolute name is relative to it, as before. To write files at absolute paths
+from an endpoint without a directory, set `jailStartingDirectory=false` on the endpoint.
+
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
