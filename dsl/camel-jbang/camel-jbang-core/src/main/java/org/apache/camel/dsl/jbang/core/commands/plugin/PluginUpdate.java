@@ -53,9 +53,9 @@ import org.eclipse.aether.version.Version;
                            "  camel plugin update forage",
                            "  camel plugin update --dry-run",
                            "",
-                           "Only a community plugin whose release camel plugin add selected is changed. A plugin",
-                           "added with --version or --gav, a plugin of the Apache Camel project, and a plugin",
-                           "added before the CLI selected releases are reported, and kept as they are." })
+                           "Only a community plugin whose release camel plugin add selected is changed.",
+                           "A plugin added with --version or --gav, a plugin of the Apache Camel project,",
+                           "and a plugin added before the CLI selected releases are only reported." })
 public class PluginUpdate extends PluginBaseCommand {
 
     private static final GenericVersionScheme VERSION_SCHEME = new GenericVersionScheme();
