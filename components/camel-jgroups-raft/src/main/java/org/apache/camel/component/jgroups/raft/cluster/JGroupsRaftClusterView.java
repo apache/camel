@@ -25,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
-import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +101,7 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
         // the node may already be the leader (elected before this view started), and then no role change is notified
         roleLock.lock();
         try {
-            leadershipChanged(Role.Leader.name().equals(handle.raft().role()));
+            leadershipChanged(handle.isLeader());
         } finally {
             roleLock.unlock();
         }
