@@ -54,6 +54,8 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
     private String user;
     @Metadata(label = "security", security = "secret")
     private String password;
+    @Metadata(label = "security", security = "secret")
+    private String apiKey;
     @Metadata(label = "security")
     private boolean enableSSL;
     @Metadata(label = "security")
@@ -86,11 +88,17 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
         config.setUser(this.getUser());
         config.setEnableSSL(this.isEnableSSL());
         config.setPassword(this.getPassword());
+        config.setApiKey(this.getApiKey());
         config.setEnableSniffer(this.isEnableSniffer());
         config.setSnifferInterval(this.getSnifferInterval());
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
         config.setSslContextParameters(this.getSslContextParameters());
+
+        if (config.getApiKey() != null && config.getUser() != null) {
+            throw new IllegalArgumentException(
+                    "Both apiKey and user are configured on the opensearch component: use either apiKey, or user and password");
+        }
 
         Endpoint endpoint = new OpensearchEndpoint(uri, this, config, client, openSearchClient);
         setProperties(endpoint, parameters);
@@ -200,6 +208,19 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * API key to authenticate with, sent in the Authorization header instead of a user and password: the token
+     * OpenSearch returns when the key is created (it starts with os_), as is. API keys need OpenSearch 3.7 or newer.
+     * The key is only sent to the configured hosts and the nodes found by the sniffer.
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public boolean isEnableSSL() {
