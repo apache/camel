@@ -55,6 +55,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * {@code tokenAndApiOnSameHostSucceeds} is an end-to-end sanity check for the same-host scenario.
  * {@code tokenClientCloseDoesNotShutDownEndpointPool} directly verifies the ownership invariant by simulating the
  * configurer lifecycle and confirming that closing the token client leaves the endpoint's pool functional.
+ * {@code oauth2WithComponentManagerDoesNotShutDownSharedPool} exercises the real
+ * {@link HttpEndpoint#createHttpClient()} path with a component-level shared connection manager to verify the
+ * endpoint's post-configurer override in that case.
  * </p>
  */
 class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
@@ -160,50 +163,50 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
     }
 
     /**
-     * When the HTTP component is configured with a shared {@link PoolingHttpClientConnectionManager}, both endpoints
-     * that use OAuth2 must NOT close that manager when their token client is closed. Stopping one OAuth2 endpoint must
-     * leave the component's pool — and any other endpoint using it — fully functional.
+     * When the HTTP component is configured with a shared {@link PoolingHttpClientConnectionManager} (via
+     * {@link HttpComponent#setClientConnectionManager}), stopping an OAuth2 endpoint must NOT close that manager.
      * <p>
-     * This test sets a component-level connection manager, creates two endpoints that share it (one with OAuth2, one
-     * plain), stops the OAuth2 endpoint, and verifies the plain endpoint can still lease connections from the pool.
+     * This test exercises the real {@link HttpEndpoint#createHttpClient()} path: it sets a component-level connection
+     * manager, creates an OAuth2 endpoint through the Camel context, calls {@code getHttpClient()} to trigger client
+     * creation, stops the endpoint, and asserts the shared manager is still functional.
+     * <p>
+     * This catches the regression where {@link OAuth2ClientConfigurer#configureHttpClient} resets
+     * {@code connManagerShared=false} and {@code HttpEndpoint.createHttpClient()} must set it back to {@code true}
+     * after the configurer loop when the endpoint uses the component's manager.
      */
     @Test
     void oauth2WithComponentManagerDoesNotShutDownSharedPool() throws Exception {
-        // A shared component-level manager (simulates the default: HttpComponent creates one pool for all endpoints)
+        // A component-level connection manager shared across all endpoints
+        // (only exists when explicitly set via HttpComponent.setClientConnectionManager).
         var componentManager = new PoolingHttpClientConnectionManager();
+        context.getComponent("http", HttpComponent.class).setClientConnectionManager(componentManager);
 
-        // Apply the OAuth2 configurer as if it were an endpoint using a component-shared manager.
-        // In this case connManagerShared=true was set by createHttpClient() AFTER the configurer ran,
-        // overriding the configurer's reset to false.  Simulate exactly that order.
-        var builder = HttpClientBuilder.create();
-        builder.setConnectionManager(componentManager);
+        String base = "http://localhost:" + localServer.getLocalPort();
+        // Create an OAuth2 endpoint through the Camel context — this exercises the real
+        // HttpComponent.createEndpoint() / HttpEndpoint.createHttpClient() path.
+        HttpEndpoint ep = context.getEndpoint(
+                base + "/items?oauth2ClientId=" + CLIENT_ID
+                                              + "&oauth2ClientSecret=" + CLIENT_SECRET
+                                              + "&oauth2TokenEndpoint=" + base + "/token",
+                HttpEndpoint.class);
 
-        var configurer = new OAuth2ClientConfigurer(
-                CLIENT_ID, CLIENT_SECRET,
-                "http://localhost:" + localServer.getLocalPort() + "/token",
-                null, null, false, 0L, 0L, false);
-        configurer.start();
-        configurer.configureHttpClient(builder); // sets true, builds token client, resets to false
+        // Trigger createHttpClient() — the endpoint's client is built here, running the OAuth2
+        // configurer and then the post-configurer shared-manager override in HttpEndpoint.
+        ep.getHttpClient();
 
-        // createHttpClient() sets shared=true AFTER the configurer loop — simulate that
-        builder.setConnectionManagerShared(true);
-        var endpointClient = builder.build(); // endpoint's own client, does NOT own the manager
+        // Stop the endpoint — closes the endpoint's HttpClient but must NOT close the
+        // component's shared manager, because HttpEndpoint.doStop() only closes the manager
+        // when it differs from the component's manager.
+        ep.stop();
 
-        try {
-            // Stop the OAuth2 configurer — closes the token client; must not touch the shared pool
-            configurer.stop();
+        // The component's pool must still be functional after the OAuth2 endpoint was stopped.
+        var route = new HttpRoute(new HttpHost("localhost", 8080));
+        assertDoesNotThrow(
+                () -> componentManager.lease("plain", route, null),
+                "Stopping an OAuth2 endpoint must not shut down the component's shared connection pool")
+                .cancel();
 
-            // The component's pool must still be functional: a "plain" endpoint using the same manager
-            // must be able to lease connections.
-            var route = new HttpRoute(new HttpHost("localhost", 8080));
-            assertDoesNotThrow(
-                    () -> componentManager.lease("plain-endpoint", route, null),
-                    "Stopping an OAuth2 endpoint must not shut down the component's shared connection pool")
-                    .cancel();
-        } finally {
-            endpointClient.close();     // must not close the manager (connManagerShared=true)
-            componentManager.close();   // component shuts down its own manager on stop
-        }
+        componentManager.close();
     }
 
     @Override
