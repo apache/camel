@@ -42,7 +42,7 @@ public final class FtpUtils {
     public static String extractDirNameFromAbsolutePath(String path) {
         // default is unix so try with '/'
         // otherwise force File.separator
-        if (path.endsWith("/") || path.endsWith("\\")) {
+        while (path.length() > 1 && (path.endsWith("/") || path.endsWith("\\"))) {
             path = path.substring(0, path.length() - 1);
         }
         return FileUtil.stripPath(path);
