@@ -24,6 +24,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "certificatepath":
@@ -67,6 +69,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "certificatepath":
@@ -106,6 +110,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return target.getApiKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "certificatepath":

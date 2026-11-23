@@ -262,6 +262,25 @@ public interface ElasticsearchComponentBuilderFactory {
         }
     
         /**
+         * API key to authenticate with, sent in the Authorization header
+         * instead of a user and password. Either the encoded key as
+         * Elasticsearch shows it when the key is created, or the id and the key
+         * separated by a colon (id:key). The key is only sent to the configured
+         * hosts and the nodes found by the sniffer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchComponentBuilder apiKey(java.lang.String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+    
+        /**
          * The path of the self-signed certificate to use to access to
          * Elasticsearch.
          * 
@@ -383,6 +402,7 @@ public interface ElasticsearchComponentBuilderFactory {
             case "enableSniffer": ((ElasticsearchComponent) component).setEnableSniffer((boolean) value); return true;
             case "sniffAfterFailureDelay": ((ElasticsearchComponent) component).setSniffAfterFailureDelay((int) value); return true;
             case "snifferInterval": ((ElasticsearchComponent) component).setSnifferInterval((int) value); return true;
+            case "apiKey": ((ElasticsearchComponent) component).setApiKey((java.lang.String) value); return true;
             case "certificatePath": ((ElasticsearchComponent) component).setCertificatePath((java.lang.String) value); return true;
             case "enableSSL": ((ElasticsearchComponent) component).setEnableSSL((boolean) value); return true;
             case "password": ((ElasticsearchComponent) component).setPassword((java.lang.String) value); return true;

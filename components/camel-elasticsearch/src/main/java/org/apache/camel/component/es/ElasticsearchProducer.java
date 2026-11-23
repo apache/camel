@@ -519,7 +519,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         }
     }
 
-    private RestClient createClient() {
+    RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
         // the credentials provider reads the nodes from the client, as the sniffer can change them
         final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
@@ -530,6 +530,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
             if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+            if (configuration.getApiKey() != null) {
+                httpClientBuilder.addInterceptorLast(
+                        new NodeScopedApiKeyInterceptor(configuration.getApiKey(), () -> nodeHosts(restClientRef.get())));
             }
             if (configuration.getSslContextParameters() != null) {
                 // Use SSLContextParameters (allows configuring named groups, signature schemes, cipher suites and
