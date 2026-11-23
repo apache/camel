@@ -37,6 +37,8 @@ import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Default {@link RestModelConverters} implementation backed by Swagger's model converters.
+ *
+ * @since 4.24.0
  */
 @SuppressWarnings("rawtypes")
 public class DefaultRestModelConverters implements RestModelConverters {
@@ -44,6 +46,11 @@ public class DefaultRestModelConverters implements RestModelConverters {
     private final ModelConverters model30Converters;
     private final ModelConverters model31Converters;
 
+    /**
+     * Creates the default converter configuration for OpenAPI 3.0 and 3.1 documents.
+     *
+     * @since 4.24.0
+     */
     public DefaultRestModelConverters() {
         model31Converters = new ModelConverters(true);
         model31Converters.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver(true)));

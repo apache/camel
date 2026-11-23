@@ -24,6 +24,8 @@ import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Converts Java model classes to OpenAPI schemas used by the REST DSL OpenAPI document generator.
+ *
+ * @since 4.24.0
  */
 public interface RestModelConverters {
 
@@ -31,6 +33,7 @@ public interface RestModelConverters {
      * Adds a Swagger model converter to the conversion chain.
      *
      * @param converter the converter to add
+     * @since           4.24.0
      */
     void addConverter(ModelConverter converter);
 
@@ -38,6 +41,7 @@ public interface RestModelConverters {
      * Excludes classes in the given package (and its subpackages) from model conversion.
      *
      * @param pkg the package name to skip
+     * @since     4.24.0
      */
     void addPackageToSkip(String pkg);
 
@@ -45,6 +49,7 @@ public interface RestModelConverters {
      * Excludes the given class from model conversion.
      *
      * @param cls the fully-qualified class name to skip
+     * @since     4.24.0
      */
     void addClassToSkip(String cls);
 
@@ -54,6 +59,7 @@ public interface RestModelConverters {
      * @param  oasDocument the OpenAPI document being generated
      * @param  clazz       the model class
      * @return             the generated schemas, or {@code null} when the class does not need a schema
+     * @since              4.24.0
      */
     List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz);
 }

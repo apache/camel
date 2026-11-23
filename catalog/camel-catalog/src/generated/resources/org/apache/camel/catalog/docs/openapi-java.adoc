@@ -190,8 +190,9 @@ restConfiguration().component("netty-http")
 == Custom model converters
 
 When Camel generates an OpenAPI document from REST DSL model classes, it looks in the Camel Registry for a bean
-implementing `org.apache.camel.openapi.RestModelConverters`. When exactly one such bean is registered, Camel uses
-that instance. When no implementation is registered, Camel uses `DefaultRestModelConverters`.
+implementing `org.apache.camel.openapi.RestModelConverters`. When exactly one matching bean is registered, Camel uses
+that instance. When no implementation is found, or multiple matching beans are registered and the Registry cannot select
+one implementation, Camel silently falls back to `DefaultRestModelConverters`. No warning is logged for this fallback.
 
 The default implementation can be configured with additional Swagger `ModelConverter` instances and with package-name
 prefixes or fully-qualified class names that should be omitted from generated schemas. Register the configured instance

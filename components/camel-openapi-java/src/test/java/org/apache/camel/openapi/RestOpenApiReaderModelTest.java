@@ -16,13 +16,25 @@
  */
 package org.apache.camel.openapi;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.JavaType;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.SpecVersion;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.openapi.model.PackageToSkipModel;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,6 +45,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderModelTest extends CamelTestSupport {
 
@@ -68,6 +82,9 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
                         .to("bean:userService?method=listUsers")
 
                         .post().description("Update all users").type(User[].class).to("bean:userService?method=updateAllUsers");
+
+                rest("/complex")
+                        .post().type(PackageToSkipModel.class).to("bean:userService");
             }
         };
     }
@@ -129,21 +146,102 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testCustomRestModelConvertersFromRegistry() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.0", "3.1" })
+    public void testCustomRestModelConvertersFromRegistry(String version) throws Exception {
         DefaultRestModelConverters converters = new DefaultRestModelConverters();
         converters.addClassToSkip(User.class.getName());
         context.getRegistry().bind("restModelConverters", converters);
 
-        BeanConfig config = new BeanConfig();
-        config.setVersion("3.0");
-        RestOpenApiReader reader = new RestOpenApiReader();
-
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = readOpenApi(version);
 
         assertNotNull(openApi);
-        assertFalse(openApi.getComponents() != null && openApi.getComponents().getSchemas() != null
-                && openApi.getComponents().getSchemas().containsKey("User"));
+        assertNotNull(openApi.getComponents(), "Components should be generated");
+        assertNotNull(openApi.getComponents().getSchemas(), "Schemas should be generated");
+        Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+        assertTrue(schemas.containsKey("PackageToSkipModel"),
+                "The non-excluded model should be present");
+        assertFalse(schemas.containsKey("User"), "The excluded User model should not be present");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "3.0", "3.1" })
+    public void testPackageToSkipFromRegistry(String version) throws Exception {
+        DefaultRestModelConverters converters = new DefaultRestModelConverters();
+        converters.addPackageToSkip(PackageToSkipModel.class.getPackageName());
+        context.getRegistry().bind("restModelConverters", converters);
+
+        OpenAPI openApi = readOpenApi(version);
+
+        assertNotNull(openApi);
+        assertNotNull(openApi.getComponents(), "Components should be generated");
+        assertNotNull(openApi.getComponents().getSchemas(), "Schemas should be generated");
+        Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+        assertTrue(schemas.containsKey("User"), "A model outside the excluded package should be present");
+        assertFalse(schemas.containsKey("PackageToSkipModel"),
+                "Models in the excluded package should not be present");
+    }
+
+    @Test
+    public void testMultipleRestModelConvertersBeansUseDefault() throws Exception {
+        DefaultRestModelConverters first = new DefaultRestModelConverters();
+        first.addClassToSkip(User.class.getName());
+        context.getRegistry().bind("restModelConverters1", first);
+
+        DefaultRestModelConverters second = new DefaultRestModelConverters();
+        second.addPackageToSkip(PackageToSkipModel.class.getPackageName());
+        context.getRegistry().bind("restModelConverters2", second);
+
+        OpenAPI openApi = readOpenApi("3.0");
+
+        assertNotNull(openApi);
+        assertNotNull(openApi.getComponents(), "Components should be generated");
+        assertNotNull(openApi.getComponents().getSchemas(), "Schemas should be generated");
+        Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+        // The default registry cannot select one of the two matching beans, so the default converter is used.
+        assertTrue(schemas.containsKey("User"));
+        assertTrue(schemas.containsKey("PackageToSkipModel"));
+    }
+
+    @Test
+    public void testCustomModelConverterForOpenApi30And31() {
+        DefaultRestModelConverters converters = new DefaultRestModelConverters();
+        converters.addConverter(new CustomModelConverter());
+
+        for (OpenAPI openApi : List.of(new OpenAPI(), new OpenAPI(SpecVersion.V31))) {
+            List<? extends Schema<?>> schemas = converters.readClass(openApi, User.class);
+            assertNotNull(schemas);
+            assertTrue(schemas.stream().anyMatch(schema -> schema.getExtensions() != null
+                    && Boolean.TRUE.equals(schema.getExtensions().get("x-custom-converter"))));
+        }
+    }
+
+    @Test
+    public void testFileClassDoesNotGenerateModel() {
+        DefaultRestModelConverters converters = new DefaultRestModelConverters();
+        assertNull(converters.readClass(new OpenAPI(), File.class));
+    }
+
+    private OpenAPI readOpenApi(String version) throws Exception {
+        BeanConfig config = new BeanConfig();
+        config.setVersion(version);
+        RestOpenApiReader reader = new RestOpenApiReader();
+        return reader.read(context, context.getRestDefinitions(), config, context.getName(),
+                new DefaultClassResolver());
+    }
+
+    private static class CustomModelConverter implements ModelConverter {
+
+        @Override
+        public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> chain) {
+            Schema schema = chain.hasNext() ? chain.next().resolve(annotatedType, context, chain) : null;
+            Object type = annotatedType.getType();
+            boolean isUser = type == User.class
+                    || (type instanceof JavaType javaType && javaType.getRawClass() == User.class);
+            if (schema != null && isUser) {
+                schema.addExtension("x-custom-converter", true);
+            }
+            return schema;
+        }
     }
 }
