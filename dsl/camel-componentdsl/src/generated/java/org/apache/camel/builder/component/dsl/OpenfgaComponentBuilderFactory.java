@@ -503,8 +503,10 @@ public interface OpenfgaComponentBuilderFactory {
         /**
          * Durable cursor storage, required for a readChanges consumer. The
          * repository must persist each update before returning, retain the
-         * previous value on failure, and use finite I/O deadlines. The
-         * application owns its lifecycle.
+         * previous value on failure, and use finite I/O deadlines. A repository
+         * that is a Camel service and not started yet is started by the
+         * consumer and stopped with it; one the application started stays under
+         * the application's control.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
