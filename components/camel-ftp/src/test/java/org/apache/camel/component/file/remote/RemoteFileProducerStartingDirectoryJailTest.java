@@ -28,8 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The name of the file to upload is resolved by the server, which gives no special meaning to a scheme or a drive at
- * the start of it. Verifies that a name that the server resolves outside the starting directory is refused with
- * jailStartingDirectory (the default), whether a directory is configured or not.
+ * the start of it, and may take a backslash in it as part of a name unless the separator option replaces it by /.
+ * Verifies that a name that the server resolves outside the starting directory is refused with jailStartingDirectory
+ * (the default), whether a directory is configured or not.
  */
 class RemoteFileProducerStartingDirectoryJailTest extends CamelTestSupport {
 
@@ -65,6 +66,32 @@ class RemoteFileProducerStartingDirectoryJailTest extends CamelTestSupport {
     void shouldRefuseNamesEscapingTheStartingDirectory() {
         assertRefused("ftp://hostname/upload", "http:/../../planted.txt");
         assertRefused("ftp://hostname/upload", "a:/../../planted.txt");
+    }
+
+    @Test
+    void shouldRefuseNamesWithBackslashAndParentSegmentUnlessSeparatorIsUnix() throws Exception {
+        // the separator option UNIX (the default) replaces a backslash by / before the name is used
+        assertEquals("upload/sub\\..\\x.txt", createFileName("ftp://hostname/upload", "sub\\..\\x.txt"));
+        assertEquals("upload/sub\\..\\x.txt", createFileName("sftp://hostname/upload?separator=UNIX", "sub\\..\\x.txt"));
+        assertEquals("upload/a\\b/../c.txt", createFileName("ftp://hostname/upload", "a\\b/../c.txt"));
+        // otherwise the FTP client compacts a\b as one segment on Linux, and a/b as one segment on Windows
+        for (String uri : new String[] {
+                "ftp://hostname/upload?separator=Auto", "ftp://hostname/upload?separator=Windows",
+                "sftp://hostname/upload?separator=Auto" }) {
+            assertRefused(uri, "sub\\..\\x.txt");
+            assertRefused(uri, "a\\b/../../planted.txt");
+            assertRefused(uri, "a/b\\..\\..\\planted.txt");
+            // a backslash without a .. segment
+            assertEquals("upload/a\\b.txt", createFileName(uri, "a\\b.txt"));
+        }
+        // with the separator option UNIX, but a temp file, a done file or a checksum file is checked, deleted, renamed
+        // or written with the name as given
+        for (String uri : new String[] {
+                "ftp://hostname/upload?tempPrefix=.uploading", "ftp://hostname/upload?doneFileName=${file:name}.done",
+                "ftp://hostname/upload?checksumFileAlgorithm=md5", "sftp://hostname/upload?tempFileName=${file:name}.tmp" }) {
+            assertRefused(uri, "sub\\..\\x.txt");
+            assertEquals("upload/a\\b.txt", createFileName(uri, "a\\b.txt"));
+        }
     }
 
     @Test

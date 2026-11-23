@@ -228,7 +228,9 @@ public final class GenericFileHelper {
     /**
      * Determines whether a path on a remote server stays within a directory on that server, such as a path built from a
      * name in the listing of the server. Both paths are compacted with
-     * {@link #compactPathForContainment(String, char)}, the way the server resolves them.
+     * {@link #compactPathForContainment(String, char)}, the way the server resolves them. A backslash separates
+     * segments, as / does: see {@link #isAmbiguousRemotePath(String)} for a path that is used without replacing its
+     * backslashes.
      *
      * @param  target    the path, not compacted
      * @param  directory the directory the path must stay within, not compacted, or empty or {@code null} when no
@@ -242,6 +244,19 @@ public final class GenericFileHelper {
         return isWithinDirectory(
                 compactPathForContainment(target, '/'), compactPathForContainment(directory != null ? directory : "", '/'),
                 '/');
+    }
+
+    /**
+     * Whether a remote path has both a backslash and a {@code ..} segment. A backslash is a path separator to some
+     * servers (such as a server on Windows) and part of a name to others, and the FTP client compacts the directory of
+     * a stepwise operation on the file separator of the platform Camel runs on only, so where such a path goes depends
+     * on the server and that platform, unless its backslashes are replaced by / before it is used.
+     *
+     * @param  path the path
+     * @return      <tt>true</tt> if the path has both a backslash and a {@code ..} segment
+     */
+    public static boolean isAmbiguousRemotePath(String path) {
+        return path != null && path.indexOf('\\') != -1 && hasParentSegment(path);
     }
 
     /**
