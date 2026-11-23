@@ -42,6 +42,18 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     private boolean disconnected;
     private volatile ClusterRoleChangeListener roleListener;
 
+    /**
+     * Creates the view of a namespace. The view works only with a {@link JGroupsRaftClusterService}: the views of all
+     * namespaces of a node share the RaftHandle of the node (one Raft member), which the cluster service configures,
+     * connects and disconnects. So the Raft leader is the leader of every namespace.
+     *
+     * @param cluster            the {@link JGroupsRaftClusterService} of the node
+     * @param namespace          the namespace
+     * @param jgroupsConfig      ignored: the cluster service uses its own JGroups configuration
+     * @param jgroupsClusterName ignored: the cluster service uses its own cluster name
+     * @param raftHandle         ignored: the cluster service uses its configured RaftHandle, or creates one
+     * @param raftId             the raft id of the node, used in log messages
+     */
     protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
                                      String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
         super(cluster, namespace);

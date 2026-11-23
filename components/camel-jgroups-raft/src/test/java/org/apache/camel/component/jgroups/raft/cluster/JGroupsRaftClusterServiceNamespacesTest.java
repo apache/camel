@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.jgroups.JChannel;
+import org.jgroups.protocols.raft.RAFT;
+import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +46,7 @@ class JGroupsRaftClusterServiceNamespacesTest {
 
     private DefaultCamelContext context;
     private RaftHandle handle;
+    private RaftHandle otherHandle;
 
     @AfterEach
     void cleanup() {
@@ -49,6 +55,9 @@ class JGroupsRaftClusterServiceNamespacesTest {
         }
         if (handle != null) {
             handle.channel().close();
+        }
+        if (otherHandle != null) {
+            otherHandle.channel().close();
         }
     }
 
@@ -108,6 +117,55 @@ class JGroupsRaftClusterServiceNamespacesTest {
         await().atMost(30, TimeUnit.SECONDS).until(() -> ns1.get() > 0 && ns2.get() > 0);
         assertTrue(service.isLeader("ns1"));
         assertTrue(service.isLeader("ns2"));
+    }
+
+    @Test
+    void testFailingViewDoesNotStopTheRoleChangeOfTheOtherViews() throws Exception {
+        handle = newHandle();
+        JGroupsRaftClusterService service = newService();
+        service.setRaftHandle(handle);
+        // the role listener of a view whose cluster event listener throws, and the one of another namespace
+        RAFT.RoleChange failing = role -> {
+            throw new IllegalStateException("Simulated failure of a cluster event listener");
+        };
+        List<Role> roles = new CopyOnWriteArrayList<>();
+        RAFT.RoleChange other = roles::add;
+        service.connectView(failing);
+        service.connectView(other);
+        try {
+            await().atMost(30, TimeUnit.SECONDS).until(handle::isLeader);
+
+            // a role change of the node, as RAFT notifies it to the role listeners of the handle (Learner, as this
+            // single node never becomes one by itself)
+            Method notify = RAFT.class.getDeclaredMethod("notifyRoleChangeListeners", Role.class);
+            notify.setAccessible(true);
+            notify.invoke(handle.raft(), Role.Learner);
+
+            assertTrue(roles.contains(Role.Learner), "The other view should get the role change, got " + roles);
+        } finally {
+            service.disconnectView(other);
+            service.disconnectView(failing);
+        }
+    }
+
+    @Test
+    void testConfiguredHandleReplacedWhileInUseIsNotClosed() throws Exception {
+        handle = newHandle();
+        JGroupsRaftClusterService service = newService();
+        service.setRaftHandle(handle);
+        AtomicInteger ns1 = new AtomicInteger();
+
+        startContext(service, ns1);
+        await().atMost(30, TimeUnit.SECONDS).until(() -> ns1.get() > 0);
+
+        // the configured handle is replaced while the view uses it: the view keeps the handle it connected, and when it
+        // stops, the handle of the user is disconnected, not closed
+        otherHandle = newHandle();
+        service.setRaftHandle(otherHandle);
+        context.getRouteController().stopRoute("route-ns1");
+        assertFalse(handle.channel().isConnected(), "The handle should be disconnected when no namespace uses it");
+        assertFalse(handle.channel().isClosed(), "The configured handle should not be closed by the service");
+        assertFalse(otherHandle.channel().isConnected(), "The new handle should not be connected yet");
     }
 
     private void startContext(JGroupsRaftClusterService service, AtomicInteger... counters) throws Exception {

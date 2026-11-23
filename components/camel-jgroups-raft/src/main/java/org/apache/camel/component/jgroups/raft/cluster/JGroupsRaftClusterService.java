@@ -28,6 +28,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.jgroups.JChannel;
 import org.jgroups.protocols.raft.RAFT;
+import org.jgroups.protocols.raft.Role;
 import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +57,12 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
     // raftHandle, or one this service creates. It is connected while views use it, guarded by handleLock
     private final Lock handleLock = new ReentrantLock();
     private RaftHandle connectedHandle;
+    // the connected handle was created by this service (not the configured raftHandle), so it is closed after use
+    private boolean createdHandle;
     private int connectedViews;
     // the role listeners of the connected views, notified by the one role listener of the handle
     private final List<RAFT.RoleChange> viewRoleListeners = new CopyOnWriteArrayList<>();
-    private final RAFT.RoleChange handleRoleListener = role -> viewRoleListeners.forEach(l -> l.roleChanged(role));
+    private final RAFT.RoleChange handleRoleListener = this::notifyViews;
 
     public JGroupsRaftClusterService() {
         this.jgroupsConfig = DEFAULT_JGROUPS_CONFIG;
@@ -87,19 +90,21 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
         handleLock.lock();
         try {
             if (connectedViews == 0) {
-                RaftHandle handle = raftHandle != null ? raftHandle : createRaftHandle();
+                boolean created = raftHandle == null;
+                RaftHandle handle = created ? createRaftHandle() : raftHandle;
                 // listen before connecting, so the role changes of the election are not missed
                 handle.addRoleListener(handleRoleListener);
                 try {
                     connect(handle);
                 } catch (Exception e) {
                     handle.removeRoleListener(handleRoleListener);
-                    if (handle != raftHandle) {
+                    if (created) {
                         close(handle);
                     }
                     throw e;
                 }
                 connectedHandle = handle;
+                createdHandle = created;
             }
             viewRoleListeners.add(roleListener);
             connectedViews++;
@@ -121,7 +126,7 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
             RaftHandle handle = connectedHandle;
             connectedHandle = null;
             handle.removeRoleListener(handleRoleListener);
-            if (handle == raftHandle) {
+            if (!createdHandle) {
                 // the configured handle is connected again when a view starts again
                 LOG.info("Disconnecting JGroupsraft Channel of JGroupsRaftClusterService with Id {}", getId());
                 try {
@@ -135,6 +140,25 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
             }
         } finally {
             handleLock.unlock();
+        }
+    }
+
+    /**
+     * Notifies a role change of the node to the views. Each view is notified on its own, as before each view was its
+     * own role listener of the handle, which RAFT notifies one by one: a listener of one namespace that fails does not
+     * stop the other namespaces from getting the change.
+     */
+    void notifyViews(Role role) {
+        for (RAFT.RoleChange listener : viewRoleListeners) {
+            try {
+                listener.roleChanged(role);
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                LOG.warn("Error notifying {} of the role change of the node with Id {} to {}: {}."
+                         + " The other cluster views are still notified.",
+                        listener, getId(), role, e.getMessage(), e);
+            }
         }
     }
 

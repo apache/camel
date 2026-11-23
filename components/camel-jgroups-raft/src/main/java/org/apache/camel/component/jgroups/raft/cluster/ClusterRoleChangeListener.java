@@ -51,4 +51,9 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
                 break;
         }
     }
+
+    @Override
+    public String toString() {
+        return "ClusterRoleChangeListener[namespace=" + jgroupsRaftClusterView.getNamespace() + "]";
+    }
 }
