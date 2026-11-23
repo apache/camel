@@ -26,6 +26,8 @@ import org.apache.camel.support.ScheduledPollConsumer;
 public class MockScheduledPollConsumer extends ScheduledPollConsumer {
 
     private Exception exceptionToThrowOnPoll;
+    private Error errorToThrowOnPoll;
+    private int pollsUntilError;
 
     public MockScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -40,6 +42,11 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
+        if (errorToThrowOnPoll != null && --pollsUntilError == 0) {
+            Error error = errorToThrowOnPoll;
+            errorToThrowOnPoll = null;
+            throw error;
+        }
         if (exceptionToThrowOnPoll != null) {
             throw exceptionToThrowOnPoll;
         }
@@ -48,6 +55,14 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
 
     public void setExceptionToThrowOnPoll(Exception exceptionToThrowOnPoll) {
         this.exceptionToThrowOnPoll = exceptionToThrowOnPoll;
+    }
+
+    /**
+     * Throws the error once, on the given poll from now on (1 is the next poll). The polls before and after it succeed.
+     */
+    public void setErrorToThrowOnPoll(Error errorToThrowOnPoll, int onPoll) {
+        this.errorToThrowOnPoll = errorToThrowOnPoll;
+        this.pollsUntilError = onPoll;
     }
 
     @Override

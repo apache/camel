@@ -21,14 +21,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
+
+    // the poll that throws an Error, after successful polls
+    private static final int ERROR_ON_POLL = 3;
 
     private static boolean rollback;
     private static String event = "";
@@ -113,6 +119,85 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         // 3 retries + 1 last failed attempt when we give up
         assertEquals(4, counter.get());
         assertEquals("rollbackrollbackrollbackrollback", event);
+    }
+
+    @Test
+    public void testErrorOnPollStopsPollingAndHealthCheckIsDown() {
+        final LinkageError expectedError = new LinkageError("Simulated error on poll");
+        final AtomicInteger rollbacks = new AtomicInteger();
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, rollbacks);
+        consumer.start();
+        pollUntilErrorIsNext(consumer);
+
+        // the Error ends the scheduled task, so the scheduler does not run it again
+        LinkageError thrown = assertThrows(LinkageError.class, consumer::run);
+        assertSame(expectedError, thrown);
+        // an Error is not an exception the poll strategy can retry
+        assertEquals(0, rollbacks.get());
+
+        HealthCheck.Result result = consumer.getHealthCheck().call();
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertSame(expectedError, result.getError().orElse(null));
+
+        consumer.stop();
+    }
+
+    @Test
+    public void testErrorOnPollKeepsHealthCheckDownUntilRestart() {
+        final LinkageError expectedError = new LinkageError("Simulated error on poll");
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, new AtomicInteger());
+        consumer.start();
+        pollUntilErrorIsNext(consumer);
+        assertThrows(LinkageError.class, consumer::run);
+        assertEquals(HealthCheck.State.DOWN, consumer.getHealthCheck().call().getState());
+
+        // with concurrentConsumers > 1 the other tasks keep polling: a successful poll must not report the
+        // consumer as healthy again, as it now polls with one task less
+        consumer.run();
+        HealthCheck.Result result = consumer.getHealthCheck().call();
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertSame(expectedError, result.getError().orElse(null));
+
+        // only a restart of the consumer clears it
+        consumer.stop();
+        consumer.start();
+        consumer.run();
+        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+
+        consumer.stop();
+    }
+
+    /**
+     * Runs the successful polls before the one that throws the Error, so the health check is UP because the consumer
+     * polled (and not because of its initial state) before the Error.
+     */
+    private void pollUntilErrorIsNext(MockScheduledPollConsumer consumer) {
+        for (int i = 1; i < ERROR_ON_POLL; i++) {
+            consumer.run();
+            assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+        }
+    }
+
+    private MockScheduledPollConsumer createConsumerWithError(Error error, AtomicInteger rollbacks) {
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(getMockEndpoint("mock:foo"), (Exception) null);
+        consumer.setErrorToThrowOnPoll(error, ERROR_ON_POLL);
+        consumer.setRouteId("error");
+        // the test runs the polls itself
+        consumer.setStartScheduler(false);
+        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
+            }
+
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+            }
+
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
+                rollbacks.incrementAndGet();
+                return false;
+            }
+        });
+        return consumer;
     }
 
     @Test
