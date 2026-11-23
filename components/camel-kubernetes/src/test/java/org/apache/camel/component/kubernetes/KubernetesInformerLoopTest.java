@@ -76,15 +76,23 @@ class KubernetesInformerLoopTest {
             thread.join(20000);
         }
         client.close();
-        // server.destroy() may time out waiting for a WebSocket that fabric8's informer opened during
-        // reconnect and has not yet closed after informer.stop(): fabric8 cancels the HTTP streaming
-        // request asynchronously, so the server may still see an open connection. The test body has
-        // already passed at this point; suppress the cleanup exception so the test is not marked as
-        // failed for a teardown race that the test infrastructure cannot reliably control.
+        // After loop.stop() and thread.join(), the informer has stopped, but fabric8 cancels its
+        // HTTP streaming request asynchronously on a ForkJoin pool thread. Wait for every opened
+        // watch to signal its close (via onClosing or onFailure) before destroying the server: this
+        // verifies the loop did close its watches. Even after the WebSocket protocol closes, the
+        // underlying Vert.x HTTP connection may still be draining; if httpServer.close() times out
+        // in that narrow window, suppress the teardown exception since the test already asserted.
+        int opened = dispatcher.openWatchCount();
+        if (opened > 0) {
+            await().atMost(Duration.ofSeconds(10))
+                    .until(() -> dispatcher.closedWatchCount() >= opened);
+        }
         try {
             server.destroy();
         } catch (IllegalStateException e) {
-            LOG.debug("Ignoring exception during mock server teardown (expected teardown race)", e);
+            // Vert.x httpServer.close() timed out: the WebSocket protocol closed (verified above)
+            // but the TCP connection was still draining. The test body has already asserted correctly.
+            LOG.warn("Mock server teardown timed out (expected async TCP drain race): {}", e.getMessage());
         }
     }
 
