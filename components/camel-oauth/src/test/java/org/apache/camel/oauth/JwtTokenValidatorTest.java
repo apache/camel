@@ -866,6 +866,191 @@ class JwtTokenValidatorTest {
         assertFalse(DefaultOAuthTokenValidationFactory.isSignedJwt("opaque-token-no-dots"));
     }
 
+    // --- RFC 9470 step-up authentication tests ---
+
+    @Test
+    void requiredAcrAcceptedWhenClaimMatches() throws Exception {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "2")
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("2"), 0);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void requiredAcrRejectedWhenClaimDoesNotMatch() throws Exception {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "1")
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("2"), 0);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("acr"));
+    }
+
+    @Test
+    void requiredAcrRejectedWhenClaimAbsent() throws Exception {
+        String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("2"), 0);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("acr"));
+    }
+
+    @Test
+    void requiredAcrAcceptsAnyMatchingValue() throws Exception {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "silver")
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("gold", "silver"), 0);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void maxAuthAgeAcceptedWhenAuthTimeRecent() throws Exception {
+        long authTime = System.currentTimeMillis() / 1000L - 60; // 60 seconds ago
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("auth_time", authTime)
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                null, 300);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void maxAuthAgeRejectedWhenAuthTimeTooOld() throws Exception {
+        long authTime = System.currentTimeMillis() / 1000L - 400; // 400 seconds ago
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("auth_time", authTime)
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                null, 300);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("auth_time"));
+    }
+
+    @Test
+    void maxAuthAgeRejectedWhenAuthTimeAbsent() throws Exception {
+        String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                null, 300);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("auth_time"));
+    }
+
+    @Test
+    void stepUpCheckSkippedWhenRequiredAcrNullAndMaxAuthAgeZero() throws Exception {
+        String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                null, 0);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void bothAcrAndMaxAuthAgeRequiredAndBothSatisfied() throws Exception {
+        long authTime = System.currentTimeMillis() / 1000L - 60;
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "2")
+                .claim("auth_time", authTime)
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("2"), 300);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void acrRejectedBeforeAuthTimeCheck() throws Exception {
+        // acr fails; auth_time would also fail — verify INSUFFICIENT_USER_AUTHENTICATION returned first
+        long authTime = System.currentTimeMillis() / 1000L - 400;
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "1")
+                .claim("auth_time", authTime)
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null, null,
+                Set.of("2"), 300);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("acr"));
+    }
+
     private String createToken(String issuer, String audience, Date expiration, Date notBefore) throws Exception {
         return createToken(issuer, List.of(audience), expiration, notBefore);
     }

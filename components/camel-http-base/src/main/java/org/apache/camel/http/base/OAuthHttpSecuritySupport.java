@@ -181,6 +181,9 @@ public final class OAuthHttpSecuritySupport {
 
         if (!result.isValid()) {
             LOG.debug("OAuth token rejected: {}", result.getError());
+            if (result.getErrorCode() == OAuthTokenValidationResult.ErrorCode.INSUFFICIENT_USER_AUTHENTICATION) {
+                return Validation.insufficientUserAuthentication(result, validationConfig);
+            }
             return Validation.invalidToken();
         }
 
@@ -459,6 +462,34 @@ public final class OAuthHttpSecuritySupport {
          */
         public static Validation serviceUnavailable() {
             return new Validation(SERVICE_UNAVAILABLE, null, SERVICE_UNAVAILABLE_BODY, null);
+        }
+
+        /**
+         * Creates unauthorized validation state for tokens that do not meet RFC 9470 step-up authentication
+         * requirements. The {@code WWW-Authenticate} challenge includes {@code acr_values} and/or {@code max_age}
+         * directives from the validation configuration so the client can re-authenticate appropriately.
+         *
+         * @since 4.24
+         */
+        static Validation insufficientUserAuthentication(
+                OAuthTokenValidationResult result, OAuthTokenValidationConfig config) {
+            String challenge = buildStepUpChallenge(config);
+            return new Validation(UNAUTHORIZED, challenge, UNAUTHORIZED_BODY, null);
+        }
+
+        private static String buildStepUpChallenge(OAuthTokenValidationConfig config) {
+            StringBuilder sb = new StringBuilder(BEARER);
+            sb.append(" error=\"insufficient_user_authentication\"");
+            sb.append(", error_description=\"Step-up authentication required\"");
+            if (config != null && config.getRequiredAcr() != null && !config.getRequiredAcr().isEmpty()) {
+                // acr_values is a space-separated list per RFC 9470
+                String acrValues = String.join(" ", config.getRequiredAcr());
+                sb.append(", acr_values=\"").append(acrValues).append('"');
+            }
+            if (config != null && config.getMaxAuthAgeSeconds() > 0) {
+                sb.append(", max_age=").append(config.getMaxAuthAgeSeconds());
+            }
+            return sb.toString();
         }
 
         /**

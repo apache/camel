@@ -80,7 +80,9 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
                     resolved.getConnectTimeoutSeconds() * 1000,
                     resolved.getReadTimeoutSeconds() * 1000,
                     resolved.getAllowedJwsAlgorithms(),
-                    resolved.getExpectedTokenType());
+                    resolved.getExpectedTokenType(),
+                    resolved.getRequiredAcr(),
+                    resolved.getMaxAuthAgeSeconds());
         }
 
         return introspectToken(resolved, token);
@@ -222,8 +224,47 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
                     "Invalid audience: expected to contain one of " + config.getExpectedAudiences());
         }
 
+        OAuthTokenValidationResult stepUpResult
+                = checkIntrospectionStepUpClaims(claimsJson, config.getRequiredAcr(), config.getMaxAuthAgeSeconds());
+        if (stepUpResult != null) {
+            return stepUpResult;
+        }
+
         LOG.debug("Introspection validated successfully: sub={}, iss={}, exp={}", subject, issuer, expiresAt);
         return OAuthTokenValidationResult.valid(subject, issuer, audience, scopes, claims, expiresAt);
+    }
+
+    private static OAuthTokenValidationResult checkIntrospectionStepUpClaims(
+            JsonObject claimsJson, Set<String> requiredAcr, int maxAuthAgeSeconds) {
+        if (requiredAcr != null && !requiredAcr.isEmpty()) {
+            String acr = readOptionalString(claimsJson, "acr");
+            if (acr == null || !requiredAcr.contains(acr)) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: acr claim " + acr
+                                                                    + " does not satisfy required values " + requiredAcr);
+            }
+        }
+
+        if (maxAuthAgeSeconds > 0) {
+            if (!claimsJson.has("auth_time")) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: auth_time claim is missing (max-auth-age-seconds="
+                                                                    + maxAuthAgeSeconds + ")");
+            }
+            long authTime = readOptionalNumericDate(claimsJson, "auth_time", 0);
+            long now = now() / 1000L;
+            if (now - authTime > maxAuthAgeSeconds) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: user authentication is too old (auth_time="
+                                                                    + authTime + ", max-auth-age-seconds=" + maxAuthAgeSeconds
+                                                                    + ")");
+            }
+        }
+
+        return null;
     }
 
     static boolean isSignedJwt(String token) {

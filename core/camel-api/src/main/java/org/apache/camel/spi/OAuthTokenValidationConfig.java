@@ -51,6 +51,8 @@ public class OAuthTokenValidationConfig {
     private boolean allowMissingAudience;
     private boolean allowMissingIssuer;
     private boolean allowInsecureHttp;
+    private @Nullable Set<String> requiredAcr;
+    private int maxAuthAgeSeconds;
 
     public OAuthTokenValidationConfig() {
     }
@@ -80,6 +82,8 @@ public class OAuthTokenValidationConfig {
         this.allowMissingAudience = source.isAllowMissingAudience();
         this.allowMissingIssuer = source.isAllowMissingIssuer();
         this.allowInsecureHttp = source.isAllowInsecureHttp();
+        this.requiredAcr = source.getRequiredAcr() != null ? copyStringSet(source.getRequiredAcr()) : null;
+        this.maxAuthAgeSeconds = source.getMaxAuthAgeSeconds();
     }
 
     /**
@@ -472,6 +476,55 @@ public class OAuthTokenValidationConfig {
      */
     public OAuthTokenValidationConfig setAllowInsecureHttp(boolean allowInsecureHttp) {
         this.allowInsecureHttp = allowInsecureHttp;
+        return this;
+    }
+
+    /**
+     * Required Authentication Context Class Reference (ACR) values for RFC 9470 step-up authentication. When set, the
+     * token {@code acr} claim must contain one of these values; otherwise the token is rejected with
+     * {@link org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode#INSUFFICIENT_USER_AUTHENTICATION}.
+     * <p>
+     * Example values: {@code "2"} (Keycloak MFA level), {@code "urn:mace:incommon:iap:silver"}.
+     *
+     * @since 4.24
+     */
+    public @Nullable Set<String> getRequiredAcr() {
+        return requiredAcr;
+    }
+
+    /**
+     * Sets the required ACR values for RFC 9470 step-up authentication. Blank values are ignored.
+     *
+     * @since 4.24
+     */
+    public OAuthTokenValidationConfig setRequiredAcr(@Nullable Set<String> requiredAcr) {
+        Set<String> values = copyStringSet(requiredAcr);
+        this.requiredAcr = values.isEmpty() ? null : values;
+        return this;
+    }
+
+    /**
+     * Maximum user authentication age in seconds for RFC 9470 step-up authentication. When set to a positive value, the
+     * token {@code auth_time} claim must be present and must be no older than this many seconds; otherwise the token is
+     * rejected with {@link org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode#INSUFFICIENT_USER_AUTHENTICATION}.
+     * Zero (the default) disables the check.
+     *
+     * @since 4.24
+     */
+    public int getMaxAuthAgeSeconds() {
+        return maxAuthAgeSeconds;
+    }
+
+    /**
+     * Sets the maximum user authentication age in seconds for RFC 9470 step-up authentication. Zero disables the check.
+     *
+     * @since 4.24
+     */
+    public OAuthTokenValidationConfig setMaxAuthAgeSeconds(int maxAuthAgeSeconds) {
+        if (maxAuthAgeSeconds < 0) {
+            throw new IllegalArgumentException("maxAuthAgeSeconds must be >= 0");
+        }
+        this.maxAuthAgeSeconds = maxAuthAgeSeconds;
         return this;
     }
 
