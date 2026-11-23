@@ -13,6 +13,15 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-openapi-java - RestModelConverters is now an interface
+
+`org.apache.camel.openapi.RestModelConverters` is now an interface instead of a concrete class. Applications that
+previously instantiated it with `new RestModelConverters(openapi31)` must migrate to
+`new DefaultRestModelConverters()`. Applications that extended the old class must implement the new
+`RestModelConverters` interface or extend `DefaultRestModelConverters` when the default Swagger-based conversion
+is suitable. The default implementation selects the OpenAPI 3.0 or 3.1 converter based on the `OpenAPI` document's
+specification version.
+
 === Undertow servlet implementation
 
 `camel-undertow` now uses the Jakarta Servlet 6.1 implementation from Undertow EE,
