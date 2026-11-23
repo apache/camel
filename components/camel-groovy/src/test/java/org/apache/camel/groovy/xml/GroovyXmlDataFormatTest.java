@@ -181,7 +181,7 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
         // the JDK serializer ends the lines of the document with the platform line separator, except the last line
-        xml = xml.replace(System.lineSeparator(), "\n") + "\n";
+        xml = xml.replace("\r\n", "\n") + "\n";
         Assertions.assertEquals(BOOKS, xml);
 
         MockEndpoint.assertIsSatisfied(context);

@@ -77,7 +77,7 @@ public class GroovyLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testValidateExpressionIndexWithLfAndCrLf() throws Exception {
+    public void testValidateExpressionIndexWithLineEnds() throws Exception {
         try (GroovyLanguage g = new GroovyLanguage()) {
             g.setCamelContext(context);
 
@@ -85,6 +85,8 @@ public class GroovyLanguageTest extends LanguageTestSupport {
             assertIndexOfError(g, "var a = 123;\nprintln a */ 2;\n");
             assertIndexOfError(g, "var a = 123;\r\nprintln a */ 2;\r\n");
             assertIndexOfError(g, "var a = 123;\r\nvar b = 4;\nprintln a */ 2;\n");
+            // CR line ends: the Groovy compiler counts no new line after \r, so it reports the error in line 1
+            assertIndexOfError(g, "var a = 123;\rprintln a */ 2;\r");
         }
     }
 
