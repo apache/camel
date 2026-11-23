@@ -34,9 +34,13 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.connect.json.JsonConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriParams
 public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedDebeziumConfiguration.class);
 
     // the properties of the file schema history of Debezium (MySQL, SQL Server, Oracle, Db2)
     private static final String SCHEMA_HISTORY_INTERNAL = "schema.history.internal";
@@ -265,6 +269,8 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
             config = createDebeziumConfiguration();
         } catch (RuntimeException e) {
             // an incomplete configuration: the connector validation reports what is missing
+            LOG.debug("Cannot check the storage files, as the Debezium configuration cannot be created: {}", e.getMessage(),
+                    e);
             return ConfigurationValidation.valid();
         }
         if (DebeziumConstants.DEFAULT_OFFSET_STORAGE.equals(config.getString(AsyncEmbeddedEngine.OFFSET_STORAGE))) {
