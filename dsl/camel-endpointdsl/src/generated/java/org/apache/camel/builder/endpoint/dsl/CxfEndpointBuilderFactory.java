@@ -1150,6 +1150,46 @@ public interface CxfEndpointBuilderFactory {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -1900,46 +1940,6 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer invokes the CXF Client without a callback and waits until
-         * the invocation returns, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfEndpointProducerBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer invokes the CXF Client without a callback and waits until
-         * the invocation returns, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfEndpointProducerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Whether to allow CXF to keep the last message part of an incoming
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
@@ -2389,6 +2389,46 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(String skipPayloadMessagePartCheck) {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -3355,6 +3395,46 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(String skipPayloadMessagePartCheck) {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
