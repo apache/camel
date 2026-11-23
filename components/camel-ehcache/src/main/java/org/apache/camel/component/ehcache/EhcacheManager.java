@@ -199,7 +199,7 @@ public class EhcacheManager extends ServiceSupport {
         ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
         for (ResourceType<?> type : pools.getResourceTypeSet()) {
             boolean memory = type == ResourceType.Core.HEAP || type == ResourceType.Core.OFFHEAP
-                    || type == ResourceType.Core.DISK && !pools.getPoolForResource(type).isPersistent();
+                    || (type == ResourceType.Core.DISK && !pools.getPoolForResource(type).isPersistent());
             if (!memory) {
                 return false;
             }

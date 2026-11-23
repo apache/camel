@@ -61,7 +61,7 @@ public final class InfinispanEmbeddedUtil extends InfinispanUtil {
             }
         }
         CacheMode mode = configuration.clustering().cacheMode();
-        if (mode.isReplicated() || mode.isDistributed() && configuration.clustering().hash().numOwners() > 1) {
+        if (mode.isReplicated() || (mode.isDistributed() && configuration.clustering().hash().numOwners() > 1)) {
             List<Address> members = embedded.getCacheManager().getMembers();
             return members == null || members.size() <= 1;
         }
