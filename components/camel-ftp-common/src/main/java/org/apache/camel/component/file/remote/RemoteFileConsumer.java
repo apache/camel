@@ -28,7 +28,6 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,6 @@ import org.slf4j.LoggerFactory;
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileConsumer.class);
-
-    /**
-     * Remote paths always use {@code /}, regardless of the platform Camel runs on.
-     */
-    private static final char REMOTE_PATH_SEPARATOR = '/';
 
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
@@ -69,18 +63,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     /**
      * The file name comes from the directory listing returned by the remote server and is not guaranteed to be a single
-     * path segment, so the path resolved from it is compacted and checked to still be inside the directory being polled
-     * before the file is accepted for retrieval, deletion or renaming.
+     * path segment, so the path resolved from it is compacted the way the server resolves it, and checked to still be
+     * inside the directory being polled before the file is accepted for retrieval, deletion or renaming (see
+     * {@link GenericFileHelper#isWithinRemoteDirectory(String, String)}).
      */
     @Override
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
-        if (absoluteFilePath == null) {
-            return false;
-        }
-        String directory = getEndpoint().getConfiguration().getDirectory();
-        String compactDir = directory != null ? FileUtil.compactPath(directory, REMOTE_PATH_SEPARATOR) : "";
-        return GenericFileHelper.isWithinDirectory(
-                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR), compactDir, REMOTE_PATH_SEPARATOR);
+        return GenericFileHelper.isWithinRemoteDirectory(
+                absoluteFilePath, getEndpoint().getConfiguration().getDirectory());
     }
 
     @Override
