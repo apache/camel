@@ -64,6 +64,7 @@ import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginList;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginUpdate;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
@@ -491,7 +492,8 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("add", CommandTree.lazy(() -> cmd(new PluginAdd())))
                     .addSubcommand("delete", CommandTree.lazy(() -> cmd(new PluginDelete())))
                     .addSubcommand("get", CommandTree.lazy(() -> cmd(new PluginGet())))
-                    .addSubcommand("list", CommandTree.lazy(() -> cmd(new PluginList()))));
+                    .addSubcommand("list", CommandTree.lazy(() -> cmd(new PluginList())))
+                    .addSubcommand("update", CommandTree.lazy(() -> cmd(new PluginUpdate()))));
         }
         if (shouldCreate(only, "ps")) {
             commandLine.addSubcommand("ps", new CommandTree(cmd(new ListProcess())));

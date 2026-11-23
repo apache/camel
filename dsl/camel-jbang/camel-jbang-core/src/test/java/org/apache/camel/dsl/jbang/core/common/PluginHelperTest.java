@@ -478,7 +478,7 @@ public class PluginHelperTest {
         Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "compat");
         assertEquals(1, plugins.size());
         assertEquals("WARN: compat is built for Camel [4.0.0,4.1.0) but this CLI is " + camelVersion
-                     + ". Run 'camel plugin add compat' to select a matching release.",
+                     + ". Run 'camel plugin update compat' to select a matching release.",
                 printer.getStderr());
 
         // once
@@ -494,7 +494,7 @@ public class PluginHelperTest {
         entry.put("camelVersions", "[4.22.0,4.23.0)");
         PluginHelper.compatibilityCheck(printer, "4.23.0", "fixture-named", entry);
         assertEquals("WARN: fixture-named 1.6.2 is built for Camel [4.22.0,4.23.0) but this CLI is 4.23.0."
-                     + " Run 'camel plugin add fixture-named' to select a matching release.",
+                     + " Run 'camel plugin update fixture-named' to select a matching release.",
                 printer.getStderr());
     }
 
@@ -520,7 +520,7 @@ public class PluginHelperTest {
         // the CLI moved to another Camel version, where a matching release may exist
         PluginHelper.compatibilityCheck(printer, "4.22.0", "fixture-older", entry);
         assertEquals("WARN: fixture-older 1.4.2 is built for Camel [4.18.0,4.19.0) but this CLI is 4.22.0."
-                     + " Run 'camel plugin add fixture-older' to select a matching release.",
+                     + " Run 'camel plugin update fixture-older' to select a matching release.",
                 printer.getStderr());
     }
 

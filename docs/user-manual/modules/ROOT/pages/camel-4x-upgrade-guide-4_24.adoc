@@ -9840,13 +9840,22 @@ level (the `org.apache.cxf.services` loggers). The component no longer depends o
 version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
 the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
 `camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
-moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+moves to newer releases on its own: run `camel plugin update` to select the newest matching release.
 When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
 version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
 `LATEST` as before.
 
 `--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
 registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-jbang - camel self-update updates the plugins
+
+After installing a new version of the Camel CLI, `camel self-update` now runs `camel plugin update` with it, which
+changes `~/.camel-jbang-plugins.json`: a community plugin whose release `camel plugin add` selected moves to the newest
+release built for the new version, when the plugin has one. Plugins added with `--version` or `--gav`, the plugins of the
+Apache Camel project, and plugins added as `LATEST` are not changed. Use `camel self-update --skip-plugins` to leave the
+plugins as they are. `camel self-update` of Camel CLI 4.23 and older does not update the plugins: run
+`camel plugin update` once after updating. See xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins].
 
 === camel-spring - a CamelEvent only goes to the consumers of the same name
 

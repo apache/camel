@@ -853,7 +853,7 @@ public final class PluginHelper {
         String pluginVersion = mavenGav != null && mavenGav.getVersion() != null ? " " + mavenGav.getVersion() : "";
         if (COMPATIBILITY_WARNED.add(name + ":" + gav + ":" + range)) {
             printer.printWarn(
-                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin add %s' to select a matching release."
+                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin update %s' to select a matching release."
                             .formatted(name, pluginVersion, range, version, name));
         }
     }

@@ -27,15 +27,19 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.InstallScriptFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.ManifestFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdateCommand;
@@ -44,8 +48,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class SelfUpdateIntegrationTest {
 
@@ -62,11 +70,13 @@ class SelfUpdateIntegrationTest {
 
     private StringPrinter printer;
     private String savedUserHome;
+    private Path savedCamelHome;
 
     @BeforeEach
     void setup() {
         printer = new StringPrinter();
         savedUserHome = System.getProperty("user.home");
+        savedCamelHome = CommandLineHelper.getHomeDir();
     }
 
     @AfterEach
@@ -77,6 +87,7 @@ class SelfUpdateIntegrationTest {
         } else {
             System.clearProperty("user.home");
         }
+        CommandLineHelper.useHomeDir(savedCamelHome.toString());
     }
 
     private String sha256Hex(Path file) throws Exception {
@@ -100,6 +111,8 @@ class SelfUpdateIntegrationTest {
         Files.createDirectories(versionDir.resolve("bin"));
         System.setProperty("camel.launcher.jar", versionDir.resolve("camel-launcher.jar").toString());
         System.setProperty("user.home", home.toString());
+        // the plugin configuration of the test home, not the one of the machine
+        CommandLineHelper.useHomeDir(home.toString());
     }
 
     // Builds a client whose SSLContext trusts the fixture's self-signed certificate authority - the fixture serves
@@ -122,11 +135,17 @@ class SelfUpdateIntegrationTest {
     }
 
     private int run(WebsiteInstallerFixture fixture, Path home, Path xdgDataHome, String... args) throws Exception {
+        return run(fixture, home, Map.of(), args);
+    }
+
+    private int run(WebsiteInstallerFixture fixture, Path home, Map<String, String> env, String... args)
+            throws Exception {
         HttpClient httpClient = trustingHttpClient(fixture);
         ManifestFetcher fetcher = new ManifestFetcher(
                 fixture.baseUrl() + "/camel-cli/releases", fixture.mavenUrl(), fixture.snapshotUrl(), httpClient);
         InstallScriptFetcher scriptFetcher = new InstallScriptFetcher(fixture.baseUrl(), httpClient);
-        Map<String, String> installerEnv = fixture.environment(home);
+        Map<String, String> installerEnv = new HashMap<>(fixture.environment(home));
+        installerEnv.putAll(env);
         SelfUpdateCommand cmd
                 = new CamelJBangMain().withPrinter(printer)
                         .command(new SelfUpdateCommand(fetcher, scriptFetcher, installerEnv));
@@ -199,6 +218,57 @@ class SelfUpdateIntegrationTest {
             assertThat(printer.getOutput()).contains("Installed Camel CLI " + NEWER_VERSION);
             assertThat(Files.isDirectory(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION))).isTrue();
             assertThat(Files.exists(home.resolve(".local/bin/camel"))).isTrue();
+        }
+    }
+
+    static Stream<Arguments> updatesThePluginsWithTheInstalledCli() {
+        return Stream.of(
+                arguments(new String[0], "0", "Camel " + NEWER_VERSION + " ran: camel plugin update", null),
+                arguments(new String[] { "--skip-plugins" }, "0", null, "ran: camel plugin update"),
+                // the CLI is installed: a failure to update the plugins does not fail camel self-update
+                arguments(new String[0], "1", "WARN: The plugins were not updated (camel plugin update exited with 1):"
+                                              + " run 'camel plugin update' to update them",
+                        null),
+                // what camel plugin update would change with the version to install, by this CLI
+                arguments(new String[] { "--check" }, "0", "Dry run for Camel CLI " + NEWER_VERSION
+                                                           + ", nothing is changed:" + System.lineSeparator()
+                                                           + "kubernetes is released with the Camel CLI, and uses its version",
+                        null),
+                arguments(new String[] { "--check", "--skip-plugins" }, "0", null, "Dry run"));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void updatesThePluginsWithTheInstalledCli(
+            String[] args, String pluginExit, String expected, String unexpected, @TempDir Path temp)
+            throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            // the plugin configuration of the environment the new CLI runs with
+            Path pluginConfig = Files.writeString(temp.resolve("plugins.json"),
+                    "{\"plugins\":{\"kubernetes\":{\"name\":\"kubernetes\",\"command\":\"kubernetes\"}}}");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishLatest(fixture, NEWER_VERSION);
+            WebsiteInstallTest.publishVersion(fixture, NEWER_VERSION);
+
+            int exit = run(fixture, home, Map.of("CAMEL_TEST_PLUGIN_EXIT", pluginExit,
+                    PluginHelper.PLUGIN_CONFIG_ENV, pluginConfig.toString()), args);
+
+            assertThat(exit).as(printer.getOutput()).isZero();
+            if (args.length > 0 && "--check".equals(args[0])) {
+                assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).doesNotExist();
+            } else {
+                assertThat(printer.getOutput()).contains("Installed Camel CLI " + NEWER_VERSION);
+                assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).isDirectory();
+            }
+            if (expected != null) {
+                assertThat(printer.getOutput()).contains(expected);
+            }
+            if (unexpected != null) {
+                assertThat(printer.getOutput()).doesNotContain(unexpected);
+            }
         }
     }
 
