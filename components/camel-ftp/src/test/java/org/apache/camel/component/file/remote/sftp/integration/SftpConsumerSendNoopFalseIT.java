@@ -38,8 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * Both sendNoop=true and sendNoop=false cause REALPATH requests (JSch resolves "." before every {@code ls}), but
  * sendNoop=true adds an extra REALPATH per poll for the noop check. The test runs both modes in sequence against the
- * same embedded server and asserts that the sendNoop=true run produces strictly more REALPATH requests than the
- * sendNoop=false baseline.
+ * same embedded server and asserts that the sendNoop=true run produces strictly more REALPATH requests <em>per
+ * poll</em> than the sendNoop=false baseline (comparing per-poll rates avoids a flaky failure if the two runs complete
+ * a different number of polls within the minimum-5 window).
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
@@ -76,13 +77,16 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     @Test
     public void testSendNoopDifference() throws Exception {
         // --- Run with sendNoop=false (baseline) ---
-        consumeFileAndPollAgain("sendNoopFalse");
+        MockEndpoint mockFalse = consumeFileAndPollAgain("sendNoopFalse");
         // Stop the route before reading the counter: the consumer polls every 100 ms and may
         // still be in flight. Reading the counter while the route is running risks a race where
         // sendNoop=false accumulates extra REALPATH requests from JSch's internal cd/ls calls
         // between assertIsSatisfied() returning and the route actually stopping.
         context.getRouteController().stopRoute("sendNoopFalse");
-        int realpathWithNoopFalse = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
+        // Divide by the number of polls to get a per-poll rate: JSch sends several REALPATH
+        // requests per poll (for cd/ls), so an extra poll in one run would skew the raw count.
+        int pollsFalse = mockFalse.getReceivedCounter();
+        double realpathPerPollFalse = (double) countingService().requests(SftpConstants.SSH_FXP_REALPATH) / pollsFalse;
         assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=false)");
 
         // reset counters and login count for the second run
@@ -90,20 +94,23 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         logins.set(0);
 
         // --- Run with sendNoop=true (default) ---
-        consumeFileAndPollAgain("sendNoopDefault");
+        MockEndpoint mockTrue = consumeFileAndPollAgain("sendNoopDefault");
         // Stop the route before reading, same reason as for the sendNoop=false run above.
         context.getRouteController().stopRoute("sendNoopDefault");
-        int realpathWithNoopTrue = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
+        int pollsTrue = mockTrue.getReceivedCounter();
+        double realpathPerPollTrue = (double) countingService().requests(SftpConstants.SSH_FXP_REALPATH) / pollsTrue;
         assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=true)");
 
-        // sendNoop=true sends an extra REALPATH round-trip before every poll, so it must produce strictly more
-        assertTrue(realpathWithNoopTrue > realpathWithNoopFalse,
-                "sendNoop=true should send more REALPATH requests (" + realpathWithNoopTrue
-                                                                 + ") than sendNoop=false ("
-                                                                 + realpathWithNoopFalse + ")");
+        // sendNoop=true sends an extra REALPATH round-trip before every poll, so it must produce
+        // strictly more REALPATH per poll. Comparing per-poll rates avoids a flaky failure when
+        // the two runs complete a different number of polls within the minimum-5 window.
+        assertTrue(realpathPerPollTrue > realpathPerPollFalse,
+                "sendNoop=true should send more REALPATH requests per poll (" + realpathPerPollTrue
+                                                               + ") than sendNoop=false ("
+                                                               + realpathPerPollFalse + ")");
     }
 
-    private void consumeFileAndPollAgain(String routeId) throws Exception {
+    private MockEndpoint consumeFileAndPollAgain(String routeId) throws Exception {
         template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/sendnoop", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -116,6 +123,7 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         context.getRouteController().startRoute(routeId);
 
         MockEndpoint.assertIsSatisfied(context);
+        return mock;
     }
 
     @Override
