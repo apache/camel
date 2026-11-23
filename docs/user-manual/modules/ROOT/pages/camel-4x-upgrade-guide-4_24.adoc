@@ -1115,6 +1115,15 @@ pool bounds the requests in flight, set `synchronous=true` on the endpoint, or
 a bound sets one itself, for example with `throttle(n).concurrentRequestsMode().asyncDelayed()`: with `asyncDelayed`, a
 request that waits for a permit does not hold a worker thread either.
 
+=== camel-knative-http, camel-vertx-websocket - a route with an asynchronous step no longer holds a worker thread
+
+A `camel-knative-http` or `camel-vertx-websocket` consumer route with an asynchronous step, such as a `vertx-http`
+call, no longer holds a Vert.x worker thread while it waits for that step. So the size of the worker pool no
+longer limits how many messages of such a route are in flight at the same time.
+
+To keep the old behaviour, where the worker thread waits until the route is complete and the worker pool bounds
+the messages in flight, set `synchronous=true` on the endpoint.
+
 === camel-http - authMethod=Bearer and authMethod=NTLM are applied
 
 The endpoint options `authMethod=Bearer` and `authBearerToken` now send the token when the server asks for it. Before,

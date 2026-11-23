@@ -29,6 +29,7 @@ import io.vertx.core.VertxOptions;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A vertx-websocket consumer route that includes an asynchronous step must not hold the Vert.x worker thread while
@@ -95,29 +97,37 @@ class VertxWebsocketSharedVertxWorkerPoolTest {
 
             // send WORKERS messages concurrently via the shared Vert.x producer
             ExecutorService senders = Executors.newFixedThreadPool(WORKERS);
-            List<CompletableFuture<Void>> sends = new ArrayList<>();
-            for (int i = 0; i < WORKERS; i++) {
-                final int idx = i;
-                sends.add(CompletableFuture.runAsync(() -> context.createProducerTemplate()
-                        .sendBody("vertx-websocket:localhost:" + serverPort + "/test", "message-" + idx), senders));
-            }
-
-            // wait until all messages have arrived at the async step — deadlocks if workers are held
-            arrivedLatch.await(10, TimeUnit.SECONDS);
-            assertEquals(WORKERS, waiting.size(), "All messages should have reached the async step");
-
-            // complete all waiting callbacks to let the route finish
-            synchronized (waitingLock) {
-                for (AsyncCallback callback : waiting) {
-                    callback.done(false);
+            ProducerTemplate template = context.createProducerTemplate();
+            try {
+                List<CompletableFuture<Void>> sends = new ArrayList<>();
+                for (int i = 0; i < WORKERS; i++) {
+                    final int idx = i;
+                    sends.add(CompletableFuture.runAsync(
+                            () -> template.sendBody("vertx-websocket:localhost:" + serverPort + "/test", "message-" + idx),
+                            senders));
                 }
-            }
 
-            // verify all sends complete without timeout
-            for (CompletableFuture<Void> send : sends) {
-                send.get(10, TimeUnit.SECONDS);
+                // wait until all messages have arrived at the async step — deadlocks if workers are held
+                assertTrue(arrivedLatch.await(10, TimeUnit.SECONDS),
+                        "Timed out waiting for all messages to arrive at the async step");
+                assertEquals(WORKERS, waiting.size(), "All messages should have reached the async step");
+
+                // complete all waiting callbacks on a Vert.x worker — fails with the old code
+                for (AsyncCallback callback : waiting) {
+                    vertx.executeBlocking(() -> {
+                        callback.done(false);
+                        return null;
+                    }, false);
+                }
+
+                // verify all sends complete without timeout
+                for (CompletableFuture<Void> send : sends) {
+                    send.get(10, TimeUnit.SECONDS);
+                }
+            } finally {
+                template.stop();
+                senders.shutdown();
             }
-            senders.shutdown();
         }
     }
 }

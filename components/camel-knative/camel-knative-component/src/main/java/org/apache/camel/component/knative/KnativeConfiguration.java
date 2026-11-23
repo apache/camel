@@ -56,6 +56,14 @@ public class KnativeConfiguration implements Cloneable {
     private Boolean reply;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean muteException = true;
+    @UriParam(label = "consumer",
+              description = "Whether the consumer routes each request synchronously. When true, the route runs on a thread of the"
+                            + " Vert.x worker pool, which waits until the route is complete, so the size of the worker pool limits"
+                            + " how many requests are routed at the same time. When false, the route starts on a worker thread"
+                            + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
+                            + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
+                            + " requests in flight.")
+    private boolean synchronous;
 
     // ************************
     //
@@ -233,6 +241,17 @@ public class KnativeConfiguration implements Cloneable {
      */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether the consumer routes each request synchronously.
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     // ************************

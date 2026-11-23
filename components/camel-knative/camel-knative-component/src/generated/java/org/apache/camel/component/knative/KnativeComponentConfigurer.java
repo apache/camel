@@ -67,6 +67,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "replyWithCloudEvent": getOrCreateConfiguration(target).setReplyWithCloudEvent(property(camelContext, boolean.class, value)); return true;
         case "sinkbinding":
         case "sinkBinding": getOrCreateConfiguration(target).setSinkBinding(property(camelContext, org.apache.camel.component.knative.spi.KnativeSinkBinding.class, value)); return true;
+        case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transportoptions":
         case "transportOptions": getOrCreateConfiguration(target).setTransportOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "typeid":
@@ -114,6 +115,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "replyWithCloudEvent": return boolean.class;
         case "sinkbinding":
         case "sinkBinding": return org.apache.camel.component.knative.spi.KnativeSinkBinding.class;
+        case "synchronous": return boolean.class;
         case "transportoptions":
         case "transportOptions": return java.util.Map.class;
         case "typeid":
@@ -162,6 +164,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "replyWithCloudEvent": return getOrCreateConfiguration(target).isReplyWithCloudEvent();
         case "sinkbinding":
         case "sinkBinding": return getOrCreateConfiguration(target).getSinkBinding();
+        case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "transportoptions":
         case "transportOptions": return getOrCreateConfiguration(target).getTransportOptions();
         case "typeid":

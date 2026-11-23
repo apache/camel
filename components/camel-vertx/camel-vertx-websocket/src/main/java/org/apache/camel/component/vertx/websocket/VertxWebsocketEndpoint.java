@@ -82,6 +82,14 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     @UriParam
     private VertxWebsocketConfiguration configuration;
+    @UriParam(label = "consumer",
+              description = "Whether the consumer routes each message synchronously. When true, the route runs on a thread of the"
+                            + " Vert.x worker pool, which waits until the route is complete, so the size of the worker pool limits"
+                            + " how many messages are routed at the same time. When false, the route starts on a worker thread"
+                            + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
+                            + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
+                            + " messages in flight.")
+    private boolean synchronous;
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
@@ -169,6 +177,17 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether the consumer routes each message synchronously.
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     protected Vertx getVertx() {

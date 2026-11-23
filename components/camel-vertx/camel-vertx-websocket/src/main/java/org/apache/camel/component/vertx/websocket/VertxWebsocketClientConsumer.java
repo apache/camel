@@ -229,23 +229,47 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
-        Context context = vertx.getOrCreateContext();
-        Promise<Void> done = Promise.promise();
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
-            return null;
-        }, false).onFailure(done::tryFail);
-        done.future().onComplete(result -> {
-            try {
-                if (result.failed()) {
-                    Throwable cause = result.cause();
-                    getExceptionHandler().handleException(cause);
+        if (getEndpoint().isSynchronous()) {
+            // synchronous path: run on worker, block until done
+            vertx.executeBlocking(() -> {
+                createUoW(exchange);
+                getProcessor().process(exchange);
+                return null;
+            }, false).onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                    }
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
                 }
-            } finally {
-                doneUoW(exchange);
-                releaseExchange(exchange, false);
+            });
+        } else {
+            // async path: Promise + runOnContext
+            Context context = vertx.getOrCreateContext();
+            Promise<Void> done = Promise.promise();
+            try {
+                vertx.executeBlocking(() -> {
+                    createUoW(exchange);
+                    getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+                    return null;
+                }, false).onFailure(done::tryFail);
+            } catch (Exception e) {
+                done.tryFail(e);
             }
-        });
+            done.future().onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                    }
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        }
     }
 }

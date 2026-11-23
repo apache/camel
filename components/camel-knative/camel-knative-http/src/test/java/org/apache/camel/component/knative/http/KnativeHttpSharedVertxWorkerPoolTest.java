@@ -53,7 +53,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.knative.KnativeEnvironmentSupport.sourceEndpoint;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A knative-http consumer route that includes an asynchronous step must not hold the Vert.x worker thread while waiting
@@ -156,20 +157,22 @@ class KnativeHttpSharedVertxWorkerPoolTest {
             }
 
             // wait until all requests have arrived at the async step — deadlocks if workers are held
-            arrivedLatch.await(10, TimeUnit.SECONDS);
-            assertEquals(WORKERS, waiting.size(), "All requests must reach the async step");
+            assertTrue(arrivedLatch.await(10, TimeUnit.SECONDS),
+                    "Timed out waiting for all requests to arrive at the async step");
+            assertThat(waiting).hasSize(WORKERS);
 
-            // complete all waiting callbacks
-            synchronized (waitingLock) {
-                for (AsyncCallback callback : waiting) {
+            // complete all waiting callbacks on a Vert.x worker — fails with the old code
+            for (AsyncCallback callback : waiting) {
+                vertx.executeBlocking(() -> {
                     callback.done(false);
-                }
+                    return null;
+                }, false);
             }
 
             for (CompletableFuture<HttpResponse<String>> response : responses) {
                 HttpResponse<String> r = response.get(10, TimeUnit.SECONDS);
                 // 200: the route replied with the request body (knative reply=true echoes the body back)
-                assertEquals(200, r.statusCode());
+                assertThat(r.statusCode()).isEqualTo(200);
             }
         }
     }
