@@ -219,13 +219,6 @@ public class LangChain4jMcpServerDefinition {
 
     @SuppressWarnings("deprecation")
     private McpTransport buildTransport(CamelContext camelContext) throws Exception {
-        // Resolve OAuth token for HTTP-based transports
-        Map<String, String> authHeaders = null;
-        if (oauthProfile != null && !oauthProfile.isBlank() && camelContext != null) {
-            String token = OAuthHelper.resolveOAuthToken(camelContext, oauthProfile);
-            authHeaders = Map.of("Authorization", "Bearer " + token);
-        }
-
         if ("http".equalsIgnoreCase(transportType) || "streamableHttp".equalsIgnoreCase(transportType)) {
             if (url == null || url.trim().isEmpty()) {
                 throw new IllegalArgumentException("URL is required for HTTP MCP transport");
@@ -235,8 +228,19 @@ public class LangChain4jMcpServerDefinition {
                     .logRequests(logRequests)
                     .logResponses(logResponses)
                     .timeout(timeout);
-            if (authHeaders != null) {
-                builder.customHeaders(authHeaders);
+            if (oauthProfile != null && !oauthProfile.isBlank() && camelContext != null) {
+                // Use a Supplier so the token is re-resolved on every request,
+                // allowing short-lived OAuth tokens to be refreshed when they expire.
+                final String profile = oauthProfile;
+                final CamelContext ctx = camelContext;
+                builder.customHeaders(() -> {
+                    try {
+                        String token = OAuthHelper.resolveOAuthToken(ctx, profile);
+                        return Map.of("Authorization", "Bearer " + token);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to resolve OAuth token for profile: " + profile, e);
+                    }
+                });
             }
             return builder.build();
         } else if ("stdio".equalsIgnoreCase(transportType)) {
