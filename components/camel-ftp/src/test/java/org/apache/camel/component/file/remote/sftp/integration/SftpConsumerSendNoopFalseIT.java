@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -25,10 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
-import org.apache.sshd.common.channel.RequestHandler;
-import org.apache.sshd.common.session.ConnectionService;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
+import org.apache.sshd.sftp.common.SftpConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,30 +35,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * With sendNoop=false the sftp consumer does not send a keep-alive request before each poll, and stays connected
- * between polls.
+ * between polls. With sendNoop=true (the default), the consumer sends a REALPATH round-trip before each poll to check
+ * that the connection is alive.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
-    private final AtomicInteger keepAlives = new AtomicInteger();
     private final AtomicInteger logins = new AtomicInteger();
 
     @RegisterExtension
-    protected SftpEmbeddedService service = new SftpEmbeddedService() {
+    protected SftpEmbeddedService service = new SftpExistsFileIT.CountingSftpEmbeddedService() {
         @Override
         public void setUpServer() throws Exception {
             super.setUpServer();
-            // count the keep-alive requests and the logins the server sees
-            List<RequestHandler<ConnectionService>> handlers = new ArrayList<>();
-            handlers.add((connectionService, request, wantReply, buffer) -> {
-                if (request.startsWith("keepalive@")) {
-                    keepAlives.incrementAndGet();
-                }
-                // let the default handlers answer the request
-                return RequestHandler.Result.Unsupported;
-            });
-            handlers.addAll(sshd.getGlobalRequestHandlers());
-            sshd.setGlobalRequestHandlers(handlers);
+            // count the logins the server sees
             sshd.addSessionListener(new SessionListener() {
                 @Override
                 public void sessionEvent(Session session, Event event) {
@@ -73,6 +60,10 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         }
     };
 
+    private SftpExistsFileIT.CountingSftpEmbeddedService countingService() {
+        return (SftpExistsFileIT.CountingSftpEmbeddedService) service;
+    }
+
     private String getSftpUrl() {
         return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/sendnoop?username=admin&password=admin"
                + "&knownHostsFile=" + service.getKnownHostsFile()
@@ -83,7 +74,8 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     public void testSendNoopFalse() throws Exception {
         consumeFileAndPollAgain("sendNoopFalse");
 
-        assertEquals(0, keepAlives.get(), "The consumer should not send a keep-alive before a poll when sendNoop=false");
+        assertEquals(0, countingService().requests(SftpConstants.SSH_FXP_REALPATH),
+                "The consumer should not send a noop REALPATH before a poll when sendNoop=false");
         assertEquals(1, logins.get(), "The consumer should stay connected between polls");
     }
 
@@ -91,7 +83,10 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     public void testSendNoopDefault() throws Exception {
         consumeFileAndPollAgain("sendNoopDefault");
 
-        assertTrue(keepAlives.get() > 0, "The consumer should send a keep-alive before a poll by default");
+        // sendNoop=true (the default) uses an SFTP REALPATH round-trip to check the connection is alive before each
+        // poll. At least one poll (5 or more empty-message polls happen) should have sent a REALPATH request.
+        assertTrue(countingService().requests(SftpConstants.SSH_FXP_REALPATH) > 0,
+                "The consumer should send a noop REALPATH before a poll by default");
         assertEquals(1, logins.get(), "The consumer should stay connected between polls");
     }
 
