@@ -336,6 +336,8 @@ class DataRefreshService {
                     info.statusWrittenAt = writtenAt(pid);
                 }
                 if (info != null && ctx != null) {
+                    // the data type each Kamelet a step calls turns the body into (CAMEL-27475)
+                    KameletInputs.attach(info);
                     ctx.chaosMarks.record(info);
                     ctx.timeline.record(info, info.statusWrittenAt);
                     mergeTimelineFile(pid);

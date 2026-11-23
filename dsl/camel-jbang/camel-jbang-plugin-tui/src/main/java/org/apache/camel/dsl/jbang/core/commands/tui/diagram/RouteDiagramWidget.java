@@ -38,6 +38,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
 import org.apache.camel.dsl.jbang.core.commands.tui.BodyTypes;
 import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
@@ -350,7 +351,7 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private void addArrowEnd(LayoutNode to, int fromCx, int fromRow, int toCx, int toTop, int countWidth) {
-        if (bodyTypes && to.treeNode != null && !to.treeNode.info.bodyTypes.isEmpty()) {
+        if (bodyTypes && to.treeNode != null && hasBody(to.treeNode.info)) {
             arrowEnds.add(new ArrowEnd(to, fromCx, fromRow, toCx, toTop, countWidth));
         }
     }
@@ -368,10 +369,31 @@ public class RouteDiagramWidget implements Widget {
             col += end.countWidth() > 0 ? end.countWidth() + 2 : 0;
         }
         var info = end.to().treeNode.info;
-        String text = BodyTypes.fit(info.bodyTypes, info.bodyKinds, info.bodyFormats, room(row, col));
-        if (!text.isEmpty()) {
-            writeText(buffer, area, row, col, text, BodyTypes.style(info.bodyKinds, info.bodyFormats));
+        // the data type of the Kamelet the step calls goes after the types (CAMEL-27475): LinkedHashMap → json
+        String arrow = kameletArrow(info);
+        int room = room(row, col);
+        String text = info.bodyTypes.isEmpty()
+                ? arrow.strip()
+                : BodyTypes.fit(info.bodyTypes, info.bodyKinds, info.bodyFormats, room - CharWidth.of(arrow)) + arrow;
+        if (CharWidth.of(text) > room) {
+            text = CharWidth.truncateWithEllipsis(text, Math.max(0, room), "…", CharWidth.TruncatePosition.END);
         }
+        if (!text.isEmpty()) {
+            boolean notTaken = info.kameletInput != null && Boolean.FALSE.equals(info.kameletInput.takesBody());
+            writeText(buffer, area, row, col, text,
+                    notTaken ? Theme.warning() : BodyTypes.style(info.bodyKinds, info.bodyFormats));
+        }
+    }
+
+    /** Whether a step has body types, or calls a Kamelet whose data type is known. */
+    private static boolean hasBody(RouteDiagramLayoutEngine.NodeInfo info) {
+        return !info.bodyTypes.isEmpty() || info.kameletInput != null;
+    }
+
+    /** The data type of the Kamelet a step calls, after its types: " → json"; empty when it calls none. */
+    private static String kameletArrow(RouteDiagramLayoutEngine.NodeInfo info) {
+        var in = info.kameletInput;
+        return in == null ? "" : " " + KameletInput.arrowText(in.dataType(), in.takesBody(), in.transformer());
     }
 
     /**
@@ -479,9 +501,9 @@ public class RouteDiagramWidget implements Widget {
         if (bodyTypes) {
             // the body types beside the arrows can be scrolled to: as wide as they are before something cuts them
             for (LayoutNode ln : layoutRoute.nodes) {
-                if (!ln.tableRow && ln.treeNode != null && !ln.treeNode.info.bodyTypes.isEmpty()) {
+                if (!ln.tableRow && ln.treeNode != null && hasBody(ln.treeNode.info)) {
                     int label = CharWidth.of(BodyTypes.label(ln.treeNode.info.bodyTypes, ln.treeNode.info.bodyKinds,
-                            ln.treeNode.info.bodyFormats));
+                            ln.treeNode.info.bodyFormats) + kameletArrow(ln.treeNode.info));
                     cols = Math.max(cols, centerCol(ln) + 2 + COUNT_WIDTH + Math.min(MAX_BODY_TYPES_WIDTH, label) + 2);
                 }
             }
@@ -569,7 +591,9 @@ public class RouteDiagramWidget implements Widget {
         }
 
         if (bodyKindMarks && node.treeNode != null
-                && BodyTypes.marked(node.treeNode.info.bodyKinds, node.treeNode.info.bodyFormats)) {
+                && (BodyTypes.marked(node.treeNode.info.bodyKinds, node.treeNode.info.bodyFormats)
+                        || node.treeNode.info.kameletInput != null
+                                && Boolean.FALSE.equals(node.treeNode.info.kameletInput.takesBody()))) {
             // bodies of more than one kind, or payloads of more than one format, reach the step: it needs attention
             writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
         }

@@ -309,7 +309,10 @@ public final class ToolRegistry {
                                              + " kind needs attention: a step that writes fails for data, one that reads"
                                              + " fields fails for a payload. bodyFormats: the format of the payload from"
                                              + " its Content-Type (json, xml, csv, yaml, text, binary or the media type), to"
-                                             + " compare with the format the catalog says a step takes.")
+                                             + " compare with the format the catalog says a step takes. kameletInput:"
+                                             + " the data type a Kamelet the step calls turns the body into, such as"
+                                             + " json for postgresql-sink, which writes a Map as JSON; takesBody false"
+                                             + " when its transformer does not take the body.")
                 .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
                         false)
                 .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
@@ -321,6 +324,7 @@ public final class ToolRegistry {
                         root.put("filter", routeFilter(routeId));
                         root.put("brief", String.valueOf(brief));
                     });
+                    result = withKameletInputs(result, ctx);
                     if ("true".equalsIgnoreCase(args.get("varied"))) {
                         result = onlyVaried(result);
                     }
@@ -1255,6 +1259,25 @@ public final class ToolRegistry {
     /** The route pattern of the route-dump and route-structure actions: all routes when none is given. */
     private static String routeFilter(String routeId) {
         return routeId != null && !routeId.isBlank() ? routeId : "*";
+    }
+
+    /**
+     * The route structure with the data type each Kamelet a step calls turns the body into (kameletInput, CAMEL-27475),
+     * from the Kamelets of the project directory or of the catalog; as it is when it is not JSON or calls no Kamelet.
+     */
+    static String withKameletInputs(String routeStructure, ToolContext ctx) {
+        if (routeStructure == null || !routeStructure.contains("kamelet")) {
+            return routeStructure;
+        }
+        try {
+            if (Jsoner.deserialize(routeStructure) instanceof JsonObject jo
+                    && KameletInput.addTo(jo, ctx.defaultDirectory(), ctx.catalog()) > 0) {
+                return jo.toJson();
+            }
+        } catch (Exception e) {
+            LOG.debug("Cannot add the data types of the Kamelets to the route structure: {}", e.getMessage(), e);
+        }
+        return routeStructure;
     }
 
     /**

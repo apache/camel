@@ -19,6 +19,7 @@ package org.apache.camel.diagram;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
@@ -84,6 +85,7 @@ public final class RouteDiagramHelper {
                     node.bodyTypes = strings(line.get("bodyTypes"));
                     node.bodyKinds = strings(line.get("bodyKinds"));
                     node.bodyFormats = strings(line.get("bodyFormats"));
+                    node.kameletInput = kameletInput(line.get("kameletInput"));
 
                     if (line.containsKey("statistics")) {
                         JsonObject ls = line.getJsonObject("statistics");
@@ -129,6 +131,21 @@ public final class RouteDiagramHelper {
     }
 
     /** The strings of a JSON array, such as the body types of a step; empty when there are none. */
+    /**
+     * The data type the Kamelet a step calls turns the body into, from the kameletInput of the route structure that the
+     * Camel CLI adds (CAMEL-27475); null when the line has none.
+     */
+    private static RouteDiagramLayoutEngine.KameletInputInfo kameletInput(Object value) {
+        if (!(value instanceof Map<?, ?> m) || !(m.get("dataType") instanceof String dataType)) {
+            return null;
+        }
+        return new RouteDiagramLayoutEngine.KameletInputInfo(
+                m.get("kamelet") instanceof String k ? k : null, dataType,
+                m.get("transformer") instanceof String t ? t : null,
+                m.get("description") instanceof String d ? d : null,
+                m.get("takesBody") instanceof Boolean b ? b : null);
+    }
+
     private static List<String> strings(Object array) {
         if (!(array instanceof List<?> list) || list.isEmpty()) {
             return List.of();

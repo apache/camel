@@ -1061,13 +1061,12 @@ class RoutesTab extends AbstractDiagramTab {
                 || route.processors.stream().anyMatch(p -> p.p50Time >= 0);
         // a column only when a step has body types, as wide as the longest up to a limit: the info panel of the
         // diagram has them all; a space before them sets them apart from the inflight count
-        boolean bodyTypes = route.processors.stream().anyMatch(p -> !p.bodyTypes.isEmpty());
+        boolean bodyTypes = route.processors.stream().anyMatch(p -> !p.bodyTypes.isEmpty() || p.kameletInput != null);
         int bodyColWidth = 0;
         if (bodyTypes) {
             bodyColWidth = CharWidth.of("BODY TYPES");
             for (ProcessorInfo proc : route.processors) {
-                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds,
-                        proc.bodyFormats)));
+                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(KameletInputs.shortLabel(proc)));
             }
             bodyColWidth = Math.min(bodyColWidth, MAX_BODY_TYPES_WIDTH) + 1;
         }
@@ -1158,9 +1157,8 @@ class RoutesTab extends AbstractDiagramTab {
             cells.add(rightCell(String.valueOf(proc.inflight), 8));
             if (bodyTypes) {
                 cells.add(Cell.from(Span.styled(
-                        " " + TuiHelper.truncate(
-                                BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds, proc.bodyFormats), bodyColWidth - 1),
-                        BodyTypes.style(proc.bodyKinds, proc.bodyFormats))));
+                        " " + TuiHelper.truncate(KameletInputs.shortLabel(proc), bodyColWidth - 1),
+                        KameletInputs.style(proc))));
             }
             cells.add(rightCell(procTimingCol, 20));
             cells.add(Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10)));

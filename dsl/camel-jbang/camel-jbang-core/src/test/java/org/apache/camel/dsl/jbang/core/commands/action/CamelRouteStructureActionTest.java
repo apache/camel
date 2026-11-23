@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -185,6 +186,24 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
         assertEquals("String | LinkedHashMap · xml | csv (payload and data)",
                 CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"),
                         List.of("payload", "data"), List.of("xml", "csv")));
+    }
+
+    @Test
+    void testTheDataTypeOfTheKameletAStepCalls() {
+        // CAMEL-27475: the Map of a row becomes the JSON that postgresql-sink takes
+        Map<String, Object> json = Map.of("dataType", "json", "transformer", "application-json", "takesBody", true);
+        assertEquals("LinkedHashMap → json", CamelRouteStructureAction.bodyText(
+                List.of("java.util.LinkedHashMap"), List.of("data"), null, json));
+        // not reached yet: the data type alone
+        assertEquals("→ json", CamelRouteStructureAction.bodyText(null, null, null,
+                Map.of("dataType", "json", "transformer", "application-json")));
+        // a body the transformer does not take
+        assertEquals("ArrayList → text (text-plain does not take it)", CamelRouteStructureAction.bodyText(
+                List.of("java.util.ArrayList"), List.of("collection"), null,
+                Map.of("dataType", "text", "transformer", "text-plain", "takesBody", false)));
+        // no Kamelet
+        assertEquals("byte[] · json", CamelRouteStructureAction.bodyText(
+                List.of("byte[]"), List.of("payload"), List.of("json"), null));
     }
 
     @Test

@@ -90,6 +90,7 @@ public record RouteErrorFrame(int topY, int bottomY, List<String> lines) {
         copy.bodyTypes = n.bodyTypes;
         copy.bodyKinds = n.bodyKinds;
         copy.bodyFormats = n.bodyFormats;
+        copy.kameletInput = n.kameletInput;
         return copy;
     }
 

@@ -67,6 +67,15 @@ A payload (text, bytes, a stream or a file) with a `Content-Type` header has its
 of the catalog: `byte[] · json` (`json`, `xml`, `csv`, `yaml`, `text`, `binary`, or the media type as it is). A step
 reached with more than one format, such as `⚠ String · xml | csv`, is marked as a step of more than one kind is.
 
+A step that calls a Kamelet (`to: kamelet:postgresql-sink`) also shows the data type the Kamelet takes: its default
+`in` data type, which Camel turns the body into before the Kamelet sees it. For example `LinkedHashMap → json`:
+`postgresql-sink` takes a JSON object, and its data type transformer (`application-json`) writes the `Map` as JSON, so
+the step is fine. Kamelets come from event-driven and serverless integration, where the data between the steps is
+JSON, which is why a SQL sink takes JSON. Before a message has reached the step, it shows what the Kamelet takes
+(`→ json`). A body the transformer does not take, as the Camel catalog says, is marked:
+`⚠ ArrayList → text (text-plain does not take it)`. The Kamelets are looked up in the project and in the Kamelet
+catalog the integration runs (`camel run --kamelets-version`). The quick documentation of the line says what the Kamelet takes, and why.
+
 image::jbang/camel-tui-source-body-types.png[The orders route in the source view: the steps after the choice are reached with a map and a stream, as only one branch marshals, so they have a warning in the gutter, and the quick documentation of the selected line says why]
 
 The same body types are in the Routes and Diagram tabs (see

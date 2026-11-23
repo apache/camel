@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -29,8 +30,10 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
@@ -136,6 +139,13 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             // no running integration with the name, so it is a source file
             jo = doCallSource(name);
         }
+        if (!raw && jo.toJson().contains("kamelet")) {
+            // the data type each Kamelet turns the body into (CAMEL-27475), from the Kamelets of the project, which is
+            // where the command runs, or of the catalog
+            File source = new File(name);
+            Path directory = source.isFile() ? source.getAbsoluteFile().toPath().getParent() : Path.of("");
+            KameletInput.addTo(jo, directory.toAbsolutePath(), new DefaultCamelCatalog(true));
+        }
         if (varied) {
             jo = onlyVaried(jo);
             JsonArray routes = jo.getCollection("routes");
@@ -208,6 +218,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     code.bodyTypes = line.getCollection("bodyTypes");
                     code.bodyKinds = line.getCollection("bodyKinds");
                     code.bodyFormats = line.getCollection("bodyFormats");
+                    code.kameletInput = line.getMap("kameletInput");
                     if (brief) {
                         // make code brief
                         code.code = StringHelper.before(code.code, "[", code.code);
@@ -296,7 +307,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             // the body types each step was reached with, as the running app has seen them, line up in a column after
             // the code (the message history records them, such as with camel run --dev)
             int width = 0;
-            if (!raw && row.code.stream().anyMatch(code -> code.bodyTypes != null && !code.bodyTypes.isEmpty())) {
+            if (!raw && row.code.stream().anyMatch(code -> !bodyText(code).isEmpty())) {
                 for (Code code : row.code) {
                     width = Math.max(width, StringHelper.padString(code.level).length() + clippedCode(code).length());
                 }
@@ -309,9 +320,9 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     printer().printf("%s%s%n", pad, c);
                 } else {
                     String text = pad + c;
-                    if (width > 0 && code.bodyTypes != null && !code.bodyTypes.isEmpty()) {
-                        text = String.format("%-" + width + "s   body: %s", text,
-                                bodyTypes(code.bodyTypes, code.bodyKinds, code.bodyFormats));
+                    String body = width > 0 ? bodyText(code) : "";
+                    if (!body.isEmpty()) {
+                        text = String.format("%-" + width + "s   body: %s", text, body);
                     }
                     if (code.line != -1) {
                         printer().printf("%4d: %s%n", code.line, text);
@@ -326,6 +337,27 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
 
     private static String clippedCode(Code code) {
         return StringHelper.limitLength(Jsoner.unescape(code.code), 90, " (clipped)");
+    }
+
+    /**
+     * The body column of a step: its body types, and the data type the Kamelet it calls turns the body into
+     * ({@code LinkedHashMap → json}, or {@code → json} before a message has reached it); empty when it has neither.
+     */
+    private static String bodyText(Code code) {
+        return bodyText(code.bodyTypes, code.bodyKinds, code.bodyFormats, code.kameletInput);
+    }
+
+    static String bodyText(
+            List<String> bodyTypes, List<String> bodyKinds, List<String> bodyFormats,
+            Map<String, Object> in) {
+        String types = bodyTypes != null && !bodyTypes.isEmpty() ? bodyTypes(bodyTypes, bodyKinds, bodyFormats) : "";
+        if (in == null || in.get("dataType") == null) {
+            return types;
+        }
+        Object takes = in.get("takesBody");
+        String arrow = KameletInput.arrowText((String) in.get("dataType"), takes instanceof Boolean b ? b : null,
+                (String) in.get("transformer"));
+        return types.isEmpty() ? arrow : types + " " + arrow;
     }
 
     /**
@@ -434,5 +466,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         List<String> bodyTypes;
         List<String> bodyKinds;
         List<String> bodyFormats;
+        Map<String, Object> kameletInput;
     }
 }
