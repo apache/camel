@@ -549,11 +549,14 @@ stream caching enabled) or a reader, or with `fileExist=Append`: that upload fai
 directory. The directories that a consumer moves files into (`move`, `preMove`, `moveFailed`) are still checked each
 time.
 
-With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed
+With the default `sendNoop=true`, the ftp and sftp producers no longer send a `NOOP` before an upload when the server completed
 an upload, a download or a `NOOP` on that connection less than a second before. A connection that the server closed
 within that second is then found by the upload, which fails, instead of by the `NOOP`, after which the producer would
 have connected again; the next upload connects again. The consumer still sends a `NOOP` before each poll, and the
-health check before each check.
+health check before each check. For sftp, the noop is now an SFTP `REALPATH` round-trip (answered by the server)
+instead of an SSH keep-alive write (fire-and-forget), so a stale session that was idle for more than a
+second is detected before the next upload. This also
+means the sftp consumer with the default `sendNoop=true` sends one `REALPATH` request per poll.
 
 The absolute paths that the SFTP server sees do not change. The FTP server sees fewer `CWD` and `PWD` commands, and its
 current directory between two uploads is the directory of the last file, not the starting directory. `FtpOperations`

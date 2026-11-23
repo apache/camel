@@ -101,6 +101,12 @@ public class SftpOperations
     // is forced, and then how long it waits for the disconnect
     private static final long DISCONNECT_ON_STOP_WAIT_MILLIS = 1000;
     /**
+     * A connection used for an upload, a download or a noop this recently ago is treated as alive: the noop before the
+     * next upload is skipped, as it would not show anything new about the connection state. This matches the value used
+     * by {@link FtpOperations}.
+     */
+    private static final long RECENTLY_USED_NANOS = TimeUnit.SECONDS.toNanos(1);
+    /**
      * How many directories autoCreate remembers on a connection at most: the gain is for repeated uploads into the same
      * directories, and a producer that writes into a new directory for each message must not grow without limit.
      */
@@ -139,6 +145,12 @@ public class SftpOperations
      * {@link #MAX_BUILT_DIRECTORIES} most recently used ones.
      */
     private final Set<String> builtDirectories = Collections.newSetFromMap(LRUCacheFactory.newLRUCache(MAX_BUILT_DIRECTORIES));
+    /**
+     * The timestamp (in nanoseconds, from {@link System#nanoTime()}) of the last completed upload, download, or noop.
+     * Zero means no operation has completed yet. Used by {@link #isRecentlyUsed()} to skip the pre-upload noop when the
+     * connection was used a moment ago and is therefore known to be alive.
+     */
+    private volatile long lastCompletedNanos;
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
@@ -1076,6 +1088,7 @@ public class SftpOperations
         restoreDirectory = null;
         stepwiseDirectory = null;
         builtDirectories.clear();
+        lastCompletedNanos = 0;
     }
 
     /**
@@ -1367,14 +1380,19 @@ public class SftpOperations
         try {
             LOG.trace("retrieveFile({})", name);
             inStepwiseOperation = true;
+            boolean answer;
             if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
                 // local work directory is configured so we should store file
                 // content as files in this local directory
-                return retrieveFileToFileInLocalWorkDirectory(name, exchange);
+                answer = retrieveFileToFileInLocalWorkDirectory(name, exchange);
             } else {
                 // store file content directory as stream on the body
-                return retrieveFileToStreamInBody(name, exchange);
+                answer = retrieveFileToStreamInBody(name, exchange);
             }
+            if (answer) {
+                lastCompletedNanos = System.nanoTime();
+            }
+            return answer;
         } finally {
             inStepwiseOperation = false;
             lock.unlock();
@@ -1555,6 +1573,7 @@ public class SftpOperations
                 answer = storeFileInBuiltDirectoryAgain(name, directory, exchange, e);
             }
             if (answer) {
+                lastCompletedNanos = System.nanoTime();
                 rememberBuiltDirectory(directory);
             }
             return answer;
@@ -1899,15 +1918,32 @@ public class SftpOperations
     }
 
     @Override
+    public boolean isRecentlyUsed() {
+        long last = lastCompletedNanos;
+        if (last == 0 || System.nanoTime() - last >= RECENTLY_USED_NANOS) {
+            return false;
+        }
+        // Even if recently used, verify the session is still connected: if the server restarted
+        // within the last second, JSch may have already seen the EOF and isConnected() returns false.
+        return isConnected();
+    }
+
+    @Override
     public boolean sendNoop() throws GenericFileOperationFailedException {
         lock.lock();
         try {
             if (isConnected()) {
                 try {
-                    session.sendKeepAliveMsg();
+                    // Use a round-trip SFTP operation (realpath) rather than the JSch keep-alive
+                    // write (sendKeepAliveMsg), which is fire-and-forget and returns true even when
+                    // the server has closed the connection but the kernel has not yet delivered the
+                    // TCP RST to the JSch reader thread. A realpath request waits for the server's
+                    // response, so it reliably detects a stale session after a server restart.
+                    channel.realpath(".");
+                    lastCompletedNanos = System.nanoTime();
                     return true;
                 } catch (Exception e) {
-                    LOG.debug("SFTP session was closed. Ignoring this exception.", e);
+                    LOG.debug("SFTP session noop failed. Ignoring this exception.", e);
                     return false;
                 }
             }
