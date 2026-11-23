@@ -4593,6 +4593,13 @@ provider is detected as before.
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
 
+=== camel-xml-jaxp - XML parse errors are no longer logged at ERROR by the type converter
+
+When a message body that is not well-formed XML is converted to a DOM `Document` (for example by `xpath`), the
+`XmlConverter` used to log the parse error at ERROR, with its stack trace, and then fail with the same
+`SAXParseException`. It now only fails with the exception, which the route can handle (`doTry`, `onException`) or
+which the error handler logs. Parser warnings and recoverable errors are logged at DEBUG.
+
 === camel-xml-io, camel-yaml-io, camel-java-io - route dumps keep options set to their default value
 
 The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
