@@ -16,14 +16,9 @@
  */
 package org.apache.camel.component.alibaba.ots.constants;
 
-import org.apache.camel.spi.Metadata;
-
 public final class AlibabaOtsProperties {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaOtsOperation";
-
-    @Metadata(label = "producer", description = "Request id returned by Tablestore", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaOtsRequestId";
 
     private AlibabaOtsProperties() {
