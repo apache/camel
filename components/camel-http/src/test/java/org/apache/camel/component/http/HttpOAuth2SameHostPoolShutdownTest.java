@@ -36,16 +36,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Regression test for CAMEL-27233: when the OAuth2 token endpoint is on the same host and port as the API endpoint,
- * closing the token client must NOT shut down the endpoint's connection pool.
+ * Tests related to CAMEL-27233: when the OAuth2 token endpoint is on the same host and port as the API endpoint, the
+ * token client must NOT own the endpoint's connection manager.
  *
  * <p>
- * Before the fix, {@link OAuth2ClientConfigurer#configureHttpClient} called {@code clientBuilder.build()}, which built
- * the token client inheriting the endpoint's {@code HttpClientConnectionManager}. Because {@code connManagerShared}
- * defaults to {@code false}, both clients considered themselves the connection-manager owner. When the token client was
- * closed (e.g. on a stop/restart cycle or when {@code doStop()} ran), it shut down the shared pool, leaving the API
- * client's pool in a shut-down state and causing subsequent requests to throw
- * {@code IllegalStateException: Connection pool shut down}.
+ * Before the fix, {@link OAuth2ClientConfigurer#configureHttpClient} called {@code clientBuilder.build()} without
+ * setting {@code connManagerShared=true}, which made the token client a co-owner of the endpoint's
+ * {@code HttpClientConnectionManager}. Because {@link org.apache.hc.client5.http.impl.classic.InternalHttpClient}
+ * closes all co-owned resources on {@link java.io.Closeable#close()}, any code path that closed the token client (such
+ * as stopping the configurer) also shut down the shared pool.
+ *
+ * <p>
+ * The fix calls {@code clientBuilder.setConnectionManagerShared(true)} before building the token client so that the
+ * token client does not take ownership of the connection manager. The connection manager's lifecycle remains under the
+ * exclusive control of {@link HttpEndpoint#doStop()}.
+ *
+ * <p>
+ * {@code tokenAndApiOnSameHostSucceeds} is an end-to-end sanity check for the same-host scenario.
+ * {@code tokenClientCloseDoesNotShutDownEndpointPool} directly verifies the ownership invariant by simulating the
+ * configurer lifecycle and confirming that closing the token client leaves the endpoint's pool functional.
  * </p>
  */
 class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
