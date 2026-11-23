@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,10 +70,11 @@ public class InOutConsumerFailedRequestMessageTest extends JmsTestSupport {
         assertTrue(msg.contains("), as the exchange failed: the caller waits until its requestTimeout and then fails with"
                                 + " ExchangeTimedOutException"),
                 msg);
-        assertTrue(msg.contains("reply with a message that says the request failed and check it in the caller"), msg);
-        assertTrue(msg.endsWith("set transferException=true to send the exception back (with objectMessageEnabled=true"
-                                + " on both sides)"),
+        assertTrue(msg.endsWith("To make the caller fail at once, reply with a message that says the request failed and"
+                                + " check it in the caller"),
                 msg);
+        // no advice to send the exception back, which would be a serialized Java object (transferException)
+        assertFalse(msg.contains("transferException"), msg);
     }
 
     @Test

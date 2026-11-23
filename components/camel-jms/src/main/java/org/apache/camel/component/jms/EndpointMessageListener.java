@@ -187,8 +187,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         }
         return failure + ". No reply is sent (JMSReplyTo " + replyDestination + "), as the exchange failed: the caller"
                + " waits until its requestTimeout and then fails with ExchangeTimedOutException. To make the caller fail"
-               + " at once, reply with a message that says the request failed and check it in the caller, or set"
-               + " transferException=true to send the exception back (with objectMessageEnabled=true on both sides)";
+               + " at once, reply with a message that says the request failed and check it in the caller";
     }
 
     /**
