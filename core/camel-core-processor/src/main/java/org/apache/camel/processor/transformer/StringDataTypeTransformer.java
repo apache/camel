@@ -39,7 +39,7 @@ import org.apache.camel.spi.Transformer;
                                      description = "Text, bytes, a stream, a file or a value such as a number, and a"
                                                    + " null body stays null; a Map, a List or an object would become"
                                                    + " its toString()"),
-           transformerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
+           transformerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String", format = "text",
                                       description = "A String, or null for a null body"))
 public class StringDataTypeTransformer extends Transformer {
 
