@@ -598,6 +598,18 @@ the same HTTP status as before, and a body that is a JSON-RPC error response wit
 code is `-32700` (parse error) for a message that cannot be parsed, and `-32600` (invalid request) otherwise; before,
 a missing header or session id gave `-32601` and an unknown session `-32603`.
 
+=== camel-ftp, camel-sftp - each producer has a health check id of its own
+
+The id of the health check of an ftp, ftps or sftp producer (producer health checks are off by default and are turned
+on with `camel.health.producersEnabled=true`) was `producer:ftp-` and the host, so the producers of two endpoints to
+the same host had the same id. Health checks are told apart by their id, so only one of them was called, and stopping
+one producer could remove the check of the other. The id now also names the endpoint by its id, for example
+`producer:ftp-myhost-endpoint7`, and ends with `-2`, `-3` and so on for the other producers of an endpoint that has
+more than one at a time (the producer is not a singleton). The endpoint id is a number given when the endpoint is
+created, so it can change when the routes change or are reloaded: a configuration that named the old id
+(`producer:ftp-myhost`) should use a pattern such as `producer:ftp-myhost-*`. Each started producer is now checked,
+so a readiness call sends one `NOOP` per producer, where it sent one per host before.
+
 === camel-ftp, camel-sftp - fewer directory changes with stepwise and autoCreate
 
 No option or default changes. With the default `stepwise=true`, an upload, a download or (ftp) a delete no longer

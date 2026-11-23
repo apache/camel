@@ -31,7 +31,16 @@ public class RemoteFileProducerHealthCheck extends AbstractHealthCheck {
     private final RemoteFileProducer<?> producer;
 
     public RemoteFileProducerHealthCheck(RemoteFileProducer<?> producer) {
-        super("camel", "producer:ftp-" + producer.getEndpoint().getConfiguration().getHost());
+        this(producer, 1);
+    }
+
+    /**
+     * The producer is not a singleton: the id names the endpoint, and the number tells the producers of one endpoint
+     * apart. The repository of the checks finds a check by its id, so each producer needs its own.
+     */
+    RemoteFileProducerHealthCheck(RemoteFileProducer<?> producer, int number) {
+        super("camel", "producer:ftp-" + producer.getEndpoint().getConfiguration().getHost() + "-"
+                       + producer.getEndpoint().getId() + (number > 1 ? "-" + number : ""));
         this.producer = producer;
     }
 

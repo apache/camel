@@ -34,6 +34,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileProducer.class);
     private boolean loggedIn;
     private RemoteFileProducerHealthCheck producerHealthCheck;
+    private int producerHealthCheckNumber;
     private WritableHealthCheckRepository healthCheckRepository;
 
     private transient String remoteFileProducerToString;
@@ -195,7 +196,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            producerHealthCheck = new RemoteFileProducerHealthCheck(this);
+            producerHealthCheckNumber = getEndpoint().acquireProducerHealthCheckNumber();
+            producerHealthCheck = new RemoteFileProducerHealthCheck(this, producerHealthCheckNumber);
             producerHealthCheck.setEnabled(this.getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
@@ -210,6 +212,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         if (healthCheckRepository != null && producerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
+            getEndpoint().releaseProducerHealthCheckNumber(producerHealthCheckNumber);
         }
         loggedIn = false;
         try {
