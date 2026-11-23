@@ -105,6 +105,26 @@ class RemoteFileProducerStartingDirectoryJailTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldRefuseAbsoluteNamesWithoutDirectory() throws Exception {
+        for (String uri : new String[] { "ftp://hostname", "sftp://hostname" }) {
+            assertRefused(uri, "/home/other/planted.txt");
+            assertRefused(uri, "\\home\\other\\planted.txt");
+            // a drive that a server on Windows takes as absolute
+            assertRefused(uri, "C:/Users/other/planted.txt");
+            assertRefused(uri, "c:\\Users\\other\\planted.txt");
+            assertRefused(uri, "C:");
+        }
+        // a colon that is not a drive
+        assertEquals("a:b.txt", createFileName("ftp://hostname", "a:b.txt"));
+        assertEquals("report 10:30.txt", createFileName("ftp://hostname", "report 10:30.txt"));
+        // with a directory, an absolute name is relative to it
+        assertEquals("upload//sub/hello.txt", createFileName("ftp://hostname/upload", "/sub/hello.txt"));
+        // the jail can be turned off
+        assertEquals("/home/other/planted.txt",
+                createFileName("ftp://hostname?jailStartingDirectory=false", "/home/other/planted.txt"));
+    }
+
+    @Test
     void shouldAcceptAnyNameWithoutJail() throws Exception {
         assertEquals("http:/../../other/planted.txt",
                 createFileName("ftp://hostname?jailStartingDirectory=false", "http:/../../other/planted.txt"));

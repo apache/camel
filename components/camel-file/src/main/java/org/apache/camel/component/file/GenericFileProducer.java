@@ -580,6 +580,10 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         boolean within;
         if (endpoint.getConfiguration().needToNormalize()) {
             within = GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir);
+        } else if (baseDir.isEmpty() && isAbsoluteName(answer)) {
+            // without a directory a remote endpoint starts in the home directory of the login, which an absolute name
+            // is not within
+            within = false;
         } else {
             // the path is used on a remote server, which may take a backslash in it as part of a name, unless the
             // backslashes are replaced by / before the path is used
@@ -600,6 +604,23 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
      */
     protected boolean isBackslashNormalized() {
         return false;
+    }
+
+    /**
+     * Whether the name starts at a root: with a / or a \, or with a drive such as C:/ or C:\ that a server on Windows
+     * takes as absolute. A name such as a:b.txt does not.
+     */
+    private static boolean isAbsoluteName(String name) {
+        if (name.isEmpty()) {
+            return false;
+        }
+        char first = name.charAt(0);
+        if (first == '/' || first == '\\') {
+            return true;
+        }
+        boolean drive = name.length() >= 2 && name.charAt(1) == ':'
+                && (first >= 'a' && first <= 'z' || first >= 'A' && first <= 'Z');
+        return drive && (name.length() == 2 || name.charAt(2) == '/' || name.charAt(2) == '\\');
     }
 
     private String evaluateName(Exchange exchange, Expression expression, Object value) {
