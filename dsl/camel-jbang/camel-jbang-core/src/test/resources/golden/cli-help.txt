@@ -1525,9 +1525,9 @@ Options:
                             can be separated by comma)
       --json                Output in JSON Format
       --varied              To show only the steps that have been reached with
-                            more than one body type, as the running integration
-                            has seen them (the message history records them,
-                            such as with camel run --dev)
+                            more than one body type or format, as the running
+                            integration has seen them (the message history
+                            records them, such as with camel run --dev)
       --ignore-loading-error
                             Whether to ignore route loading and compilation
                             errors (use this with care!)
