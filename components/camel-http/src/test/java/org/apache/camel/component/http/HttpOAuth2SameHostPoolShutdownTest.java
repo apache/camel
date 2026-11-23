@@ -31,12 +31,13 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Regression test for CAMEL-27233: when the OAuth2 token endpoint is on the same host and port as the API endpoint, the
- * token client's independent connection manager must NOT affect the API client's connection pool.
+ * Regression test for CAMEL-27233: when the OAuth2 token endpoint is on the same host and port as the API endpoint,
+ * closing the token client must NOT shut down the endpoint's connection pool.
  *
  * <p>
  * Before the fix, {@link OAuth2ClientConfigurer#configureHttpClient} called {@code clientBuilder.build()}, which built
@@ -83,9 +84,8 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
 
     /**
      * Sending requests through an OAuth2-configured endpoint whose token URL lives on the same host and port as the API
-     * must succeed. Before the fix, the connection manager shared between the token client and the API client was shut
-     * down when the token client closed, causing subsequent API requests to throw
-     * {@code IllegalStateException: Connection pool shut down}.
+     * must succeed. The fix ensures the token client does not own the connection manager, so the basic same-host
+     * scenario is exercised end-to-end here with two successive requests.
      */
     @Test
     void tokenAndApiOnSameHostSucceeds() {
@@ -137,14 +137,13 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
             // Close the OAuth2ClientConfigurer (simulates doStop()) — this closes the token client
             configurer.stop();
 
-            // The endpoint's connection pool must still be functional after the token client closed
+            // The endpoint's connection pool must still be functional after the token client closed.
+            // A shut-down pool would throw IllegalStateException on lease().
             var route = new HttpRoute(new HttpHost("localhost", 8080));
-            var future = endpointConnManager.lease("test", route, null);
-            try {
-                // just checking lease() doesn't throw — a shut-down pool would throw IllegalStateException here
-            } finally {
-                future.cancel();
-            }
+            assertDoesNotThrow(
+                    () -> endpointConnManager.lease("test", route, null),
+                    "lease() must not throw — a shut-down pool would throw IllegalStateException")
+                    .cancel();
         } finally {
             endpointClient.close();
             endpointConnManager.close();
