@@ -443,7 +443,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                             + " cookies in the handler itself, and an ExchangeCookieHandler keeps them in an exchange"
                             + " property. The consumer does not use it.")
     private CookieHandler cookieHandler;
-    @UriParam(defaultValue = "false", label = "producer,advanced",
+    @UriParam(defaultValue = "false", label = "advanced",
               description = "Whether to always process the exchange synchronously. If true, the producer invokes the CXF"
                             + " Client without a callback and waits until the invocation returns, and the consumer runs the"
                             + " route without a CXF continuation. The component sets it to the value of its own synchronous"

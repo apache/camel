@@ -47,7 +47,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
                             + " component creates and that has no sslContextParameters. The producer uses them for the HTTPS"
                             + " requests that it sends. The consumer does not use them.")
     private boolean useGlobalSslContextParameters;
-    @Metadata(defaultValue = "false", label = "producer,advanced",
+    @Metadata(defaultValue = "false", label = "advanced",
               description = "Whether to always process the exchange synchronously. If true, the producer sends each request"
                             + " without an InvocationCallback and waits for the response, and the consumer runs the route"
                             + " without a CXF continuation. The component sets the value on each endpoint that it creates,"

@@ -1842,6 +1842,42 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointCxfSynchronous() {
+        // the consumer and the producer of cxf use synchronous
+        String uri = "cxf:bean:orderEndpoint?synchronous=true";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses defaultOperationName
+        uri = "cxf:bean:orderEndpoint?synchronous=true&defaultOperationName=getOrder";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("defaultOperationName"));
+
+        // the consumer and the producer of cxfrs use synchronous too
+        uri = "cxfrs:bean:rsServer?synchronous=true";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the component options have the group advanced, with no side
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("cxf").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+
+        groups.clear();
+        catalog.componentModel("cxfrs").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+    }
+
+    @Test
     public void testValidateEndpointSpringWsConsumerOptions() {
         String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
                      + "&outputAction=http://example.com/GetFooResponse&faultAction=http://example.com/GetFooFault";
