@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -126,5 +127,23 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         assertFalse(json.contains("\"enum\""));
 
         context.stop();
+    }
+
+    @Test
+    public void testCustomRestModelConvertersFromRegistry() throws Exception {
+        DefaultRestModelConverters converters = new DefaultRestModelConverters();
+        converters.addClassToSkip(User.class.getName());
+        context.getRegistry().bind("restModelConverters", converters);
+
+        BeanConfig config = new BeanConfig();
+        config.setVersion("3.0");
+        RestOpenApiReader reader = new RestOpenApiReader();
+
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+                new DefaultClassResolver());
+
+        assertNotNull(openApi);
+        assertFalse(openApi.getComponents() != null && openApi.getComponents().getSchemas() != null
+                && openApi.getComponents().getSchemas().containsKey("User"));
     }
 }

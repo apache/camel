@@ -16,130 +16,44 @@
  */
 package org.apache.camel.openapi;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
-import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 
 /**
- * A Camel extended {@link ModelConverters} where we are appending vendor extensions to include the java class name of
- * the model classes.
+ * Converts Java model classes to OpenAPI schemas used by the REST DSL OpenAPI document generator.
  */
-@SuppressWarnings("rawtypes")
-public class RestModelConverters {
+public interface RestModelConverters {
 
-    private static final ModelConverters MODEL31_CONVERTERS;
+    /**
+     * Adds a Swagger model converter to the conversion chain.
+     *
+     * @param converter the converter to add
+     */
+    void addConverter(ModelConverter converter);
 
-    static {
-        MODEL31_CONVERTERS = new ModelConverters(true);
-        MODEL31_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver(true)));
-    }
+    /**
+     * Excludes classes in the given package (and its subpackages) from model conversion.
+     *
+     * @param pkg the package name to skip
+     */
+    void addPackageToSkip(String pkg);
 
-    private static final ModelConverters MODEL30_CONVERTERS;
+    /**
+     * Excludes the given class from model conversion.
+     *
+     * @param cls the fully-qualified class name to skip
+     */
+    void addClassToSkip(String cls);
 
-    static {
-        MODEL30_CONVERTERS = new ModelConverters();
-        MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
-    }
-
-    private final boolean openapi31;
-
-    public RestModelConverters(boolean openapi31) {
-        this.openapi31 = openapi31;
-    }
-
-    public List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz) {
-        if (clazz.equals(File.class)) {
-            // File is a special type in OAS2 / OAS3 (no model)
-            return null;
-        } else {
-            return readClassOpenApi3(clazz);
-        }
-    }
-
-    private List<? extends Schema<?>> readClassOpenApi3(Class<?> clazz) {
-        String name = clazz.getName();
-        if (!name.contains(".")) {
-            return null;
-        }
-
-        ModelConverters modelConverters = openapi31 ? MODEL31_CONVERTERS : MODEL30_CONVERTERS;
-        Map<String, Schema> swaggerModel = modelConverters.readAll(clazz);
-        List<Schema<?>> modelSchemas = new ArrayList<>();
-        swaggerModel.forEach((key, schema) -> {
-            schema.setName(key);
-            modelSchemas.add(schema);
-        });
-        return modelSchemas;
-    }
-
-    private static class FqnModelResolver extends ModelResolver {
-        public FqnModelResolver() {
-            this(false);
-        }
-
-        public FqnModelResolver(boolean openapi31) {
-            this(new ObjectMapper());
-            openapi31(openapi31);
-        }
-
-        public FqnModelResolver(ObjectMapper mapper) {
-            super(mapper);
-            this._typeNameResolver.setUseFqn(true);
-        }
-    }
-
-    private static class ClassNameExtensionModelResolver extends ModelResolver {
-        private final ModelResolver delegate;
-
-        public ClassNameExtensionModelResolver() {
-            this(new ModelResolver(new ObjectMapper()));
-            ModelResolver.composedModelPropertiesAsSibling = true;
-        }
-
-        public ClassNameExtensionModelResolver(ModelResolver delegate) {
-            super(delegate.objectMapper());
-            this.delegate = delegate;
-        }
-
-        @Override
-        public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
-            Schema<?> result = delegate.resolve(annotatedType, context, next);
-            if (result != null) {
-                String rt = result.getType();
-                if (rt == null && result.getTypes() != null) {
-                    rt = result.getTypes().size() == 1 ? result.getTypes().iterator().next() : null;
-                }
-                if (Objects.equals("object", rt)) {
-                    JavaType type;
-                    if (annotatedType.getType() instanceof JavaType) {
-                        type = (JavaType) annotatedType.getType();
-                    } else {
-                        type = _mapper.constructType(annotatedType.getType());
-                    }
-
-                    if (!type.isContainerType()) {
-                        Map<String, String> value = new HashMap<>();
-                        value.put("type", "string");
-                        value.put("format", type.getRawClass().getName());
-                        result.addExtension("x-className", value);
-                    }
-                }
-            }
-            return result;
-        }
-    }
+    /**
+     * Reads the schema(s) for the given class.
+     *
+     * @param  oasDocument the OpenAPI document being generated
+     * @param  clazz       the model class
+     * @return             the generated schemas, or {@code null} when the class does not need a schema
+     */
+    List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz);
 }

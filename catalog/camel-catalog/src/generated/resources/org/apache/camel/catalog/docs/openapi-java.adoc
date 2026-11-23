@@ -186,3 +186,28 @@ restConfiguration().component("netty-http")
     .host("localhost")
     .port(8080);
 ----
+
+== Custom model converters
+
+When Camel generates an OpenAPI document from REST DSL model classes, it looks in the Camel Registry for a bean
+implementing `org.apache.camel.openapi.RestModelConverters`. When exactly one such bean is registered, Camel uses
+that instance. When no implementation is registered, Camel uses `DefaultRestModelConverters`.
+
+The default implementation can be configured with additional Swagger `ModelConverter` instances and with package-name
+prefixes or fully-qualified class names that should be omitted from generated schemas. Register the configured instance
+in the Registry before the OpenAPI document is generated:
+
+[source,java]
+----
+DefaultRestModelConverters converters = new DefaultRestModelConverters();
+converters.addConverter(new MyModelConverter());
+converters.addPackageToSkip("com.example.internal");
+converters.addClassToSkip("com.example.model.Secret");
+
+camelContext.getRegistry().bind("restModelConverters", converters);
+----
+
+`MyModelConverter` is an application-provided implementation of Swagger's `ModelConverter` interface. Applications
+may also provide their own implementation of `RestModelConverters` when the default conversion behaviour is not
+sufficient.
+
