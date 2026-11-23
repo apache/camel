@@ -434,9 +434,10 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
 
     private static void jailedCheck(String answer, String baseDir) {
         // check for file must be within starting directory (need to compact
-        // first as the name can be using relative paths via ../ etc)
-        String compatchAnswer = FileUtil.compactPath(answer);
-        String compatchBaseDir = FileUtil.compactPath(baseDir);
+        // first as the name can be using relative paths via ../ etc), the way
+        // the file system or the remote server resolves the path
+        String compatchAnswer = GenericFileHelper.compactPathForContainment(answer, File.separatorChar);
+        String compatchBaseDir = GenericFileHelper.compactPathForContainment(baseDir, File.separatorChar);
         if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + compatchAnswer
