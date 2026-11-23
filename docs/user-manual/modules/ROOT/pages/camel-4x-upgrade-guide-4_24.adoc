@@ -9852,7 +9852,9 @@ registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_ve
 
 After installing a new version of the Camel CLI, `camel self-update` now runs `camel plugin update` with it, which
 changes `~/.camel-jbang-plugins.json`: a community plugin whose release `camel plugin add` selected moves to the newest
-release built for the new version, when the plugin has one. Plugins added with `--version` or `--gav`, the plugins of the
+release built for the new version, when the plugin has one. A plugin may publish that release some time after the Camel
+release: while the new version is newer than the Camel versions of all the releases of the plugin, the plugin keeps its
+release, and the CLI reminds to run `camel plugin update` again when the plugin is loaded. Plugins added with `--version` or `--gav`, the plugins of the
 Apache Camel project, and plugins added as `LATEST` are not changed. Use `camel self-update --skip-plugins` to leave the
 plugins as they are. `camel self-update` of Camel CLI 4.23 and older does not update the plugins: run
 `camel plugin update` once after updating. See xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins].

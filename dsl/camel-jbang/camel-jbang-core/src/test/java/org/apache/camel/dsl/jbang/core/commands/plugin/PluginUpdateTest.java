@@ -119,8 +119,10 @@ class PluginUpdateTest extends CamelCommandBaseTestSupport {
                 arguments("4.25.0",
                         (Consumer<FakePluginDownloader>) d -> d.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")
                                 .release("1.6.2", "4.22.2", null),
-                        "WARN: No release of fixture is built for Camel CLI 4.25.0 yet. The newest, fixture 2.0.0, is"
-                                                                   + " built for Camel 4.23.0. Keeping fixture 1.6.2."),
+                        // its release for a new Camel version may come some time after the Camel release
+                        "WARN: No release of fixture is built for Camel CLI 4.25.0 yet (the newest, 2.0.0, is built for"
+                                                                   + " Camel 4.23.0). Keeping fixture 1.6.2: run 'camel plugin update fixture' again once a"
+                                                                   + " release built for this Camel version is published."),
                 // offline, or the repositories cannot be reached
                 arguments("4.23.0",
                         (Consumer<FakePluginDownloader>) d -> d.listingDown = true,

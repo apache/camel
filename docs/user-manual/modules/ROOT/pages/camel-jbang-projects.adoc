@@ -491,8 +491,9 @@ community plugin) can be loaded before it stores it: a name such as `kubernets` 
 similar name. Give `--gav` for a plugin of your own. A stored plugin that cannot be loaded no longer fails `camel run`
 and `camel export`: they warn and go on without it. This includes a plugin built for another Camel version, whose
 classes (or only those of its exporter or run customizer) do not link with this Camel CLI: the warning says so, and the
-plugin's own command fails with the same reason. Run `camel plugin add <plugin-name>` to select a release built for
-this Camel version, or remove the plugin with `camel plugin delete <plugin-name>`.
+plugin's own command fails with the same reason. Run `camel plugin update <plugin-name>` to select the release built
+for this Camel version (or `camel plugin add <plugin-name>` for a plugin whose release `camel plugin add` did not select,
+see <<Updating plugins>>), or remove the plugin with `camel plugin delete <plugin-name>`.
 
 === Custom plugin configuration
 
@@ -618,10 +619,20 @@ changed. The other plugins are reported, and kept as they are:
 * a plugin added as `LATEST`, by an older CLI or when `camel plugin add` could not select a release: run
 `camel plugin add <name>` to select the release built for the CLI
 
-When no release is built for the CLI, for example when the plugin has no release for a new Camel version yet, or when
-the releases cannot be read (for example, when offline), `camel plugin update` warns and keeps the plugin as it is. When
-the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
-version, and warns, as `camel plugin add` does.
+A plugin may publish its release for a new Camel version some time after the Camel release. Until then, when the CLI is
+newer than the Camel versions of all the releases of the plugin, `camel plugin update` keeps the current release (a
+release built for another Camel version gains nothing) and warns, and the CLI reminds to run `camel plugin update`
+again each time the plugin is loaded:
+
+[source,bash]
+----
+$ camel plugin update forage
+WARN: No release of forage is built for Camel CLI 4.24.0 yet (the newest, 1.7.0, is built for Camel 4.23.0). Keeping forage 1.6.2: run 'camel plugin update forage' again once a release built for this Camel version is published.
+----
+
+When the releases cannot be read (for example, when offline), or the CLI is older than the Camel versions of all the
+releases, `camel plugin update` warns and keeps the plugin as it is too. When the CLI is between the Camel versions of
+the releases, it selects the newest release for the nearest older Camel version, and warns, as `camel plugin add` does.
 
 `camel plugin update --dry-run` reports what would change, without downloading or changing anything.
 

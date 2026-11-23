@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.NoMatch;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Older;
+import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Reason;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Result;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Selected;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
@@ -173,6 +174,15 @@ public class PluginUpdate extends PluginBaseCommand {
             older = true;
         } else if (builtForCli) {
             printer().println("%s %s is up to date (built for Camel %s)".formatted(plugin, current, range));
+            return Outcome.KEPT;
+        } else if (result instanceof NoMatch noMatch && noMatch.reason() == Reason.CLI_NEWER) {
+            // a plugin may publish its release for a new Camel version some time after the Camel release; one built for
+            // another Camel version gains nothing, so the stored one is kept, and the load-time check keeps reminding
+            printer().printWarn(("No release of %s is built for Camel CLI %s yet (the newest, %s, is %s). Keeping %s %s:"
+                                 + " run 'camel plugin update %s' again once a release built for this Camel version is"
+                                 + " published.")
+                    .formatted(plugin, cli, noMatch.newestVersion(), noMatch.newest().describe(), plugin, current,
+                            plugin));
             return Outcome.KEPT;
         } else {
             printer().printWarn(PluginAdd.noMatchWarning(plugin, cli, (NoMatch) result, keeping));

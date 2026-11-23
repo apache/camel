@@ -442,9 +442,9 @@ public final class PluginHelper {
                     String reason = notLinked(version, e);
                     if (!contributor) {
                         throw CliException.failure("Plugin " + name + " cannot be loaded (" + reason + "): "
-                                                   + addOrDelete(name));
+                                                   + addOrDelete(name, properties));
                     }
-                    warnNotLoaded(main.getOut(), name, target, reason, addOrDelete(name));
+                    warnNotLoaded(main.getOut(), name, target, reason, addOrDelete(name, properties));
                     continue;
                 }
                 if (res.plugin().isPresent()) {
@@ -500,14 +500,15 @@ public final class PluginHelper {
      * @param e       the error
      */
     public static void warnNotLinked(Printer printer, String command, String target, LinkageError e) {
-        String name = nameOf(command);
+        Map.Entry<String, JsonObject> plugin = entryOf(command);
+        String name = plugin != null ? plugin.getKey() : command;
         warnNotLoaded(printer, name, target, notLinked(new DefaultCamelCatalog().getCatalogVersion(), e),
-                addOrDelete(name));
+                addOrDelete(name, plugin != null ? plugin.getValue() : null));
     }
 
-    // the name of the plugin of the given command in the plugin configuration, which camel plugin add and camel plugin
-    // delete take
-    private static String nameOf(String command) {
+    // the name (which camel plugin add and camel plugin delete take) and the entry of the plugin of the given command in
+    // the plugin configuration, or null
+    private static Map.Entry<String, JsonObject> entryOf(String command) {
         try {
             JsonObject config = getPluginConfig();
             JsonObject plugins = config != null ? config.getMap("plugins") : null;
@@ -516,21 +517,34 @@ public final class PluginHelper {
                     JsonObject properties = plugins.getMap(pluginKey);
                     String name = properties.getOrDefault("name", pluginKey).toString();
                     if (command.equals(properties.getOrDefault("command", name).toString())) {
-                        return name;
+                        return Map.entry(name, properties);
                     }
                 }
             }
         } catch (RuntimeException e) {
             // corrupt plugin config: warned about by getActivePlugins
         }
-        return command;
+        return null;
     }
 
-    // what to do about a plugin built for another Camel version: camel plugin add selects the release built for this
-    // one, as compatibilityCheck says
-    private static String addOrDelete(String name) {
-        return "run camel plugin add " + name + " to select a release for this Camel version, or remove it with"
-               + " camel plugin delete " + name;
+    // what to do about a plugin built for another Camel version: camel plugin update selects the release built for this
+    // one when camel plugin add selected the release (it stored the release and the Camel versions it supports), as
+    // compatibilityCheck says, and camel plugin add otherwise
+    private static String addOrDelete(String name, JsonObject properties) {
+        String range = properties != null ? asString(properties.get("camelVersions")) : null;
+        MavenGav gav = null;
+        try {
+            gav = properties != null ? dependencyAsMavenGav(asString(properties.get("dependency"))) : null;
+        } catch (RuntimeException e) {
+            // not a release
+        }
+        String version = gav != null ? gav.getVersion() : null;
+        boolean selected = range != null && !range.isBlank() && version != null && !version.isEmpty()
+                && Character.isDigit(version.charAt(0));
+        String select = selected
+                ? "run camel plugin update " + name + " to select the release built for this Camel version"
+                : "run camel plugin add " + name + " to select a release for this Camel version";
+        return select + ", or remove it with camel plugin delete " + name;
     }
 
     private static void warnNotLoaded(Printer printer, String name, String target, String reason) {
@@ -853,7 +867,7 @@ public final class PluginHelper {
         String pluginVersion = mavenGav != null && mavenGav.getVersion() != null ? " " + mavenGav.getVersion() : "";
         if (COMPATIBILITY_WARNED.add(name + ":" + gav + ":" + range)) {
             printer.printWarn(
-                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin update %s' to select a matching release."
+                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin update %s' to select the release built for this Camel version (if it is published)."
                             .formatted(name, pluginVersion, range, version, name));
         }
     }
