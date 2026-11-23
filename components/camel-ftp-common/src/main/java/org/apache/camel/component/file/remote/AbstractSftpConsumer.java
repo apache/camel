@@ -181,6 +181,11 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+                    if (isStepwise() && !FtpUtils.isSubDirectoryName(file.getFilename())) {
+                        LOG.debug("Skipping directory as its name is not the name of a directory in {}: {}", absolutePath,
+                                file.getFilename());
+                        continue;
+                    }
                     String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
                     Supplier<GenericFile<SftpRemoteFile>> remote
                             = Suppliers.memorize(

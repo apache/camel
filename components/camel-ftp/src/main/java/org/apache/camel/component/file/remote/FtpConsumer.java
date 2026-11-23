@@ -188,6 +188,15 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             Exchange dynamic,
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            // a server that lists the absolute path of each entry (handleDirectoryParserAbsoluteResult) names the directory
+            // by its last segment
+            String directoryName = ((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()
+                    ? FtpUtils.extractDirNameFromAbsolutePath(file.getName()) : file.getName();
+            if (isStepwise() && !FtpUtils.isSubDirectoryName(directoryName)) {
+                LOG.debug("Skipping directory as its name is not the name of a directory in {}: {}", absolutePath,
+                        file.getName());
+                return false;
+            }
             // calculate the absolute file path using util class
             String absoluteFilePath = absoluteFilePath(absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
