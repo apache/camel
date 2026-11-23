@@ -159,6 +159,53 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
         }
     }
 
+    /**
+     * When the HTTP component is configured with a shared {@link PoolingHttpClientConnectionManager}, both endpoints
+     * that use OAuth2 must NOT close that manager when their token client is closed. Stopping one OAuth2 endpoint must
+     * leave the component's pool — and any other endpoint using it — fully functional.
+     * <p>
+     * This test sets a component-level connection manager, creates two endpoints that share it (one with OAuth2, one
+     * plain), stops the OAuth2 endpoint, and verifies the plain endpoint can still lease connections from the pool.
+     */
+    @Test
+    void oauth2WithComponentManagerDoesNotShutDownSharedPool() throws Exception {
+        // A shared component-level manager (simulates the default: HttpComponent creates one pool for all endpoints)
+        var componentManager = new PoolingHttpClientConnectionManager();
+
+        // Apply the OAuth2 configurer as if it were an endpoint using a component-shared manager.
+        // In this case connManagerShared=true was set by createHttpClient() AFTER the configurer ran,
+        // overriding the configurer's reset to false.  Simulate exactly that order.
+        var builder = HttpClientBuilder.create();
+        builder.setConnectionManager(componentManager);
+
+        var configurer = new OAuth2ClientConfigurer(
+                CLIENT_ID, CLIENT_SECRET,
+                "http://localhost:" + localServer.getLocalPort() + "/token",
+                null, null, false, 0L, 0L, false);
+        configurer.start();
+        configurer.configureHttpClient(builder); // sets true, builds token client, resets to false
+
+        // createHttpClient() sets shared=true AFTER the configurer loop — simulate that
+        builder.setConnectionManagerShared(true);
+        var endpointClient = builder.build(); // endpoint's own client, does NOT own the manager
+
+        try {
+            // Stop the OAuth2 configurer — closes the token client; must not touch the shared pool
+            configurer.stop();
+
+            // The component's pool must still be functional: a "plain" endpoint using the same manager
+            // must be able to lease connections.
+            var route = new HttpRoute(new HttpHost("localhost", 8080));
+            assertDoesNotThrow(
+                    () -> componentManager.lease("plain-endpoint", route, null),
+                    "Stopping an OAuth2 endpoint must not shut down the component's shared connection pool")
+                    .cancel();
+        } finally {
+            endpointClient.close();     // must not close the manager (connManagerShared=true)
+            componentManager.close();   // component shuts down its own manager on stop
+        }
+    }
+
     @Override
     protected void assertHeaders(Map<String, Object> headers) {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
