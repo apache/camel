@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -29,6 +30,8 @@ import jakarta.jms.Session;
 import jakarta.jms.TemporaryQueue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.MessageListenerContainer;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 
@@ -50,11 +53,18 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             // stop of the reply manager would complete it
             long timeout = endpoint.getRequestTimeout();
             if (!destResolver.destinationReady(timeout)) {
-                throw new IllegalStateException(
-                        destResolver.isStopped()
-                                ? "The reply manager was stopped while waiting for a new temporary JMSReplyTo queue"
-                                : "No new temporary JMSReplyTo queue was created within the request timeout of " + timeout
-                                  + " millis after the connection of the reply listener failed");
+                if (destResolver.isStopped()) {
+                    // the same exception as a request that reaches the stopped reply manager when it registers
+                    throw new RejectedExecutionException(
+                            "The reply manager was stopped while waiting for a new temporary JMSReplyTo queue."
+                                                         + " The request was not sent.");
+                }
+                // ExchangeTimedOutException is checked: SjmsProducer completes the exchange with the cause
+                throw new RuntimeCamelException(
+                        new ExchangeTimedOutException(
+                                null, timeout,
+                                "to no new temporary JMSReplyTo queue being created after the connection of the reply"
+                                               + " listener failed. The request was not sent."));
             }
         } catch (InterruptedException e) {
             log.warn("Interrupted while waiting for JMSReplyTo destination refresh", e);
@@ -169,8 +179,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          *
          * @param  timeoutMillis the longest time to wait, zero or negative to wait until the queue is refreshed or the
          *                       reply manager is stopped
-         * @return               <tt>true</tt> when the queue is ready, <tt>false</tt> when the time ran out or the
-         *                       reply manager was stopped
+         * @return               {@code true} when the queue is ready, {@code false} when the time ran out or the reply
+         *                       manager was stopped
          */
         public boolean destinationReady(long timeoutMillis) throws InterruptedException {
             if (!refreshWanted) {

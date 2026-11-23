@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.reply;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,7 +73,8 @@ class TemporaryQueueReplyManagerRefreshTest extends JmsTestSupport {
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> done.get() > 0);
         assertEquals(1, done.get());
-        assertInstanceOf(IllegalStateException.class, exchange.getException());
+        // the same exception as a request that reaches the stopped reply manager when it registers (CAMEL-27321)
+        assertInstanceOf(RejectedExecutionException.class, exchange.getException());
         assertTrue(exchange.getException().getMessage().contains("stopped"), exchange.getException().getMessage());
     }
 
@@ -85,27 +88,35 @@ class TemporaryQueueReplyManagerRefreshTest extends JmsTestSupport {
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> done.get() > 0);
         assertEquals(1, done.get());
-        assertInstanceOf(IllegalStateException.class, exchange.getException());
-        assertTrue(exchange.getException().getMessage().contains("request timeout"), exchange.getException().getMessage());
+        ExchangeTimedOutException e = assertInstanceOf(ExchangeTimedOutException.class, exchange.getException());
+        assertEquals(1000, e.getTimeout());
+        assertTrue(e.getMessage().contains("temporary JMSReplyTo queue"), e.getMessage());
+        assertTrue(e.getMessage().contains("not sent"), e.getMessage());
         ServiceHelper.stopService(producer);
     }
 
     @Test
     void testRequestIsSentWhenTheRecoveryCreatesTheNewTemporaryQueue() throws Exception {
+        // the wait for the new queue uses the endpoint's requestTimeout, which leaves a wide margin over the fixed 1 s
+        // delay of the recovery; the registered request uses the timeout of the header
         SjmsProducer producer
-                = startProducer("sjms:queue:TemporaryQueueRefresh.recover?requestTimeout=3000&recoveryInterval=200");
+                = startProducer("sjms:queue:TemporaryQueueRefresh.recover?requestTimeout=20000&recoveryInterval=200");
         TemporaryQueueReplyManager replyManager = replyManager(producer);
         // the connection fails: the exception listener wants a refresh, and the recovery creates the new queue
         ((SimpleMessageListenerContainer) replyManager.listenerContainer)
                 .onException(new JMSException("simulated connection failure"));
 
         Exchange exchange = inOut("Hello");
+        exchange.getIn().setHeader(SjmsConstants.JMS_REQUEST_TIMEOUT, 500L);
         AtomicInteger done = sendAsync(producer, exchange);
 
-        // the recovery runs after 1 second, then the request is sent; nothing replies, so it times out as usual
+        // the recovery runs after 1 second, then the request is sent; nothing replies, so it times out as usual, after
+        // the 500 ms of the header
         await().atMost(15, TimeUnit.SECONDS).until(() -> done.get() > 0);
         assertEquals(1, done.get());
-        assertInstanceOf(ExchangeTimedOutException.class, exchange.getException());
+        ExchangeTimedOutException e = assertInstanceOf(ExchangeTimedOutException.class, exchange.getException());
+        assertEquals(500, e.getTimeout());
+        assertFalse(e.getMessage().contains("not sent"), e.getMessage());
         ServiceHelper.stopService(producer);
     }
 

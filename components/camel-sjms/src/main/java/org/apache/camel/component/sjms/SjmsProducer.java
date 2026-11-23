@@ -29,6 +29,7 @@ import jakarta.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
@@ -345,7 +346,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
                         registered, e.getMessage(), e);
                 return false;
             }
-            exchange.setException(e);
+            if (e instanceof RuntimeCamelException && e.getCause() instanceof ExchangeTimedOutException timedOut) {
+                // no new temporary reply queue within the request timeout (TemporaryQueueReplyManager.getReplyTo):
+                // the request was not sent
+                exchange.setException(timedOut);
+            } else {
+                exchange.setException(e);
+            }
             callback.done(true);
             return true;
         }
