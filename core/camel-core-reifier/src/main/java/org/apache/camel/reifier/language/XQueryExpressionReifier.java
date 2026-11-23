@@ -16,10 +16,7 @@
  */
 package org.apache.camel.reifier.language;
 
-import org.apache.camel.util.ObjectHelper;
-
 import java.util.LinkedHashMap;
-
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +24,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.util.ObjectHelper;
 
 public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<XQueryExpression> {
 
