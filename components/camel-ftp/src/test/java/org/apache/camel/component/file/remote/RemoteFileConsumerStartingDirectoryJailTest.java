@@ -108,6 +108,9 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
             assertFalse(consumer.isWithinStartingDirectory("classpath:/../../other/secret.txt"), uri);
             assertFalse(consumer.isWithinStartingDirectory("a:/../../other/secret.txt"), uri);
             assertFalse(consumer.isWithinStartingDirectory("http:\\..\\..\\other\\secret.txt"), uri);
+            // a listed path is used with its backslashes replaced by /, so a backslash separates segments
+            assertTrue(consumer.isWithinStartingDirectory("a\\b/../../secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("a\\..\\..\\secret.txt"), uri);
 
             // names that stay inside
             assertTrue(consumer.isWithinStartingDirectory("http:/secret.txt"), uri);
@@ -122,6 +125,8 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
 
         assertFalse(consumer.isWithinStartingDirectory("poll/http:/../../secret.txt"));
         assertFalse(consumer.isWithinStartingDirectory("poll/a:/../../secret.txt"));
+        assertTrue(consumer.isWithinStartingDirectory("poll/a\\b/../../secret.txt"));
+        assertFalse(consumer.isWithinStartingDirectory("poll/a\\b/../../../secret.txt"));
         assertTrue(consumer.isWithinStartingDirectory("poll/http:/secret.txt"));
     }
 
