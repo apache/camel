@@ -573,6 +573,16 @@ not refused.
 When the endpoint has a directory, an absolute name is relative to it, as before. To write files at absolute paths
 from an endpoint without a directory, set `jailStartingDirectory=false` on the endpoint.
 
+=== camel-ftp - handleDirectoryParserAbsoluteResult: a recursive poll changes into a listed directory by its name
+
+With `handleDirectoryParserAbsoluteResult=true` (for a server that lists the absolute path of each entry), a recursive
+poll now changes into a listed sub directory by its name, relative to the directory that it lists, instead of the
+absolute path that the server listed, and skips a listed directory whose absolute path is not in the directory that it
+lists. The files of such a sub directory are now downloaded from that directory; before, their download could fail, as
+their path was built from the absolute path of the sub directory. A listed sub directory is matched by its name, so a
+hidden directory (whose name starts with a dot) is skipped, as with other servers. Listed files are matched as listed,
+as before.
+
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
