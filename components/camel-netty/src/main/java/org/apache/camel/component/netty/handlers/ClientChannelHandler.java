@@ -71,12 +71,19 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // ignore subsequent exceptions being thrown
             return;
         }
-        exceptionHandled = true;
 
         Exchange exchange = null;
 
         NettyCamelState state = getState(ctx, cause);
-        if (state != null && state.isDone()) {
+        if (state == null) {
+            // no request on this channel yet (an idle channel in the producer pool, or one just borrowed): the next
+            // request on it must still be completed by its exception, its read timeout or the channel being closed,
+            // so this exception does not set exceptionHandled
+            LOG.debug("Exception caught at Channel: {} while no request has a state on it", ctx.channel(), cause);
+            return;
+        }
+        exceptionHandled = true;
+        if (state.isDone()) {
             // no request on this channel waits for a reply: the channel is idle in the producer pool (the server reset
             // it, for example), and the exchange of its last request is completed, and may still be routing, so it
             // must not get this exception
@@ -85,10 +92,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             NettyHelper.close(ctx.channel());
             return;
         }
-        if (state != null) {
-            state.onExceptionCaught();
-            exchange = state.getExchange();
-        }
+        state.onExceptionCaught();
+        exchange = state.getExchange();
 
         // the state may not be set
         if (exchange != null) {
