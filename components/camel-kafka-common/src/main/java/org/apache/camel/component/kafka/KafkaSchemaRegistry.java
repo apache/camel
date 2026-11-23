@@ -122,7 +122,7 @@ final class KafkaSchemaRegistry {
                                                + " serde (io.apicurio:apicurio-registry-jsonschema-serde-kafka 3.x) depends on"
                                                + " com.networknt:json-schema-validator 1.5.x. In 3.x, SchemaLoader changed from an interface to a class,"
                                                + " so the serde classes fail to link against the 3.x classes already loaded."
-                                               + " camel-yaml-dsl-validator, camel-json-validator and Camel JBang bring 3.x."
+                                               + " For example, camel-yaml-dsl-validator, camel-json-validator and Camel JBang bring 3.x."
                                                + " Use schemaFormat avro or protobuf with apicurio, or use schemaRegistryVendor confluent with"
                                                + " schemaFormat json (the Confluent compatible API of Apicurio Registry works with confluent).");
         }

@@ -1087,7 +1087,7 @@ YAML::
 [[apicurio-json-incompatibility]]
 NOTE: Supports Avro, JSON Schema and Protobuf, with the serdes of Apicurio Registry 3.x. The 2.x serdes have other artifact names and property names, and are not set up by `apicurio`.
 JSON Schema (`schemaFormat=json`) fails at startup when `com.networknt:json-schema-validator` 3.x is on the classpath:
-the Apicurio JSON Schema serde (`io.apicurio:apicurio-registry-jsonschema-serde-kafka` 3.x) depends on `com.networknt:json-schema-validator` 1.5.x, while `camel-yaml-dsl-validator`, `camel-json-validator` and Camel JBang use `com.networknt:json-schema-validator` 3.x (upgraded for Jackson 3 in CAMEL-23172).
+the Apicurio JSON Schema serde (`io.apicurio:apicurio-registry-jsonschema-serde-kafka` 3.x) depends on `com.networknt:json-schema-validator` 1.5.x, while for example `camel-yaml-dsl-validator`, `camel-json-validator` and Camel JBang use `com.networknt:json-schema-validator` 3.x (upgraded for Jackson 3 in CAMEL-23172).
 In 3.x, `SchemaLoader` changed from an interface to a class, so the 1.5.x classes of the serde fail to link against the 3.x classes already loaded, with an `IncompatibleClassChangeError`.
 Use `schemaFormat=avro` or `schemaFormat=protobuf` with `apicurio`, or use `schemaRegistryVendor=confluent` with `schemaFormat=json`
 (the Confluent compatible API of Apicurio Registry works with `confluent`).
