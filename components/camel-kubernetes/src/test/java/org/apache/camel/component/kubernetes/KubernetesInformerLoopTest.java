@@ -75,24 +75,26 @@ class KubernetesInformerLoopTest {
             loop.stop();
             thread.join(20000);
         }
-        client.close();
         // After loop.stop() and thread.join(), the informer has stopped, but fabric8 cancels its
         // HTTP streaming request asynchronously on a ForkJoin pool thread. Wait for every opened
-        // watch to signal its close (via onClosing or onFailure) before destroying the server: this
-        // verifies the loop did close its watches. Even after the WebSocket protocol closes, the
-        // underlying Vert.x HTTP connection may still be draining; if httpServer.close() times out
-        // in that narrow window, suppress the teardown exception since the test already asserted.
-        int opened = dispatcher.openWatchCount();
-        if (opened > 0) {
-            await().atMost(Duration.ofSeconds(10))
-                    .until(() -> dispatcher.closedWatchCount() >= opened);
-        }
+        // watch to close (via onClosed) before closing the client: this verifies that loop.stop()
+        // actually closed its watches, not client.close(). Even after the WebSocket protocol closes,
+        // the underlying Vert.x HTTP connection may still be draining; if httpServer.close() times
+        // out in that narrow window, suppress the teardown exception since the test already asserted.
         try {
-            server.destroy();
-        } catch (IllegalStateException e) {
-            // Vert.x httpServer.close() timed out: the WebSocket protocol closed (verified above)
-            // but the TCP connection was still draining. The test body has already asserted correctly.
-            LOG.warn("Mock server teardown timed out (expected async TCP drain race): {}", e.getMessage());
+            if (dispatcher.openWatchCount() > 0) {
+                await().atMost(Duration.ofSeconds(10))
+                        .until(() -> dispatcher.activeWatchCount() == 0);
+            }
+        } finally {
+            client.close();
+            try {
+                server.destroy();
+            } catch (IllegalStateException e) {
+                // Vert.x httpServer.close() timed out: all WebSocket connections closed (verified above)
+                // but the TCP layer was still draining. The test body has already asserted correctly.
+                LOG.warn("Mock server teardown timed out (expected async TCP drain race): {}", e.getMessage());
+            }
         }
     }
 

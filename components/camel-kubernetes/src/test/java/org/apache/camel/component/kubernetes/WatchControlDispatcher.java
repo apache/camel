@@ -17,7 +17,9 @@
 package org.apache.camel.component.kubernetes;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
@@ -65,6 +67,8 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     // totalOpenWatches and totalClosedWatches count watches cumulatively, guarded by watchLock
     private int totalOpenWatches;
     private int totalClosedWatches;
+    // openSockets tracks currently active sockets: added in onOpen, removed in onClosed
+    private final Set<WebSocket> openSockets = new HashSet<>();
     private final Semaphore listRequests = new Semaphore(0);
     private final CompletableFuture<WebSocket> heldWatch = new CompletableFuture<>();
     private volatile boolean holdFirstWatch;
@@ -148,6 +152,18 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         watchLock.lock();
         try {
             return totalOpenWatches;
+        } finally {
+            watchLock.unlock();
+        }
+    }
+
+    /**
+     * The number of watches that are currently active (opened but not yet closed).
+     */
+    public int activeWatchCount() {
+        watchLock.lock();
+        try {
+            return openSockets.size();
         } finally {
             watchLock.unlock();
         }
@@ -255,8 +271,12 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
                 }
 
                 @Override
+                public void onClosed(WebSocket webSocket, int code, String reason) {
+                    signalWatchClosed(webSocket);
+                }
+
+                @Override
                 public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                    // a watch the client drops without a close frame
                     signalWatchClosed(webSocket);
                 }
             });
@@ -273,6 +293,7 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         watchLock.lock();
         try {
             totalOpenWatches++;
+            openSockets.add(webSocket);
             watchOpened.signalAll();
         } finally {
             watchLock.unlock();
@@ -282,8 +303,10 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     private void signalWatchClosed(WebSocket webSocket) {
         watchLock.lock();
         try {
-            totalClosedWatches++;
-            watchClosed.signalAll();
+            if (openSockets.remove(webSocket)) {
+                totalClosedWatches++;
+                watchClosed.signalAll();
+            }
         } finally {
             watchLock.unlock();
         }
@@ -332,7 +355,6 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
             delegate.onPing(webSocket, bytes);
         }
 
-        // onClosing and onFailure are mutually exclusive — only one fires per connection
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             delegate.onClosing(webSocket, code, reason);
@@ -342,12 +364,12 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             delegate.onClosed(webSocket, code, reason);
+            signalWatchClosed(webSocket);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             delegate.onFailure(webSocket, t, response);
-            // a watch the client drops without a close frame
             signalWatchClosed(webSocket);
         }
     }
