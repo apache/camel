@@ -56,6 +56,9 @@ public class InfraAdvancedITCase extends JBangTestSupport {
         while (m.find()) {
             pid = m.group(1);
         }
+        Assertions.assertThat(pid)
+                .as("infra output should contain 'PID: <digits>' but was: %s", message)
+                .isNotNull();
         return pid;
     }
 
