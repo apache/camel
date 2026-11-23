@@ -240,7 +240,9 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private InsertAllRequest.RowToInsert createRowRequest(Exchange exchange, Map<String, Object> object) {
         String insertId = null;
         if (configuration.getUseAsInsertId() != null) {
-            insertId = (String) (object.get(configuration.getUseAsInsertId()));
+            // convert, as the field can be a number such as an order or sequence id, or bytes
+            insertId = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class,
+                    object.get(configuration.getUseAsInsertId()));
         } else {
             if (exchange != null) {
                 insertId = exchange.getIn().getHeader(GoogleBigQueryConstants.INSERT_ID, String.class);
