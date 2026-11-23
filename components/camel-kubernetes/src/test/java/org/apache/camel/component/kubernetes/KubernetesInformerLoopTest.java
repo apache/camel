@@ -32,6 +32,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * events, so the first update it calls back for tells whether an earlier event was taken as an update.
  */
 class KubernetesInformerLoopTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesInformerLoopTest.class);
 
     private WatchControlDispatcher dispatcher;
     private KubernetesMockServer server;
@@ -79,7 +83,8 @@ class KubernetesInformerLoopTest {
         // failed for a teardown race that the test infrastructure cannot reliably control.
         try {
             server.destroy();
-        } catch (IllegalStateException ignored) {
+        } catch (IllegalStateException e) {
+            LOG.debug("Ignoring exception during mock server teardown (expected teardown race)", e);
         }
     }
 
