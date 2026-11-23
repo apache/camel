@@ -19,8 +19,8 @@ camel.main.routesIncludePattern=file\:src/test/resources/golden/localkamelet/rou
 dependency=mvn\:org.apache.camel\:camel-kamelet\:${camel.version}
 dependency=mvn\:org.apache.camel.kamelets\:camel-kamelets\:${kamelets.version}
 dependency=mvn\:org.apache.camel\:camel-yaml-dsl\:${camel.version}
-dependency=mvn\:org.apache.camel\:camel-log\:${camel.version}
 kamelet=greeting-source
+dependency=mvn\:org.apache.camel\:camel-log\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-timer\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-core-languages\:${camel.version}
 

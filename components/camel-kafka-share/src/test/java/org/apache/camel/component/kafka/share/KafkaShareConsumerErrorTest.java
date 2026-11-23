@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConsumerFatalException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -118,6 +119,9 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
                         .errorHandler(deadLetterChannel("mock:dead"))
                         .to("mock:result");
 
+                from("kafka-share:" + TOPIC + options + "poll-error").routeId("pollError")
+                        .to("mock:poll-error");
+
                 from("kafka-share:" + TOPIC + options + "unreachable").routeId("unreachable")
                         .to("mock:unreachable");
 
@@ -158,6 +162,26 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
         assertThat(result.getState()).isEqualTo(HealthCheck.State.DOWN);
         assertThat(result.getMessage()).hasValueSatisfying(message -> assertThat(message).contains("terminated"));
         assertThat(consumers.get("stop")).hasSize(1);
+    }
+
+    @Test
+    void pollFailingWithAnErrorTerminatesVisibly() {
+        // CAMEL-27305: the Kafka client throws an Error of a deserializer out of poll as is, such as the
+        // ExceptionInInitializerError of a class that cannot be initialized
+        RecordingShareConsumer consumer = subscribedConsumer("poll-error", 0);
+        consumer.failNextPoll(new ExceptionInInitializerError("Forced class initialization failure"));
+
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isClosed);
+        HealthCheck.Result result = readiness("pollError");
+        assertThat(result.getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(result.getMessage()).hasValueSatisfying(message -> assertThat(message)
+                .contains("terminated")
+                .contains("Forced class initialization failure"));
+        assertThat(result.getError()).hasValueSatisfying(error -> assertThat(error)
+                .isInstanceOf(KafkaConsumerFatalException.class)
+                .hasCauseInstanceOf(ExceptionInInitializerError.class));
+        // the consumer does not reconnect, as the Error fails every poll the same way
+        assertThat(consumers.get("poll-error")).hasSize(1);
     }
 
     @Test

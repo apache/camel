@@ -30,6 +30,9 @@ public interface ConsulConstants {
     String CONSUL_ACTION = "CamelConsulAction";
     @Metadata(description = "The Key on which the action should applied", javaType = "String")
     String CONSUL_KEY = "CamelConsulKey";
+    // exchange property the key/value and event consumers set to the key they received, so that a producer can tell the
+    // key header the consumer sets apart from a key chosen by the route
+    String CONSUL_RECEIVED_KEY = "CamelConsulReceivedKey";
     @Metadata(label = "consumer", description = "The event id", javaType = "String")
     String CONSUL_EVENT_ID = "CamelConsulEventId";
     @Metadata(label = "consumer", description = "The event name", javaType = "String")

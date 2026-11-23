@@ -755,6 +755,24 @@ public final class ToolRegistry {
                     });
                 }));
 
+        register(tool("get_genai",
+                "Get the GenAI calls of the running Camel application from the genai dev console "
+                                   + "(camel-ai-observability): the model calls per model with their tokens, and the "
+                                   + "newest agent runs with their model calls and tool calls in order. Agent runs "
+                                   + "and tool calls need camel.aiObservability.level=detailed, the messages full.")
+                .param("limit", "string", "The number of the newest agent runs and model calls to list (default: 20)",
+                        false)
+                .param("id", "string", "The id of one call to show with its messages", false)
+                .param("content", "string", "true to add the messages of the listed calls (level full only)", false)
+                .executor((ctx, args) -> ctx.executeAction("genai", root -> {
+                    for (String key : new String[] { "limit", "id", "content" }) {
+                        String value = args.get(key);
+                        if (value != null && !value.isBlank()) {
+                            root.put(key, value);
+                        }
+                    }
+                })));
+
         register(tool("get_metrics",
                 "Get Micrometer metrics from the running Camel application. "
                                      + "Shows counters, gauges, timers, long-task timers, and distributions. "

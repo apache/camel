@@ -35,6 +35,14 @@ public class OutboundStreamHttpResponse extends DefaultHttpResponse implements C
         this.input = new HttpChunkedInput(new ChunkedStream(in));
     }
 
+    /**
+     * A response with the status, headers and body stream of the given response, such as to add behaviour to it.
+     */
+    protected OutboundStreamHttpResponse(OutboundStreamHttpResponse response) {
+        super(response.protocolVersion(), response.status(), response.headers());
+        this.input = response.input;
+    }
+
     public DefaultHttpResponse getResponse() {
         return new DefaultHttpResponse(this.protocolVersion(), this.status(), this.headers());
     }

@@ -34,7 +34,8 @@ public class DefaultTransformerLoader extends Transformer implements Transformer
     public void load(TransformerRegistry registry) {
         Transformer[] defaultTransformers = new Transformer[] {
                 new ByteArrayDataTypeTransformer(),
-                new StringDataTypeTransformer()
+                new StringDataTypeTransformer(),
+                new UnchangedDataTypeTransformer()
         };
 
         for (Transformer defaultTransformer : defaultTransformers) {

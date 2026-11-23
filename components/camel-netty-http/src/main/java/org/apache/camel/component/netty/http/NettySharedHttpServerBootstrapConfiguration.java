@@ -39,6 +39,10 @@ public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBoot
         return chunked;
     }
 
+    /**
+     * Not used: the server aggregates each request, also a chunked one, before it is passed on to the route, as the
+     * server of a netty-http endpoint does. The size of the body is limited by chunkedMaxContentLength.
+     */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }

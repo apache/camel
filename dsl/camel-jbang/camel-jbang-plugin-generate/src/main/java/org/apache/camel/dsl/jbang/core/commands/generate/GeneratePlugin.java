@@ -28,7 +28,8 @@ public class GeneratePlugin implements Plugin {
     public void customize(CommandTree commandLine, CamelJBangMain main) {
         var cmd = new CommandTree(main.command(new CodeGenerator()))
                 .addSubcommand("rest", new CommandTree(main.command(new CodeRestGenerator())))
-                .addSubcommand("schema", new CommandTree(main.command(new CodeSchemaGenerator())));
+                .addSubcommand("schema", new CommandTree(main.command(new CodeSchemaGenerator())))
+                .addSubcommand("wsdl", new CommandTree(main.command(new CodeWsdlGenerator())));
 
         commandLine.addSubcommand("generate", cmd);
     }

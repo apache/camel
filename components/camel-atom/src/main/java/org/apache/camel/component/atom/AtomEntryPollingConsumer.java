@@ -69,10 +69,13 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer<Item> {
         if (items == null) {
             // without sortEntries the entries are in the natural order of the feed reader (the newest published first)
             items = AtomUtils.readItems(getEndpoint().getCamelContext(), getEndpoint().getFeedUri(), rssReader, false);
-            if (getEndpoint().isSortEntries()) {
+            if (getEndpoint().isSortEntries() || isUpdatedDateIdempotent()) {
                 // sort by the updated date, and by the published date when an entry has no updated date, as
                 // ItemUpdatedIdempotentStrategy compares the entries. The entries are routed from the end of the list,
-                // so the newest entry is first and the oldest entry is routed first
+                // so the newest entry is first and the oldest entry is routed first. The default idempotent strategy
+                // needs this order also without sortEntries: it skips every entry older than the entry routed before
+                // it, so an entry that was updated after newer entries were published (the natural order of the feed
+                // reader is the newest published first) would make it skip those newer entries for good
                 items = new ArrayList<>(items);
                 items.sort(ItemComparator.newestUpdatedItemFirst());
             }
@@ -80,6 +83,10 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer<Item> {
             entryIndex = list.size() - 1;
         }
         return items;
+    }
+
+    private boolean isUpdatedDateIdempotent() {
+        return getEndpoint().isIdempotent() && getEndpoint().getIdempotentStrategy() instanceof ItemUpdatedIdempotentStrategy;
     }
 
     @Override

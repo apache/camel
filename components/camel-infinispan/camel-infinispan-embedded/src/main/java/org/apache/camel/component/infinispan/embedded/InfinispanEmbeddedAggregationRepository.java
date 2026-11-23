@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.component.infinispan.InfinispanAggregationRepository;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceHelper;
@@ -31,7 +32,7 @@ import org.infinispan.commons.api.BasicCache;
           description = "Aggregation repository that uses embedded Infinispan to store exchanges.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
-public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregationRepository {
+public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregationRepository implements InMemoryStrategy {
 
     private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
     private InfinispanEmbeddedManager manager;
@@ -93,6 +94,14 @@ public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregati
     @Override
     protected BasicCache<String, DefaultExchangeHolder> getCache() {
         return cache.get();
+    }
+
+    /**
+     * Whether the aggregates are kept only in memory; see {@link InfinispanEmbeddedUtil#isInMemory(BasicCache)}.
+     */
+    @Override
+    public boolean isInMemory() {
+        return isStarted() && InfinispanEmbeddedUtil.isInMemory(getCache());
     }
 
     public InfinispanEmbeddedConfiguration getConfiguration() {

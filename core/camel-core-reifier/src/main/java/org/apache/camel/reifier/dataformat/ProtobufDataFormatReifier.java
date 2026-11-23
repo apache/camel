@@ -41,6 +41,8 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
             } else {
                 properties.put("instanceClass", definition.getInstanceClass());
             }
+            properties.put("schema", definition.getSchema());
+            properties.put("messageName", definition.getMessageName());
             properties.put("contentTypeFormat", definition.getContentTypeFormat());
             properties.put("defaultInstance", definition.getDefaultInstance());
         } else if (definition.getLibrary() == ProtobufLibrary.Jackson) {

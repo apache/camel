@@ -70,7 +70,7 @@
         <aliyun-dysmsapi-version>4.6.0</aliyun-dysmsapi-version>
         <aliyun-kms-version>2.3.2</aliyun-kms-version>
         <aliyun-sls-version>5.18.1</aliyun-sls-version>
-        <aliyun-eventbridge-version>7.7.1</aliyun-eventbridge-version>
+        <aliyun-eventbridge-version>7.7.2</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.3.14</aliyun-eventbridge-client-version>
         <aliyun-tablestore-version>5.17.14</aliyun-tablestore-version>
         <tea-openapi-version>0.3.20</tea-openapi-version>
@@ -102,7 +102,7 @@
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
-        <bouncycastle-version>1.86</bouncycastle-version>
+        <bouncycastle-version>1.87</bouncycastle-version>
         <box-java-sdk-version>4.16.4</box-java-sdk-version>
         <braintree-gateway-version>3.55.1</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.7.0</build-helper-maven-plugin-version>
@@ -143,7 +143,7 @@
         <commons-text-version>1.15.0</commons-text-version>
         <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.1</compress-lzf-version>
-        <confluent-serializer-version>8.3.3</confluent-serializer-version>
+        <confluent-serializer-version>8.4.1</confluent-serializer-version>
         <consul-client-version>1.12.2</consul-client-version>
         <couchbase-client-version>3.13.1</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
@@ -211,18 +211,18 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.76.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.80.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.52.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.77.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.81.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.53.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.88.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.160.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.102.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.78.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.103.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.100.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.97.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.103.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.161.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.103.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.79.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.104.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.101.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.98.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.104.0</google-cloud-texttospeech-version>
         <google-genai-version>2.0.0</google-genai-version>
         <graalvm-version>25.5.5.0.3</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
@@ -359,14 +359,14 @@
         <!-- smack 4.4.x asks for jxmpp in the range [1.0.0,1.0.999] -->
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
-        <kafka-version>4.3.2</kafka-version>
+        <kafka-version>4.4.0</kafka-version>
         <keycloak-client-version>26.0.13</keycloak-client-version>
         <keycloak-version>26.8.1</keycloak-version>
         <kubernetes-client-version>8.0.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.23.0</langchain4j-version>
+        <langchain4j-version>1.24.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.23.0-beta33</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-beta-version>1.24.0-beta34</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.23.0-beta33</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
@@ -374,7 +374,7 @@
         <libphonenumber-version>9.0.42</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
-        <log4j2-version>2.25.5</log4j2-version>
+        <log4j2-version>2.26.1</log4j2-version>
         <logback-version>1.6.6</logback-version>
         <lucene-version>10.6.0</lucene-version>
         <littleproxy-version>2.9.1</littleproxy-version>
@@ -408,7 +408,7 @@
         <micrometer-tracing-version>1.8.0</micrometer-tracing-version>
         <microprofile-config-version>3.1.3</microprofile-config-version>
         <milo-version>1.1.8</milo-version>
-        <milvus-client-version>2.6.25</milvus-client-version>
+        <milvus-client-version>2.6.28</milvus-client-version>
         <mina-version>2.2.10</mina-version>
         <minio-version>9.0.3</minio-version>
         <mockito-version>5.24.0</mockito-version>
@@ -439,7 +439,7 @@
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
         <openai-java-version>4.78.0</openai-java-version>
-        <openapi-generator-version>7.26.0</openapi-generator-version>
+        <openapi-generator-version>7.27.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.9.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.10.0</opensearch-java-client-version>
@@ -470,8 +470,13 @@
         <pooled-jms-version>3.2.5</pooled-jms-version>
         <properties-maven-plugin-version>1.3.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.79.0</proto-google-common-protos-version>
-        <protobuf-version>4.35.1</protobuf-version>
+        <!-- the protobuf-java runtime: at least the gencode version of the protobuf classes in the libraries that Camel manages,
+             such as the Apicurio Registry protobuf serdes -->
+        <protobuf-version>4.36.2</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
+        <!-- the protoc that generates the protobuf classes of Camel (the gencode version): at most the lowest protobuf-java
+             runtime of Spring Boot and Quarkus, and at most protobuf-version -->
+        <protoc-version>4.35.1</protoc-version>
         <prowide-version>SRU2025-10.4.1</prowide-version>
         <pubnub-version>14.2.0</pubnub-version>
         <pulsar-version>4.2.4</pulsar-version>
@@ -566,6 +571,7 @@
         <xchange-version>6.0.0</xchange-version>
         <xerces-version>2.12.2</xerces-version>
         <xml-resolver-version>1.2</xml-resolver-version>
+        <xmlschema-core-version>2.3.3</xmlschema-core-version>
         <xmlsec-version>4.0.4</xmlsec-version>
         <xmlunit-version>2.14.0</xmlunit-version>
         <yasson-version>3.0.5</yasson-version>
@@ -1350,6 +1356,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cxf-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-cxf-platform-http</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2599,6 +2610,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-protobuf-schema</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-pubnub</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3229,6 +3245,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-xsd-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-xslt</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3401,6 +3422,11 @@
                 <artifactId>camel-jbang-run</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-wsdl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- camel catalog -->
             <dependency>
@@ -3417,6 +3443,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-catalog-console</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-catalog-cve</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

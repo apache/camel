@@ -59,15 +59,16 @@ class SettingsPopup {
     static final int ROW_FOLDER = 11;
     static final int ROW_PROXY_HOST = 12;
     static final int ROW_PROXY_PORT = 13;
-    static final int ROW_SHELL_HISTORY = 14;
-    static final int ROW_AI_PROVIDER = 15;
-    static final int ROW_AI_MODEL = 16;
-    static final int ROW_AI_URL = 17;
-    static final int ROW_AI_TOOLS = 18;
-    static final int ROW_AI_OVERVIEW = 19;
-    static final int ROW_AI_PROMPT_HISTORY = 20;
-    static final int ROW_AI_ACP_COMMAND = 21;
-    static final int ROW_COUNT = 22;
+    static final int ROW_OSV_DATABASE = 14;
+    static final int ROW_SHELL_HISTORY = 15;
+    static final int ROW_AI_PROVIDER = 16;
+    static final int ROW_AI_MODEL = 17;
+    static final int ROW_AI_URL = 18;
+    static final int ROW_AI_TOOLS = 19;
+    static final int ROW_AI_OVERVIEW = 20;
+    static final int ROW_AI_PROMPT_HISTORY = 21;
+    static final int ROW_AI_ACP_COMMAND = 22;
+    static final int ROW_COUNT = 23;
     /**
      * Separator lines drawn between the row groups, after the Select Tab, Panel Theme, Default Folder and Shell History
      * rows.
@@ -125,6 +126,7 @@ class SettingsPopup {
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
     private TextInputState proxyPortInput;
+    private TextInputState osvDatabaseInput;
     private TextInputState shellHistoryInput;
     private TextInputState aiModelInput;
     private TextInputState aiUrlInput;
@@ -209,6 +211,7 @@ class SettingsPopup {
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
         proxyPortInput = new TextInputState(settings.getProxyPort() != null ? settings.getProxyPort() : "");
+        osvDatabaseInput = new TextInputState(settings.getOsvDatabase() != null ? settings.getOsvDatabase() : "");
         shellHistoryInput = new TextInputState(settings.getShellHistory() != null ? settings.getShellHistory() : "");
         String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
         int providerIdx = AI_PROVIDERS.indexOf(currentProvider);
@@ -331,6 +334,10 @@ class SettingsPopup {
             handleTextInput(ke, proxyPortInput);
             return true;
         }
+        if (selectedRow == ROW_OSV_DATABASE) {
+            handleTextInput(ke, osvDatabaseInput);
+            return true;
+        }
         if (selectedRow == ROW_SHELL_HISTORY) {
             handleTextInput(ke, shellHistoryInput);
             return true;
@@ -421,6 +428,7 @@ class SettingsPopup {
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
         settings.setProxyPort(stripControlChars(proxyPortInput.text().trim()));
+        settings.setOsvDatabase(stripControlChars(osvDatabaseInput.text().trim()));
         settings.setShellHistory(stripControlChars(shellHistoryInput.text().trim()));
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
@@ -553,6 +561,11 @@ class SettingsPopup {
         renderLabel(frame, innerX, rowY, labelW, "Proxy Port:", selectedRow == ROW_PROXY_PORT);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, proxyPortInput,
                 selectedRow == ROW_PROXY_PORT, "(8080)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "OSV Database:", selectedRow == ROW_OSV_DATABASE);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, osvDatabaseInput,
+                selectedRow == ROW_OSV_DATABASE, "(OSV.dev API) default, a URL or a file");
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Shell History:", selectedRow == ROW_SHELL_HISTORY);

@@ -32,6 +32,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
+    private static final String START_QUEUE
+            = queueNameForClass("activemq:queue:JmsInOutRoutingSlipTest.start", JmsInOutRoutingSlipTest.class);
+
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
@@ -48,7 +51,7 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
     @RepeatedTest(5)
     public void testJmsInOutRoutingSlip() throws Exception {
-        template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
+        template.sendBodyAndHeader(START_QUEUE, "World", "slip",
                 "activemq:queue:JmsInOutRoutingSlipTest.foo,activemq:queue:JmsInOutRoutingSlipTest.result");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -64,7 +67,7 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsInOutRoutingSlipTest.start")
+                from(START_QUEUE)
                         .setExchangePattern(ExchangePattern.InOut)
                         .routingSlip(header("slip"))
                         .to("log:end")

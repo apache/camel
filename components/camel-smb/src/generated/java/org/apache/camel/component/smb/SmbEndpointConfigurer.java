@@ -51,6 +51,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumwritefile":
         case "checksumWriteFile": target.setChecksumWriteFile(property(camelContext, boolean.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": target.getConfiguration().setCopyAndDeleteOnRenameFail(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -66,6 +68,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "eagerDeleteTargetFile": target.setEagerDeleteTargetFile(property(camelContext, boolean.class, value)); return true;
         case "eagermaxmessagesperpoll":
         case "eagerMaxMessagesPerPoll": target.setEagerMaxMessagesPerPoll(property(camelContext, boolean.class, value)); return true;
+        case "encryptdata":
+        case "encryptData": target.getConfiguration().setEncryptData(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -149,6 +153,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
+        case "readtimeout":
+        case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, int.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
         case "renameusingcopy":
         case "renameUsingCopy": target.getConfiguration().setRenameUsingCopy(property(camelContext, boolean.class, value)); return true;
@@ -185,9 +191,13 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "throwExceptionOnConnectFailed": target.getConfiguration().setThrowExceptionOnConnectFailed(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "transacttimeout":
+        case "transactTimeout": target.getConfiguration().setTransactTimeout(property(camelContext, int.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "writetimeout":
+        case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -227,6 +237,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": return java.lang.String.class;
         case "checksumwritefile":
         case "checksumWriteFile": return boolean.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": return boolean.class;
         case "delay": return long.class;
@@ -242,6 +254,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "eagerDeleteTargetFile": return boolean.class;
         case "eagermaxmessagesperpoll":
         case "eagerMaxMessagesPerPoll": return boolean.class;
+        case "encryptdata":
+        case "encryptData": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -325,6 +339,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinLength": return long.class;
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
+        case "readtimeout":
+        case "readTimeout": return int.class;
         case "recursive": return boolean.class;
         case "renameusingcopy":
         case "renameUsingCopy": return boolean.class;
@@ -361,9 +377,13 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "throwExceptionOnConnectFailed": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "transacttimeout":
+        case "transactTimeout": return int.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "username": return java.lang.String.class;
+        case "writetimeout":
+        case "writeTimeout": return int.class;
         default: return null;
         }
     }
@@ -399,6 +419,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "checksumwritefile":
         case "checksumWriteFile": return target.isChecksumWriteFile();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": return target.getConfiguration().isCopyAndDeleteOnRenameFail();
         case "delay": return target.getDelay();
@@ -414,6 +436,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "eagerDeleteTargetFile": return target.isEagerDeleteTargetFile();
         case "eagermaxmessagesperpoll":
         case "eagerMaxMessagesPerPoll": return target.isEagerMaxMessagesPerPoll();
+        case "encryptdata":
+        case "encryptData": return target.getConfiguration().isEncryptData();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -497,6 +521,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinLength": return target.getReadLockMinLength();
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
+        case "readtimeout":
+        case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "recursive": return target.isRecursive();
         case "renameusingcopy":
         case "renameUsingCopy": return target.getConfiguration().isRenameUsingCopy();
@@ -533,9 +559,13 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "throwExceptionOnConnectFailed": return target.getConfiguration().isThrowExceptionOnConnectFailed();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "transacttimeout":
+        case "transactTimeout": return target.getConfiguration().getTransactTimeout();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "username": return target.getConfiguration().getUsername();
+        case "writetimeout":
+        case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         default: return null;
         }
     }

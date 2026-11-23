@@ -72,7 +72,8 @@ class SettingsPopupRenderTest {
                 new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
         popup.open();
 
-        Rect area = new Rect(0, 0, 80, 30);
+        // tall enough for all the rows without scrolling
+        Rect area = new Rect(0, 0, 80, 32);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
         popup.render(frame, area);
@@ -85,6 +86,7 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("Rate per"), "the Rate per row should be shown");
         assertTrue(rendered.contains("Panel Theme"), "the Panel Theme row should be shown");
         assertTrue(rendered.contains("Default Folder"), "the Default Folder row should be shown");
+        assertTrue(rendered.contains("OSV Database"), "the OSV Database row should be shown");
         assertTrue(rendered.contains("AI Provider"), "the AI Provider row should be shown");
         assertTrue(rendered.contains("AI Model"), "the AI Model row should be shown");
         assertTrue(rendered.contains("AI Base URL"), "the AI Base URL row should be shown");

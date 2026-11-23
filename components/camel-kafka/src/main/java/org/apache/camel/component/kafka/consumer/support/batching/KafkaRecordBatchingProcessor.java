@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer.support.batching;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -181,6 +183,35 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // None of the states provided by the processing result are relevant for batch processing. We can simply return the
         // default state
         return ProcessingResult.newUnprocessed();
+    }
+
+    /**
+     * Removes the records of the given partitions from the incomplete batch, and releases their exchanges. Called when
+     * the partitions are revoked or lost (inside the poll, on the consumer thread): the batch must not process them and
+     * commit their offsets, which could move back the offset that the new owner of a partition committed. The new owner
+     * reads them again from the committed offset (also this consumer, if the partition is assigned to it again).
+     */
+    void discardBufferedRecords(KafkaConsumer camelKafkaConsumer, Collection<TopicPartition> partitions) {
+        if (exchangeList.isEmpty() || partitions.isEmpty()) {
+            return;
+        }
+        int discarded = 0;
+        Iterator<Exchange> it = exchangeList.iterator();
+        while (it.hasNext()) {
+            Exchange exchange = it.next();
+            Message message = exchange.getMessage();
+            String topic = message.getHeader(KafkaConstants.TOPIC, String.class);
+            Integer partition = message.getHeader(KafkaConstants.PARTITION, Integer.class);
+            if (topic != null && partition != null && partitions.contains(new TopicPartition(topic, partition))) {
+                it.remove();
+                camelKafkaConsumer.releaseExchange(exchange, false);
+                discarded++;
+            }
+        }
+        if (discarded > 0) {
+            LOG.debug("Discarded {} records of the incomplete batch from the revoked partitions {} ({} records left)",
+                    discarded, partitions, exchangeList.size());
+        }
     }
 
     private boolean hasExpiredRecords(ConsumerRecords<Object, Object> consumerRecords) {

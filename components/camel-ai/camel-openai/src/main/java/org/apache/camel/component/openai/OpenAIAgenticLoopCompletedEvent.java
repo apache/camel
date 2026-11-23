@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ai.AiEvent;
 
 /**
- * Fired when an OpenAI MCP agentic loop completes on an exchange.
+ * Fired when an OpenAI agentic loop (MCP and route tools) completes on an exchange.
  *
  * @since 4.23
  */

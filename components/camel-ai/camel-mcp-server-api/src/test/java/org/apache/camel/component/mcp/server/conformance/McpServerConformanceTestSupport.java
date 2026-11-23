@@ -94,6 +94,12 @@ public abstract class McpServerConformanceTestSupport extends CamelTestSupport {
                         .routeId("say-hello-route")
                         .setBody(simple("Hello ${header.name}"));
 
+                from("ai-tool:schema_tool?tags=" + CONFORMANCE_TAG + "&description=Tool with an argSchema"
+                     + "&argSchema=RAW({\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},"
+                     + "\"required\":[\"city\"]})")
+                        .routeId("schema-tool-route")
+                        .setBody(simple("Weather in ${header.city}"));
+
                 from("ai-tool:fail_tool?tags=" + CONFORMANCE_TAG + "&description=Always fails")
                         .routeId("fail-tool-route")
                         .process(e -> {
@@ -162,6 +168,35 @@ public abstract class McpServerConformanceTestSupport extends CamelTestSupport {
 
         assertThat(result.isError()).isEqualTo(Boolean.TRUE);
         assertThat(textOf(result)).contains("name");
+    }
+
+    @Test
+    void testCallToolUndeclaredArgumentIsRefused() {
+        McpSchema.CallToolResult result = client().callTool(
+                new McpSchema.CallToolRequest("say_hello", Map.of("name", "World", "nmae", "typo")));
+
+        assertThat(result.isError()).isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    void testListToolsArgSchemaWithoutAdditionalPropertiesRefusesOthers() {
+        McpSchema.Tool tool = client().listTools().tools().stream()
+                .filter(t -> "schema_tool".equals(t.name())).findFirst().orElseThrow();
+
+        assertThat(tool.inputSchema()).containsEntry("additionalProperties", false);
+    }
+
+    @Test
+    void testCallToolArgSchemaUndeclaredArgumentIsRefused() {
+        McpSchema.CallToolResult ok
+                = client().callTool(new McpSchema.CallToolRequest("schema_tool", Map.of("city", "Paris")));
+        assertThat(ok.isError()).isNotEqualTo(Boolean.TRUE);
+        assertThat(textOf(ok)).isEqualTo("Weather in Paris");
+
+        McpSchema.CallToolResult result = client().callTool(
+                new McpSchema.CallToolRequest("schema_tool", Map.of("city", "Paris", "cty", "typo")));
+
+        assertThat(result.isError()).isEqualTo(Boolean.TRUE);
     }
 
     @Test

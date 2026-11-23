@@ -72,6 +72,12 @@ the route is slow, the last messages of a poll can become visible again before t
 them a second time. Enable `extendMessageVisibility` together with `visibilityTimeout`, which keeps every message of
 the poll invisible until it is processed, or use a visibility timeout that covers the processing of a whole poll.
 
+With `extendMessageVisibility`, the visibility of a message is extended when 80% of its visibility timeout has passed,
+by a task that runs every half of the visibility timeout, in whole seconds. A `visibilityTimeout` below 2 seconds is
+rejected when the endpoint is created, as the extension would always come too late, and a value below 10 seconds is
+logged as a warning when the consumer starts, as it leaves only 1 to 2 seconds for the extension. Use a
+`visibilityTimeout` of 10 seconds or more.
+
 With a FIFO queue, a poll can receive several messages of the same message group. A message that fails is not deleted,
 but the next messages of its group in the same poll are still routed and deleted, so the failed message is delivered
 again after them. Set `maxMessagesPerPoll=1` if the messages of a group must keep their order when one of them fails.

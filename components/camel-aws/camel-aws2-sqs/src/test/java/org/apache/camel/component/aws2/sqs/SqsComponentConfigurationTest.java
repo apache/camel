@@ -19,6 +19,8 @@ package org.apache.camel.component.aws2.sqs;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
@@ -247,6 +249,30 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true");
         });
+    }
+
+    // The visibility timeout extender runs every visibilityTimeout / 2 whole seconds, so with less than 2 seconds it
+    // always comes too late (CAMEL-25737)
+    @ParameterizedTest
+    @ValueSource(ints = { -1, 0, 1 })
+    public void createEndpointWithExtendMessageVisibilityAndShortVisibilityTimeoutThrowsException(int visibilityTimeout) {
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true"
+                                     + "&visibilityTimeout=" + visibilityTimeout);
+        });
+        assertTrue(e.getMessage().contains("at least 2 seconds"), e.getMessage());
+    }
+
+    @Test
+    public void createEndpointWithExtendMessageVisibilityAndTwoSecondsVisibilityTimeout() throws Exception {
+        AmazonSQSClientMock mock = new AmazonSQSClientMock();
+
+        context.getRegistry().bind("amazonSQSClient", mock);
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        assertNotNull(component
+                .createEndpoint(
+                        "aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy&visibilityTimeout=2&extendMessageVisibility=true"));
     }
 
     @Test

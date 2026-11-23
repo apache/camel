@@ -63,9 +63,23 @@ public abstract class YamlModelWriterSupport {
         }
     }
 
+    /**
+     * The text of an expression. An empty text is written too, as it is the value of the expression:
+     * <code>constant: {expression: ""}</code> sets an empty body, <code>constant: {}</code> has no expression.
+     */
     protected void doWriteValue(JsonObject jo, String value) {
-        if (value != null && !value.isEmpty()) {
+        if (value != null) {
             jo.put("expression", value);
+        }
+    }
+
+    /**
+     * The text of a method call expression, when it is not empty: the Java DSL gives it an empty text, as the bean is
+     * given by the attributes (ref, beanType and method).
+     */
+    protected void doWriteNonEmptyValue(JsonObject jo, String value) {
+        if (value != null && !value.isEmpty()) {
+            doWriteValue(jo, value);
         }
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka.consumer.support.batching;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -60,6 +61,11 @@ public class KafkaRecordBatchingProcessorFacade extends AbstractKafkaRecordProce
         }
 
         return result;
+    }
+
+    @Override
+    public void discardPendingRecords(Collection<TopicPartition> partitions) {
+        kafkaRecordProcessor.discardBufferedRecords(camelKafkaConsumer, partitions);
     }
 
 }

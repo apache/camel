@@ -160,7 +160,7 @@ import org.slf4j.LoggerFactory;
                                                           carriers = { Carrier.BYTES, Carrier.TEXT, Carrier.LIST }) },
                                    description = "The answer of chat-completion as text, also with outputClass or"
                                                  + " jsonSchema, where it is JSON text: unmarshal it to read its fields."
-                                                 + " With streaming, an Iterator of the chunks (text when MCP tools run in"
+                                                 + " With streaming, an Iterator of the chunks (text when tools run in"
                                                  + " a loop). With autoToolExecution=false, the tool calls the model asks"
                                                  + " for: an Optional of the List of tool calls, or a List of the function"
                                                  + " calls for responses. embeddings gives a vector (a List of Float), or a"
@@ -874,6 +874,12 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
     }
 
+    /**
+     * The key of a client without a key: the SDK needs a credential to build the client, and the Authorization header
+     * it would go into is removed, so it is never sent (and never logged).
+     */
+    private static final String NO_API_KEY = "camel-openai-no-api-key";
+
     protected OpenAIClient createClient() throws Exception {
         String apiKey = resolveApiKey();
 
@@ -881,6 +887,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         if (ObjectHelper.isNotEmpty(apiKey)) {
             builder.apiKey(apiKey);
+        } else {
+            // no key, such as for a local server (Ollama, vLLM, LM Studio): the SDK needs a credential, so a placeholder
+            // is given, and its Authorization header is removed, so the requests are sent without one
+            builder.apiKey(NO_API_KEY);
+            builder.removeHeaders("Authorization");
         }
 
         builder.baseUrl(ObjectHelper.notNullOrEmpty(configuration.getBaseUrl(), "baseUrl"));

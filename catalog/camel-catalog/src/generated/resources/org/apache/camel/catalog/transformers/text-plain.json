@@ -12,9 +12,14 @@
   "bodyTypes": {
     "transformerIn": {
       "carriers": [
-        "any"
+        "text",
+        "bytes",
+        "stream",
+        "file",
+        "value",
+        "null"
       ],
-      "description": "A body Camel can convert to a String; a null body stays null"
+      "description": "Text, bytes, a stream, a file or a value such as a number, and a null body stays null; a Map, a List or an object would become its toString()"
     },
     "transformerOut": {
       "carriers": [

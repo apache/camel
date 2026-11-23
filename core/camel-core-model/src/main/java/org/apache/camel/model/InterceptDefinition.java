@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -37,6 +38,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
+    @XmlTransient
+    private boolean routeScoped = true;
+
     @Metadata(description = "To use an expression to only trigger intercepting in specific situations")
     @XmlElement
     @AsPredicate
@@ -47,12 +51,21 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
     protected InterceptDefinition(InterceptDefinition source) {
         super(source);
+        this.routeScoped = source.routeScoped;
         this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
     }
 
     @Override
     public InterceptDefinition copyDefinition() {
         return new InterceptDefinition(this);
+    }
+
+    public boolean isRouteScoped() {
+        return routeScoped;
+    }
+
+    public void setRouteScoped(boolean routeScoped) {
+        this.routeScoped = routeScoped;
     }
 
     @Override

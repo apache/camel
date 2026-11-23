@@ -290,12 +290,7 @@ class AiPanel {
     /** The question the current turn answers, for grouping its requests on the Ollama tab. */
     private volatile String currentQuestion;
     private boolean statsView;
-    boolean spanRefreshRequested;
-
-    enum AiUsageSource {
-        TUI,
-        ROUTE
-    }
+    boolean usageRefreshRequested;
 
     /**
      * One conversation line. For assistant replies {@code elapsedMs} is the wall-clock time of the whole turn,
@@ -362,24 +357,6 @@ class AiPanel {
         }
     }
 
-    record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-            int totalTokens, long latencyMs, String stopReason, Instant timestamp,
-            AiUsageSource source, String routeId, int question) {
-
-        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-                     int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
-            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
-                 AiUsageSource.TUI, null, 0);
-        }
-
-        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-                     int totalTokens, long latencyMs, String stopReason, Instant timestamp,
-                     AiUsageSource source, String routeId) {
-            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
-                 source, routeId, 0);
-        }
-    }
-
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
     }
@@ -403,8 +380,8 @@ class AiPanel {
         toolSet.setMcpInfo(active, port);
     }
 
-    void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
-        usage.setOtelSpans(otelSpans);
+    void setGenAiUsage(AtomicReference<GenAiConsoleUsage> genAiUsage) {
+        usage.setGenAiUsage(genAiUsage);
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -1891,7 +1868,7 @@ class AiPanel {
                 response.usage().inputTokens(), response.usage().outputTokens(),
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
-                AiUsageSource.TUI, null, questionCounter));
+                AiUsageSource.TUI, null, questionCounter, response.usage().cachedTokens()));
         noteMeasuredPrompt(response.usage());
         if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
             // the Ollama tab shows this request with the timings Ollama returned
@@ -2335,7 +2312,7 @@ class AiPanel {
         statsView = !statsView;
         usage.resetScroll();
         if (statsView) {
-            spanRefreshRequested = true;
+            usageRefreshRequested = true;
         }
     }
 
@@ -2602,7 +2579,7 @@ class AiPanel {
         statsView = !statsView;
         usage.resetScroll();
         if (statsView) {
-            spanRefreshRequested = true;
+            usageRefreshRequested = true;
         }
     }
 

@@ -41,12 +41,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * For working with Post Quantum Cryptography Algorithms
  */
 @Component("pqc")
 public class PQCComponent extends HealthCheckComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PQCComponent.class);
 
     @Metadata
     private PQCConfiguration configuration = new PQCConfiguration();
@@ -87,6 +91,12 @@ public class PQCComponent extends HealthCheckComponent {
                 = this.configuration != null ? this.configuration.copy() : new PQCConfiguration();
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        if ("CMCE".equals(configuration.getKeyEncapsulationAlgorithm())) {
+            LOG.warn("The CMCE (Classic McEliece) key encapsulation algorithm is deprecated: it is believed to be unsafe"
+                     + " to use and will be removed in a future release. Use MLKEM instead. Endpoint: {}",
+                    endpoint);
+        }
 
         // Captured here, before any auto-configuration runs. The generic blocks below fill the PQC material in, so
         // asking the same question later would always answer "present" and the matched hybrid material would never

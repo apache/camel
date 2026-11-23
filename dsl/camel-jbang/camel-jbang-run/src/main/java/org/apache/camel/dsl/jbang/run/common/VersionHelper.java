@@ -19,19 +19,10 @@ package org.apache.camel.dsl.jbang.run.common;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.camel.catalog.cve.AdvisoryVersions;
 
 public final class VersionHelper {
-
-    private static final Pattern LEADING_NUMBER = Pattern.compile("^\\d{1,18}");
-    // the qualifiers of a version before its release, as in Maven: 4.24.0-SNAPSHOT, -RC1, -M2, -beta1
-    private static final Pattern PRE_RELEASE
-            = Pattern.compile("^[-.]?(snapshot|alpha|beta|milestone|preview|rc|cr|ea|m|a|b)(?=\\d|[-.]|$)",
-                    Pattern.CASE_INSENSITIVE);
 
     private VersionHelper() {
     }
@@ -59,15 +50,15 @@ public final class VersionHelper {
     }
 
     public static boolean isGE(String source, String target) {
-        return compare(source, target) >= 0;
+        return AdvisoryVersions.isGE(source, target);
     }
 
     public static boolean isLE(String source, String target) {
-        return compare(source, target) <= 0;
+        return AdvisoryVersions.isLE(source, target);
     }
 
     public static boolean isBetween(String source, String inclusive, String exclusive) {
-        return compare(source, inclusive) >= 0 && compare(source, exclusive) < 0;
+        return AdvisoryVersions.isBetween(source, inclusive, exclusive);
     }
 
     /**
@@ -79,53 +70,7 @@ public final class VersionHelper {
      *         (zero when one of them is missing)
      */
     public static int compare(String source, String target) {
-        if (source == null || target == null || source.isBlank() || target.isBlank()) {
-            return 0;
-        }
-        List<Long> s = new ArrayList<>();
-        String sq = parse(source, s);
-        List<Long> t = new ArrayList<>();
-        String tq = parse(target, t);
-        for (int i = 0; i < Math.max(s.size(), t.size()); i++) {
-            long a = i < s.size() ? s.get(i) : 0;
-            long b = i < t.size() ? t.get(i) : 0;
-            if (a != b) {
-                return Long.compare(a, b);
-            }
-        }
-        int rank = Integer.compare(qualifierRank(sq), qualifierRank(tq));
-        return rank != 0 ? rank : sq.compareToIgnoreCase(tq);
-    }
-
-    /**
-     * Where a qualifier sorts: a pre-release before the release, and any other qualifier after it.
-     */
-    private static int qualifierRank(String qualifier) {
-        if (qualifier.isEmpty()) {
-            return 1;
-        }
-        return PRE_RELEASE.matcher(qualifier).lookingAt() ? 0 : 2;
-    }
-
-    /**
-     * The numbers of the version (separated by dots or commas), and what follows them, such as -SNAPSHOT.
-     */
-    private static String parse(String version, List<Long> numbers) {
-        String[] parts = version.trim().split("[.,]");
-        for (int i = 0; i < parts.length; i++) {
-            Matcher m = LEADING_NUMBER.matcher(parts[i]);
-            if (!m.find()) {
-                return String.join(".", Arrays.copyOfRange(parts, i, parts.length));
-            }
-            numbers.add(Long.parseLong(m.group()));
-            if (m.end() < parts[i].length()) {
-                // such as 0-SNAPSHOT
-                String rest = parts[i].substring(m.end());
-                return i + 1 < parts.length
-                        ? rest + "." + String.join(".", Arrays.copyOfRange(parts, i + 1, parts.length)) : rest;
-            }
-        }
-        return "";
+        return AdvisoryVersions.compare(source, target);
     }
 
     public static String getMajorMinorVersion(String version) {

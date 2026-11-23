@@ -202,13 +202,14 @@ class BlobConsumerDeleteMoveAfterReadTest extends CamelTestSupport {
 
     private BlobContainerClient containerClient(String container) {
         BlobContainerClient containerClient = mock(BlobContainerClient.class);
-        when(containerClient.listBlobs(nullable(ListBlobsOptions.class), nullable(Duration.class))).thenAnswer(i -> {
-            ListBlobsOptions options = i.getArgument(0);
-            String prefix = options != null && options.getPrefix() != null ? options.getPrefix() : "";
-            List<BlobItem> items = blobs(container).stream().filter(name -> name.startsWith(prefix))
-                    .map(name -> new BlobItem().setName(name)).toList();
-            return new PagedIterable<>(() -> new PagedResponseBase<Void, BlobItem>(null, 200, null, items, null, null));
-        });
+        when(containerClient.listBlobs(nullable(ListBlobsOptions.class), nullable(String.class), nullable(Duration.class)))
+                .thenAnswer(i -> {
+                    ListBlobsOptions options = i.getArgument(0);
+                    String prefix = options != null && options.getPrefix() != null ? options.getPrefix() : "";
+                    List<BlobItem> items = blobs(container).stream().filter(name -> name.startsWith(prefix))
+                            .map(name -> new BlobItem().setName(name)).toList();
+                    return new PagedIterable<>(() -> new PagedResponseBase<Void, BlobItem>(null, 200, null, items, null, null));
+                });
         when(containerClient.getBlobClient(anyString())).thenAnswer(i -> blobClient(container, i.getArgument(0)));
         return containerClient;
     }

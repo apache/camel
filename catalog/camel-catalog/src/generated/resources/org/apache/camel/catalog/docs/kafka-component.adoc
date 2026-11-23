@@ -76,6 +76,12 @@ The default is *ERROR_HANDLER*, which will let Camel's error handler (if any con
 Afterwards continue to poll the next message. This behavior is similar to the _bridgeErrorHandler_ option that
 Camel components have.
 
+The _pollOnError_ configuration applies to exceptions only. The Kafka client wraps only a `RuntimeException` of a
+deserializer in a `RecordDeserializationException`. A `java.lang.Error`, such as an `ExceptionInInitializerError` or
+`NoClassDefFoundError` of a deserializer whose classes cannot be loaded, fails every poll the same way. The consumer
+thread then logs the error, closes its Kafka consumer and terminates, and the consumer health check reports DOWN. Fix
+the cause (for example, a dependency version), and then restart the route or the application.
+
 For advanced control a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
 on the component level, which allows controlling which of the strategies to use for each exception.
 
@@ -1030,7 +1036,7 @@ For example with Maven, for Confluent and Avro:
 <dependency>
   <groupId>io.confluent</groupId>
   <artifactId>kafka-avro-serializer</artifactId>
-  <version>8.3.3</version>
+  <version>8.4.1</version>
 </dependency>
 ----
 

@@ -19,9 +19,13 @@ package org.apache.camel.component.kafka.share;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.TaskHealthState;
@@ -32,7 +36,13 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.ClientDnsLookup;
 import org.apache.kafka.clients.ClientUtils;
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.AlterConfigOp;
+import org.apache.kafka.clients.admin.AlterConfigsOptions;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.ConfigResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +113,10 @@ public class KafkaShareConsumer extends DefaultConsumer {
         KafkaShareConfiguration.validateShareConsumerProperties(props);
         endpoint.checkSchemaRegistrySerde(props);
 
+        if (ObjectHelper.isNotEmpty(configuration.getShareAutoOffsetReset())) {
+            setShareAutoOffsetReset(props, configuration.getShareAutoOffsetReset().trim());
+        }
+
         executor = endpoint.createExecutor(this);
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
@@ -144,6 +158,52 @@ public class KafkaShareConsumer extends DefaultConsumer {
         executor = null;
 
         super.doStop();
+    }
+
+    /**
+     * Sets share.auto.offset.reset of the share group with the Admin client, before the share consumers start, so it is
+     * set when the group first consumes a share-partition.
+     */
+    void setShareAutoOffsetReset(Properties consumerProps, String value) throws Exception {
+        KafkaShareConfiguration.validateShareAutoOffsetReset(value);
+        String groupId = endpoint.getConfiguration().getGroupId();
+        ConfigResource group = new ConfigResource(ConfigResource.Type.GROUP, groupId);
+        AlterConfigOp op = new AlterConfigOp(
+                new ConfigEntry(KafkaShareConfiguration.SHARE_AUTO_OFFSET_RESET_CONFIG, value), AlterConfigOp.OpType.SET);
+        int timeout = endpoint.getConfiguration().getConsumerRequestTimeoutMs();
+
+        LOG.info("Setting {}={} on share group: {}", KafkaShareConfiguration.SHARE_AUTO_OFFSET_RESET_CONFIG, value, groupId);
+        try (Admin admin = endpoint.getKafkaShareClientFactory().getAdmin(adminProperties(consumerProps))) {
+            admin.incrementalAlterConfigs(Map.of(group, List.of(op)), new AlterConfigsOptions().timeoutMs(timeout))
+                    .all().get(timeout, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException(cannotSet(value, groupId, e.getCause()), e.getCause());
+        } catch (TimeoutException e) {
+            throw new IllegalStateException(cannotSet(value, groupId, e), e);
+        }
+    }
+
+    private static String cannotSet(String value, String groupId, Throwable cause) {
+        return "Cannot set " + KafkaShareConfiguration.SHARE_AUTO_OFFSET_RESET_CONFIG + "=" + value + " on the share group "
+               + groupId + " (the shareAutoOffsetReset option): " + cause.getMessage()
+               + ". The principal of the consumer needs the ALTER_CONFIGS permission on the group.";
+    }
+
+    /**
+     * The properties of the admin client: the properties of the share consumer (the brokers, security and additional
+     * properties) without the ones that only a consumer knows, which the admin client would log as unknown.
+     */
+    static Properties adminProperties(Properties consumerProps) {
+        Set<String> adminConfigs = AdminClientConfig.configNames();
+        Set<String> consumerConfigs = ConsumerConfig.configNames();
+        Properties answer = new Properties();
+        consumerProps.forEach((key, value) -> {
+            String name = key.toString();
+            if (adminConfigs.contains(name) || !consumerConfigs.contains(name)) {
+                answer.put(key, value);
+            }
+        });
+        return answer;
     }
 
     public List<TaskHealthState> healthStates() {

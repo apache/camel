@@ -17,7 +17,9 @@
 package org.apache.camel.component.smb;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
+import com.hierynomus.protocol.commons.socket.ProxySocketFactory;
 import com.hierynomus.smbj.SmbConfig;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.spi.Metadata;
@@ -29,6 +31,10 @@ import org.apache.camel.util.StringHelper;
 
 @UriParams
 public class SmbConfiguration extends GenericFileConfiguration {
+
+    // the defaults of smbj (ProxySocketFactory and SmbConfig)
+    private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
+    private static final int DEFAULT_TIMEOUT = 60000;
 
     // component name is implied as the protocol
     private String protocol;
@@ -87,8 +93,28 @@ public class SmbConfiguration extends GenericFileConfiguration {
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "
-                            + " configurations, like timeouts")
+                            + " configurations, like timeouts. Cannot be combined with the encryptData, connectTimeout,"
+                            + " readTimeout, writeTimeout and transactTimeout options: set them on the SmbConfig instead.")
     private SmbConfig smbConfig;
+    @UriParam(label = "security",
+              description = "Whether to encrypt the messages to and from the server (SMB 3 encryption), so the file content"
+                            + " is not sent in the clear. A share that requires encryption (for Samba, smb encrypt = required)"
+                            + " refuses the connection with STATUS_ACCESS_DENIED unless this option is enabled. The server must"
+                            + " support SMB 3 encryption.")
+    private boolean encryptData;
+    @UriParam(label = "advanced", defaultValue = "5000", javaType = "java.time.Duration",
+              description = "The timeout for establishing the TCP connection to the server.")
+    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+    @UriParam(label = "advanced", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "The timeout for the server to answer a read of file content.")
+    private int readTimeout = DEFAULT_TIMEOUT;
+    @UriParam(label = "advanced", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "The timeout for the server to answer a write of file content.")
+    private int writeTimeout = DEFAULT_TIMEOUT;
+    @UriParam(label = "advanced", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "The timeout for the server to answer the other requests, such as listing a directory,"
+                            + " opening, closing, renaming and deleting a file, and logging off.")
+    private int transactTimeout = DEFAULT_TIMEOUT;
 
     @UriParam(label = "producer,advanced",
               description = "Perform rename operations using a copy and delete strategy. This option takes "
@@ -265,6 +291,73 @@ public class SmbConfiguration extends GenericFileConfiguration {
 
     public void setSmbConfig(SmbConfig smbConfig) {
         this.smbConfig = smbConfig;
+    }
+
+    public boolean isEncryptData() {
+        return encryptData;
+    }
+
+    public void setEncryptData(boolean encryptData) {
+        this.encryptData = encryptData;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public int getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public void setWriteTimeout(int writeTimeout) {
+        this.writeTimeout = writeTimeout;
+    }
+
+    public int getTransactTimeout() {
+        return transactTimeout;
+    }
+
+    public void setTransactTimeout(int transactTimeout) {
+        this.transactTimeout = transactTimeout;
+    }
+
+    /**
+     * The configuration of the SMB client: the smbConfig option, or else one built from the encryptData and timeout
+     * options.
+     *
+     * @throws IllegalArgumentException when smbConfig is set together with one of these options, which it would ignore
+     */
+    public SmbConfig createSmbConfig() {
+        if (smbConfig != null) {
+            if (encryptData || connectTimeout != DEFAULT_CONNECT_TIMEOUT || readTimeout != DEFAULT_TIMEOUT
+                    || writeTimeout != DEFAULT_TIMEOUT || transactTimeout != DEFAULT_TIMEOUT) {
+                throw new IllegalArgumentException(
+                        "The smbConfig option cannot be combined with the encryptData, connectTimeout, readTimeout,"
+                                                   + " writeTimeout and transactTimeout options, as the SmbConfig is used as is:"
+                                                   + " set them on the SmbConfig instead (an SmbConfig bean in the registry is used"
+                                                   + " as smbConfig when it is the only one)");
+            }
+            return smbConfig;
+        }
+        return SmbConfig.builder()
+                .withEncryptData(encryptData)
+                .withSocketFactory(new ProxySocketFactory(connectTimeout))
+                .withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                .withWriteTimeout(writeTimeout, TimeUnit.MILLISECONDS)
+                .withTransactTimeout(transactTimeout, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     /**

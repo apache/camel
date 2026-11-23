@@ -109,6 +109,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
     private ScheduledExecutorService scheduledExecutorService;
+    // the scheduler of the timeouts in asynchronous mode, when created by this processor
+    private ScheduledExecutorService timeoutScheduler;
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
@@ -187,6 +189,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
         if (bulkheadConfig != null) {
             bulkhead = bulkheadRegistry.bulkhead(id, bulkheadConfig);
         }
+        if (asynchronous && timeLimiter != null && scheduledExecutorService == null && timeoutScheduler == null) {
+            // the timeouts get their own threads: when they were tasks of the pool that runs the calls, a timeout
+            // could not fire while every thread of that pool was blocked in a call, which is what the timeout is for
+            timeoutScheduler = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this,
+                    "CircuitBreakerTimeout");
+        }
         ServiceHelper.startService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
@@ -202,10 +210,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
-
+        // the thread pools are shut down when the route is removed (doShutdown), and not here: the thread pool that
+        // runs the calls is created once, with the route, and a route that is stopped is started again with it
         ServiceHelper.stopService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
 
         if (createCircuitBreaker) {
@@ -222,6 +228,13 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @Override
     protected void doShutdown() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+        if (timeoutScheduler != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(timeoutScheduler);
+            timeoutScheduler = null;
+        }
         ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
@@ -688,7 +701,9 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 supplier = Bulkhead.decorateCompletionStage(bulkhead, supplier);
             }
             if (timeLimiter != null) {
-                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduledExecutorService, supplier);
+                ScheduledExecutorService scheduler
+                        = scheduledExecutorService != null ? scheduledExecutorService : timeoutScheduler;
+                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduler, supplier);
             }
             supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
 

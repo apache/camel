@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- every built-in type that XsdJsonSamples gives a value of its own, to check that the samples are valid -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:t="urn:samples" targetNamespace="urn:samples"
+           elementFormDefault="qualified">
+
+  <xs:simpleType name="Level">
+    <xs:restriction base="xs:int">
+      <xs:enumeration value="3"/>
+      <xs:enumeration value="5"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Color">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="red"/>
+      <xs:enumeration value="blue"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- the enumeration of the most derived type -->
+  <xs:simpleType name="DarkColor">
+    <xs:restriction base="t:Color">
+      <xs:enumeration value="blue"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Folder">
+    <xs:sequence>
+      <xs:element name="folder" type="t:Folder" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:NCName" use="required"/>
+  </xs:complexType>
+
+  <xs:element name="types">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="text" type="xs:string"/>
+        <xs:element name="token" type="xs:token"/>
+        <xs:element name="flag" type="xs:boolean"/>
+        <xs:element name="count" type="xs:int"/>
+        <xs:element name="big" type="xs:integer"/>
+        <xs:element name="positive" type="xs:positiveInteger"/>
+        <xs:element name="negative" type="xs:negativeInteger"/>
+        <xs:element name="nonPositive" type="xs:nonPositiveInteger"/>
+        <xs:element name="unsigned" type="xs:unsignedByte"/>
+        <xs:element name="amount" type="xs:decimal"/>
+        <xs:element name="ratio" type="xs:float"/>
+        <xs:element name="measure" type="xs:double"/>
+        <xs:element name="dateTime" type="xs:dateTime"/>
+        <xs:element name="date" type="xs:date"/>
+        <xs:element name="time" type="xs:time"/>
+        <xs:element name="duration" type="xs:duration"/>
+        <xs:element name="year" type="xs:gYear"/>
+        <xs:element name="yearMonth" type="xs:gYearMonth"/>
+        <xs:element name="month" type="xs:gMonth"/>
+        <xs:element name="monthDay" type="xs:gMonthDay"/>
+        <xs:element name="day" type="xs:gDay"/>
+        <xs:element name="base64" type="xs:base64Binary"/>
+        <xs:element name="hex" type="xs:hexBinary"/>
+        <xs:element name="uri" type="xs:anyURI"/>
+        <xs:element name="lang" type="xs:language"/>
+        <xs:element name="id" type="xs:ID"/>
+        <xs:element name="ncname" type="xs:NCName"/>
+        <xs:element name="tokens" type="xs:NMTOKENS"/>
+        <xs:element name="level" type="t:Level"/>
+        <xs:element name="color" type="t:Color"/>
+        <xs:element name="dark" type="t:DarkColor"/>
+        <xs:element name="levels">
+          <xs:simpleType><xs:list itemType="t:Level"/></xs:simpleType>
+        </xs:element>
+        <xs:choice>
+          <xs:element name="email" type="xs:string"/>
+          <xs:element name="phone" type="xs:string"/>
+        </xs:choice>
+        <xs:element name="optional" type="xs:string" minOccurs="0"/>
+        <xs:element name="item" type="xs:string" maxOccurs="unbounded"/>
+        <xs:element name="root" type="t:Folder"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:int" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

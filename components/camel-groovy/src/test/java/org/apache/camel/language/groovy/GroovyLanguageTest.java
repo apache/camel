@@ -77,6 +77,24 @@ public class GroovyLanguageTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testValidateExpressionIndexWithLfAndCrLf() throws Exception {
+        try (GroovyLanguage g = new GroovyLanguage()) {
+            g.setCamelContext(context);
+
+            // LF line ends, CRLF line ends, and both in one script
+            assertIndexOfError(g, "var a = 123;\nprintln a */ 2;\n");
+            assertIndexOfError(g, "var a = 123;\r\nprintln a */ 2;\r\n");
+            assertIndexOfError(g, "var a = 123;\r\nvar b = 4;\nprintln a */ 2;\n");
+        }
+    }
+
+    private static void assertIndexOfError(GroovyLanguage g, String script) {
+        GroovyValidationException e = assertThrows(GroovyValidationException.class, () -> g.validateExpression(script));
+        // the syntax error is the * of the script
+        assertEquals(script.indexOf('*'), e.getIndex());
+    }
+
+    @Test
     public void testGroovyAttachments() throws Exception {
         DefaultAttachment da
                 = new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));

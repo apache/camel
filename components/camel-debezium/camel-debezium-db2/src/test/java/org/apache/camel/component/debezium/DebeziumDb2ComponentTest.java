@@ -34,7 +34,7 @@ public class DebeziumDb2ComponentTest {
     @Test
     void testIfConnectorEndpointCreatedWithConfig() throws Exception {
         final Map<String, Object> params = new HashMap<>();
-        params.put("offsetStorageFileName", "/offset_test_file");
+        params.put("offsetStorageFileName", "target/offset_test_file");
         params.put("databaseHostname", "localhost");
         params.put("databaseUser", "dbz");
         params.put("databasePassword", "pwd");
@@ -43,7 +43,7 @@ public class DebeziumDb2ComponentTest {
         params.put("schemaHistoryInternalFileFilename", "/db_history_file_test");
 
         final String remaining = "test_name";
-        final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
+        final String uri = "debezium?name=test_name&offsetStorageFileName=target/offset-test&"
                            + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
                            + "topicPrefix=test&schemaHistoryInternalFileFilename=/test";
 
@@ -57,7 +57,7 @@ public class DebeziumDb2ComponentTest {
             final Db2ConnectorEmbeddedDebeziumConfiguration configuration
                     = (Db2ConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
-            assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
+            assertEquals("target/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
             assertEquals("dbz", configuration.getDatabaseUser());
             assertEquals("pwd", configuration.getDatabasePassword());
@@ -73,7 +73,7 @@ public class DebeziumDb2ComponentTest {
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabasePassword("pwd");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setTopicPrefix("test");
 
         final String uri = "debezium:dummy";

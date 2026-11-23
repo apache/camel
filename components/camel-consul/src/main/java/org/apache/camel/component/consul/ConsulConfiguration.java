@@ -74,7 +74,9 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     }
 
     /**
-     * The default key. Can be overridden by CamelConsulKey
+     * The key (kv) or event name (event) that the consumer watches or that the producer acts on; the other APIs do not
+     * use it. In a producer, a CamelConsulKey header overrides it, unless the header still holds the key that a consul
+     * consumer received (the CamelConsulReceivedKey exchange property).
      */
     public void setKey(String key) {
         this.key = key;

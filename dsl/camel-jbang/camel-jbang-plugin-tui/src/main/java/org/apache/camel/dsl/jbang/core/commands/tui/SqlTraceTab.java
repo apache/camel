@@ -82,6 +82,10 @@ class SqlTraceTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiAboutSelectedStatement();
+            return true;
+        }
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
             return true;
@@ -174,16 +178,40 @@ class SqlTraceTab extends AbstractTableTab {
 
     private String getSelectedQuery() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            return null;
-        }
+        SqlTraceInfo si = info != null ? selectedStatement(info) : null;
+        return si != null ? si.query : null;
+    }
+
+    /** The statement selected in the table, in the order it is shown; null when none is. */
+    SqlTraceInfo selectedStatement(IntegrationInfo info) {
         List<SqlTraceInfo> sorted = new ArrayList<>(info.sqlTraceStatements);
         sorted.sort(this::sortTrace);
         Integer sel = tableState.selected();
-        if (sel != null && sel >= 0 && sel < sorted.size()) {
-            return sorted.get(sel).query;
+        return sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        SqlTraceInfo si = info != null && ctx.askAiCallback != null ? selectedStatement(info) : null;
+        if (si != null && SqlTraceAiPrompt.hasTrouble(si)) {
+            hint(spans, "Shift+F8", si.failed ? "fix with AI" : "explain with AI");
         }
-        return null;
+    }
+
+    /** Shift+F8 (CAMEL-25362): fix with AI a statement that failed, explain with AI a slow one. */
+    private void askAiAboutSelectedStatement() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        SqlTraceInfo si = info != null ? selectedStatement(info) : null;
+        if (si == null || ctx.askAiCallback == null) {
+            return;
+        }
+        if (SqlTraceAiPrompt.hasTrouble(si)) {
+            ctx.askAiCallback.ask(SqlTraceAiPrompt.of(info, si));
+        } else if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept("This statement did not fail and was not slow: ask the AI with F8", false);
+        }
     }
 
     private static String traceKey(SqlTraceInfo si) {

@@ -31,11 +31,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.crypto.params.LMOtsParameters;
+import org.bouncycastle.crypto.params.LMSigParameters;
+import org.bouncycastle.jcajce.spec.LMSHSSKeyGenParameterSpec;
+import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
-import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

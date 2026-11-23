@@ -239,10 +239,9 @@ public interface AzureStorageBlobComponentBuilderFactory {
         }
     
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -482,6 +481,22 @@ public interface AzureStorageBlobComponentBuilderFactory {
          */
         default AzureStorageBlobComponentBuilder destinationContainer(java.lang.String destinationContainer) {
             doSetProperty("destinationContainer", destinationContainer);
+            return this;
+        }
+    
+        /**
+         * Maximum number of blobs to retrieve during one consumer polling
+         * cycle. A value of 0 or less means unlimited.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
     
@@ -1021,6 +1036,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "destinationBlobPrefix": getOrCreateConfiguration((BlobComponent) component).setDestinationBlobPrefix((java.lang.String) value); return true;
             case "destinationBlobSuffix": getOrCreateConfiguration((BlobComponent) component).setDestinationBlobSuffix((java.lang.String) value); return true;
             case "destinationContainer": getOrCreateConfiguration((BlobComponent) component).setDestinationContainer((java.lang.String) value); return true;
+            case "maxMessagesPerPoll": getOrCreateConfiguration((BlobComponent) component).setMaxMessagesPerPoll((int) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((BlobComponent) component).setMoveAfterRead((boolean) value); return true;
             case "removePrefixOnMove": getOrCreateConfiguration((BlobComponent) component).setRemovePrefixOnMove((boolean) value); return true;
             case "blobSequenceNumber": getOrCreateConfiguration((BlobComponent) component).setBlobSequenceNumber((java.lang.Long) value); return true;

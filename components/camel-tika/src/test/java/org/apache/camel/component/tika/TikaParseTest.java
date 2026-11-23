@@ -56,6 +56,14 @@ public class TikaParseTest extends CamelTestSupport {
             = ("<html><head><title>Test</title></head><body><p>" + HTML_TEXT + "</p></body></html>")
                     .getBytes(StandardCharsets.UTF_8);
 
+    // ASCII only, as the html output method writes other characters as entity references
+    private static final String TEXT = "Hello from Camel";
+    private static final String HTML_WITH_TITLE
+            = "<html><head><title>Test</title></head><body><p>" + TEXT + "</p></body></html>";
+    private static final String HTML_WITHOUT_TITLE = "<html><head></head><body><p>" + TEXT + "</p></body></html>";
+    private static final String HTML_WITH_EMPTY_TITLE
+            = "<html><head><title></title></head><body><p>" + TEXT + "</p></body></html>";
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -182,6 +190,47 @@ public class TikaParseTest extends CamelTestSupport {
     }
 
     @Test
+    public void testHtmlParseWithTitle() {
+        String html = template.requestBody("direct:html", HTML_WITH_TITLE, String.class);
+        assertThat(html, containsString("<title>Test</title>"));
+        assertThat(html, containsString(TEXT));
+    }
+
+    @Test
+    public void testHtmlParsePlainText() {
+        // plain text has no title
+        String html = template.requestBody("direct:html", TEXT, String.class);
+        assertEmptyTitle(html);
+    }
+
+    @Test
+    public void testHtmlParsePlainTextBytes() {
+        String html = template.requestBody("direct:html", TEXT.getBytes(StandardCharsets.UTF_8), String.class);
+        assertEmptyTitle(html);
+    }
+
+    @Test
+    public void testHtmlParseWithoutTitle() {
+        String html = template.requestBody("direct:html", HTML_WITHOUT_TITLE.getBytes(StandardCharsets.UTF_8), String.class);
+        assertEmptyTitle(html);
+    }
+
+    @Test
+    public void testHtmlParseWithEmptyTitle() {
+        String html = template.requestBody("direct:html", HTML_WITH_EMPTY_TITLE, String.class);
+        assertEmptyTitle(html);
+    }
+
+    private static void assertEmptyTitle(String html) {
+        // TIKA-725: browsers do not handle <title/>, so the empty title must be written with an end tag
+        assertThat(html, containsString("<title></title>"));
+        assertThat(html, not(containsString("<title/>")));
+        assertThat(html, not(containsString("\0")));
+        assertThat(html, not(containsString("&#0;")));
+        assertThat(html, containsString(TEXT));
+    }
+
+    @Test
     public void testParseBodyNotStream() {
         Exception e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", Map.of("key", "value")));
@@ -226,6 +275,7 @@ public class TikaParseTest extends CamelTestSupport {
                 from("direct:start3").to("tika:parse?tikaLoader=#testLoader").to("mock:result");
                 from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
+                from("direct:html").to("tika:parse?tikaParseOutputFormat=html");
                 from("direct:start5")
                         .to("tika:parse?tikaParseOutputFormat=text&tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");

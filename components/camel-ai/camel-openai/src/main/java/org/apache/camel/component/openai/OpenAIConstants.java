@@ -70,6 +70,10 @@ public final class OpenAIConstants {
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
+    @Metadata(description = "Whether the model must follow the JSON schema exactly (strict structured outputs), in place of"
+                            + " the jsonSchemaStrict option",
+              javaType = "Boolean")
+    public static final String JSON_SCHEMA_STRICT = "CamelOpenAIJsonSchemaStrict";
     @Metadata(description = "Whether to strip <think>...</think> blocks from the response body", javaType = "Boolean")
     public static final String STRIP_THINKING = "CamelOpenAIStripThinking";
     @Metadata(description = "The MIME type of the message body when sending a file or binary content (File, WrappedFile, "

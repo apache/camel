@@ -29,6 +29,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -107,7 +108,7 @@ public final class HybridKEM {
 
         // Perform PQC KEM encapsulation
         SecretKeyWithEncapsulation pqcResult;
-        synchronized (pqcKemGenerator) {
+        synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPublicKey)) {
             pqcKemGenerator.init(
                     new KEMGenerateSpec(pqcPublicKey, symmetricAlgorithm, keyLength),
                     SecureRandomHelper.getSecureRandom());
@@ -186,7 +187,7 @@ public final class HybridKEM {
 
         // Perform PQC KEM extraction
         SecretKeyWithEncapsulation pqcResult;
-        synchronized (pqcKemGenerator) {
+        synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPrivateKey)) {
             pqcKemGenerator.init(
                     new KEMExtractSpec(pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength),
                     SecureRandomHelper.getSecureRandom());

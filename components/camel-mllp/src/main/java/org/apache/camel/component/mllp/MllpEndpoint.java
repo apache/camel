@@ -25,7 +25,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -66,8 +65,8 @@ import org.slf4j.Logger;
                                                    + " property, or with autoAck an HL7 ACK (AA, or AE when the exchange"
                                                    + " failed)"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
-                                  description = "The HL7 message as a String (in the charset of charsetName) or a byte"
-                                                + " array. Another body, such as a stream or a file, is converted to a byte"
+                                  description = "The HL7 message as a String (encoded in the charset of MSH-18, or"
+                                                + " charsetName) or a byte array. Another body, such as a stream or a file, is converted to a byte"
                                                 + " array; no body, or a body that cannot be converted, fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "The body is left as it was: with InOut the acknowledgement is in the"
@@ -114,13 +113,6 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     }
 
     @Override
-    public Exchange createExchange(ExchangePattern exchangePattern) {
-        Exchange mllpExchange = super.createExchange(exchangePattern);
-        setExchangeProperties(mllpExchange);
-        return mllpExchange;
-    }
-
-    @Override
     public void setExchangePattern(ExchangePattern exchangePattern) {
         configuration.setExchangePattern(exchangePattern);
         super.setExchangePattern(configuration.getExchangePattern());
@@ -130,12 +122,6 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
         configuration.setBridgeErrorHandler(bridgeErrorHandler);
         super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
-    }
-
-    void setExchangeProperties(Exchange mllpExchange) {
-        if (configuration.hasCharsetName()) {
-            mllpExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, configuration.getCharsetName());
-        }
     }
 
     @Override

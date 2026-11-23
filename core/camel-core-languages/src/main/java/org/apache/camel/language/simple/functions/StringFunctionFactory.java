@@ -36,7 +36,7 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumen
  * {@code ${substringAfter}}, {@code ${substringBetween}}, {@code ${contains}}, {@code ${trim}}, {@code ${val}},
  * {@code ${capitalize}}, {@code ${pad}}, {@code ${concat}}, {@code ${quote}}, {@code ${safeQuote}}, {@code ${unquote}},
  * {@code ${uppercase}}, {@code ${lowercase}}, {@code ${length}}, {@code ${size}}, {@code ${normalizeWhitespace}},
- * {@code ${escape}}.
+ * {@code ${escape}}, {@code ${unescape}}.
  */
 public final class StringFunctionFactory implements SimpleLanguageFunctionFactory {
 
@@ -406,6 +406,31 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 exp = null;
             }
             return StringExpressionBuilder.escapeExpression(kind, exp);
+        }
+
+        remainder = ifStartsWithReturnRemainder("unescape(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${unescape(kind)} or ${unescape(kind,expression)} was: " + function, index);
+            }
+            // only split on the first comma so the expression may contain nested functions with commas
+            String kindName = StringHelper.before(values, ",", values).trim();
+            String exp = StringHelper.after(values, ",");
+            EscapeHelper.Kind kind = EscapeHelper.Kind.fromName(kindName);
+            if (kind == null) {
+                throw new SimpleParserException(
+                        "Unknown unescape kind: " + kindName + " (valid kinds: html, xml, json, js, sql, url) was: "
+                                                + function,
+                        index);
+            }
+            if (ObjectHelper.isNotEmpty(exp)) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(exp.trim());
+            } else {
+                exp = null;
+            }
+            return StringExpressionBuilder.unescapeExpression(kind, exp);
         }
 
         remainder = ifStartsWithReturnRemainder("normalizeWhitespace(", function);

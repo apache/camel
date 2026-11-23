@@ -385,8 +385,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "dependency")) {
             commandLine.addSubcommand("dependency", new CommandTree(cmd(new DependencyCommand()))
+                    .addSubcommand("audit", CommandTree.lazy(() -> cmd(new DependencyAudit())))
                     .addSubcommand("copy", CommandTree.lazy(() -> cmd(new DependencyCopy())))
                     .addSubcommand("list", CommandTree.lazy(() -> cmd(new DependencyList())))
+                    .addSubcommand("outdated", CommandTree.lazy(() -> cmd(new DependencyOutdated())))
                     .addSubcommand("runtime", CommandTree.lazy(() -> cmd(new DependencyRuntime())))
                     .addSubcommand("update", CommandTree.lazy(() -> cmd(new DependencyUpdate()))));
         }
@@ -431,6 +433,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("endpoint", CommandTree.lazy(() -> cmd(new ListEndpoint())))
                     .addSubcommand("error", CommandTree.lazy(() -> cmd(new ListError())))
                     .addSubcommand("event", CommandTree.lazy(() -> cmd(new ListEvent())))
+                    .addSubcommand("genai", CommandTree.lazy(() -> cmd(new CamelGenAiAction())))
                     .addSubcommand("groovy", CommandTree.lazy(() -> cmd(new ListGroovy())))
                     .addSubcommand("group", CommandTree.lazy(() -> cmd(new CamelRouteGroupStatus())))
                     .addSubcommand("health", CommandTree.lazy(() -> cmd(new ListHealth())))

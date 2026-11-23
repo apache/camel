@@ -78,6 +78,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the genai action and the genai dev console, tested end to end -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-observability</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>

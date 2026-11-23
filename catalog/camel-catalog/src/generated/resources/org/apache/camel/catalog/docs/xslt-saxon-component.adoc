@@ -227,6 +227,24 @@ available:
     <xsl:template ...>
 ----
 
+[NOTE]
+====
+The `xslt-saxon` endpoint sets `ACCESS_EXTERNAL_DTD` and `ACCESS_EXTERNAL_STYLESHEET` on the Saxon
+`TransformerFactory` it creates to the empty (deny-all) value. At transform time, an external `http:`,
+`https:`, `ftp:` or `file:` URI is then refused by `document()` / `doc()` (since Camel 4.23), by the
+XSLT 3.0 functions `unparsed-text()`, `unparsed-text-lines()`, `unparsed-text-available()` and
+`json-doc()` (since Camel 4.24), and by `collection()` and `uri-collection()`: the transform fails (and
+the reason is logged as a warning), and `unparsed-text-available()` returns `false`. This also applies
+in a stylesheet run with `fn:transform()`, and to a *relative* reference when the stylesheet itself was
+loaded from `file:`; for a stylesheet loaded from `classpath:` a relative reference resolves to a
+`classpath:` URI. Camel's internal `classpath:`, `ref:` and `bean:` schemes remain available to
+`document()`, `unparsed-text()` and `json-doc()`. To permit specific external protocols, supply your own
+`TransformerFactory` (through the `transformerFactory` option) whose `ACCESS_EXTERNAL_STYLESHEET`
+allows them: a comma-separated protocol list (such as `file` or `http,https`), or `all`. A stylesheet's
+`xsl:include` / `xsl:import` references are resolved when the stylesheet is compiled and are not
+affected by this restriction.
+====
+
 === Spring XML versions
 
 To use the above examples in Spring XML, you would use something like the following code:

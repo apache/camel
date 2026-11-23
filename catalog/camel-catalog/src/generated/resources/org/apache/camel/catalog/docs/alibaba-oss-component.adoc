@@ -2,7 +2,7 @@
 :doctitle: Alibaba Object Storage Service (OSS)
 :shortname: alibaba-oss
 :artifactid: camel-alibaba-oss
-:description: Alibaba Cloud Object Storage Service (OSS) component
+:description: Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -43,30 +43,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 == Usage
-
-=== Message headers evaluated by the OSS producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAlibabaOssOperation` |`String` | Name of operation to invoke
-
-|`CamelAlibabaOssBucketName` |`String` | Bucket name to invoke operation on (overrides the URI path bucket name)
-
-|`CamelAlibabaOssObjectName` |`String` | Name of the object to be used in operation
-
-|`CamelAlibabaOssSourceBucketName` |`String` | Source bucket name for copy operations
-
-|`CamelAlibabaOssSourceObjectName` |`String` | Source object name for copy operations
-
-|`CamelAlibabaOssPrefix` |`String` | Prefix filter when listing objects
-
-|`CamelAlibabaOssMaxKeys` |`Integer` | Maximum number of keys returned when listing objects
-
-|=======================================================================
-
-If any of the above headers are set, they will override their corresponding query parameter or URI path value.
 
 === List of Supported OSS Operations
 

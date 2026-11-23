@@ -367,6 +367,46 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     }
 
     @Test
+    void testCreateItemWithCreateIfNotExistsEndpointOptions() throws InterruptedException {
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        final String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+
+        final Map<String, Object> item = new HashMap<>();
+        item.put("id", "test-id-1");
+        item.put("partition", "test-1");
+        item.put("name", "Test item");
+
+        result.expectedMessageCount(1);
+
+        template.send("direct:createItemWithEndpointOptions", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setBody(item);
+        });
+
+        result.assertIsSatisfied(1000);
+
+        final Message response = result.getExchanges().get(0).getMessage();
+
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        // Verify that the database and container were created.
+        assertNotNull(client.getDatabase(databaseName).read().block());
+        assertNotNull(client.getDatabase(databaseName).getContainer(containerName).read().block());
+
+        // Verify that the item was successfully created.
+        final List<?> items = client.getDatabase(databaseName)
+                .getContainer(containerName)
+                .readAllItems(new PartitionKey("test-1"), Object.class)
+                .collectList()
+                .block();
+
+        assertNotNull(items);
+        assertEquals(1, items.size());
+    }
+
+    @Test
     void testQueryItems() {
         final String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
@@ -444,6 +484,11 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
                 from("direct:replaceItem").to("azure-cosmosdb://?operation=replaceItem").to(resultName);
                 from("direct:deleteItem").to("azure-cosmosdb://?operation=deleteItem").to(resultName);
                 from("direct:queryItems").to("azure-cosmosdb://?operation=queryItems").to(resultName);
+                from("direct:createItemWithEndpointOptions").to("azure-cosmosdb://?operation=createItem"
+                                                                + "&createDatabaseIfNotExists=true"
+                                                                + "&createContainerIfNotExists=true"
+                                                                + "&containerPartitionKeyPath=/partition")
+                        .to(resultName);
             }
         };
     }

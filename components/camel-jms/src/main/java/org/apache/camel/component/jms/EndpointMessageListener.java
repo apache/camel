@@ -177,6 +177,20 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     /**
+     * The failure of a message that expects a reply, as the listener container logs it. The exchange failed, so no
+     * reply is sent: the caller waits until its requestTimeout, and its ExchangeTimedOutException cannot say why.
+     */
+    static String noReplyMessage(Exception cause, Object replyDestination) {
+        String failure = cause.toString();
+        if (failure.endsWith(".")) {
+            failure = failure.substring(0, failure.length() - 1);
+        }
+        return failure + ". No reply is sent (JMSReplyTo " + replyDestination + "), as the exchange failed: the caller"
+               + " waits until its requestTimeout and then fails with ExchangeTimedOutException. To make the caller fail"
+               + " at once, reply with a message that says the request failed and check it in the caller";
+    }
+
+    /**
      * Callback task that is performed when the exchange has been processed
      */
     private final class EndpointMessageListenerAsyncCallback implements AsyncCallback {
@@ -229,6 +243,11 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             }
             if (exchange.isFailed() && exchange.getException() != null
                     && !(endpoint.isTransferException() && sendReply)) {
+                if (sendReply) {
+                    // no reply is sent, and the caller sees only its own timeout later: say so where this failure is logged
+                    return new RuntimeCamelException(
+                            noReplyMessage(exchange.getException(), replyDestination), exchange.getException());
+                }
                 return wrapRuntimeCamelException(exchange.getException());
             }
             return null;

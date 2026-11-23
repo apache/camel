@@ -153,7 +153,12 @@ final class OpenAIResponsesSupport {
         return builder.build();
     }
 
-    static void applyJsonSchemaTextFormat(ResponseCreateParams.Builder paramsBuilder, String jsonSchema)
+    /**
+     * The JSON schema as the text format of a Responses API request.
+     *
+     * @param strict whether the model must follow the schema exactly (strict is left out of the request when false)
+     */
+    static void applyJsonSchemaTextFormat(ResponseCreateParams.Builder paramsBuilder, String jsonSchema, boolean strict)
             throws Exception {
         Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchema, Map.class);
         if (root == null) {
@@ -164,10 +169,13 @@ final class OpenAIResponsesSupport {
         for (Map.Entry<String, Object> e : root.entrySet()) {
             schemaBuilder.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
-        ResponseFormatTextJsonSchemaConfig jsonSchemaConfig = ResponseFormatTextJsonSchemaConfig.builder()
+        ResponseFormatTextJsonSchemaConfig.Builder configBuilder = ResponseFormatTextJsonSchemaConfig.builder()
                 .name("camel_schema")
-                .schema(schemaBuilder.build())
-                .build();
+                .schema(schemaBuilder.build());
+        if (strict) {
+            configBuilder.strict(true);
+        }
+        ResponseFormatTextJsonSchemaConfig jsonSchemaConfig = configBuilder.build();
         paramsBuilder.text(
                 ResponseTextConfig.builder()
                         .format(ResponseFormatTextConfig.ofJsonSchema(jsonSchemaConfig))

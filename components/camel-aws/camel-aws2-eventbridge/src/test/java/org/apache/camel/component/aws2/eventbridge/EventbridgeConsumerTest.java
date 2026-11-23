@@ -25,6 +25,9 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +36,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsResultEntry;
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsResponse;
+import software.amazon.awssdk.services.eventbridge.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
@@ -63,6 +69,7 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
 
     private static final String TEST_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/123456789/camel-eventbridge-test";
     private static final String TEST_QUEUE_ARN = "arn:aws:sqs:us-east-1:123456789:camel-eventbridge-test";
+    private static final String TEST_RULE_ARN = "arn:aws:events:us-east-1:123456789:rule/test-rule";
     private static final String USER_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/123456789/user-queue";
     private static final String USER_QUEUE_ARN = "arn:aws:sqs:us-east-1:123456789:user-queue";
 
@@ -109,12 +116,73 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
 
         verify(sqsClient, never()).createQueue(any(CreateQueueRequest.class));
         verify(sqsClient).getQueueAttributes(any(GetQueueAttributesRequest.class));
+        // a user-provided queue keeps its own policy
+        verify(sqsClient, never()).setQueueAttributes(any(SetQueueAttributesRequest.class));
+        verify(eventBridgeClient, never()).describeRule(any(DescribeRuleRequest.class));
 
         ArgumentCaptor<PutTargetsRequest> captor = ArgumentCaptor.forClass(PutTargetsRequest.class);
         verify(eventBridgeClient).putTargets(captor.capture());
         assertEquals(USER_QUEUE_ARN, captor.getValue().targets().get(0).arn());
 
         consumer.stop();
+    }
+
+    @Test
+    public void testAutoCreatedQueuePolicyOnlyAllowsTheRuleOfTheConsumer() throws Exception {
+        stubAutoCreateQueue();
+        stubPutTargetsSuccess();
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, true);
+        consumer.start();
+
+        ArgumentCaptor<DescribeRuleRequest> describe = ArgumentCaptor.forClass(DescribeRuleRequest.class);
+        verify(eventBridgeClient).describeRule(describe.capture());
+        assertEquals("test-rule", describe.getValue().name());
+        assertEquals("default", describe.getValue().eventBusName());
+
+        ArgumentCaptor<SetQueueAttributesRequest> captor = ArgumentCaptor.forClass(SetQueueAttributesRequest.class);
+        verify(sqsClient).setQueueAttributes(captor.capture());
+        assertEquals(TEST_QUEUE_URL, captor.getValue().queueUrl());
+        JsonObject policy = (JsonObject) Jsoner.deserialize(captor.getValue().attributes().get(QueueAttributeName.POLICY));
+        JsonArray statements = policy.getCollection("Statement");
+        assertEquals(1, statements.size());
+        JsonObject statement = (JsonObject) statements.get(0);
+        assertEquals("Allow", statement.getString("Effect"));
+        assertEquals("events.amazonaws.com", statement.getMap("Principal").get("Service"));
+        assertEquals("sqs:SendMessage", statement.getString("Action"));
+        assertEquals(TEST_QUEUE_ARN, statement.getString("Resource"));
+        // only the rule of the consumer may send to the queue, not every EventBridge rule
+        JsonObject condition = (JsonObject) statement.getMap("Condition");
+        assertEquals(Map.of("ArnEquals", Map.of("aws:SourceArn", TEST_RULE_ARN)), condition);
+
+        consumer.stop();
+    }
+
+    @Test
+    public void testMissingRuleFailsBeforeTheQueueIsCreated() throws Exception {
+        when(eventBridgeClient.describeRule(any(DescribeRuleRequest.class)))
+                .thenThrow(ResourceNotFoundException.builder().message("Rule test-rule does not exist.").build());
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, true);
+
+        assertThrows(ResourceNotFoundException.class, consumer::start);
+        verify(sqsClient, never()).createQueue(any(CreateQueueRequest.class));
+        verify(eventBridgeClient, never()).putTargets(any(PutTargetsRequest.class));
+    }
+
+    @Test
+    public void testQueuePolicy() throws Exception {
+        String policy = EventbridgeConsumer.buildQueuePolicy(TEST_QUEUE_ARN, TEST_RULE_ARN);
+        assertEquals("{\"Version\":\"2012-10-17\","
+                     + "\"Statement\":[{\"Sid\":\"AllowEventBridgeToSendMessage\","
+                     + "\"Effect\":\"Allow\","
+                     + "\"Principal\":{\"Service\":\"events.amazonaws.com\"},"
+                     + "\"Action\":\"sqs:SendMessage\","
+                     + "\"Resource\":\"" + TEST_QUEUE_ARN + "\","
+                     + "\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"" + TEST_RULE_ARN + "\"}}}]}",
+                policy);
+        // valid JSON
+        assertInstanceOf(JsonObject.class, Jsoner.deserialize(policy));
     }
 
     @Test
@@ -351,20 +419,82 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDeleteQueueOnShutdownFalseKeepsQueue() throws Exception {
+    public void testDeleteQueueOnShutdownFalseKeepsQueueAndTarget() throws Exception {
         stubAutoCreateQueue();
         stubPutTargetsSuccess();
-        when(eventBridgeClient.removeTargets(any(RemoveTargetsRequest.class)))
-                .thenReturn(RemoveTargetsResponse.builder().build());
 
         EventbridgeConsumer consumer = createConsumer("test-rule", null, true, false);
         consumer.start();
         consumer.stop();
 
-        // Target is still removed
-        verify(eventBridgeClient).removeTargets(any(RemoveTargetsRequest.class));
-        // But queue is NOT deleted
+        // the queue and its target stay, so the queue keeps collecting the events of the rule until the next start
+        verify(eventBridgeClient, never()).removeTargets(any(RemoveTargetsRequest.class));
         verify(sqsClient, never()).deleteQueue(any(DeleteQueueRequest.class));
+
+        ArgumentCaptor<PutTargetsRequest> captor = ArgumentCaptor.forClass(PutTargetsRequest.class);
+        verify(eventBridgeClient).putTargets(captor.capture());
+        assertEquals(EventbridgeConsumer.targetIdForQueue(TEST_QUEUE_ARN), captor.getValue().targets().get(0).id());
+    }
+
+    @Test
+    public void testDeleteQueueOnShutdownFalseReusesQueueOnRestart() throws Exception {
+        stubAutoCreateQueue();
+        stubPutTargetsSuccess();
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, false);
+        consumer.start();
+        consumer.stop();
+        consumer.start();
+        consumer.stop();
+
+        // both starts ask for the same queue name, so CreateQueue returns the queue of the first start
+        ArgumentCaptor<CreateQueueRequest> create = ArgumentCaptor.forClass(CreateQueueRequest.class);
+        verify(sqsClient, times(2)).createQueue(create.capture());
+        String name = EventbridgeConsumer.durableQueueName("default", "test-rule");
+        assertEquals(List.of(name, name), create.getAllValues().stream().map(CreateQueueRequest::queueName).toList());
+
+        // and update the same target
+        ArgumentCaptor<PutTargetsRequest> put = ArgumentCaptor.forClass(PutTargetsRequest.class);
+        verify(eventBridgeClient, times(2)).putTargets(put.capture());
+        assertEquals(put.getAllValues().get(0).targets().get(0).id(), put.getAllValues().get(1).targets().get(0).id());
+    }
+
+    @Test
+    public void testDeleteQueueOnShutdownTrueCreatesOwnQueuePerStart() throws Exception {
+        stubAutoCreateQueue();
+        stubPutTargetsSuccess();
+        when(eventBridgeClient.removeTargets(any(RemoveTargetsRequest.class)))
+                .thenReturn(RemoveTargetsResponse.builder().build());
+
+        EventbridgeConsumer consumer = createConsumer("test-rule", null, true, true);
+        consumer.start();
+        consumer.stop();
+        consumer.start();
+        consumer.stop();
+
+        ArgumentCaptor<CreateQueueRequest> create = ArgumentCaptor.forClass(CreateQueueRequest.class);
+        verify(sqsClient, times(2)).createQueue(create.capture());
+        String first = create.getAllValues().get(0).queueName();
+        String second = create.getAllValues().get(1).queueName();
+        assertTrue(first.startsWith("camel-eventbridge-test-rule-"), first);
+        assertNotEquals(first, second);
+    }
+
+    @Test
+    public void testDurableQueueName() {
+        String name = EventbridgeConsumer.durableQueueName("default", "test-rule");
+        assertTrue(name.matches("camel-eventbridge-test-rule-[0-9a-f]{16}"), name);
+        assertEquals(name, EventbridgeConsumer.durableQueueName("default", "test-rule"));
+        // a rule with the same name on another event bus gets another queue
+        assertNotEquals(name, EventbridgeConsumer.durableQueueName("orders", "test-rule"));
+
+        // a queue name has at most 80 characters of [-_A-Za-z0-9]; a rule name has up to 64 characters, dots too
+        String longRule = "a.b".repeat(21) + "x";
+        String longName = EventbridgeConsumer.durableQueueName("default", longRule);
+        assertTrue(longName.length() <= 80, longName);
+        assertTrue(longName.matches("[-_A-Za-z0-9]+"), longName);
+        // rules that differ after the cut get other queues
+        assertNotEquals(longName, EventbridgeConsumer.durableQueueName("default", "a.b".repeat(21) + "y"));
     }
 
     @Test
@@ -470,6 +600,8 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
     }
 
     private void stubAutoCreateQueue() {
+        when(eventBridgeClient.describeRule(any(DescribeRuleRequest.class)))
+                .thenReturn(DescribeRuleResponse.builder().name("test-rule").arn(TEST_RULE_ARN).build());
         when(sqsClient.createQueue(any(CreateQueueRequest.class)))
                 .thenReturn(CreateQueueResponse.builder().queueUrl(TEST_QUEUE_URL).build());
         stubGetQueueAttributes(TEST_QUEUE_URL, TEST_QUEUE_ARN);

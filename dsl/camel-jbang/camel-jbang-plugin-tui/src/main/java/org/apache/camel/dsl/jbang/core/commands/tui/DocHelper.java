@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,6 +28,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.catalog.cve.HttpProxy;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 
 final class DocHelper {
@@ -86,10 +88,14 @@ final class DocHelper {
 
     static String downloadContent(String url) {
         try {
-            HttpClient client = HttpClient.newBuilder()
+            HttpProxy proxy = TuiSettings.httpProxy();
+            HttpClient.Builder builder = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
-                    .proxy(TuiSettings.proxySelector())
-                    .build();
+                    .proxy(proxy != null ? proxy.selector() : ProxySelector.getDefault());
+            if (proxy != null && proxy.authenticator() != null) {
+                builder.authenticator(proxy.authenticator());
+            }
+            HttpClient client = builder.build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(10))

@@ -183,7 +183,9 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         // the velocity templates are ugly to maintain so lets hack here to control the order in circuit-breaker
         // we want onFallback to be after outputs, but because the writer is hard-coded to not be able to generate code
         // that respect this order, then we swap the lines after the source code is generated
-        String[] lines = writer.split(System.lineSeparator());
+        // the source has the line ends of the velocity template (LF, or CRLF in a working tree with CRLF line ends),
+        // which can differ from the line separator of the platform, so split at LF or CRLF and join with LF
+        String[] lines = writer.split("\r?\n");
         int pos = -1;
         for (int i = 0; i < lines.length; i++) {
             String s = lines[i].trim();
@@ -199,7 +201,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             lines[pos] = next;
             lines[pos + 1] = prev;
         }
-        return String.join(System.lineSeparator(), lines);
+        return String.join("\n", lines);
     }
 
     protected Class<?> loadClass(ClassLoader loader, String name) {

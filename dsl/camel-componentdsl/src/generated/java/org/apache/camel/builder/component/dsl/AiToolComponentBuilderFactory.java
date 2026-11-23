@@ -56,7 +56,10 @@ public interface AiToolComponentBuilderFactory {
          * Raw JSON Schema for tool input parameters. Supports inline JSON and
          * resource references (classpath:, file:, resource:). Mutually
          * exclusive with the parameter multi-value options. Use for nested
-         * objects, arrays, oneOf, and other complex schemas.
+         * objects, arrays, oneOf, and other complex schemas. When the schema
+         * does not set additionalProperties, Camel adds additionalProperties:
+         * false, so a client that validates the input (such as the MCP server)
+         * refuses an undeclared argument.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -324,8 +327,10 @@ public interface AiToolComponentBuilderFactory {
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
-         * LLM. When omitted, the tool goes into a default pool available to all
-         * producers.
+         * LLM. When omitted, the tool goes into a default pool that is added to
+         * the tools of every tag a producer selects with its own tags option
+         * (producers without tags receive no registry tools, and the MCP server
+         * never exposes the default pool).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -70,6 +70,7 @@ import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
+import org.apache.camel.model.dataformat.XsdJsonDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
@@ -1143,6 +1144,30 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T univocityTsv() {
         return dataFormat(new UniVocityTsvDataFormat());
+    }
+
+    /**
+     * Uses the XSD JSON data format, which maps XML to JSON and back, driven by an XML Schema
+     *
+     * @param schema the XML Schema, an .xsd or a .wsdl resource such as classpath:orders.xsd
+     */
+    public T xsdJson(String schema) {
+        XsdJsonDataFormat dataFormat = new XsdJsonDataFormat();
+        dataFormat.setSchema(schema);
+        return dataFormat(dataFormat);
+    }
+
+    /**
+     * Uses the XSD JSON data format, which maps XML to JSON and back, driven by an XML Schema
+     *
+     * @param schema  the XML Schema, an .xsd or a .wsdl resource such as classpath:orders.xsd
+     * @param element the root element, as {namespace}name or as a unique local name
+     */
+    public T xsdJson(String schema, String element) {
+        XsdJsonDataFormat dataFormat = new XsdJsonDataFormat();
+        dataFormat.setSchema(schema);
+        dataFormat.setElement(element);
+        return dataFormat(dataFormat);
     }
 
     /**

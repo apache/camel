@@ -87,6 +87,18 @@ transformation adds the operation, with `additionalProperties.transforms.unwrap.
 See below for more details.
 
 
+== Where the position is saved
+
+Debezium saves how far the connector got, so that after a restart it goes on from there. With the default
+`offsetStorage` (`org.apache.kafka.connect.storage.FileOffsetBackingStore`), the position is saved to the file of
+`offsetStorageFileName`. The file is created when it does not exist, but its folder must exist and be writable: the
+consumer fails when it starts otherwise, as without it nothing is saved and a restart sends everything again, the
+snapshot included. A relative name is in the folder the integration runs in, such as `data/offset-file-1.dat`.
+
+To save the position in a Kafka topic instead, such as for an integration that has no lasting disk, set `offsetStorage`
+to `org.apache.kafka.connect.storage.KafkaOffsetBackingStore`, with `offsetStorageTopic`, `offsetStoragePartitions`,
+`offsetStorageReplicationFactor` and the Kafka brokers as `additionalProperties.bootstrap.servers`.
+
 == Examples
 
 === Consuming events
@@ -99,7 +111,7 @@ Java::
 +
 [source,java]
 ----
-from("debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&topicPrefix=my-app-connector&schemaHistoryInternalFileFilename=/usr/history-file-1.dat")
+from("debezium-postgres:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&topicPrefix=my-app-connector&schemaHistoryInternalFileFilename=data/history-file-1.dat")
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
@@ -114,7 +126,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&amp;databaseHostname=localhost&amp;databaseUser=debezium&amp;databasePassword=dbz&amp;topicPrefix=my-app-connector&amp;schemaHistoryInternalFileFilename=/usr/history-file-1.dat"/>
+  <from uri="debezium-postgres:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&amp;databaseHostname=localhost&amp;databaseUser=debezium&amp;databasePassword=dbz&amp;topicPrefix=my-app-connector&amp;schemaHistoryInternalFileFilename=data/history-file-1.dat"/>
   <log message="Event received from Debezium : ${body}"/>
   <log message="    with this identifier ${headers.CamelDebeziumIdentifier}"/>
   <log message="    with these source metadata ${headers.CamelDebeziumSourceMetadata}"/>
@@ -133,12 +145,12 @@ YAML::
     from:
       uri: debezium-postgres:dbz-test-1
       parameters:
-        offsetStorageFileName: /usr/offset-file-1.dat
+        offsetStorageFileName: data/offset-file-1.dat
         databaseHostname: localhost
         databaseUser: debezium
         databasePassword: dbz
         topicPrefix: my-app-connector
-        schemaHistoryInternalFileFilename: /usr/history-file-1.dat
+        schemaHistoryInternalFileFilename: data/history-file-1.dat
       steps:
         - log:
             message: "Event received from Debezium : ${body}"

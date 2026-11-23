@@ -176,7 +176,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -379,9 +381,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -396,9 +399,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1056,8 +1060,52 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -1078,7 +1126,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -1873,7 +1921,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2738,7 +2788,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2941,9 +2993,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2958,9 +3011,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3618,8 +3672,52 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -3640,7 +3738,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -4435,7 +4533,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5149,7 +5249,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
-         * variable.
+         * variable. Optional for a server that checks no key, such as a local
+         * Ollama, vLLM or LM Studio (with baseUrl): without a key (and no
+         * oauthProfile), the requests are sent without an Authorization header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5352,9 +5454,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5369,9 +5472,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true and MCP servers are configured, automatically execute tool
-         * calls and loop back to the model. When false, tool calls are returned
-         * as the message body for manual handling.
+         * When true, run the tool calls the model asks for, both MCP tools
+         * (mcpServer.*) and route tools (tags), and send the results back to
+         * the model until it answers. When false, the tool calls are returned
+         * as the message body for the route to handle.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -6029,8 +6133,52 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the model must follow jsonSchema exactly (strict structured
+         * outputs): sets strict to true in the JSON schema response format of
+         * chat-completion, the Responses API and batch. OpenAI then only
+         * accepts a schema that meets its rules, every property of each object
+         * listed in required and additionalProperties false on every object,
+         * and rejects any other with HTTP 400. Without it, OpenAI takes the
+         * schema as a hint, and the answer can miss required fields or have
+         * others. Other OpenAI-compatible servers may ignore it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -6051,7 +6199,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * tool loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
          * execution, so actual spend may exceed the configured budget by up to
          * one call (typically the largest, as the prompt grows each iteration).
@@ -6846,7 +6994,9 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Comma-separated tags for discovering route-based tools registered via
          * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * AiToolRegistry are exposed to the model alongside MCP tools, and run
+         * in the same tool loop (see autoToolExecution). No MCP server is
+         * needed for route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -7711,6 +7861,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIJsonSchema() {
             return "CamelOpenAIJsonSchema";
+        }
+        /**
+         * Whether the model must follow the JSON schema exactly (strict
+         * structured outputs), in place of the jsonSchemaStrict option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code OpenAIJsonSchemaStrict}.
+         */
+        public String openAIJsonSchemaStrict() {
+            return "CamelOpenAIJsonSchemaStrict";
         }
         /**
          * Whether to strip ... blocks from the response body.

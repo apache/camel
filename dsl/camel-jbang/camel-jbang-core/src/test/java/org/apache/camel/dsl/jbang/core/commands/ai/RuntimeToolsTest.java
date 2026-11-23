@@ -156,6 +156,19 @@ class RuntimeToolsTest {
     }
 
     @Test
+    void theGenAiCallsComeFromTheGenAiAction() throws Exception {
+        answers.put("genai", Map.of("level", "full", "calls", List.of()));
+
+        call("get_genai", Map.of());
+        assertThat(integration.lastAction().getString("action")).isEqualTo("genai");
+        assertThat(integration.lastAction()).doesNotContainKeys("limit", "id", "content");
+        call("get_genai", Map.of("limit", "50", "content", "true"));
+        assertThat(integration.lastAction()).containsEntry("limit", "50").containsEntry("content", "true");
+        call("get_genai", Map.of("id", "7", "limit", " "));
+        assertThat(integration.lastAction()).containsEntry("id", "7").doesNotContainKey("limit");
+    }
+
+    @Test
     void theSpansAndTheStartupStepsAndTheThreads() throws Exception {
         answers.put("span", Map.of("spans", List.of()));
         answers.put("startup-recorder", Map.of("steps", List.of()));

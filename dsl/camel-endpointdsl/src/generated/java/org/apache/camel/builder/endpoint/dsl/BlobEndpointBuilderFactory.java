@@ -383,10 +383,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -400,10 +399,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -680,6 +678,38 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointConsumerBuilder destinationContainer(String destinationContainer) {
             doSetProperty("destinationContainer", destinationContainer);
+            return this;
+        }
+        /**
+         * Maximum number of blobs to retrieve during one consumer polling
+         * cycle. A value of 0 or less means unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Maximum number of blobs to retrieve during one consumer polling
+         * cycle. A value of 0 or less means unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -1897,10 +1927,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1914,10 +1943,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3098,10 +3126,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3115,10 +3142,9 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of blobs to return, including all
-         * BlobPrefix elements. If the request does not specify
-         * maxResultsPerPage or specifies a value greater than 5,000, the server
-         * will return up to 5,000 items.
+         * Specifies the maximum number of blobs to return per listing page,
+         * including all BlobPrefix elements. If not set or greater than 5,000,
+         * Azure Storage returns up to 5,000 items per page.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

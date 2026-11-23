@@ -1703,6 +1703,7 @@ public class ModelParser extends BaseParser {
                 case "format": def.setFormat(val); yield true;
                 case "header": def.setHeader(val); yield true;
                 case "headerDisabled": def.setHeaderDisabled(val); yield true;
+                case "headerFromMapKeys": def.setHeaderFromMapKeys(val); yield true;
                 case "ignoreEmptyLines": def.setIgnoreEmptyLines(val); yield true;
                 case "ignoreHeaderCase": def.setIgnoreHeaderCase(val); yield true;
                 case "ignoreSurroundingSpaces": def.setIgnoreSurroundingSpaces(val); yield true;
@@ -2035,9 +2036,11 @@ public class ModelParser extends BaseParser {
                 case "instanceClass": def.setInstanceClass(val); yield true;
                 case "jsonView": def.setJsonViewTypeName(val); yield true;
                 case "library": def.setLibrary(ProtobufLibrary.valueOf(val)); yield true;
+                case "messageName": def.setMessageName(val); yield true;
                 case "moduleClassNames": def.setModuleClassNames(val); yield true;
                 case "moduleRefs": def.setModuleRefs(val); yield true;
                 case "objectMapper": def.setObjectMapper(val); yield true;
+                case "schema": def.setSchema(val); yield true;
                 case "schemaResolver": def.setSchemaResolver(val); yield true;
                 case "timezone": def.setTimezone(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
@@ -2186,6 +2189,18 @@ public class ModelParser extends BaseParser {
                 case "secureTag": def.setSecureTag(val); yield true;
                 case "secureTagContents": def.setSecureTagContents(val); yield true;
                 case "xmlCipherAlgorithm": def.setXmlCipherAlgorithm(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
+    protected XsdJsonDataFormat doParseXsdJsonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new XsdJsonDataFormat(), (def, key, val) -> switch (key) {
+                case "attributePrefix": def.setAttributePrefix(val); yield true;
+                case "element": def.setElement(val); yield true;
+                case "ignoreUnknown": def.setIgnoreUnknown(val); yield true;
+                case "includeRoot": def.setIncludeRoot(val); yield true;
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                case "schema": def.setSchema(val); yield true;
+                case "textName": def.setTextName(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
@@ -2952,6 +2967,7 @@ public class ModelParser extends BaseParser {
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "xmlSecurity": return doParseXMLSecurityDataFormat();
+            case "xsdJson": return doParseXsdJsonDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipFile": return doParseZipFileDataFormat();

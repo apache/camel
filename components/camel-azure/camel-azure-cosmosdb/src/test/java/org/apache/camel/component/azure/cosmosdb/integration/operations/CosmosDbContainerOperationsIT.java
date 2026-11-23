@@ -159,7 +159,8 @@ class CosmosDbContainerOperationsIT {
         items.add(item2);
 
         // create items
-        containerOperations.createItems(items, new PartitionKey("test-1"), null).blockFirst();
+        // wait for all items, blockFirst() would cancel the creation of the remaining ones
+        containerOperations.createItems(items, new PartitionKey("test-1"), null).collectList().block();
         assertEquals(2, readAllItems("test-1").count().block());
     }
 
@@ -214,7 +215,8 @@ class CosmosDbContainerOperationsIT {
         items.add(item2);
 
         // create items
-        containerOperations.upsertItems(items, new PartitionKey("test-1"), null).blockFirst();
+        // wait for all items, blockFirst() would cancel the upsert of the remaining ones
+        containerOperations.upsertItems(items, new PartitionKey("test-1"), null).collectList().block();
         assertEquals(2, readAllItems("test-1").count().block());
     }
 

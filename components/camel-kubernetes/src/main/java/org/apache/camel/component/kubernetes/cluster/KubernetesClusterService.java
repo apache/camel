@@ -19,6 +19,8 @@ package org.apache.camel.component.kubernetes.cluster;
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.DeferredContextBinding;
@@ -85,6 +87,10 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
 
     private KubernetesLockConfiguration lockConfiguration;
 
+    // the time that the views which stopped while this service or the CamelContext stops have spent in their stop,
+    // see KubernetesClusterView.doStop
+    private final AtomicLong sharedStopTimeSpentNanos = new AtomicLong();
+
     public KubernetesClusterService() {
     }
 
@@ -107,6 +113,46 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     @Override
     public KubernetesClusterView getView(String namespace) throws Exception {
         return (KubernetesClusterView) super.getView(namespace);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        sharedStopTimeSpentNanos.set(0);
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            super.doStop();
+        } finally {
+            sharedStopTimeSpentNanos.set(0);
+        }
+    }
+
+    /**
+     * The time that a view that stops now may spend waiting for the API server, when this service or the CamelContext
+     * stops. The views then stop one after another (when the CamelContext stops, the routes release their views, which
+     * stops a view once no other route uses it, and then this service stops the rest), so they share one renew
+     * deadline: the time that the views have spent in their stop (see {@link #sharedStopTimeSpent(long)}) is taken from
+     * it. The time between their stops (such as the graceful shutdown of the routes) is not.
+     *
+     * @return the time left in nanoseconds, or {@code null} if neither this service nor the CamelContext is stopping
+     */
+    Long sharedStopTimeLeftNanos() {
+        CamelContext context = getCamelContext();
+        if (!isStopping() && (context == null || !context.isStopping())) {
+            return null;
+        }
+        long renewDeadline = lockConfiguration != null ? lockConfiguration.getRenewDeadlineMillis() : renewDeadlineMillis;
+        return Math.max(0, TimeUnit.MILLISECONDS.toNanos(renewDeadline) - sharedStopTimeSpentNanos.get());
+    }
+
+    /**
+     * Records the time that a view spent in its stop, see {@link #sharedStopTimeLeftNanos()}.
+     */
+    void sharedStopTimeSpent(long nanos) {
+        sharedStopTimeSpentNanos.addAndGet(nanos);
     }
 
     protected KubernetesConfiguration setConfigDefaults(

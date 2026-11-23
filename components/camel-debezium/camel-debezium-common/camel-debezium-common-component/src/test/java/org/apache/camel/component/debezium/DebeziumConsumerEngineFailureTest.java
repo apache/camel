@@ -35,6 +35,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +54,12 @@ public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
             = Paths.get("target/data", "camel-debezium-engine-failure-input.txt").toAbsolutePath();
     private static final Path TEST_OFFSET_STORE_PATH
             = Paths.get("target/data", "camel-debezium-engine-failure-offset-store.txt").toAbsolutePath();
+
+    @BeforeAll
+    static void createFolder() throws IOException {
+        // the folder of the offset file must exist when the endpoint is created, which is before beforeEach
+        Files.createDirectories(TEST_OFFSET_STORE_PATH.getParent());
+    }
 
     @BeforeEach
     public void beforeEach() throws IOException {

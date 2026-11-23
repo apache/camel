@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -310,17 +309,29 @@ public class DefaultHttpBinding implements HttpBinding {
                 // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
                 String text = message.getBody(String.class);
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(text)) {
+                    Charset formCharset;
+                    try {
+                        formCharset = Charset.forName(charset);
+                    } catch (IllegalArgumentException e) {
+                        throw new UnsupportedEncodingException(charset);
+                    }
                     for (String param : text.split("&")) {
-                        String[] pair = param.split("=", 2);
-                        if (pair.length == 2) {
-                            String name = URLDecoder.decode(pair[0], charset);
-                            String value = URLDecoder.decode(pair[1], charset);
-                            if (headerFilterStrategy != null
-                                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                                HttpHelper.appendHeader(headers, name, value);
-                            }
-                        } else {
-                            throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+                        if (param.isEmpty()) {
+                            // an empty field, as in a=1&&b=2, has no name
+                            continue;
+                        }
+                        // a field without = is a name with an empty value, as in the URL-encoded form parser
+                        // of the WHATWG URL standard, which is what browsers and Vert.x do, and that parser also keeps
+                        // a % that is not followed by two hex digits, as in a text such as "50% off"
+                        int pos = param.indexOf('=');
+                        String name = org.apache.camel.http.base.HttpHelper
+                                .decodeFormComponent(pos < 0 ? param : param.substring(0, pos), formCharset);
+                        String value = pos < 0
+                                ? "" : org.apache.camel.http.base.HttpHelper.decodeFormComponent(param.substring(pos + 1),
+                                        formCharset);
+                        if (headerFilterStrategy != null
+                                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                            HttpHelper.appendHeader(headers, name, value);
                         }
                     }
                 }
@@ -469,6 +480,15 @@ public class DefaultHttpBinding implements HttpBinding {
         // must use entrySet to ensure case of keys is preserved
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
+            if (!org.apache.camel.http.base.HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field mapped to a header,
+                // but it cannot be sent as an HTTP header, and the route has already run
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping header {} in the response, as its name is not a valid HTTP header name",
+                            HttpHelper.sanitizeLog(key));
+                }
+                continue;
+            }
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null, true);

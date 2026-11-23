@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobItem;
@@ -48,6 +49,11 @@ public class BlobContainerClientWrapper {
 
     public List<BlobItem> listBlobs(final ListBlobsOptions listBlobsOptions, final Duration timeout) {
         return client.listBlobs(listBlobsOptions, timeout).stream().toList();
+    }
+
+    public PagedIterable<BlobItem> listBlobsPaged(
+            final ListBlobsOptions listBlobsOptions, final String continuationToken, final Duration timeout) {
+        return client.listBlobs(listBlobsOptions, continuationToken, timeout);
     }
 
     public BlobClientWrapper getBlobClientWrapper(final String blobName) {

@@ -37,7 +37,7 @@ public class DebeziumComponentTest extends CamelTestSupport {
         params.put("extra.1", 789);
         params.put("extra.3", "test.extra.3");
 
-        configuration.setOffsetStorageFileName("/test");
+        configuration.setOffsetStorageFileName("target/offset-test");
         configuration.setTestFilePath(Paths.get("."));
         configuration.setTopicConfig("test_conf");
         configuration.setAdditionalProperties(params);

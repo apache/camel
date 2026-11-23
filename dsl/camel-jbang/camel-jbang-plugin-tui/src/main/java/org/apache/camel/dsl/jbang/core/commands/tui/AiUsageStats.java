@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
@@ -41,9 +42,9 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
-import org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.AiUsageEntry;
-import org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.AiUsageSource;
+import org.apache.camel.dsl.jbang.core.common.genai.GenAiSpans.GenAiActivity;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.formatSeconds;
 
@@ -55,19 +56,26 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.AiPanel.formatSeconds
  */
 final class AiUsageStats {
 
+    static final String BASIC_LEVEL_HINT
+            = "agent runs and tool calls are not traced; camel.aiObservability.level=detailed adds them";
+
     private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
     /** Per answered question: [aiMs, toolMs, toolCalls], in order, for the time chart in the usage view. */
     private final List<long[]> turnTimings = new CopyOnWriteArrayList<>();
     private volatile long sessionToolTimeMs;
     private volatile int sessionToolCalls;
-    /** Route usage (GenAI spans) recorded before this instant is left out after a {@code /usage reset}. */
+    static final String NOT_RECORDING_HINT
+            = "not recorded: the dev console of the integration is off (camel.main.devConsoleEnabled=true)";
+
+    /** Route usage (GenAI calls) recorded before this instant is left out after a {@code /usage reset}. */
     private volatile Instant usageResetAt = Instant.EPOCH;
-    private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
+    private AtomicReference<GenAiConsoleUsage> genAiUsage = new AtomicReference<>(GenAiConsoleUsage.NONE);
     private final TableState statsTableState = new TableState();
     private int statsScrollOffset;
 
-    void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
-        this.otelSpans = otelSpans != null ? otelSpans : new AtomicReference<>(List.of());
+    /** The GenAI calls of the integration, from its genai dev console. */
+    void setGenAiUsage(AtomicReference<GenAiConsoleUsage> genAiUsage) {
+        this.genAiUsage = genAiUsage != null ? genAiUsage : new AtomicReference<>(GenAiConsoleUsage.NONE);
     }
 
     /** A request of the panel, or of an ACP agent. */
@@ -87,8 +95,8 @@ final class AiUsageStats {
     }
 
     /**
-     * Forgets the usage recorded so far: the panel's own requests are dropped, and route usage from spans that were
-     * exported before now is hidden (the spans themselves stay, as the Spans tab owns them).
+     * Forgets the usage recorded so far: the panel's own requests are dropped, and the GenAI calls of the integration
+     * made before now are hidden (the integration keeps them).
      */
     void reset() {
         usageHistory.clear();
@@ -125,7 +133,8 @@ final class AiUsageStats {
         if (entries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(
-                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability and --observe.",
+                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability "
+                                                         + "(camel.aiObservability.level=detailed).",
                             Style.EMPTY.dim()))),
                     area);
             return;
@@ -133,6 +142,7 @@ final class AiUsageStats {
 
         // Compute aggregates
         int totalInput = 0;
+        int totalCached = 0;
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
@@ -141,6 +151,7 @@ final class AiUsageStats {
         int routeRequests = 0;
         for (AiUsageEntry e : entries) {
             totalInput += e.inputTokens();
+            totalCached += e.cachedInputTokens();
             totalOutput += e.outputTokens();
             totalTokens += e.totalTokens();
             totalLatency += e.latencyMs();
@@ -155,16 +166,7 @@ final class AiUsageStats {
         int questionCount = countQuestions(entries);
 
         // Per-model aggregation
-        Map<String, long[]> perModel = new LinkedHashMap<>();
-        for (AiUsageEntry e : entries) {
-            String key = modelTableKey(e);
-            long[] stats = perModel.computeIfAbsent(key, k -> new long[5]);
-            stats[0]++; // requests
-            stats[1] += e.inputTokens();
-            stats[2] += e.outputTokens();
-            stats[3] += e.totalTokens();
-            stats[4] += e.latencyMs();
-        }
+        Map<String, long[]> perModel = perModel(entries);
 
         // Tokens per question (panel requests only): the round trips made for one question share its sequence
         // number. Grouping by that, rather than by a pause between requests, keeps a follow-up typed right after the
@@ -180,9 +182,12 @@ final class AiUsageStats {
             turnTokens.set(last, turnTokens.get(last) + e.totalTokens());
         }
 
-        // Layout: summary (2 rows) + model table (header + models + 1 blank) + chart (fill)
+        // Layout: summary (2 rows, 3 with GenAI calls) + model table (header + models + 1 blank) + chart (fill)
+        Style dimStyle = Theme.muted();
+        Style cyanStyle = Style.EMPTY.fg(Theme.accent());
+        Line activityLine = activityLine(activity(), genAiUsage.get().recording(), dimStyle, cyanStyle);
         int tableRows = perModel.size() + 1;
-        int summaryRows = 2;
+        int summaryRows = activityLine != null ? 3 : 2;
         int chartMinRows = 4;
         boolean hasChart = area.height() > summaryRows + tableRows + chartMinRows + 1;
 
@@ -198,8 +203,6 @@ final class AiUsageStats {
 
         // --- Summary ---
         Rect summaryArea = sections.get(0);
-        Style dimStyle = Theme.muted();
-        Style cyanStyle = Style.EMPTY.fg(Theme.accent());
         List<Line> summaryLines = new ArrayList<>();
         summaryLines.add(Line.from(
                 Span.styled("Requests: ", dimStyle),
@@ -214,6 +217,8 @@ final class AiUsageStats {
                 Span.styled(LlmClient.formatTokens(totalInput), Theme.success()),
                 Span.styled(" / out: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
+                Span.styled(totalCached > 0 ? " / cached: " : "", dimStyle),
+                Span.styled(totalCached > 0 ? LlmClient.formatTokens(totalCached) : "", Theme.success()),
                 Span.styled(")", dimStyle)));
         summaryLines.add(Line.from(
                 Span.styled("Avg per question: ", dimStyle),
@@ -222,48 +227,18 @@ final class AiUsageStats {
                 Span.styled(" (" + formatSeconds(totalLatency / requestCount) + " per request)", dimStyle),
                 Span.styled("   AI time: ", dimStyle),
                 Span.styled(formatSeconds(totalLatency), cyanStyle),
-                Span.styled("   Tool time: ", dimStyle),
-                Span.styled(formatSeconds(sessionToolTimeMs), cyanStyle),
-                Span.styled(" (" + sessionToolCalls + " calls)", dimStyle)));
+                // the tools of this panel; the integration's tool calls are on the agent runs line
+                Span.styled(sessionToolCalls > 0 ? "   Tool time: " : "", dimStyle),
+                Span.styled(sessionToolCalls > 0 ? formatSeconds(sessionToolTimeMs) : "", cyanStyle),
+                Span.styled(sessionToolCalls > 0 ? " (" + sessionToolCalls + " calls)" : "", dimStyle)));
+        if (activityLine != null) {
+            summaryLines.add(activityLine);
+        }
         frame.renderWidget(
                 Paragraph.from(new Text(summaryLines, Alignment.LEFT)),
                 summaryArea);
 
-        // --- Per-model table ---
-        Rect tableArea = sections.get(1);
-        List<Row> rows = new ArrayList<>();
-        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
-            long[] s = entry.getValue();
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.getKey(), cyanStyle)),
-                    Cell.from(String.valueOf(s[0])),
-                    Cell.from(LlmClient.formatTokens((int) s[1])),
-                    Cell.from(LlmClient.formatTokens((int) s[2])),
-                    Cell.from(LlmClient.formatTokens((int) s[3])),
-                    Cell.from(formatSeconds(s[4] / s[0]))));
-        }
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("MODEL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("REQS", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("AVG/REQ", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.fill(),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8))
-                .build();
-        // PgUp/PgDn scroll the models that do not fit below the header
-        int visibleModels = Math.max(0, tableArea.height() - 1);
-        statsScrollOffset = Math.max(0, Math.min(statsScrollOffset, rows.size() - visibleModels));
-        statsTableState.setOffset(statsScrollOffset);
-        frame.renderStatefulWidget(table, tableArea, statsTableState);
+        renderModelTable(frame, sections.get(1), perModel, cyanStyle);
 
         // --- Charts per question: tokens on the left, AI vs tool time on the right ---
         if (hasChart && (turnTokens.size() > 1 || turnTimings.size() > 1)) {
@@ -281,6 +256,46 @@ final class AiUsageStats {
                 renderTimePerQuestion(frame, halves.get(2), timings);
             }
         }
+    }
+
+    /** One row per model: requests, input, cached, output and total tokens, and the average time. */
+    private void renderModelTable(Frame frame, Rect tableArea, Map<String, long[]> perModel, Style cyanStyle) {
+        List<Row> rows = new ArrayList<>();
+        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
+            long[] s = entry.getValue();
+            rows.add(Row.from(
+                    Cell.from(Span.styled(entry.getKey(), cyanStyle)),
+                    Cell.from(String.valueOf(s[0])),
+                    Cell.from(LlmClient.formatTokens((int) s[1])),
+                    Cell.from(s[5] > 0 ? LlmClient.formatTokens((int) s[5]) : "-"),
+                    Cell.from(LlmClient.formatTokens((int) s[2])),
+                    Cell.from(LlmClient.formatTokens((int) s[3])),
+                    Cell.from(formatSeconds(s[4] / s[0]))));
+        }
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled("MODEL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("REQS", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("CACHED", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("AVG/REQ", Style.EMPTY.bold()))))
+                .widths(
+                        Constraint.fill(),
+                        Constraint.length(6),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8))
+                .build();
+        // PgUp/PgDn scroll the models that do not fit below the header
+        int visibleModels = Math.max(0, tableArea.height() - 1);
+        statsScrollOffset = Math.max(0, Math.min(statsScrollOffset, rows.size() - visibleModels));
+        statsTableState.setOffset(statsScrollOffset);
+        frame.renderStatefulWidget(table, tableArea, statsTableState);
     }
 
     private void renderTokensPerQuestion(Frame frame, Rect chartArea, List<Integer> turnTokens) {
@@ -366,16 +381,65 @@ final class AiUsageStats {
     List<AiUsageEntry> combinedUsageEntries() {
         List<AiUsageEntry> combined = new ArrayList<>(usageHistory.size() + 8);
         combined.addAll(usageHistory);
-        List<SpanEntry> spans = otelSpans.get();
-        if (spans != null && !spans.isEmpty()) {
-            Instant since = usageResetAt;
-            for (AiUsageEntry entry : GenAiSpanUsageExtractor.extract(spans)) {
-                if (!entry.timestamp().isBefore(since)) {
-                    combined.add(entry);
-                }
+        Instant since = usageResetAt;
+        for (AiUsageEntry entry : genAiUsage.get().modelCalls()) {
+            if (!entry.timestamp().isBefore(since)) {
+                combined.add(entry);
             }
         }
         return combined;
+    }
+
+    /** The agent runs and tool calls of the integration since the last reset, and its GenAI observability level. */
+    GenAiActivity activity() {
+        return genAiUsage.get().activity(usageResetAt);
+    }
+
+    /**
+     * The agent runs with their model and tool calls, or at level basic, where they are not traced, how to see them.
+     * {@code null} when the integration has no genai dev console.
+     */
+    private static Line activityLine(GenAiActivity activity, boolean recording, Style dimStyle, Style cyanStyle) {
+        if (activity.level() == null) {
+            return null;
+        }
+        String level = activity.level().name().toLowerCase(Locale.ROOT);
+        if (!recording) {
+            return Line.from(
+                    Span.styled("GenAI level: ", dimStyle),
+                    Span.styled(level, cyanStyle),
+                    Span.styled("   " + NOT_RECORDING_HINT, dimStyle));
+        }
+        if (activity.level() == GenAiObservabilityLevel.BASIC) {
+            return Line.from(
+                    Span.styled("GenAI level: ", dimStyle),
+                    Span.styled(level, cyanStyle),
+                    Span.styled("   " + BASIC_LEVEL_HINT, dimStyle));
+        }
+        return Line.from(
+                Span.styled("Agent runs: ", dimStyle),
+                Span.styled(String.valueOf(activity.agentRuns()), cyanStyle),
+                Span.styled(" (model calls: ", dimStyle),
+                Span.styled(String.valueOf(activity.agentModelCalls()), cyanStyle),
+                Span.styled(" / tool calls: ", dimStyle),
+                Span.styled(String.valueOf(activity.toolCalls()), cyanStyle),
+                Span.styled(")   GenAI level: ", dimStyle),
+                Span.styled(level, cyanStyle));
+    }
+
+    /** Per model: requests, input, output and total tokens, latency, cached input tokens. */
+    private static Map<String, long[]> perModel(List<AiUsageEntry> entries) {
+        Map<String, long[]> perModel = new LinkedHashMap<>();
+        for (AiUsageEntry e : entries) {
+            long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[6]);
+            stats[0]++; // requests
+            stats[1] += e.inputTokens();
+            stats[2] += e.outputTokens();
+            stats[3] += e.totalTokens();
+            stats[4] += e.latencyMs();
+            stats[5] += e.cachedInputTokens();
+        }
+        return perModel;
     }
 
     private static String modelTableKey(AiUsageEntry entry) {
@@ -387,11 +451,6 @@ final class AiUsageStats {
         return "[tui] " + modelProvider;
     }
 
-    /**
-     * One model round trip. {@code question} is the sequence number of the panel question the request was made for (a
-     * question takes several round trips when the model calls tools), so usage can be grouped per question; it is 0 for
-     * route requests, which belong to no question.
-     */
     /**
      * How many questions the panel's own requests were made for: a question takes one request per model round trip, and
      * consecutive requests with the same question number belong to one question. Route calls do not count.
@@ -418,19 +477,20 @@ final class AiUsageStats {
     String summary() {
         List<AiUsageEntry> entries = combinedUsageEntries();
         if (entries.isEmpty()) {
-            return "No AI usage yet. Ask a question, or run an integration with GenAI observability and --observe to see "
-                   + "their usage here.";
+            return "No AI usage yet. Ask a question, or run an integration with GenAI observability "
+                   + "(camel.aiObservability.level=detailed) to see their usage here.";
         }
         int totalInput = 0;
+        int totalCached = 0;
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
         long tuiLatency = 0;
         int tuiRequests = 0;
         int routeRequests = 0;
-        Map<String, long[]> perModel = new LinkedHashMap<>();
         for (AiUsageEntry e : entries) {
             totalInput += e.inputTokens();
+            totalCached += e.cachedInputTokens();
             totalOutput += e.outputTokens();
             totalTokens += e.totalTokens();
             totalLatency += e.latencyMs();
@@ -440,13 +500,8 @@ final class AiUsageStats {
                 tuiRequests++;
                 tuiLatency += e.latencyMs();
             }
-            long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[5]);
-            stats[0]++;
-            stats[1] += e.inputTokens();
-            stats[2] += e.outputTokens();
-            stats[3] += e.totalTokens();
-            stats[4] += e.latencyMs();
         }
+        Map<String, long[]> perModel = perModel(entries);
         StringBuilder sb = new StringBuilder();
         sb.append("**AI usage:** ").append(entries.size()).append(" request(s)");
         if (routeRequests > 0) {
@@ -456,7 +511,23 @@ final class AiUsageStats {
         sb.append("\n\n");
         sb.append("- **Tokens:** ").append(LlmClient.formatTokens(totalTokens))
                 .append(" (in ").append(LlmClient.formatTokens(totalInput))
-                .append(", out ").append(LlmClient.formatTokens(totalOutput)).append(")\n");
+                .append(", out ").append(LlmClient.formatTokens(totalOutput));
+        if (totalCached > 0) {
+            sb.append(", cached ").append(LlmClient.formatTokens(totalCached));
+        }
+        sb.append(")\n");
+        GenAiActivity activity = activity();
+        if (activity.level() != null && !genAiUsage.get().recording()) {
+            sb.append("- **GenAI level:** ").append(activity.level().name().toLowerCase(Locale.ROOT)).append(" (")
+                    .append(NOT_RECORDING_HINT).append(")\n");
+        } else if (activity.level() == GenAiObservabilityLevel.BASIC) {
+            sb.append("- **GenAI level:** basic (").append(BASIC_LEVEL_HINT).append(")\n");
+        } else if (activity.level() != null) {
+            sb.append("- **Agent runs:** ").append(activity.agentRuns())
+                    .append(" (").append(activity.agentModelCalls()).append(" model call(s), ")
+                    .append(activity.toolCalls()).append(" tool call(s)), **GenAI level:** ")
+                    .append(activity.level().name().toLowerCase(Locale.ROOT)).append("\n");
+        }
         int questionCount = countQuestions(entries);
         sb.append("- **Avg per question:** ")
                 .append(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / entries.size()))
@@ -471,12 +542,13 @@ final class AiUsageStats {
             sb.append("- **Last request:** ").append(LlmClient.formatTokens(last.totalTokens()))
                     .append(" tokens in ").append(formatSeconds(last.latencyMs())).append("\n");
         }
-        sb.append("\n| Model | Reqs | In | Out | Total | Avg/req |\n|---|---|---|---|---|---|\n");
+        sb.append("\n| Model | Reqs | In | Cached | Out | Total | Avg/req |\n|---|---|---|---|---|---|---|\n");
         for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
             long[] stats = entry.getValue();
             sb.append("| ").append(entry.getKey())
                     .append(" | ").append(stats[0])
                     .append(" | ").append(LlmClient.formatTokens((int) stats[1]))
+                    .append(" | ").append(stats[5] > 0 ? LlmClient.formatTokens((int) stats[5]) : "-")
                     .append(" | ").append(LlmClient.formatTokens((int) stats[2]))
                     .append(" | ").append(LlmClient.formatTokens((int) stats[3]))
                     .append(" | ").append(formatSeconds(stats[4] / stats[0]))

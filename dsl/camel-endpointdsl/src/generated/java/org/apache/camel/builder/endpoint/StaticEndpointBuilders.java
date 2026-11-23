@@ -454,7 +454,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -463,7 +464,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-mns:queueName</code>
      * 
      * Path parameter: queueName (required)
-     * Queue name, or topic name when using the topic URI syntax
+     * The name of the queue, or of the topic for a topic endpoint such as
+     * alibaba-mns:topic:myTopic. The CamelAlibabaMnsQueueName exchange property
+     * replaces the name of the queue for sendMessage and deleteMessage.
      * 
      * @param path queueName
      * @return the dsl builder
@@ -473,7 +476,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -482,7 +486,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-mns:queueName</code>
      * 
      * Path parameter: queueName (required)
-     * Queue name, or topic name when using the topic URI syntax
+     * The name of the queue, or of the topic for a topic endpoint such as
+     * alibaba-mns:topic:myTopic. The CamelAlibabaMnsQueueName exchange property
+     * replaces the name of the queue for sendMessage and deleteMessage.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -494,7 +500,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -503,7 +509,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-oss:bucketName</code>
      * 
      * Path parameter: bucketName
-     * Name of bucket to perform operation on
+     * The name of the bucket, or of the destination bucket for copyObject. The
+     * CamelAlibabaOssBucketName exchange property replaces this option for the
+     * producer, and a header of the same name replaces both.
      * 
      * @param path bucketName
      * @return the dsl builder
@@ -513,7 +521,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -522,7 +530,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-oss:bucketName</code>
      * 
      * Path parameter: bucketName
-     * Name of bucket to perform operation on
+     * The name of the bucket, or of the destination bucket for copyObject. The
+     * CamelAlibabaOssBucketName exchange property replaces this option for the
+     * producer, and a header of the same name replaces both.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4464,8 +4474,10 @@ public class StaticEndpointBuilders {
      * Path parameter: address
      * The service address, for example http://localhost:9000/orders. The
      * consumer receives requests at this address, and the producer sends
-     * requests to it. The CamelDestinationOverrideUrl header replaces this
-     * address for a request that the producer sends over HTTP.
+     * requests to it. A producer with no address sends requests to the address
+     * that the WSDL (see wsdlURL) gives for the port. The
+     * CamelDestinationOverrideUrl header replaces this address for a request
+     * that the producer sends over HTTP.
      * 
      * @param path beanId:address
      * @return the dsl builder
@@ -4494,8 +4506,10 @@ public class StaticEndpointBuilders {
      * Path parameter: address
      * The service address, for example http://localhost:9000/orders. The
      * consumer receives requests at this address, and the producer sends
-     * requests to it. The CamelDestinationOverrideUrl header replaces this
-     * address for a request that the producer sends over HTTP.
+     * requests to it. A producer with no address sends requests to the address
+     * that the WSDL (see wsdlURL) gives for the port. The
+     * CamelDestinationOverrideUrl header replaces this address for a request
+     * that the producer sends over HTTP.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8539,6 +8553,7 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
         return ibmWatsonLanguage("ibm-watson-language", path);
     }
@@ -8561,6 +8576,7 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
         return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -16758,10 +16774,9 @@ public class StaticEndpointBuilders {
      * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
      * no part of the request, because lookupKey names a CamelEndpointDispatcher
      * bean and an existing Spring-WS endpoint mapping maps requests to that
-     * bean. The endpoint URI takes the type as written here, without the
-     * underscore of the enum constant, and ignores its case.
-     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
-     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+     * bean. The endpoint URI ignores the case of the type.
+     * There are 8 enums and the value can be one of: rootqname, action, to,
+     * soapaction, xpathresult, uri, uripath, beanname
      * 
      * Path parameter: lookupKey
      * The value that is compared with the part of the request that type names.
@@ -16809,10 +16824,9 @@ public class StaticEndpointBuilders {
      * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
      * no part of the request, because lookupKey names a CamelEndpointDispatcher
      * bean and an existing Spring-WS endpoint mapping maps requests to that
-     * bean. The endpoint URI takes the type as written here, without the
-     * underscore of the enum constant, and ignores its case.
-     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
-     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+     * bean. The endpoint URI ignores the case of the type.
+     * There are 8 enums and the value can be one of: rootqname, action, to,
+     * soapaction, xpathresult, uri, uripath, beanname
      * 
      * Path parameter: lookupKey
      * The value that is compared with the part of the request that type names.

@@ -191,12 +191,36 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             safeConsumerClose();
+        } catch (VirtualMachineError e) {
+            // left as before: an OutOfMemoryError or StackOverflowError is thrown on as is, as the JVM may not be able
+            // to log it or close the consumer
+            throw e;
+        } catch (RuntimeException | Error e) {
+            // what the poll loop does not handle, such as an Error that a deserializer throws in poll (the Kafka client
+            // only wraps a RuntimeException of a deserializer in a RecordDeserializationException): this task runs in an
+            // executor that keeps what it throws in a Future that nobody reads, so terminate visibly
+            terminateOnUnhandledFailure(e);
+            throw e;
         } finally {
             if (reconnectPool != null) {
                 kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(reconnectPool);
                 reconnectPool = null;
             }
         }
+    }
+
+    private void terminateOnUnhandledFailure(Throwable cause) {
+        String msg = "Terminating KafkaConsumer thread " + threadId + " receiving from " + getPrintableTopic()
+                     + " due to " + cause + ". Restart the route or the application to recover.";
+        LOG.error(msg, cause);
+        setLastError(new KafkaConsumerFatalException(msg, cause));
+        terminated = true;
+        setConnected(false);
+
+        // the Kafka consumer is not used again: close it, so it leaves the consumer group and its partitions are
+        // assigned to the other consumers
+        safeUnsubscribe();
+        safeConsumerClose();
     }
 
     private void setupReconnectException(BackgroundTask task, int max) {
@@ -614,8 +638,9 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isRecoverable() {
-        // a suspended consumer keeps polling and reconnecting
-        return (pollExceptionStrategy != null && pollExceptionStrategy.canContinue() || isReconnect())
+        // a suspended consumer keeps polling and reconnecting, a terminated consumer does not
+        return !terminated
+                && (pollExceptionStrategy != null && pollExceptionStrategy.canContinue() || isReconnect())
                 && isKafkaConsumerRunnableAndNotStopped();
     }
 
@@ -673,6 +698,7 @@ public class KafkaFetchRecords implements Runnable {
 
         @Override
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            discardPendingRecords(partitions);
             delegate.onPartitionsRevoked(partitions);
         }
 
@@ -693,7 +719,17 @@ public class KafkaFetchRecords implements Runnable {
 
         @Override
         public void onPartitionsLost(Collection<TopicPartition> partitions) {
+            discardPendingRecords(partitions);
             delegate.onPartitionsLost(partitions);
+        }
+
+        private void discardPendingRecords(Collection<TopicPartition> partitions) {
+            // the records of these partitions that are held for an incomplete batch must not be processed and committed
+            // by this consumer: the new owner of a partition reads them again from the committed offset
+            KafkaRecordProcessorFacade facade = recordProcessorFacade;
+            if (facade != null) {
+                facade.discardPendingRecords(partitions);
+            }
         }
     }
 }

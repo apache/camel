@@ -1,0 +1,344 @@
+= XSD JSON DataFormat
+:doctitle: XSD JSON
+:shortname: xsdJson
+:artifactid: camel-xsd-json
+:description: Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The XSD JSON data format maps XML to JSON and back, driven by an XML Schema: an `.xsd` file, or a `.wsdl` file whose
+inline types are read. It is meant for the XML payloads of SOAP services, for example with camel-cxf in `PAYLOAD`
+mode, in low-code routes (YAML DSL and Kamelets) that have no classes generated from the schema.
+
+A mapping without a schema, such as the one of xref:ROOT:xj-component.adoc[XJ], loses information: every value is text,
+one repeated element gives an object and two give an array, and going back to XML the JSON has to list its fields in
+the right order and the route has to know the namespaces. With the schema:
+
+* the values have the JSON type of their XML Schema type: numbers, booleans and strings,
+* an element that may repeat is always a JSON array, even with one item,
+* `marshal` writes the elements in the order of the schema, whatever the order of the JSON fields,
+* `marshal` puts every element and attribute in its namespace, following `elementFormDefault`,
+  `attributeFormDefault` and `form`, across imported schemas. The JSON has local names only.
+
+`unmarshal` reads XML into JSON text, and `marshal` writes XML from JSON (JSON text in a `String`, bytes, a stream or
+a file, or a `Map`). The schema is read once, when the data format starts. The module has one third-party dependency,
+https://ws.apache.org/xmlschema/[Apache XmlSchema], the library that Apache CXF uses as well.
+
+== XSD JSON Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== The root element
+
+The JSON is the content of the root element: `{"orderId": "42"}` for `<getOrder><orderId>42</orderId></getOrder>`.
+With `includeRoot` the JSON has the root element as its single field instead: `{"getOrder": {"orderId": "42"}}`.
+
+* `unmarshal`: the XML names its root element, which must be a global element of the schema. When `element` is set,
+  the root element must be that one.
+* `marshal`: the `element` option names the root element, as `\{namespace}name` or as a local name that is unique in
+  the schema. With `includeRoot`, the single field of the JSON names it, so the option is not needed.
+
+The `CamelXsdJsonElement` header overrides the `element` option for one message, for example when the reply of a
+SOAP service differs per operation. It may only name a global element of the schema. As a `Camel*` header, it is
+removed from messages that come in over HTTP by the header filter.
+
+== Mapping
+
+[width="100%",cols="1,2,2",options="header"]
+|===
+|XML Schema |JSON |Notes
+|`xs:int`, `xs:long`, `xs:integer`, `xs:short`, `xs:byte`, the unsigned and the positive and negative integer types
+|number
+|
+
+|`xs:decimal`
+|number
+|The exact value and scale: `9.950` stays `9.950`, never `9.95` or `1E-8`.
+
+|`xs:float`, `xs:double`
+|number
+|`INF`, `-INF` and `NaN` are not JSON numbers and stay strings.
+
+|`xs:boolean`
+|`true` / `false`
+|`1` and `0` are read as `true` and `false`.
+
+|`xs:list`, `xs:NMTOKENS`
+|array
+|The items, split on whitespace, with the type of the item type.
+
+|every other simple type: `xs:string`, date and time types, `xs:duration`, `xs:QName`, `xs:anyURI`, `xs:base64Binary`,
+unions, enumerations
+|string
+|The text as it is. A restriction maps as its base type.
+
+|an element with `maxOccurs` > 1, or in a repeating `xs:sequence` or `xs:choice`
+|array
+|Always an array, even with one item. On marshal a single value is accepted as an array of one, and an empty
+array writes no element.
+
+|a missing optional element
+|no field
+|
+
+|an attribute
+|a field
+|Named `attributePrefix` + the attribute name, such as `currency`, or `@currency` with `attributePrefix=@`.
+
+|simple content with attributes
+|`{"currency": "EUR", "value": 9.95}`
+|The text is the field named by `textName`.
+
+|`xsi:nil="true"`
+|`null`
+|On marshal `null` writes `xsi:nil="true"` when the element is nillable, is left out when the element is optional,
+and fails otherwise. For an element that repeats, `null` writes no elements (the same as a missing field), and a
+`null` item inside the array, such as `["a", null]`, writes one `xsi:nil="true"` element.
+
+|`xs:sequence`
+|object
+|Marshal writes the children in the order of the sequence. Inside a repeating sequence the items are written by
+index: `a[0] b[0] a[1] b[1]`.
+
+|`xs:all`
+|object
+|Marshal keeps the order of the JSON.
+
+|`xs:choice`
+|object
+|Marshal writes the branch that is present, and fails when the JSON has more than one. In a repeating choice the
+items of each branch are written together, in the order of the branches, so the order between the branches is not
+kept.
+
+|`xs:extension`, `xs:restriction` of complex types, `xs:group`, `xs:attributeGroup`, `xs:import`, `xs:include`
+|
+|Resolved by the schema: an extension is the content of the base type followed by its own.
+|===
+
+A JSON field that the schema does not declare fails, and so does an XML element or attribute, unless
+`ignoreUnknown` is set, which skips them. A value that does not fit its type, such as `cheap` for an `xs:decimal`,
+fails with a message that names the field.
+
+Two children of one type with the same local name, or an attribute and a child element with the same name, cannot be
+told apart in JSON. The message names them, and for the attribute and element case the `attributePrefix` option
+solves it. When `element` is set, such a conflict fails when the data format starts.
+
+== Not supported
+
+The following constructs are not mapped. A schema that has them can still be used for the other elements; the
+mapping fails with a message that names the construct when a message reaches one:
+
+* `xs:any` content (wildcards) and elements of `xs:anyType` or without a type. An `xs:anyAttribute` is accepted, and
+  the attributes it allows are skipped.
+* mixed content (`mixed="true"`),
+* substitution groups and abstract elements,
+* abstract types and `xsi:type` with another type than the declared one.
+
+The data format does not validate the XML against the schema: use the xref:ROOT:validator-component.adoc[Validator]
+component or the schema validation of camel-cxf for that.
+
+== Security
+
+The schema is configuration of the route and so is trusted. Even so, the schema, the WSDL and every document they
+import or include are parsed with DOCTYPE declarations refused and external entities and XInclude turned off.
+`xs:import` and `xs:include` are resolved relative to the document that has them, and are only followed to resources
+with the same scheme as the `schema` option: a schema loaded from `https:` cannot pull in a `file:` or `classpath:`
+resource.
+
+The message XML is read with StAX with DTDs and external entities turned off, and a document with a DOCTYPE is
+refused. Nothing from the message is evaluated. The nesting of elements is limited (512 levels, or less when the XML
+parser of the JVM has a lower limit). The size of a message is otherwise limited by the route.
+
+== Usage
+
+The WSDL of the following examples is a document/literal service with the operation `getOrder`:
+
+[source,xml]
+----
+<wsdl:types>
+  <xs:schema targetNamespace="http://example.com/orders" elementFormDefault="qualified">
+    <xs:complexType name="Item">
+      <xs:sequence>
+        <xs:element name="sku" type="xs:string"/>
+        <xs:element name="quantity" type="xs:int"/>
+        <xs:element name="price" type="xs:decimal"/>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getOrder">
+      <xs:complexType><xs:sequence>
+        <xs:element name="orderId" type="xs:string"/>
+      </xs:sequence></xs:complexType>
+    </xs:element>
+    <xs:element name="getOrderResponse">
+      <xs:complexType><xs:sequence>
+        <xs:element name="orderId" type="xs:string"/>
+        <xs:element name="item" type="tns:Item" maxOccurs="unbounded"/>
+      </xs:sequence></xs:complexType>
+    </xs:element>
+  </xs:schema>
+</wsdl:types>
+----
+
+The response
+
+[source,xml]
+----
+<getOrderResponse xmlns="http://example.com/orders">
+  <orderId>42</orderId>
+  <item><sku>A-1</sku><quantity>2</quantity><price>9.95</price></item>
+</getOrderResponse>
+----
+
+is unmarshalled to
+
+[source,json]
+----
+{"orderId": "42", "item": [{"sku": "A-1", "quantity": 2, "price": 9.95}]}
+----
+
+and the JSON `{"orderId": "42"}` is marshalled with `element=getOrder` to
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?><tns:getOrder xmlns:tns="http://example.com/orders"><tns:orderId>42</tns:orderId></tns:getOrder>
+----
+
+The prefix of a namespace is the one that the schema declares for it, else `ns1`, `ns2` and so on.
+
+=== XML to JSON
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:reply")
+    .unmarshal().xsdJson("classpath:orders.wsdl")
+    .to("mock:json");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:reply"/>
+  <unmarshal>
+    <xsdJson schema="classpath:orders.wsdl"/>
+  </unmarshal>
+  <to uri="mock:json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:reply
+      steps:
+        - unmarshal:
+            xsdJson:
+              schema: classpath:orders.wsdl
+        - to:
+            uri: mock:json
+----
+====
+
+=== JSON to XML
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:request")
+    .marshal().xsdJson("classpath:orders.wsdl", "getOrder")
+    .to("mock:xml");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:request"/>
+  <marshal>
+    <xsdJson schema="classpath:orders.wsdl" element="getOrder"/>
+  </marshal>
+  <to uri="mock:xml"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:request
+      steps:
+        - marshal:
+            xsdJson:
+              schema: classpath:orders.wsdl
+              element: getOrder
+        - to:
+            uri: mock:xml
+----
+====
+
+=== The element per message
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:request
+      steps:
+        - setHeader:
+            name: CamelXsdJsonElement
+            simple: "${header.operation}"
+        - marshal:
+            xsdJson:
+              schema: classpath:orders.wsdl
+----
+
+== Samples
+
+The Camel CLI writes a sample of each message of a WSDL, as XML and as JSON in the form of this data format, with
+`camel generate wsdl orders.wsdl --samples`. See xref:manual::camel-jbang-projects.adoc[Camel CLI projects].
+
+From Java, `org.apache.camel.dataformat.xsdjson.XsdJsonSamples` gives the same samples for any global element of a
+schema. Every element and attribute has a value of its type (the first value of an enumeration, a date for `xs:date`,
+and so on), a repeating element has one item, and of an `xs:choice` only the first member is filled in. A value does not
+follow the other facets of its type, such as a pattern or a length.
+
+[source,java]
+----
+try (XsdJsonSamples samples = new XsdJsonSamples(camelContext, "classpath:orders.wsdl")) {
+    String json = samples.json("getOrder");
+    String xml = samples.xml("getOrder");
+}
+----
+
+== Dependencies
+
+Maven users need to add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xsd-json</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
