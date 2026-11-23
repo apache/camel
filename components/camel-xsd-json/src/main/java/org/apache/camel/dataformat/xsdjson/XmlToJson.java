@@ -46,11 +46,32 @@ final class XmlToJson {
     private final XsdModel model;
     private final boolean ignoreUnknown;
     private final String textName;
+    private int deepest;
 
     XmlToJson(XsdModel model, boolean ignoreUnknown, String textName) {
         this.model = model;
         this.ignoreUnknown = ignoreUnknown;
         this.textName = textName;
+    }
+
+    /**
+     * The error when the stack of the thread overflows before the limit of {@link #MAX_DEPTH} levels is reached.
+     *
+     * @param format the format of the message, JSON or XML
+     * @param level  the deepest level reached, the root element being level 1
+     */
+    static IllegalArgumentException tooDeepForTheStack(String format, int level, StackOverflowError cause) {
+        return new IllegalArgumentException(
+                "The " + format + " is nested too deep for the thread stack, which overflowed after the conversion"
+                                            + " reached level " + level + " (the data format allows " + MAX_DEPTH + " levels)",
+                cause);
+    }
+
+    /**
+     * The deepest level of element read, the root element being level 1.
+     */
+    int deepest() {
+        return deepest;
     }
 
     /**
@@ -105,6 +126,9 @@ final class XmlToJson {
     private Object readElement(XMLStreamReader reader, Element element, String path, int depth) throws XMLStreamException {
         if (depth > MAX_DEPTH) {
             throw new IllegalArgumentException("The XML is nested deeper than " + MAX_DEPTH + " elements at " + path);
+        }
+        if (depth > deepest) {
+            deepest = depth;
         }
         if (element.unsupported != null) {
             throw unsupported(element.unsupported, path);

@@ -151,8 +151,17 @@ with the same scheme as the `schema` option: a schema loaded from `https:` canno
 resource.
 
 The message XML is read with StAX with DTDs and external entities turned off, and a document with a DOCTYPE is
-refused. Nothing from the message is evaluated. The nesting of elements is limited (512 levels, or less when the XML
-parser of the JVM has a lower limit). The size of a message is otherwise limited by the route.
+refused. Nothing from the message is evaluated. The size of a message is otherwise limited by the route.
+
+The nesting of the elements that the data format maps is limited to 512 levels in both directions, and a message
+nested deeper fails with an `IllegalArgumentException` (unknown content skipped with `ignoreUnknown` is not counted).
+Two other limits can be lower:
+
+* The XML parser: the parser of the JDK stops at `jdk.xml.maxElementDepth`, which is 100 on JDK 25 (no limit on
+  JDK 21). Woodstox, which CXF brings, allows more than 512.
+* The stack of the thread: each level of nesting takes some of it. The default stack of the JVM (1 MB or more)
+  normally holds 512 levels, but a stack lowered with `-Xss` (such as `-Xss256k`) holds far fewer. A message nested
+  deeper than the stack holds fails with an `IllegalArgumentException` that says the level the conversion reached.
 
 == Usage
 

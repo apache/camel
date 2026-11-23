@@ -18,10 +18,6 @@ package org.apache.camel.dataformat.xsdjson;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -81,52 +77,32 @@ class XsdJsonSecurityTest extends XsdJsonTestSupport {
     @Test
     void nestingDepthIsLimited() throws Exception {
         XsdJsonDataFormat df = dataFormat("classpath:xsdjson/shop.xsd", d -> d.setElement("tree"));
-        // the XML parser of the JDK may have a lower limit (jdk.xml.maxElementDepth) than the data format
-        String xml = "<tree xmlns=\"urn:shop\">" + "<node>".repeat(600) + "</node>".repeat(600) + "</tree>";
-        assertThatThrownBy(() -> toJson(df, xml))
+        // the XML parser of the JDK may have a lower limit (jdk.xml.maxElementDepth) than the data format,
+        // XsdJsonWoodstoxTest checks the limit of the data format in the XML to JSON direction
+        assertThat(thrownOnThread(BIG_STACK, () -> toJson(df, nestedXml(600))))
                 .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("depth", "nested deeper than 512"));
 
-        Map<String, Object> tree = nestedTree(600);
-        // the stack of the thread may be exhausted before the limit of the data format
-        assertThatThrownBy(() -> toXml(df, tree))
+        // on a stack that holds 512 levels, the limit of the data format applies
+        assertThat(thrownOnThread(BIG_STACK, () -> toXml(df, nestedTree(512)))).isNull();
+        assertThat(thrownOnThread(BIG_STACK, () -> toXml(df, nestedTree(513))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("The JSON is nested deeper than 512",
-                        "The JSON is nested too deep for the thread stack"));
+                .hasMessageStartingWith("The JSON is nested deeper than 512 elements at /tree/node[0]/node[0]");
     }
 
     @Test
     void nestingOnASmallStackIsRefused() throws Exception {
         XsdJsonDataFormat df = dataFormat("classpath:xsdjson/shop.xsd", d -> d.setElement("tree"));
-        Map<String, Object> tree = nestedTree(600);
         // load the classes first, so that the stack of the small thread is not exhausted by the class loading
-        toXml(df, nestedTree(2));
+        toXml(df, nestedTree(3));
 
-        AtomicReference<Throwable> thrown = new AtomicReference<>();
-        Thread thread = new Thread(null, () -> {
-            try {
-                toXml(df, tree);
-            } catch (Throwable e) {
-                thrown.set(e);
-            }
-        }, "small-stack", 128 * 1024);
-        thread.start();
-        thread.join();
-
-        // an IllegalArgumentException, never a StackOverflowError, whichever limit is reached first
-        assertThat(thrown.get()).isInstanceOf(IllegalArgumentException.class);
-        assertThat(thrown.get().getMessage()).containsAnyOf("The JSON is nested deeper than 512",
-                "The JSON is nested too deep for the thread stack");
-    }
-
-    private static Map<String, Object> nestedTree(int depth) {
-        Map<String, Object> tree = new LinkedHashMap<>();
-        Map<String, Object> current = tree;
-        for (int i = 0; i < depth; i++) {
-            Map<String, Object> node = new LinkedHashMap<>();
-            current.put("node", List.of(node));
-            current = node;
-        }
-        return tree;
+        // an IllegalArgumentException that says where the stack overflowed, never a StackOverflowError
+        assertThat(thrownOnThread(SMALL_STACK, () -> toXml(df, nestedTree(512))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasCauseInstanceOf(StackOverflowError.class)
+                .hasMessageMatching(
+                        "The JSON is nested too deep for the thread stack, which overflowed after the conversion"
+                                    + " reached level \\d+"
+                                    + " \\(the data format allows 512 levels\\)");
     }
 
     @Test

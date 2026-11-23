@@ -53,6 +53,7 @@ final class JsonToXml {
     private final Set<String> inScope = new HashSet<>();
     private final Deque<List<String>> declared = new ArrayDeque<>();
     private int generated;
+    private int deepest;
 
     JsonToXml(XsdModel model, boolean ignoreUnknown, String textName, boolean pretty, XMLStreamWriter writer) {
         this.model = model;
@@ -73,16 +74,18 @@ final class JsonToXml {
             writeElement(root, value, "/" + root.jsonName(), 0);
         } catch (StackOverflowError e) {
             // the depth limit is checked per element, but a small thread stack can be exhausted before that limit
-            throw new IllegalArgumentException(
-                    "The JSON is nested too deep for the thread stack (the configured maximum is " + XmlToJson.MAX_DEPTH
-                                               + " levels)",
-                    e);
+            throw XmlToJson.tooDeepForTheStack("JSON", deepest, e);
         }
     }
 
     private void writeElement(Element element, Object value, String path, int depth) throws XMLStreamException {
-        if (depth > XmlToJson.MAX_DEPTH) {
-            throw new IllegalArgumentException("The JSON is nested deeper than " + XmlToJson.MAX_DEPTH + " at " + path);
+        // the depth of the root is 0 (no indentation), so the element is at level depth + 1
+        if (depth >= XmlToJson.MAX_DEPTH) {
+            throw new IllegalArgumentException(
+                    "The JSON is nested deeper than " + XmlToJson.MAX_DEPTH + " elements at " + path);
+        }
+        if (depth >= deepest) {
+            deepest = depth + 1;
         }
         if (element.unsupported != null) {
             throw new IllegalArgumentException("Cannot map " + path + ": " + element.unsupported);
