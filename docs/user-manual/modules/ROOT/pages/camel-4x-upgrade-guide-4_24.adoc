@@ -3500,6 +3500,13 @@ the initial state (`camel.health.initial-state`, DOWN by default) while the firs
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
 
+=== camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
+
+A `vertx-websocket` consumer with `consumeAsClient=true` used to route the received messages in parallel, on the
+threads of the Vert.x worker pool, so they could reach the route in any order. It now routes the messages of its
+WebSocket one after the other, in the order they are received. To route them in parallel as before, set the new
+option `parallelProcessing=true`.
+
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
 All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
