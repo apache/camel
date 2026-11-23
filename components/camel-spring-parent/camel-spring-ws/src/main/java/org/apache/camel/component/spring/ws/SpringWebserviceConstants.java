@@ -31,8 +31,7 @@ public final class SpringWebserviceConstants {
                             + " option.",
               javaType = "String")
     public static final String SPRING_WS_SOAP_ACTION = "CamelSpringWebserviceSoapAction";
-    @Metadata(label = "producer",
-              description = "The SOAP header as XML. The consumer sets it to the SOAP header of the request, as a"
+    @Metadata(description = "The SOAP header as XML. The consumer sets it to the SOAP header of the request, as a"
                             + " javax.xml.transform.Source of the soap:Header element. The producer converts it to a Source and"
                             + " adds the XML to the content of the SOAP header of the request that it sends. When"
                             + " allowResponseHeaderOverride is true, the producer sets it to the SOAP header of the response.",

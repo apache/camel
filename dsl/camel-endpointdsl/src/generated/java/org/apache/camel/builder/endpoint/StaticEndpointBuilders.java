@@ -16774,10 +16774,9 @@ public class StaticEndpointBuilders {
      * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
      * no part of the request, because lookupKey names a CamelEndpointDispatcher
      * bean and an existing Spring-WS endpoint mapping maps requests to that
-     * bean. The endpoint URI takes the type as written here, without the
-     * underscore of the enum constant, and ignores its case.
-     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
-     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+     * bean. The endpoint URI ignores the case of the type.
+     * There are 8 enums and the value can be one of: rootqname, action, to,
+     * soapaction, xpathresult, uri, uripath, beanname
      * 
      * Path parameter: lookupKey
      * The value that is compared with the part of the request that type names.
@@ -16825,10 +16824,9 @@ public class StaticEndpointBuilders {
      * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
      * no part of the request, because lookupKey names a CamelEndpointDispatcher
      * bean and an existing Spring-WS endpoint mapping maps requests to that
-     * bean. The endpoint URI takes the type as written here, without the
-     * underscore of the enum constant, and ignores its case.
-     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
-     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+     * bean. The endpoint URI ignores the case of the type.
+     * There are 8 enums and the value can be one of: rootqname, action, to,
+     * soapaction, xpathresult, uri, uripath, beanname
      * 
      * Path parameter: lookupKey
      * The value that is compared with the part of the request that type names.

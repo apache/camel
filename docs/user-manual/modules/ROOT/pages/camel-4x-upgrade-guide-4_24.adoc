@@ -8882,6 +8882,25 @@ A call of one of them on the producer builder no longer compiles, and neither do
 recompiled. Remove the two options from producer endpoints: they had no effect there, and the endpoint validation of the
 catalog now reports them in producer-only mode. The behavior of the component at runtime does not change.
 
+=== camel-spring-ws - sslContextParameters is a producer option, and messageSender is also a consumer option
+
+The `sslContextParameters` option of the `spring-ws` endpoint now has the labels `producer` and `security`, as only the
+producer uses it. In the Endpoint DSL, `SpringWebserviceEndpointConsumerBuilder` no longer has its methods. So
+`from(springWs(...).sslContextParameters(...))` no longer compiles. Code compiled against an earlier version that calls
+them on the `springWs(...)` builder must be recompiled. Remove the option from consumer endpoints, where it had no
+effect. The endpoint validation of the catalog now reports it in consumer-only mode.
+
+The `messageSender` option no longer has the label `producer`, as the consumer uses it too. In the Endpoint DSL,
+`SpringWebserviceEndpointConsumerBuilder` now has its methods as well. The endpoint validation of the catalog no longer
+reports the option in consumer-only mode. The `CamelSpringWebserviceSoapHeader` header no longer has the label
+`producer` either, as the consumer sets it too.
+
+The catalog now lists the values of the `type` path option as the endpoint URI takes them. They are `rootqname`,
+`action`, `to`, `soapaction`, `xpathresult`, `uri`, `uripath` and `beanname`. It listed the names of the enum constants
+before. Three of them, `ROOT_QNAME`, `SOAP_ACTION` and `URI_PATH`, select no type in an endpoint URI.
+
+The behavior of the component at runtime does not change.
+
 === camel-ignite - cache PUT of a Map, the existing query results, RUN bodies and missing operations
 
 With `fireExistingQueryResults=true`, the `ignite-cache` consumer now sends each entry that the initial query finds
