@@ -69,7 +69,8 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The operation that the producer performs. If not set, the producer performs publishMessage for a"
                             + " topic endpoint and sendMessage otherwise. The CamelAlibabaMnsOperation header replaces this"
                             + " option, and an exchange property of the same name replaces both.",
-              displayName = "Operation", enums = "sendMessage,deleteMessage,publishMessage")
+              displayName = "Operation", label = "producer",
+              enums = "sendMessage,deleteMessage,publishMessage")
     private String operation;
 
     @UriParam(description = "The region ID of Simple Message Queue, for example cn-hangzhou.", displayName = "Region")
@@ -103,13 +104,13 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The name of the topic for publishMessage. If not set, a topic endpoint takes the name of the"
                             + " topic from its URI. The CamelAlibabaMnsTopicName header replaces this option, and an exchange"
                             + " property of the same name replaces both.",
-              displayName = "Topic Name")
+              displayName = "Topic Name", label = "producer")
     private String topicName;
 
     @UriParam(description = "The long polling wait time in seconds when the consumer receives messages. If 0 or less, the"
                             + " PollingWaitSeconds of the queue applies. Simple Message Queue accepts a value of at most 30.",
               displayName = "Wait Seconds",
-              defaultValue = "0")
+              defaultValue = "0", label = "consumer")
     private int waitSeconds;
 
     @UriParam(description = "Whether to delete the message from the queue after it is processed successfully.",

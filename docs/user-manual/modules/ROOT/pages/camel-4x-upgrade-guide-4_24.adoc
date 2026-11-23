@@ -7305,6 +7305,22 @@ earlier version must be recompiled, and a subclass that overrides `initClient()`
 `accountEndpoint`, which no code read. Code that creates the record, or calls one of these four accessors, needs a
 change. The producer no longer needs an AccessKey pair when the `mnsClient` option is set or autowired.
 
+=== camel-alibaba-mns - operation and topicName are producer options, and waitSeconds is a consumer option
+
+The `operation` and `topicName` options of the `alibaba-mns` endpoint now have the label `producer`, as only the
+producer uses them. The `waitSeconds` option now has the label `consumer`, as only the consumer uses it. In the Endpoint
+DSL, `MNSEndpointConsumerBuilder` no longer has the methods of `operation` and `topicName`. `MNSEndpointProducerBuilder`
+no longer has the methods of `waitSeconds`. So `from(alibabaMns(...).operation(...))` and
+`to(alibabaMns(...).waitSeconds(...))` no longer compile. Code compiled against an earlier version that calls one of the
+three on the `alibabaMns(...)` builder must be recompiled.
+
+Remove `operation` and `topicName` from consumer endpoints, and `waitSeconds` from producer endpoints. They had no
+effect there. The endpoint validation of the catalog now reports `operation` and `topicName` in consumer-only mode, and
+`waitSeconds` in producer-only mode.
+
+The `CamelAlibabaMnsPriority` header now has the label `common` instead of `producer`, as the consumer sets it too. The
+behavior of the component at runtime does not change.
+
 === camel-minio - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to stat or get one of the listed objects (for example access denied, or
