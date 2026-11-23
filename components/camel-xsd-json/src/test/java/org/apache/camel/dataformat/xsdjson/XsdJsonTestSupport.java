@@ -19,6 +19,10 @@ package org.apache.camel.dataformat.xsdjson;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +31,19 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.function.Executable;
 
 abstract class XsdJsonTestSupport {
+
+    /**
+     * A thread stack that cannot hold 512 levels of nesting.
+     */
+    protected static final long SMALL_STACK = 128 * 1024;
+
+    /**
+     * A thread stack that holds 512 levels of nesting in any JVM mode.
+     */
+    protected static final long BIG_STACK = 16 * 1024 * 1024;
 
     protected CamelContext context;
 
@@ -72,5 +87,44 @@ abstract class XsdJsonTestSupport {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         df.marshal(exchange, json, out);
         return out.toString(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * The JSON of the element tree of shop.xsd with the given number of levels (the tree element and the node elements
+     * nested in it).
+     */
+    protected static Map<String, Object> nestedTree(int levels) {
+        Map<String, Object> tree = new LinkedHashMap<>();
+        Map<String, Object> current = tree;
+        for (int i = 1; i < levels; i++) {
+            Map<String, Object> node = new LinkedHashMap<>();
+            current.put("node", List.of(node));
+            current = node;
+        }
+        return tree;
+    }
+
+    /**
+     * The XML of the element tree of shop.xsd with the given number of levels.
+     */
+    protected static String nestedXml(int levels) {
+        return "<tree xmlns=\"urn:shop\">" + "<node>".repeat(levels - 1) + "</node>".repeat(levels - 1) + "</tree>";
+    }
+
+    /**
+     * Runs the task on a new thread with the given stack size, and returns what it threw, or null.
+     */
+    protected static Throwable thrownOnThread(long stackSize, Executable task) throws InterruptedException {
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        Thread thread = new Thread(null, () -> {
+            try {
+                task.execute();
+            } catch (Throwable e) {
+                thrown.set(e);
+            }
+        }, "stack-" + stackSize, stackSize);
+        thread.start();
+        thread.join();
+        return thrown.get();
     }
 }

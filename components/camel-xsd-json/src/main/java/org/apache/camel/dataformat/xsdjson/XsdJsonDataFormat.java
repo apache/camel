@@ -187,12 +187,15 @@ public class XsdJsonDataFormat extends ServiceSupport implements DataFormat, Dat
             reader = charset != null
                     ? inputFactory.createXMLStreamReader(is, charset) : inputFactory.createXMLStreamReader(is);
         }
+        XmlToJson xmlToJson = new XmlToJson(model, ignoreUnknown, textName);
         try {
-            Map.Entry<Element, Object> root
-                    = new XmlToJson(model, ignoreUnknown, textName).read(reader, element(exchange));
+            Map.Entry<Element, Object> root = xmlToJson.read(reader, element(exchange));
             Object value = root.getValue() == XmlToJson.NULL ? null : root.getValue();
             Object json = includeRoot ? singletonMap(root.getKey().jsonName(), value) : value;
             return JsonText.write(json, prettyPrint);
+        } catch (StackOverflowError e) {
+            // the depth limit is checked per element, but a small thread stack can be exhausted before that limit
+            throw XmlToJson.tooDeepForTheStack("XML", xmlToJson.deepest(), e);
         } finally {
             reader.close();
         }
