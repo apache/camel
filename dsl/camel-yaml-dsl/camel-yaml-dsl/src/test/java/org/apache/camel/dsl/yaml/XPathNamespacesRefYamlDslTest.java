@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.Properties;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -94,6 +96,51 @@ class XPathNamespacesRefYamlDslTest {
                     "<number xmlns=\"http://acme.com/water\">77</number>");
 
             noMatch.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    void loadsXPathWithNamespacesFromOneString() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            // several namespaces in one property, as a Kamelet option is a single string
+            Properties properties = new Properties();
+            properties.setProperty("namespaces", "c=http://acme.com/cheese,w=http://acme.com/wine");
+            context.getPropertiesComponent().setInitialProperties(properties);
+
+            YamlRoutesBuilderLoader loader = new YamlRoutesBuilderLoader();
+            loader.setCamelContext(context);
+            RoutesBuilder routesBuilder = loader.loadRoutesBuilder(ResourceHelper.fromString("xpath-namespaces-string.yaml", """
+                    - beans:
+                        - name: myNamespaces
+                          type: org.apache.camel.support.builder.Namespaces
+                          constructors:
+                            0: "{{namespaces}}"
+                    - route:
+                        from:
+                          uri: "direct:start"
+                          steps:
+                            - filter:
+                                xpath:
+                                  expression: "/c:order/w:wine = 'Rioja'"
+                                  resultQName: "BOOLEAN"
+                                  namespacesRef: "myNamespaces"
+                                steps:
+                                  - to: "mock:match"
+                    """));
+            context.addRoutes(routesBuilder);
+            context.start();
+
+            MockEndpoint match = context.getEndpoint("mock:match", MockEndpoint.class);
+            match.expectedBodiesReceived(
+                    "<order xmlns=\"http://acme.com/cheese\"><wine xmlns=\"http://acme.com/wine\">Rioja</wine></order>");
+
+            context.createProducerTemplate().sendBody("direct:start",
+                    "<order xmlns=\"http://acme.com/cheese\"><wine xmlns=\"http://acme.com/wine\">Rioja</wine></order>");
+            // the wine element in the cheese namespace: no match
+            context.createProducerTemplate().sendBody("direct:start",
+                    "<order xmlns=\"http://acme.com/cheese\"><wine>Rioja</wine></order>");
+
+            match.assertIsSatisfied();
         }
     }
 }
