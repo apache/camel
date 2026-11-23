@@ -54,6 +54,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class AuthorizationAsyncExecutorTest {
     @Test
@@ -152,6 +153,8 @@ class AuthorizationAsyncExecutorTest {
                 release.countDown();
             }
             assertThat(workerDone.await(5, TimeUnit.SECONDS)).isTrue();
+            // the capacity comes back when the worker returns from the action, not with the continuation
+            await().atMost(5, TimeUnit.SECONDS).until(() -> executor.availableCapacity() == 2);
             // the capacity of one worker and one queued admission is back without the callback: two more fit
             Exchange next = new DefaultExchange(context);
             Exchange last = new DefaultExchange(context);
@@ -188,6 +191,7 @@ class AuthorizationAsyncExecutorTest {
             } finally {
                 release.countDown();
             }
+            await().atMost(5, TimeUnit.SECONDS).until(() -> executor.availableCapacity() == 2);
             Exchange next = new DefaultExchange(context);
             CountDownLatch nextCallback = new CountDownLatch(1);
             executor.process(next, doneSync -> nextCallback.countDown(),

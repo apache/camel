@@ -287,6 +287,11 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         shutdownCompletionsIfDrained();
     }
 
+    /** The admissions currently free: workers and queue slots not held by a pending or running task. */
+    int availableCapacity() {
+        return permits.availablePermits();
+    }
+
     private void shutdownCompletionsIfDrained() {
         // A winner can still be between claiming its task and submitting the callback. Keep the executor alive until
         // every admitted decision has been committed, then drain callbacks through Camel without interrupting them.

@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
@@ -218,7 +219,7 @@ class OpenFgaAsyncProducerTest {
             var result = fixture.producer.processAsync(exchange);
             assertThat(submitted.await(5, TimeUnit.SECONDS)).isTrue();
             assertThat(result.cancel(true)).isTrue();
-            org.awaitility.Awaitility.await().atMost(5, TimeUnit.SECONDS).until(pending::isCancelled);
+            await().atMost(5, TimeUnit.SECONDS).until(pending::isCancelled);
             assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
             assertThat(exchange.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
         }
