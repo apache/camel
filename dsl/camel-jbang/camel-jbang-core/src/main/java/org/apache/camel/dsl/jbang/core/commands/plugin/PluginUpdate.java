@@ -64,7 +64,7 @@ public class PluginUpdate extends PluginBaseCommand {
     String name;
 
     @Option(name = "dry-run", hasValue = false,
-            description = "Report what would change, without downloading or changing anything")
+            description = "Report what would change, without downloading the plugins or changing anything")
     boolean dryRun;
 
     // the version of the Camel CLI to select the releases for, when it is not this CLI
@@ -77,8 +77,8 @@ public class PluginUpdate extends PluginBaseCommand {
     }
 
     /**
-     * Reports what would change with another version of the Camel CLI, without downloading or changing anything, as
-     * {@code camel self-update --check} does before installing it.
+     * Reports what would change with another version of the Camel CLI, without downloading the plugins or changing
+     * anything, as {@code camel self-update --check} does before installing it.
      *
      * @param cliVersion   the version of the Camel CLI
      * @param pluginConfig the plugin configuration file, or null for the one of this CLI
@@ -131,22 +131,21 @@ public class PluginUpdate extends PluginBaseCommand {
         }
         MavenGav gav = parseGav(dependency);
         String current = gav != null ? gav.getVersion() : null;
-        boolean release = current != null && !current.isEmpty() && Character.isDigit(current.charAt(0));
-        String range = entry.getString("camelVersions");
-        if (!release) {
+        if (!PluginHelper.isRelease(current)) {
             // added before the CLI selected releases (or when it could not), as LATEST
             printer().println(("%s is kept as %s: it was added without the Camel versions it is built for. Run '%s' to"
                                + " select the release built for this Camel CLI")
                     .formatted(plugin, current != null ? current : dependency, addCommand(plugin, entry, gav)));
             return Outcome.KEPT;
         }
-        if (range == null || range.isBlank()) {
+        if (!PluginHelper.isSelectedRelease(entry)) {
             printer().println(("%s %s is kept: camel plugin add did not select this release (such as one given with"
                                + " --version or --gav)")
                     .formatted(plugin, current));
             return Outcome.KEPT;
         }
 
+        String range = entry.getString("camelVersions");
         Result result;
         try {
             result = resolve(gav, entry.getString("repos"), cli);
@@ -185,7 +184,7 @@ public class PluginUpdate extends PluginBaseCommand {
                             plugin));
             return Outcome.KEPT;
         } else {
-            printer().printWarn(PluginAdd.noMatchWarning(plugin, cli, (NoMatch) result, keeping));
+            printer().printWarn(PluginAdd.noMatchWarning(plugin, cli, (NoMatch) result, keeping, true));
             return Outcome.KEPT;
         }
 

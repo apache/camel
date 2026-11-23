@@ -128,6 +128,18 @@ class PluginUpdateTest extends CamelCommandBaseTestSupport {
                         (Consumer<FakePluginDownloader>) d -> d.listingDown = true,
                         "WARN: Could not check the releases of fixture (Cannot resolve available versions of"
                                                                                     + " org.example.plugins:camel-jbang-plugin-fixture). Keeping fixture 1.6.2."),
+                // a version given to camel plugin add is not updated any more: the hint says so
+                arguments("4.14.0",
+                        (Consumer<FakePluginDownloader>) d -> d.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")
+                                .release("1.4.2", "4.18.5", null),
+                        "WARN: No release of fixture is built for Camel CLI 4.14.0 or an older Camel version. Keeping"
+                                                                   + " fixture 1.6.2." + System.lineSeparator()
+                                                                   + "Newest release per Camel version:"
+                                                                   + System.lineSeparator()
+                                                                   + "  Camel 4.23: fixture 2.0.0" + System.lineSeparator()
+                                                                   + "  Camel 4.18: fixture 1.4.2" + System.lineSeparator()
+                                                                   + "To use one of them: camel plugin add fixture --version <version> (camel plugin"
+                                                                   + " update then keeps that version)"),
                 // the stored release is built for this CLI, but is not among the releases read
                 arguments("4.22.0",
                         (Consumer<FakePluginDownloader>) d -> d.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")

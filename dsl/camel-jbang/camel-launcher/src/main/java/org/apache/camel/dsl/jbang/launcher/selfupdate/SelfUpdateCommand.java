@@ -71,11 +71,14 @@ import org.apache.camel.util.json.JsonObject;
                            "nightly build (which never moves), LTS or X.Y. --version X.Y.Z installs that",
                            "release without a pin.",
                            "",
-                           "Once installed, the new Camel CLI runs camel plugin update, which selects again",
-                           "the plugin releases that camel plugin add selected, for the new version. When",
-                           "--check finds a newer version, it reports what that would change. --skip-plugins",
-                           "leaves the plugins as they are." })
+                           "Once installed, the new Camel CLI (4.24 or newer) runs camel plugin update,",
+                           "which selects again the plugin releases that camel plugin add selected, for the",
+                           "new version. When --check finds a newer version, it reports what that would",
+                           "change. --skip-plugins leaves the plugins as they are." })
 public class SelfUpdateCommand extends CamelCommand {
+
+    // the first version of the Camel CLI with camel plugin update
+    private static final String PLUGIN_UPDATE_SINCE = "4.24.0";
 
     @Option(name = "version",
             description = "Install a specific version instead of the latest: X.Y.Z, the newest release of X.Y or"
@@ -83,7 +86,9 @@ public class SelfUpdateCommand extends CamelCommand {
                           + " one nightly build X.Y.Z-YYYYMMDD.HHMMSS-N (pinned)")
     String version;
 
-    @Option(name = "check", hasValue = false, description = "Only report whether a newer version is available")
+    @Option(name = "check", hasValue = false,
+            description = "Only report whether a newer version is available, and what camel plugin update would"
+                          + " change with it")
     boolean checkOnly;
 
     @Option(name = "skip-plugins", hasValue = false,
@@ -204,7 +209,7 @@ public class SelfUpdateCommand extends CamelCommand {
                     ? "A new version is available (" + running + " -> " + manifest.version() + ")"
                     : upToDate);
             if (newer) {
-                checkPlugins(manifest.version());
+                checkPlugins(manifest.version(), manifest.version());
             }
             return 0;
         }
@@ -229,7 +234,7 @@ public class SelfUpdateCommand extends CamelCommand {
             // --version X.Y.Z, which leaves the nightly builds: back to following the releases
             exit = writePin(null);
         }
-        updatePlugins(manifest.version());
+        updatePlugins(manifest.version(), manifest.version());
         return exit;
     }
 
@@ -287,7 +292,8 @@ public class SelfUpdateCommand extends CamelCommand {
                       + ")"
                     : "A new nightly build is available (" + current + " -> " + build + ")");
             if (!same && newer) {
-                checkPlugins(Nightly.snapshotVersionOf(build));
+                String snapshotVersion = Nightly.snapshotVersionOf(build);
+                checkPlugins(snapshotVersion, Nightly.releaseOf(snapshotVersion));
             }
             printNote(releasedNote);
             return 0;
@@ -306,7 +312,7 @@ public class SelfUpdateCommand extends CamelCommand {
             return exit;
         }
         exit = explicit ? writePin(selector) : 0;
-        updatePlugins(build);
+        updatePlugins(build, Nightly.releaseOf(Nightly.snapshotVersionOf(build)));
         printNote(releasedNote);
         printNote(maintenanceNote);
         return exit;
@@ -412,11 +418,11 @@ public class SelfUpdateCommand extends CamelCommand {
         }
     }
 
-    // Runs camel plugin update with the Camel CLI just installed: it selects the plugin releases built for its own
-    // version, which this CLI does not know before it is installed. Best effort: the CLI is installed and stays so, and
-    // a failure only prints a hint.
-    private void updatePlugins(String installed) {
-        if (skipPlugins || !hasPlugins(pluginConfig())) {
+    // Runs camel plugin update with the Camel CLI just installed (the directory of the version, and its release): it
+    // selects the plugin releases built for its own version, which this CLI does not know before it is installed. Best
+    // effort: the CLI is installed and stays so, and a failure only prints a hint.
+    private void updatePlugins(String installed, String release) {
+        if (skipPlugins || !hasPlugins(pluginConfig()) || !hasPluginUpdate(release)) {
             return;
         }
         String hint = "run 'camel plugin update' to update them";
@@ -444,11 +450,11 @@ public class SelfUpdateCommand extends CamelCommand {
         }
     }
 
-    // For --check: what camel plugin update would change once the version is installed, with the releases selected by
-    // this CLI for that version, without downloading or changing anything.
-    private void checkPlugins(String cliVersion) {
+    // For --check: what camel plugin update would change once the version (and its release) is installed, with the
+    // releases selected by this CLI for that version, without downloading the plugins or changing anything.
+    private void checkPlugins(String cliVersion, String release) {
         Path config = pluginConfig();
-        if (skipPlugins || !hasPlugins(config)) {
+        if (skipPlugins || !hasPlugins(config) || !hasPluginUpdate(release)) {
             return;
         }
         try {
@@ -458,6 +464,16 @@ public class SelfUpdateCommand extends CamelCommand {
         } catch (Exception e) {
             printer().printWarn("Could not check the plugins: " + e.getMessage());
         }
+    }
+
+    // Whether the Camel CLI of this release has camel plugin update; when it has not, the plugins are kept as they are.
+    private boolean hasPluginUpdate(String release) {
+        if (VersionHelper.compare(release, PLUGIN_UPDATE_SINCE) >= 0) {
+            return true;
+        }
+        printer().println("Note: Camel CLI " + release + " has no camel plugin update, so the plugins are kept as they"
+                          + " are");
+        return false;
     }
 
     // The plugin configuration of the new CLI, which runs with the environment of runProcess, or null when it cannot be

@@ -5956,8 +5956,8 @@ Usage: camel plugin update [-h] [--dry-run] [--plugin-config=<plugin-config>]
 
 Options:
   -h, --help                Display this help and exit
-      --dry-run             Report what would change, without downloading or
-                            changing anything
+      --dry-run             Report what would change, without downloading the
+                            plugins or changing anything
       --plugin-config=<plugin-config>
                             Path to a custom plugin configuration file or
                             directory. Only applies to the plugin subcommands;

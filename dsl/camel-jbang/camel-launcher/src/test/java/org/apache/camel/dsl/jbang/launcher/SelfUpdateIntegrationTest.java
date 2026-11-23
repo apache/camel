@@ -234,7 +234,11 @@ class SelfUpdateIntegrationTest {
                                                            + ", nothing is changed:" + System.lineSeparator()
                                                            + "kubernetes is released with the Camel CLI, and uses its version",
                         null),
-                arguments(new String[] { "--check", "--skip-plugins" }, "0", null, "Dry run"));
+                arguments(new String[] { "--check", "--skip-plugins" }, "0", null, "Dry run"),
+                // a Camel CLI before 4.24 has no camel plugin update
+                arguments(new String[] { "--version", "4.23.0" }, "0",
+                        "Note: Camel CLI 4.23.0 has no camel plugin update, so the plugins are kept as they are",
+                        "ran: camel plugin update"));
     }
 
     @ParameterizedTest
@@ -252,16 +256,18 @@ class SelfUpdateIntegrationTest {
             publishRealInstallSh(fixture);
             WebsiteInstallTest.publishLatest(fixture, NEWER_VERSION);
             WebsiteInstallTest.publishVersion(fixture, NEWER_VERSION);
+            WebsiteInstallTest.publishVersion(fixture, "4.23.0");
+            String installed = args.length == 2 && "--version".equals(args[0]) ? args[1] : NEWER_VERSION;
 
             int exit = run(fixture, home, Map.of("CAMEL_TEST_PLUGIN_EXIT", pluginExit,
                     PluginHelper.PLUGIN_CONFIG_ENV, pluginConfig.toString()), args);
 
             assertThat(exit).as(printer.getOutput()).isZero();
             if (args.length > 0 && "--check".equals(args[0])) {
-                assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).doesNotExist();
+                assertThat(xdgDataHome.resolve("camel-cli/versions/" + installed)).doesNotExist();
             } else {
-                assertThat(printer.getOutput()).contains("Installed Camel CLI " + NEWER_VERSION);
-                assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).isDirectory();
+                assertThat(printer.getOutput()).contains("Installed Camel CLI " + installed);
+                assertThat(xdgDataHome.resolve("camel-cli/versions/" + installed)).isDirectory();
             }
             if (expected != null) {
                 assertThat(printer.getOutput()).contains(expected);

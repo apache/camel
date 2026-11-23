@@ -9850,14 +9850,17 @@ registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_ve
 
 === camel-jbang - camel self-update updates the plugins
 
-After installing a new version of the Camel CLI, `camel self-update` now runs `camel plugin update` with it, which
-changes `~/.camel-jbang-plugins.json`: a community plugin whose release `camel plugin add` selected moves to the newest
-release built for the new version, when the plugin has one. A plugin may publish that release some time after the Camel
-release: while the new version is newer than the Camel versions of all the releases of the plugin, the plugin keeps its
-release, and the CLI reminds to run `camel plugin update` again when the plugin is loaded. Plugins added with `--version` or `--gav`, the plugins of the
-Apache Camel project, and plugins added as `LATEST` are not changed. Use `camel self-update --skip-plugins` to leave the
-plugins as they are. `camel self-update` of Camel CLI 4.23 and older does not update the plugins: run
-`camel plugin update` once after updating. See xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins].
+After installing a new Camel CLI, `camel self-update` runs `camel plugin update` with it. This updates
+`~/.camel-jbang-plugins.json`: community plugins whose release `camel plugin add` selected move to the newest release
+built for the new version, when the plugin has one.
+
+A plugin may publish its release for a new Camel version some time after the Camel release. Until then,
+`camel plugin update` keeps the current release and warns, and the CLI reminds to run it again when the plugin is loaded.
+
+Plugins added with `--version` or `--gav`, the plugins of the Apache Camel project, and plugins added as `LATEST` are not
+changed. Use `camel self-update --skip-plugins` to leave the plugins as they are. `camel self-update` of Camel CLI 4.23
+and older does not update the plugins: run `camel plugin update` once after updating. See
+xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins].
 
 === camel-spring - a CamelEvent only goes to the consumers of the same name
 

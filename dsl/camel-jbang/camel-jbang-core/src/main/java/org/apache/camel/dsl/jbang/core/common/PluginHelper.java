@@ -531,17 +531,7 @@ public final class PluginHelper {
     // one when camel plugin add selected the release (it stored the release and the Camel versions it supports), as
     // compatibilityCheck says, and camel plugin add otherwise
     private static String addOrDelete(String name, JsonObject properties) {
-        String range = properties != null ? asString(properties.get("camelVersions")) : null;
-        MavenGav gav = null;
-        try {
-            gav = properties != null ? dependencyAsMavenGav(asString(properties.get("dependency"))) : null;
-        } catch (RuntimeException e) {
-            // not a release
-        }
-        String version = gav != null ? gav.getVersion() : null;
-        boolean selected = range != null && !range.isBlank() && version != null && !version.isEmpty()
-                && Character.isDigit(version.charAt(0));
-        String select = selected
+        String select = isSelectedRelease(properties)
                 ? "run camel plugin update " + name + " to select the release built for this Camel version"
                 : "run camel plugin add " + name + " to select a release for this Camel version";
         return select + ", or remove it with camel plugin delete " + name;
@@ -827,6 +817,30 @@ public final class PluginHelper {
         }
 
         return MavenGav.parseGav(gav);
+    }
+
+    /**
+     * Whether camel plugin add selected the release of a plugin entry: it stored a release (not LATEST) together with
+     * the Camel versions the release supports, so camel plugin update selects the release again.
+     */
+    public static boolean isSelectedRelease(JsonObject entry) {
+        String range = entry != null ? asString(entry.get("camelVersions")) : null;
+        if (range == null || range.isBlank()) {
+            return false;
+        }
+        try {
+            MavenGav gav = dependencyAsMavenGav(asString(entry.get("dependency")));
+            return gav != null && isRelease(gav.getVersion());
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether a version of a plugin is a release, such as {@code 1.6.2}, and not {@code LATEST} or a version range.
+     */
+    public static boolean isRelease(String version) {
+        return version != null && !version.isEmpty() && Character.isDigit(version.charAt(0));
     }
 
     static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {

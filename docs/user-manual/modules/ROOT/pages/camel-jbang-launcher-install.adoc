@@ -247,11 +247,13 @@ xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins]). The new CLI
 that knows the Camel version it is built for. When the plugins cannot be updated (for example, a release cannot be
 downloaded), `camel self-update` prints a hint to run `camel plugin update` later: the new CLI stays installed, and
 `camel self-update` does not fail. `--skip-plugins` leaves the plugins as they are. When `camel self-update --check`
-finds a newer version, it also reports what `camel plugin update` would change with it, without downloading or changing
-anything.
+finds a newer version, it also reports what `camel plugin update` would change with it, without downloading the
+plugins or changing anything.
 
-`camel self-update` of Camel CLI 4.23 and older does not update the plugins, and Camel CLI 4.23 and older have no
-`camel plugin update`: after updating from such a version, run `camel plugin update` once.
+Camel CLI 4.23 and older have no `camel plugin update`. When `camel self-update` installs one of them (for example
+`--version 4.22.3`, or `--version LTS` while the newest LTS release is 4.22.x), it says so and leaves the plugins as they
+are. `camel self-update` of Camel CLI 4.23 and older does not update the plugins either: after updating from such a
+version, run `camel plugin update` once.
 
 `camel self-update` refuses to run in two cases. If the currently running installation was not made
 by `install.sh`/`install.ps1` (it was installed through Homebrew, Chocolatey, WinGet, Scoop,

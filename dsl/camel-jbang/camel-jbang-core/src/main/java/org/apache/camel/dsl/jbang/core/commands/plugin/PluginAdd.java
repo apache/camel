@@ -257,7 +257,7 @@ public class PluginAdd extends PluginBaseCommand {
                     "No release of %s is built for Camel CLI %s. Selected %s %s, the newest release for an older Camel version (%s)."
                             .formatted(name, cli, name, version, older.compat().describe()));
         } else if (result instanceof NoMatch noMatch) {
-            printer().printWarn(noMatchWarning(name, cli, noMatch, "Using LATEST."));
+            printer().printWarn(noMatchWarning(name, cli, noMatch, "Using LATEST.", false));
         } else if (result instanceof Unavailable unavailable) {
             printer().printWarn("Could not check plugin compatibility (%s). Using LATEST.".formatted(unavailable.reason()));
         }
@@ -284,9 +284,10 @@ public class PluginAdd extends PluginBaseCommand {
      * The warning when no release of a plugin can be selected for the Camel CLI, with the newest release per Camel
      * version that was found.
      *
-     * @param outcome what is done instead, such as {@code Using LATEST.}
+     * @param outcome  what is done instead, such as {@code Using LATEST.}
+     * @param updating whether camel plugin update warns, which does not update a plugin added with --version
      */
-    static String noMatchWarning(String name, String cli, NoMatch noMatch, String outcome) {
+    static String noMatchWarning(String name, String cli, NoMatch noMatch, String outcome, boolean updating) {
         StringBuilder sb = new StringBuilder();
         switch (noMatch.reason()) {
             case CLI_NEWER -> sb.append("No release of %s is built for Camel CLI %s yet. The newest, %s %s, is %s."
@@ -302,6 +303,9 @@ public class PluginAdd extends PluginBaseCommand {
                     .append("  Camel %s: %s %s".formatted(line, name, v)));
             sb.append(System.lineSeparator())
                     .append("To use one of them: camel plugin add %s --version <version>".formatted(name));
+            if (updating) {
+                sb.append(" (camel plugin update then keeps that version)");
+            }
         }
         return sb.toString();
     }

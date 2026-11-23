@@ -634,7 +634,12 @@ When the releases cannot be read (for example, when offline), or the CLI is olde
 releases, `camel plugin update` warns and keeps the plugin as it is too. When the CLI is between the Camel versions of
 the releases, it selects the newest release for the nearest older Camel version, and warns, as `camel plugin add` does.
 
-`camel plugin update --dry-run` reports what would change, without downloading or changing anything.
+A plugin added with `--version`, as the warnings suggest to use one of the releases found, is not updated any more:
+`camel plugin update` and `camel self-update` keep that version. To select the releases again, add the plugin again
+without `--version`: `camel plugin add <name>` for a known community plugin, or with its `--groupId` and `--artifactId`
+(and `--repo`, if any) for another one.
+
+`camel plugin update --dry-run` reports what would change, without downloading the plugins or changing anything.
 
 `camel self-update` runs `camel plugin update` with the new CLI once it is installed, see
 xref:camel-jbang-launcher-install.adoc#_upgrading_and_switching_versions[Upgrading and switching versions].
