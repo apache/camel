@@ -3894,6 +3894,19 @@ changed fields of an update are now in the new `CamelDebeziumUpdateDescription` 
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
 
+=== camel-debezium - the folder of the offset file must exist, and the Map keeps the order of the columns
+
+With the default file offset store, a `debezium-*` endpoint now fails to start when the folder of
+`offsetStorageFileName` does not exist or cannot be written, or when the file exists and cannot be written. The error
+names the file. Before, the consumer started, every save of its position failed with only a WARN in the log, and after
+a restart everything was sent again, the snapshot included. Create the folder, or use a file in a folder that exists.
+With the file schema history (`schemaHistoryInternal=io.debezium.storage.file.history.FileSchemaHistory`), the file
+of `schemaHistoryInternalFileFilename` must be writable too; its folders may be missing, as Debezium creates them.
+
+The `Struct` to `Map` type converter now gives a `LinkedHashMap` in the order of the fields of the `Struct` (the order
+of the columns of the table), nested `Struct` values included, so the JSON of the `Map` has the columns in that order.
+Before, it was a `HashMap` with no defined order.
+
 === camel-debezium-mysql - a signed TINYINT column is a Byte
 
 Debezium has been upgraded to 3.7.0.Final, which maps a signed MySQL `TINYINT` column to the Kafka Connect `INT8`

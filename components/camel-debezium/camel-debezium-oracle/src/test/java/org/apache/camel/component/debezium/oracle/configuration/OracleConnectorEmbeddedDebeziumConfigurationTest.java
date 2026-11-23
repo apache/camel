@@ -58,7 +58,7 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
@@ -78,7 +78,7 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setDatabaseHostname("localhost");
         configuration.setDatabasePassword("test_pwd");
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
@@ -89,7 +89,7 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("localhost", configuration.getDatabaseHostname());
         assertEquals("test_pwd", configuration.getDatabasePassword());
         assertEquals("test_server", configuration.getTopicPrefix());
-        assertEquals("/offset/file", configuration.getOffsetStorageFileName());
+        assertEquals("target/offset-file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
 
