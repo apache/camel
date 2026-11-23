@@ -194,8 +194,9 @@ public class SpringAiChatMcpManager {
 
     /**
      * The URL of an MCP server, split into the base URI and the endpoint that the HTTP transports of the MCP SDK take.
+     * Package-private for tests.
      */
-    private record McpServerUrl(String baseUri, String endpoint) {
+    record McpServerUrl(String baseUri, String endpoint) {
     }
 
     /**
@@ -207,9 +208,9 @@ public class SpringAiChatMcpManager {
      * that a server served under another path, for example {@code http://host:8080/api/mcp}, is reached. The endpoint
      * is the absolute URL of the MCP endpoint, path and query included, as a path that starts with {@code //} would
      * otherwise be read as the authority of another server. A URL without a path, such as {@code http://host:8080},
-     * uses the default endpoint of the transport.
+     * uses the default endpoint of the transport. Package-private for tests.
      */
-    private static McpServerUrl splitUrl(String serverName, String url, String defaultEndpoint) {
+    static McpServerUrl splitUrl(String serverName, String url, String defaultEndpoint) {
         URI uri;
         try {
             uri = new URI(url);

@@ -133,11 +133,10 @@ class SpringAiChatMcpHttpTransportTest extends CamelTestSupport {
     }
 
     /**
-     * The sse transport opens the stream at the path of the URL, and at /sse when the URL has no path. A path that
-     * starts with // stays a path on the server of the URL: mcp.invalid is not a host.
+     * The sse transport opens the stream at the path of the URL, and at /sse when the URL has no path.
      */
     @ParameterizedTest
-    @CsvSource({ "/custom/sse, /custom/sse", "'', /sse", "//mcp.invalid/custom/sse, //mcp.invalid/custom/sse" })
+    @CsvSource({ "/custom/sse, /custom/sse", "'', /sse" })
     void sseOpensTheStreamAtThePathOfTheUrl(String urlPath, String expectedPath) throws Exception {
         SpringAiChatMcpManager manager = new SpringAiChatMcpManager();
         try {
@@ -204,13 +203,9 @@ class SpringAiChatMcpHttpTransportTest extends CamelTestSupport {
         public void handle(HttpExchange exchange) throws IOException {
             try {
                 String httpMethod = exchange.getRequestMethod();
-                URI requestUri = exchange.getRequestURI();
-                String path = requestUri.getPath();
-                String query = requestUri.getRawQuery();
-                // the request URI reads a path that starts with // as an authority and a path: record it as it was sent
-                String sentPath = requestUri.getRawAuthority() != null
-                        ? "//" + requestUri.getRawAuthority() + requestUri.getRawPath() : requestUri.getRawPath();
-                REQUESTS.add(new RecordedRequest(httpMethod, sentPath, query));
+                String path = exchange.getRequestURI().getPath();
+                String query = exchange.getRequestURI().getRawQuery();
+                REQUESTS.add(new RecordedRequest(httpMethod, path, query));
                 SseSession sseSession = query != null && query.startsWith("sessionId=")
                         ? sseSessions.get(query.substring("sessionId=".length())) : null;
                 if ("GET".equals(httpMethod) && SSE_PATHS.contains(path)) {
