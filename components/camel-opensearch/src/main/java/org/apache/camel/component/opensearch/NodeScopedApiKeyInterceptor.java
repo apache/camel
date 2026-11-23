@@ -54,10 +54,13 @@ final class NodeScopedApiKeyInterceptor implements HttpRequestInterceptor {
     }
 
     private boolean isToNode(HttpRequest request, HttpContext context) {
-        if (context != null && HttpClientContext.castOrCreate(context).getHttpRoute() != null) {
-            HttpHost target = HttpClientContext.castOrCreate(context).getHttpRoute().getTargetHost();
-            return NodeScopedCredentialsProvider.isNode(nodes.get(), target.getSchemeName(), target.getHostName(),
-                    target.getPort());
+        if (context != null) {
+            HttpClientContext clientContext = HttpClientContext.castOrCreate(context);
+            if (clientContext.getHttpRoute() != null) {
+                HttpHost target = clientContext.getHttpRoute().getTargetHost();
+                return NodeScopedCredentialsProvider.isNode(nodes.get(), target.getSchemeName(), target.getHostName(),
+                        target.getPort());
+            }
         }
         URIAuthority authority = request.getAuthority();
         return authority != null && NodeScopedCredentialsProvider.isNode(nodes.get(), request.getScheme(),
