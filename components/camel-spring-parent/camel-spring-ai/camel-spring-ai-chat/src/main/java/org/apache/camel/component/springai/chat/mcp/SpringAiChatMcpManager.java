@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springai.chat.mcp;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -49,6 +51,11 @@ public class SpringAiChatMcpManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiChatMcpManager.class);
 
+    /**
+     * The endpoint path of an SSE server whose URL has no path, as in the MCP SDK.
+     */
+    private static final String DEFAULT_SSE_ENDPOINT = "/sse";
+
     private final List<McpSyncClient> mcpClients = new ArrayList<>();
     private SyncMcpToolCallbackProvider toolCallbackProvider;
 
@@ -60,7 +67,7 @@ public class SpringAiChatMcpManager {
      * <li>{@code transportType} - Required. One of: stdio, sse</li>
      * <li>{@code command} - Required for stdio. The command to execute</li>
      * <li>{@code args} - Optional for stdio. Comma-separated arguments</li>
-     * <li>{@code url} - Required for sse. The server URL</li>
+     * <li>{@code url} - Required for sse. The URL of the endpoint of the server, path included</li>
      * <li>{@code oauthProfile} - Optional for sse. OAuth profile name for obtaining a Bearer token (requires
      * camel-oauth)</li>
      * </ul>
@@ -171,7 +178,9 @@ public class SpringAiChatMcpManager {
                 if (url == null) {
                     throw new IllegalArgumentException("mcpServer." + serverName + ".url is required for sse transport");
                 }
-                HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(url);
+                McpServerUrl serverUrl = splitUrl(serverName, url, DEFAULT_SSE_ENDPOINT);
+                HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(serverUrl.baseUri())
+                        .sseEndpoint(serverUrl.endpoint());
                 if (authRequestBuilder != null) {
                     sseBuilder.requestBuilder(authRequestBuilder);
                 }
@@ -181,5 +190,45 @@ public class SpringAiChatMcpManager {
                     "Unknown transport type '" + transportType + "' for mcpServer." + serverName
                                                           + ". Supported: stdio, sse");
         };
+    }
+
+    /**
+     * The URL of an MCP server, split into the base URI and the endpoint that the HTTP transports of the MCP SDK take.
+     */
+    private record McpServerUrl(String baseUri, String endpoint) {
+    }
+
+    /**
+     * Splits the URL of an MCP server into the base URI (scheme and authority) and the endpoint that the HTTP
+     * transports of the MCP SDK take.
+     * <p>
+     * The transports resolve their endpoint, {@code /mcp} or {@code /sse} by default, against the base URI they are
+     * given, which replaces the path and the query of that URI. The URL is therefore not passed as the base URI, so
+     * that a server served under another path, for example {@code http://host:8080/api/mcp}, is reached. The endpoint
+     * is the absolute URL of the MCP endpoint, path and query included, as a path that starts with {@code //} would
+     * otherwise be read as the authority of another server. A URL without a path, such as {@code http://host:8080},
+     * uses the default endpoint of the transport.
+     */
+    private static McpServerUrl splitUrl(String serverName, String url, String defaultEndpoint) {
+        URI uri;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(
+                    "mcpServer." + serverName + ".url is not a valid URL: " + e.getReason(), e);
+        }
+        if (uri.getScheme() == null || uri.getRawAuthority() == null) {
+            throw new IllegalArgumentException(
+                    "mcpServer." + serverName + ".url must be an absolute URL, such as http://localhost:8080"
+                                               + defaultEndpoint);
+        }
+
+        String baseUri = uri.getScheme() + "://" + uri.getRawAuthority();
+        String path = uri.getRawPath();
+        if (path == null || path.isEmpty() || "/".equals(path)) {
+            path = defaultEndpoint;
+        }
+        String query = uri.getRawQuery() != null ? "?" + uri.getRawQuery() : "";
+        return new McpServerUrl(baseUri, baseUri + path + query);
     }
 }
