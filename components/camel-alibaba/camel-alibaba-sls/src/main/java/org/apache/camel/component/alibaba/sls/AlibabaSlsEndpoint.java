@@ -172,7 +172,7 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
                             + " options. It creates this client when the producer processes its first message.",
               displayName = "SLS Client", label = "advanced")
     @Metadata(autowired = true)
-    private Client slsClient;
+    private volatile Client slsClient;
 
     private boolean autowiredSlsClient;
 
@@ -195,19 +195,37 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
     }
 
     public Client initClient() throws Exception {
-        if (slsClient != null) {
-            return slsClient;
+        Client answer = slsClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = slsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    slsClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        slsClient = AlibabaSlsUtils.createClient(this);
-        return slsClient;
+        return answer;
+    }
+
+    Client createClient() throws Exception {
+        return AlibabaSlsUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (slsClient != null && !autowiredSlsClient) {
-            // com.aliyun.sls20201230.Client extends com.aliyun.teaopenapi.Client, which has no
-            // close/shutdown lifecycle API (same as camel-alibaba-eventbridge)
-            slsClient = null;
+        lock.lock();
+        try {
+            if (slsClient != null && !autowiredSlsClient) {
+                // com.aliyun.sls20201230.Client extends com.aliyun.teaopenapi.Client, which has no
+                // close/shutdown lifecycle API (same as camel-alibaba-eventbridge)
+                slsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -337,7 +355,12 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
     }
 
     public void setSlsClient(Client slsClient) {
-        this.slsClient = slsClient;
-        this.autowiredSlsClient = slsClient != null;
+        lock.lock();
+        try {
+            this.slsClient = slsClient;
+            this.autowiredSlsClient = slsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

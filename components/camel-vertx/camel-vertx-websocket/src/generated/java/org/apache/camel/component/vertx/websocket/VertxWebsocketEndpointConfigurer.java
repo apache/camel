@@ -54,6 +54,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": target.getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
         case "originheaderurl":
         case "originHeaderUrl": target.getConfiguration().setOriginHeaderUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "parallelprocessing":
+        case "parallelProcessing": target.getConfiguration().setParallelProcessing(property(camelContext, boolean.class, value)); return true;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": target.getConfiguration().setReconnectInitialDelay(property(camelContext, int.class, value)); return true;
         case "reconnectinterval":
@@ -103,6 +105,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": return int.class;
         case "originheaderurl":
         case "originHeaderUrl": return java.lang.String.class;
+        case "parallelprocessing":
+        case "parallelProcessing": return boolean.class;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return int.class;
         case "reconnectinterval":
@@ -153,6 +157,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": return target.getConfiguration().getMaxReconnectAttempts();
         case "originheaderurl":
         case "originHeaderUrl": return target.getConfiguration().getOriginHeaderUrl();
+        case "parallelprocessing":
+        case "parallelProcessing": return target.getConfiguration().isParallelProcessing();
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return target.getConfiguration().getReconnectInitialDelay();
         case "reconnectinterval":
