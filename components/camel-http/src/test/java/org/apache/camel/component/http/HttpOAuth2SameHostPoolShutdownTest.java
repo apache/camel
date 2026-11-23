@@ -201,12 +201,14 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
 
         // The component's pool must still be functional after the OAuth2 endpoint was stopped.
         var route = new HttpRoute(new HttpHost("localhost", 8080));
-        assertDoesNotThrow(
-                () -> componentManager.lease("plain", route, null),
-                "Stopping an OAuth2 endpoint must not shut down the component's shared connection pool")
-                .cancel();
-
-        componentManager.close();
+        try {
+            assertDoesNotThrow(
+                    () -> componentManager.lease("plain", route, null),
+                    "Stopping an OAuth2 endpoint must not shut down the component's shared connection pool")
+                    .cancel();
+        } finally {
+            componentManager.close();
+        }
     }
 
     @Override
