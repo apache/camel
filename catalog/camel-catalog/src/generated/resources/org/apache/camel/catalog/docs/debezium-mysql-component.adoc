@@ -69,6 +69,9 @@ Due to licensing issues, you will need to add the dependency for `mysql-connecto
     <version>8.0.15</version>
 </dependency>
 ----
+
+The Camel CLI downloads the driver by itself when a route uses this component, and `camel export` adds it to the
+exported project.
 ====
 
 // component options: START
