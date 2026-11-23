@@ -104,8 +104,8 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
     }
 
     /**
-     * After the fix, the OAuth2 token client uses an independent connection manager (from
-     * {@link HttpClientBuilder#create()}), so closing it does NOT shut down the endpoint's connection pool.
+     * After the fix, the OAuth2 token client is built from the endpoint's builder with {@code connManagerShared=true},
+     * so closing it does NOT shut down the endpoint's connection pool.
      * <p>
      * This test directly verifies that invariant: it simulates the lifecycle of {@link OAuth2ClientConfigurer} and
      * confirms the endpoint's connection manager remains usable after the token client is closed.
@@ -117,7 +117,7 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
         var endpointBuilder = HttpClientBuilder.create();
         endpointBuilder.setConnectionManager(endpointConnManager);
 
-        // Apply the configurer (which now uses HttpClientBuilder.create() for the token client)
+        // Apply the configurer — sets connManagerShared=true and builds the token client
         var configurer = new OAuth2ClientConfigurer(
                 CLIENT_ID, CLIENT_SECRET,
                 "http://localhost:" + localServer.getLocalPort() + "/token",
@@ -128,17 +128,19 @@ class HttpOAuth2SameHostPoolShutdownTest extends BaseHttpTest {
         // Build the endpoint's main client (simulates what HttpEndpoint.createHttpClient() does)
         var endpointClient = endpointBuilder.build();
 
-        // Close the OAuth2ClientConfigurer (simulates doStop()) — this closes the token client
-        configurer.stop();
+        try {
+            // Close the OAuth2ClientConfigurer (simulates doStop()) — this closes the token client
+            configurer.stop();
 
-        // The endpoint's connection pool must still be functional after the token client closed
-        var route = new HttpRoute(new HttpHost("localhost", 8080));
-        var future = endpointConnManager.lease("test", route, null);
-        future.cancel();  // just checking it doesn't throw
-        // If pool were shut down, lease() would throw IllegalStateException
-
-        endpointClient.close();
-        endpointConnManager.close();
+            // The endpoint's connection pool must still be functional after the token client closed
+            var route = new HttpRoute(new HttpHost("localhost", 8080));
+            var future = endpointConnManager.lease("test", route, null);
+            future.cancel();  // just checking it doesn't throw
+            // If pool were shut down, lease() would throw IllegalStateException
+        } finally {
+            endpointClient.close();
+            endpointConnManager.close();
+        }
     }
 
     @Override
