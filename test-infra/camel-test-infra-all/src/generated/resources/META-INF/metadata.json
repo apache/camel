@@ -711,7 +711,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-mosquitto",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.0.22",
+  "serviceVersion" : "2.0.23",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
