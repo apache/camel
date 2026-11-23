@@ -72,7 +72,9 @@ class SinglePoolEvictionLockTest extends ContextTestSupport {
         PausingServicePool pool = new PausingServicePool(1);
         TestEndpoint a = new TestEndpoint("test:a", context, true);
         TestEndpoint b = new TestEndpoint("test:b", context, true);
-        // the stop of the pool stops the pool of b before the pool of a (the order of the pool map)
+        // the stop of the pool stops the pool of b before the pool of a (the order of the pool map): with
+        // DefaultEndpoint.hashCode() (the hash code of the URI * 37 + 1), test:b is in a lower bucket of a
+        // ConcurrentHashMap than test:a, so b comes first. The assertSame below fails if other URIs change this order
         Map<Endpoint, Boolean> order = new ConcurrentHashMap<>();
         order.put(a, true);
         order.put(b, true);
