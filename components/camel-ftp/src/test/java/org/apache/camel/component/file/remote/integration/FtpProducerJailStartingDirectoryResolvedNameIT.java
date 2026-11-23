@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The FTP client compacts the directory of a stepwise upload before it changes into each of its segments, and gives no
- * special meaning to a scheme or a drive at the start of it. Verifies that a name that the upload would resolve outside
- * the starting directory is refused.
+ * special meaning to a scheme or a drive at the start of it, or to a backslash where the file separator is /. Verifies
+ * that a name that the upload would resolve outside the starting directory is refused.
  */
 public class FtpProducerJailStartingDirectoryResolvedNameIT extends FtpServerTestSupport {
 
@@ -37,8 +37,12 @@ public class FtpProducerJailStartingDirectoryResolvedNameIT extends FtpServerTes
     }
 
     private void assertRefused(String directory, String name) {
+        assertRefusedAt(ftpUrl(directory), name);
+    }
+
+    private void assertRefusedAt(String uri, String name) {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.sendBodyAndHeader(ftpUrl(directory), "Hello World", Exchange.FILE_NAME, name));
+                () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, name));
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertTrue(iae.getMessage().contains("as the filename is jailed to the starting directory"), iae.getMessage());
     }
@@ -49,6 +53,23 @@ public class FtpProducerJailStartingDirectoryResolvedNameIT extends FtpServerTes
         assertRefused("", "a:/../../planted.txt");
 
         assertFalse(service.ftpFile("planted.txt").toFile().exists());
+    }
+
+    @Test
+    public void testBackslashNameEscapingTheStartingDirectoryIsRefused() {
+        // separator=Auto uploads the name as it is, and the FTP client compacts a\b as one segment where the file
+        // separator is /, so the two .. would leave upload/jail
+        assertRefusedAt(ftpUrl("upload/jail") + "&separator=Auto", "a\\b/../../planted.txt");
+
+        assertFalse(service.ftpFile("upload/planted.txt").toFile().exists());
+    }
+
+    @Test
+    public void testBackslashNameIsNormalizedWithDefaultSeparator() {
+        // the default separator=UNIX replaces the backslashes by / before the upload
+        template.sendBodyAndHeader(ftpUrl("upload/jail"), "Hello World", Exchange.FILE_NAME, "sub\\..\\x.txt");
+
+        assertTrue(service.ftpFile("upload/jail/x.txt").toFile().exists());
     }
 
     @Test
