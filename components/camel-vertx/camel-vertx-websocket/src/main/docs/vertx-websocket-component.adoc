@@ -119,6 +119,11 @@ YAML::
 ----
 ====
 
+The query parameters of the URI that are not options of the component are sent to the remote server. Like any endpoint
+URI, Camel decodes the URI before the component reads it, so write a value that contains `+`, `&` or `%` (such as a
+token or a signature) as a raw value, for example `token=RAW(a+b/c=)`. It then reaches the server as written. See
+xref:manual::endpoint.adoc#_configuring_parameter_values_using_raw_values_such_as_passwords[raw values].
+
 === Path & query parameters
 
 The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
