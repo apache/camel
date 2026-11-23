@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -85,17 +86,47 @@ class XsdJsonSecurityTest extends XsdJsonTestSupport {
         assertThatThrownBy(() -> toJson(df, xml))
                 .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("depth", "nested deeper than 512"));
 
+        Map<String, Object> tree = nestedTree(600);
+        // the stack of the thread may be exhausted before the limit of the data format
+        assertThatThrownBy(() -> toXml(df, tree))
+                .isInstanceOf(IllegalArgumentException.class)
+                .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("The JSON is nested deeper than 512",
+                        "The JSON is nested too deep for the thread stack"));
+    }
+
+    @Test
+    void nestingOnASmallStackIsRefused() throws Exception {
+        XsdJsonDataFormat df = dataFormat("classpath:xsdjson/shop.xsd", d -> d.setElement("tree"));
+        Map<String, Object> tree = nestedTree(600);
+        // load the classes first, so that the stack of the small thread is not exhausted by the class loading
+        toXml(df, nestedTree(2));
+
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        Thread thread = new Thread(null, () -> {
+            try {
+                toXml(df, tree);
+            } catch (Throwable e) {
+                thrown.set(e);
+            }
+        }, "small-stack", 128 * 1024);
+        thread.start();
+        thread.join();
+
+        // an IllegalArgumentException, never a StackOverflowError, whichever limit is reached first
+        assertThat(thrown.get()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(thrown.get().getMessage()).containsAnyOf("The JSON is nested deeper than 512",
+                "The JSON is nested too deep for the thread stack");
+    }
+
+    private static Map<String, Object> nestedTree(int depth) {
         Map<String, Object> tree = new LinkedHashMap<>();
         Map<String, Object> current = tree;
-        for (int i = 0; i < 600; i++) {
+        for (int i = 0; i < depth; i++) {
             Map<String, Object> node = new LinkedHashMap<>();
             current.put("node", List.of(node));
             current = node;
         }
-        // the stack of the thread may be exhausted before the limit of the data format
-        assertThatThrownBy(() -> toXml(df, tree))
-                .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("The JSON is nested deeper than 512",
-                        "The JSON is nested too deep for the stack"));
+        return tree;
     }
 
     @Test
