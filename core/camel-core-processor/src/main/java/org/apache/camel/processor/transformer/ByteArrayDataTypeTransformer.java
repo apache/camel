@@ -41,6 +41,7 @@ import org.apache.camel.spi.Transformer;
                                      description = "A body Camel can convert to a byte array: a number fails, and a null"
                                                    + " body stays null"),
            transformerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                      format = "binary",
                                       description = "A stream cache or a file body is kept as it is and a null body"
                                                     + " stays null; any other body becomes a byte array"))
 public class ByteArrayDataTypeTransformer extends Transformer {
