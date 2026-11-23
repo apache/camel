@@ -844,7 +844,11 @@ tail pages do not produce exchanges. Standard scheduled polling options, such as
 Register an application-provided `org.apache.camel.spi.StateRepository<String, String>`
 as `changeCheckpoints`. A repository that is a Camel service, such as `FileStateRepository`,
 is started by the consumer when the application has not started it, and stopped again when
-the route stops; a repository the application started stays under the application's control:
+the route stops; a repository the application started stays under the application's control.
+A repository that several routes share, each with its own `checkpointKey`, should be started
+and stopped by the application: otherwise the first route to start owns it and stops it with
+that route, and a stopped `FileStateRepository` answers `null` to the other routes, which then
+start again from `startTime` or the beginning:
 
 [tabs]
 ====
