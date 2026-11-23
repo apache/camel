@@ -42,14 +42,11 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.ProducerServicePool;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.camel.util.function.ThrowingFunction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -62,8 +59,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * only affect the pool of that producer.
  */
 class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
-
-    private static final String SERVICE_POOL_LOGGER = "org.apache.camel.support.cache.ServicePool";
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -197,39 +192,37 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
     }
 
     @Test
-    void testAcquireDoesNotReturnNullWhenEvictedMeanwhile() throws Exception {
+    void testCreatorReturningNullFails() throws Exception {
+        Endpoint a = context.getEndpoint("my:a");
+        MyServicePool pool = new MyServicePool(1, e -> null, Producer::getEndpoint);
+        try {
+            // fails as main did, instead of retrying the same pool for ever
+            Future<Exception> failed = executor.submit(() -> assertThrows(IllegalStateException.class, () -> pool.acquire(a)));
+            assertTrue(failed.get(10, TimeUnit.SECONDS).getMessage().startsWith("No service created from endpoint"));
+            // and again, as the pool is not left in a bad state
+            assertThrows(IllegalStateException.class, () -> pool.acquire(a));
+        } finally {
+            // ends a retry loop that would not end by itself
+            pool.stop();
+        }
+    }
+
+    @Test
+    void testStopOfThePoolStopsTheEndpointOfAnEvictedProducerInUse() throws Exception {
         MyServicePool pool = new MyServicePool(1);
         Endpoint a = context.getEndpoint("my:a");
-        MyProducer pa = (MyProducer) pool.acquire(a);
-        pool.release(a, pa);
 
-        // the trace log of the acquire calls toString() of the producer, which waits there for the eviction
-        pa.inToString = new CountDownLatch(1);
-        pa.proceedToString = new CountDownLatch(1);
-        Level level = LogManager.getLogger(SERVICE_POOL_LOGGER).getLevel();
-        Configurator.setLevel(SERVICE_POOL_LOGGER, Level.TRACE);
-        try {
-            Future<AsyncProducer> acquired = executor.submit(() -> {
-                pa.waitingThread = Thread.currentThread();
-                return pool.acquire(a);
-            });
-            assertTrue(pa.inToString.await(10, TimeUnit.SECONDS));
+        AsyncProducer pa = pool.acquire(a);
+        // acquiring b evicts pa, which is in use
+        AsyncProducer pb = pool.acquire(b());
+        pool.release(b(), pb);
+        assertTrue(isStarted(pa), "The evicted producer should not be stopped while it is in use");
 
-            // acquiring b evicts pa while the other thread is acquiring it
-            AsyncProducer pb = pool.acquire(b());
-            pa.proceedToString.countDown();
-            AsyncProducer got = acquired.get(10, TimeUnit.SECONDS);
-            assertNotNull(got, "Acquire should not return null while the pool is started");
-            assertSame(pa, got);
-            assertTrue(isStarted(pa), "The evicted producer should not be stopped while it is in use");
-
-            pool.release(a, got);
-            assertTrue(isStopped(pa), "The evicted producer should be stopped when it is released");
-            pool.release(b(), pb);
-        } finally {
-            Configurator.setLevel(SERVICE_POOL_LOGGER, level);
-        }
+        // the producer cache stops (or is purged) before pa is released: pa is stopped, and its dynamic endpoint as
+        // nothing else uses it, as its release would have done
         pool.stop();
+        assertTrue(isStopped(pa), "The evicted producer should be stopped when the pool stops");
+        assertTrue(ServiceHelper.isStopped(a), "The dynamic endpoint not in use should be stopped to free resources");
     }
 
     @Test
@@ -277,7 +270,12 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
         }
 
         MyServicePool(int capacity, Function<AsyncProducer, Endpoint> getEndpoint) {
-            super(Endpoint::createAsyncProducer, getEndpoint, capacity);
+            this(capacity, Endpoint::createAsyncProducer, getEndpoint);
+        }
+
+        MyServicePool(int capacity, ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+                      Function<AsyncProducer, Endpoint> getEndpoint) {
+            super(creator, getEndpoint, capacity);
             start();
         }
 
@@ -340,9 +338,6 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
     }
 
     private static final class MyProducer extends DefaultAsyncProducer {
-        volatile CountDownLatch inToString;
-        volatile CountDownLatch proceedToString;
-        volatile Thread waitingThread;
 
         MyProducer(MyEndpoint endpoint) {
             super(endpoint);
@@ -370,21 +365,6 @@ class ProducerCacheSingletonEvictionTest extends ContextTestSupport {
             }
             callback.done(true);
             return true;
-        }
-
-        @Override
-        public String toString() {
-            CountDownLatch in = inToString;
-            if (in != null && Thread.currentThread() == waitingThread) {
-                inToString = null;
-                in.countDown();
-                try {
-                    proceedToString.await(10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            return "MyProducer[" + getEndpoint().getEndpointUri() + "]";
         }
     }
 }

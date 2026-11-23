@@ -171,6 +171,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
     }
 
+    /**
+     * Called by a single pool when it has acquired its service, before it returns it. A test hook (noop): a test pauses
+     * here to evict the service while it is being acquired.
+     */
+    void onSingleAcquired(S s) {
+        // noop
+    }
+
     private void stopAndRemove(S s) {
         ServicePool.stop(s);
         try {
@@ -299,6 +307,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                     if (answer == null && !stopped.get()) {
                         LOG.trace("Creating service from endpoint: {}", endpoint);
                         S tempS = creator.apply(endpoint);
+                        if (tempS == null) {
+                            // fail as main did, as a null would make ServicePool.acquire retry this pool for ever: it
+                            // retries only when the pool was evicted or stopped meanwhile
+                            throw new IllegalStateException("No service created from endpoint: " + endpoint);
+                        }
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
                         answer = tempS;
@@ -312,6 +325,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                     }
                 }
             }
+            onSingleAcquired(answer);
             LOG.trace("Acquired service: {}", answer);
             return answer;
         }
@@ -356,19 +370,32 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         @Override
         public void stop() {
             stopped.set(true);
-            S toStop;
-            lock.lock();
-            try {
-                toStop = s;
-                s = null;
-            } finally {
-                lock.unlock();
-            }
+            S toStop = takeService();
             pool.remove(endpoint, this);
             if (toStop != null) {
                 singlePoolEvicted.remove(toStop, this);
             }
             doStop(toStop);
+            if (evicted && toStop != null) {
+                // an evicted pool whose service was still in use (stopped with the ServicePool): stop its endpoint as
+                // well when nothing else uses it, as its last release would have done
+                stopEndpointIfUnused();
+            }
+        }
+
+        /**
+         * Takes the service out of the pool, under the lock that creates the services, so a creation in progress either
+         * completes before (and its service is taken) or sees the pool stopped
+         */
+        private S takeService() {
+            lock.lock();
+            try {
+                S answer = s;
+                s = null;
+                return answer;
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override
@@ -397,19 +424,25 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 // still in use (the last user stops it), or stopped already
                 return;
             }
-            // under the lock that creates the services, so a service that a new pool of this endpoint creates meanwhile
-            // is either seen as using the endpoint, or created after it was stopped
+            S toStop = takeService();
+            if (toStop != null) {
+                singlePoolEvicted.remove(toStop, this);
+            }
+            // stop the evicted service first, so it no longer counts as using the endpoint; outside the lock, so a slow
+            // stop does not hold up the creation of the services of other endpoints
+            doStop(toStop);
+            stopEndpointIfUnused();
+        }
+
+        /**
+         * Stops the endpoint (such as a dynamic endpoint from toD) to free its resources, if nothing else uses it.
+         * Under the lock that creates the services, so a service that a new pool of this endpoint creates meanwhile is
+         * either seen as using the endpoint, or created after it was stopped.
+         */
+        private void stopEndpointIfUnused() {
             lock.lock();
             try {
-                S toStop = s;
-                s = null;
-                if (toStop != null) {
-                    singlePoolEvicted.remove(toStop, this);
-                }
-                // stop the evicted service first, so it no longer counts as using the endpoint
-                doStop(toStop);
                 if (!isEndpointInUse(endpoint)) {
-                    // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
                     doStop(endpoint);
                 }
             } finally {
