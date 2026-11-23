@@ -18,6 +18,7 @@ package org.apache.camel.main.download;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -43,6 +44,24 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     private static final String[] ACCEPTED_TRANSFORM_NAMES = {
             "stub", "direct", "log", "seda"
     };
+
+    /**
+     * A class that a component needs, from a library that is not a dependency of the component, by component name. The
+     * class is resolved through the class resolver when the component is resolved, which downloads its library from the
+     * third-party known dependencies (known-third-party-libraries.properties) in the version Camel manages. As the
+     * download is recorded, camel export adds the library to the exported project too.
+     * <p/>
+     * The JDBC drivers of the Debezium connectors that their license keeps out of the component are here (CAMEL-27447):
+     * Debezium loads the driver itself with Class.forName, which does not go through the class resolver.
+     */
+    private static final Map<String, String> NEEDED_CLASSES = Map.of(
+            // the JMS connection pool
+            "activemq", "org.messaginghub.pooled.jms.JmsPoolConnectionFactory",
+            "activemq6", "org.messaginghub.pooled.jms.JmsPoolConnectionFactory",
+            // the MySQL JDBC driver is GPL licensed
+            "debezium-mysql", "com.mysql.cj.jdbc.Driver",
+            // the Db2 JDBC driver is under the IBM International Program License Agreement
+            "debezium-db2", "com.ibm.db2.jcc.DB2Driver");
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
@@ -117,10 +136,11 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 downloader.downloadDependency("org.hibernate.orm", "hibernate-core", "${hibernate-version}");
             }
         }
-        if ("activemq".equals(name) || "activemq6".equals(name)) {
-            // need to include JMS connection-pool (trigger class loader to download correct JAR)
+        String neededClass = NEEDED_CLASSES.get(name);
+        if (neededClass != null) {
+            // trigger the class loader to download the JAR of the class (known-third-party-libraries.properties)
             try {
-                camelContext.getClassResolver().resolveClass("org.messaginghub.pooled.jms.JmsPoolConnectionFactory");
+                camelContext.getClassResolver().resolveClass(neededClass);
             } catch (Exception e) {
                 // ignore
             }

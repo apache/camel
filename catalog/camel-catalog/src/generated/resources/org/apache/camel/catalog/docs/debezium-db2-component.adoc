@@ -66,6 +66,23 @@ for this component.
 debezium-db2:name[?options]
 ----
 
+[NOTE]
+====
+The JDBC driver of Db2 is not included, as its license is not the Apache license. Add the dependency for
+`com.ibm.db2:jcc` to your POM file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.ibm.db2</groupId>
+    <artifactId>jcc</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+The Camel CLI downloads the driver by itself when a route uses this component, and `camel export` adds it to the
+exported project.
+====
 
 // component options: START
 include::partial$component-configure-options.adoc[]

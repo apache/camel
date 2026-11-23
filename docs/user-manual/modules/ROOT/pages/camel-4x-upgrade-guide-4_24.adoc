@@ -2481,6 +2481,16 @@ with another element type fails. SEARCH fails on a `List` body.
 REMOVE now fails when the body is not text (a `String`, bytes or a stream) or a `Collection` of `String` IDs. Before, a
 `Map` or a number body removed the ID made of its `toString()`, which usually removed nothing.
 
+=== camel-jbang - camel run and camel export add the JDBC driver of debezium-mysql and debezium-db2
+
+The MySQL JDBC driver (`com.mysql:mysql-connector-j`, GPL) and the Db2 JDBC driver (`com.ibm.db2:jcc`, IBM
+International Program License Agreement) are not dependencies of `camel-debezium-mysql` and `camel-debezium-db2`, so a
+route with `debezium-mysql` or `debezium-db2` failed on `camel run` with a `ClassNotFoundException` unless the driver
+was added with `--dep`. `camel run` now downloads the driver in the version Camel manages, and `camel export` adds it,
+with that version, to the exported project (Camel Main, Spring Boot and Quarkus). A driver you add yourself, with
+`--dep`, `camel.jbang.dependencies` or in the project's POM, is used instead. Remove the driver from the exported
+project if its license does not suit you.
+
 === camel-jbang - camel run uses MariaDB Connector/J 4
 
 Camel is upgraded to MariaDB Connector/J 4.0 (`org.mariadb.jdbc:mariadb-java-client`), which is the version
