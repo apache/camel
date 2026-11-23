@@ -302,7 +302,7 @@ final class DiagramTopology {
             if (p.id != null && p.statistics != null) {
                 steps.put(p.id, p.statistics);
             }
-            if (p.id != null && !p.bodyTypes.isEmpty()) {
+            if (p.id != null && (!p.bodyTypes.isEmpty() || p.kameletInput != null)) {
                 bodies.put(p.id, p);
             }
         }
@@ -320,7 +320,10 @@ final class DiagramTopology {
                     line.put("statistics", statistics instanceof JsonObject jo ? jo : new JsonObject(statistics));
                 }
                 ProcessorInfo body = index > 1 ? bodies.get(line.getString("id")) : null;
-                if (body != null) {
+                if (body != null && body.kameletInput != null) {
+                    line.put("kameletInput", KameletInputs.toJson(body));
+                }
+                if (body != null && !body.bodyTypes.isEmpty()) {
                     line.put("bodyTypes", new JsonArray(body.bodyTypes));
                     line.put("bodyKinds", new JsonArray(body.bodyKinds));
                     if (!body.bodyFormats.isEmpty()) {

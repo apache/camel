@@ -583,6 +583,7 @@ final class DiagramDetailSupport {
      * and one reached with more than one format is marked too. The diagram shows them cut, and with y only.
      */
     static void addBodyTypes(List<Line> lines, RouteDiagramLayoutEngine.NodeInfo info, int width) {
+        addKameletInput(lines, info, width);
         if (info.bodyTypes.isEmpty()) {
             return;
         }
@@ -612,6 +613,36 @@ final class DiagramDetailSupport {
         if (mixed) {
             List<String> warning = wrapWords(
                     BodyTypes.kinds(info.bodyKinds) + ": the body here depends on the path a message takes",
+                    Math.max(10, width - 2));
+            for (int i = 0; i < warning.size(); i++) {
+                lines.add(Line.from(Span.styled((i == 0 ? " " + BodyTypes.MARK + " " : "   ") + warning.get(i),
+                        Theme.warning())));
+            }
+        }
+    }
+
+    /**
+     * What the Kamelet the step calls takes (CAMEL-27475): its data type, which Camel turns the body into before the
+     * Kamelet sees it, so a Map that reaches a Kamelet that takes json is fine; a warning when its transformer does not
+     * take the body.
+     */
+    private static void addKameletInput(List<Line> lines, RouteDiagramLayoutEngine.NodeInfo info, int width) {
+        var in = info.kameletInput;
+        if (in == null) {
+            return;
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(" Kamelet takes:", Theme.muted()), Span.raw(" " + in.dataType())));
+        String text = (in.description() != null ? in.description() + " " : "")
+                      + "Camel turns the body into it" + (in.transformer() != null ? " (" + in.transformer() + ")" : "")
+                      + " before the Kamelet sees it.";
+        for (String line : wrapWords(text, Math.max(10, width - 2))) {
+            lines.add(Line.from(Span.styled("   " + line, Theme.muted())));
+        }
+        if (Boolean.FALSE.equals(in.takesBody())) {
+            List<String> warning = wrapWords(
+                    (in.transformer() != null ? in.transformer() : in.dataType()) + " does not take this body: convert"
+                                             + " it first",
                     Math.max(10, width - 2));
             for (int i = 0; i < warning.size(); i++) {
                 lines.add(Line.from(Span.styled((i == 0 ? " " + BodyTypes.MARK + " " : "   ") + warning.get(i),

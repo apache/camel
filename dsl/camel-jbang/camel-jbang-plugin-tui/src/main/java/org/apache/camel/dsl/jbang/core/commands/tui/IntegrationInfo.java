@@ -29,6 +29,11 @@ class IntegrationInfo {
     String pid;
     String name;
     String camelVersion;
+    /**
+     * The version of the Kamelet catalog the integration uses (camel run --kamelets-version), from its
+     * camel.jbang.kameletsVersion property; null when it does not say.
+     */
+    String kameletsVersion;
     String platform;
     String platformVersion;
     String javaVersion;

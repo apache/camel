@@ -313,6 +313,15 @@ of the catalog: `byte[] · json` (`json`, `xml`, `csv`, `yaml`, `text`, `binary`
 `LinkedHashMap` that reaches a step that takes `json` is easy to spot. A step reached with more than one format, such
 as `⚠ String · xml | csv`, is marked as a step of more than one kind is.
 
+A step that calls a Kamelet (`to: kamelet:postgresql-sink`) also shows the data type the Kamelet takes: its default
+`in` data type, which Camel turns the body into before the Kamelet sees it. For example `LinkedHashMap → json`:
+`postgresql-sink` takes a JSON object, and its data type transformer (`application-json`) writes the `Map` as JSON, so
+the step is fine. Kamelets come from event-driven and serverless integration, where the data between the steps is
+JSON, which is why a SQL sink takes JSON. Before a message has reached the step, it shows what the Kamelet takes
+(`→ json`). A body the transformer does not take, as the Camel catalog says, is marked:
+`⚠ ArrayList → text (text-plain does not take it)`. The Kamelets are looked up in the project and in the Kamelet
+catalog the integration runs (`camel run --kamelets-version`). The Info panel of the step says what the Kamelet takes.
+
 In the topology, the Info panel of a route says how many of its steps were reached with more than one type
 (`⚠ 1 mixed · 2 varied`), and the Routes tab has the same in its BODY TYPES column, with the types of each step in the
 table of the processors of the selected route. The source view of the Source tab has them at the end of the line of each

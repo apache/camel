@@ -272,7 +272,10 @@ public class RuntimeTools {
                         + " bodyKinds: null, payload, data or collection. More than one kind needs attention: a step that"
                         + " writes fails for data, one that reads fields fails for a payload. bodyFormats: the format of"
                         + " the payload from its Content-Type (json, xml, csv, yaml, text, binary or the media type), to"
-                        + " compare with the format the catalog says a step takes. The routes tool counts them"
+                        + " compare with the format the catalog says a step takes. kameletInput: the data type a"
+                        + " Kamelet the step calls turns the body into, such as json for postgresql-sink, which writes a"
+                        + " Map as JSON; takesBody false when its transformer does not take the body. The routes tool"
+                        + " counts them"
                         + " per route (mixedBodyKinds). The checksum of each route says which version of the route the"
                         + " facts of its lines are of.")
     public JsonObject camel_runtime_route_structure(

@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
 
 /**
  * The live run data of the running integration in the source view ({@link SourceViewer}), a column at the end of the
@@ -50,15 +51,25 @@ class SourceLiveColumn {
      * one of them was reached with bodies of more than one kind or payloads of more than one format.
      */
     record LiveLine(long total, long failed, long meanMillis, List<String> bodyTypes, List<String> bodyKinds,
-            List<String> bodyFormats, boolean mixed) {
+            List<String> bodyFormats, KameletInput kameletInput, boolean mixed) {
 
         LiveLine(long total, long failed, long meanMillis) {
-            this(total, failed, meanMillis, List.of(), List.of(), List.of(), false);
+            this(total, failed, meanMillis, List.of(), List.of(), List.of(), null, false);
         }
 
         LiveLine(long total, long failed, long meanMillis, List<String> bodyTypes, List<String> bodyKinds,
                  boolean mixed) {
-            this(total, failed, meanMillis, bodyTypes, bodyKinds, List.of(), mixed);
+            this(total, failed, meanMillis, bodyTypes, bodyKinds, List.of(), null, mixed);
+        }
+
+        /** Whether the line has body types, or calls a Kamelet whose data type is known: what the end of it shows. */
+        boolean hasBody() {
+            return !bodyTypes.isEmpty() || kameletInput != null;
+        }
+
+        /** Whether the transformer of the Kamelet the line calls takes its bodies; null when not known. */
+        Boolean takes() {
+            return kameletInput != null ? kameletInput.takes(bodyTypes, bodyKinds) : null;
         }
     }
 
@@ -213,7 +224,7 @@ class SourceLiveColumn {
      */
     void addBodyTypes(List<Span> spans, int lineIndex, boolean plain, Style selBg, int rightEdge) {
         LiveLine live = plain || !current() ? null : liveLines().get(lineIndex);
-        if (live == null || live.bodyTypes().isEmpty()) {
+        if (live == null || !live.hasBody()) {
             return;
         }
         int width = 0;
@@ -221,8 +232,17 @@ class SourceLiveColumn {
             width += CharWidth.of(span.content());
         }
         int pad = Math.max(2, bodyTypesAlign - width);
-        String text = BodyTypes.fit(live.bodyTypes(), live.mixed() ? live.bodyKinds() : List.of(), live.bodyFormats(),
-                live.mixed(), rightEdge - width - pad);
+        // the data type of the Kamelet the line calls goes after the types (CAMEL-27475): LinkedHashMap → json
+        String arrow = KameletInputs.arrow(live.kameletInput(), live.takes());
+        String text = live.bodyTypes().isEmpty()
+                ? arrow.strip()
+                : BodyTypes.fit(live.bodyTypes(), live.mixed() ? live.bodyKinds() : List.of(), live.bodyFormats(),
+                        live.mixed(), rightEdge - width - pad - CharWidth.of(arrow))
+                  + arrow;
+        if (CharWidth.of(text) > rightEdge - width - pad) {
+            text = CharWidth.truncateWithEllipsis(text, Math.max(0, rightEdge - width - pad), "…",
+                    CharWidth.TruncatePosition.END);
+        }
         if (text.isEmpty()) {
             return;
         }
@@ -258,6 +278,34 @@ class SourceLiveColumn {
 
     private static String title(LiveLine live) {
         return live.bodyKinds().size() == 1 ? "Body types (" + live.bodyKinds().get(0) + ")" : "Body types";
+    }
+
+    /** The quick documentation of the live run data of a line: its body types, and the Kamelet it calls. */
+    List<SourceViewer.DocEntry> docs(int row) {
+        List<SourceViewer.DocEntry> answer = new ArrayList<>(2);
+        SourceViewer.DocEntry types = bodyTypesDoc(row);
+        if (types != null) {
+            answer.add(types);
+        }
+        SourceViewer.DocEntry kamelet = kameletDoc(row);
+        if (kamelet != null) {
+            answer.add(kamelet);
+        }
+        return answer;
+    }
+
+    /**
+     * What the Kamelet the line calls takes, for the quick documentation (CAMEL-27475): its data type, why a Map or a
+     * POJO is fine, and whether it takes the bodies the line was reached with; null when the line calls no Kamelet
+     * whose data type is known.
+     */
+    SourceViewer.DocEntry kameletDoc(int row) {
+        LiveLine live = current() ? liveLines().get(row) : null;
+        if (live == null || live.kameletInput() == null) {
+            return null;
+        }
+        return SourceViewer.DocEntry.withTitle("Kamelet data type",
+                KameletInputs.doc(live.kameletInput(), live.bodyTypes(), live.bodyKinds()));
     }
 
     /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */
@@ -328,7 +376,7 @@ class SourceLiveColumn {
         int longest = 0;
         for (Map.Entry<Integer, LiveLine> e : liveLines.entrySet()) {
             int i = e.getKey();
-            if (!e.getValue().bodyTypes().isEmpty() && shown != null && i >= 0 && i < shown.size()) {
+            if (e.getValue().hasBody() && shown != null && i >= 0 && i < shown.size()) {
                 longest = Math.max(longest, Math.min(CharWidth.of(shown.get(i)), MAX_BODY_TYPES_ALIGN));
             }
         }

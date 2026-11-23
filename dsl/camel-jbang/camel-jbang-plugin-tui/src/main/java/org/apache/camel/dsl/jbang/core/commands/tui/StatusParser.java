@@ -875,6 +875,10 @@ final class StatusParser {
                 for (Object p : propArr) {
                     JsonObject pj = (JsonObject) p;
                     String key = pj.getString("key");
+                    if ("camel.jbang.kameletsVersion".equals(key)) {
+                        // the Kamelets the integration runs, for what they take (CAMEL-27475)
+                        info.kameletsVersion = objToString(pj.get("value"));
+                    }
                     if (key != null && !key.startsWith("camel.jbang.")) {
                         ConfigurationTab.ConfigProperty cp = new ConfigurationTab.ConfigProperty();
                         cp.key = key;
