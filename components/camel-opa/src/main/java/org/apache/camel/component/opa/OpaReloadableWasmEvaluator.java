@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,7 +270,17 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
     }
 
     @Override
+    protected Engine observationEngine() {
+        return Engine.OPA_WASM;
+    }
+
+    @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
+        return evaluateDecision(input, null);
+    }
+
+    @Override
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
         Snapshot snapshot;
         synchronized (state) {
             ensureOpen(-1);
@@ -277,7 +288,9 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
             snapshot.readers++;
         }
         try {
-            return snapshot.evaluator.evaluateDecision(input);
+            return poolWaitNanos == null
+                    ? snapshot.evaluator.evaluateDecision(input)
+                    : snapshot.evaluator.evaluateDecision(input, poolWaitNanos);
         } finally {
             boolean drained;
             synchronized (state) {

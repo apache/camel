@@ -73,6 +73,11 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,14 +181,36 @@ public class OpenFgaProducer extends DefaultProducer {
      * allowed - so a route can filter a collection down to what the caller may see in one step.
      */
     private void batchCheck(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        AuthorizationObservation observation = AuthorizationObservation.begin(exchange, Engine.OPENFGA, Operation.BATCH,
+                getEndpoint().getConfiguration().getAuthorizationModelId());
+        if (!observation.isEnabled()) {
+            batchCheckInternal(exchange, authorizer, observation);
+            return;
+        }
+        try {
+            batchCheckInternal(exchange, authorizer, observation);
+            observation.completeBatch();
+        } catch (Exception e) {
+            boolean unavailable = OpenFgaAuthorizer.isDecisionPointUnavailable(e);
+            observation.failure(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private void batchCheckInternal(Exchange exchange, OpenFgaAuthorizer authorizer, AuthorizationObservation observation)
+            throws Exception {
         OpenFgaAuthorizer.clearDecisionHeaders(exchange);
         List<String> objects = bodyAsList(exchange);
+        observation.expectedItems(objects.size());
         String user = authorizer.resolveUser(exchange);
         String relation = authorizer.resolveRelation(exchange);
         if (user == null || relation == null) {
             // the subject or the permission could not be established, so none of the objects is allowed. The deny
             // reason is already on the exchange
             exchange.getMessage().setBody(List.of());
+            observation.items(Outcome.DENY, objects.size());
             return;
         }
 
@@ -192,6 +219,7 @@ public class OpenFgaProducer extends DefaultProducer {
             // a configured contextual tuple did not resolve, so no object is allowed; the reason is on the exchange
             exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
             exchange.getMessage().setBody(List.of());
+            observation.items(Outcome.DENY, objects.size());
             return;
         }
 
@@ -201,6 +229,7 @@ public class OpenFgaProducer extends DefaultProducer {
                 // an entry that cannot be an object of a check is not one the caller may have; leaving it out of the
                 // batch leaves it out of the result, which is the fail-closed answer
                 LOG.debug("Skipping '{}' in a batchCheck: not usable as an object identifier", object);
+                observation.item(Outcome.DENY);
                 continue;
             }
             ClientCheckRequest item = new ClientCheckRequest().user(user).relation(relation)._object(object);
@@ -216,15 +245,16 @@ public class OpenFgaProducer extends DefaultProducer {
         }
 
         List<String> allowed = getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server
-                ? serverBatchCheck(exchange, authorizer, requests)
-                : clientBatchCheck(exchange, authorizer, requests, objects, user, relation);
+                ? serverBatchCheck(exchange, authorizer, requests, observation)
+                : clientBatchCheck(exchange, authorizer, requests, objects, user, relation, observation);
+        observation.remainingItems(Outcome.DENY, objects.size());
         exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
         exchange.getMessage().setBody(allowed);
     }
 
     private List<String> clientBatchCheck(
             Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests,
-            List<String> objects, String user, String relation)
+            List<String> objects, String user, String relation, AuthorizationObservation observation)
             throws Exception {
         int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
         ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
@@ -255,6 +285,9 @@ public class OpenFgaProducer extends DefaultProducer {
             }
             if (Boolean.TRUE.equals(response.getAllowed())) {
                 permitted.add(response.getRequest().getObject());
+                observation.item(Outcome.ALLOW);
+            } else {
+                observation.item(Outcome.DENY);
             }
         }
         // filter the body rather than collect the answers: the SDK issues the checks in parallel and hands them back
@@ -269,7 +302,9 @@ public class OpenFgaProducer extends DefaultProducer {
         return allowed;
     }
 
-    private List<String> serverBatchCheck(Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests)
+    private List<String> serverBatchCheck(
+            Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests,
+            AuthorizationObservation observation)
             throws Exception {
         List<ClientBatchCheckItem> checks = new ArrayList<>(requests.size());
         Set<String> pending = new HashSet<>();
@@ -307,6 +342,9 @@ public class OpenFgaProducer extends DefaultProducer {
             }
             if (result.isAllowed()) {
                 permitted.add(result.getCorrelationId());
+                observation.item(Outcome.ALLOW);
+            } else {
+                observation.item(Outcome.DENY);
             }
         }
         if (!pending.isEmpty()) {

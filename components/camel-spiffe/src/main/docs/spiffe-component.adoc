@@ -668,3 +668,10 @@ No token, private key, certificate contents or exception text is retained or pub
 no independent unsubscribe handle for a borrowed client. Supply your own health check for that injected client. If
 `allowOperationHeader=true` is explicitly enabled, changing an individual message's operation does not retarget the
 readiness observer, which always reflects the endpoint's configured operation.
+
+== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.
