@@ -92,7 +92,10 @@ class XsdJsonSecurityTest extends XsdJsonTestSupport {
             current.put("node", List.of(node));
             current = node;
         }
-        assertThatThrownBy(() -> toXml(df, tree)).hasMessageContaining("The JSON is nested deeper than 512");
+        // the stack of the thread may be exhausted before the limit of the data format
+        assertThatThrownBy(() -> toXml(df, tree))
+                .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("The JSON is nested deeper than 512",
+                        "The JSON is nested too deep for the stack"));
     }
 
     @Test
