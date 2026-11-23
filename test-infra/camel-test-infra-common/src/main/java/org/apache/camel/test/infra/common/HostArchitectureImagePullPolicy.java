@@ -36,7 +36,9 @@ import org.testcontainers.utility.DockerLoggerFactory;
  * When pulling an image fails (for instance because the registry mirror replies {@code toomanyrequests}),
  * Testcontainers silently retries the pull for {@code linux/amd64}. On hosts with another architecture (ppc64le, s390x)
  * this leaves an image with the wrong architecture in the local cache, that is then reused by all subsequent runs and
- * fails with {@code exec format error}.
+ * fails with {@code exec format error}. This is reported to Testcontainers in
+ * <a href="https://github.com/testcontainers/testcontainers-java/issues/12180">testcontainers-java#12180</a>, this
+ * policy can be removed once it is fixed there.
  * <p>
  * When the check is enabled, this policy:
  * <ul>
@@ -50,6 +52,10 @@ import org.testcontainers.utility.DockerLoggerFactory;
  * policy: an image is only pulled if it is not available locally.
  * <p>
  * This policy is registered through the {@code testcontainers.properties} file of this module.
+ * <p>
+ * <b>Concurrency:</b> Testcontainers constructs a new policy instance per container and calls {@code shouldPull} once
+ * per image, so concurrent calls for the same image are not expected in normal use. No additional synchronization is
+ * applied.
  */
 public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
 
@@ -111,7 +117,13 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
         }
 
         String pulledArch = inspectLocalArch(client, name);
-        if (pulledArch != null && !hostArch.equals(normalizeArch(pulledArch))) {
+        if (pulledArch == null) {
+            // Pull succeeded but inspect returned no architecture — treat as a failed pull so the caller retries
+            throw new ContainerFetchException(
+                    "Image " + name + " was pulled for platform " + platform
+                                              + " but could not be inspected afterwards");
+        }
+        if (!hostArch.equals(normalizeArch(pulledArch))) {
             LOG.warn("Image {} has architecture {} after pulling it for platform {}, removing it", name, pulledArch,
                     platform);
             removeImage(client, name);
@@ -131,6 +143,8 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
 
     private static void removeImage(DockerClient client, String name) {
         try {
+            // withForce(true) untags and removes the image even if its tag is referenced by a stopped container;
+            // this is intentional so we do not leave a wrong-architecture image in the cache.
             client.removeImageCmd(name).withForce(true).exec();
         } catch (RuntimeException e) {
             LOG.warn("Failed to remove image {}: {}", name, e.getMessage());
