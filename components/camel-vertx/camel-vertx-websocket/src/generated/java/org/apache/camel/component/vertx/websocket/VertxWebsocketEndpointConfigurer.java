@@ -34,6 +34,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.WebSocketClientOptions.class, value)); return true;
         case "clientsubprotocols":
         case "clientSubProtocols": target.getConfiguration().setClientSubProtocols(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectmessage":
+        case "connectMessage": target.getConfiguration().setConnectMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "consumeasclient":
         case "consumeAsClient": target.getConfiguration().setConsumeAsClient(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -81,6 +83,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": return io.vertx.core.http.WebSocketClientOptions.class;
         case "clientsubprotocols":
         case "clientSubProtocols": return java.lang.String.class;
+        case "connectmessage":
+        case "connectMessage": return java.lang.String.class;
         case "consumeasclient":
         case "consumeAsClient": return boolean.class;
         case "exceptionhandler":
@@ -129,6 +133,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": return target.getConfiguration().getClientOptions();
         case "clientsubprotocols":
         case "clientSubProtocols": return target.getConfiguration().getClientSubProtocols();
+        case "connectmessage":
+        case "connectMessage": return target.getConfiguration().getConnectMessage();
         case "consumeasclient":
         case "consumeAsClient": return target.getConfiguration().isConsumeAsClient();
         case "exceptionhandler":

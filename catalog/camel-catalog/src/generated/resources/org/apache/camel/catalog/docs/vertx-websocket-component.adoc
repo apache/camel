@@ -119,6 +119,22 @@ YAML::
 ----
 ====
 
+Some servers only send messages to a client that asked for them, such as a feed that needs a subscribe request. Set
+`connectMessage` to the text to send each time the consumer connects: when it starts and after each reconnect.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: vertx-websocket:my.websocket.com:8080/feed
+      parameters:
+        consumeAsClient: true
+        connectMessage: '{"op":"subscribe","channel":"prices"}'
+      steps:
+        - log:
+            message: "Got WebSocket message ${body}"
+----
+
 === Path & query parameters
 
 The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
