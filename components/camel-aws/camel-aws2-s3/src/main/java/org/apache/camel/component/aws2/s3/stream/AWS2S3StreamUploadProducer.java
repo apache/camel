@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -36,12 +37,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Endpoint;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -75,6 +79,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
     // the number of timestamp windows whose completed uploads are counted
     private static final int MAX_COUNTED_WINDOWS = 10000;
+    // the runs of the timeout task that try to upload the buffered data of an upload before it is given up
+    private static final int TIMEOUT_FLUSH_ATTEMPTS = 3;
     private AtomicInteger part = new AtomicInteger();
     private UploadState uploadAggregate = null;
     private final Map<Long, UploadState> timestampBasedUploads = new ConcurrentHashMap<>();
@@ -153,13 +159,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         public void run() {
             lock.lock();
             try {
-                if (ObjectHelper.isNotEmpty(uploadAggregate)) {
-                    try {
-                        uploadPart(uploadAggregate);
-                        completeUpload(uploadAggregate);
-                    } catch (Exception e) {
-                        LOG.warn("Error during timeout-triggered upload flush for {}", uploadAggregate.dynamicKeyName, e);
-                    }
+                if (ObjectHelper.isNotEmpty(uploadAggregate) && flushOnTimeout(uploadAggregate) != TimeoutFlush.KEPT) {
                     uploadAggregate = null;
                 }
 
@@ -169,14 +169,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
                         UploadState state = entry.getValue();
                         if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
-                            try {
-                                uploadPart(state);
-                                completeUpload(state);
+                            TimeoutFlush flush = flushOnTimeout(state);
+                            if (flush == TimeoutFlush.COMPLETED) {
                                 completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
-                            } catch (Exception e) {
-                                LOG.warn("Error during timeout-triggered upload flush for {}", state.dynamicKeyName, e);
                             }
-                            keysToRemove.add(entry.getKey());
+                            if (flush != TimeoutFlush.KEPT) {
+                                keysToRemove.add(entry.getKey());
+                            }
                         }
                     }
                     keysToRemove.forEach(timestampBasedUploads::remove);
@@ -184,6 +183,72 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             } finally {
                 lock.unlock();
             }
+        }
+    }
+
+    private enum TimeoutFlush {
+        COMPLETED,
+        KEPT,
+        LOST
+    }
+
+    /**
+     * Uploads and completes an upload when the streamingUploadTimeout runs. The exchanges of the buffered data have
+     * already returned success, so a failure does not drop the data: when uploading it fails, it stays buffered in the
+     * open upload, and the next run of the timeout task (or the next exchange) uploads it again. When the upload of the
+     * data failed in {@link #TIMEOUT_FLUSH_ATTEMPTS} runs, the multipart upload is aborted. When the data is lost this
+     * way, or because completing the upload failed (which aborts it), the failure goes to the exception handler.
+     */
+    private TimeoutFlush flushOnTimeout(UploadState state) {
+        try {
+            uploadPart(state);
+        } catch (Exception e) {
+            state.failedTimeoutFlushes++;
+            if (state.failedTimeoutFlushes < TIMEOUT_FLUSH_ATTEMPTS) {
+                LOG.warn("Uploading the data buffered for {} when the streamingUploadTimeout ran out failed (attempt {} of {})."
+                         + " The data stays buffered and the next run of the timeout uploads it again: {}",
+                        state.dynamicKeyName, state.failedTimeoutFlushes, TIMEOUT_FLUSH_ATTEMPTS, e.toString());
+                LOG.debug("Uploading the data buffered for {} failed", state.dynamicKeyName, e);
+                return TimeoutFlush.KEPT;
+            }
+            abortUpload(state);
+            lostOnTimeout(state, "uploading it failed " + TIMEOUT_FLUSH_ATTEMPTS + " times and the upload was aborted", e);
+            return TimeoutFlush.LOST;
+        }
+        try {
+            completeUpload(state);
+            return TimeoutFlush.COMPLETED;
+        } catch (Exception e) {
+            lostOnTimeout(state, "completing the upload failed and the upload was aborted", e);
+            return TimeoutFlush.LOST;
+        }
+    }
+
+    private void lostOnTimeout(UploadState state, String reason, Exception cause) {
+        String message = "The data of " + state.index + " exchange(s) buffered for " + state.dynamicKeyName
+                         + " (multipart upload " + state.initResponse.uploadId() + ") was not stored when the"
+                         + " streamingUploadTimeout ran out: " + reason;
+        ExceptionHandler handler = getEndpoint().getExceptionHandler();
+        if (handler == null) {
+            handler = new LoggingExceptionHandler(getEndpoint().getCamelContext(), getClass(), LoggingLevel.ERROR);
+        }
+        try {
+            handler.handleException(message, cause);
+        } catch (Exception e) {
+            // the timeout task must keep running (CAMEL-24195), so a failing handler only gets the loss logged
+            LOG.error("{} (the exceptionHandler of the endpoint failed: {})", message, e.toString(), cause);
+        }
+    }
+
+    private void abortUpload(UploadState state) {
+        try {
+            getEndpoint().getS3Client()
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                            .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+        } catch (Exception e) {
+            LOG.warn("Aborting the multipart upload {} of {} failed: {}", state.initResponse.uploadId(), state.dynamicKeyName,
+                    e.toString());
+            LOG.debug("Aborting the multipart upload {} failed", state.initResponse.uploadId(), e);
         }
     }
 
@@ -209,6 +274,20 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     }
 
     private void writeWithoutTimestampGrouping(final Exchange exchange, final InputStream is) throws Exception {
+        // the open upload before this exchange, to take the exchange out of it again when the exchange fails
+        AggregateMark mark = uploadAggregate != null ? new AggregateMark(uploadAggregate) : null;
+        try {
+            appendWithoutTimestampGrouping(exchange, is, mark);
+        } catch (Exception e) {
+            if (mark != null && uploadAggregate == mark.state) {
+                mark.restore();
+            }
+            throw e;
+        }
+    }
+
+    private void appendWithoutTimestampGrouping(final Exchange exchange, final InputStream is, final AggregateMark mark)
+            throws Exception {
         UploadState state = null;
         int totalSize = 0;
         byte[] b;
@@ -229,6 +308,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 uploadAggregate.buffer.write(b);
                 if (getConfiguration().isMultiPartUpload() &&
                         uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
+                    if (mark != null) {
+                        mark.beforeUploadPart();
+                    }
                     uploadPart(uploadAggregate);
                     maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     continue;
@@ -510,6 +592,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         state.completedParts.add(partUpload);
         state.buffer.reset();
         state.multipartIndex++;
+        // the data that failed timeout runs kept is uploaded: count the failed runs again from here
+        state.failedTimeoutFlushes = 0;
     }
 
     private String fileNameToUpload(
@@ -739,10 +823,55 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The open upload as it was before an exchange was added to it. When the exchange fails, {@link #restore()} takes
+     * the data of the exchange out of the upload again: the exchange is redelivered (or reported as failed), so it must
+     * not be stored by a later upload of the data buffered before it.
+     */
+    private static final class AggregateMark {
+        private final UploadState state;
+        private final int index;
+        private final int bufferSize;
+        private final int completedParts;
+        private final int multipartIndex;
+        private final int failedTimeoutFlushes;
+        // the data buffered before the exchange, once a part with it was uploaded during the exchange
+        private byte[] buffered;
+
+        AggregateMark(UploadState state) {
+            this.state = state;
+            this.index = state.index;
+            this.bufferSize = state.buffer.size();
+            this.completedParts = state.completedParts.size();
+            this.multipartIndex = state.multipartIndex;
+            this.failedTimeoutFlushes = state.failedTimeoutFlushes;
+        }
+
+        void beforeUploadPart() {
+            if (buffered == null) {
+                buffered = Arrays.copyOf(state.buffer.toByteArray(), bufferSize);
+            }
+        }
+
+        void restore() {
+            // a part uploaded again replaces the part with the same number, and the parts after the restored ones are
+            // not completed, so S3 discards them
+            byte[] data = buffered != null ? buffered : Arrays.copyOf(state.buffer.toByteArray(), bufferSize);
+            state.buffer.reset();
+            state.buffer.write(data, 0, data.length);
+            state.completedParts.subList(completedParts, state.completedParts.size()).clear();
+            state.multipartIndex = multipartIndex;
+            state.index = index;
+            state.failedTimeoutFlushes = failedTimeoutFlushes;
+        }
+    }
+
     private class UploadState {
         int index;
         int multipartIndex;
         int part;
+        // the runs of the timeout task that failed to upload the buffered data
+        int failedTimeoutFlushes;
         List<CompletedPart> completedParts = new ArrayList<>();
         ByteArrayOutputStream buffer;
         String dynamicKeyName;

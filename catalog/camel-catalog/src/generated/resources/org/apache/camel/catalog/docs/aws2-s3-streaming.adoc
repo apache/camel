@@ -82,6 +82,17 @@ from(kafka("topic1").brokers("localhost:9092"))
 
 In this case, the upload will be completed after 10 seconds.
 
+The exchanges whose data is buffered have already returned success when the timeout runs, so a failure of the timeout
+upload does not drop the data. When uploading the buffered data fails, it stays buffered and the next run of the
+timeout (or the next exchange) uploads it again. After three runs that failed to upload it, or when completing the
+upload fails, the multipart upload is aborted and the data is lost: the failure, naming the object and the number of
+exchanges, goes to the `exceptionHandler` of the endpoint when one is set, and is logged at ERROR level otherwise.
+
+Without `timestampGroupingEnabled`, when an exchange fails (for example because uploading a part failed), its data is
+taken out of the upload again: the data buffered before it stays, and a redelivery of the exchange does not store its
+data twice. This does not apply to the data of an exchange that already completed an object before the exchange failed
+(an exchange larger than the batch): that object stays.
+
 === Timestamp Grouping
 
 The streaming upload mode also supports timestamp-based file grouping, which allows messages to be automatically grouped into time windows and written to the same S3 file based on their timestamps. This feature enables append-like behavior where messages with timestamps falling within the same time window are combined into a single file.
