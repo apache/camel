@@ -51,6 +51,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -1554,6 +1555,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             leaveStepwiseDirectory();
             workingDirectory = null;
             return client;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Runs the check, such as the noop of the producer health check, unless another thread holds the lock, such as an
+     * upload, which holds it for the whole transfer. The check runs with the lock held, so an upload that starts
+     * meanwhile waits for it.
+     */
+    @Override
+    public boolean runIfIdle(ThrowingRunnable<Exception> check) throws Exception {
+        if (!lock.tryLock()) {
+            return false;
+        }
+        try {
+            check.run();
+            return true;
         } finally {
             lock.unlock();
         }

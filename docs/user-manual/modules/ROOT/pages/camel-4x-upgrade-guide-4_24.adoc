@@ -687,6 +687,16 @@ directory than the one it lists. A backslash is a valid character in the name of
 poll such a directory, set `stepwise=false`. With `handleDirectoryParserAbsoluteResult=true`, a backslash always
 separates names, so such a directory cannot be polled.
 
+=== camel-ftp, camel-sftp - the producer health check does not wait for an upload
+
+The health check of an ftp, ftps or sftp producer (producer health checks are off by default and are turned on with
+`camel.health.producersEnabled=true`) no longer waits while the producer uses its connection, such as for an upload.
+It waited for the whole upload before it sent its `NOOP`, so a readiness probe could time out during a long but
+healthy upload. While the connection is in use, the check now reports the state that its last check of the connection
+found (`UP` before the first one), with the detail `busy` set to `true`. The next call sends the `NOOP` again when the
+connection is no longer in use. An upload that hangs is reported the same way until it fails, so the check does not
+turn `DOWN` while it hangs (before, the readiness call waited for it).
+
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
