@@ -368,9 +368,9 @@ public class RouteDiagramWidget implements Widget {
             col += end.countWidth() > 0 ? end.countWidth() + 2 : 0;
         }
         var info = end.to().treeNode.info;
-        String text = BodyTypes.fit(info.bodyTypes, info.bodyKinds, room(row, col));
+        String text = BodyTypes.fit(info.bodyTypes, info.bodyKinds, info.bodyFormats, room(row, col));
         if (!text.isEmpty()) {
-            writeText(buffer, area, row, col, text, BodyTypes.style(info.bodyKinds));
+            writeText(buffer, area, row, col, text, BodyTypes.style(info.bodyKinds, info.bodyFormats));
         }
     }
 
@@ -480,7 +480,8 @@ public class RouteDiagramWidget implements Widget {
             // the body types beside the arrows can be scrolled to: as wide as they are before something cuts them
             for (LayoutNode ln : layoutRoute.nodes) {
                 if (!ln.tableRow && ln.treeNode != null && !ln.treeNode.info.bodyTypes.isEmpty()) {
-                    int label = CharWidth.of(BodyTypes.label(ln.treeNode.info.bodyTypes, ln.treeNode.info.bodyKinds));
+                    int label = CharWidth.of(BodyTypes.label(ln.treeNode.info.bodyTypes, ln.treeNode.info.bodyKinds,
+                            ln.treeNode.info.bodyFormats));
                     cols = Math.max(cols, centerCol(ln) + 2 + COUNT_WIDTH + Math.min(MAX_BODY_TYPES_WIDTH, label) + 2);
                 }
             }
@@ -567,8 +568,9 @@ public class RouteDiagramWidget implements Widget {
             }
         }
 
-        if (bodyKindMarks && node.treeNode != null && BodyTypes.mixed(node.treeNode.info.bodyKinds)) {
-            // bodies of more than one kind reach the step: it needs attention
+        if (bodyKindMarks && node.treeNode != null
+                && BodyTypes.marked(node.treeNode.info.bodyKinds, node.treeNode.info.bodyFormats)) {
+            // bodies of more than one kind, or payloads of more than one format, reach the step: it needs attention
             writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
         }
         if (stuck != null) {

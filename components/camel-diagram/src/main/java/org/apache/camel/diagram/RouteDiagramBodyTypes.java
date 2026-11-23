@@ -22,8 +22,9 @@ import java.util.StringJoiner;
 
 /**
  * The label of the body types a step has been reached with, on the arrow into the step of a route diagram image: their
- * simple class names, and their kinds (null, payload, data or collection) when there is more than one kind, which is
- * what needs attention. The same words as the diagram of the Camel CLI terminal UI.
+ * simple class names, the formats of the payloads from their Content-Type ({@code byte[] · json}), and their kinds
+ * (null, payload, data or collection) when there is more than one kind, which is what needs attention. The same words
+ * as the diagram of the Camel CLI terminal UI.
  */
 final class RouteDiagramBodyTypes {
 
@@ -33,6 +34,18 @@ final class RouteDiagramBodyTypes {
     /** Whether the bodies were of more than one kind: a step that needs attention. */
     static boolean mixed(List<String> kinds) {
         return kinds != null && kinds.size() > 1;
+    }
+
+    /**
+     * Whether the step is marked: bodies of more than one kind, or payloads of more than one format (json and xml).
+     */
+    static boolean marked(List<String> kinds, List<String> formats) {
+        return mixed(kinds) || formats != null && formats.size() > 1;
+    }
+
+    /** The formats after the types: " · json", " · xml | csv", or empty when there is none. */
+    static String formats(List<String> formats) {
+        return formats == null || formats.isEmpty() ? "" : " · " + String.join(" | ", formats);
     }
 
     /** The simple class name of a type: LinkedHashMap, byte[]. */
@@ -58,25 +71,29 @@ final class RouteDiagramBodyTypes {
     }
 
     /**
-     * The label in at most the width, the most that fits of: all the types with their kinds when there is more than one
-     * kind, all the types, the first ones and how many more ({@code byte[] +1}), the first one cut and how many more.
-     * Empty when the step has not been reached.
+     * The label in at most the width, the most that fits of: all the types with their formats and with their kinds when
+     * there is more than one kind, all the types with their formats, the first ones and how many more with the formats
+     * ({@code byte[] +1 · json}), the same without the formats, the first one cut and how many more. Empty when the
+     * step has not been reached.
      */
-    static String fit(List<String> types, List<String> kinds, FontMetrics fm, int width) {
+    static String fit(List<String> types, List<String> kinds, List<String> formats, FontMetrics fm, int width) {
         if (types == null || types.isEmpty() || width <= 0) {
             return "";
         }
+        String suffix = formats(formats);
         if (mixed(kinds)) {
-            String all = names(types) + " (" + kinds(kinds) + ")";
+            String all = names(types) + suffix + " (" + kinds(kinds) + ")";
             if (fm.stringWidth(all) <= width) {
                 return all;
             }
         }
-        for (int n = types.size(); n >= 1; n--) {
-            String more = n < types.size() ? " +" + (types.size() - n) : "";
-            String text = names(types.subList(0, n)) + more;
-            if (fm.stringWidth(text) <= width) {
-                return text;
+        for (String end : suffix.isEmpty() ? List.of("") : List.of(suffix, "")) {
+            for (int n = types.size(); n >= 1; n--) {
+                String more = n < types.size() ? " +" + (types.size() - n) : "";
+                String text = names(types.subList(0, n)) + more + end;
+                if (fm.stringWidth(text) <= width) {
+                    return text;
+                }
             }
         }
         String more = types.size() > 1 ? " +" + (types.size() - 1) : "";

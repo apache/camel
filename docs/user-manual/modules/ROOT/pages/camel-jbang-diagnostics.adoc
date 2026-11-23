@@ -256,7 +256,13 @@ have been reached with more than one body type:
 camel cmd route-structure myApp --varied
 ----
 
-The JSON output (`--json`) has the types and kinds of each step as `bodyTypes` and `bodyKinds`. The route console of a
+When a payload (text, bytes, a stream or a file) has a `Content-Type` header, its format follows the type, by the names
+of the catalog: `json`, `xml`, `csv`, `yaml`, `text` or `binary`, or the media type as it is for any other. For
+example `body: byte[] · json` after a Kamelet with the `json` data type, where the type alone does not tell what the
+bytes hold. A step reached with more than one format, such as `body: String · xml | csv`, is shown by `--varied` too.
+
+The JSON output (`--json`) has the types, kinds and formats of each step as `bodyTypes`, `bodyKinds` and
+`bodyFormats`. The route console of a
 running integration counts them per route: `variedBodyTypes` and `mixedBodyKinds` (the steps that need attention). See
 xref:components:eips:message-history.adoc[Message History] for what the kinds mean.
 

@@ -46,14 +46,19 @@ class SourceLiveColumn {
 
     /**
      * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
-     * mean processing time; and the body types they have been reached with, mixed when one of them was reached with
-     * bodies of more than one kind.
+     * mean processing time; and the body types they have been reached with and the formats of the payloads, mixed when
+     * one of them was reached with bodies of more than one kind or payloads of more than one format.
      */
     record LiveLine(long total, long failed, long meanMillis, List<String> bodyTypes, List<String> bodyKinds,
-            boolean mixed) {
+            List<String> bodyFormats, boolean mixed) {
 
         LiveLine(long total, long failed, long meanMillis) {
-            this(total, failed, meanMillis, List.of(), List.of(), false);
+            this(total, failed, meanMillis, List.of(), List.of(), List.of(), false);
+        }
+
+        LiveLine(long total, long failed, long meanMillis, List<String> bodyTypes, List<String> bodyKinds,
+                 boolean mixed) {
+            this(total, failed, meanMillis, bodyTypes, bodyKinds, List.of(), mixed);
         }
     }
 
@@ -216,7 +221,8 @@ class SourceLiveColumn {
             width += CharWidth.of(span.content());
         }
         int pad = Math.max(2, bodyTypesAlign - width);
-        String text = BodyTypes.fit(live.bodyTypes(), live.mixed() ? live.bodyKinds() : List.of(), rightEdge - width - pad);
+        String text = BodyTypes.fit(live.bodyTypes(), live.mixed() ? live.bodyKinds() : List.of(), live.bodyFormats(),
+                live.mixed(), rightEdge - width - pad);
         if (text.isEmpty()) {
             return;
         }
@@ -235,13 +241,23 @@ class SourceLiveColumn {
         if (live == null || live.bodyTypes().isEmpty()) {
             return null;
         }
-        if (live.mixed()) {
-            return SourceViewer.DocEntry.withTitle("Body types", BodyTypes.names(live.bodyTypes()) + "   " + BodyTypes.MARK
+        String names = BodyTypes.names(live.bodyTypes(), live.bodyFormats());
+        if (BodyTypes.mixed(live.bodyKinds()) && live.mixed()) {
+            return SourceViewer.DocEntry.withTitle("Body types", names + "   " + BodyTypes.MARK
                                                                  + " " + BodyTypes.kinds(live.bodyKinds())
                                                                  + ": the body here depends on the path a message takes");
         }
-        String title = live.bodyKinds().size() == 1 ? "Body types (" + live.bodyKinds().get(0) + ")" : "Body types";
-        return SourceViewer.DocEntry.withTitle(title, BodyTypes.names(live.bodyTypes()));
+        if (live.mixed()) {
+            // one kind, but payloads of more than one format (CAMEL-27468)
+            return SourceViewer.DocEntry.withTitle(title(live), names + "   " + BodyTypes.MARK
+                                                                + " " + BodyTypes.and(live.bodyFormats())
+                                                                + ": the format here depends on the message");
+        }
+        return SourceViewer.DocEntry.withTitle(title(live), names);
+    }
+
+    private static String title(LiveLine live) {
+        return live.bodyKinds().size() == 1 ? "Body types (" + live.bodyKinds().get(0) + ")" : "Body types";
     }
 
     /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */

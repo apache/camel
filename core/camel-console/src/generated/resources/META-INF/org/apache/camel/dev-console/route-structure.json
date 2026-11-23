@@ -155,6 +155,13 @@
                     },
                     "description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)"
                   },
+                  "bodyFormats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The formats of the payloads this processor has been reached with, from their Content-Type header, in the order first seen: json, xml, csv, yaml, text or binary, or the media type as it is for any other. More than one means the format varied (only present when the message history recorded a payload with a Content-Type)"
+                  },
                   "statistics": {
                     "type": "object",
                     "additionalProperties": true,

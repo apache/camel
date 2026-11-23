@@ -63,6 +63,10 @@ end of its line, dimmed and lined up. A step reached with bodies of more than on
 types and kinds are in the warning color. The quick documentation of the line lists all the types, which the end of the
 line cuts to the room there is.
 
+A payload (text, bytes, a stream or a file) with a `Content-Type` header has its format after its type, by the names
+of the catalog: `byte[] · json` (`json`, `xml`, `csv`, `yaml`, `text`, `binary`, or the media type as it is). A step
+reached with more than one format, such as `⚠ String · xml | csv`, is marked as a step of more than one kind is.
+
 image::jbang/camel-tui-source-body-types.png[The orders route in the source view: the steps after the choice are reached with a map and a stream, as only one branch marshals, so they have a warning in the gutter, and the quick documentation of the selected line says why]
 
 The same body types are in the Routes and Diagram tabs (see

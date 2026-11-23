@@ -75,7 +75,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
 
         assertEquals(0, exit);
         String out = printer.getOutput();
-        assertTrue(out.contains("body: GenericFile"), out);
+        // the format of the payload, from its Content-Type
+        assertTrue(out.contains("body: GenericFile · json"), out);
         // a step reached with a Map by some messages and with a text by others shows both, and their kinds
         assertTrue(out.contains("body: LinkedHashMap | String (data and payload)"), out);
         // two types of one kind are dynamic, but need no attention
@@ -167,13 +168,37 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testBodyTypesBySimpleNames() {
         assertEquals("String | byte[] | String[]",
                 CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "byte[]", "java.lang.String[]"),
-                        List.of("payload")));
+                        List.of("payload"), null));
         assertEquals("null | String | LinkedHashMap (null, payload and data)",
                 CamelRouteStructureAction.bodyTypes(List.of("null", "java.lang.String", "java.util.LinkedHashMap"),
-                        List.of("null", "payload", "data")));
+                        List.of("null", "payload", "data"), null));
         // an older Camel says no kinds
         assertEquals("String | LinkedHashMap",
-                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"), null));
+                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"), null, null));
+    }
+
+    @Test
+    void testBodyTypesWithTheFormats() {
+        // the formats of the payloads, from their Content-Type (CAMEL-27468)
+        assertEquals("byte[] · json",
+                CamelRouteStructureAction.bodyTypes(List.of("byte[]"), List.of("payload"), List.of("json")));
+        assertEquals("String | LinkedHashMap · xml | csv (payload and data)",
+                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"),
+                        List.of("payload", "data"), List.of("xml", "csv")));
+    }
+
+    @Test
+    void testOnlyVariedKeepsAStepOfMoreThanOneFormat() {
+        JsonObject line = codeLine(5, "to", "to1", 1, "to[http://stock]", List.of("byte[]"), List.of("payload"));
+        line.put("bodyFormats", new JsonArray(List.of("json", "xml")));
+        JsonObject route = new JsonObject();
+        route.put("routeId", "orders");
+        route.put("code", new JsonArray(List.of(line)));
+        JsonObject response = new JsonObject();
+        response.put("routes", new JsonArray(List.of(route)));
+
+        JsonArray routes = CamelRouteStructureAction.onlyVaried(response).getCollection("routes");
+        assertEquals(1, routes.size());
     }
 
     @Test
@@ -312,8 +337,10 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
         JsonArray codeLines = new JsonArray();
         codeLines.add(codeLine(1, "route", "orders", 0, "route[orders]", null, null));
         codeLines.add(codeLine(2, "from", "orders", 1, "from[file:inbox]", null, null));
-        codeLines.add(codeLine(5, "unmarshal", "unmarshal1", 2, "unmarshal[json]",
-                List.of("org.apache.camel.component.file.GenericFile"), List.of("payload")));
+        JsonObject unmarshal = codeLine(5, "unmarshal", "unmarshal1", 2, "unmarshal[json]",
+                List.of("org.apache.camel.component.file.GenericFile"), List.of("payload"));
+        unmarshal.put("bodyFormats", new JsonArray(List.of("json")));
+        codeLines.add(unmarshal);
         codeLines.add(codeLine(8, "to", "to1", 2, "to[http://stock/api/reserve]",
                 List.of("java.util.LinkedHashMap", "java.lang.String"), List.of("data", "payload")));
         codeLines.add(codeLine(11, "log", "log1", 2, "log[${body}]",

@@ -85,6 +85,33 @@ public class DefaultBodyTypeRegistryTest {
     }
 
     @Test
+    public void testDistinctFormatsInTheOrderFirstSeen() {
+        DefaultBodyTypeRegistry registry = new DefaultBodyTypeRegistry();
+        assertTrue(registry.getBodyFormats("orders", "to1").isEmpty());
+
+        registry.addBodyType("orders", "to1", "byte[]", PAYLOAD);
+        registry.addBodyFormat("orders", "to1", "json");
+        registry.addBodyFormat("orders", "to1", "json");
+        registry.addBodyFormat("orders", "to1", "xml");
+        registry.addBodyFormat("orders", "to1", null);
+
+        assertEquals(List.of("json", "xml"), registry.getBodyFormats("orders", "to1"));
+        assertTrue(registry.getBodyFormats("orders", "to2").isEmpty());
+    }
+
+    @Test
+    public void testANodeKeepsTheFirstFewFormats() {
+        DefaultBodyTypeRegistry registry = new DefaultBodyTypeRegistry();
+        for (int i = 0; i < DefaultBodyTypeRegistry.MAX_FORMATS_PER_NODE + 5; i++) {
+            registry.addBodyFormat("orders", "to1", "application/x-" + i);
+        }
+
+        List<String> formats = registry.getBodyFormats("orders", "to1");
+        assertEquals(DefaultBodyTypeRegistry.MAX_FORMATS_PER_NODE, formats.size());
+        assertEquals("application/x-0", formats.get(0));
+    }
+
+    @Test
     public void testRemoveRouteAndClear() {
         DefaultBodyTypeRegistry registry = new DefaultBodyTypeRegistry();
         registry.addBodyType("orders", "to1", "java.lang.String", PAYLOAD);

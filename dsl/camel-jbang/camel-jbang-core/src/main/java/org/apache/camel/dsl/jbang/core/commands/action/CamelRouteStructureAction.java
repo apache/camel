@@ -90,7 +90,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     boolean jsonOutput;
 
     @Option(name = "varied", hasValue = false,
-            description = "To show only the steps that have been reached with more than one body type, as the"
+            description = "To show only the steps that have been reached with more than one body type or format, as the"
                           + " running integration has seen them (the message history records them, such as"
                           + " with camel run --dev)")
     boolean varied;
@@ -207,6 +207,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     code.description = line.getString("description");
                     code.bodyTypes = line.getCollection("bodyTypes");
                     code.bodyKinds = line.getCollection("bodyKinds");
+                    code.bodyFormats = line.getCollection("bodyFormats");
                     if (brief) {
                         // make code brief
                         code.code = StringHelper.before(code.code, "[", code.code);
@@ -309,7 +310,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 } else {
                     String text = pad + c;
                     if (width > 0 && code.bodyTypes != null && !code.bodyTypes.isEmpty()) {
-                        text = String.format("%-" + width + "s   body: %s", text, bodyTypes(code.bodyTypes, code.bodyKinds));
+                        text = String.format("%-" + width + "s   body: %s", text,
+                                bodyTypes(code.bodyTypes, code.bodyKinds, code.bodyFormats));
                     }
                     if (code.line != -1) {
                         printer().printf("%4d: %s%n", code.line, text);
@@ -328,15 +330,19 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
 
     /**
      * The body types by their simple class names, such as {@code String | LinkedHashMap} for a step reached with a text
-     * by some messages and with a Map by others, followed by the kinds when there is more than one:
+     * by some messages and with a Map by others, followed by the formats of the payloads from their Content-Type
+     * ({@code byte[] · json}), and by the kinds when there is more than one:
      * {@code String | LinkedHashMap (payload and data)}, a step that needs attention.
      */
-    static String bodyTypes(List<String> types, List<String> kinds) {
+    static String bodyTypes(List<String> types, List<String> kinds, List<String> formats) {
         StringJoiner sj = new StringJoiner(" | ");
         for (String type : types) {
             sj.add(StringHelper.afterLast(type, ".", type));
         }
         String answer = sj.toString();
+        if (formats != null && !formats.isEmpty()) {
+            answer += " · " + String.join(" | ", formats);
+        }
         if (kinds != null && kinds.size() > 1) {
             answer += " (" + String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1)
                       + ")";
@@ -345,8 +351,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     }
 
     /**
-     * Only the steps that have been reached with more than one body type, and the routes that have such steps: what is
-     * dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
+     * Only the steps that have been reached with more than one body type or more than one format, and the routes that
+     * have such steps: what is dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
      */
     public static JsonObject onlyVaried(JsonObject jo) {
         JsonArray routes = new JsonArray();
@@ -359,7 +365,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 if (lines != null) {
                     for (JsonObject line : lines) {
                         List<String> types = line.getCollection("bodyTypes");
-                        if (types != null && types.size() > 1) {
+                        List<String> formats = line.getCollection("bodyFormats");
+                        if (types != null && types.size() > 1 || formats != null && formats.size() > 1) {
                             code.add(line);
                         }
                     }
@@ -426,5 +433,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         String description;
         List<String> bodyTypes;
         List<String> bodyKinds;
+        List<String> bodyFormats;
     }
 }

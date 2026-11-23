@@ -93,6 +93,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             @Metadata(description = "The destination URI, for processors that send to a destination (only present when applicable)") String uri,
             @Metadata(description = "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)") List<String> bodyTypes,
             @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)") List<String> bodyKinds,
+            @Metadata(description = "The formats of the payloads this processor has been reached with, from their Content-Type header, in the order first seen: json, xml, csv, yaml, text or binary, or the media type as it is for any other. More than one means the format varied (only present when the message history recorded a payload with a Content-Type)") List<String> bodyFormats,
             @Metadata(description = "Runtime statistics") Statistics statistics) {
     }
 
@@ -344,19 +345,23 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             // the body types the processor has been reached with (CAMEL-25750)
             List<String> bodyTypes = null;
             List<String> bodyKinds = null;
+            List<String> bodyFormats = null;
             if (registry != null && mp.getRouteId() != null && mp.getProcessorId() != null) {
                 List<String> types = registry.getBodyTypes(mp.getRouteId(), mp.getProcessorId());
                 if (!types.isEmpty()) {
                     bodyTypes = types;
                     bodyKinds = RouteStructureDevConsole.kindNames(
                             registry.getBodyKinds(mp.getRouteId(), mp.getProcessorId()));
+                    List<String> formats = registry.getBodyFormats(mp.getRouteId(), mp.getProcessorId());
+                    bodyFormats = formats.isEmpty() ? null : formats;
                 }
             }
 
             list.add(new ProcessorEntry(
                     mp.getRouteId(), mp.getProcessorId(), mp.getNodePrefixId(), mp.getDescription(), mp.getNote(),
                     source, mp.getState(), mp.getDisabled(), mp.getStepId(), code.isEmpty() ? null : code,
-                    mp.getProcessorName(), mp.getLevel(), destination, bodyTypes, bodyKinds, buildStatistics(mp)));
+                    mp.getProcessorName(), mp.getLevel(), destination, bodyTypes, bodyKinds, bodyFormats,
+                    buildStatistics(mp)));
         }
     }
 

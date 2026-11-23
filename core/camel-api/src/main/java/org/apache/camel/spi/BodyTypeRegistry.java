@@ -28,6 +28,10 @@ import java.util.Map;
  * route: also in a branch the last exchange did not take, and with all the types when they varied, such as after a
  * processor that sets a text for some messages and a Map for others.
  * <p>
+ * The registry also keeps the formats of the payloads, from the {@code Content-Type} header the node was reached with,
+ * as the catalog names them: a {@code byte[]} or a stream can hold JSON, XML, CSV or a PDF, which the type alone does
+ * not tell.
+ * <p>
  * Each type also has its {@link Kind}. A node reached with bodies of more than one kind needs attention: a step that
  * writes or sends fails for the data, and a step that reads fields fails for the payload. Types of one kind, such as a
  * String and a byte[], are a part of the route that is dynamic, which the steps after it usually handle.
@@ -112,6 +116,30 @@ public interface BodyTypeRegistry {
      *                 the kind (or only with types beyond the first few)
      */
     List<String> getBodyTypes(String routeId, String nodeId, Kind kind);
+
+    /**
+     * Records that a node was reached with a payload of the given format, as the {@code Content-Type} header named it.
+     *
+     * @param routeId the id of the route the node belongs to
+     * @param nodeId  the id of the node
+     * @param format  the format, by the names of the catalog: json, xml, csv, yaml, text or binary, or the media type
+     *                as it is for any other, as given by {@code BodyFacts.formatOf} of camel-support
+     */
+    void addBodyFormat(String routeId, String nodeId, String format);
+
+    /**
+     * The formats of the payloads the node has been reached with, from their {@code Content-Type} header, in the order
+     * they were first seen: json, xml, csv, yaml, text or binary (the names of the catalog), or the media type as it is
+     * for any other. More than one means the format varied between exchanges. Only a payload (text, bytes, a stream or
+     * a file) has a format: a {@code Content-Type} that is left on data, such as after an unmarshal, is not about the
+     * body any more. A node keeps the first few distinct formats only.
+     *
+     * @param  routeId the id of the route the node belongs to
+     * @param  nodeId  the id of the node
+     * @return         the formats, or an empty list when no exchange has reached the node with a payload that had a
+     *                 {@code Content-Type} since its route was added
+     */
+    List<String> getBodyFormats(String routeId, String nodeId);
 
     /**
      * The body types of every node of the route that an exchange has reached.

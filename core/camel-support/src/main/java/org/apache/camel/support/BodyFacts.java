@@ -162,6 +162,12 @@ public final class BodyFacts {
     /** At most this many keys of a Map are listed. */
     private static final int MAX_KEYS = 20;
 
+    /** The longest media type kept as a format: the names of real ones are short, the value comes from the message. */
+    private static final int MAX_MEDIA_TYPE_LENGTH = 64;
+
+    /** The longest Content-Type that is parsed for its format, parameters such as the charset included. */
+    private static final int MAX_CONTENT_TYPE_LENGTH = 256;
+
     /** The usual data formats, named when nothing names the one of the payload. */
     private static final String USUAL_UNMARSHAL = "unmarshal: json, unmarshal: jacksonXml or unmarshal: csv";
     private static final String USUAL_MARSHAL = "marshal: json, marshal: jacksonXml or marshal: csv";
@@ -218,6 +224,75 @@ public final class BodyFacts {
             return "yaml";
         }
         return null;
+    }
+
+    /**
+     * The format of a payload from its {@code Content-Type}, by the names of the catalog and of the Kamelet data types
+     * (CAMEL-27468): json for application/json and the +json types, xml for application/xml, text/xml and the +xml
+     * types, csv for text/csv, yaml for application/yaml, text for the other text types, and binary for
+     * application/octet-stream. Any other media type is given as it is, without its parameters and in lower case.
+     *
+     * @param  contentType the value of the {@code Content-Type} header, or null
+     * @return             the format, or null when there is no Content-Type or it is not a media type
+     */
+    public static String formatOf(Object contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String value = contentType.toString();
+        // the ones the Kamelet data types and most components set, as they write them: no parsing for every message
+        switch (value) {
+            case "application/json":
+                return "json";
+            case "application/xml", "text/xml":
+                return "xml";
+            case "text/plain":
+                return "text";
+            case "application/octet-stream":
+                return "binary";
+            default:
+                break;
+        }
+        if (value.length() > MAX_CONTENT_TYPE_LENGTH) {
+            // the value comes from the message: no parsing of a long one for every node it reaches
+            return null;
+        }
+        String type = StringHelper.before(value, ";", value).trim().toLowerCase(Locale.ROOT);
+        int slash = type.indexOf('/');
+        if (slash <= 0 || slash == type.length() - 1 || type.length() > MAX_MEDIA_TYPE_LENGTH || !isMediaType(type)) {
+            // the value comes from the message: show only what is a media type
+            return null;
+        }
+        String subtype = type.substring(slash + 1);
+        if (subtype.equals("json") || subtype.endsWith("+json")) {
+            return "json";
+        } else if (subtype.equals("xml") || subtype.endsWith("+xml")) {
+            return "xml";
+        } else if (subtype.equals("csv")) {
+            return "csv";
+        } else if (subtype.equals("yaml") || subtype.equals("x-yaml") || subtype.endsWith("+yaml")) {
+            return "yaml";
+        } else if (type.startsWith("text/")) {
+            return "text";
+        } else if (type.equals("application/octet-stream")) {
+            return "binary";
+        }
+        return type;
+    }
+
+    /**
+     * Whether a type/subtype has only the characters a media type has (RFC 6838), such as no spaces or control
+     * characters.
+     */
+    private static boolean isMediaType(String type) {
+        for (int i = 0; i < type.length(); i++) {
+            char ch = type.charAt(i);
+            boolean ok = ch >= 'a' && ch <= 'z' || ch >= '0' && ch <= '9' || ch == '/' || "!#$&-^_.+".indexOf(ch) >= 0;
+            if (!ok) {
+                return false;
+            }
+        }
+        return type.indexOf('/') == type.lastIndexOf('/');
     }
 
     /**
