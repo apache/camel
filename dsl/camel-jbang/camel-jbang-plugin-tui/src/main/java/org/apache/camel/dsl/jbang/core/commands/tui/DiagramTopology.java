@@ -323,6 +323,9 @@ final class DiagramTopology {
                 if (body != null) {
                     line.put("bodyTypes", new JsonArray(body.bodyTypes));
                     line.put("bodyKinds", new JsonArray(body.bodyKinds));
+                    if (!body.bodyFormats.isEmpty()) {
+                        line.put("bodyFormats", new JsonArray(body.bodyFormats));
+                    }
                 }
                 lines.add(line);
             } else {

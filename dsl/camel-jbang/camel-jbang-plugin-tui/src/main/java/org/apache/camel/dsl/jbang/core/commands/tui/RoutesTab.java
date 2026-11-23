@@ -1066,7 +1066,8 @@ class RoutesTab extends AbstractDiagramTab {
         if (bodyTypes) {
             bodyColWidth = CharWidth.of("BODY TYPES");
             for (ProcessorInfo proc : route.processors) {
-                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds)));
+                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds,
+                        proc.bodyFormats)));
             }
             bodyColWidth = Math.min(bodyColWidth, MAX_BODY_TYPES_WIDTH) + 1;
         }
@@ -1157,8 +1158,9 @@ class RoutesTab extends AbstractDiagramTab {
             cells.add(rightCell(String.valueOf(proc.inflight), 8));
             if (bodyTypes) {
                 cells.add(Cell.from(Span.styled(
-                        " " + TuiHelper.truncate(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds), bodyColWidth - 1),
-                        BodyTypes.style(proc.bodyKinds))));
+                        " " + TuiHelper.truncate(
+                                BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds, proc.bodyFormats), bodyColWidth - 1),
+                        BodyTypes.style(proc.bodyKinds, proc.bodyFormats))));
             }
             cells.add(rightCell(procTimingCol, 20));
             cells.add(Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10)));

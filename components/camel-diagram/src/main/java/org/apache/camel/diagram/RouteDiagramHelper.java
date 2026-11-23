@@ -83,6 +83,7 @@ public final class RouteDiagramHelper {
                     node.line = lineNum != null ? lineNum : 0;
                     node.bodyTypes = strings(line.get("bodyTypes"));
                     node.bodyKinds = strings(line.get("bodyKinds"));
+                    node.bodyFormats = strings(line.get("bodyFormats"));
 
                     if (line.containsKey("statistics")) {
                         JsonObject ls = line.getJsonObject("statistics");

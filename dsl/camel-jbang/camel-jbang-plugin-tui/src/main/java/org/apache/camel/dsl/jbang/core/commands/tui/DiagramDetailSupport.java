@@ -578,8 +578,9 @@ final class DiagramDetailSupport {
     }
 
     /**
-     * The body types the step has been reached with, across the messages (CAMEL-25750), one per line, with their kind;
-     * a step reached with bodies of more than one kind needs attention. The diagram shows them cut, and with y only.
+     * The body types the step has been reached with, across the messages (CAMEL-25750), one per line, with their kind,
+     * and the formats of the payloads (CAMEL-27468); a step reached with bodies of more than one kind needs attention,
+     * and one reached with more than one format is marked too. The diagram shows them cut, and with y only.
      */
     static void addBodyTypes(List<Line> lines, RouteDiagramLayoutEngine.NodeInfo info, int width) {
         if (info.bodyTypes.isEmpty()) {
@@ -592,6 +593,21 @@ final class DiagramDetailSupport {
                 Theme.muted())));
         for (String type : info.bodyTypes) {
             lines.add(Line.from(Span.raw("   " + truncate(BodyTypes.simpleName(type), Math.max(4, width - 2)))));
+        }
+        // the formats of the payloads, from their Content-Type (CAMEL-27468)
+        if (!info.bodyFormats.isEmpty()) {
+            boolean formats = BodyTypes.mixedFormats(info.bodyFormats);
+            lines.add(Line.from(Span.styled(formats ? " Formats:" : " Format:", Theme.muted()),
+                    Span.raw(" " + truncate(BodyTypes.formats(info.bodyFormats), Math.max(4, width - 10)))));
+            if (formats) {
+                List<String> warning = wrapWords(
+                        BodyTypes.and(info.bodyFormats) + ": the format here depends on the message",
+                        Math.max(10, width - 2));
+                for (int i = 0; i < warning.size(); i++) {
+                    lines.add(Line.from(Span.styled((i == 0 ? " " + BodyTypes.MARK + " " : "   ") + warning.get(i),
+                            Theme.warning())));
+                }
+            }
         }
         if (mixed) {
             List<String> warning = wrapWords(

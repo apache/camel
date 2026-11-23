@@ -292,6 +292,35 @@ public class BodyFactsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testTheFormatOfAContentType() {
+        // the names of the catalog, as the Kamelet data types set them
+        assertEquals("json", BodyFacts.formatOf("application/json"));
+        assertEquals("json", BodyFacts.formatOf("application/json; charset=UTF-8"));
+        assertEquals("json", BodyFacts.formatOf("application/fhir+json"));
+        assertEquals("xml", BodyFacts.formatOf("application/xml"));
+        assertEquals("xml", BodyFacts.formatOf("text/xml"));
+        assertEquals("xml", BodyFacts.formatOf("application/soap+xml; charset=utf-8"));
+        assertEquals("csv", BodyFacts.formatOf("text/csv"));
+        assertEquals("yaml", BodyFacts.formatOf("application/yaml"));
+        assertEquals("yaml", BodyFacts.formatOf("application/x-yaml"));
+        assertEquals("text", BodyFacts.formatOf("text/plain"));
+        assertEquals("text", BodyFacts.formatOf("TEXT/HTML; charset=UTF-8"));
+        assertEquals("binary", BodyFacts.formatOf("application/octet-stream"));
+        // any other media type as it is, without its parameters
+        assertEquals("application/pdf", BodyFacts.formatOf("application/pdf"));
+        assertEquals("image/png", BodyFacts.formatOf("Image/PNG; q=0.9"));
+        // the value comes from the message: what is not a media type is not shown
+        assertNull(BodyFacts.formatOf(null));
+        assertNull(BodyFacts.formatOf(""));
+        assertNull(BodyFacts.formatOf("json"));
+        assertNull(BodyFacts.formatOf("application/"));
+        assertNull(BodyFacts.formatOf("text/plain\u001b[31m"));
+        assertNull(BodyFacts.formatOf("a/b/c"));
+        assertNull(BodyFacts.formatOf("application/" + "x".repeat(100)));
+        assertNull(BodyFacts.formatOf("application/json; " + "x".repeat(300)));
+    }
+
+    @Test
     public void testTheDataFormatOfAContentType() {
         assertEquals("json", BodyFacts.dataFormatOf("application/json; charset=UTF-8"));
         assertEquals("json", BodyFacts.dataFormatOf("application/problem+json"));

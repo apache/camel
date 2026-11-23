@@ -184,6 +184,7 @@ class DiagramTopologyTest {
         ProcessorInfo to1 = info.routes.get(0).processors.get(0);
         to1.bodyTypes = List.of("byte[]", "java.util.LinkedHashMap");
         to1.bodyKinds = List.of("payload", "data");
+        to1.bodyFormats = List.of("json");
 
         JsonObject topology = DiagramTopology.withNumbers(json(TOPOLOGY), info);
 
@@ -191,6 +192,7 @@ class DiagramTopologyTest {
         assertThat(lines.get(2).id).isEqualTo("to1");
         assertThat(lines.get(2).bodyTypes).containsExactly("byte[]", "java.util.LinkedHashMap");
         assertThat(lines.get(2).bodyKinds).containsExactly("payload", "data");
+        assertThat(lines.get(2).bodyFormats).containsExactly("json");
         // a step not reached yet has none, nor have the route and its from
         assertThat(lines.get(3).bodyTypes).isEmpty();
         assertThat(lines.get(0).bodyTypes).isEmpty();

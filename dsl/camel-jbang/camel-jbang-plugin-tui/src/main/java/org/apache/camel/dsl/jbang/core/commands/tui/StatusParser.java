@@ -333,6 +333,7 @@ final class StatusParser {
                         // the body types the step has been reached with, and their kinds (CAMEL-25750)
                         pi.bodyTypes = stringList(pj.get("bodyTypes"));
                         pi.bodyKinds = stringList(pj.get("bodyKinds"));
+                        pi.bodyFormats = stringList(pj.get("bodyFormats"));
 
                         Map<String, ?> ps = pj.getMap("statistics");
                         pi.statistics = ps;

@@ -53,4 +53,6 @@ class ProcessorInfo {
     List<String> bodyTypes = List.of();
     /** The kinds of those bodies: null, payload, data or collection. More than one needs attention. */
     List<String> bodyKinds = List.of();
+    /** The formats of the payloads, from their Content-Type (CAMEL-27468): json, xml, csv, yaml, text, binary. */
+    List<String> bodyFormats = List.of();
 }

@@ -332,6 +332,11 @@ public class RouteDiagramLayoutEngine {
          * as a step that writes the body fails for the data, and one that reads fields fails for the payload.
          */
         public List<String> bodyKinds = List.of();
+        /**
+         * The formats of the payloads the step has been reached with, from their Content-Type header: json, xml, csv,
+         * yaml, text or binary, or the media type as it is. More than one is marked as a step of more than one kind is.
+         */
+        public List<String> bodyFormats = List.of();
     }
 
     public static class RouteInfo {

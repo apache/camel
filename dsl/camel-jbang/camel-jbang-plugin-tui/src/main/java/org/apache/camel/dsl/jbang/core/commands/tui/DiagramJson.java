@@ -136,6 +136,9 @@ final class DiagramJson {
         if (!info.bodyTypes.isEmpty()) {
             n.put("bodyTypes", new JsonArray(info.bodyTypes));
         }
+        if (!info.bodyFormats.isEmpty()) {
+            n.put("bodyFormats", new JsonArray(info.bodyFormats));
+        }
         if (!info.problems.isEmpty()) {
             n.put("problems", new JsonArray(info.problems));
         }

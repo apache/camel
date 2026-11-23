@@ -70,10 +70,36 @@ public class BodyTypeDevConsoleTest extends ContextTestSupport {
         Assertions.assertEquals("result", result.getString("id"));
         Assertions.assertEquals(List.of("java.lang.String", "java.util.LinkedHashMap"), result.getCollection("bodyTypes"));
         Assertions.assertEquals(List.of("payload", "data"), result.getCollection("bodyKinds"));
+        // no Content-Type, no format
+        Assertions.assertNull(result.get("bodyFormats"));
 
         String text = (String) con.call(DevConsole.MediaType.TEXT);
         Assertions.assertTrue(text.contains("Route: orders"), text);
         Assertions.assertTrue(text.contains("body: String | LinkedHashMap (payload and data)"), text);
+    }
+
+    @Test
+    public void testTheFormatsOfThePayloads() {
+        template.sendBodyAndHeader("direct:start", "{\"id\": 1}".getBytes(), "Content-Type", "application/json");
+        template.sendBodyAndHeader("direct:quiet", "<id>1</id>", "Content-Type", "application/xml");
+        template.sendBodyAndHeader("direct:quiet", "id\n1\n", "Content-Type", "text/csv");
+
+        DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("body-type");
+        JsonObject out = (JsonObject) con.call(DevConsole.MediaType.JSON);
+        JsonArray routes = out.getCollection("routes");
+        JsonObject orders = (JsonObject) ((JsonArray) ((JsonObject) routes.get(0)).getCollection("steps")).get(1);
+        Assertions.assertEquals(List.of("byte[]"), orders.getCollection("bodyTypes"));
+        Assertions.assertEquals(List.of("json"), orders.getCollection("bodyFormats"));
+
+        String text = (String) con.call(DevConsole.MediaType.TEXT);
+        Assertions.assertTrue(text.contains("body: byte[] · json"), text);
+        Assertions.assertTrue(text.contains("body: String · xml | csv"), text);
+
+        // one type, but more than one format, is varied too
+        JsonObject varied = (JsonObject) con.call(DevConsole.MediaType.JSON, Map.of(BodyTypeDevConsole.VARIED, "true"));
+        JsonArray variedRoutes = varied.getCollection("routes");
+        Assertions.assertEquals(1, variedRoutes.size());
+        Assertions.assertEquals("quiet", ((JsonObject) variedRoutes.get(0)).getString("routeId"));
     }
 
     @Test

@@ -307,11 +307,13 @@ public final class ToolRegistry {
                                              + " processor has bodyTypes: the body types it has been reached with, across"
                                              + " the messages, and bodyKinds: null, payload, data or collection. More than one"
                                              + " kind needs attention: a step that writes fails for data, one that reads"
-                                             + " fields fails for a payload.")
+                                             + " fields fails for a payload. bodyFormats: the format of the payload from"
+                                             + " its Content-Type (json, xml, csv, yaml, text, binary or the media type), to"
+                                             + " compare with the format the catalog says a step takes.")
                 .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
                         false)
                 .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
-                .param("varied", "boolean", "Only the steps reached with more than one body type", false)
+                .param("varied", "boolean", "Only the steps reached with more than one body type or format", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     boolean brief = "true".equalsIgnoreCase(args.get("brief"));

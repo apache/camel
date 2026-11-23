@@ -68,6 +68,25 @@ public class BodyTypeRegistryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testTheFormatsOfThePayloads() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(4);
+
+        template.sendBodyAndHeader("direct:start", "{\"id\": 1}", "Content-Type", "application/json");
+        template.sendBodyAndHeader("direct:start", "<id>1</id>", "Content-Type", "application/xml; charset=UTF-8");
+        template.sendBody("direct:start", "no content type");
+        // turned into a Map, which keeps the Content-Type of the payload it was made from
+        template.sendBodyAndHeader("direct:start", "map", "Content-Type", "text/csv");
+        assertMockEndpointsSatisfied();
+
+        // the formats the processor was reached with (CAMEL-27468): a message without Content-Type adds none
+        assertEquals(List.of("json", "xml", "csv"), registry.getBodyFormats("orders", "maybeMap"));
+        assertEquals(List.of("json", "xml"), registry.getBodyFormats("orders", "onlyText"));
+        // the Content-Type left on data is not about the body
+        assertTrue(registry.getBodyFormats("orders", "onlyMaps").isEmpty());
+        assertEquals(List.of("java.util.LinkedHashMap"), registry.getBodyTypes("orders", "onlyMaps"));
+    }
+
+    @Test
     public void testANullBodyIsAType() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

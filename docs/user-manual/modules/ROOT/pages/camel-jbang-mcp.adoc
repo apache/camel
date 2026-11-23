@@ -919,7 +919,9 @@ accept `nameOrPid`). A call that names the integration with another argument the
 | Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
   routes when omitted). `brief=true` leaves out the options and expressions. With the message history on, each step has
   the body types it has been reached with (`bodyTypes`) and their kinds (`bodyKinds`: `null`, `payload`, `data` or
-  `collection`); `varied=true` keeps only the steps reached with more than one body type.
+  `collection`), and the formats of the payloads from their `Content-Type` (`bodyFormats`: `json`, `xml`, `csv`,
+  `yaml`, `text`, `binary` or the media type), to compare with the format the catalog says a step takes;
+  `varied=true` keeps only the steps reached with more than one body type or format.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options
