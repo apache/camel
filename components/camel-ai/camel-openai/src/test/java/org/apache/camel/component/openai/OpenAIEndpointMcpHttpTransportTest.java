@@ -47,6 +47,7 @@ import io.modelcontextprotocol.server.McpStatelessSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpStatelessServerTransport;
 import io.modelcontextprotocol.spec.ProtocolVersions;
+import io.modelcontextprotocol.util.Utils;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -136,15 +137,14 @@ class OpenAIEndpointMcpHttpTransportTest {
     /**
      * The client sends its requests to the endpoint at the path and query of the URL, and to the default endpoint of
      * the transport when the URL has no path: the POST requests of Streamable HTTP, or the GET request that opens the
-     * SSE stream. A path that starts with // stays a path on the server of the URL: mcp.invalid is not a host.
+     * SSE stream.
      */
     @ParameterizedTest
     @CsvSource({
             "streamableHttp, /api/mcp?tenant=acme,    POST, /api/mcp,    tenant=acme",
             "streamableHttp, '',                      POST, /mcp,",
             "sse,            /custom/sse?tenant=acme, GET,  /custom/sse, tenant=acme",
-            "sse,            /,                       GET,  /sse,",
-            "streamableHttp, //mcp.invalid/api/mcp,   POST, //mcp.invalid/api/mcp," })
+            "sse,            /,                       GET,  /sse," })
     void connectsToTheEndpointAtThePathOfTheUrl(
             String transportType, String urlPath, String httpMethod, String expectedPath, String expectedQuery)
             throws Exception {
@@ -172,6 +172,22 @@ class OpenAIEndpointMcpHttpTransportTest {
         assertThatThrownBy(() -> endpoint.createMcpClient("local", Map.of("transportType", "sse", "url", "mcp-server/sse")))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("mcpServer.local.url must be an absolute URL, such as http://localhost:8080/sse");
+    }
+
+    /**
+     * A path that starts with // stays a path on the server of the URL where the SDK transports resolve the endpoint:
+     * mcp.invalid is not read as a host. Tested on the split rather than end to end, as recent JDK updates of the HTTP
+     * server of the JDK reject a request URI that starts with //.
+     */
+    @Test
+    void pathStartingWithTwoSlashesStaysOnTheServerOfTheUrl() {
+        OpenAIEndpoint.McpServerUrl serverUrl
+                = OpenAIEndpoint.splitMcpServerUrl("local", "http://127.0.0.1:8080//mcp.invalid/api/mcp", "/mcp");
+
+        assertThat(URI.create(serverUrl.endpoint()).getHost()).isEqualTo("127.0.0.1");
+        URI resolved = Utils.resolveUri(URI.create(serverUrl.baseUri()), serverUrl.endpoint());
+        assertThat(resolved.getHost()).isEqualTo("127.0.0.1");
+        assertThat(resolved.getRawPath()).isEqualTo("//mcp.invalid/api/mcp");
     }
 
     private static OpenAIEndpoint createEndpoint() {
@@ -232,13 +248,9 @@ class OpenAIEndpointMcpHttpTransportTest {
         public void handle(HttpExchange exchange) throws IOException {
             try {
                 String httpMethod = exchange.getRequestMethod();
-                URI requestUri = exchange.getRequestURI();
-                String path = requestUri.getPath();
-                String query = requestUri.getRawQuery();
-                // the request URI reads a path that starts with // as an authority and a path: record it as it was sent
-                String sentPath = requestUri.getRawAuthority() != null
-                        ? "//" + requestUri.getRawAuthority() + requestUri.getRawPath() : requestUri.getRawPath();
-                REQUESTS.add(new RecordedRequest(httpMethod, sentPath, query));
+                String path = exchange.getRequestURI().getPath();
+                String query = exchange.getRequestURI().getRawQuery();
+                REQUESTS.add(new RecordedRequest(httpMethod, path, query));
                 SseSession sseSession = query != null && query.startsWith("sessionId=")
                         ? sseSessions.get(query.substring("sessionId=".length())) : null;
 
