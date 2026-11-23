@@ -28,6 +28,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -639,7 +640,11 @@ public class ResilienceProcessor extends BaseProcessorSupport
             ExchangeWriteGuard exchangeWriteGuard = new ExchangeWriteGuard();
             task.exchangeWriteGuard = exchangeWriteGuard;
             fallbackTask.exchangeWriteGuard = exchangeWriteGuard;
-            final CircuitBreakerTask ftask = task; // annoying final java thingy!
+            final CircuitBreakerTask ctask = task; // annoying final java thingy!
+            // with a bulkhead, the call claims its start, so that a call that timed out before it started is not
+            // started later (without a bulkhead, the time limiter cancels the future of the call itself)
+            final CallStart callStart = timeLimiter != null && bulkhead != null ? new CallStart() : null;
+            final Supplier<Exchange> ftask = callStart != null ? callStart.claiming(ctask) : ctask;
             Callable<Exchange> callable;
 
             if (timeLimiter != null) {
@@ -647,7 +652,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 if (bulkhead != null) {
                     // the bulkhead goes inside the time limiter, so the permit is held until the task is done,
                     // and not released when the timeout fires while the task is still running
-                    stage = Bulkhead.decorateCompletionStage(bulkhead, stage);
+                    stage = Bulkhead.decorateCompletionStage(bulkhead, callStart.submitting(stage));
+                    // on timeout the time limiter cancels the future of the bulkhead, and not the one of the call:
+                    // pass the cancel on to a call that has not started yet
+                    stage = cancelOnCancel(exchange, stage, callStart);
                 }
                 final Supplier<CompletionStage<Exchange>> fstage = stage;
                 Supplier<CompletableFuture<Exchange>> futureSupplier = () -> fstage.get().toCompletableFuture();
@@ -703,12 +711,18 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
             // build the CompletionStage supplier for the main task
             Supplier<CompletionStage<Exchange>> supplier;
+            final CallStart callStart = timeLimiter != null ? new CallStart() : null;
             if (timeLimiter != null) {
                 // with timeout: submit work to executor so the supplier returns immediately
                 // and the TimeLimiter can schedule the timeout check
                 supplier = () -> {
-                    CompletableFuture<Exchange> future = new CompletableFuture<>();
-                    executorService.submit(() -> processTaskAsync(exchange, exchangeWriteGuard, future));
+                    CompletableFuture<Exchange> future = callStart.submitted(new CompletableFuture<>());
+                    executorService.submit(() -> {
+                        // a call that timed out before it started is not started
+                        if (callStart.tryStart()) {
+                            processTaskAsync(exchange, exchangeWriteGuard, future);
+                        }
+                    });
                     return future;
                 };
             } else {
@@ -726,6 +740,11 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 ScheduledExecutorService scheduler
                         = scheduledExecutorService != null ? scheduledExecutorService : timeoutScheduler;
                 supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduler, supplier);
+                if (timeLimiter.getTimeLimiterConfig().shouldCancelRunningFuture()) {
+                    // the timeout completes the future, and nothing cancels the call: cancel a call that has not
+                    // started yet, as the time limiter does in synchronous mode
+                    supplier = cancelOnTimeout(exchange, supplier, callStart);
+                }
             }
             supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
 
@@ -934,6 +953,97 @@ public class ResilienceProcessor extends BaseProcessorSupport
             future.completeExceptionally(e);
         }
         return future;
+    }
+
+    /**
+     * Asynchronous mode: cancels the call when the time limiter completes the future with a timeout.
+     */
+    private static Supplier<CompletionStage<Exchange>> cancelOnTimeout(
+            Exchange exchange, Supplier<CompletionStage<Exchange>> supplier, CallStart callStart) {
+        return () -> supplier.get().whenComplete((result, throwable) -> {
+            Throwable cause = throwable instanceof CompletionException ? throwable.getCause() : throwable;
+            if (cause instanceof TimeoutException) {
+                cancelCall(exchange, callStart);
+            }
+        });
+    }
+
+    /**
+     * Synchronous mode with a bulkhead: cancels the call when the time limiter cancels the future of the bulkhead (it
+     * does so on timeout, when timeoutCancelRunningFuture is true).
+     */
+    private static Supplier<CompletionStage<Exchange>> cancelOnCancel(
+            Exchange exchange, Supplier<CompletionStage<Exchange>> supplier, CallStart callStart) {
+        return () -> {
+            CompletableFuture<Exchange> future = supplier.get().toCompletableFuture();
+            future.whenComplete((result, throwable) -> {
+                if (future.isCancelled()) {
+                    cancelCall(exchange, callStart);
+                }
+            });
+            return future;
+        };
+    }
+
+    private static void cancelCall(Exchange exchange, CallStart callStart) {
+        if (callStart.cancel()) {
+            LOG.debug("Exchange: {} timed out before its call started: the call is not started", exchange.getExchangeId());
+        }
+    }
+
+    /**
+     * The start of one call on the thread pool, when the caller may give up on the call (on timeout) before a thread of
+     * the pool starts it. The thread that starts the call and the caller that cancels it both claim the call, and only
+     * one of them gets it: a call that has started is not cancelled (nor interrupted) and keeps its bulkhead permit
+     * until it is done, and a call that is cancelled is never started. Cancelling completes the future of the call at
+     * once, which releases its bulkhead permit.
+     */
+    private static final class CallStart {
+        private final AtomicBoolean claimed = new AtomicBoolean();
+        private volatile CompletableFuture<Exchange> future;
+
+        /**
+         * Records the future of the call, which {@link #cancel()} completes.
+         */
+        CompletableFuture<Exchange> submitted(CompletableFuture<Exchange> future) {
+            this.future = future;
+            return future;
+        }
+
+        Supplier<CompletionStage<Exchange>> submitting(Supplier<CompletionStage<Exchange>> stage) {
+            return () -> submitted(stage.get().toCompletableFuture());
+        }
+
+        /**
+         * The task of the call, which runs only if it claims the call first (else it returns null, to a future that is
+         * already cancelled).
+         */
+        Supplier<Exchange> claiming(Supplier<Exchange> task) {
+            return () -> tryStart() ? task.get() : null;
+        }
+
+        /**
+         * Claims the call for its start.
+         *
+         * @return true to start the call, false if it was cancelled
+         */
+        boolean tryStart() {
+            return claimed.compareAndSet(false, true);
+        }
+
+        /**
+         * Cancels the call if it has not started.
+         *
+         * @return true if the call was cancelled, false if it had started (or was not submitted)
+         */
+        boolean cancel() {
+            CompletableFuture<Exchange> f = future;
+            if (f != null && claimed.compareAndSet(false, true)) {
+                f.cancel(false);
+                return true;
+            }
+            return false;
+        }
     }
 
     /**
