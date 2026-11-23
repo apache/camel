@@ -1748,6 +1748,41 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaOss() {
+        // a client that is set replaces the region and the AccessKey pair
+        String uri = "alibaba-oss:myBucket?ossClient=#ossClient";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // serviceKeys replaces accessKey and secretKey
+        uri = "alibaba-oss:myBucket?region=cn-hangzhou&serviceKeys=#serviceKeys";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the producer uses prefix and maxKeys for listObjects
+        uri = "alibaba-oss:myBucket?operation=listObjects&prefix=logs/&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer uses prefix, but neither objectName nor maxKeys
+        uri = "alibaba-oss:myBucket?prefix=logs/&objectName=a.txt&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("objectName"));
+        assertTrue(result.getNotConsumerOnly().contains("maxKeys"));
+
+        // only the producer reads these six headers, and both sides set the key of the object
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-oss").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        for (String name : List.of("Operation", "ObjectName", "SourceBucketName", "SourceObjectName", "Prefix", "MaxKeys")) {
+            assertEquals("producer", groups.get("CamelAlibabaOss" + name), name);
+        }
+        assertEquals("common", groups.get("CamelAlibabaOssObjectKey"));
+    }
+
+    @Test
     public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
