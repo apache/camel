@@ -1436,6 +1436,10 @@ YAML::
 ----
 ====
 
+The `url` is the URL of the SSE endpoint of the server, path included, for example
+`http://mcp-server:3001/sse` or `https://example.com/api/sse`. When the URL has no path, such as
+`http://mcp-server:3001`, the component uses `/sse`.
+
 ==== Multiple MCP Servers
 
 [tabs]

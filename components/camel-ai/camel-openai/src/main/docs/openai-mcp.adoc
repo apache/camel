@@ -54,6 +54,10 @@ YAML::
 ----
 ====
 
+The `url` is the URL of the MCP endpoint of the server, path included, for example
+`http://localhost:9090/mcp` or `https://example.com/api/mcp`. When the URL has no path, such as
+`http://localhost:9090`, the component uses `/mcp`.
+
 ==== SSE Transport (Deprecated)
 
 [tabs]
@@ -94,6 +98,10 @@ YAML::
               mcpServer.weather.url: http://localhost:8080
 ----
 ====
+
+The `url` is the URL of the SSE endpoint of the server, path included, for example
+`http://localhost:8080/sse` or `https://example.com/api/sse`. When the URL has no path, such as
+`http://localhost:8080`, the component uses `/sse`.
 
 ==== Stdio Transport
 
