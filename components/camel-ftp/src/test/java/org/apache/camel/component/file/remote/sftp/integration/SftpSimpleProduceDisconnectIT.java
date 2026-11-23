@@ -17,11 +17,16 @@
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,13 +44,22 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
-        // restart the SFTP server now
-        // The second upload works without Awaitility because isRecentlyUsed() checks isConnected():
-        // even though less than a second has passed since the first upload, JSch has already seen the
-        // EOF from the old server, so isConnected() returns false, isRecentlyUsed() returns false,
-        // and the producer sends a noop that triggers a reconnect to the new server.
+        // Restart the SFTP server. Wait until the new server is accepting connections before the
+        // second upload. This also gives JSch enough time to process the EOF/RST from the old
+        // server's connection, so that isConnected() returns false, isRecentlyUsed() returns false,
+        // and the producer sends a noop that detects the stale session and reconnects.
         service.tearDownServer();
         service.setUpServer();
+        int port = service.getPort();
+        await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS)
+                .until(() -> {
+                    try (Socket s = new Socket()) {
+                        s.connect(new InetSocketAddress("localhost", port), 100);
+                        return true;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                });
 
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="

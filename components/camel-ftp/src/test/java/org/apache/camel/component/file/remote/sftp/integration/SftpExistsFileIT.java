@@ -349,7 +349,6 @@ class SftpExistsFileIT extends CamelTestSupport {
         // by the name of the request type, such as SSH_FXP_LSTAT
         private final Map<String, AtomicInteger> requests = new ConcurrentHashMap<>();
         private final AtomicInteger entriesListed = new AtomicInteger();
-        private final AtomicInteger noopRealpathCount = new AtomicInteger();
         private volatile ThrowingRunnable<IOException> onLstat;
         private volatile Predicate<Path> refuseAttributesOf;
 
@@ -369,17 +368,6 @@ class SftpExistsFileIT extends CamelTestSupport {
                     }
                     return SftpFileSystemAccessor.super.resolveFileAccessLinkOptions(
                             subsystem, file, cmd, extension, followLinks);
-                }
-
-                @Override
-                public Path resolveLocalFilePath(
-                        SftpSubsystemProxy subsystem, Path rootDir, String remotePath)
-                        throws IOException {
-                    // The noop sends channel.realpath("."), so the server receives remotePath="."
-                    if (".".equals(remotePath)) {
-                        noopRealpathCount.incrementAndGet();
-                    }
-                    return SftpFileSystemAccessor.super.resolveLocalFilePath(subsystem, rootDir, remotePath);
                 }
             });
             factory.addSftpEventListener(new SftpEventListener() {
@@ -415,14 +403,15 @@ class SftpExistsFileIT extends CamelTestSupport {
         void reset() {
             requests.clear();
             entriesListed.set(0);
-            noopRealpathCount.set(0);
         }
 
         /**
-         * Returns the number of REALPATH requests with path "." (the noop round-trip).
+         * Returns the number of SSH_FXP_REALPATH requests the server received. The sendNoop() method in SftpOperations
+         * sends a REALPATH round-trip, so this counts the noop probes (plus any other REALPATH requests, such as the
+         * initial getHome() during connect).
          */
         int noopRealpath() {
-            return noopRealpathCount.get();
+            return requests(SftpConstants.SSH_FXP_REALPATH);
         }
 
         int requests(int type) {

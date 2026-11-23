@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
+import org.apache.sshd.sftp.common.SftpConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -33,9 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * With sendNoop=false the sftp consumer does not send a keep-alive request before each poll, and stays connected
- * between polls. With sendNoop=true (the default), the consumer sends a REALPATH round-trip before each poll to check
- * that the connection is alive.
+ * Verifies that sendNoop controls whether a keep-alive REALPATH round-trip is sent before each poll.
+ * <p>
+ * Both sendNoop=true and sendNoop=false cause REALPATH requests (JSch resolves "." before every {@code ls}), but
+ * sendNoop=true adds an extra REALPATH per poll for the noop check. The test runs both modes in sequence against the
+ * same embedded server and asserts that the sendNoop=true run produces strictly more REALPATH requests than the
+ * sendNoop=false baseline.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
@@ -70,23 +74,29 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     }
 
     @Test
-    public void testSendNoopFalse() throws Exception {
+    public void testSendNoopDifference() throws Exception {
+        // --- Run with sendNoop=false (baseline) ---
         consumeFileAndPollAgain("sendNoopFalse");
+        int realpathWithNoopFalse = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
+        assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=false)");
 
-        assertEquals(0, countingService().noopRealpath(),
-                "The consumer should not send a noop REALPATH before a poll when sendNoop=false");
-        assertEquals(1, logins.get(), "The consumer should stay connected between polls");
-    }
+        // stop the route so we can run the next one
+        context.getRouteController().stopRoute("sendNoopFalse");
 
-    @Test
-    public void testSendNoopDefault() throws Exception {
+        // reset counters and login count for the second run
+        countingService().reset();
+        logins.set(0);
+
+        // --- Run with sendNoop=true (default) ---
         consumeFileAndPollAgain("sendNoopDefault");
+        int realpathWithNoopTrue = countingService().requests(SftpConstants.SSH_FXP_REALPATH);
+        assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=true)");
 
-        // sendNoop=true (the default) uses an SFTP REALPATH round-trip to check the connection is alive before each
-        // poll. At least one poll (5 or more empty-message polls happen) should have sent a REALPATH request.
-        assertTrue(countingService().noopRealpath() > 0,
-                "The consumer should send a noop REALPATH before a poll by default");
-        assertEquals(1, logins.get(), "The consumer should stay connected between polls");
+        // sendNoop=true sends an extra REALPATH round-trip before every poll, so it must produce strictly more
+        assertTrue(realpathWithNoopTrue > realpathWithNoopFalse,
+                "sendNoop=true should send more REALPATH requests (" + realpathWithNoopTrue
+                                                                 + ") than sendNoop=false ("
+                                                                 + realpathWithNoopFalse + ")");
     }
 
     private void consumeFileAndPollAgain(String routeId) throws Exception {
@@ -94,6 +104,7 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
                 "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
         // the file, and then an empty message for each poll that finds no new file
         mock.expectedMinimumMessageCount(5);
         mock.message(0).body(String.class).isEqualTo("Hello World");

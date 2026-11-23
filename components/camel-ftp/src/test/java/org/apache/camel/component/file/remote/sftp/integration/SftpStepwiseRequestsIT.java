@@ -79,6 +79,9 @@ class SftpStepwiseRequestsIT extends CamelTestSupport {
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_OPEN));
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_WRITE));
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_CLOSE));
+        // 0 REALPATHs holds only while each upload starts less than a second after the previous one,
+        // so that isRecentlyUsed() returns true and sendNoop() is skipped. If the loop were slower
+        // (e.g. because of a debugger or a loaded CI), some uploads would trigger a noop REALPATH.
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_REALPATH));
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_STAT));
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_LSTAT));
