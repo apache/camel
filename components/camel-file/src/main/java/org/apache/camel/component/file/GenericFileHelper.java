@@ -202,12 +202,12 @@ public final class GenericFileHelper {
     }
 
     /**
-     * Determines whether a compacted target path is contained within a compacted directory path, using the given path
+     * Determines whether a normalized target path is contained within a normalized directory path, using the given path
      * separator. Remote file paths always use {@code /} regardless of the platform Camel runs on, so remote callers
      * must pass {@code '/'} rather than relying on {@link File#separatorChar}.
      *
-     * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String, char)})
-     * @param  compactDir    the compacted directory the target must stay within
+     * @param  compactTarget the normalized target path (see {@link #normalizeRemotePath(String)})
+     * @param  compactDir    the normalized directory the target must stay within
      * @param  separator     the path separator both paths are expressed with
      * @return               {@code true} if the target is the directory itself or a path inside it
      */
@@ -243,6 +243,11 @@ public final class GenericFileHelper {
      * <li>treats every path segment identically, with no scheme or drive-letter exceptions, and</li>
      * <li>preserves a leading {@code /} for absolute paths.</li>
      * </ul>
+     *
+     * <p>
+     * This method is also used for the producer jail check ({@link GenericFileProducer#jailedCheck}) to normalize the
+     * target path before comparing it to the starting directory, as a CamelFileName header may contain {@code \}
+     * separators on Windows SMB routes.
      *
      * @param  path the remote path to normalize; may be {@code null}
      * @return      the normalized path, or {@code null} if the input is {@code null}

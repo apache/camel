@@ -213,6 +213,33 @@ public class GenericFileHelperTest {
     }
 
     @Test
+    public void jailedCheckRejectsBackslashEscapingPaths() {
+        // A CamelFileName header with backslash separators (Windows/SMB) must still be caught by the jail check.
+        // normalizeRemotePath converts '\\' to '/' before comparing against the starting directory.
+        // target\\out\\..\\..\\secret.txt with baseDir=target normalizes to ../secret.txt -> rejected
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("target\\out\\..\\..\\secret.txt"),
+                GenericFileHelper.normalizeRemotePath("target"), '/'));
+        // target\\file.txt with baseDir=target normalizes to target/file.txt -> allowed
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("target\\file.txt"),
+                GenericFileHelper.normalizeRemotePath("target"), '/'));
+        // empty starting directory (session root): backslash upward path must be rejected
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("..\\secret.txt"), "", '/'));
+    }
+
+    @Test
+    public void producerJailedCheckWithEmptyDirectory() {
+        // producer with empty starting directory: upward paths in CamelFileName are still rejected
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("../secret.txt"), "", '/'));
+        // normal paths allowed
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("sub/file.txt"), "", '/'));
+    }
+
+    @Test
     public void normalizeRemotePathTreatsBackslashAsSeparator() {
         assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\file.txt"));
         assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\sub\\..\\file.txt"));
