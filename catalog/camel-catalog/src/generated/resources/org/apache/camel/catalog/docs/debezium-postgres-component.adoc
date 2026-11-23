@@ -33,10 +33,17 @@ Before the engine starts polling, the consumer health check reports the configur
 (`DOWN` by default). It reports `UP` once the connector tasks have started and the engine enters its polling phase,
 even if no change events have arrived. This does not indicate that an initial snapshot has completed.
 
-If the embedded engine stops with an error, for example because the connector cannot reach the database or
-the offset store cannot be read, it is not restarted: the route stays started but receives no further events.
-The failure is reported to the consumer exception handler and turns the route health check `DOWN`, so it can
-be picked up by a readiness probe.
+The consumer starts when the engine has started the connector tasks, which is before an initial snapshot is done,
+so a long snapshot does not delay the start. If the engine fails while it starts, for example because the connector
+cannot reach the database, the database is not set up for change data capture, or the offset store cannot be read,
+the consumer fails to start, and so does the route, with the error of Debezium as the cause.
+Debezium gives each task `internal.task.management.timeout.ms` (40 seconds by default, set with
+`additionalProperties.internal.task.management.timeout.ms`) to start, and the start waits that long for each task and
+once more for the connector; if the engine has not reported back by then, the route starts anyway, with a `WARN` in the log.
+
+If the embedded engine stops with an error later, it is not restarted: the route stays started but receives no further
+events. The failure is reported to the consumer exception handler (with `bridgeErrorHandler=true`, to the error handler
+of the route) and turns the route health check `DOWN`, so it can be picked up by a readiness probe.
 ====
 
 Maven users will need to add the following dependency to their `pom.xml` for this component.
