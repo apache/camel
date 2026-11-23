@@ -578,7 +578,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         // schemes or Windows drive letters that are irrelevant to remote paths
         String normalizedAnswer = GenericFileHelper.normalizeRemotePath(answer);
         String normalizedBaseDir = GenericFileHelper.normalizeRemotePath(baseDir);
-        if (!GenericFileHelper.isWithinDirectory(normalizedAnswer, normalizedBaseDir)) {
+        if (!GenericFileHelper.isWithinDirectory(normalizedAnswer, normalizedBaseDir, '/')) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + normalizedAnswer
                                                + " as the filename is jailed to the starting directory: "

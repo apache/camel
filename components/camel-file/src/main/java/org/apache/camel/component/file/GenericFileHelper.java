@@ -252,19 +252,28 @@ public final class GenericFileHelper {
             return null;
         }
 
-        boolean absolute = path.startsWith("/");
-        boolean trailingSlash = path.endsWith("/") && path.length() > 1;
+        boolean absolute = path.startsWith("/") || path.startsWith("\\");
+        boolean trailingSlash = (path.endsWith("/") || path.endsWith("\\")) && path.length() > 1;
 
         Deque<String> stack = new ArrayDeque<>();
-        for (String part : path.split("/", -1)) {
+        for (String part : path.split("[/\\\\]", -1)) {
             if (part.isEmpty() || part.equals(".")) {
                 // skip empty segments (from leading/trailing/double slashes) and '.' segments
             } else if (part.equals("..")) {
-                if (!stack.isEmpty()) {
-                    stack.pop();
+                if (absolute) {
+                    // for absolute paths: '..' at the root is a no-op (just like compactPath)
+                    if (!stack.isEmpty()) {
+                        stack.pop();
+                    }
+                } else {
+                    // for relative paths: pop if we have a non-dotdot segment to cancel;
+                    // otherwise push '..' (preserving unresolved upward navigation)
+                    if (!stack.isEmpty() && !stack.peek().equals("..")) {
+                        stack.pop();
+                    } else {
+                        stack.push("..");
+                    }
                 }
-                // if the stack is empty and the path is absolute, '..' at the root is a no-op;
-                // for relative paths an unresolved '..' is kept by not pushing anything
             } else {
                 stack.push(part);
             }

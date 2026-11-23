@@ -148,9 +148,14 @@ public class GenericFileHelperTest {
         assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll/sub/../file.txt"));
         assertEquals("/poll/file.txt", GenericFileHelper.normalizeRemotePath("/poll/sub/../file.txt"));
 
-        // leading '..' on a relative path: unresolvable '..' is dropped (no parent to pop)
-        assertEquals("secret.txt", GenericFileHelper.normalizeRemotePath("../secret.txt"));
-        assertEquals("shadow", GenericFileHelper.normalizeRemotePath("../../etc/../shadow"));
+        // leading '..' on a relative path: '..' is preserved (keeps the jail check working)
+        assertEquals("../secret.txt", GenericFileHelper.normalizeRemotePath("../secret.txt"));
+        assertEquals("../../shadow", GenericFileHelper.normalizeRemotePath("../../etc/../shadow"));
+
+        // backslash is treated as a separator
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\file.txt"));
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\sub\\..\\file.txt"));
+        assertEquals("../../secret", GenericFileHelper.normalizeRemotePath("..\\..\\.\\secret"));
 
         // leading '..' on an absolute path: at the root, '..' is a no-op
         assertEquals("/etc/shadow", GenericFileHelper.normalizeRemotePath("/../etc/shadow"));
@@ -187,6 +192,34 @@ public class GenericFileHelperTest {
         // if the path contains '..', normalizeRemotePath reduces it and the jail check can catch escapes
         assertFalse(GenericFileHelper.isWithinDirectory(
                 GenericFileHelper.normalizeRemotePath("http:/../etc/passwd"), "/poll", '/'));
+        // with session root (empty directory), the path resolves within the root after the scheme-like
+        // segment cancels the '..'; the jail check correctly allows it
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("http:/../etc/passwd"), "", '/'));
+    }
+
+    @Test
+    public void isWithinStartingDirectorySessionRootRejectsUpwardPaths() {
+        // when no directory is configured (session root), upward paths must still be rejected
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("../secret.txt"), "", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("../../etc/passwd"), "", '/'));
+        // non-upward paths are accepted
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("file.txt"), "", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory(
+                GenericFileHelper.normalizeRemotePath("sub/file.txt"), "", '/'));
+    }
+
+    @Test
+    public void normalizeRemotePathTreatsBackslashAsSeparator() {
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\file.txt"));
+        assertEquals("poll/file.txt", GenericFileHelper.normalizeRemotePath("poll\\sub\\..\\file.txt"));
+        // leading backslash is treated as absolute
+        assertEquals("/poll/file.txt", GenericFileHelper.normalizeRemotePath("\\poll\\file.txt"));
+        // unresolved backslash-separated upwards path is preserved for rejection
+        assertEquals("../../secret", GenericFileHelper.normalizeRemotePath("..\\..\\.\\secret"));
     }
 
     @Test
