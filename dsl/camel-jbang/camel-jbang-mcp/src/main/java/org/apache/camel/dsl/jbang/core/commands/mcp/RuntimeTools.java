@@ -38,6 +38,7 @@ import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTarget;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -57,10 +58,10 @@ import org.apache.camel.util.json.Jsoner;
 public class RuntimeTools {
 
     private static final String NAME_OR_PID_DESC
-            = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
+            = "Name, local PID, or runtime ID of the Camel integration. Leave empty to auto-detect when exactly one runtime is connected";
 
     private static final String CHAOS_NAME_OR_PID_DESC
-            = "Name or PID of the Camel process. Leave empty to auto-detect: the only Camel process running, else the"
+            = "Name, local PID, or runtime ID of the Camel integration. Leave empty to auto-detect: the only runtime running, else the"
               + " only one with chaos switched on";
 
     private static final Set<String> MEMORY_LEAK_COMMANDS = Set.of("start", "stop", "status", "query", "compare");
@@ -74,7 +75,7 @@ public class RuntimeTools {
     // (one tick is a second by default)
     private static final long RECEIVE_SETTLE_DEFAULT_MS = 3000;
 
-    private final ConcurrentMap<Long, ReentrantLock> receiveLocks = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReentrantLock> receiveLocks = new ConcurrentHashMap<>();
     /** How long to wait after the stop for the process to confirm it and to write the last messages. */
     long receiveSettleMs = RECEIVE_SETTLE_DEFAULT_MS;
 
@@ -96,10 +97,10 @@ public class RuntimeTools {
         return delegateToRegistry(registryToolName, runtimeService.findSingleProcess(nameOrPid), args);
     }
 
-    private static JsonObject delegateToRegistry(
+    private JsonObject delegateToRegistry(
             String registryToolName, RuntimeService.ProcessInfo p, Map<String, String> args) {
-        ToolContext ctx = new ToolContext();
-        ctx.selectProcess(p.pid());
+        ToolContext ctx = runtimeService.newToolContext();
+        ctx.selectProcess(p.target());
         try {
             Object result = ToolRegistry.execute(registryToolName, ctx, args);
             return McpToolNames.of(toJsonObject(result));
@@ -139,7 +140,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List all running Camel processes that can be inspected. \
-                  Returns PID, name, and context name for each discovered process.""")
+                  Returns the stable runtime ID, transport, name, context name, and a PID when one is available.""")
     public List<RuntimeService.ProcessInfo> camel_runtime_processes() {
         return runtimeService.discoverProcesses();
     }
@@ -730,11 +731,11 @@ public class RuntimeTools {
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
 
         if ("start".equals(cmd) && dual) {
-            return doDualJfrRecording(p.pid(), seconds == null || seconds <= 0 ? DUAL_DEFAULT_DURATION : seconds,
+            return doDualJfrRecording(p.target(), seconds == null || seconds <= 0 ? DUAL_DEFAULT_DURATION : seconds,
                     stacktrace, minSize);
         }
 
-        return runtimeService.executeAction(p.pid(), "jfr-memory-leak", root -> {
+        return runtimeService.executeAction(p.target(), "jfr-memory-leak", root -> {
             root.put("command", cmd);
             if ("start".equals(cmd)) {
                 root.put("duration", String.valueOf(seconds != null ? seconds : SINGLE_DEFAULT_DURATION));
@@ -765,11 +766,11 @@ public class RuntimeTools {
         }
     }
 
-    private JsonObject doDualJfrRecording(long pid, int dur1, String stacktrace, String minSize) {
+    private JsonObject doDualJfrRecording(RuntimeTarget target, int dur1, String stacktrace, String minSize) {
         int dur2 = dur1 * 2;
 
         // run 1
-        JsonObject r1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+        JsonObject r1 = runtimeService.executeAction(target, "jfr-memory-leak", root -> {
             root.put("command", "start");
             root.put("duration", String.valueOf(dur1));
             if (stacktrace != null) {
@@ -783,9 +784,9 @@ public class RuntimeTools {
             throw new ToolCallException("Failed to start recording 1", null);
         }
 
-        waitForJfrRecordingComplete(pid, dur1);
+        waitForJfrRecordingComplete(target, dur1);
 
-        JsonObject s1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+        JsonObject s1 = runtimeService.executeAction(target, "jfr-memory-leak", root -> {
             root.put("command", "stop");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -799,7 +800,7 @@ public class RuntimeTools {
         }
 
         // run 2
-        JsonObject r2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+        JsonObject r2 = runtimeService.executeAction(target, "jfr-memory-leak", root -> {
             root.put("command", "start");
             root.put("duration", String.valueOf(dur2));
             if (stacktrace != null) {
@@ -813,9 +814,9 @@ public class RuntimeTools {
             throw new ToolCallException("Failed to start recording 2", null);
         }
 
-        waitForJfrRecordingComplete(pid, dur2);
+        waitForJfrRecordingComplete(target, dur2);
 
-        JsonObject s2 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+        JsonObject s2 = runtimeService.executeAction(target, "jfr-memory-leak", root -> {
             root.put("command", "stop");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -829,7 +830,7 @@ public class RuntimeTools {
         }
 
         // compare
-        return runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+        return runtimeService.executeAction(target, "jfr-memory-leak", root -> {
             root.put("command", "compare");
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -844,10 +845,10 @@ public class RuntimeTools {
      * Waits until the recording stopped by itself: sleeps for the time the console says is left, then checks again (a
      * recording ends a little after its duration, as it is parsed).
      */
-    private void waitForJfrRecordingComplete(long pid, int dur) {
+    private void waitForJfrRecordingComplete(RuntimeTarget target, int dur) {
         long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
         while (System.currentTimeMillis() < deadline) {
-            JsonObject status = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
+            JsonObject status = runtimeService.executeAction(target, "jfr-memory-leak", root -> {
                 root.put("command", "status");
             });
             if (status == null || !"recording".equals(status.getString("status"))) {
@@ -903,16 +904,22 @@ public class RuntimeTools {
         int timeout = timeoutSeconds == null || timeoutSeconds <= 0
                 ? RECEIVE_DEFAULT_TIMEOUT : Math.min(timeoutSeconds, RECEIVE_MAX_TIMEOUT);
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return receive(p.pid(), endpoint, timeout * 1000L, limit != null ? limit : 1);
+        return receive(p.target(), endpoint, timeout * 1000L, limit != null ? limit : 1);
     }
 
     /**
-     * Enables the receive console of the process for the endpoint, waits for the messages the CLI connector writes to
-     * the receive file, and disables it again whatever happens. One call at a time per process: the console is shared,
-     * and disabling it stops every consumer it runs.
+     * Legacy local receive entry point retained for package callers and tests that have a PID.
      */
     JsonObject receive(long pid, String endpoint, long timeoutMs, int limit) {
-        ReentrantLock lock = receiveLocks.computeIfAbsent(pid, k -> new ReentrantLock());
+        return receive(RuntimeTarget.local(pid), endpoint, timeoutMs, limit);
+    }
+
+    /**
+     * Enables the receive console for one runtime, waits for messages after an opaque transport cursor, and disables it
+     * again whatever happens. The lock is keyed by the stable runtime target ID, not by a PID.
+     */
+    JsonObject receive(RuntimeTarget target, String endpoint, long timeoutMs, int limit) {
+        ReentrantLock lock = receiveLocks.computeIfAbsent(target.id(), key -> new ReentrantLock());
         boolean locked;
         try {
             locked = lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS);
@@ -927,36 +934,33 @@ public class RuntimeTools {
                     null);
         }
         try {
-            return receiveExclusively(pid, endpoint, timeoutMs, limit);
+            return receiveExclusively(target, endpoint, timeoutMs, limit);
         } finally {
             lock.unlock();
         }
     }
 
-    private JsonObject receiveExclusively(long pid, String endpoint, long timeoutMs, int limit) {
-        JsonObject state = runtimeService.readStatusSection(pid, "receive");
+    private JsonObject receiveExclusively(RuntimeTarget target, String endpoint, long timeoutMs, int limit) {
+        JsonObject state = runtimeService.readStatusSection(target, "receive");
         Collection<?> active = state.getCollection("endpoints");
         if (Boolean.TRUE.equals(state.getBoolean("enabled")) && active != null && !active.isEmpty()) {
-            // disabling would stop those consumers too
             throw new ToolCallException(
                     "The process is already receiving from " + active
                                         + " (camel cmd receive); stop that first with: camel cmd receive --action=stop",
                     null);
         }
-        // the console numbers every message it takes (uid) from one counter, which the status reports as total:
-        // the messages above the count before this call are the ones its consumer takes
         long startTotal = longValue(state, "total", 0);
-        long offset = runtimeService.receiveFileSize(pid);
-        JsonObject started = runtimeService.executeAction(pid, "receive", root -> {
+        String cursor = runtimeService.receiveCursor(target);
+        JsonObject started = runtimeService.executeAction(target, "receive", root -> {
             root.put("enabled", "true");
             root.put("endpoint", endpoint);
         });
         List<JsonObject> messages;
         try {
-            messages = awaitMessages(pid, endpoint, started, offset, startTotal, timeoutMs);
+            messages = awaitMessages(target, endpoint, started, cursor, startTotal, timeoutMs);
         } catch (RuntimeException e) {
             try {
-                stopReceiving(pid);
+                stopReceiving(target);
             } catch (RuntimeException stop) {
                 throw new ToolCallException(
                         message(e) + ". The consumer could not be stopped (" + message(stop)
@@ -969,12 +973,9 @@ public class RuntimeTools {
         answer.put("endpoint", started.getString("url"));
         Long taken = null;
         try {
-            stopReceiving(pid);
-            // the connector writes the queue of the console every second tick, so the messages taken between the dump
-            // read above and the stop come later: the status after the stop says how many there are
-            taken = settle(pid, offset, startTotal, messages);
+            stopReceiving(target);
+            taken = settle(target, cursor, startTotal, messages);
         } catch (RuntimeException e) {
-            // the messages are taken from the endpoint already: return them, and say the consumer may still run
             answer.put("warning", "The consumer could not be stopped (" + message(e)
                                   + ") and may still take messages from the endpoint: stop it with: "
                                   + "camel cmd receive --action=stop");
@@ -1011,12 +1012,8 @@ public class RuntimeTools {
         return answer;
     }
 
-    /**
-     * Waits for the first dump of the receive file that holds a message of this call, or for the timeout; returns the
-     * messages found (none on timeout).
-     */
     private List<JsonObject> awaitMessages(
-            long pid, String endpoint, JsonObject started, long offset, long startTotal, long timeoutMs) {
+            RuntimeTarget target, String endpoint, JsonObject started, String cursor, long startTotal, long timeoutMs) {
         if (started.getString("error") != null) {
             throw new ToolCallException("Cannot receive from " + endpoint + ": " + started.getString("error"), null);
         }
@@ -1029,7 +1026,7 @@ public class RuntimeTools {
         }
         StopWatch watch = new StopWatch();
         while (true) {
-            List<JsonObject> messages = ownMessages(pid, offset, startTotal, null);
+            List<JsonObject> messages = ownMessages(target, cursor, startTotal, null);
             if (!messages.isEmpty() || watch.taken() >= timeoutMs) {
                 return messages;
             }
@@ -1037,21 +1034,15 @@ public class RuntimeTools {
         }
     }
 
-    /**
-     * After the stop: waits until the status of the process shows the console disabled, so its total is the number of
-     * messages this call took, and until the receive file holds them (the connector dumps the queue every second tick).
-     * Returns the number taken, or null when the process did not confirm the stop within the wait; the list of messages
-     * is completed with the ones dumped after the stop.
-     */
-    private Long settle(long pid, long offset, long startTotal, List<JsonObject> messages) {
+    private Long settle(RuntimeTarget target, String cursor, long startTotal, List<JsonObject> messages) {
         StopWatch watch = new StopWatch();
         Long taken = null;
         while (true) {
-            JsonObject state = runtimeService.readStatusSection(pid, "receive");
+            JsonObject state = runtimeService.readStatusSection(target, "receive");
             if (Boolean.FALSE.equals(state.getBoolean("enabled")) && state.get("total") != null) {
                 long endTotal = longValue(state, "total", startTotal);
                 taken = Math.max(endTotal - startTotal, messages.size());
-                List<JsonObject> all = ownMessages(pid, offset, startTotal, endTotal);
+                List<JsonObject> all = ownMessages(target, cursor, startTotal, endTotal);
                 if (all.size() >= messages.size()) {
                     messages.clear();
                     messages.addAll(all);
@@ -1067,22 +1058,20 @@ public class RuntimeTools {
         }
     }
 
-    /** The messages of the receive file after the offset that this call's consumer took: uid above the start count. */
-    private List<JsonObject> ownMessages(long pid, long offset, long startTotal, Long endTotal) {
-        List<JsonObject> messages = new ArrayList<>(runtimeService.readReceivedMessages(pid, offset));
-        messages.removeIf(m -> {
-            Object uid = m.get("uid");
-            if (!(uid instanceof Number n)) {
+    private List<JsonObject> ownMessages(RuntimeTarget target, String cursor, long startTotal, Long endTotal) {
+        List<JsonObject> messages = new ArrayList<>(runtimeService.readReceivedMessages(target, cursor));
+        messages.removeIf(message -> {
+            Object uid = message.get("uid");
+            if (!(uid instanceof Number number)) {
                 return false;
             }
-            return n.longValue() <= startTotal || endTotal != null && n.longValue() > endTotal;
+            return number.longValue() <= startTotal || endTotal != null && number.longValue() > endTotal;
         });
         return messages;
     }
 
-    /** An action without an endpoint stops the consumers of the receive console. */
-    private void stopReceiving(long pid) {
-        runtimeService.executeAction(pid, "receive", null);
+    private void stopReceiving(RuntimeTarget target) {
+        runtimeService.executeAction(target, "receive", null);
     }
 
     private static void sleep() {

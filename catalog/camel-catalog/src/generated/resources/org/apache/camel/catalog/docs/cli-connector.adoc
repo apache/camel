@@ -27,6 +27,42 @@ and Camel should auto-detect this on startup and log as follows:
 Local CLI Connector started
 ----
 
+== Spring Boot and Quarkus applications
+
+The connector protocol and action dispatcher are implemented once against Camel's `CliConnectorFactory`
+SPI and managed by the `CamelContext` lifecycle. The Spring Boot starter supplies a Spring factory and
+lifecycle wrapper around the shared `LocalCliConnector`; the Camel Quarkus extension supplies a Quarkus
+factory and lifecycle wrapper around the same connector. These adapters do not define a second action or
+snapshot protocol. Do not copy the WebSocket transport, frame protocol, or action dispatcher into an
+application.
+
+[width="100%",cols="1,3",options="header"]
+|===
+| Runtime | Dependency
+| Spring Boot | `org.apache.camel.springboot:camel-cli-connector-starter`
+| Quarkus | `org.apache.camel.quarkus:camel-quarkus-cli-connector`
+| Camel Main / plain Camel | `org.apache.camel:camel-cli-connector`
+|===
+
+Use versions managed by the corresponding Spring Boot or Quarkus Camel BOM. The common
+`camel.cli.transport` and `camel.cli.websocket.*` settings below apply across runtimes. The platform
+adapter selects the WebSocket client and provides its platform TLS integration; the action and snapshot
+protocol remains shared.
+
+* **Spring Boot:** the starter auto-configures `SpringCliConnectorFactory`. It uses the Spring WebSocket
+  client when `spring-websocket` and a Jakarta WebSocket client are present; otherwise it uses the JDK
+  client. Set `camel.cli.websocket.client=jdk` to force the JDK client. When using the Spring client,
+  `camel.cli.websocket.ssl-bundle` can name a Spring SSL bundle for `wss://` trust.
+* **Quarkus:** the extension registers `QuarkusCliConnectorFactory` and uses the Vert.x WebSocket client.
+  Set `camel.cli.websocket.client=jdk` to force the JDK client. For `wss://`,
+  `quarkus.camel.cli.websocket.tls-configuration-name` selects a configuration from the Quarkus TLS
+  registry; otherwise the JVM default trust store is used. The extension's current metadata marks
+  native-image support as unavailable; use the JVM runtime for this connector.
+
+The platform adapters can be disabled without removing the shared connector dependency:
+`camel.cli.enabled=false` for Spring Boot, or `quarkus.camel.cli.enabled=false` for Quarkus (a
+Quarkus build-time setting).
+
 == Transports
 
 The connector executes actions (start and stop routes, send messages, dump routes, trace, debug, ...) and

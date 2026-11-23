@@ -91,6 +91,178 @@ java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar camel-jbang-
 
 IMPORTANT: The MCP server does **not** expose REST endpoints — all communication uses JSON-RPC over the MCP protocol.
 
+== Connecting remote Camel runtimes
+
+The MCP server can accept outbound connections from remote Camel integrations over an authenticated
+WebSocket endpoint at `/connect`. This is separate from the MCP JSON-RPC endpoints (`/mcp` and
+`/mcp/sse`). The endpoint shares the Quarkus HTTP listener and is disabled by default. The Spring
+Boot or Quarkus integration opens the connection to the MCP server; it does not need to expose an
+inbound management port.
+
+The remote connection reuses the existing `camel-cli-connector` implementation and its
+`CliConnectorFactory` SPI. The Spring Boot starter creates `SpringCliConnectorFactory` and a Spring
+lifecycle wrapper around `LocalCliConnector`; Camel Quarkus creates `QuarkusCliConnectorFactory` and a
+Quarkus lifecycle wrapper around that same connector. Their WebSocket clients and TLS hooks are platform
+adapters only. There is one action/snapshot protocol for Camel Main, Spring Boot, and Quarkus; do not add
+platform-specific WebSocket endpoints or duplicate protocol classes.
+
+=== Platform dependencies
+
+Add the existing adapter for the runtime in use. Versions should be supplied by the matching
+platform BOM.
+
+[width="100%",cols="1,3",options="header"]
+|===
+| Runtime | Maven dependency
+| Spring Boot | `org.apache.camel.springboot:camel-cli-connector-starter`
+| Quarkus | `org.apache.camel.quarkus:camel-quarkus-cli-connector`
+| Camel Main / plain Camel | `org.apache.camel:camel-cli-connector`
+|===
+
+The adapters can be disabled independently of the shared protocol: set `camel.cli.enabled=false` on
+Spring Boot, or `quarkus.camel.cli.enabled=false` on Quarkus (fixed at build time). The Quarkus CLI
+connector extension is currently marked as unsupported for native-image builds; use its JVM runtime.
+
+=== Enable the MCP server endpoint
+
+The endpoint uses the MCP server's HTTP listener. Start the MCP server with HTTP enabled and configure
+a shared bearer token. For example:
+
+[source,bash]
+----
+export CAMEL_MCP_REMOTE_ENABLED=true
+export CAMEL_MCP_REMOTE_TOKEN="$(openssl rand -hex 32)"
+camel mcp --http --port 8080
+----
+
+`CAMEL_MCP_REMOTE_ENABLED` maps to `camel.mcp.remote.enabled`; the endpoint remains unavailable when
+that option is false. `CAMEL_MCP_REMOTE_TOKEN` maps to `camel.mcp.remote.token`. The token must be
+non-empty. The remote registry currently uses one shared token/trust domain; deploy separate MCP
+server instances for separate trust domains rather than sharing one endpoint across tenants.
+
+The server-side limits can be tuned with these properties (the defaults below match
+`application.properties`):
+
+[width="100%",cols="2,1,3",options="header"]
+|===
+| Property | Default | Purpose
+| `camel.mcp.remote.max-connections` | `16` | Maximum simultaneously connected integrations.
+| `camel.mcp.remote.max-retained-runtimes` | `32` | Maximum runtime entries retained by the registry.
+| `camel.mcp.remote.retention-ms` | `3600000` | How long disconnected runtime entries are retained for reconnect.
+| `camel.mcp.remote.heartbeat-timeout-ms` | `90000` | Disconnect a connection after this heartbeat timeout.
+| `camel.mcp.remote.max-frame-chars` | `16777216` | Maximum accepted WebSocket frame length.
+| `camel.mcp.remote.max-snapshot-chars` | `1048576` | Maximum retained serialized snapshot length per snapshot.
+| `camel.mcp.remote.max-retained-messages` | `500` | Maximum retained trace/receive messages per runtime snapshot.
+| `quarkus.websockets-next.server.max-message-size` | `16777216` | Quarkus WebSocket message limit; keep it aligned with the connector's 16 MiB message limit.
+|===
+
+=== Configure the Spring Boot or Quarkus integration
+
+Add the following to the integration's configuration (or its non-production profile-specific
+configuration):
+
+[source,properties]
+----
+camel.cli.transport=websocket
+camel.cli.websocket.url=wss://mcp.example.net/connect?executionId=orders-spring-a
+----
+
+For Spring Boot, keep these settings in a development or other non-prod profile (for example
+`application-dev.properties`) and activate that profile. For Quarkus dev mode, use `%dev.camel.cli.transport`
+and `%dev.camel.cli.websocket.url`. A packaged Quarkus application defaults to the `prod` profile;
+activate a named non-prod profile and use the matching `%<profile>.` property prefix when you intend
+to use this development/operations connection.
+
+Set `CAMEL_CLI_WEBSOCKET_TOKEN` in the integration process environment to the same value as
+`CAMEL_MCP_REMOTE_TOKEN`. The connector reads this environment variable as its bearer token; avoid
+putting the secret in a command-line argument. Give every running integration instance a distinct,
+stable `executionId`. Reusing that ID when the same instance reconnects preserves its remote runtime
+identity; use a different ID for each replica.
+
+For a local development server, a loopback `ws://127.0.0.1:8080/connect?...` URL can be used. For a
+remote host, use `wss://`; the connector rejects unencrypted `ws://` connections to non-loopback
+hosts unless `camel.cli.websocket.allow-insecure=true` is explicitly enabled. Do not enable that
+exception for a deployed environment.
+
+The Spring Boot starter uses its Spring WebSocket client when `spring-websocket` and a Jakarta WebSocket
+client are present; otherwise it falls back to the JDK client. For a Spring SSL bundle, set
+`camel.cli.websocket.ssl-bundle=<bundle-name>`. Camel Quarkus uses its Vert.x WebSocket client; configure
+`quarkus.camel.cli.websocket.tls-configuration-name=<tls-configuration-name>` to select a Quarkus TLS
+registry entry for `wss://`. In either platform, `camel.cli.websocket.client=jdk` forces the shared JDK
+client and uses the JVM default trust store.
+
+Use a non-production platform profile: the Spring adapter refuses the WebSocket transport with the
+Spring `prod` profile, and the Quarkus adapter refuses it with the Quarkus `prod` profile (the default
+profile of a packaged Quarkus application). In Quarkus, use a non-prod profile such as `dev` or a
+purpose-configured non-prod profile for this development/operations connection.
+
+When TLS terminates at a reverse proxy, forward `/connect` to the MCP server and preserve the
+WebSocket upgrade and `Authorization` headers. The integration needs outbound network access to the
+MCP server; no inbound firewall rule for the integration is required.
+
+=== Security and deployment considerations
+
+* The remote endpoint is opt-in and must have a configured token. Treat the token as a credential and
+  rotate it if it is exposed.
+* The token is shared by all clients connected to that MCP server. It is not per-user authorization
+  or tenant isolation; use separate MCP server deployments for separate trust domains.
+* Use `wss://` across network boundaries. A plain `ws://` connection can expose the bearer token and
+  runtime data to observers on the network path.
+* A connected MCP tool can control the integration, including stopping it, sending messages,
+  evaluating expressions, loading routes, and reading files available to the process. Run this as a
+  development/operations tool only and restrict network access accordingly.
+* The connector and its platform adapters refuse the WebSocket transport under their production
+  profiles: Camel `prod`, Spring `prod`, and Quarkus `prod`. Do not bypass that protection to make this
+  development transport part of a production runtime.
+* Message snapshots can contain application bodies and headers when tracing, debugging, or receiving
+  is enabled. Apply the same data-handling controls as for application logs and diagnostics.
+
+=== Troubleshooting
+
+[width="100%",cols="1,3",options="header"]
+|===
+| Symptom / status | Check
+| HTTP `404` during upgrade | `camel.mcp.remote.enabled` must be true and the MCP server must be running with its HTTP listener enabled.
+| HTTP `400` during upgrade | Check the `executionId` query parameter. It must be present and valid.
+| HTTP `401` during upgrade | The `Authorization: Bearer ...` value is missing or does not match `camel.mcp.remote.token`.
+| HTTP `503` during upgrade | The server token is not configured, or the configured connection/runtime capacity has been reached.
+| Client refuses to start | Check `camel.cli.transport=websocket`, the `camel.cli.websocket.url`, the token for a remote host, and the active platform profile. The transport is refused under Camel `prod`, Spring `prod`, and Quarkus `prod` profiles.
+| Runtime is not listed by MCP | Check the MCP server log for the connection, the integration log for a successful WebSocket handshake, the `/connect?executionId=...` URL, and outbound network/TLS access. The runtime is listed after the connector sends its `hello` frame.
+| Reconnect creates a different runtime | Keep the same `executionId` for the same integration instance across reconnects; use different IDs for distinct replicas.
+|===
+
+=== Acceptance checklist
+
+The shared Camel module tests verify the SPI lifecycle and the WebSocket transport. The packaged MCP
+server integration test exercises the real connector protocol against the running HTTP/WebSocket
+endpoint. To validate the framework adapters end to end, also launch one Spring Boot application
+with `camel-cli-connector-starter` and one Quarkus application with
+`camel-quarkus-cli-connector`, using the same properties above.
+
+For each platform, confirm that:
+
+. The application starts with one connector managed by its `CamelContext` and connects outbound to `/connect`.
+. `camel_runtime_processes` lists the runtime with the stable `websocket:<executionId>` identity and the expected platform metadata.
+. Status/snapshot reads and a controlled action complete successfully through MCP.
+. Disconnecting and reconnecting the same integration reuses its runtime identity; a second replica with a different ID appears separately.
+. A wrong token is rejected, and a non-loopback `ws://` URL is refused by the connector.
+
+Run the in-repository regression and packaged-server checks from the Camel repository root:
+
+[source,bash]
+----
+mvn -pl dsl/camel-cli-connector -am -DskipTests=false test
+mvn -pl dsl/camel-jbang/camel-jbang-mcp -am -DskipTests install
+mvn -pl dsl/camel-jbang/camel-jbang-mcp -DskipTests=false -DskipITs=false verify
+----
+
+The final command runs `RemoteRuntimeEndpointIT` with the packaged MCP server and requires a working
+Docker environment. Those Camel-repository tests validate the shared connector and MCP endpoint; they
+do not compile or run the separate `camel-spring-boot` and `camel-quarkus` repositories. Those projects
+also maintain adapter-level factory enable/disable tests. Complete the platform smoke checks above, and
+run the corresponding platform project test suites, to certify the exact Spring Boot and Quarkus
+versions used by the application.
+
 == Server instructions
 
 The `initialize` response carries `instructions`: a short plain-text guide (under 4096 characters) that the agent

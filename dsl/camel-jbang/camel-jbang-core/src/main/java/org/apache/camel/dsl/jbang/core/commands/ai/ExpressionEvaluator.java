@@ -509,7 +509,7 @@ public final class ExpressionEvaluator {
 
     private static void evaluateInProcess(ToolContext ctx, Request r, JsonObject result) {
         // an integration before Camel 4.24 reads the value of a header or variable as text, and has no resultType
-        String version = ActionClient.versionOf(ctx.pid());
+        String version = ctx.runtimeVersion();
         boolean before424 = version != null && !ActionClient.isAtLeast(version, 4, 24);
         String ignored = before424 && r.resultType() != null
                 ? "the integration runs Camel " + version + ", which ignores resultType (taken from Camel 4.24 on)"

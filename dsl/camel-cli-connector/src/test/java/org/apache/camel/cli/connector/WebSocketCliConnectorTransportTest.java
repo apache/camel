@@ -138,6 +138,25 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void cancellingAnActionInterruptsItsExecution() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        try {
+            tool.send(action("cancel-me", "semantic-evaluate"));
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+
+            tool.send(new JsonObject(
+                    Map.of(
+                            "v", 1, "type", "cancel", "requestId", "cancel-me")));
+            assertThat(console.interrupted.await(5, TimeUnit.SECONDS)).isTrue();
+        } finally {
+            console.release.countDown();
+        }
+    }
+
+    @Test
     void sendsHelloAndSnapshotsOnceConnected() throws Exception {
         // the tool does not check it here (see keepsRetryingWhenTheTokenIsRejected), it must not leak in the status
         property("camel.cli.websocket.token", "t0k3n-4-t3st");

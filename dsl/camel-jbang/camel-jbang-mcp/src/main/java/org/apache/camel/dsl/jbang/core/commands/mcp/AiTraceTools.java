@@ -49,7 +49,7 @@ public class AiTraceTools {
     private static final Logger LOG = Logger.getLogger(AiTraceTools.class);
 
     private static final String NAME_OR_PID_DESC
-            = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
+            = "Name, local PID, or runtime ID of the Camel integration. Leave empty to auto-detect when exactly one runtime is connected";
 
     private static final Set<String> AI_COMPONENT_SCHEMES = Set.of(
             "aws-bedrock", "aws-bedrock-agent", "aws-bedrock-agent-runtime",
@@ -85,8 +85,8 @@ public class AiTraceTools {
                      required = false) String routeFilter) {
 
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        ToolContext ctx = new ToolContext();
-        ctx.selectProcess(p.pid());
+        ToolContext ctx = runtimeService.newToolContext();
+        ctx.selectProcess(p.target());
 
         String filter = routeFilter != null && !routeFilter.isBlank() ? routeFilter : "*";
 
@@ -105,7 +105,7 @@ public class AiTraceTools {
 
             return new AiTraceResult(
                     GenAiTraceReport.summary(genAi, filter), GenAiTraceReport.genAi(genAi, filter),
-                    p.name(), p.pid(),
+                    p.name(), p.pid(), p.id(), p.transport(),
                     aiComponents.isEmpty() ? null : aiComponents,
                     aiHeaders.isEmpty() ? null : aiHeaders,
                     aiProcessorStats.isEmpty() ? null : aiProcessorStats,
@@ -130,8 +130,8 @@ public class AiTraceTools {
             @ToolArg(description = "The runId of an agent run, as camel_runtime_ai_trace lists it") String runId) {
 
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        ToolContext ctx = new ToolContext();
-        ctx.selectProcess(p.pid());
+        ToolContext ctx = runtimeService.newToolContext();
+        ctx.selectProcess(p.target());
         JsonObject answer = loadGenAi(ctx, Map.of("id", runId));
         if (!GenAiTraceReport.hasConsole(answer)) {
             throw new ToolCallException(GenAiTraceReport.NO_CONSOLE, null);
@@ -343,7 +343,9 @@ public class AiTraceTools {
             String genAiSummary,
             GenAiTraceReport.GenAi genAi,
             String processName,
-            long pid,
+            Long pid,
+            String targetId,
+            String transport,
             List<AiComponentInfo> aiComponents,
             List<AiHeaderInfo> aiHeaders,
             List<AiProcessorStat> aiProcessorStats,

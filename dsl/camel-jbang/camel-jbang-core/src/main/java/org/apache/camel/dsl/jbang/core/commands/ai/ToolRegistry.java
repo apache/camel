@@ -33,8 +33,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction
 import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
-import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTarget;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -134,21 +133,33 @@ public final class ToolRegistry {
 
     private static void registerProcessTools() {
         register(tool("list_processes",
-                "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.")
+                "List all running Camel runtimes with their target ID, name, and PID when available. Use this to discover available runtimes before selecting one.")
                 .core(true)
                 .executor((ctx, args) -> {
-                    List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
+                    List<RuntimeTarget> processes = ctx.discoverRuntimeTargets();
                     if (processes.isEmpty()) {
                         return "No running Camel processes found. Start one with: camel run <file>";
                     }
                     JsonObject response = new JsonObject();
                     response.put("count", processes.size());
                     List<JsonObject> list = new ArrayList<>();
-                    for (RuntimeHelper.ProcessInfo p : processes) {
+                    RuntimeTarget selected = ctx.selectedTarget();
+                    for (RuntimeTarget p : processes) {
                         JsonObject entry = new JsonObject();
-                        entry.put("pid", p.pid());
-                        entry.put("name", p.name());
-                        entry.put("selected", p.pid() == ctx.pid());
+                        entry.put("id", p.id());
+                        if (p.pid() != null) {
+                            entry.put("pid", p.pid());
+                        }
+                        if (p.transport() != null) {
+                            entry.put("transport", p.transport());
+                        }
+                        if (p.contextName() != null) {
+                            entry.put("contextName", p.contextName());
+                        }
+                        if (p.name() != null) {
+                            entry.put("name", p.name());
+                        }
+                        entry.put("selected", selected != null && selected.id().equals(p.id()));
                         list.add(entry);
                     }
                     response.put("processes", list);
@@ -159,7 +170,7 @@ public final class ToolRegistry {
                 }));
 
         register(tool("select_process",
-                "Select a running Camel process by name or PID to inspect. Required when multiple processes are running.")
+                "Select a running Camel runtime by name, PID, or target ID to inspect. Required when multiple runtimes are running.")
                 .param("name", "string", "Name or PID of the Camel process to connect to", true)
                 .core(true)
                 .executor((ctx, args) -> {
@@ -168,20 +179,20 @@ public final class ToolRegistry {
                         throw new ToolExecutionException("name or PID is required");
                     }
                     ToolContext.refuseThisProcess(name);
-                    RuntimeHelper.ProcessInfo found = ctx.findProcess(name);
+                    RuntimeTarget found = ctx.findRuntimeTarget(name);
                     if (found == null) {
-                        List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
+                        List<RuntimeTarget> processes = ctx.discoverRuntimeTargets();
                         if (processes.isEmpty()) {
                             return "No running Camel processes found.";
                         }
                         StringBuilder sb
                                 = new StringBuilder("No process found matching: " + name + ". Available:\n");
-                        processes.forEach(
-                                p -> sb.append("  ").append(p.name()).append(" (PID ").append(p.pid()).append(")\n"));
+                        processes.forEach(p -> sb.append("  ").append(p.displayName()).append(" (")
+                                .append(p.identityLabel()).append(")\n"));
                         return sb.toString();
                     }
-                    ctx.selectProcess(found.pid());
-                    return "Connected to " + found.name() + " (PID " + found.pid()
+                    ctx.selectProcess(found);
+                    return "Connected to " + found.displayName() + " (" + found.identityLabel()
                            + "). Runtime tools are now active.";
                 }));
     }
@@ -645,18 +656,23 @@ public final class ToolRegistry {
         AppFeatures features = AppFeatures.fromStatus(status);
         ToolGroups.Selection selection = ToolGroups.select(features);
         JsonObject answer = new JsonObject();
-        String app = null;
-        for (RuntimeHelper.ProcessInfo p : ctx.discoverProcesses()) {
-            if (p.pid() == ctx.pid()) {
-                app = p.name();
-            }
-        }
+        RuntimeTarget selected = ctx.selectedTarget();
+        String app = selected != null ? selected.name() : null;
         if (app == null && status != null && status.get("context") instanceof Map<?, ?> context
                 && context.get("name") != null) {
             app = context.get("name").toString();
         }
         answer.put("app", app);
-        answer.put("pid", ctx.pid());
+        if (selected == null || selected.pid() == null) {
+            if (selected == null) {
+                answer.put("pid", -1);
+            }
+        } else {
+            answer.put("pid", selected.pid());
+        }
+        if (selected != null) {
+            answer.put("targetId", selected.id());
+        }
         answer.put("fingerprint", selection.fingerprint());
         JsonArray core = new JsonArray();
         authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name).forEach(core::add);
@@ -1083,7 +1099,7 @@ public final class ToolRegistry {
             ctx.selectProcess(name);
         } else if (!ctx.hasProcess() && ctx.isAutoSelectSingleProcess()) {
             try {
-                ctx.selectProcess(ProcessFinder.requireOneForChaos(null).pid());
+                ctx.selectProcess(ctx.findChaosRuntimeTarget());
             } catch (CliException e) {
                 throw new ToolExecutionException(e.getMessage());
             }
@@ -1110,11 +1126,11 @@ public final class ToolRegistry {
     static JsonObject chaosSection(ToolContext ctx, String key) {
         JsonObject status = ctx.readFullStatus();
         if (status == null) {
-            throw new ToolExecutionException("No status from the integration with pid " + ctx.pid() + " yet");
+            throw new ToolExecutionException("No status from the integration with " + ctx.processDescription() + " yet");
         }
         if (!(status.get("chaos") instanceof Map<?, ?> chaos)) {
             throw new ToolExecutionException(
-                    "camel-chaos is not on the classpath of the integration with pid " + ctx.pid()
+                    "camel-chaos is not on the classpath of the integration with " + ctx.processDescription()
                                              + ": run it with camel run --chaos, or add the camel-chaos dependency");
         }
         JsonObject answer = new JsonObject();

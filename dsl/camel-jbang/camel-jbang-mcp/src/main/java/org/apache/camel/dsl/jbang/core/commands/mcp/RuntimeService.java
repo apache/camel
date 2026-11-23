@@ -17,112 +17,152 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.LocalRuntimeAccess;
+import org.apache.camel.dsl.jbang.core.common.RuntimeAccess;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTarget;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * CDI service for discovering running Camel processes and communicating with them via the file-based IPC protocol.
- * <p>
- * This is a thin wrapper around {@link RuntimeHelper} that translates null returns and error conditions into
- * {@link ToolCallException} instances suitable for MCP tool responses.
- *
- * @since 4.21
+ * CDI facade for discovering and operating on local and authenticated remote Camel runtimes. The selected identity is
+ * an opaque {@link RuntimeTarget}; PID-based methods remain as compatibility overloads for local callers.
  */
 @ApplicationScoped
 public class RuntimeService {
 
-    /**
-     * Process information exposed to MCP tools.
-     *
-     * @since 4.21
-     */
-    public record ProcessInfo(long pid, String name, String contextName) {
+    private static final long ACTION_TIMEOUT_MILLIS = 10_000L;
+
+    @Inject
+    RuntimeAccess runtimeAccess;
+
+    /** Creates a tool context backed by the same local/remote runtime access as this MCP service. */
+    public ToolContext newToolContext() {
+        return new ToolContext(runtimeAccess());
+    }
+
+    private RuntimeAccess runtimeAccess() {
+        return runtimeAccess != null ? runtimeAccess : LocalRuntimeAccess.INSTANCE;
+    }
+
+    /** Process information exposed by MCP, including a stable ID for runtimes that have no local PID. */
+    public record ProcessInfo(String id, Long pid, String name, String contextName, String transport) {
+
+        /** Compatibility constructor for existing local tests and callers. */
+        public ProcessInfo(long pid, String name, String contextName) {
+            this("file:" + pid, pid, name, contextName, "file");
+        }
+
+        public RuntimeTarget target() {
+            return new RuntimeTarget(
+                    id != null ? id : "file:" + pid, pid, name, contextName,
+                    transport != null ? transport : "file");
+        }
+
+        static ProcessInfo from(RuntimeTarget target) {
+            return new ProcessInfo(target.id(), target.pid(), target.name(), target.contextName(), target.transport());
+        }
     }
 
     public List<ProcessInfo> discoverProcesses() {
-        return RuntimeHelper.discoverProcesses().stream()
-                .map(p -> new ProcessInfo(p.pid(), p.name(), p.contextName()))
-                .toList();
+        return runtimeAccess().discoverProcesses().stream().map(ProcessInfo::from).toList();
     }
 
+    /** Finds the one runtime selected by name, local PID, or stable runtime ID. */
     public ProcessInfo findSingleProcess(String nameOrPid) {
         if (RuntimeHelper.isThisProcess(nameOrPid)) {
-            // never an integration, see RuntimeHelper.discoverProcesses()
             throw new ToolCallException(
-                    "pid " + nameOrPid + " is this MCP server (the process that runs the tools), not a Camel integration;"
-                                        + " camel_runtime_processes shows the integrations",
+                    "pid " + nameOrPid + " is this MCP server (the process that runs the tools), not a Camel "
+                                        + "integration; camel_runtime_processes shows the integrations",
                     null);
         }
-        List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
-
+        List<RuntimeTarget> processes = runtimeAccess().discoverProcesses();
         if (processes.isEmpty()) {
             throw new ToolCallException("No running Camel processes found", null);
         }
-
-        RuntimeHelper.ProcessInfo found = RuntimeHelper.findProcess(nameOrPid);
-        if (found != null) {
-            return new ProcessInfo(found.pid(), found.name(), found.contextName());
-        }
-
-        if (nameOrPid != null && !nameOrPid.isBlank()) {
+        if (nameOrPid == null || nameOrPid.isBlank()) {
+            if (processes.size() == 1) {
+                return ProcessInfo.from(processes.get(0));
+            }
             throw new ToolCallException(
-                    "No unique Camel process found matching '" + nameOrPid + "': "
-                                        + processes.stream().map(p -> p.name() + " (PID " + p.pid() + ")").toList()
-                                        + ". Specify a more specific name or PID.",
+                    "Multiple Camel processes running: " + processes.stream().map(RuntimeService::describe).toList()
+                                        + ". Specify nameOrPid to select one.",
                     null);
         }
-
+        RuntimeTarget found = runtimeAccess().findProcess(nameOrPid);
+        if (found != null) {
+            return ProcessInfo.from(found);
+        }
         throw new ToolCallException(
-                "Multiple Camel processes running: "
-                                    + processes.stream().map(p -> p.name() + " (PID " + p.pid() + ")").toList()
-                                    + ". Specify nameOrPid to select one.",
+                "No unique Camel process found matching '" + nameOrPid + "': "
+                                    + processes.stream().map(RuntimeService::describe).toList()
+                                    + ". Specify a more specific name, PID, or runtime ID.",
                 null);
     }
 
+    private static String describe(RuntimeTarget target) {
+        return target.displayName() + " (" + target.identityLabel() + ")";
+    }
+
     /**
-     * The process of a chaos tool, as {@code camel cmd chaos-add} picks it: the one the name or pid matches; without a
-     * name the only one running, else the only one with chaos switched on, else an error with the list of the running
-     * integrations.
-     *
-     * @since 4.24
+     * The process a chaos tool should use: explicit selector, sole runtime, or the unique runtime with chaos enabled.
      */
     public ProcessInfo findChaosProcess(String nameOrPid) {
         if (nameOrPid != null && !nameOrPid.isBlank()) {
             return findSingleProcess(nameOrPid);
         }
         try {
-            ProcessFinder.CamelProcess p = ProcessFinder.requireOneForChaos(null);
-            return new ProcessInfo(p.pid(), p.name(), p.contextName());
+            RuntimeTarget target = runtimeAccess().findChaosProcess();
+            if (target != null) {
+                return ProcessInfo.from(target);
+            }
         } catch (CliException e) {
             throw new ToolCallException(e.getMessage(), null);
         }
+        List<RuntimeTarget> processes = runtimeAccess().discoverProcesses();
+        if (processes.isEmpty()) {
+            throw new ToolCallException("No running Camel processes found", null);
+        }
+        throw new ToolCallException(
+                "Cannot select one Camel process for chaos tools: "
+                                    + processes.stream().map(RuntimeService::describe).toList()
+                                    + ". Specify nameOrPid.",
+                null);
     }
 
     public JsonObject readStatus(long pid) {
-        return RuntimeHelper.readStatus(pid);
+        return runtimeAccess().readStatus(runtimeAccess().targetForPid(pid));
+    }
+
+    public JsonObject readStatus(RuntimeTarget target) {
+        return runtimeAccess().readStatus(target);
     }
 
     public JsonObject readStatusSection(long pid, String section) {
-        JsonObject root = RuntimeHelper.readStatus(pid);
+        JsonObject root = readStatus(pid);
+        return statusSection(root, "PID " + pid, section);
+    }
+
+    public JsonObject readStatusSection(RuntimeTarget target, String section) {
+        if (isLocal(target)) {
+            return readStatusSection(target.pid(), section);
+        }
+        JsonObject root = readStatus(target);
+        return statusSection(root, target.identityLabel(), section);
+    }
+
+    private static JsonObject statusSection(JsonObject root, String runtime, String section) {
         if (root == null) {
-            throw new ToolCallException("No status available for PID " + pid, null);
+            throw new ToolCallException("No status available for " + runtime, null);
         }
         Object value = root.get(section);
         if (value instanceof JsonObject jo) {
@@ -137,102 +177,139 @@ public class RuntimeService {
     }
 
     public JsonObject readErrorFile(long pid) {
-        JsonObject result = RuntimeHelper.readErrorFile(pid);
-        if (result == null) {
-            JsonObject empty = new JsonObject();
-            empty.put("errors", new org.apache.camel.util.json.JsonArray());
-            return empty;
-        }
-        return result;
+        return runtimeAccess().readErrorFile(runtimeAccess().targetForPid(pid));
+    }
+
+    public JsonObject readErrorFile(RuntimeTarget target) {
+        return runtimeAccess().readErrorFile(target);
     }
 
     public JsonObject readHistoryFile(long pid) {
-        JsonObject result = RuntimeHelper.readHistoryFile(pid);
-        if (result == null) {
-            JsonObject empty = new JsonObject();
-            empty.put("message", "No message history available for PID " + pid);
-            return empty;
-        }
-        return result;
+        return runtimeAccess().readHistoryFile(runtimeAccess().targetForPid(pid));
+    }
+
+    public JsonObject readHistoryFile(RuntimeTarget target) {
+        return runtimeAccess().readHistoryFile(target);
     }
 
     public String stopApplication(long pid) {
-        return RuntimeHelper.stopApplication(pid);
+        return runtimeAccess().stopApplication(runtimeAccess().targetForPid(pid));
     }
 
-    /**
-     * The size of the file the CLI connector appends the messages of the receive console to
-     * ({@code {pid}-receive.json}, read by {@code camel cmd receive} too), to read only what arrives after this point.
-     */
+    public String stopApplication(RuntimeTarget target) {
+        return runtimeAccess().stopApplication(target);
+    }
+
+    /** Legacy byte-offset view retained for local callers. */
     public long receiveFileSize(long pid) {
         try {
-            Path file = receiveFile(pid);
-            return Files.exists(file) ? Files.size(file) : 0;
-        } catch (IOException e) {
+            return Long.parseLong(runtimeAccess().receiveCursor(runtimeAccess().targetForPid(pid)));
+        } catch (RuntimeException e) {
             return 0;
         }
     }
 
-    /**
-     * The messages the CLI connector appended to the receive file after the given offset: each complete line is a
-     * {@code {"messages": [...]}} dump of the receive console. Only what was appended after the offset is read, as the
-     * file is append-only and kept across sessions.
-     */
+    /** Legacy local receive API retained for callers that hold a PID and byte offset. */
     public List<JsonObject> readReceivedMessages(long pid, long offset) {
-        List<JsonObject> messages = new ArrayList<>();
-        Path file = receiveFile(pid);
-        try {
-            if (!Files.exists(file)) {
-                return messages;
-            }
-            String text;
-            try (SeekableByteChannel channel = Files.newByteChannel(file, StandardOpenOption.READ)) {
-                long size = channel.size();
-                // camel cmd receive --action=clear rewrites the file: read it from the start then
-                long from = offset <= size ? offset : 0;
-                ByteBuffer buffer = ByteBuffer.allocate(Math.toIntExact(size - from));
-                channel.position(from);
-                int read = 0;
-                while (buffer.hasRemaining() && read >= 0) {
-                    read = channel.read(buffer);
-                }
-                text = new String(buffer.array(), 0, buffer.position(), StandardCharsets.UTF_8);
-            }
-            int end = text.lastIndexOf('\n');
-            if (end < 0) {
-                return messages;
-            }
-            for (String line : text.substring(0, end).split("\n")) {
-                Object parsed = Jsoner.deserialize(line.trim(), (JsonObject) null);
-                if (parsed instanceof JsonObject dump && dump.getCollection("messages") != null) {
-                    for (Object m : dump.getCollection("messages")) {
-                        if (m instanceof JsonObject jo) {
-                            messages.add(jo);
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // not readable yet: the caller polls again
-        }
-        return messages;
+        return runtimeAccess().readReceivedMessages(runtimeAccess().targetForPid(pid), Long.toString(offset));
     }
 
-    private static Path receiveFile(long pid) {
-        return CommandLineHelper.getCamelDir().resolve(pid + "-receive.json");
+    public String receiveCursor(RuntimeTarget target) {
+        if (isLocal(target)) {
+            return Long.toString(receiveFileSize(target.pid()));
+        }
+        return runtimeAccess().receiveCursor(target);
+    }
+
+    public List<JsonObject> readReceivedMessages(RuntimeTarget target, String cursor) {
+        if (isLocal(target)) {
+            try {
+                return readReceivedMessages(target.pid(), Long.parseLong(cursor));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid local receive cursor: " + cursor, e);
+            }
+        }
+        return runtimeAccess().readReceivedMessages(target, cursor);
     }
 
     public JsonObject executeAction(long pid, String action, Consumer<JsonObject> configure) {
-        String result = RuntimeHelper.executeAction(pid, action, configure);
-        if (result != null && result.startsWith("Timeout")) {
+        JsonObject request = actionRequest(action, configure);
+        String result;
+        try {
+            result = runtimeAccess().executeActionText(
+                    runtimeAccess().targetForPid(pid), request, ACTION_TIMEOUT_MILLIS);
+        } catch (IOException e) {
+            throw new ToolCallException(e.getMessage(), e);
+        }
+        return parseActionResult(result, action, "PID " + pid);
+    }
+
+    public JsonObject executeAction(RuntimeTarget target, String action, Consumer<JsonObject> configure) {
+        if (isLocal(target)) {
+            return executeAction(target.pid(), action, configure);
+        }
+        JsonObject request = actionRequest(action, configure);
+        String result;
+        try {
+            result = runtimeAccess().executeActionText(target, request, ACTION_TIMEOUT_MILLIS);
+        } catch (IOException e) {
+            throw new ToolCallException(
+                    "Cannot send the action " + action + " to " + target.identityLabel()
+                                        + ": " + e.getMessage(),
+                    e);
+        }
+        return parseActionResult(result, action, target.identityLabel());
+    }
+
+    private static JsonObject actionRequest(String action, Consumer<JsonObject> configure) {
+        JsonObject request = new JsonObject();
+        request.put("action", action);
+        if (configure != null) {
+            configure.accept(request);
+        }
+        return request;
+    }
+
+    private static JsonObject parseActionResult(String result, String action, String runtime) {
+        if (result == null) {
+            throw new ToolCallException(
+                    "No answer from the integration " + runtime + " to the action " + action
+                                        + " within " + ACTION_TIMEOUT_MILLIS / 1000 + " seconds",
+                    null);
+        }
+        if (result.startsWith("Timeout")) {
             throw new ToolCallException(result, null);
         }
         try {
-            return (JsonObject) Jsoner.deserialize(result);
+            Object parsed = Jsoner.deserialize(result);
+            if (parsed instanceof JsonObject json) {
+                return json;
+            }
         } catch (Exception e) {
-            JsonObject wrapper = new JsonObject();
-            wrapper.put("result", result);
-            return wrapper;
+            // An action may return plain text; preserve it for the caller.
         }
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("result", result);
+        return wrapper;
+    }
+
+    public JsonObject sendMessage(
+            RuntimeTarget target, String endpoint, String body, String headers, int repeat,
+            String interval) {
+        return runtimeAccess().sendMessage(target, endpoint, body, headers, repeat, interval);
+    }
+
+    public JsonObject executeSqlQuery(
+            RuntimeTarget target, String sql, String datasource, int maxRows, int queryTimeout) {
+        return runtimeAccess().executeSqlQuery(target, sql, datasource, maxRows, queryTimeout);
+    }
+
+    public String runtimeVersion(RuntimeTarget target) {
+        return runtimeAccess().runtimeVersion(target);
+    }
+
+    private static boolean isLocal(RuntimeTarget target) {
+        return target != null && target.pid() != null
+                && (target.transport() == null || "file".equals(target.transport()));
     }
 }

@@ -54,8 +54,9 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Every frame is a JSON envelope <tt>{"v":1,"type":...}</tt>. The tool sends <tt>action</tt> frames holding the same
  * action JSON the Camel CLI writes to its action file, and gets <tt>result</tt> frames back correlated by
- * <tt>requestId</tt>. The transport sends a <tt>hello</tt> frame once the integration is started, and <tt>snapshot</tt>
- * frames (the content of the status, trace, ... files) while connected.
+ * <tt>requestId</tt>. A peer can send a <tt>cancel</tt> frame with that id to interrupt queued or running work. The
+ * transport sends a <tt>hello</tt> frame once the integration is started, and <tt>snapshot</tt> frames (the content of
+ * the status, trace, ... files) while connected.
  * <p/>
  * The connection is kept alive with pings, and re-established with an exponential backoff when it is lost.
  * <p/>
@@ -295,7 +296,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                     Connection c = connection;
                     if (c != null) {
                         connection = null;
-                        c.pending.forEach(future -> future.cancel(true));
+                        c.pending.values().forEach(ActionTask::cancel);
+                        c.pending.clear();
                         c.close(NORMAL_CLOSURE, "stopping");
                     }
                 }).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -389,7 +391,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         connection = null;
-        c.pending.forEach(future -> future.cancel(true));
+        c.pending.values().forEach(ActionTask::cancel);
+        c.pending.clear();
         c.channel.abort();
         // a connection that drops right away counts as a failure, so a tool that keeps closing us is not hammered
         if (System.currentTimeMillis() - c.openedAt < STABLE_CONNECTION) {
@@ -575,8 +578,15 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             requestId = frame.getString("requestId");
             if (!Integer.valueOf(VERSION).equals(frame.getInteger("v"))) {
                 reply(c, error(requestId, "Unsupported protocol version: " + frame.get("v")));
+            } else if ("cancel".equals(frame.getString("type"))) {
+                if (!validRequestId(requestId)) {
+                    throw new IllegalArgumentException("A cancel frame requires a valid requestId");
+                }
+                cancelAction(c, requestId);
             } else if (!"action".equals(frame.getString("type"))) {
                 reply(c, error(requestId, "Unsupported frame type: " + frame.getString("type")));
+            } else if (!validRequestId(requestId)) {
+                reply(c, error(requestId, "Missing or invalid requestId"));
             } else if (!ready) {
                 reply(c, error(requestId, "Not ready: Camel is starting"));
             } else {
@@ -595,26 +605,28 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
     }
 
+    private static boolean validRequestId(String requestId) {
+        return requestId != null && !requestId.isBlank() && requestId.length() <= 128;
+    }
+
     private void runAction(Connection c, String requestId, JsonObject action) {
+        ActionTask task = new ActionTask(c, requestId, action);
+        if (c.pending.putIfAbsent(requestId, task) != null) {
+            reply(c, error(requestId, "Duplicate requestId"));
+            return;
+        }
         try {
-            actions.execute(() -> {
-                if (c != connection) {
-                    return;
-                }
-                CompletableFuture<JsonObject> result = result(requestId, action);
-                c.pending.add(result);
-                if (c != connection) {
-                    result.cancel(true);
-                }
-                result.whenComplete((frame, failure) -> {
-                    c.pending.remove(result);
-                    if (failure == null) {
-                        reply(c, frame);
-                    }
-                });
-            });
+            actions.execute(task);
         } catch (RejectedExecutionException e) {
+            c.pending.remove(requestId, task);
             reply(c, error(requestId, "Busy: too many pending actions"));
+        }
+    }
+
+    private void cancelAction(Connection c, String requestId) {
+        ActionTask task = c.pending.get(requestId);
+        if (task != null) {
+            task.cancel();
         }
     }
 
@@ -751,6 +763,77 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 || "::1".equals(h);
     }
 
+    /** A cancellable action, including work still queued on the serialized dispatcher executor. */
+    private final class ActionTask implements Runnable {
+
+        private final Connection connection;
+        private final String requestId;
+        private final JsonObject action;
+        private volatile boolean cancelled;
+        private volatile Thread runner;
+        private volatile CompletableFuture<JsonObject> response;
+
+        private ActionTask(Connection connection, String requestId, JsonObject action) {
+            this.connection = connection;
+            this.requestId = requestId;
+            this.action = action;
+        }
+
+        @Override
+        public void run() {
+            if (cancelled || connection != WebSocketCliConnectorTransport.this.connection) {
+                connection.pending.remove(requestId, this);
+                return;
+            }
+            runner = Thread.currentThread();
+            try {
+                if (cancelled || connection != WebSocketCliConnectorTransport.this.connection) {
+                    return;
+                }
+                CompletableFuture<JsonObject> result = result(requestId, action);
+                response = result;
+                if (cancelled || connection != WebSocketCliConnectorTransport.this.connection) {
+                    result.cancel(true);
+                    return;
+                }
+                result.whenComplete((frame, failure) -> {
+                    connection.pending.remove(requestId, this);
+                    if (failure == null && !cancelled
+                            && connection == WebSocketCliConnectorTransport.this.connection) {
+                        reply(connection, frame);
+                    }
+                });
+            } catch (RuntimeException e) {
+                connection.pending.remove(requestId, this);
+                if (!cancelled && connection == WebSocketCliConnectorTransport.this.connection) {
+                    reply(connection, error(requestId, "Action failed: " + e.getMessage()));
+                }
+            } finally {
+                runner = null;
+            }
+        }
+
+        private void cancel() {
+            cancelled = true;
+            CompletableFuture<JsonObject> current = response;
+            if (current != null) {
+                current.cancel(true);
+            }
+            Thread currentRunner = runner;
+            if (currentRunner != null) {
+                // Covers dispatchers whose synchronous dispatch path is currently blocking this worker.
+                currentRunner.interrupt();
+            } else {
+                ThreadPoolExecutor executor = actions;
+                if (executor != null) {
+                    // Avoid letting cancelled work occupy the bounded action queue until it reaches the head.
+                    executor.remove(this);
+                }
+            }
+            connection.pending.remove(requestId, this);
+        }
+    }
+
     /**
      * One WebSocket connection, and what has been sent on it. The callbacks come from the client, on any thread.
      */
@@ -758,7 +841,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
         // set on the scheduler thread, before the connection is used
         private CliWebSocketClient.Channel channel;
-        private final Set<CompletableFuture<JsonObject>> pending = ConcurrentHashMap.newKeySet();
+        private final ConcurrentHashMap<String, ActionTask> pending = new ConcurrentHashMap<>();
         private boolean lost;
         private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;

@@ -30,24 +30,27 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.LocalRuntimeAccess;
+import org.apache.camel.dsl.jbang.core.common.RuntimeAccess;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTarget;
 import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * Shared execution context for AI tools. Wraps {@link RuntimeHelper} (process IPC) and {@link CamelCatalog} (component
- * metadata). This class intentionally has no dependency on MCP or Quarkus so it can be used by both the Agent REPL and
- * the MCP server.
+ * Shared execution context for AI tools. Wraps {@link RuntimeAccess} (local file IPC by default) and
+ * {@link CamelCatalog} (component metadata). This class intentionally has no dependency on MCP or Quarkus so it can be
+ * used by both the Agent REPL and the MCP server.
  */
 public class ToolContext {
 
     /** How long an action on the integration may take, in millis. */
     private static final long ACTION_TIMEOUT = 10000;
 
-    private volatile long pid = -1;
+    private final RuntimeAccess runtimeAccess;
+    private volatile RuntimeTarget selectedTarget;
     private volatile CamelCatalog catalog;
     private volatile String camelVersion;
     private volatile Path defaultDirectory;
@@ -59,21 +62,59 @@ public class ToolContext {
     private volatile boolean autoSelectSingleProcess = true;
     private volatile Predicate<ToolConfirms.Call> confirmer;
 
-    public long pid() {
-        return pid;
+    public ToolContext() {
+        this(LocalRuntimeAccess.INSTANCE);
     }
 
+    /** Creates a context backed by the supplied runtime access implementation. */
+    public ToolContext(RuntimeAccess runtimeAccess) {
+        this.runtimeAccess = Objects.requireNonNull(runtimeAccess, "runtimeAccess");
+    }
+
+    /**
+     * The selected PID for legacy local callers, or {@code -1} when no target is selected or the target has no PID. New
+     * runtime code should use {@link #selectedTarget()} instead.
+     */
+    public long pid() {
+        RuntimeTarget target = selectedTarget;
+        return target != null && target.pid() != null ? target.pid() : -1;
+    }
+
+    /** The opaque selected runtime target, or {@code null} when none is selected. */
+    public RuntimeTarget selectedTarget() {
+        return selectedTarget;
+    }
+
+    /** A diagnostic identity that does not assume every runtime has a PID. */
+    public String processDescription() {
+        RuntimeTarget target = selectedTarget;
+        if (target == null) {
+            return "no selected runtime";
+        }
+        return target.pid() != null ? "pid " + target.pid() : "runtime target " + target.id();
+    }
+
+    /** Selects a runtime by its opaque reference. */
+    public void selectProcess(RuntimeTarget target) {
+        this.selectedTarget = Objects.requireNonNull(target, "target");
+    }
+
+    /** Legacy convenience for selecting a local runtime by PID. */
     public void selectProcess(long pid) {
-        this.pid = pid;
+        if (pid < 0) {
+            clearProcess();
+        } else {
+            selectProcess(runtimeAccess.targetForPid(pid));
+        }
     }
 
     public boolean hasProcess() {
-        return pid >= 0;
+        return selectedTarget != null;
     }
 
     /** Forgets the selected process, so tools fall back to what needs no running integration. */
     public void clearProcess() {
-        this.pid = -1;
+        this.selectedTarget = null;
     }
 
     /**
@@ -101,11 +142,11 @@ public class ToolContext {
         if (!autoSelectSingleProcess) {
             return false;
         }
-        RuntimeHelper.ProcessInfo only = RuntimeHelper.findProcess(null);
+        RuntimeTarget only = runtimeAccess.findProcess(null);
         if (only == null) {
             return false;
         }
-        selectProcess(only.pid());
+        selectProcess(only);
         return true;
     }
 
@@ -265,13 +306,13 @@ public class ToolContext {
             return;
         }
         refuseThisProcess(nameOrPid);
-        RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(nameOrPid);
-        if (p == null) {
+        RuntimeTarget target = runtimeAccess.findProcess(nameOrPid);
+        if (target == null) {
             throw new ToolExecutionException(
                     "No running Camel process matches '" + nameOrPid
                                              + "'; list_processes shows what runs");
         }
-        selectProcess(p.pid());
+        selectProcess(target);
     }
 
     /**
@@ -296,13 +337,26 @@ public class ToolContext {
     }
 
     public String readStatus(String section) {
-        requireProcess();
-        return RuntimeHelper.readStatusSection(pid, section);
+        JsonObject root = readFullStatus();
+        if (root == null) {
+            RuntimeTarget target = requireTarget();
+            return "No status available for "
+                   + (target.pid() != null ? "PID " + target.pid() : processDescription());
+        }
+        Object value = root.get(section);
+        if (value instanceof JsonObject jo) {
+            return jo.toJson();
+        }
+        if (value != null) {
+            JsonObject wrapper = new JsonObject();
+            wrapper.put(section, value);
+            return wrapper.toJson();
+        }
+        return "{}";
     }
 
     public JsonObject readFullStatus() {
-        requireProcess();
-        return RuntimeHelper.readStatus(pid);
+        return runtimeAccess.readStatus(requireTarget());
     }
 
     /**
@@ -312,18 +366,18 @@ public class ToolContext {
      * @throws ToolExecutionException when the integration answers that the action failed, or does not take it in time
      */
     public void sendAction(String action, Consumer<JsonObject> configure) {
-        requireProcess();
         JsonObject request = new JsonObject();
         request.put("action", action);
         if (configure != null) {
             configure.accept(request);
         }
-        ActionClient.ActionResult result;
+        RuntimeAccess.ActionResult result;
         try {
-            result = ActionClient.send(pid, request, ACTION_TIMEOUT);
+            result = runtimeAccess.sendAction(requireTarget(), request, ACTION_TIMEOUT);
         } catch (IOException e) {
             throw new ToolExecutionException(
-                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+                    "Cannot send the action " + action + " to the integration with " + processDescription() + ": "
+                                             + e.getMessage());
         }
         if (!result.isOk()) {
             throw new ToolExecutionException(result.error());
@@ -336,7 +390,6 @@ public class ToolContext {
      * @throws ToolExecutionException when the integration answers that the action failed, or does not answer in time
      */
     public String executeAction(String action, Consumer<JsonObject> configure) {
-        requireProcess();
         JsonObject request = new JsonObject();
         request.put("action", action);
         if (configure != null) {
@@ -344,24 +397,25 @@ public class ToolContext {
         }
         String answer;
         try {
-            answer = ActionClient.executeText(pid, request, ACTION_TIMEOUT);
-        } catch (ActionClient.StoppedException e) {
+            answer = runtimeAccess.executeActionText(requireTarget(), request, ACTION_TIMEOUT);
+        } catch (RuntimeAccess.RuntimeStoppedException e) {
             throw new ToolExecutionException(e.getMessage());
         } catch (IOException e) {
             throw new ToolExecutionException(
-                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+                    "Cannot send the action " + action + " to the integration with " + processDescription() + ": "
+                                             + e.getMessage());
         }
         if (answer == null) {
             throw new ToolExecutionException(
-                    "No answer from the integration with pid " + pid + " to the action " + action + " within "
+                    "No answer from the integration with " + processDescription() + " to the action " + action + " within "
                                              + ACTION_TIMEOUT / 1000 + " seconds");
         }
         // an integration of Camel 4.24 or later answers a failed action with the error
         JsonObject json = Jsoner.deserialize(answer, (JsonObject) null);
         if (json != null) {
-            ActionClient.ActionResult result = ActionClient.result(json);
-            if (!result.isOk()) {
-                throw new ToolExecutionException(result.error());
+            String status = json.getString("status");
+            if ("failed".equals(status) || "error".equals(status)) {
+                throw new ToolExecutionException(actionError(json));
             }
             if (unescapeCodeLines(json)) {
                 return json.toJson();
@@ -370,16 +424,30 @@ public class ToolContext {
         return answer;
     }
 
+    private static String actionError(JsonObject reply) {
+        if (reply.get("exception") instanceof JsonObject exception) {
+            String message = exception.getString("message") != null
+                    ? exception.getString("message") : exception.getString("type");
+            if (message != null) {
+                return message;
+            }
+        }
+        String error = reply.getString("error");
+        if (error != null && !error.isBlank()) {
+            return error;
+        }
+        String message = reply.getString("message");
+        return message != null && !message.isBlank() ? message : "Action failed";
+    }
+
     public JsonObject readErrorFile() {
-        requireProcess();
-        JsonObject errors = RuntimeHelper.readErrorFile(pid);
+        JsonObject errors = runtimeAccess.readErrorFile(requireTarget());
         unescapeCodeLines(errors);
         return errors;
     }
 
     public JsonObject readHistoryFile() {
-        requireProcess();
-        JsonObject history = RuntimeHelper.readHistoryFile(pid);
+        JsonObject history = runtimeAccess.readHistoryFile(requireTarget());
         unescapeCodeLines(history);
         return history;
     }
@@ -418,8 +486,7 @@ public class ToolContext {
     }
 
     public String stopApplication() {
-        requireProcess();
-        return RuntimeHelper.stopApplication(pid);
+        return runtimeAccess.stopApplication(requireTarget());
     }
 
     public JsonObject sendMessage(String endpoint, String body, String headers) {
@@ -427,25 +494,62 @@ public class ToolContext {
     }
 
     public JsonObject sendMessage(String endpoint, String body, String headers, int repeat, String interval) {
-        requireProcess();
-        return RuntimeHelper.sendMessage(pid, endpoint, body, headers, repeat, interval);
+        return runtimeAccess.sendMessage(requireTarget(), endpoint, body, headers, repeat, interval);
     }
 
+    /** Discovers opaque runtime targets. */
+    public List<RuntimeTarget> discoverRuntimeTargets() {
+        return runtimeAccess.discoverProcesses();
+    }
+
+    /** Finds an opaque runtime target by name, PID string, or stable target identifier. */
+    public RuntimeTarget findRuntimeTarget(String selector) {
+        return runtimeAccess.findProcess(selector);
+    }
+
+    /** Resolves the target chosen by the runtime access implementation's chaos-selection rules. */
+    public RuntimeTarget findChaosRuntimeTarget() {
+        return runtimeAccess.findChaosProcess();
+    }
+
+    /**
+     * Legacy local-process view retained for callers that work with PID-based log files and process handles. Remote
+     * targets are intentionally omitted rather than assigned a synthetic PID.
+     */
     public List<RuntimeHelper.ProcessInfo> discoverProcesses() {
-        return RuntimeHelper.discoverProcesses();
+        return discoverRuntimeTargets().stream()
+                .filter(target -> target.pid() != null)
+                .map(ToolContext::legacyProcessInfo)
+                .toList();
     }
 
+    /** Legacy local-process lookup retained for callers that need PID-based process metadata. */
     public RuntimeHelper.ProcessInfo findProcess(String name) {
-        return RuntimeHelper.findProcess(name);
+        return legacyProcessInfo(findRuntimeTarget(name));
+    }
+
+    private static RuntimeHelper.ProcessInfo legacyProcessInfo(RuntimeTarget target) {
+        return target == null || target.pid() == null
+                ? null
+                : new RuntimeHelper.ProcessInfo(target.pid(), target.name(), target.contextName());
     }
 
     public JsonObject executeSqlQuery(String sql, String datasource, int maxRows, int queryTimeout) {
+        return runtimeAccess.executeSqlQuery(requireTarget(), sql, datasource, maxRows, queryTimeout);
+    }
+
+    /** Camel version of the selected runtime, or {@code null} when unknown. */
+    public String runtimeVersion() {
+        return runtimeAccess.runtimeVersion(requireTarget());
+    }
+
+    private RuntimeTarget requireTarget() {
         requireProcess();
-        return RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
+        return selectedTarget;
     }
 
     public void requireProcess() {
-        if (pid < 0) {
+        if (selectedTarget == null) {
             throw new ToolExecutionException(
                     "No running Camel process connected. Start one with: camel run <file>");
         }
