@@ -245,6 +245,21 @@ public class EndpointMessageListener implements SessionMessageListener {
         LOG.trace("onMessage END");
     }
 
+    /**
+     * The failure of a message that expects a reply, as the listener container logs it. The exchange failed, so no
+     * reply is sent: the caller waits until its requestTimeout, and its ExchangeTimedOutException cannot say why.
+     */
+    static String noReplyMessage(Exception cause, Object replyDestination) {
+        String failure = cause.toString();
+        if (failure.endsWith(".")) {
+            failure = failure.substring(0, failure.length() - 1);
+        }
+        return failure + ". No reply is sent (JMSReplyTo " + replyDestination + "), as the exchange failed: the caller"
+               + " waits until its requestTimeout and then fails with ExchangeTimedOutException. To make the caller fail"
+               + " at once, reply with a message that says the request failed and check it in the caller, or set"
+               + " transferException=true to send the exception back (with objectMessageEnabled=true on both sides)";
+    }
+
     protected Object getReplyToDestination(Message message) {
         // lets send a response back if we can
         Object destination = getReplyToDestination();
@@ -438,6 +453,10 @@ public class EndpointMessageListener implements SessionMessageListener {
                         // send the exception as reply, so null body and set the exception as the cause
                         body = null;
                         cause = exchange.getException();
+                    } else if (sendReply) {
+                        // no reply is sent, and the caller sees only its own timeout later: say so where this failure is logged
+                        rce = new RuntimeCamelException(
+                                noReplyMessage(exchange.getException(), replyDestination), exchange.getException());
                     } else {
                         // only throw exception if endpoint is not configured to transfer exceptions back to caller
                         // or if there is no reply destination to send the exception to
