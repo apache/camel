@@ -38,8 +38,8 @@ public final class MNSHeaders {
               javaType = "Integer")
     public static final String DELAY_SECONDS = "CamelAlibabaMnsDelaySeconds";
 
-    @Metadata(label = "producer", description = "The priority of the message for sendMessage. The consumer sets it for a"
-                                                + " received message.",
+    @Metadata(label = "common", description = "The priority of the message for sendMessage. The consumer sets it for a received"
+                                              + " message.",
               javaType = "Integer")
     public static final String PRIORITY = "CamelAlibabaMnsPriority";
 

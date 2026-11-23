@@ -62,23 +62,6 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation that the producer performs. If not set, the producer
-         * performs publishMessage for a topic endpoint and sendMessage
-         * otherwise. The CamelAlibabaMnsOperation header replaces this option,
-         * and an exchange property of the same name replaces both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointConsumerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
          * The region ID of Simple Message Queue, for example cn-hangzhou.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -91,57 +74,6 @@ public interface MNSEndpointBuilderFactory {
          */
         default MNSEndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * The name of the topic for publishMessage. If not set, a topic
-         * endpoint takes the name of the topic from its URI. The
-         * CamelAlibabaMnsTopicName header replaces this option, and an exchange
-         * property of the same name replaces both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param topicName the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointConsumerBuilder topicName(String topicName) {
-            doSetProperty("topicName", topicName);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointConsumerBuilder waitSeconds(int waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointConsumerBuilder waitSeconds(String waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
             return this;
         }
         /**
@@ -240,6 +172,40 @@ public interface MNSEndpointBuilderFactory {
          */
         default MNSEndpointConsumerBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The long polling wait time in seconds when the consumer receives
+         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
+         * Simple Message Queue accepts a value of at most 30.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param waitSeconds the value to set
+         * @return the dsl builder
+         */
+        default MNSEndpointConsumerBuilder waitSeconds(int waitSeconds) {
+            doSetProperty("waitSeconds", waitSeconds);
+            return this;
+        }
+        /**
+         * The long polling wait time in seconds when the consumer receives
+         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
+         * Simple Message Queue accepts a value of at most 30.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param waitSeconds the value to set
+         * @return the dsl builder
+         */
+        default MNSEndpointConsumerBuilder waitSeconds(String waitSeconds) {
+            doSetProperty("waitSeconds", waitSeconds);
             return this;
         }
         /**
@@ -1036,23 +1002,6 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation that the producer performs. If not set, the producer
-         * performs publishMessage for a topic endpoint and sendMessage
-         * otherwise. The CamelAlibabaMnsOperation header replaces this option,
-         * and an exchange property of the same name replaces both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointProducerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
          * The region ID of Simple Message Queue, for example cn-hangzhou.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1068,6 +1017,23 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
+         * The operation that the producer performs. If not set, the producer
+         * performs publishMessage for a topic endpoint and sendMessage
+         * otherwise. The CamelAlibabaMnsOperation header replaces this option,
+         * and an exchange property of the same name replaces both.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default MNSEndpointProducerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * The name of the topic for publishMessage. If not set, a topic
          * endpoint takes the name of the topic from its URI. The
          * CamelAlibabaMnsTopicName header replaces this option, and an exchange
@@ -1075,47 +1041,13 @@ public interface MNSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param topicName the value to set
          * @return the dsl builder
          */
         default MNSEndpointProducerBuilder topicName(String topicName) {
             doSetProperty("topicName", topicName);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointProducerBuilder waitSeconds(int waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointProducerBuilder waitSeconds(String waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
             return this;
         }
         /**
@@ -1306,23 +1238,6 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation that the producer performs. If not set, the producer
-         * performs publishMessage for a topic endpoint and sendMessage
-         * otherwise. The CamelAlibabaMnsOperation header replaces this option,
-         * and an exchange property of the same name replaces both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
          * The region ID of Simple Message Queue, for example cn-hangzhou.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1335,57 +1250,6 @@ public interface MNSEndpointBuilderFactory {
          */
         default MNSEndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * The name of the topic for publishMessage. If not set, a topic
-         * endpoint takes the name of the topic from its URI. The
-         * CamelAlibabaMnsTopicName header replaces this option, and an exchange
-         * property of the same name replaces both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param topicName the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointBuilder topicName(String topicName) {
-            doSetProperty("topicName", topicName);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointBuilder waitSeconds(int waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
-            return this;
-        }
-        /**
-         * The long polling wait time in seconds when the consumer receives
-         * messages. If 0 or less, the PollingWaitSeconds of the queue applies.
-         * Simple Message Queue accepts a value of at most 30.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: common
-         * 
-         * @param waitSeconds the value to set
-         * @return the dsl builder
-         */
-        default MNSEndpointBuilder waitSeconds(String waitSeconds) {
-            doSetProperty("waitSeconds", waitSeconds);
             return this;
         }
         /**
@@ -1637,7 +1501,7 @@ public interface MNSEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaMnsPriority}.
          */

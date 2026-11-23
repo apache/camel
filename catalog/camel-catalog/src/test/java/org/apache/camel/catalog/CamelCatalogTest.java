@@ -1620,6 +1620,39 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaMns() {
+        // only the producer uses operation and topicName
+        String uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+                     + "&operation=sendMessage&topicName=myTopic";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("operation"));
+        assertTrue(result.getNotConsumerOnly().contains("topicName"));
+
+        // only the consumer uses waitSeconds
+        uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+              + "&waitSeconds=10";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("waitSeconds"));
+
+        // both sides use the priority header
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-mns").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelAlibabaMnsPriority"));
+    }
+
+    @Test
     public void testValidateApiEndpoint() {
         // there is a type converter that converts from and to to phone number
         String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
