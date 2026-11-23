@@ -142,6 +142,20 @@ public final class FtpUtils {
         }
     }
 
+    /**
+     * Whether a directory name from a listing of the server is the name of one directory in the listed directory: not
+     * blank, not . or .., and without a / or a \. A stepwise recursive poll changes into such a directory one segment
+     * at a time, and back to its parent afterwards, so a name such as sub/.. or a\b would leave the poll in another
+     * directory than the listed one.
+     *
+     * @param  name the name of the directory, as listed
+     * @return      <tt>true</tt> if the poll can change into the directory
+     */
+    public static boolean isSubDirectoryName(String name) {
+        return name != null && !name.isBlank() && !".".equals(name) && !"..".equals(name) && name.indexOf('/') == -1
+                && name.indexOf('\\') == -1;
+    }
+
     public static String absoluteFilePath(String absolutePath, String name) {
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
 
