@@ -74,6 +74,7 @@ class KubernetesInformerLoopTest {
             // Stop the loop (stops the informer, releases the wait latch) and join the thread.
             loop.stop();
             thread.join(20000);
+            assertFalse(thread.isAlive(), "Loop thread still alive after 20s — possible deadlock in stop()");
         }
         // After loop.stop() and thread.join(), the informer has stopped, but fabric8 cancels its
         // HTTP streaming request asynchronously on a ForkJoin pool thread. Wait for every opened
