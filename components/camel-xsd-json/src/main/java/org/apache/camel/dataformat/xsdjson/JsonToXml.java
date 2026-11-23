@@ -74,7 +74,7 @@ final class JsonToXml {
         } catch (StackOverflowError e) {
             // the depth limit is checked per element, but a small thread stack can be exhausted before that limit
             throw new IllegalArgumentException(
-                    "The JSON is nested too deep for the stack of the thread (the limit is " + XmlToJson.MAX_DEPTH
+                    "The JSON is nested too deep for the thread stack (the configured maximum is " + XmlToJson.MAX_DEPTH
                                                + " levels)",
                     e);
         }
