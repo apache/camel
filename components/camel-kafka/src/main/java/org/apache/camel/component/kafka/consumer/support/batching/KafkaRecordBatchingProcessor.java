@@ -189,7 +189,9 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
      * Removes the records of the given partitions from the incomplete batch, and releases their exchanges. Called when
      * the partitions are revoked or lost (inside the poll, on the consumer thread): the batch must not process them and
      * commit their offsets, which could move back the offset that the new owner of a partition committed. The new owner
-     * reads them again from the committed offset (also this consumer, if the partition is assigned to it again).
+     * reads them again from the committed offset (also this consumer, if the partition is assigned to it again). Also
+     * called on a resume, which seeks the partitions back to the committed offset (on the consumer thread, after the
+     * poll): the consumer reads these records again.
      */
     void discardBufferedRecords(KafkaConsumer camelKafkaConsumer, Collection<TopicPartition> partitions) {
         if (exchangeList.isEmpty() || partitions.isEmpty()) {
@@ -209,7 +211,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             }
         }
         if (discarded > 0) {
-            LOG.debug("Discarded {} records of the incomplete batch from the revoked partitions {} ({} records left)",
+            LOG.debug("Discarded {} records of the incomplete batch from the partitions {} ({} records left)",
                     discarded, partitions, exchangeList.size());
         }
     }

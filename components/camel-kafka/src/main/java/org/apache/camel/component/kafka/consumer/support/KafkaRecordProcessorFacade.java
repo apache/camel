@@ -37,9 +37,10 @@ public interface KafkaRecordProcessorFacade {
     /**
      * Drops the records of the given partitions that were polled but are not processed yet, such as the records held
      * for an incomplete batch. Called when the partitions are revoked or lost: they must not be processed and committed
-     * by this consumer any more, and their next owner reads them again from the committed offset.
+     * by this consumer any more, and their next owner reads them again from the committed offset. Also called when a
+     * resume seeks the partitions back to their committed offset, from where the consumer reads them again.
      *
-     * @param partitions the partitions that are no longer assigned to the consumer
+     * @param partitions the partitions that are no longer assigned to the consumer, or that are read again
      */
     default void discardPendingRecords(Collection<TopicPartition> partitions) {
         // NO-OP: by default the records of a poll are processed before the next poll
