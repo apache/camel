@@ -235,13 +235,13 @@ a `ScheduledExecutorService`. If not provided, Camel will automatically create o
 If a custom executor is provided that is not a `ScheduledExecutorService`, the route will
 fail to start with an `IllegalArgumentException`.
 The calls run on this thread pool, and the timeouts on threads of their own, so a timeout
-fires also when every thread of the pool is blocked in a call. The fallback, and the rest of the
-route after the Circuit Breaker, then run on the thread of the timeout. These threads come from a
+fires also when every thread of the pool is blocked in a call. These threads come from a
 scheduled thread pool of the Circuit Breaker, named `CircuitBreakerTimeout`, that has the size of the
 default thread pool profile (10 threads, set with `camel.threadpool.poolSize`, which other thread pools
-use too). Keep the fallback, and the steps after the Circuit Breaker, non-blocking, or give that thread
-pool enough threads: each exchange that timed out and whose fallback blocks (such as a call to a backup
-HTTP service) holds a timeout thread, and while all of them are held, the next timeouts wait.
+use too). After a timeout, the fallback, and the rest of the route after the Circuit Breaker, run on a
+thread of a cached thread pool of the Circuit Breaker, named `CircuitBreakerFallback`, and not on the
+thread of the timeout: a fallback that blocks (such as a call to a backup HTTP service) does not hold
+the threads that fire the next timeouts.
 
 === Camel's Error Handler and Circuit Breaker EIP
 

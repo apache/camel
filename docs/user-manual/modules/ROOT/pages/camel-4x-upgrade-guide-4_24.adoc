@@ -2661,8 +2661,9 @@ thread dumps and JMX change:
   the size of the default thread pool profile (10 threads by default).
 - A thread pool given with `timeoutExecutorService` now runs only the calls, not the timeouts. A thread pool that was
   sized to cover both can be made smaller.
-- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a `CircuitBreakerTimeout`
-  thread. Keep them non-blocking, or give that thread pool enough threads (see the Resilience4j EIP page).
+- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a thread of one more thread
+  pool of the Circuit Breaker, a cached thread pool named `CircuitBreakerFallback`, so a fallback that blocks does not
+  hold a `CircuitBreakerTimeout` thread.
 - A Circuit Breaker with `timeoutEnabled` (asynchronous or not) keeps the thread pools that Camel created for it while
   its route is stopped, and shuts them down when the route is removed or the CamelContext stops. Before, stopping the
   route shut the thread pool of the calls down, and after the route was started again, the calls through the Circuit
@@ -3499,6 +3500,13 @@ Its readiness health check (`consumer:<routeId>`, with the consumer health check
 the initial state (`camel.health.initial-state`, DOWN by default) while the first attempt to start runs, and DOWN while
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
+
+=== camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
+
+A `vertx-websocket` consumer with `consumeAsClient=true` used to route the received messages in parallel, on the
+threads of the Vert.x worker pool, so they could reach the route in any order. It now routes the messages of its
+WebSocket one after the other, in the order they are received. To route them in parallel as before, set the new
+option `parallelProcessing=true`.
 
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
@@ -4592,6 +4600,13 @@ provider is detected as before.
 * `camel transform route --format` other than `xml`, `yaml` or `java` exits with `2` (it ran the routes and printed
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
+
+=== camel-xml-jaxp - XML parse errors are no longer logged at ERROR by the type converter
+
+When a message body that is not well-formed XML is converted to a DOM `Document` (for example by `xpath`), the
+`XmlConverter` used to log the parse error at ERROR, with its stack trace, and then fail with the same
+`SAXParseException`. It now only fails with the exception, which the route can handle (`doTry`, `onException`) or
+which the error handler logs. Parser warnings and recoverable errors are logged at DEBUG.
 
 === camel-xml-io, camel-yaml-io, camel-java-io - route dumps keep options set to their default value
 

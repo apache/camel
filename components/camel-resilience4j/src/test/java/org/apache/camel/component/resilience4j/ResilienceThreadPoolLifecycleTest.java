@@ -45,6 +45,8 @@ class ResilienceThreadPoolLifecycleTest extends CamelTestSupport {
     private final Map<String, ScheduledExecutorService> scheduledPools = new ConcurrentHashMap<>();
     /** The thread pools created by name: the calls of the synchronous mode. */
     private final Map<String, ExecutorService> pools = new ConcurrentHashMap<>();
+    /** The cached thread pools created by name: what runs after a timeout in asynchronous mode. */
+    private final Map<String, ExecutorService> cachedPools = new ConcurrentHashMap<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -61,6 +63,13 @@ class ResilienceThreadPoolLifecycleTest extends CamelTestSupport {
             public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
                 ExecutorService answer = super.newThreadPool(source, name, profile);
                 pools.put(name, answer);
+                return answer;
+            }
+
+            @Override
+            public ExecutorService newCachedThreadPool(Object source, String name) {
+                ExecutorService answer = super.newCachedThreadPool(source, name);
+                cachedPools.put(name, answer);
                 return answer;
             }
         });
@@ -83,12 +92,16 @@ class ResilienceThreadPoolLifecycleTest extends CamelTestSupport {
         ExecutorService timeouts = scheduledPools.get("CircuitBreakerTimeout");
         assertNotNull(timeouts);
         assertFalse(timeouts.isShutdown(), "the route is started again with this thread pool");
+        ExecutorService fallbacks = cachedPools.get("CircuitBreakerFallback");
+        assertNotNull(fallbacks);
+        assertFalse(fallbacks.isShutdown(), "the route is started again with this thread pool");
 
         context.removeRoute("async");
         context.removeRoute("sync");
         assertTrue(asyncCalls.isShutdown());
         assertTrue(syncCalls.isShutdown());
         assertTrue(timeouts.isShutdown());
+        assertTrue(fallbacks.isShutdown());
     }
 
     private Object request(String uri) throws Exception {

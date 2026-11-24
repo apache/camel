@@ -21,12 +21,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509KeyManager;
 
 import io.vertx.core.http.ClientAuth;
+import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import io.vertx.core.net.TrustOptions;
@@ -68,9 +71,19 @@ public final class VertxHelper {
 
         tcpsslOptions.setSsl(true);
 
-        KeyManagerFactory keyManagerFactory = createKeyManagerFactory(camelContext, sslContextParameters);
-        if (keyManagerFactory != null) {
-            tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+        KeyManager keyManager = sslContextParameters.getKeyManagers() != null
+                ? sslContextParameters.getKeyManagers().getKeyManager() : null;
+        if (keyManager instanceof X509KeyManager x509KeyManager) {
+            tcpsslOptions.setKeyCertOptions(KeyCertOptions.wrap(x509KeyManager));
+        } else if (keyManager != null) {
+            throw new IllegalArgumentException(
+                    "Vert.x requires an X509KeyManager, but the configured key manager is a "
+                                               + keyManager.getClass().getName());
+        } else {
+            KeyManagerFactory keyManagerFactory = createKeyManagerFactory(camelContext, sslContextParameters);
+            if (keyManagerFactory != null) {
+                tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+            }
         }
 
         TrustManager trustManager = sslContextParameters.getTrustManagers() != null

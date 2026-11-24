@@ -128,7 +128,7 @@ public class SMSEndpoint extends DefaultEndpoint {
                             + " creates this client when the producer processes its first message.",
               displayName = "SMS Client", label = "advanced")
     @Metadata(autowired = true)
-    private Client smsClient;
+    private volatile Client smsClient;
 
     private boolean autowiredSmsClient;
 
@@ -151,17 +151,35 @@ public class SMSEndpoint extends DefaultEndpoint {
     }
 
     public Client initClient() throws Exception {
-        if (smsClient != null) {
-            return smsClient;
+        Client answer = smsClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = smsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    smsClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        smsClient = SMSUtils.createClient(this);
-        return smsClient;
+        return answer;
+    }
+
+    Client createClient() throws Exception {
+        return SMSUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (smsClient != null && !autowiredSmsClient) {
-            smsClient = null;
+        lock.lock();
+        try {
+            if (smsClient != null && !autowiredSmsClient) {
+                smsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -259,7 +277,12 @@ public class SMSEndpoint extends DefaultEndpoint {
     }
 
     public void setSmsClient(Client smsClient) {
-        this.smsClient = smsClient;
-        this.autowiredSmsClient = smsClient != null;
+        lock.lock();
+        try {
+            this.smsClient = smsClient;
+            this.autowiredSmsClient = smsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

@@ -92,10 +92,25 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
                 getEndpoint().discardWebSocket(mine);
                 return null;
             }
+            sendConnectMessage(webSocket);
             return webSocket;
         } finally {
             connectLock.unlock();
         }
+    }
+
+    /**
+     * Sends the connectMessage, such as a subscribe request, each time the consumer connects: when it starts and after
+     * each reconnect.
+     */
+    private void sendConnectMessage(WebSocket webSocket) {
+        String connectMessage = getEndpoint().getConfiguration().getConnectMessage();
+        if (connectMessage == null || webSocket == null || webSocket.isClosed()) {
+            return;
+        }
+        webSocket.writeTextMessage(connectMessage).onFailure(cause -> LOG.warn(
+                "Failed to send the connectMessage to {} due to {}. It is sent again when the consumer reconnects.",
+                webSocket.remoteAddress(), cause.getMessage(), cause));
     }
 
     @Override
@@ -229,13 +244,16 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
+        // ordered: Vert.x runs the blocking tasks of the WebSocket's context one after the other, so the messages reach
+        // the route in the order they are received
+        boolean ordered = !getEndpoint().getConfiguration().isParallelProcessing();
         if (getEndpoint().isSynchronous()) {
             // synchronous path: run on worker, block until done
             vertx.executeBlocking(() -> {
                 createUoW(exchange);
                 getProcessor().process(exchange);
                 return null;
-            }, false).onComplete(result -> {
+            }, ordered).onComplete(result -> {
                 try {
                     if (result.failed()) {
                         Throwable cause = result.cause();
@@ -255,7 +273,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
                     createUoW(exchange);
                     getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
                     return null;
-                }, false).onFailure(done::tryFail);
+                }, ordered).onFailure(done::tryFail);
             } catch (Exception e) {
                 done.tryFail(e);
             }

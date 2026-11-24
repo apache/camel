@@ -16,6 +16,12 @@
  */
 package org.apache.camel.support.jsse;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.security.GeneralSecurityException;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,10 +35,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.X509KeyManager;
 
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Disabled;
@@ -50,6 +58,66 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
      * The hybrid ML-KEM named groups, in the order the auto-configuration prefers them.
      */
     private static final List<String> PQC_GROUPS = List.of("X25519MLKEM768", "SecP256r1MLKEM768", "SecP384r1MLKEM1024");
+
+    @Test
+    public void testCertAliasAppliesToExistingKeyManager() throws Exception {
+        X509KeyManager myKm = new X509KeyManager() {
+            @Override
+            public String[] getClientAliases(String keyType, Principal[] issuers) {
+                return new String[] { "mine" };
+            }
+
+            @Override
+            public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
+                return "other";
+            }
+
+            @Override
+            public String[] getServerAliases(String keyType, Principal[] issuers) {
+                return new String[] { "mine" };
+            }
+
+            @Override
+            public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
+                return "other";
+            }
+
+            @Override
+            public X509Certificate[] getCertificateChain(String alias) {
+                return null;
+            }
+
+            @Override
+            public PrivateKey getPrivateKey(String alias) {
+                return null;
+            }
+        };
+
+        // keep the key managers the SSLContext is initialized with, as SSLContext does not expose them
+        KeyManager[][] used = new KeyManager[1][];
+        KeyManagersParameters kmp = new KeyManagersParameters() {
+            @Override
+            public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
+                used[0] = super.createKeyManagers();
+                return used[0];
+            }
+        };
+        kmp.setKeyManager(myKm);
+
+        SSLContextParameters scp = new SSLContextParameters();
+        scp.setKeyManagers(kmp);
+        scp.setCertAlias("localhost");
+
+        assertNotNull(scp.createSSLContext(null));
+
+        // the existing key manager is wrapped so the certAlias is chosen instead of the alias it would choose
+        assertEquals(1, used[0].length);
+        X509KeyManager km = assertInstanceOf(AliasedX509ExtendedKeyManager.class, used[0][0]);
+        assertEquals("localhost", km.chooseServerAlias("RSA", null, null));
+        assertEquals("localhost", km.chooseClientAlias(new String[] { "RSA" }, null, null));
+        // and the rest is still answered by the existing key manager
+        assertArrayEquals(new String[] { "mine" }, km.getServerAliases("RSA", null));
+    }
 
     @Test
     public void testFilter() {

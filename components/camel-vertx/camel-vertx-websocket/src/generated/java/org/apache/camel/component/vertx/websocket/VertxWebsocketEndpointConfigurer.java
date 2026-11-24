@@ -34,6 +34,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.WebSocketClientOptions.class, value)); return true;
         case "clientsubprotocols":
         case "clientSubProtocols": target.getConfiguration().setClientSubProtocols(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectmessage":
+        case "connectMessage": target.getConfiguration().setConnectMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "consumeasclient":
         case "consumeAsClient": target.getConfiguration().setConsumeAsClient(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -52,6 +54,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": target.getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
         case "originheaderurl":
         case "originHeaderUrl": target.getConfiguration().setOriginHeaderUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "parallelprocessing":
+        case "parallelProcessing": target.getConfiguration().setParallelProcessing(property(camelContext, boolean.class, value)); return true;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": target.getConfiguration().setReconnectInitialDelay(property(camelContext, int.class, value)); return true;
         case "reconnectinterval":
@@ -81,6 +85,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": return io.vertx.core.http.WebSocketClientOptions.class;
         case "clientsubprotocols":
         case "clientSubProtocols": return java.lang.String.class;
+        case "connectmessage":
+        case "connectMessage": return java.lang.String.class;
         case "consumeasclient":
         case "consumeAsClient": return boolean.class;
         case "exceptionhandler":
@@ -99,6 +105,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": return int.class;
         case "originheaderurl":
         case "originHeaderUrl": return java.lang.String.class;
+        case "parallelprocessing":
+        case "parallelProcessing": return boolean.class;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return int.class;
         case "reconnectinterval":
@@ -129,6 +137,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientOptions": return target.getConfiguration().getClientOptions();
         case "clientsubprotocols":
         case "clientSubProtocols": return target.getConfiguration().getClientSubProtocols();
+        case "connectmessage":
+        case "connectMessage": return target.getConfiguration().getConnectMessage();
         case "consumeasclient":
         case "consumeAsClient": return target.getConfiguration().isConsumeAsClient();
         case "exceptionhandler":
@@ -147,6 +157,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxReconnectAttempts": return target.getConfiguration().getMaxReconnectAttempts();
         case "originheaderurl":
         case "originHeaderUrl": return target.getConfiguration().getOriginHeaderUrl();
+        case "parallelprocessing":
+        case "parallelProcessing": return target.getConfiguration().isParallelProcessing();
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return target.getConfiguration().getReconnectInitialDelay();
         case "reconnectinterval":
