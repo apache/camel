@@ -17,6 +17,11 @@
 package org.apache.camel.component.nats;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,6 +39,7 @@ import io.nats.client.JetStreamSubscription;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import io.nats.client.PushSubscribeOptions;
+import io.nats.client.Subscription;
 import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.DeliverPolicy;
@@ -75,6 +81,12 @@ import org.slf4j.LoggerFactory;
  * writes that field on the thread that acknowledges, without synchronization, so a read here can miss a recent
  * acknowledgement: the consumer then resumes at an earlier message and the server delivers it again, nothing is
  * skipped.
+ * <p>
+ * jnats keeps the queue of the dispatcher across a reconnect and dispatches the messages of a subscription until it is
+ * unsubscribed. When the stream was created again, the messages of the old stream still in that queue are not tracked:
+ * their sequences mean nothing in the new stream. After a resubscribe, a message of the previous subscription that is
+ * not settled stays tracked until the new consumer delivers it again (or a later sequence, as it delivers in stream
+ * order), so a second consumer loss before that still resumes at it.
  */
 final class NatsJetStreamPushConsumerKeeper implements MessageHandler, ConnectionListener {
 
@@ -103,6 +115,16 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     // the JetStream messages delivered to the route that may still need a delivery, by stream sequence
     private final ConcurrentSkipListMap<Long, Message> unacknowledged = new ConcurrentSkipListMap<>();
     private final AtomicLong highestDelivered = new AtomicLong();
+    // the dispatcher thread tracks a delivered message under this lock, and a resubscribe clears the tracking under it
+    // when the stream was created again, so a message of the old stream is either cleared or not tracked
+    private final Lock trackingLock = new ReentrantLock();
+    // the current and the previous subscription made on the stream as it is now (since the start, or since it was
+    // created again), guarded by trackingLock
+    private final List<Subscription> streamSubscriptions = new ArrayList<>(2);
+    // the subscriptions made on the stream before it was created again: jnats may still dispatch messages of them (its
+    // queue survives a reconnect, and a message it took before an unsubscribe is still handed over), guarded by
+    // trackingLock
+    private Set<Subscription> staleSubscriptions = Collections.emptySet();
     // with AckPolicy.None the delivery is the acknowledgement: no delivered message waits for an ack
     private final boolean trackUnacknowledged;
     // the server delivers a message at most maxDeliver times (when set): a message delivered that often is settled
@@ -146,6 +168,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
         this.subscription = subscription;
         this.streamCreated = streamCreated;
         this.streamLastSequence = streamLastSequence;
+        addStreamSubscription(subscription);
         connection.addConnectionListener(this);
     }
 
@@ -156,14 +179,33 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     @Override
     public void onMessage(Message msg) throws InterruptedException {
         if (msg.isJetStream()) {
-            long seq = msg.metaData().streamSequence();
+            track(msg);
+        }
+        handler.onMessage(msg);
+    }
+
+    private void track(Message msg) {
+        long seq = msg.metaData().streamSequence();
+        Subscription from = msg.getSubscription();
+        trackingLock.lock();
+        try {
+            if (from != null && staleSubscriptions.contains(from)) {
+                // a message of the stream before it was created again
+                return;
+            }
             if (trackUnacknowledged) {
                 unacknowledged.values().removeIf(this::settled);
+                if (from != null && from == subscription) {
+                    // the current consumer delivers in stream order: a message of a previous subscription below this
+                    // sequence that it did not deliver again is no longer in the stream
+                    unacknowledged.headMap(seq).values().removeIf(m -> m.getSubscription() != from);
+                }
                 unacknowledged.put(seq, msg);
             }
             highestDelivered.accumulateAndGet(seq, Math::max);
+        } finally {
+            trackingLock.unlock();
         }
-        handler.onMessage(msg);
     }
 
     @Override
@@ -300,12 +342,12 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
      * Subscribes again after the server deleted the ephemeral consumer, starting at the first message delivered to the
      * route and not acknowledged.
      * <p>
-     * A message that is not acknowledged stays in the unacknowledged map until this resubscribe, and the new consumer
-     * starts at its sequence, so the route sees the messages after it again (at-least-once). A message delivered
-     * maxDeliver times (when set) is settled, as the server does not deliver it again. With ackPolicy=None no message
-     * is tracked: the new consumer starts after the highest one delivered. When nothing was delivered yet, a consumer
-     * with the deliver policy New (or Last) starts after (or at) the last message of the stream at the subscribe, so
-     * that the messages published meanwhile are not skipped.
+     * A message that is not acknowledged stays in the unacknowledged map until it is settled or a later consumer
+     * delivers it again, and the new consumer starts at its sequence, so the route sees the messages after it again
+     * (at-least-once). A message delivered maxDeliver times (when set) is settled, as the server does not deliver it
+     * again. With ackPolicy=None no message is tracked: the new consumer starts after the highest one delivered. When
+     * nothing was delivered yet, a consumer with the deliver policy New (or Last) starts after (or at) the last message
+     * of the stream at the subscribe, so that the messages published meanwhile are not skipped.
      * <p>
      * The consumer configuration is used as it is (no start sequence) for a stream with WorkQueue retention, which
      * accepts only the deliver policy All and has already removed the acknowledged messages, and for a stream that was
@@ -318,8 +360,17 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
             LOG.warn("The JetStream stream {} was created again since the subscribe; consuming it from its deliver"
                      + " policy (from its first message for the deliver policy New or Last)",
                     streamName);
-            unacknowledged.clear();
-            highestDelivered.set(0);
+            trackingLock.lock();
+            try {
+                Set<Subscription> stale = Collections.newSetFromMap(new IdentityHashMap<>());
+                stale.addAll(streamSubscriptions);
+                staleSubscriptions = stale;
+                streamSubscriptions.clear();
+                unacknowledged.clear();
+                highestDelivered.set(0);
+            } finally {
+                trackingLock.unlock();
+            }
             // every message of the new stream came after the subscribe
             streamLastSequence = 0;
         }
@@ -329,8 +380,16 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
         boolean workQueue = stream != null && stream.getConfiguration() != null
                 && stream.getConfiguration().getRetentionPolicy() == RetentionPolicy.WorkQueue;
         ConsumerConfiguration again = configuration;
-        unacknowledged.values().removeIf(this::settled);
-        long highest = highestDelivered.get();
+        long highest;
+        long firstUnsettled;
+        trackingLock.lock();
+        try {
+            unacknowledged.values().removeIf(this::settled);
+            highest = highestDelivered.get();
+            firstUnsettled = unacknowledged.isEmpty() ? 0 : unacknowledged.firstKey();
+        } finally {
+            trackingLock.unlock();
+        }
         DeliverPolicy policy = configuration.getDeliverPolicy();
         long lastAtSubscribe = streamLastSequence;
         // the stream sequence to start at, 0 to use the consumer configuration as it is
@@ -339,7 +398,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
             LOG.debug("The JetStream stream {} has WorkQueue retention: subscribing with the consumer configuration",
                     streamName);
         } else if (highest > 0) {
-            start = unacknowledged.isEmpty() ? highest + 1 : unacknowledged.firstKey();
+            start = firstUnsettled > 0 ? firstUnsettled : highest + 1;
         } else if (policy == DeliverPolicy.New && lastAtSubscribe >= 0) {
             start = lastAtSubscribe + 1;
         } else if (policy == DeliverPolicy.Last && lastAtSubscribe >= 0) {
@@ -362,8 +421,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
                 .build();
         JetStreamSubscription old = subscription;
         subscription = connection.jetStream().subscribe(topic, queueName, dispatcher, this, false, options);
-        // the new consumer delivers those again; a message it delivered meanwhile stays tracked
-        unacknowledged.values().removeIf(m -> m.getSubscription() == old);
+        addStreamSubscription(subscription);
         onSubscribed.accept(subscription);
         try {
             dispatcher.unsubscribe(old);
@@ -377,6 +435,19 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
             } catch (Exception e) {
                 LOG.debug("Error unsubscribing the push subscription made while the consumer stopped", e);
             }
+        }
+    }
+
+    private void addStreamSubscription(Subscription sub) {
+        trackingLock.lock();
+        try {
+            streamSubscriptions.add(sub);
+            if (streamSubscriptions.size() > 2) {
+                // an older subscription was unsubscribed two resubscribes ago, jnats dispatches nothing of it any more
+                streamSubscriptions.remove(0);
+            }
+        } finally {
+            trackingLock.unlock();
         }
     }
 
