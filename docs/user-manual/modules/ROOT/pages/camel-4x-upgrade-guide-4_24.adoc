@@ -11302,6 +11302,17 @@ Use certificates that match the hosts, or set the new `hostnameVerification` opt
 behaviour. An `opentls://` server address still trusts
 any certificate and is not checked.
 
+=== camel-nats - the JetStream producer creates the stream of jetstreamName and waits requestTimeout
+
+With `jetstreamEnabled=true`, the producer now creates the stream named by `jetstreamName` at startup, with the subject
+of the topic, when this stream does not exist and no other stream takes in the subject. Before, the producer did not
+use `jetstreamName`, and each send failed with `503 No Responders Available For Request` when no stream took in the
+subject. Remove `jetstreamName` from the producer endpoint to keep the previous behaviour.
+
+With `jetstreamAsync=false`, the producer now waits `requestTimeout` (20 seconds by default) for the acknowledgement of
+JetStream. Before, it waited the connection timeout of the NATS client (`connectionTimeout`, 2 seconds by default). Set
+`requestTimeout=2000` to keep the previous wait.
+
 === camel-pulsar - the host name of the broker is verified with pulsar+ssl
 
 When the endpoint creates its own Pulsar client, a `pulsar+ssl://` connection now checks that the certificate of the
