@@ -25,6 +25,7 @@ import javax.net.ssl.KeyManager;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 
 /**
@@ -48,6 +49,12 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
                                                 + " the KeyManagers represented by this object's configuration."
                                                 + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     protected String algorithm;
+
+    @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "To use an existing configured key manager instead of using KeyManagerFactory to get the KeyManager."
+                            + " When set, the key store, key password, provider and algorithm are not used.")
+    protected String keyManager;
 
     @XmlTransient
     private KeyManagersParameters instance;
@@ -74,6 +81,14 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
 
     public void setAlgorithm(String value) {
         this.algorithm = value;
+    }
+
+    public String getKeyManager() {
+        return keyManager;
+    }
+
+    public void setKeyManager(String keyManager) {
+        this.keyManager = keyManager;
     }
 
     @Override
@@ -105,6 +120,11 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
         }
         newInstance.setProvider(provider);
         CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
+
+        if (keyManager != null) {
+            KeyManager km = CamelContextHelper.mandatoryLookup(getCamelContext(), keyManager, KeyManager.class);
+            newInstance.setKeyManager(km);
+        }
 
         return newInstance;
     }
