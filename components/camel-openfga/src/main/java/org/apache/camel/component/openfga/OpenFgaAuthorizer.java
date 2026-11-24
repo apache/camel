@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
@@ -293,60 +294,90 @@ public class OpenFgaAuthorizer {
         // asynchronous check publishes the same decision event as the synchronous one
         AuthorizationObservation observation
                 = AuthorizationObservation.begin(exchange, Engine.OPENFGA, Operation.DECISION, authorizationModelId);
-        clearDecisionHeaders(exchange);
-        String resolvedUser = resolveUser(exchange);
-        String resolvedRelation = resolveRelation(exchange);
-        String resolvedObject = resolveObject(exchange);
-        if (resolvedUser == null || resolvedRelation == null || resolvedObject == null) {
-            return () -> denied(observation);
+        try {
+            clearDecisionHeaders(exchange);
+            String resolvedUser = resolveUser(exchange);
+            String resolvedRelation = resolveRelation(exchange);
+            String resolvedObject = resolveObject(exchange);
+            if (resolvedUser == null || resolvedRelation == null || resolvedObject == null) {
+                return () -> denied(observation);
+            }
+            List<ClientTupleKey> contextual = resolveContextualTuples(exchange);
+            if (contextual == null) {
+                return () -> denied(observation);
+            }
+            ClientCheckRequest request
+                    = new ClientCheckRequest().user(resolvedUser).relation(resolvedRelation)._object(resolvedObject);
+            if (!contextual.isEmpty()) {
+                request.contextualTuples(contextual);
+            }
+            if (conditionContext != null && !conditionContext.isEmpty()) {
+                request.context(AuthorizationAsyncExecutor.snapshotValue(conditionContext));
+            }
+            var options = checkOptions();
+            return () -> interruptedOnCancel(
+                    awaitAsync(executor, exchange, "check " + resolvedRelation + " on " + resolvedObject,
+                            () -> client.check(request, options)).handle((response, error) -> {
+                                if (error != null) {
+                                    Throwable failure
+                                            = error instanceof CompletionException && error.getCause() != null
+                                                    ? error.getCause() : error;
+                                    boolean unavailable = isDecisionPointUnavailable(failure);
+                                    if (failOpen && unavailable) {
+                                        LOG.warn(
+                                                "Could not ask OpenFGA whether {} has {} on {}; allowing the exchange to proceed because failOpen is enabled. Reason: {}",
+                                                resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
+                                        setDecision(exchange, true);
+                                        exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
+                                        observation.complete(Outcome.FAILED_OPEN, Failure.UNAVAILABLE);
+                                        return true;
+                                    }
+                                    if (failOpen) {
+                                        LOG.warn(
+                                                "failOpen is enabled but does not cover this failure: OpenFGA has not established whether {} has {} on {}, and the failure is not an unreachable decision point. Reason: {}",
+                                                resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
+                                    }
+                                    recordFailure(observation, failure);
+                                    throw new CompletionException(failure);
+                                }
+                                boolean allowed = Boolean.TRUE.equals(response.getAllowed());
+                                setDecision(exchange, allowed);
+                                if (!allowed) {
+                                    exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "denied");
+                                }
+                                observation.complete(allowed ? Outcome.ALLOW : Outcome.DENY, Failure.NONE);
+                                return allowed;
+                            }),
+                    observation);
+
+        } catch (RuntimeException e) {
+            // a subject, relation, object or contextual tuple that cannot be evaluated is an error of this decision,
+            // as it is on the synchronous path
+            recordFailure(observation, e);
+            throw e;
         }
-        List<ClientTupleKey> contextual = resolveContextualTuples(exchange);
-        if (contextual == null) {
-            return () -> denied(observation);
-        }
-        ClientCheckRequest request
-                = new ClientCheckRequest().user(resolvedUser).relation(resolvedRelation)._object(resolvedObject);
-        if (!contextual.isEmpty()) {
-            request.contextualTuples(contextual);
-        }
-        if (conditionContext != null && !conditionContext.isEmpty()) {
-            request.context(AuthorizationAsyncExecutor.snapshotValue(conditionContext));
-        }
-        var options = checkOptions();
-        return () -> awaitAsync(executor, exchange, "check " + resolvedRelation + " on " + resolvedObject,
-                () -> client.check(request, options)).handle((response, error) -> {
-                    if (error != null) {
-                        Throwable failure
-                                = error instanceof CompletionException && error.getCause() != null
-                                        ? error.getCause() : error;
-                        boolean unavailable = isDecisionPointUnavailable(failure);
-                        if (failOpen && unavailable) {
-                            LOG.warn(
-                                    "Could not ask OpenFGA whether {} has {} on {}; allowing the exchange to proceed because failOpen is enabled. Reason: {}",
-                                    resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
-                            setDecision(exchange, true);
-                            exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
-                            observation.complete(Outcome.FAILED_OPEN, Failure.UNAVAILABLE);
-                            return true;
-                        }
-                        if (failOpen) {
-                            LOG.warn(
-                                    "failOpen is enabled but does not cover this failure: OpenFGA has not established whether {} has {} on {}, and the failure is not an unreachable decision point. Reason: {}",
-                                    resolvedUser, resolvedRelation, resolvedObject, failure.getMessage());
-                        }
-                        observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
-                                AuthorizationObservation.interrupted(failure) ? Failure.INTERRUPTED
-                                        : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
-                        throw new CompletionException(failure);
-                    }
-                    boolean allowed = Boolean.TRUE.equals(response.getAllowed());
-                    setDecision(exchange, allowed);
-                    if (!allowed) {
-                        exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "denied");
-                    }
-                    observation.complete(allowed ? Outcome.ALLOW : Outcome.DENY, Failure.NONE);
-                    return allowed;
-                });
+    }
+
+    private static void recordFailure(AuthorizationObservation observation, Throwable failure) {
+        boolean unavailable = isDecisionPointUnavailable(failure);
+        observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                AuthorizationObservation.interrupted(failure) ? Failure.INTERRUPTED
+                        : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+    }
+
+    /**
+     * The executor cancels the stage the action returned when the deadline passes, the policy stops or a caller claims
+     * the task. A cancelled stage never runs its function, so the decision is published here as interrupted; the
+     * observation publishes once, so a stage that already recorded its decision is not reported again.
+     */
+    static <T> CompletableFuture<T> interruptedOnCancel(CompletableFuture<T> stage, AuthorizationObservation observation) {
+        stage.whenComplete((result, error) -> {
+            if (error instanceof CancellationException
+                    || error instanceof CompletionException && error.getCause() instanceof CancellationException) {
+                observation.complete(Outcome.ERROR, Failure.INTERRUPTED);
+            }
+        });
+        return stage;
     }
 
     private static CompletableFuture<Boolean> denied(AuthorizationObservation observation) {

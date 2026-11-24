@@ -28,6 +28,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
 import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
 import org.junit.jupiter.api.Test;
@@ -125,6 +126,19 @@ class AuthorizationObservationTest {
     }
 
     // Proxies deliberately reject body/header/property access: constructing observations must not inspect message data.
+    @Test
+    void publishesOnlyOnce() {
+        Collector collector = new Collector();
+        var observation
+                = AuthorizationObservation.begin(exchange(List.of(collector)), Engine.OPENFGA, Operation.DECISION, null);
+        observation.complete(Outcome.ALLOW, Failure.NONE);
+        // a cancellation listener that fires after the decision, or a late second completion, changes nothing
+        observation.complete(Outcome.ERROR, Failure.INTERRUPTED);
+        observation.failure(Outcome.ERROR, Failure.EVALUATION);
+        assertThat(collector.events).hasSize(1);
+        assertThat(collector.events.getFirst().getOutcome()).isEqualTo(Outcome.ALLOW);
+    }
+
     private static Exchange exchange(List<EventNotifier> notifiers) {
         ManagementStrategy management = proxy(ManagementStrategy.class, (method) -> {
             if (method.equals("getStartedEventNotifiers")) {

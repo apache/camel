@@ -275,10 +275,6 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
 
     /**
      * Checks one subject against many objects, taken from the body, and replaces the body with the ones the check
-     * allowed - so a route can filter a collection down to what the caller may see in one step.
-     */
-    /**
-     * Checks one subject against many objects, taken from the body, and replaces the body with the ones the check
      * allowed - so a route can filter a collection down to what the caller may see in one step. The operation carries
      * one batch observation, on the synchronous and the asynchronous path alike.
      */
@@ -286,96 +282,104 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             throws Exception {
         AuthorizationObservation observation = AuthorizationObservation.begin(exchange, Engine.OPENFGA, Operation.BATCH,
                 getEndpoint().getConfiguration().getAuthorizationModelId());
-        OpenFgaAuthorizer.clearDecisionHeaders(exchange);
-        List<String> objects = bodyAsList(exchange);
-        observation.expectedItems(objects.size());
-        String user = authorizer.resolveUser(exchange);
-        String relation = authorizer.resolveRelation(exchange);
-        if (user == null || relation == null) {
-            // the subject or the permission could not be established, so none of the objects is allowed. The deny
-            // reason is already on the exchange
-            exchange.getMessage().setBody(List.of());
-            observation.items(Outcome.DENY, objects.size());
-            return observed(NOOP, observation);
-        }
-
-        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
-        if (contextualTuples == null) {
-            // a configured contextual tuple did not resolve, so no object is allowed; the reason is on the exchange
-            exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
-            exchange.getMessage().setBody(List.of());
-            observation.items(Outcome.DENY, objects.size());
-            return observed(NOOP, observation);
-        }
-
-        List<ClientCheckRequest> requests = new ArrayList<>(objects.size());
-        for (String object : objects) {
-            if (OpenFgaIdentifiers.validate(object) != null) {
-                // an entry that cannot be an object of a check is not one the caller may have; leaving it out of the
-                // batch leaves it out of the result, which is the fail-closed answer
-                LOG.debug("Skipping '{}' in a batchCheck: not usable as an object identifier", object);
-                observation.item(Outcome.DENY);
-                continue;
+        try {
+            OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+            List<String> objects = bodyAsList(exchange);
+            observation.expectedItems(objects.size());
+            String user = authorizer.resolveUser(exchange);
+            String relation = authorizer.resolveRelation(exchange);
+            if (user == null || relation == null) {
+                // the subject or the permission could not be established, so none of the objects is allowed. The deny
+                // reason is already on the exchange
+                exchange.getMessage().setBody(List.of());
+                observation.items(Outcome.DENY, objects.size());
+                return observed(NOOP, observation);
             }
-            ClientCheckRequest item = new ClientCheckRequest().user(user).relation(relation)._object(object);
-            applyPreparedContext(item::contextualTuples, item::context, contextualTuples, authorizer, async);
-            requests.add(item);
-        }
-        if (requests.isEmpty()) {
-            // nothing in the body could be an object of a check, so nothing is allowed. Say so on the header as
-            // every other path does, rather than leaving the route to infer a verdict from an empty body
-            exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
-            exchange.getMessage().setBody(List.of());
-            return observed(NOOP, observation);
-        }
 
-        if (getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
-            return observed(prepareServerBatchCheck(exchange, authorizer, requests, observation), observation);
-        }
-        int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
-        ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
-                .maxParallelRequests(maxParallelRequests);
-        if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getAuthorizationModelId())) {
-            options.authorizationModelId(getEndpoint().getConfiguration().getAuthorizationModelId());
-        }
-        if (authorizer.getConsistency() != null) {
-            options.consistency(authorizer.getConsistency());
-        }
+            List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+            if (contextualTuples == null) {
+                // a configured contextual tuple did not resolve, so no object is allowed; the reason is on the exchange
+                exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
+                exchange.getMessage().setBody(List.of());
+                observation.items(Outcome.DENY, objects.size());
+                return observed(NOOP, observation);
+            }
 
-        return observed(invocation(authorizer, exchange, "batch check " + relation + " for " + user,
-                () -> authorizer.getClient().clientBatchCheck(requests, options), responses -> {
+            List<ClientCheckRequest> requests = new ArrayList<>(objects.size());
+            for (String object : objects) {
+                if (OpenFgaIdentifiers.validate(object) != null) {
+                    // an entry that cannot be an object of a check is not one the caller may have; leaving it out of the
+                    // batch leaves it out of the result, which is the fail-closed answer
+                    LOG.debug("Skipping '{}' in a batchCheck: not usable as an object identifier", object);
+                    observation.item(Outcome.DENY);
+                    continue;
+                }
+                ClientCheckRequest item = new ClientCheckRequest().user(user).relation(relation)._object(object);
+                applyPreparedContext(item::contextualTuples, item::context, contextualTuples, authorizer, async);
+                requests.add(item);
+            }
+            if (requests.isEmpty()) {
+                // nothing in the body could be an object of a check, so nothing is allowed. Say so on the header as
+                // every other path does, rather than leaving the route to infer a verdict from an empty body
+                exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
+                exchange.getMessage().setBody(List.of());
+                return observed(NOOP, observation);
+            }
 
-                    Set<String> permitted = new HashSet<>();
-                    for (ClientBatchCheckClientResponse response : responses) {
-                        if (response.getThrowable() != null) {
-                            // one check in the batch never got an answer. Returning the rest would quietly present a partial
-                            // filter as a complete one, so the whole operation fails - and unlike a single check, there is no
-                            // failOpen here, because "proceed" for a filter would mean handing back everything unfiltered
-                            throw new CompletionException(
-                                    new OpenFgaEvaluationException(
-                                            "OpenFGA failed to answer part of a batch check for " + user, exchange,
-                                            response.getThrowable()));
+            if (getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server) {
+                return observed(prepareServerBatchCheck(exchange, authorizer, requests, observation), observation);
+            }
+            int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
+            ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
+                    .maxParallelRequests(maxParallelRequests);
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getAuthorizationModelId())) {
+                options.authorizationModelId(getEndpoint().getConfiguration().getAuthorizationModelId());
+            }
+            if (authorizer.getConsistency() != null) {
+                options.consistency(authorizer.getConsistency());
+            }
+
+            return observed(invocation(authorizer, exchange, "batch check " + relation + " for " + user,
+                    () -> authorizer.getClient().clientBatchCheck(requests, options), responses -> {
+
+                        Set<String> permitted = new HashSet<>();
+                        for (ClientBatchCheckClientResponse response : responses) {
+                            if (response.getThrowable() != null) {
+                                // one check in the batch never got an answer. Returning the rest would quietly present a partial
+                                // filter as a complete one, so the whole operation fails - and unlike a single check, there is no
+                                // failOpen here, because "proceed" for a filter would mean handing back everything unfiltered
+                                throw new CompletionException(
+                                        new OpenFgaEvaluationException(
+                                                "OpenFGA failed to answer part of a batch check for " + user, exchange,
+                                                response.getThrowable()));
+                            }
+                            if (Boolean.TRUE.equals(response.getAllowed())) {
+                                permitted.add(response.getRequest().getObject());
+                                observation.item(Outcome.ALLOW);
+                            } else {
+                                observation.item(Outcome.DENY);
+                            }
                         }
-                        if (Boolean.TRUE.equals(response.getAllowed())) {
-                            permitted.add(response.getRequest().getObject());
-                            observation.item(Outcome.ALLOW);
-                        } else {
-                            observation.item(Outcome.DENY);
+                        // filter the body rather than collect the answers: the SDK issues the checks in parallel and hands them back
+                        // in whatever order they completed, so building the result from the responses would reorder the caller's list
+                        // between runs. A route that filters a list to render it wants the order it asked in
+                        List<String> allowed = new ArrayList<>();
+                        for (String object : objects) {
+                            if (permitted.contains(object)) {
+                                allowed.add(object);
+                            }
                         }
-                    }
-                    // filter the body rather than collect the answers: the SDK issues the checks in parallel and hands them back
-                    // in whatever order they completed, so building the result from the responses would reorder the caller's list
-                    // between runs. A route that filters a list to render it wants the order it asked in
-                    List<String> allowed = new ArrayList<>();
-                    for (String object : objects) {
-                        if (permitted.contains(object)) {
-                            allowed.add(object);
-                        }
-                    }
-                    observation.remainingItems(Outcome.DENY, objects.size());
-                    exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
-                    exchange.getMessage().setBody(allowed);
-                }, authorizer.batchAwaitTimeoutMillis(requests.size(), maxParallelRequests)), observation);
+                        observation.remainingItems(Outcome.DENY, objects.size());
+                        exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
+                        exchange.getMessage().setBody(allowed);
+                    }, authorizer.batchAwaitTimeoutMillis(requests.size(), maxParallelRequests)), observation);
+
+        } catch (Exception e) {
+            // a body that is not a list, or a subject, relation or contextual tuple that cannot be evaluated, is an error
+            // of this batch, as it is on the synchronous path
+            recordBatchFailure(observation, e);
+            throw e;
+        }
     }
 
     /**
@@ -408,7 +412,7 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                     recordBatchFailure(observation, e);
                     throw e;
                 }
-                return future.whenComplete((result, error) -> {
+                CompletableFuture<?> completed = future.whenComplete((result, error) -> {
                     if (error == null) {
                         observation.completeBatch();
                     } else {
@@ -416,6 +420,15 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                                 error instanceof CompletionException && error.getCause() != null ? error.getCause() : error);
                     }
                 });
+                // the executor cancels this stage on its deadline, on stop or for a claimed cancel, and a cancelled stage
+                // never runs the function above: record the batch as interrupted then (the observation publishes once)
+                completed.whenComplete((result, error) -> {
+                    if (error instanceof CancellationException
+                            || error instanceof CompletionException && error.getCause() instanceof CancellationException) {
+                        observation.failure(Outcome.ERROR, Failure.INTERRUPTED);
+                    }
+                });
+                return completed;
             }
         };
     }

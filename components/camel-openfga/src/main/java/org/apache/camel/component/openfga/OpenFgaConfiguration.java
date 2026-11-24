@@ -29,13 +29,13 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpenFgaConfiguration implements Cloneable {
 
-    @UriParam(label = "advanced", defaultValue = "false")
+    @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean asyncProcessing;
-    @UriParam(label = "advanced", defaultValue = "4")
+    @UriParam(label = "producer,advanced", defaultValue = "4")
     private int asyncPoolSize = 4;
-    @UriParam(label = "advanced", defaultValue = "100")
+    @UriParam(label = "producer,advanced", defaultValue = "100")
     private int asyncQueueSize = 100;
-    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    @UriParam(label = "producer,advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long asyncTimeout = 30000;
 
     public boolean isAsyncProcessing() {

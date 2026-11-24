@@ -17,6 +17,7 @@
 package org.apache.camel.support.security;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -48,6 +49,7 @@ public final class AuthorizationObservation {
     private long poolWaitNanos = -1;
     private int expectedItems;
     private final long[] counts;
+    private final AtomicBoolean published = new AtomicBoolean();
 
     private AuthorizationObservation() {
         context = null;
@@ -165,6 +167,11 @@ public final class AuthorizationObservation {
     }
 
     private void publish(Outcome outcome, Failure failure) {
+        // an observation publishes once: a cancellation listener that fires after the decision, or a second completion
+        // from a late stage, must not report the same authorization twice
+        if (!published.compareAndSet(false, true)) {
+            return;
+        }
         AuthorizationDecisionEvent event = new AuthorizationDecisionEvent(
                 engine, operation, outcome, failure,
                 Math.max(0, System.nanoTime() - started), poolWaitNanos,

@@ -492,6 +492,64 @@ class OpenFgaAsyncProducerTest {
         }
     }
 
+    @Test
+    void cancelledAsynchronousCheckPublishesAnInterruptedDecision() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<ClientCheckResponse> never = new CompletableFuture<>();
+        when(client.check(any(), any())).thenReturn(never);
+        try (Fixture fixture = new Fixture(client, configuration -> configuration.setAsyncTimeout(200))) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange exchange = fixture.exchange();
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
+            // the deadline cancelled the stage before its decision function ran: the observation still publishes
+            assertThat(events).hasSize(1);
+            assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.DECISION);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.INTERRUPTED);
+            assertThat(never.isCancelled()).isTrue();
+        }
+    }
+
+    @Test
+    void cancelledAsynchronousBatchPublishesAnInterruptedBatch() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CompletableFuture<List<ClientBatchCheckClientResponse>> never = new CompletableFuture<>();
+        when(client.clientBatchCheck(anyList(), any())).thenReturn(never);
+        try (Fixture fixture = new Fixture(
+                client, configuration -> configuration.setAsyncTimeout(200),
+                OpenFgaOperation.batchCheck)) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange exchange = fixture.exchange();
+            exchange.getMessage().setBody(List.of("document:a", "document:b"));
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
+            assertThat(events).hasSize(1);
+            assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.INTERRUPTED);
+            assertThat(events.get(0).getCounts().errors()).isEqualTo(2);
+        }
+    }
+
+    @Test
+    void batchWithAnInvalidBodyPublishesAnErrorBeforeTheRequest() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        try (Fixture fixture = new Fixture(client, configuration -> {
+        }, OpenFgaOperation.batchCheck)) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange exchange = fixture.exchange();
+            exchange.getMessage().setBody(Map.of("not", "a list"));
+            fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(IllegalArgumentException.class);
+            assertThat(events).hasSize(1);
+            assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.EVALUATION);
+            verifyNoInteractions(client);
+        }
+    }
+
     private static class Fixture implements AutoCloseable {
         final DefaultCamelContext context = new DefaultCamelContext();
         final OpenFgaEndpoint endpoint;
