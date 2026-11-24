@@ -238,6 +238,11 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         processPolledExchange(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                    } catch (Error e) {
+                        // a VirtualMachineError (e.g. StackOverflowError) thrown by the route escapes the
+                        // Exception-only catch blocks; log it at ERROR and continue the polling loop so
+                        // the consumer thread survives and the queue keeps being drained (CAMEL-27471)
+                        LOG.error("Error processing exchange", e);
                     }
                 } else {
                     // hook for subclasses to cleanup after empty poll (e.g., release permits)
@@ -258,6 +263,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 } else {
                     getExceptionHandler().handleException(e);
                 }
+            } catch (Error e) {
+                // an Error thrown outside of exchange processing (e.g. during queue.poll or beforePoll)
+                // must also not kill the consumer thread (CAMEL-27471)
+                LOG.error("Error in SEDA consumer loop", e);
             }
         }
     }
