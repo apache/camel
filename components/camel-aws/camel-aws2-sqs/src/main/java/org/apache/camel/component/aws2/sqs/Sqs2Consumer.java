@@ -603,7 +603,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         private void logException(Exception e, List<ChangeMessageVisibilityBatchRequestEntry> entries) {
             LOG.warn(
-                    "Extending visibility window failed for entries {}. Will not attempt to extend visibility further. This exception will be ignored.",
+                    "Extending visibility window failed for entries {}. This exception will be ignored and the extender will keep running.",
                     entries, e);
         }
 
