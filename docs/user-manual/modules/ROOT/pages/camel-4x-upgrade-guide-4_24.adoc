@@ -7824,6 +7824,17 @@ in full and rejected by the broker.
 
 A settlement request the broker rejects is now reported through the consumer's exception handler.
 
+=== camel-azure-servicebus - the Camel lock renewer runs on a thread of its own
+
+A consumer in peek-lock mode with `maxAutoLockRenewDuration` above 0 (the default) and without sessions now renews the
+locks of its messages on a thread of its own, named `ServiceBusLockRenewer[<topic or queue name>]`. The thread comes
+from the thread pool settings of the CamelContext, starts with the consumer and ends when the consumer stops. Before,
+the renewer was a task of the period task scheduler of the CamelContext, on one thread shared with the other periodic
+tasks (such as the secret refresh tasks of the vaults): a slow task there could hold up the renewals until a lock
+expired, and every start of the consumer left one more task registered until the CamelContext stopped. There is now one
+more thread per such consumer in thread dumps and in the thread pools listed over JMX, and the renewer is no longer
+listed among the period tasks. Routes need no change.
+
 === camel-azure-key-vault - the body after deleteSecret, and a Map or a POJO given to createSecret
 
 The `deleteSecret` operation now sets the `DeletedSecret` of the Azure SDK as the message body, with the recovery id and
