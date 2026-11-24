@@ -39,6 +39,58 @@ The *kamelet* endpoint is *lenient*, which means that the endpoint accepts addit
 
 If a xref:manual::route-template.adoc[Route Template] is not found, the *kamelet* endpoint tries to load the related *kamelet* definition from the file system (by default `classpath:kamelets`). The default resolution mechanism expects _Kamelets_ files to have the extension `.kamelet.yaml`.
 
+=== Configuring a Kamelet
+
+The parameters of a Kamelet can be set in four places. When a parameter is set in more than one, the one higher in
+this list wins:
+
+. The endpoint parameters: `kamelet:timer-source?message=Hello`, or `parameters` in YAML.
+. An environment variable `CAMEL_KAMELET_<NAME>_<PARAMETER>`. The name of the Kamelet and of the parameter are
+  written in capitals, with `_` between the words: the parameter `bucketNameOrArn` of `aws-s3-source` is
+  `CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN`.
+. A property `camel.kamelet.<name>.<parameter>`, such as `camel.kamelet.timer-source.message=Hello`, for every use
+  of the Kamelet.
+. The default of the parameter, in the Kamelet.
+
+A use of a Kamelet can be given an id after its name, `kamelet:<name>/<id>`. The property
+`camel.kamelet.<name>.<id>.<parameter>` and the environment variable `CAMEL_KAMELET_<NAME>_<ID>_<PARAMETER>` then
+apply to that use only, and win over the ones for every use:
+
+[source,properties]
+----
+camel.kamelet.timer-source.message=Hello
+camel.kamelet.timer-source.fast.period=1000
+----
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: kamelet:timer-source/fast
+      steps:
+        - to:
+            uri: kamelet:log-sink
+----
+
+The component options `template-properties` and `route-properties` hold parameters too:
+`camel.component.kamelet.template-properties[<name>].<parameter>` for every use and
+`camel.component.kamelet.route-properties[<id>].<parameter>` for one use. Use one style or the other: once any
+`template-properties` or `route-properties` value applies to a Kamelet, no `camel.kamelet.*` property is read for it,
+and those parameters fall back to their defaults. The environment variables and the endpoint parameters still apply.
+
+A required parameter that is not set fails the route when it starts, such as
+`Route template timer-source the following mandatory parameters must be provided: message`.
+
+These names belong to the `kamelet` endpoint and are never passed to the Kamelet: `templateId`, `routeId`,
+`location`, `uuid`, and the endpoint options `block`, `timeout`, `failIfNoConsumers`, `noErrorHandler`,
+`advancedOptions`, `bridgeErrorHandler`, `exceptionHandler`, `exchangePattern` and `lazyStartProducer`. A Kamelet
+should not have a parameter with one of these names.
+
+NOTE: An optional parameter that is not set, written `+{{?user}}+` in the template, is still looked up as a property
+placeholder, and so also in the environment under its name in capitals: an unset `user` takes the value of `USER`.
+
+For the Kamelets of the catalog, see also the page Using Kamelets in the Kamelet Catalog documentation.
+
 === Writing a custom Kamelet
 
 You can write your own Kamelets, for a piece of an integration that several routes need. A Kamelet is a
