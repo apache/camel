@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,7 +36,15 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -54,6 +63,43 @@ class IBMEventStreamReloadTriggerTaskTest {
             "{\"data\":{\"secrets\":[]}}",
             "{\"data\":{\"event_type\":\"secret_rotated\"}}" })
     void rotationAfterARecordThatCannotBeReadStillTriggersTheReload(String unreadable) throws Exception {
+        ScriptedConsumer scripted = new ScriptedConsumer();
+        // an event that the task cannot read, then the rotation of a secret that the task watches
+        scripted.batches.add(unreadable);
+        scripted.batches.add(ROTATED);
+
+        runTask(scripted, "the record [" + unreadable + "]");
+    }
+
+    @Test
+    void rotationAfterAFailedPollStillTriggersTheReload() throws Exception {
+        ScriptedConsumer scripted = new ScriptedConsumer();
+        // what KafkaConsumer.poll throws when the broker rejects the credentials; the consumer authenticates again on a
+        // later poll, here once the broker accepts them again
+        scripted.failNextPoll = new SaslAuthenticationException("Authentication failed: Invalid username or password");
+        scripted.batches.add(ROTATED);
+
+        Logger logger = (Logger) LogManager.getLogger(IBMEventStreamReloadTriggerTask.class);
+        LogEventCaptor captor = new LogEventCaptor();
+        logger.addAppender(captor);
+        try {
+            runTask(scripted, "a failed poll");
+        } finally {
+            logger.removeAppender(captor);
+        }
+
+        assertTrue(captor.events.stream()
+                .anyMatch(event -> event.getLevel() == Level.WARN
+                        && event.getMessage().getFormattedMessage().contains("SaslAuthenticationException")),
+                "the failed poll was not logged at WARN");
+    }
+
+    /**
+     * Runs the task with the scripted consumer, on its own thread for as long as Camel runs (as the period task
+     * scheduler runs it), and checks that the rotation in the scripted records triggers a reload and that the task is
+     * still running.
+     */
+    private static void runTask(ScriptedConsumer scripted, String before) throws Exception {
         CountDownLatch reloaded = new CountDownLatch(1);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try (DefaultCamelContext context = new DefaultCamelContext()) {
@@ -78,24 +124,17 @@ class IBMEventStreamReloadTriggerTaskTest {
             IBMEventStreamReloadTriggerTask task = new IBMEventStreamReloadTriggerTask();
             task.setCamelContext(context);
             task.start();
-            // replace the client that doStart created (it never connected) by one that returns the given records
+            // replace the client that doStart created (it never connected) by the scripted one
             KafkaConsumer<String, String> created = task.kafkaConsumer;
-            ScriptedConsumer scripted = new ScriptedConsumer();
             task.kafkaConsumer = scripted;
             created.close(Duration.ZERO);
 
-            // an event that the task cannot read, then the rotation of a secret that the task watches
-            scripted.batches.add(unreadable);
-            scripted.batches.add(ROTATED);
-
-            // the task runs once, on its own thread, for as long as Camel runs (as the period task scheduler runs it)
             Future<?> running = executor.submit(task);
             boolean reloadTriggered = reloaded.await(10, TimeUnit.SECONDS);
             boolean taskEnded = running.isDone();
 
             task.stop();
-            assertTrue(reloadTriggered,
-                    "the rotation of a watched secret did not trigger a reload after the record [" + unreadable + "]");
+            assertTrue(reloadTriggered, "the rotation of a watched secret did not trigger a reload after " + before);
             assertFalse(taskEnded, "the reload trigger task ended while Camel was running");
         } finally {
             executor.shutdownNow();
@@ -105,11 +144,12 @@ class IBMEventStreamReloadTriggerTaskTest {
 
     /**
      * A Kafka consumer that is never connected: each poll returns the next queued record value, or no record when none
-     * is queued within the poll timeout.
+     * is queued within the poll timeout. A poll can be made to throw once instead.
      */
     private static final class ScriptedConsumer extends KafkaConsumer<String, String> {
 
         private final BlockingQueue<String> batches = new LinkedBlockingQueue<>();
+        private volatile RuntimeException failNextPoll;
         private long offset;
 
         ScriptedConsumer() {
@@ -121,6 +161,11 @@ class IBMEventStreamReloadTriggerTaskTest {
 
         @Override
         public ConsumerRecords<String, String> poll(Duration timeout) {
+            RuntimeException failure = failNextPoll;
+            if (failure != null) {
+                failNextPoll = null;
+                throw failure;
+            }
             String value;
             try {
                 value = batches.poll(timeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -134,6 +179,20 @@ class IBMEventStreamReloadTriggerTaskTest {
             TopicPartition partition = new TopicPartition(TOPIC, 0);
             return new ConsumerRecords<>(
                     Map.of(partition, List.of(new ConsumerRecord<>(TOPIC, 0, offset++, "key", value))), Map.of());
+        }
+    }
+
+    private static final class LogEventCaptor extends AbstractAppender {
+        private final List<LogEvent> events = new CopyOnWriteArrayList<>();
+
+        LogEventCaptor() {
+            super("IBMEventStreamReloadTriggerTaskCaptor", null, null, false, Property.EMPTY_ARRAY);
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            events.add(event.toImmutable());
         }
     }
 }
