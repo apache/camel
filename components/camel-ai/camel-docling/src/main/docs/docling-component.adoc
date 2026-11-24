@@ -1024,7 +1024,11 @@ When using docling-serve API mode (`useDoclingServe=true`), the component expose
 
 | `doOcr`
 | _not set_
-| Enable OCR processing in docling-serve API mode. When not set, the server uses its own defaults. Set `enableOCR` to `false` to explicitly disable OCR.
+| Enable OCR processing in docling-serve API mode. When not set, OCR is turned on if `ocrLanguage` is set, and otherwise the server uses its own defaults. Set `enableOCR` to `false` to explicitly disable OCR.
+
+| `ocrLanguage`
+| _not set_
+| Language for OCR. When set, it is sent as `ocr_lang` with `do_ocr=true`, unless `enableOCR` or `doOcr` is `false`. When not set, the server uses its own default languages. In CLI mode, `en` is used when it is not set.
 
 | `forceOcr`
 | _not set_
@@ -1036,7 +1040,7 @@ When using docling-serve API mode (`useDoclingServe=true`), the component expose
 
 |===
 
-NOTE: The `enableOCR` and `ocrLanguage` settings are primarily for CLI mode. In API mode, use `doOcr` to explicitly control OCR behavior. When `doOcr` is not set, the server uses its own defaults. Setting `enableOCR=false` will send `doOcr(false)` to the server to disable OCR.
+NOTE: In API mode, use `doOcr` to explicitly control OCR behavior. When `doOcr` is not set, a configured `ocrLanguage` turns OCR on, the same way as the `CamelDoclingOCRLanguage` header; otherwise the server uses its own defaults. Setting `enableOCR=false` will send `doOcr(false)` to the server to disable OCR.
 
 === Table and Structure Options
 
