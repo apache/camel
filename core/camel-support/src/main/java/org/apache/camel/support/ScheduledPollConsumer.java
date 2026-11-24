@@ -23,6 +23,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -87,6 +89,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private final AtomicLong backoffErrorBase = new AtomicLong();
     // incremented when the consumer is stopped, so a poll that is still running does not update the state afterwards
     private final AtomicLong generation = new AtomicLong();
+    // held by doStop to increment the generation and clear the state, and by a poll to check the generation and
+    // update the state: a stop (and start) can then not happen between the check and the update
+    private final Lock stateLock = new ReentrantLock();
+    // the generation of the poll in progress on this thread, so forceConsumerAsReady() of a poll of before a stop
+    // is ignored
+    private final ThreadLocal<Long> pollGeneration = new ThreadLocal<>();
     // whether this consumer created the scheduler (and therefore configures it)
     private boolean consumerCreatedScheduler;
     private volatile boolean forceReady;
@@ -163,40 +171,53 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             return;
         }
 
-        // should we backoff if its enabled, and either the idle or error counter is > the threshold
-        if (backoffMultiplier > 0
-                // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
-                && (idleCounter.longValue() >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
-                        || errorCounter.longValue() - backoffErrorBase.longValue() >= (backoffErrorThreshold > 0
-                                ? backoffErrorThreshold : Integer.MAX_VALUE))) {
-            final int currentBackoffCounter = backoffCounter.incrementAndGet();
-            if (currentBackoffCounter < backoffMultiplier) {
-                // yes we should backoff
-                if (idleCounter.intValue() > 0) {
-                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter.longValue(),
-                            backoffCounter.intValue(), backoffMultiplier);
-                } else {
-                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter.intValue(),
-                            backoffCounter.intValue(), backoffMultiplier);
-                }
+        stateLock.lock();
+        try {
+            if (currentGeneration != generation.get()) {
+                // the consumer has been stopped since this run started, so it must not use the state of a later start
+                LOG.trace("doRun() not polling as the consumer was stopped");
                 return;
-            } else {
-                // we are finished with backoff so reset counters, but keep the error counter (the consumer is still
-                // failing until the next poll succeeds) and count the error threshold from now on
-                idleCounter.set(0);
-                backoffErrorBase.set(errorCounter.longValue());
-                backoffCounter.set(0);
-                successCounter.set(0);
-                LOG.trace("doRun() backoff finished, resetting counters.");
             }
-        }
 
-        long count = counter.incrementAndGet();
-        boolean stopFire = repeatCount > 0 && count > repeatCount;
-        if (stopFire) {
-            LOG.debug("Cancelling {} scheduler as repeat count limit reached after {} counts.", getEndpoint(), repeatCount);
-            scheduler.unscheduleTask();
-            return;
+            // should we backoff if its enabled, and either the idle or error counter is > the threshold
+            if (backoffMultiplier > 0
+                    // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
+                    && (idleCounter.longValue() >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
+                            || errorCounter.longValue() - backoffErrorBase.longValue() >= (backoffErrorThreshold > 0
+                                    ? backoffErrorThreshold : Integer.MAX_VALUE))) {
+                final int currentBackoffCounter = backoffCounter.incrementAndGet();
+                if (currentBackoffCounter < backoffMultiplier) {
+                    // yes we should backoff
+                    if (idleCounter.intValue() > 0) {
+                        LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter.longValue(),
+                                backoffCounter.intValue(), backoffMultiplier);
+                    } else {
+                        LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter.intValue(),
+                                backoffCounter.intValue(), backoffMultiplier);
+                    }
+                    return;
+                } else {
+                    // we are finished with backoff so reset counters, but keep the error counter (the consumer is still
+                    // failing until the next poll succeeds) and count the error threshold from now on
+                    idleCounter.set(0);
+                    backoffErrorBase.set(errorCounter.longValue());
+                    backoffCounter.set(0);
+                    successCounter.set(0);
+                    LOG.trace("doRun() backoff finished, resetting counters.");
+                }
+            }
+
+            long count = counter.incrementAndGet();
+            boolean stopFire = repeatCount > 0 && count > repeatCount;
+            if (stopFire) {
+                LOG.debug("Cancelling {} scheduler as repeat count limit reached after {} counts.", getEndpoint(),
+                        repeatCount);
+                // under the lock, so the futures of a later start of the consumer are not cancelled
+                scheduler.unscheduleTask();
+                return;
+            }
+        } finally {
+            stateLock.unlock();
         }
 
         int retryCounter = -1;
@@ -225,9 +246,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                         if (begin) {
                             retryCounter++;
                             int polled = 0;
+                            pollGeneration.set(currentGeneration);
                             try {
                                 polled = poll();
                             } finally {
+                                pollGeneration.remove();
                                 // also a poll that failed, so a consumer that keeps failing is seen polling
                                 onPolled(currentGeneration, polled);
                             }
@@ -246,16 +269,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
 
-                                if (currentGeneration == generation.get()) {
-                                    // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
-                                    // consumer to be unhealthy
-                                    errorCounter.set(0);
-                                    backoffErrorBase.set(0);
-                                    lastError = null;
-                                    lastErrorDetails = null;
+                                stateLock.lock();
+                                try {
+                                    if (currentGeneration == generation.get()) {
+                                        // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                        // consumer to be unhealthy
+                                        errorCounter.set(0);
+                                        backoffErrorBase.set(0);
+                                        lastError = null;
+                                        lastErrorDetails = null;
 
-                                    // setting firstPollDone to true if greedy polling is enabled
-                                    firstPollDone = true;
+                                        // setting firstPollDone to true if greedy polling is enabled
+                                        firstPollDone = true;
+                                    }
+                                } finally {
+                                    stateLock.unlock();
                                 }
                             }
                         } else {
@@ -296,41 +324,46 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
         }
 
-        if (currentGeneration != generation.get()) {
-            // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
-            LOG.trace("doRun() done after the consumer was stopped");
-            return;
-        }
-
-        if (cause != null) {
-            idleCounter.set(0);
-            successCounter.set(0);
-            errorCounter.incrementAndGet();
-            lastError = cause;
-            // the details are for this error only
-            lastErrorDetails = null;
-            // enrich last error with http response code if possible
-            if (cause instanceof HttpResponseAware httpResponseAware) {
-                int code = httpResponseAware.getHttpResponseCode();
-                if (code > 0) {
-                    addLastErrorDetail(HealthCheck.HTTP_RESPONSE_CODE, code);
-                }
+        stateLock.lock();
+        try {
+            if (currentGeneration != generation.get()) {
+                // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
+                LOG.trace("doRun() done after the consumer was stopped");
+                return;
             }
-        } else {
-            if (polledMessages == 0) {
-                idleCounter.incrementAndGet();
-            } else {
+
+            if (cause != null) {
                 idleCounter.set(0);
+                successCounter.set(0);
+                errorCounter.incrementAndGet();
+                lastError = cause;
+                // the details are for this error only
+                lastErrorDetails = null;
+                // enrich last error with http response code if possible
+                if (cause instanceof HttpResponseAware httpResponseAware) {
+                    int code = httpResponseAware.getHttpResponseCode();
+                    if (code > 0) {
+                        addLastErrorDetail(HealthCheck.HTTP_RESPONSE_CODE, code);
+                    }
+                }
+            } else {
+                if (polledMessages == 0) {
+                    idleCounter.incrementAndGet();
+                } else {
+                    idleCounter.set(0);
+                }
+                successCounter.incrementAndGet();
+                errorCounter.set(0);
+                backoffErrorBase.set(0);
+                lastError = null;
+                lastErrorDetails = null;
             }
-            successCounter.incrementAndGet();
-            errorCounter.set(0);
-            backoffErrorBase.set(0);
-            lastError = null;
-            lastErrorDetails = null;
-        }
 
-        // now first pool is done after the poll is complete
-        firstPollDone = true;
+            // now first pool is done after the poll is complete
+            firstPollDone = true;
+        } finally {
+            stateLock.unlock();
+        }
 
         LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter.longValue(),
                 successCounter.longValue(), errorCounter.longValue());
@@ -344,16 +377,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      * the developer consoles show (not {@code TimeSource}, which is for waits and durations).
      */
     private void onPolled(long currentGeneration, int polledMessages) {
-        if (currentGeneration != generation.get()) {
-            // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
-            return;
+        stateLock.lock();
+        try {
+            if (currentGeneration != generation.get()) {
+                // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
+                return;
+            }
+            long now = System.currentTimeMillis();
+            if (polledMessages > 0) {
+                lastPollMessagesCount = polledMessages;
+                lastPollMessagesTimestamp = now;
+            }
+            lastPollTimestamp = now;
+        } finally {
+            stateLock.unlock();
         }
-        long now = System.currentTimeMillis();
-        if (polledMessages > 0) {
-            lastPollMessagesCount = polledMessages;
-            lastPollMessagesTimestamp = now;
-        }
-        lastPollTimestamp = now;
     }
 
     /**
@@ -645,9 +683,25 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      *
      * This is for example needed by the FTP component as polling a large file can take long time, causing a
      * health-check to not be ready within reasonable time.
+     *
+     * When called from a poll that started before the consumer was stopped (such as a long poll that returns after the
+     * consumer has been restarted), this does nothing: the poll is not a poll of the restarted consumer.
      */
     protected void forceConsumerAsReady() {
-        forceReady = true;
+        Long pollGen = pollGeneration.get();
+        if (pollGen == null) {
+            // not called from a poll of this consumer
+            forceReady = true;
+            return;
+        }
+        stateLock.lock();
+        try {
+            if (pollGen == generation.get()) {
+                forceReady = true;
+            }
+        } finally {
+            stateLock.unlock();
+        }
     }
 
     /**
@@ -842,24 +896,29 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             ServiceHelper.stopAndShutdownServices(scheduler);
         }
 
-        // a poll that is still running must not update the state after it has been cleared
-        generation.incrementAndGet();
+        stateLock.lock();
+        try {
+            // a poll that is still running must not update the state after it has been cleared
+            generation.incrementAndGet();
 
-        // clear counters
-        backoffCounter.set(0);
-        idleCounter.set(0);
-        errorCounter.set(0);
-        backoffErrorBase.set(0);
-        successCounter.set(0);
-        counter.set(0);
-        lastPollTimestamp = 0;
-        lastPollMessagesTimestamp = 0;
-        lastPollMessagesCount = 0;
-        // clear ready state
-        firstPollDone = false;
-        forceReady = false;
-        lastError = null;
-        lastErrorDetails = null;
+            // clear counters
+            backoffCounter.set(0);
+            idleCounter.set(0);
+            errorCounter.set(0);
+            backoffErrorBase.set(0);
+            successCounter.set(0);
+            counter.set(0);
+            lastPollTimestamp = 0;
+            lastPollMessagesTimestamp = 0;
+            lastPollMessagesCount = 0;
+            // clear ready state
+            firstPollDone = false;
+            forceReady = false;
+            lastError = null;
+            lastErrorDetails = null;
+        } finally {
+            stateLock.unlock();
+        }
 
         super.doStop();
     }
