@@ -63,7 +63,7 @@ class VertxWebsocketClientRawQueryTest extends VertxWebSocketTestSupport {
     void clientConsumerSendsTheRawValuesAsWritten() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:consumer");
         mock.expectedMessageCount(1);
-        mock.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         assertParameters(mock.getReceivedExchanges().get(0).getMessage().getBody(String.class));
     }
