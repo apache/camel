@@ -33,6 +33,7 @@ import org.opensearch.client.Response;
 import org.opensearch.client.RestClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -106,7 +107,7 @@ class OpensearchProducerApiKeyTest {
     }
 
     @Test
-    void failsWhenBothApiKeyAndUserAreSet() throws Exception {
+    void failsWhenApiKeyAndUserAndPasswordAreSet() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.start();
             OpensearchComponent component = component(context);
@@ -117,9 +118,42 @@ class OpensearchProducerApiKeyTest {
             ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
                     () -> context.getEndpoint("opensearch:test-cluster"));
             IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Both apiKey and user are configured on the opensearch component: use either apiKey, or user and"
-                         + " password",
+            assertEquals("Both apiKey and user and password are configured on the opensearch component: use either apiKey, or"
+                         + " user and password",
                     cause.getMessage());
+        }
+    }
+
+    @Test
+    void usesTheApiKeyWhenTheUserHasNoPassword() throws Exception {
+        // inside a Kamelet an optional {{?user}} that is not set can resolve from the USER environment variable
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            OpensearchComponent component = component(context);
+            component.setApiKey("os_3jVHq8X2mK9pLwR5tN7bYcD1fA4eZ6uS");
+            component.setUser("admin");
+
+            send(context);
+
+            assertEquals("ApiKey os_3jVHq8X2mK9pLwR5tN7bYcD1fA4eZ6uS", authorizations.get("node"));
+            assertEquals(NO_HEADER, authorizations.get("other"));
+        }
+    }
+
+    @Test
+    void ignoresAnEmptyApiKey() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            OpensearchComponent component = component(context);
+            component.setApiKey("");
+            component.setUser("admin");
+            component.setPassword("secret");
+
+            send(context);
+
+            // user and password are used instead, which the client may send before it is challenged
+            assertFalse(authorizations.getOrDefault("node", NO_HEADER).startsWith("ApiKey"));
+            assertEquals(NO_HEADER, authorizations.get("other"));
         }
     }
 

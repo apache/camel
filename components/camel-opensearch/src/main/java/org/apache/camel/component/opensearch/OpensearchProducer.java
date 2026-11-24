@@ -520,7 +520,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
-            if (configuration.getApiKey() != null) {
+            if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
                 httpClientBuilder.addRequestInterceptorLast(
                         new NodeScopedApiKeyInterceptor(configuration.getApiKey(), () -> nodeHosts(restClientRef.get())));
             }
