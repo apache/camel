@@ -1585,6 +1585,199 @@ class DefaultOAuthTokenValidationFactoryTest {
         assertNull(result);
     }
 
+    @Test
+    void introspectionStepUpAcrRejectedWhenMissing() throws Exception {
+        long exp = System.currentTimeMillis() / 1000L + 300;
+        HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"user","iss":"%s","aud":"%s","exp":%d}
+                        """
+                        .formatted(ISSUER, AUDIENCE, exp));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE)
+                    .setRequiredAcr(Set.of("high"));
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token-no-dots");
+
+            assertFalse(result.isValid());
+            assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+            assertTrue(result.getError().contains("acr"));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void introspectionStepUpAcrAcceptedWhenPresent() throws Exception {
+        long exp = System.currentTimeMillis() / 1000L + 300;
+        HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"user","iss":"%s","aud":"%s","exp":%d,"acr":"high"}
+                        """
+                        .formatted(ISSUER, AUDIENCE, exp));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE)
+                    .setRequiredAcr(Set.of("high"));
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token-no-dots");
+
+            assertTrue(result.isValid());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void introspectionStepUpMaxAuthAgeRejectedWhenTooOld() throws Exception {
+        long exp = System.currentTimeMillis() / 1000L + 300;
+        long authTime = System.currentTimeMillis() / 1000L - 7200; // 2 hours ago
+        HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"user","iss":"%s","aud":"%s","exp":%d,"auth_time":%d}
+                        """
+                        .formatted(ISSUER, AUDIENCE, exp, authTime));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE)
+                    .setMaxAuthAgeSeconds(3600);
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token-no-dots");
+
+            assertFalse(result.isValid());
+            assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+            assertTrue(result.getError().contains("auth_time"));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void introspectionStepUpMaxAuthAgeAllowedWithClockSkew() throws Exception {
+        long exp = System.currentTimeMillis() / 1000L + 300;
+        long authTime = System.currentTimeMillis() / 1000L - 3610; // 10 seconds beyond max age
+        HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"user","iss":"%s","aud":"%s","exp":%d,"auth_time":%d}
+                        """
+                        .formatted(ISSUER, AUDIENCE, exp, authTime));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE)
+                    .setMaxAuthAgeSeconds(3600)
+                    .setClockSkewSeconds(30); // 30-second skew covers the 10-second overage
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token-no-dots");
+
+            assertTrue(result.isValid());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void stepUpPropertiesResolvedFromProfile() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            PropertiesComponent pc = new PropertiesComponent();
+            pc.addInitialProperty("camel.oauth.myprofile.jwks-endpoint", JWKS_ENDPOINT);
+            pc.addInitialProperty("camel.oauth.myprofile.expected-issuer", ISSUER);
+            pc.addInitialProperty("camel.oauth.myprofile.expected-audience", AUDIENCE);
+            pc.addInitialProperty("camel.oauth.myprofile.required-acr", "high, medium");
+            pc.addInitialProperty("camel.oauth.myprofile.max-auth-age-seconds", "3600");
+            context.setPropertiesComponent(pc);
+            context.start();
+
+            OAuthTokenValidationConfig config = OAuthTokenValidationConfigResolver.resolveProfileConfig(context, "myprofile");
+
+            assertEquals(Set.of("high", "medium"), config.getRequiredAcr());
+            assertEquals(3600, config.getMaxAuthAgeSeconds());
+        }
+    }
+
+    @Test
+    void jwtStepUpRejectedThroughFactory() throws Exception {
+        long authTime = System.currentTimeMillis() / 1000L - 7200; // 2 hours ago
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("test-user")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "low")
+                .claim("auth_time", authTime)
+                .build();
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build();
+        SignedJWT signedJWT = new SignedJWT(header, claims);
+        signedJWT.sign(new RSASSASigner(rsaKey));
+        String token = signedJWT.serialize();
+
+        OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                .setJwksEndpoint(JWKS_ENDPOINT)
+                .setExpectedIssuer(ISSUER)
+                .setExpectedAudience(AUDIENCE)
+                .setRequiredAcr(Set.of("high"));
+
+        OAuthTokenValidationResult result = factory.validateToken(config, token);
+
+        assertFalse(result.isValid());
+        assertEquals(ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, result.getErrorCode());
+        assertTrue(result.getError().contains("acr"));
+    }
+
+    @Test
+    void jwtStepUpAcceptedWhenAcrMatches() throws Exception {
+        long authTime = System.currentTimeMillis() / 1000L - 60;
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("test-user")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("acr", "high")
+                .claim("auth_time", authTime)
+                .build();
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build();
+        SignedJWT signedJWT = new SignedJWT(header, claims);
+        signedJWT.sign(new RSASSASigner(rsaKey));
+        String token = signedJWT.serialize();
+
+        OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                .setJwksEndpoint(JWKS_ENDPOINT)
+                .setExpectedIssuer(ISSUER)
+                .setExpectedAudience(AUDIENCE)
+                .setRequiredAcr(Set.of("high"))
+                .setMaxAuthAgeSeconds(3600);
+
+        OAuthTokenValidationResult result = factory.validateToken(config, token);
+
+        assertTrue(result.isValid());
+    }
+
     private static OAuthTokenValidationConfig discoveryConfig(String discoveryUrl) {
         return new OAuthTokenValidationConfig()
                 .setOidcDiscoveryUrl(discoveryUrl)

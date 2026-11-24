@@ -112,6 +112,14 @@ public final class OAuthTokenValidationConfigResolver {
                 .map(Boolean::parseBoolean)
                 .ifPresent(config::setAllowInsecureHttp);
 
+        resolveOptionalProperty(context, prefix + "required-acr")
+                .map(OAuthTokenValidationConfigResolver::parseStringSet)
+                .filter(values -> !values.isEmpty())
+                .ifPresent(config::setRequiredAcr);
+        resolveOptionalProperty(context, prefix + "max-auth-age-seconds")
+                .map(Integer::parseInt)
+                .ifPresent(config::setMaxAuthAgeSeconds);
+
         resolveOptionalProperty(context, prefix + "base-uri")
                 .map(String::trim)
                 .filter(baseUri -> !baseUri.isEmpty())
