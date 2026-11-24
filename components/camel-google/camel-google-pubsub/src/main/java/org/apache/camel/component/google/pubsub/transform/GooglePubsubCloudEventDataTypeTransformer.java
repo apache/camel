@@ -32,7 +32,8 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Output data type represents Google Pubsub Pulling response as CloudEvent V1. The data type sets Camel specific
- * CloudEvent headers on the exchange.
+ * CloudEvent headers on the exchange. The CloudEvent source is the name of the subscription, from the header the
+ * google-pubsub consumer sets, with the prefix {@code google.pubsub.}.
  */
 @DataTypeTransformer(name = "google-pubsub:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Google Pubsub Pulling information")
@@ -49,9 +50,9 @@ public class GooglePubsubCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.pubsub.pull");
 
-        if (message.getHeaders().containsKey(GooglePubsubConstants.ACK_ID)) {
+        if (message.getHeaders().containsKey(GooglePubsubConstants.SUBSCRIPTION_NAME)) {
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "google.pubsub." + message.getHeader(GooglePubsubConstants.ACK_ID, String.class));
+                    "google.pubsub." + message.getHeader(GooglePubsubConstants.SUBSCRIPTION_NAME, String.class));
         }
 
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(GooglePubsubConstants.MESSAGE_ID, String.class));

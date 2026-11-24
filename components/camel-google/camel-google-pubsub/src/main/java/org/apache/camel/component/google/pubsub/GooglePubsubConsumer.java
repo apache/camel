@@ -379,6 +379,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                         // Standard headers
                         exchange.getIn().setHeader(GooglePubsubConstants.ACK_ID, message.getAckId());
                         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
+                        exchange.getIn().setHeader(GooglePubsubConstants.SUBSCRIPTION_NAME, endpoint.getDestinationName());
                         exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());
                         // Deprecated:  replaced by headerFilterStrategy
                         exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());

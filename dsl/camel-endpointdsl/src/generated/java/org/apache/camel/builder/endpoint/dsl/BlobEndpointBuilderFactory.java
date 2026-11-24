@@ -4173,6 +4173,21 @@ public interface BlobEndpointBuilderFactory {
             return "CamelAzureStorageBlobBlobName";
         }
         /**
+         * The name of the container the blob was consumed from. It is not the
+         * CamelAzureStorageBlobBlobContainerName header, which overrides the
+         * container of a producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobConsumedContainerName}.
+         */
+        public String azureStorageBlobConsumedContainerName() {
+            return "CamelAzureStorageBlobConsumedContainerName";
+        }
+        /**
          * (downloadBlobToFile) The file directory where the downloaded blobs
          * will be saved to.
          * 

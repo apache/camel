@@ -1141,6 +1141,18 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         public String googleCalendarEventId() {
             return "CamelGoogleCalendarEventId";
         }
+        /**
+         * The id of the calendar the event was read from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCalendarCalendarId}.
+         */
+        public String googleCalendarCalendarId() {
+            return "CamelGoogleCalendarCalendarId";
+        }
     }
     static GoogleCalendarStreamEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {

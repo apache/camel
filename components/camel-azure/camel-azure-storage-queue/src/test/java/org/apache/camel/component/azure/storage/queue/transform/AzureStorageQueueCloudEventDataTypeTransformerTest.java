@@ -19,10 +19,12 @@ package org.apache.camel.component.azure.storage.queue.transform;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -31,6 +33,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class AzureStorageQueueCloudEventDataTypeTransformerTest {
@@ -39,6 +42,32 @@ class AzureStorageQueueCloudEventDataTypeTransformerTest {
 
     private final AzureStorageQueueCloudEventDataTypeTransformer transformer
             = new AzureStorageQueueCloudEventDataTypeTransformer();
+
+    @Test
+    void theSourceIsTheQueue() throws Exception {
+        // CAMEL-27101: the source was built from the message id, so every event had a source of its own
+        for (String messageId : List.of("1234", "5678")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(QueueConstants.CONSUMED_QUEUE_NAME, "orders");
+            exchange.getMessage().setHeader(QueueConstants.MESSAGE_ID, messageId);
+            exchange.getMessage().setHeader(QueueConstants.POP_RECEIPT, "receipt-" + messageId);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("azure.storage.queue.orders", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals("receipt-" + messageId, exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+            assertEquals(exchange.getExchangeId(), exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_ID));
+        }
+    }
+
+    @Test
+    void theSourceIsNotTheMessageId() throws Exception {
+        // a message without the queue name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(QueueConstants.MESSAGE_ID, "1234");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {

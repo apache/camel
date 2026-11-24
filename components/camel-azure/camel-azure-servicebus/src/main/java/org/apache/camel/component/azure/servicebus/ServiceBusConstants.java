@@ -60,6 +60,9 @@ public final class ServiceBusConstants {
     @Metadata(label = "consumer", description = "Gets the partition key for sending a message to a partitioned entity.",
               javaType = "String")
     public static final String PARTITION_KEY = HEADER_PREFIX + "PartitionKey";
+    @Metadata(label = "consumer", description = "The name of the queue or topic the message was received from.",
+              javaType = "String")
+    public static final String TOPIC_OR_QUEUE_NAME = HEADER_PREFIX + "TopicOrQueueName";
     @Metadata(label = "consumer", description = "The representation of message as defined by AMQP protocol.",
               javaType = "com.azure.core.amqp.models.AmqpAnnotatedMessage")
     public static final String RAW_AMQP_MESSAGE = HEADER_PREFIX + "RawAmqpMessage";

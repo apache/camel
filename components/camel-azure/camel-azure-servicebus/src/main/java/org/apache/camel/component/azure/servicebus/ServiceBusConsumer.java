@@ -318,6 +318,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         message.setHeader(ServiceBusConstants.LOCK_TOKEN, receivedMessage.getLockToken());
         message.setHeader(ServiceBusConstants.LOCKED_UNTIL, receivedMessage.getLockedUntil());
         message.setHeader(ServiceBusConstants.PARTITION_KEY, receivedMessage.getPartitionKey());
+        message.setHeader(ServiceBusConstants.TOPIC_OR_QUEUE_NAME, getConfiguration().getTopicOrQueueName());
         message.setHeader(ServiceBusConstants.RAW_AMQP_MESSAGE, receivedMessage.getRawAmqpMessage());
         message.setHeader(ServiceBusConstants.REPLY_TO, receivedMessage.getReplyTo());
         message.setHeader(ServiceBusConstants.REPLY_TO_SESSION_ID, receivedMessage.getReplyToSessionId());

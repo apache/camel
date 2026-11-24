@@ -300,6 +300,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
             exchange.getMessage().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
             exchange.getMessage().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
             exchange.getMessage().setHeader(Kinesis2Constants.SHARD_ID, shardId);
+            exchange.getMessage().setHeader(Kinesis2Constants.STREAM_NAME, endpoint.getConfiguration().getStreamName());
             if (dataRecord.approximateArrivalTimestamp() != null) {
                 long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
                 exchange.getMessage().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);

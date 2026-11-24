@@ -33,6 +33,8 @@ import org.apache.camel.spi.Transformer;
 /**
  * Data type transformer converts Azure Service bus receive messages response to CloudEvent v1_0 data format. The data
  * type sets Camel specific CloudEvent headers with values extracted from Azure Service bus receive messages response.
+ * The CloudEvent source is the name of the queue or topic, from the header the azure-servicebus consumer sets, with the
+ * prefix {@code azure.servicebus.}.
  */
 @DataTypeTransformer(name = "azure-servicebus:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Azure Service bus receive messages response details")
@@ -50,9 +52,9 @@ public class ServicebusCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.servicebus.receiveMessages");
 
-        if (message.getHeaders().containsKey(ServiceBusConstants.PARTITION_KEY)) {
+        if (message.getHeaders().containsKey(ServiceBusConstants.TOPIC_OR_QUEUE_NAME)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.servicebus.partition." + message.getHeader(ServiceBusConstants.PARTITION_KEY, String.class));
+                    "azure.servicebus." + message.getHeader(ServiceBusConstants.TOPIC_OR_QUEUE_NAME, String.class));
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(ServiceBusConstants.MESSAGE_ID, String.class));

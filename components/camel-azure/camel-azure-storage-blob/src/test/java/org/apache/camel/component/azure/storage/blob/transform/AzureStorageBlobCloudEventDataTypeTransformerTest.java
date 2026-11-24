@@ -20,6 +20,7 @@ package org.apache.camel.component.azure.storage.blob.transform;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class AzureStorageBlobCloudEventDataTypeTransformerTest {
@@ -49,6 +51,7 @@ public class AzureStorageBlobCloudEventDataTypeTransformerTest {
     void shouldMapToCloudEvent() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
+        exchange.getMessage().setHeader(BlobConstants.CONSUMED_CONTAINER_NAME, "myContainer");
         exchange.getMessage().setHeader(BlobConstants.BLOB_NAME, "myBlob");
         exchange.getMessage().setHeader(BlobConstants.E_TAG, "eTag");
         exchange.getMessage().setBody(new ByteArrayInputStream("Test1".getBytes(StandardCharsets.UTF_8)));
@@ -59,7 +62,34 @@ public class AzureStorageBlobCloudEventDataTypeTransformerTest {
         assertEquals("org.apache.camel.event.azure.storage.blob.getBlob",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("myBlob", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
-        assertEquals("azure.storage.blob.eTag", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertEquals("azure.storage.blob.myContainer", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
+
+    @Test
+    void theSourceIsTheContainer() throws Exception {
+        // CAMEL-27101: the source was built from the ETag of the blob, so every event had a source of its own
+        for (String blob : List.of("a.txt", "b.txt")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(BlobConstants.CONSUMED_CONTAINER_NAME, "myContainer");
+            exchange.getMessage().setHeader(BlobConstants.BLOB_NAME, blob);
+            exchange.getMessage().setHeader(BlobConstants.E_TAG, "eTag-" + blob);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("azure.storage.blob.myContainer",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals(blob, exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        }
+    }
+
+    @Test
+    void theSourceIsNotTheETag() throws Exception {
+        // a message without the container name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(BlobConstants.BLOB_NAME, "myBlob");
+        exchange.getMessage().setHeader(BlobConstants.E_TAG, "eTag");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
     }
 
     @Test

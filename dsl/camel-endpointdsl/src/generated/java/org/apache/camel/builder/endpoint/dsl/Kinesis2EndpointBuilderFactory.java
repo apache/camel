@@ -2980,6 +2980,18 @@ public interface Kinesis2EndpointBuilderFactory {
             return "CamelAwsKinesisShardId";
         }
         /**
+         * The name of the stream the record was read from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsKinesisStreamName}.
+         */
+        public String awsKinesisStreamName() {
+            return "CamelAwsKinesisStreamName";
+        }
+        /**
          * A list of partition keys for batch operations. When set, each record
          * in the batch is assigned the partition key at the corresponding
          * index, allowing records to be routed to different shards. If not set,

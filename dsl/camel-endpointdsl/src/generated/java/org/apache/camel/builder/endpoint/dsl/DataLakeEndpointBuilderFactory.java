@@ -3590,6 +3590,21 @@ public interface DataLakeEndpointBuilderFactory {
             return "CamelAzureStorageDataLakeArchiveStatus";
         }
         /**
+         * The name of the file system the file was consumed from. It is not the
+         * CamelAzureStorageDataLakeFileSystemName header, which overrides the
+         * file system of a producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeConsumedFileSystemName}.
+         */
+        public String azureStorageDataLakeConsumedFileSystemName() {
+            return "CamelAzureStorageDataLakeConsumedFileSystemName";
+        }
+        /**
          * Cache control specified for the file.
          * 
          * The option is a: {@code String} type.

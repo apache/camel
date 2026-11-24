@@ -19,10 +19,12 @@ package org.apache.camel.component.azure.servicebus.transform;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.component.azure.servicebus.ServiceBusConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -31,6 +33,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ServicebusCloudEventDataTypeTransformerTest {
@@ -38,6 +41,31 @@ class ServicebusCloudEventDataTypeTransformerTest {
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
     private final ServicebusCloudEventDataTypeTransformer transformer = new ServicebusCloudEventDataTypeTransformer();
+
+    @Test
+    void theSourceIsTheQueueOrTopic() throws Exception {
+        // CAMEL-27101: the source was built from the partition key that the sender may set on each message
+        for (String messageId : List.of("1", "2")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(ServiceBusConstants.TOPIC_OR_QUEUE_NAME, "orders");
+            exchange.getMessage().setHeader(ServiceBusConstants.PARTITION_KEY, "pk-" + messageId);
+            exchange.getMessage().setHeader(ServiceBusConstants.MESSAGE_ID, messageId);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("azure.servicebus.orders", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals(messageId, exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        }
+    }
+
+    @Test
+    void theSourceIsNotThePartitionKey() throws Exception {
+        // a message without the queue or topic name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(ServiceBusConstants.PARTITION_KEY, "pk");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {
