@@ -25,9 +25,11 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.DataLakeFileSystemClient;
 import com.azure.storage.file.datalake.DataLakeServiceClient;
@@ -45,6 +47,7 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,6 +67,8 @@ class DataLakeConsumerFileThatCannotBeGotTest extends CamelTestSupport {
     private final Set<String> forbidden = ConcurrentHashMap.newKeySet();
     private final Set<String> deleted = ConcurrentHashMap.newKeySet();
     private final CountDownLatch failedPolls = new CountDownLatch(2);
+    private final CountDownLatch emptyPolls = new CountDownLatch(2);
+    private final AtomicInteger rolledBackPolls = new AtomicInteger();
     private final CountDownLatch skippedReported = new CountDownLatch(1);
     private final List<String> handled = new CopyOnWriteArrayList<>();
 
@@ -85,6 +90,25 @@ class DataLakeConsumerFileThatCannotBeGotTest extends CamelTestSupport {
             @Override
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 failedPolls.countDown();
+                return false;
+            }
+        });
+        context.getRegistry().bind("countEmptyPolls", new PollingConsumerPollStrategy() {
+            @Override
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
+            }
+
+            @Override
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                if (polledMessages == 0) {
+                    emptyPolls.countDown();
+                }
+            }
+
+            @Override
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
+                rolledBackPolls.incrementAndGet();
                 return false;
             }
         });
@@ -152,6 +176,20 @@ class DataLakeConsumerFileThatCannotBeGotTest extends CamelTestSupport {
     }
 
     @Test
+    void fileNameThatDoesNotExistGivesAnEmptyPoll() throws Exception {
+        deleted.add("missing.txt");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        addConsumerRoute("&fileName=missing.txt&pollStrategy=#countEmptyPolls");
+
+        // before, the BlobStorageException (404) of the read failed every poll, with a WARN each time
+        assertTrue(emptyPolls.await(20, TimeUnit.SECONDS), "the polls are empty");
+        assertEquals(0, rolledBackPolls.get(), "no poll fails");
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void pollFailsWhenNoListedFileCanBeGot() throws Exception {
         files.add("a.txt");
         files.add("b.txt");
@@ -207,10 +245,11 @@ class DataLakeConsumerFileThatCannotBeGotTest extends CamelTestSupport {
                         null);
             }
             if (deleted.contains(name)) {
-                // what the service answers to a read of a file deleted after the listing
+                // what the SDK throws when reading a file that does not exist: openInputStream reads through the blob
+                // endpoint and does not translate the exception into a DataLakeStorageException
                 HttpResponse response = mock(HttpResponse.class);
                 when(response.getStatusCode()).thenReturn(404);
-                throw new DataLakeStorageException("The specified path does not exist.", response, null);
+                throw new BlobStorageException("The specified blob does not exist.", response, null);
             }
             DataLakeFileOpenInputStreamResult result = mock(DataLakeFileOpenInputStreamResult.class);
             when(result.getInputStream()).thenReturn(new ByteArrayInputStream(name.getBytes(StandardCharsets.UTF_8)));
