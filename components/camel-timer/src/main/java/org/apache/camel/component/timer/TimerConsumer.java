@@ -138,6 +138,21 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         LOG.warn(
                                 "Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.",
                                 e);
+                    } catch (Throwable t) {
+                        // An Error (such as StackOverflowError or OutOfMemoryError) must not propagate out
+                        // of run(): the java.util.Timer contract states that any unchecked Throwable from
+                        // run() terminates the timer thread and silently cancels ALL tasks sharing that
+                        // timer — including tasks from other routes with the same timer name. We therefore
+                        // catch Throwable rather than just Error: cancelling this task and logging is the
+                        // least-bad option in every case. For OutOfMemoryError the JVM may already be in
+                        // trouble, but allowing the error to propagate would additionally kill sibling
+                        // routes, which is strictly worse.
+                        cancel();
+                        LOG.error(
+                                "Fatal error processing exchange on timer: {}."
+                                  + " The timer task for this route has been cancelled."
+                                  + " The route no longer fires until it is restarted.",
+                                endpoint, t);
                     } finally {
                         polling = false;
                     }
@@ -198,6 +213,14 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         sendTimerExchange(count);
                         count = counter.incrementAndGet();
                     }
+                } catch (Throwable t) {
+                    // An Error (such as StackOverflowError) must not be silently swallowed in the executor
+                    // path. Log at ERROR so the operator sees it.
+                    LOG.error(
+                            "Fatal error processing exchange on timer: {}."
+                              + " The timer task for this route has been terminated."
+                              + " The route no longer fires until it is restarted.",
+                            endpoint, t);
                 } finally {
                     polling = false;
                 }
@@ -292,14 +315,17 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             AsyncCallback cb = defaultConsumerCallback(exchange, false);
             getAsyncProcessor().process(exchange, cb);
         } else {
+            // Use an outer try-finally so that releaseExchange is always called,
+            // even if an Error (e.g. StackOverflowError) escapes getProcessor().process().
+            // Without this, an Error would leave the exchange inflight and cause
+            // the context shutdown to wait for the full shutdown timeout.
             try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-
-            // handle any thrown exception
-            try {
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+                // handle any thrown exception
                 if (exchange.getException() != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
