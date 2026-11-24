@@ -154,9 +154,11 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         release.countDown();
         if (poller != null) {
             poller.join(10000);
+            assertFalse(poller.isAlive(), "the poll did not complete");
         }
         if (restarter != null) {
             restarter.join(10000);
+            assertFalse(restarter.isAlive(), "the restart did not complete");
         }
         if (consumer != null) {
             consumer.stop();
