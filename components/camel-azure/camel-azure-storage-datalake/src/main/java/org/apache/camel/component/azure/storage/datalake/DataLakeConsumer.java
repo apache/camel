@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import com.azure.core.exception.HttpResponseException;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.file.datalake.DataLakeFileSystemClient;
 import com.azure.storage.file.datalake.models.DataLakeStorageException;
@@ -144,7 +145,7 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
      * translate its exception), so a missing file is a {@link BlobStorageException}, not a
      * {@link DataLakeStorageException}.
      */
-    private static boolean isNotFound(final Exception e) {
+    private static boolean isNotFound(final HttpResponseException e) {
         return e instanceof DataLakeStorageException d && NOT_FOUND == d.getStatusCode()
                 || e instanceof BlobStorageException b && NOT_FOUND == b.getStatusCode();
     }
