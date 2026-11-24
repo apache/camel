@@ -371,7 +371,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Configure fresh mode (update policy)
         if (fresh) {
-            overridesBuilder.snapshotUpdatePolicy(ContextOverrides.SnapshotUpdatePolicy.ALWAYS);
+            overridesBuilder.artifactUpdatePolicy(ContextOverrides.UpdatePolicy.ALWAYS)
+                    .metadataUpdatePolicy(ContextOverrides.UpdatePolicy.ALWAYS);
         }
 
         // Create MIMA context - this replaces ~650 lines of DIRegistry code!
