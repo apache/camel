@@ -18,11 +18,11 @@ package org.apache.camel.component.file;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +73,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final String[] includeExt;
     private final String[] excludeExt;
     private boolean retrieveFile = true;
-    // whether the exchange processBatch hands to processExchange is the last of its done file in the batch (poll thread)
+    // whether the exchange processBatch hands to processExchange is the last of its done file in the batch (poll thread);
+    // set by processBatch just before it calls processExchange, and read there
     private boolean lastOfDoneFile;
     // files already reported as resolving outside the starting directory (bounded)
     private final Map<String, Boolean> skippedOutsideStartingDirectory = LRUCacheFactory.newLRUCache(1000);
@@ -290,7 +291,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         Queue<Object> notStarted = new ArrayDeque<>();
-        Set<Object> lastOfEachDoneFile = lastOfEachDoneFile(exchanges, total);
+        BitSet lastOfEachDoneFile = lastOfEachDoneFile(exchanges, total);
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
@@ -304,7 +305,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-            lastOfDoneFile = lastOfEachDoneFile != null && lastOfEachDoneFile.contains(exchange);
+            lastOfDoneFile = lastOfEachDoneFile != null && lastOfEachDoneFile.get(index);
 
             // the file as polled: the begin strategy may pre move it, and then binds the pre moved file to the exchange
             GenericFile<?> polledFile = getExchangeFileProperty(exchange);
@@ -342,27 +343,32 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * With a done file with a fixed name, the exchange of the last file of each done file among the files of the batch:
-     * that file deletes the done file once it completed. With {@code recursive=true} the files of a poll come from
-     * several directories, each with its own done file, not only the directory of the last file of the poll.
+     * With a done file with a fixed name, the batch index of the last file of each done file among the files of the
+     * batch: that file deletes the done file once it completed. With {@code recursive=true} the files of a poll come
+     * from several directories, each with its own done file, not only the directory of the last file of the poll. Only
+     * the indexes are kept, not the exchanges, so an exchange that completed is not kept reachable for the rest of the
+     * poll.
      *
-     * @return the exchanges, or <tt>null</tt> when the done files are not kept (no done file with a fixed name)
+     * @return the batch indexes, or <tt>null</tt> when the done files are not kept (no done file with a fixed name)
      */
-    private Set<Object> lastOfEachDoneFile(Queue<Object> exchanges, int total) {
+    private BitSet lastOfEachDoneFile(Queue<Object> exchanges, int total) {
         if (getKeptDoneFiles() == null) {
             return null;
         }
-        Map<String, Object> last = new HashMap<>();
+        Map<String, Integer> last = new HashMap<>();
         int index = 0;
         for (Object exchange : exchanges) {
-            if (index++ >= total) {
+            if (index >= total) {
                 break;
             }
             GenericFile<?> file = getExchangeFileProperty((Exchange) exchange);
-            last.put(endpoint.createDoneFileName(file.getAbsoluteFilePath()), exchange);
+            last.put(endpoint.createDoneFileName(file.getAbsoluteFilePath()), index);
+            index++;
         }
-        Set<Object> answer = Collections.newSetFromMap(new IdentityHashMap<>());
-        answer.addAll(last.values());
+        BitSet answer = new BitSet(total);
+        for (int i : last.values()) {
+            answer.set(i);
+        }
         return answer;
     }
 
@@ -642,6 +648,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             GenericFileKeptDoneFiles kept = getKeptDoneFiles();
             if (kept != null) {
                 onCompletion.setKeptDoneFiles(kept.batch());
+                // the value set by processBatch for this exchange: this relies on processExchange being called from
+                // inside processBatch, on the poll thread, as the field is not passed as a parameter
                 onCompletion.setLastOfDoneFile(lastOfDoneFile);
             }
             exchange.getExchangeExtension().addOnCompletion(onCompletion);

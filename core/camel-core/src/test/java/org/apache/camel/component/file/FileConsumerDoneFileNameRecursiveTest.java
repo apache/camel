@@ -57,12 +57,13 @@ class FileConsumerDoneFileNameRecursiveTest extends ContextTestSupport {
                     "The done file of " + directory + " must be deleted after its last file");
         }
 
-        // a file written into one of the directories waits for a new done file
+        // a file written into one of the directories waits for a new done file (the mock is reset before the files are
+        // written, as a poll can deliver the file at once)
+        getMockEndpoint("mock:result").reset();
+        getMockEndpoint("mock:result").expectedBodiesReceived("other");
         Files.writeString(testFile("d1/next.txt"), "next");
         Files.writeString(testFile("d2/other.txt"), "other");
         Files.writeString(testFile("d2/ready"), "");
-        getMockEndpoint("mock:result").reset();
-        getMockEndpoint("mock:result").expectedBodiesReceived("other");
         assertMockEndpointsSatisfied();
         Awaitility.await().atMost(20, TimeUnit.SECONDS).until(() -> !Files.exists(testFile("d2/ready")));
         assertTrue(Files.exists(testFile("d1/next.txt")), "d1/next.txt has no done file and must not be consumed");

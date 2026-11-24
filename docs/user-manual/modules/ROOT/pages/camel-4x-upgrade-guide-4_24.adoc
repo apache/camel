@@ -564,15 +564,6 @@ current directory between two uploads is the directory of the last file, not the
 example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
 must change directory itself.
 
-=== camel-file, camel-ftp, camel-sftp, camel-smb, camel-azure-files - with recursive=true the done file of each directory is deleted
-
-No option or default changes. With `recursive=true` and a done file with a fixed name (such as `doneFileName=ready`),
-a poll that consumes files of several directories deletes the done file of each of these directories after the last
-file of that directory, as documented. Before, it deleted only the done file of the directory of the last file of the
-poll, and the done files of the other directories stayed, so that the next files written there were consumed without
-a new done file. A done file is still kept while the poll leaves files of its directory for the next poll, and a
-dynamic done file name (`${file:name}.done`) is deleted for each file as before.
-
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
 Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `+ai-resource:customer?uriTemplate=camel:///customers/{id}+`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
@@ -3655,6 +3646,17 @@ was written. Meanwhile the polls consume every file of the directory, as they do
 also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file per call: the done file is now kept
 until the last file of the directory is received, where before the first received file deleted it. This applies to
 camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
+
+=== camel-file, camel-ftp, camel-sftp, camel-mina-sftp, camel-smb, camel-azure-files - with recursive=true the done file of each directory is deleted
+
+No option or default changes. With `recursive=true` and a done file with a fixed name (such as `doneFileName=ready`),
+a poll that consumes files of several directories deletes the done file of each of these directories after the last
+file of that directory, as documented. Before, it deleted only the done file of the directory of the last file of the
+poll, and the done files of the other directories stayed, so that the next files written there were consumed without
+a new done file. So a file of such a directory that failed in the poll before the last file of that directory (and was
+not moved with `moveFailed`) is now consumed again only after a new done file is written, as it already was in the
+directory of the last file of the poll. A done file is still kept while the poll leaves files of its directory for the
+next poll, and a dynamic done file name (`${file:name}.done`) is deleted for each file as before.
 
 === camel-file - poll and pollEnrich evaluate the fileName on the current message
 
