@@ -533,12 +533,27 @@ public class LlmClient {
 
     // -- Simple generate (for explain) --
 
-    String generate(String systemPrompt, String userPrompt) {
+    /**
+     * The result of a {@link #generate} call: the full text of the response, and whether the response was truly
+     * streamed. When {@code streamed} is {@code true}, the text was printed token-by-token as it arrived (Ollama,
+     * Anthropic when stream is on) and the caller MUST NOT print it again. When {@code streamed} is {@code false}, the
+     * text was returned from the provider as a complete response and the caller is responsible for printing it.
+     */
+    record GenerateResponse(String text, boolean streamed) {
+    }
+
+    GenerateResponse generate(String systemPrompt, String userPrompt) {
         return switch (apiType) {
-            case ollama -> generateOllama(systemPrompt, userPrompt);
-            case openai, watsonx -> generateOpenAi(systemPrompt, userPrompt);
-            case anthropic -> generateAnthropic(systemPrompt, userPrompt);
-            case gemini -> generateGemini(systemPrompt, userPrompt);
+            case ollama -> {
+                String text = generateOllama(systemPrompt, userPrompt);
+                yield new GenerateResponse(text, stream);
+            }
+            case openai, watsonx -> new GenerateResponse(generateOpenAi(systemPrompt, userPrompt), false);
+            case anthropic -> {
+                String text = generateAnthropic(systemPrompt, userPrompt);
+                yield new GenerateResponse(text, stream);
+            }
+            case gemini -> new GenerateResponse(generateGemini(systemPrompt, userPrompt), false);
         };
     }
 
