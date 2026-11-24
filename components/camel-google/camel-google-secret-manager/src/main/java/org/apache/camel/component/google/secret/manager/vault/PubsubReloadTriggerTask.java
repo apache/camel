@@ -23,8 +23,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import com.google.api.core.ApiService;
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -66,7 +70,14 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
-    private Subscriber subscriber;
+    // run() runs on the timer thread that all the periodic tasks of the CamelContext share: how long it waits for the
+    // subscriber it starts to be running
+    private static final long SUBSCRIBER_START_TIMEOUT = 5000;
+    // builds a new subscriber with the receiver of this task: set by doStart (package-private for tests)
+    Supplier<Subscriber> subscriberFactory;
+    private volatile Subscriber subscriber;
+    // subscribers in a row that failed or stopped (only used by run(), on the timer thread)
+    private int failedSubscribers;
     private GoogleSecretManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
@@ -104,7 +115,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     }
 
     /**
-     * Last time this task checked GCP for updated secrets.
+     * Last time this task checked GCP for updated secrets: the last refresh that found the Google Pub/Sub subscriber
+     * running (or that ran before the task was started).
      */
     public Instant getLastCheckTime() {
         return lastCheckTime;
@@ -149,25 +161,25 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 subscription = gcpVaultConfiguration.getSubscriptionName();
             }
         }
+        CredentialsProvider credentialsProvider;
         if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)
                 && ObjectHelper.isNotEmpty(subscription)) {
             InputStream resolveMandatoryResourceAsInputStream
                     = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
             Credentials myCredentials = ServiceAccountCredentials
                     .fromStream(resolveMandatoryResourceAsInputStream);
-            ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
-            Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
-            builder.setCredentialsProvider(FixedCredentialsProvider.create(myCredentials));
-            subscriber = builder.build();
+            credentialsProvider = FixedCredentialsProvider.create(myCredentials);
         } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId) && ObjectHelper.isNotEmpty(subscription)) {
-            ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
-            Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
-            builder.setCredentialsProvider(FixedCredentialsProvider.create(GoogleCredentials.getApplicationDefault()));
-            subscriber = builder.build();
+            credentialsProvider = FixedCredentialsProvider.create(GoogleCredentials.getApplicationDefault());
         } else {
             throw new RuntimeCamelException(
                     "Using the GCP Secret refresh task requires setting GCP service account key, project Id and Google Pubsub subscription name as application properties or environment variables");
         }
+        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        subscriberFactory = () -> Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver())
+                .setCredentialsProvider(credentialsProvider)
+                .build();
+        subscriber = subscriberFactory.get();
     }
 
     @Override
@@ -188,15 +200,82 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
 
     @Override
     public void run() {
-        lastCheckTime = Instant.now();
-
-        if (subscriber == null) {
+        Subscriber current = subscriber;
+        if (current == null) {
+            lastCheckTime = Instant.now();
             return;
+        }
+        ApiService.State state = current.state();
+        // running at the previous refresh already, so its streaming pull works: a subscriber that has just started
+        // reports RUNNING before the service answers its streaming pull, which can still be refused right after
+        boolean runningSincePreviousRefresh = state == ApiService.State.RUNNING;
+        if (state == ApiService.State.FAILED || state == ApiService.State.TERMINATED) {
+            if (!isRunAllowed()) {
+                return;
+            }
+            // a Subscriber that failed (for example on a non-retryable status of its streaming pull, such as
+            // PERMISSION_DENIED) receives nothing any more and cannot be started again: replace it with a new one
+            failedSubscribers++;
+            logSubscriberNotRunning(current, state);
+            current = subscriberFactory.get();
+            subscriber = current;
+            state = current.state();
         }
         // the subscriber is push based, so it only has to be started once. A Google ApiService can only be
         // started while it is still NEW, starting it again on every period would fail with an IllegalStateException
-        if (subscriber.state() == ApiService.State.NEW) {
-            subscriber.startAsync().awaitRunning();
+        if (state == ApiService.State.NEW) {
+            current.startAsync();
+            if (!isRunAllowed()) {
+                // stopped meanwhile: doShutdown may have missed the new subscriber
+                current.stopAsync();
+                return;
+            }
+            try {
+                // run() runs on the timer thread that all the periodic tasks of the CamelContext share: do not wait
+                // without a bound
+                current.awaitRunning(SUBSCRIBER_START_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                LOG.debug("The Google Pub/Sub subscriber of the GCP secret refresh task is not running after {} ms,"
+                          + " it is checked again at the next refresh",
+                        SUBSCRIBER_START_TIMEOUT);
+            } catch (IllegalStateException e) {
+                // it failed while starting: it is reported and replaced at the next refresh
+                LOG.debug("The Google Pub/Sub subscriber of the GCP secret refresh task failed to start", e);
+            }
+        }
+        // only a running subscriber receives the secret events: the dev console shows a stale last check otherwise. A
+        // subscriber that replaced a failed one counts once it is still running at the next refresh, so that while
+        // the streaming pull keeps being refused there is one WARN, and the last check does not move
+        if (current.state() == ApiService.State.RUNNING && (failedSubscribers == 0 || runningSincePreviousRefresh)) {
+            lastCheckTime = Instant.now();
+            if (failedSubscribers > 0) {
+                LOG.info("The Google Pub/Sub subscriber of the GCP secret refresh task is running again, after {}"
+                         + " subscriber(s) that did not run",
+                        failedSubscribers);
+                failedSubscribers = 0;
+            }
+        }
+    }
+
+    private void logSubscriberNotRunning(Subscriber current, ApiService.State state) {
+        String cause = "stopped";
+        if (state == ApiService.State.FAILED) {
+            // the failure cause of the Subscriber wraps the failure of its streaming pull (the gRPC status)
+            Throwable root = current.failureCause();
+            while (root.getCause() != null && root.getCause() != root) {
+                root = root.getCause();
+            }
+            cause = root.toString();
+            LOG.debug("The Google Pub/Sub subscriber of the GCP secret refresh task failed", current.failureCause());
+        }
+        if (failedSubscribers == 1) {
+            // the first one in a row at WARN, the repeats at DEBUG (a subscriber that runs again is logged at INFO)
+            LOG.warn("The Google Pub/Sub subscriber of the GCP secret refresh task is {} ({}): starting a new subscriber",
+                    state, cause);
+        } else {
+            LOG.debug("The Google Pub/Sub subscriber of the GCP secret refresh task is {} ({}), {} times in a row:"
+                      + " starting a new subscriber",
+                    state, cause, failedSubscribers);
         }
     }
 
