@@ -389,7 +389,12 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // setup state as attachment on the channel, so we can access the state later when needed
             state = new NettyCamelState(producerCallback, exchange);
-            channelCorrelationManager.putState(channel, state);
+            if (configuration.isSync() || !(channelCorrelationManager instanceof TimeoutCorrelationManagerSupport)) {
+                // with sync=false no reply is waited for: a TimeoutCorrelationManagerSupport would only keep the state
+                // until it expires, and refuse another request with the same correlation id while the write of this
+                // one is not complete
+                channelCorrelationManager.putState(channel, state);
+            }
         } catch (RuntimeException e) {
             if (!configuration.isReuseChannel()) {
                 // with reuseChannel the channel is left to the on-completion of the exchange
