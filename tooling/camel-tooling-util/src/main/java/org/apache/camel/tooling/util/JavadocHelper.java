@@ -27,7 +27,8 @@ import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 public final class JavadocHelper {
 
-    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}?*+[]|";
+    // a lone < or > is kept, such as in an operator (> 0), as the text between angle brackets is removed before
+    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}?*+[]|<>";
 
     // what the sanitizer removes as a tag: everything between angle brackets
     private static final Pattern TAG = Pattern.compile("<.*?>");
@@ -91,15 +92,14 @@ public final class JavadocHelper {
     }
 
     /**
-     * Finds the text with angle brackets that {@link #sanitizeDescription(String, boolean)} removes from the javadoc
-     * and that is not an HTML tag: the text between angle brackets, such as a placeholder ({@code <name>}) or a generic
-     * type ({@code List<String>}), and a lone angle bracket, such as in an operator ({@code <=}). The sanitizer removes
-     * everything between angle brackets, and then every angle bracket that is left, so this text would be lost.
+     * Finds the text between angle brackets that {@link #sanitizeDescription(String, boolean)} removes from the javadoc
+     * and that is not an HTML tag, such as a placeholder ({@code <name>}) or a generic type ({@code List<String>}). The
+     * sanitizer removes everything between angle brackets, so this text would be lost. A lone angle bracket, such as in
+     * an operator ({@code > 0}), is kept.
      *
      * @param  javadoc the javadoc
      * @param  summary whether only the summary is used, as in {@link #sanitizeDescription(String, boolean)}
-     * @return         the removed text that is not an HTML tag, or an empty list. The text between angle brackets comes
-     *                 first, then each lone angle bracket with the text around it.
+     * @return         the removed text that is not an HTML tag, in the order it occurs, or an empty list
      */
     public static List<String> findRemovedAngleBracketText(String javadoc, boolean summary) {
         if (isNullOrEmpty(javadoc)) {
@@ -107,19 +107,10 @@ public final class JavadocHelper {
         }
         List<String> answer = new ArrayList<>();
         Matcher matcher = TAG.matcher(joinLines(javadoc, summary));
-        StringBuilder rest = new StringBuilder();
         while (matcher.find()) {
             String tag = matcher.group();
             if (!isHtmlTag(tag)) {
                 answer.add(tag);
-            }
-            matcher.appendReplacement(rest, " ");
-        }
-        matcher.appendTail(rest);
-        for (int i = 0; i < rest.length(); i++) {
-            char c = rest.charAt(i);
-            if (c == '<' || c == '>') {
-                answer.add(rest.substring(Math.max(0, i - 10), Math.min(rest.length(), i + 11)).trim());
             }
         }
         return answer;

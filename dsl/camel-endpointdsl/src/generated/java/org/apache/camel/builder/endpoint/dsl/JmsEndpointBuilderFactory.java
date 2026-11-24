@@ -3888,12 +3888,12 @@ public interface JmsEndpointBuilderFactory {
          * JMSCorrelationID JMS property to correlate reply message. Difference
          * between this and 'correlationProperty' is that 'correlationProperty'
          * tells which request property holds the correlation id value and it
-         * does not affect the selector for the reply
-         * (JMSCorrelationID=&amp;lt;correlation id&amp;gt;), while
+         * does not affect the selector for the reply (the selector matches the
+         * JMSCorrelationID with the correlation id), while
          * 'replyCorrelationProperty' tells which reply property will hold the
          * correlation id value and it does affect the selector for the reply
-         * (&amp;lt;replyCorrelationProperty&amp;gt;=&amp;lt;correlation
-         * id&amp;gt;).
+         * (the selector matches the replyCorrelationProperty property with the
+         * correlation id).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

@@ -242,7 +242,7 @@ class EndpointSchemaGeneratorMojoTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "Use mcpServer.<name>.url to set the URL.", "The grantee as id=<canonical-user-id>.",
-            "The operator: ==, <, >, <= or >=.", "A <code>List<String></code> of names.", "A value > 0 retries.",
+            "The operator: ==, <, >, <= or >=.", "A <code>List<String></code> of names.",
             "Use {@code Map<String, Object>}." })
     void failsOnAnOptionDescriptionWithTextBetweenAngleBrackets(String description) {
         ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
@@ -298,7 +298,7 @@ class EndpointSchemaGeneratorMojoTest {
         EndpointHeaderModel header = new EndpointHeaderModel();
         header.setKind("header");
         header.setName("CamelSomeQuery");
-        header.setDescription("Use 5 or more, {@link Map} and {@code a=b}.");
+        header.setDescription("Use 5 or more, a value > 0, a -> b, {@link Map}, {@code a=b} and x <= 5.");
         model.addEndpointOption(option);
         model.addEndpointHeader(header);
 

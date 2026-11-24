@@ -117,17 +117,29 @@ public class JavadocHelperTest {
         // the sanitizer removes from the first opening to the first closing angle bracket
         Assertions.assertEquals(List.of("< 5 and <b>"),
                 JavadocHelper.findRemovedAngleBracketText("When x < 5 and <b>y</b> is set.", false));
-        // the sanitizer also removes the angle brackets that are left
-        Assertions.assertEquals(List.of("disabled, > 0 = retri"),
-                JavadocHelper.findRemovedAngleBracketText("0 = disabled, > 0 = retries.", false));
         Assertions.assertEquals(List.of("<, >", "<=, >"),
                 JavadocHelper.findRemovedAngleBracketText("==, <, >, <=, >= or !=.", false));
-        Assertions.assertEquals(List.of("x <= 5"), JavadocHelper.findRemovedAngleBracketText("x <= 5", false));
         // what a summary does not use is not removed
         Assertions.assertEquals(List.of(),
                 JavadocHelper.findRemovedAngleBracketText("The summary.\nUse <name> here.", true));
         Assertions.assertEquals(List.of("<name>"),
                 JavadocHelper.findRemovedAngleBracketText("The summary.\nUse <name> here.", false));
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "0 = disabled, > 0 = num of retries.|0 = disabled, > 0 = num of retries.",
+            "Use x >= 10 or x <= 5.|Use x >= 10 or x <= 5.",
+            "Use a -> b.|Use a -> b.",
+            "Use <b>x</b> > 0.|Use x > 0." })
+    void testSanitizeKeepsALoneAngleBracket(String javadoc, String expected) {
+        Assertions.assertEquals(expected, JavadocHelper.sanitizeDescription(javadoc, false));
+        Assertions.assertEquals(List.of(), JavadocHelper.findRemovedAngleBracketText(javadoc, false));
+    }
+
+    @Test
+    void testSanitizeRemovesTheTextBetweenAngleBrackets() {
+        Assertions.assertEquals("Use mcpServer...", JavadocHelper.sanitizeDescription("Use mcpServer.<name>.<value>.", false));
     }
 
     @ParameterizedTest
