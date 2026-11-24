@@ -118,10 +118,12 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
                 path = "/";
             }
 
-            websocketURI = new URI(
-                    websocketURI.getScheme(), websocketURI.getUserInfo(),
-                    host, port, path, websocketURI.getQuery(),
-                    websocketURI.getFragment());
+            // keep the query as it is encoded: the multi-argument URI constructor would decode %2B and %26 of a RAW value
+            String rawQuery = websocketURI.getRawQuery();
+            websocketURI = new URI(websocketURI.getScheme(), websocketURI.getUserInfo(), host, port, path, null, null);
+            if (rawQuery != null) {
+                websocketURI = URISupport.createURIWithQuery(websocketURI, rawQuery);
+            }
         }
 
         configuration.setWebsocketURI(websocketURI);
