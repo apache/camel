@@ -232,6 +232,10 @@ YAML::
 ----
 ====
 
+A message the producer sends completes on a Vert.x event loop thread. The route then continues on a thread of the
+Vert.x worker pool, so a step after the producer may block (such as an HTTP call, or another `vertx-websocket` producer
+that connects to a server) without stalling the WebSocket I/O of that event loop.
+
 === Sending messages to peers connected to the vertx-websocket server consumer
 
 NOTE: This section only applies when producing messages to a WebSocket hosted by the camel-vertx-websocket consumer.
