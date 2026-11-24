@@ -176,6 +176,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // time how long it takes to poll
         StopWatch stop = new StopWatch();
         boolean limitHit;
+        GenericFileKeptDoneFiles keptDoneFilesOfPoll = getKeptDoneFiles();
+        if (keptDoneFilesOfPoll != null) {
+            keptDoneFilesOfPoll.startListing();
+        }
         try {
             limitHit = !pollDirectory(dynamic, name, files, 0);
         } catch (Exception e) {
@@ -852,6 +856,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (endpoint.getInProgressRepository().contains(absoluteFilePath)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Skipping as file is already in progress: {}", name);
+            }
+            // a file of an earlier poll still routing: its done file is not gone, if the poll kept it
+            GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+            if (kept != null) {
+                kept.skippedInProgress(endpoint.createDoneFileName(absoluteFilePath));
             }
             return false;
         }

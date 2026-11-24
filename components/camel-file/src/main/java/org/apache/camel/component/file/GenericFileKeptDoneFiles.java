@@ -33,15 +33,35 @@ import java.util.Set;
  * <p/>
  * The files of a poll can complete on another thread while the next poll runs (the route continues asynchronously), so
  * the last file of a poll checks the done files kept by its own poll as well as those kept by the current poll (see
- * {@link Batch}).
+ * {@link Batch}). For the same reason a kept done file whose directory has no file listed is not gone while a file of
+ * an earlier poll in that directory is still in progress: it stays kept until a complete listing finds the directory
+ * without files in progress.
  * <p/>
- * The state is in memory, and the done files kept by the current poll are forgotten when the consumer stops.
+ * The state is in memory, and the done files kept by the current poll are forgotten when the consumer stops. The files
+ * of a poll that are still routing then keep what their poll kept.
  */
 final class GenericFileKeptDoneFiles {
 
     // the done files kept by the current poll: a complete listing starts a new set, and the set of the previous poll
     // stays with the files of that poll that have not completed yet
     private Set<String> kept = new HashSet<>();
+    // the done files of the files the current listing skipped as they are still in progress (files of an earlier poll
+    // that have not completed yet)
+    private Set<String> inProgress = new HashSet<>();
+
+    /**
+     * Called before the directory is listed.
+     */
+    synchronized void startListing() {
+        inProgress = new HashSet<>();
+    }
+
+    /**
+     * The listing skipped a file of this done file as it is still in progress.
+     */
+    synchronized void skippedInProgress(String doneFileName) {
+        inProgress.add(doneFileName);
+    }
 
     /**
      * Called once the directory is listed, before the files are consumed. When the listing was complete, forgets the
@@ -51,23 +71,32 @@ final class GenericFileKeptDoneFiles {
      * files may be among those not listed, and the caller then keeps the done file of every listed file, as the poll
      * leaves files for the next one.
      *
+     * A kept done file of which the listing found no file, but skipped a file still in progress, stays kept: that file
+     * may still fail and then needs its done file to be polled again, and the next complete listing decides again.
+     *
      * @param  listedDoneFiles the done files of the files this poll found
      * @param  listingComplete whether every file was listed
      * @return                 the done files kept for files that are gone (the listing was complete and found none of
-     *                         their files), to delete
+     *                         their files, nor any of their files in progress), to delete
      */
     synchronized List<String> startBatch(Set<String> listedDoneFiles, boolean listingComplete) {
         List<String> answer = null;
         if (listingComplete) {
+            Set<String> stillKept = new HashSet<>();
             for (String doneFileName : kept) {
-                if (!listedDoneFiles.contains(doneFileName)) {
+                if (listedDoneFiles.contains(doneFileName)) {
+                    continue;
+                }
+                if (inProgress.contains(doneFileName)) {
+                    stillKept.add(doneFileName);
+                } else {
                     if (answer == null) {
                         answer = new ArrayList<>();
                     }
                     answer.add(doneFileName);
                 }
             }
-            kept = new HashSet<>();
+            kept = stillKept;
         }
         return answer;
     }
@@ -93,8 +122,14 @@ final class GenericFileKeptDoneFiles {
         return new Batch(kept);
     }
 
+    /**
+     * Forgets the kept done files, when the consumer stops. A new set, not cleared in place: the files of the last poll
+     * that are still routing (handed over to another thread) refer to the set of their poll, and must still find their
+     * done file kept, or the last of them deletes it and the files the poll left are not consumed after a restart.
+     */
     synchronized void clear() {
-        kept.clear();
+        kept = new HashSet<>();
+        inProgress = new HashSet<>();
     }
 
     /**
