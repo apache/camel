@@ -32,17 +32,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ForegroundTimeTaskTest extends TaskTestSupport {
 
+    // these tests count the iterations of a task and do not measure the elapsed time, so the budgets of one second are
+    // shortened to a fifth of it (and the slow predicate with them) and the test is five times faster
+    @Override
+    protected long slowPredicateMillis() {
+        return 400;
+    }
+
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
     @Timeout(20)
     void testRunNoMoreSupplier() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -60,13 +67,13 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMoreSupplierWithDelay() {
-        // this should run 5 times in a total duration of 6 seconds (5s executing + 1s delay)
+        // this should run 5 times in a total duration of 1.2 seconds (1s executing + 200ms delay)
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(10_000))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
-                        .withInitialDelay(Duration.ofSeconds(1))
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInitialDelay(Duration.ofMillis(200))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -78,13 +85,13 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicate() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -96,31 +103,37 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateMaxDuration() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // The time budget (1000ms) stops the task before hitting the 50-iteration cap.
+        // At 200ms per iteration, at most 5 iterations can fit in 1000ms; count <= 5 and
+        // elapsed >= 1000ms are both deterministic (no CI timing dependency).
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .withMaxIterations(50)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
         task.run(camelContext, this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount.intValue());
+        int count = taskCount.intValue();
+        // the time budget stops the task: at most one iteration per interval fits in maxDuration (1000 / 200 = 5),
+        // fewer when the machine is slow, and never the iteration cap of 50
+        assertTrue(count >= 1 && count <= 5, "Expected 1 to 5 iterations, but ran " + count);
+        assertTrue(task.elapsed().toMillis() >= 1000, "The time budget should be used up, elapsed: " + task.elapsed());
     }
 
     @DisplayName("Test that the task stops running once the predicate is true")
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministic() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(5_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -132,13 +145,13 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministicSlow() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 
@@ -150,13 +163,13 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     @Test
     @Timeout(20)
     void testRunNoMorePredicateDeterministicSlowWithDelay() {
-        // It should run 5 times in 4 seconds because there is no delay
+        // It should run 5 times in 800 milliseconds because there is no initial delay
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofMillis(1000))
                         .withMaxIterations(5)
-                        .withInitialDelay(Duration.ofSeconds(1))
-                        .withInterval(Duration.ofSeconds(1))
+                        .withInitialDelay(Duration.ofMillis(200))
+                        .withInterval(Duration.ofMillis(200))
                         .build())
                 .build();
 

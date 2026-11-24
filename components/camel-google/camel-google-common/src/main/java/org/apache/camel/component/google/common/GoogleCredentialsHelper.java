@@ -143,7 +143,9 @@ public final class GoogleCredentialsHelper {
      *
      * @param  context          the Camel context for resource resolution
      * @param  config           the component configuration
-     * @param  scopes           OAuth scopes to apply
+     * @param  scopes           OAuth scopes to apply to service account and Application Default Credentials; ignored
+     *                          for OAuth 2.0 credentials (client ID/secret) because their granted scopes are fixed at
+     *                          consent time
      * @param  httpTransport    HTTP transport to use (pass null for default)
      * @param  jsonFactory      JSON factory to use (pass null for default)
      * @return                  Google credential for use with legacy API clients
@@ -163,7 +165,7 @@ public final class GoogleCredentialsHelper {
 
         // Check for OAuth 2.0 credentials first
         if (hasOAuthCredentials(config)) {
-            return createOAuthCredential(config, scopes, transport, factory);
+            return createOAuthCredential(config, transport, factory);
         }
 
         // Check for Service Account credentials
@@ -186,7 +188,9 @@ public final class GoogleCredentialsHelper {
      *
      * @param  context     the Camel context for resource resolution
      * @param  config      the component configuration
-     * @param  scopes      OAuth scopes to apply
+     * @param  scopes      OAuth scopes to apply to service account and Application Default Credentials; ignored for
+     *                     OAuth 2.0 credentials (client ID/secret) because their granted scopes are fixed at consent
+     *                     time
      * @return             Google credential for use with legacy API clients
      * @throws IOException if credentials cannot be loaded
      */
@@ -209,11 +213,12 @@ public final class GoogleCredentialsHelper {
     }
 
     /**
-     * Creates OAuth 2.0 credential from client ID, secret, and tokens.
+     * Creates OAuth 2.0 credential from client ID, secret, and tokens. Scopes are not set here because for OAuth
+     * credentials the granted scopes are fixed at consent time (when the refresh token was obtained) and are not needed
+     * when building or refreshing the credential.
      */
     private static Credential createOAuthCredential(
             GoogleCommonConfiguration config,
-            Collection<String> scopes,
             HttpTransport transport,
             JsonFactory jsonFactory) {
 
@@ -221,7 +226,6 @@ public final class GoogleCredentialsHelper {
                 .setJsonFactory(jsonFactory)
                 .setTransport(transport)
                 .setClientSecrets(config.getClientId(), config.getClientSecret())
-                .setServiceAccountScopes(scopes)
                 .build();
 
         if (ObjectHelper.isNotEmpty(config.getRefreshToken())) {

@@ -97,12 +97,12 @@ class ListAboutTest extends ProcessCommandTestSupport {
     }
 
     private ListAbout command(JsonObject timeline) {
-        return new ListAbout(new CamelJBangMain().withPrinter(printer)) {
+        return new CamelJBangMain().withPrinter(printer).command(new ListAbout() {
             @Override
             JsonObject loadTimeline(long pid) {
                 return timeline;
             }
-        };
+        });
     }
 
     private static JsonObject timeline() throws Exception {

@@ -56,7 +56,7 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogKamelet command() {
-        return new CatalogKamelet(new CamelJBangMain().withPrinter(printer));
+        return new CamelJBangMain().withPrinter(printer).command(new CatalogKamelet());
     }
 
     private static List<String> names(List<KameletModel> rows) {

@@ -23,21 +23,21 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents the data type URN which is used for message data type contract.
- * <p/>
+ * <p>
  * Java class doesn't always explain the data type completely, for example XML and JSON data format is sometimes
  * serialized as a {@code String}, {@code InputStream} or etc. The {@link DataTypeAware} message stores the DataType as
  * a part of the message to carry those data type information even if it's marshaled, so that it could be leveraged to
  * detect required {@link Transformer} and {@link Validator}. DataType URN consists of two parts, 'scheme' and 'name'.
  *
  * Its string representation is 'scheme:name' connected with colon. For example 'java:com.example.Order', 'xml:ABCOrder'
- * or 'json:XYZOrder'. These type name other than java class name allows the message to carry the name of the message
+ * or 'json:XYZOrder'. These type names other than java class names allow the message to carry the name of the message
  * data structure even if it's marshaled.
- * <p/>
+ * <p>
  * The scheme can also be used to associate the same DataType with different Camel components. For example
  * `http:cloud-events` and `aws-s3:cloud-events` where the scheme relates to the respective component's scheme. This
  * information could be leveraged to detect required {@link Transformer} and {@link Validator} implementations provided
  * as part of these components.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
  *
  * @see DataTypeAware

@@ -100,6 +100,9 @@ class McpServerMainOAuthTest {
                                                                            + (exchange.getProperty(
                                                                                    McpToolCallContext.OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY)
                                                                               != null)));
+
+                from("ai-tool:oauth_admin?tags=oauth&description=A tool for administrators&allowedRoles=admin")
+                        .setBody(constant("admin-only"));
             }
         });
 
@@ -312,6 +315,36 @@ class McpServerMainOAuthTest {
         }
     }
 
+    @Test
+    void aToolWithAllowedRolesAnswersAnOAuthCallerWhoHasTheRole() {
+        McpSyncClient client = newClient("valid");
+        try {
+            client.initialize();
+
+            McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("oauth_admin", Map.of()));
+
+            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("admin-only");
+        } finally {
+            client.closeGracefully();
+        }
+    }
+
+    @Test
+    void aToolWithAllowedRolesRefusesAnOAuthCallerWhoDoesNotHaveTheRole() {
+        McpSyncClient client = newClient("bob");
+        try {
+            client.initialize();
+
+            McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("oauth_admin", Map.of()));
+
+            assertThat(result.isError()).isEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("Access denied").doesNotContain("admin-only");
+        } finally {
+            client.closeGracefully();
+        }
+    }
+
     private static void assertRejectedLargePostDoesNotBlockConnection(
             String token, int expectedStatus, byte[] body)
             throws Exception {
@@ -454,7 +487,7 @@ class McpServerMainOAuthTest {
         return builder;
     }
 
-    private static final class TestOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
+    static final class TestOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
 
         @Override
         public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
@@ -481,7 +514,7 @@ class McpServerMainOAuthTest {
                 claims.put("sub", subject);
             }
             claims.put("tenant", "engineering");
-            claims.put("roles", List.of("admin", "analyst"));
+            claims.put("roles", "bob".equals(token) ? List.of("analyst") : List.of("admin", "analyst"));
             return OAuthTokenValidationResult.valid(
                     subject,
                     "https://id.example.test/realms/camel",

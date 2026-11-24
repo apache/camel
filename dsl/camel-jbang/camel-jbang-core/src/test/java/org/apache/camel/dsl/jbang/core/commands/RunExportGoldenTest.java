@@ -39,10 +39,12 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -65,7 +67,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * src/test/resources/golden/expected. Run with -Dcamel.golden.update=true to write the expected files again, and review
  * the difference.
  */
-@UsesWorkingDirectory
 class RunExportGoldenTest {
 
     private static final Path GOLDEN = Path.of("src/test/resources/golden");
@@ -75,6 +76,22 @@ class RunExportGoldenTest {
     // the camel system properties of the JVM, which the commands read (such as camel.jbang.repos): a case runs without
     // them, so a property that another test left set does not change the output
     private final Map<String, String> camelProperties = new TreeMap<>();
+
+    // a work directory of its own, so the test does not share .camel-jbang with the tests of the other forks. The
+    // expected files have the default one, which normalize() puts back
+    private Path testWorkDir;
+
+    @BeforeEach
+    void useWorkDirOfItsOwn() throws Exception {
+        testWorkDir = Files.createTempDirectory("camel-jbang-work");
+        CamelHome.useWorkDir(testWorkDir);
+    }
+
+    @AfterEach
+    void resetWorkDirOfItsOwn() {
+        CamelHome.resetWorkDir();
+        FileUtil.removeDir(testWorkDir.toFile());
+    }
 
     @BeforeEach
     void clearCamelSystemProperties() {
@@ -164,7 +181,7 @@ class RunExportGoldenTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("exportCases")
     void export(Case c, @TempDir Path out) throws Exception {
-        export(c, out, new Export(new CamelJBangMain()));
+        export(c, out, new CamelJBangMain().command(new Export()));
     }
 
     private void export(Case c, Path out, Export command) throws Exception {
@@ -183,9 +200,11 @@ class RunExportGoldenTest {
         Files.writeString(props, Files.readString(props).replaceAll("(?m)^camel\\.jbang\\.(background|jvmDebug)=.*\\R", ""));
 
         String withOutput = exportOutput(new Case("run-settings", files(with.toString()), List.of(), true, false),
-                dir.resolve("with-out"), new Export(new CamelJBangMain())).replace(with.toString(), "${fixture}");
+                dir.resolve("with-out"), new CamelJBangMain().command(new Export()))
+                .replace(with.toString(), "${fixture}");
         String withoutOutput = exportOutput(new Case("run-settings", files(without.toString()), List.of(), true, false),
-                dir.resolve("without-out"), new Export(new CamelJBangMain())).replace(without.toString(), "${fixture}");
+                dir.resolve("without-out"), new CamelJBangMain().command(new Export()))
+                .replace(without.toString(), "${fixture}");
 
         assertThat(Files.readString(props)).doesNotContain("camel.jbang.background", "camel.jbang.jvmDebug");
         assertThat(withOutput).isEqualTo(withoutOutput);
@@ -268,7 +287,7 @@ class RunExportGoldenTest {
         KameletMain main;
 
         CapturingRun() {
-            super(new CamelJBangMain());
+            setCamelMain(new CamelJBangMain());
         }
 
         @Override
@@ -298,7 +317,7 @@ class RunExportGoldenTest {
                 new MavenCase("maven-quarkus", files("yaml/hello.camel.yaml"), List.of("--runtime=quarkus"), false),
                 new MavenCase(
                         "maven-quarkus-dev", files("yaml/hello.camel.yaml"),
-                        List.of("--runtime=quarkus", "--dev", "--console"), false),
+                        List.of("--runtime=quarkus", "--dev", "--console", "--port=0"), false),
                 // a released Camel, as the catalog of camel-spring-boot is not built with this one
                 new MavenCase(
                         "maven-spring-boot", files("yaml/hello.camel.yaml"),
@@ -378,7 +397,7 @@ class RunExportGoldenTest {
         final List<ProcessBuilder> started = new ArrayList<>();
 
         MavenRun() {
-            super(new CamelJBangMain());
+            setCamelMain(new CamelJBangMain());
         }
 
         @Override
@@ -502,9 +521,12 @@ class RunExportGoldenTest {
      * Replaces what differs from one machine or build to another: the directories, and the versions that the build
      * brings (of Camel, Spring Boot and the Kamelets), so that a version upgrade does not change the expected output.
      */
-    private static String normalize(String text, Path dir) throws Exception {
+    private String normalize(String text, Path dir) throws Exception {
         String answer = text;
         Map<String, String> replacements = new LinkedHashMap<>();
+        // the work directory of the test is the default one (.camel-jbang) in the expected files
+        replacements.put(testWorkDir.toRealPath().toString(), ".camel-jbang");
+        replacements.put(testWorkDir.toAbsolutePath().toString(), ".camel-jbang");
         replacements.put(dir.toRealPath().toString(), "${dir}");
         replacements.put(dir.toAbsolutePath().toString(), "${dir}");
         // the home of the CLI of the tests, which differs per test execution

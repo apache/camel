@@ -22,6 +22,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -52,7 +53,12 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
         final CamelExecutionException exception = Assertions.assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"));
-        assertThat(exception).hasRootCauseInstanceOf(ShutdownSignalException.class);
+        // RabbitMQ closes the channel when publishing to an unknown exchange: depending on timing the producer either
+        // sees the ShutdownSignalException itself, or Spring AMQP reports that the channel was already closed
+        assertThat(exception).rootCause().satisfiesAnyOf(
+                cause -> assertThat(cause).isInstanceOf(ShutdownSignalException.class),
+                cause -> assertThat(cause).isInstanceOf(AmqpException.class)
+                        .hasMessageContaining("PublisherCallbackChannel is closed"));
     }
 
     @Override

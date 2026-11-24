@@ -79,7 +79,8 @@ public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServic
     private Map<String, String> serviceMetadata;
 
     @UriPath(description = "Sets the stored procedure template to perform. You can externalize the template by using file: or classpath: as prefix and specify the location of the file.")
-    @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
+    @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql",
+              supportSimpleExpression = true)
     private String template;
     @UriParam(description = "Sets the DataSource to use to communicate with the database.")
     private DataSource dataSource;

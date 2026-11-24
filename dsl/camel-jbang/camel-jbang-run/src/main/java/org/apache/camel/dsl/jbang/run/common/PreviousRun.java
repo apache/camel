@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -78,8 +77,7 @@ public final class PreviousRun {
     private static final String INFO_SUFFIX = "-previous.json";
     private static final Pattern PID_LOG = Pattern.compile("(\\d+)\\.log");
     private static final int MAX_FAILURE = 500;
-    private static final DateTimeFormatter TIME
-            = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * A run that ended, and the log it kept.
@@ -108,7 +106,7 @@ public final class PreviousRun {
          * When the run ended, in local time, such as <tt>2026-10-19 10:32:01</tt>.
          */
         public String endedAt() {
-            return TIME.format(Instant.ofEpochMilli(ended));
+            return CliTimes.format(TIME, ended);
         }
 
         /**

@@ -218,10 +218,17 @@ public class RestOpenApiReader {
             openApi.setOpenapi(config.getVersion());
         }
 
+        // Use a registry-provided converter when available; otherwise use Camel's default implementation.
+        RestModelConverters restModelConverters
+                = CamelContextHelper.findSingleByType(camelContext, RestModelConverters.class);
+        if (restModelConverters == null) {
+            restModelConverters = new DefaultRestModelConverters();
+        }
+
         for (RestDefinition rest : rests) {
             Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
             if (disabled == null || !disabled) {
-                parse(camelContext, openApi, rest, camelContextId, classResolver, config);
+                parse(camelContext, openApi, rest, camelContextId, classResolver, config, restModelConverters);
             }
         }
 
@@ -264,7 +271,7 @@ public class RestOpenApiReader {
 
     private void parse(
             CamelContext camelContext, OpenAPI openApi, RestDefinition rest, String camelContextId,
-            ClassResolver classResolver, BeanConfig config)
+            ClassResolver classResolver, BeanConfig config, RestModelConverters restModelConverters)
             throws ClassNotFoundException {
 
         // only include enabled verbs
@@ -336,7 +343,7 @@ public class RestOpenApiReader {
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
             Class<?> clazz = classResolver.resolveMandatoryClass(type);
-            appendModels(clazz, openApi, config.isOpenApi31());
+            appendModels(clazz, openApi, restModelConverters);
         }
 
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags, config);
@@ -1139,12 +1146,12 @@ public class RestOpenApiReader {
      * If the class is annotated with openApi annotations its parsed into a OpenApi model representation which is added
      * to openApi
      *
-     * @param clazz   the class such as pojo with openApi annotation
-     * @param openApi the openApi model
+     * @param clazz               the class such as pojo with openApi annotation
+     * @param openApi             the openApi model
+     * @param restModelConverters the model converter to use
      */
-    private void appendModels(Class<?> clazz, OpenAPI openApi, boolean openapi31) {
-        RestModelConverters converters = new RestModelConverters(openapi31);
-        List<? extends Schema<?>> models = converters.readClass(openApi, clazz);
+    private void appendModels(Class<?> clazz, OpenAPI openApi, RestModelConverters restModelConverters) {
+        List<? extends Schema<?>> models = restModelConverters.readClass(openApi, clazz);
         if (models == null) {
             return;
         }

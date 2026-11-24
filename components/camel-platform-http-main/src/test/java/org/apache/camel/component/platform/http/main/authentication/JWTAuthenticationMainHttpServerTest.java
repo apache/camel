@@ -64,7 +64,8 @@ public class JWTAuthenticationMainHttpServerTest {
 
     @Test
     void testJWTAuth() {
-        String validToken = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions());
+        String validToken
+                = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions().setAlgorithm("RS256"));
         String invalidToken = validToken.substring(0, (validToken.length() - 2));
 
         CamelContext camelContext = main.getCamelContext();
@@ -94,6 +95,20 @@ public class JWTAuthenticationMainHttpServerTest {
                 .body(equalTo("Unauthorized"));
     }
 
+    @Test
+    void testAuthorizationHeaderNotPassedOnToRoute() {
+        String validToken
+                = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions().setAlgorithm("RS256"));
+
+        given()
+                .header("Authorization", "Bearer " + validToken)
+                .when()
+                .get("/main-http-authorization")
+                .then()
+                .statusCode(200)
+                .body(equalTo("authorization="));
+    }
+
     private static class PlatformHttpRouteBuilder extends RouteBuilder {
 
         @Override
@@ -101,6 +116,9 @@ public class JWTAuthenticationMainHttpServerTest {
             from("platform-http:/main-http-test")
                     .log("Received request with headers: ${headers}\nWith body: ${body}")
                     .setBody(simple("main-http-auth-jwt-test-response"));
+
+            from("platform-http:/main-http-authorization")
+                    .setBody(simple("authorization=${header.Authorization}"));
         }
     }
 }

@@ -310,6 +310,145 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option is a:
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityCallbackHandler(javax.security.auth.callback.CallbackHandler wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option will be converted to a
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityCallbackHandler(String wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityCredentials(Map<java.lang.String, java.lang.String> wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityCredentials(String wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * The password of a WS-Security UsernameToken. The producer sends it in
+         * the UsernameToken, and the consumer requires it for the user of the
+         * wsSecurityUsername option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityPassword the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityPassword(String wsSecurityPassword) {
+            doSetProperty("wsSecurityPassword", wsSecurityPassword);
+            return this;
+        }
+        /**
+         * The type of the password in a WS-Security UsernameToken: Text for
+         * PasswordText, or Digest for PasswordDigest. The producer sends this
+         * type, and the consumer requires it. Not used when the WSDL of the
+         * service has a WS-SecurityPolicy, which then decides the type. Digest
+         * is no replacement for HTTPS: it uses SHA-1, and the consumer needs
+         * the plain password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Text
+         * Group: security
+         * 
+         * @param wsSecurityPasswordType the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityPasswordType(String wsSecurityPasswordType) {
+            doSetProperty("wsSecurityPasswordType", wsSecurityPasswordType);
+            return this;
+        }
+        /**
+         * The user name of a WS-Security UsernameToken. The producer sends a
+         * UsernameToken with this user name in the SOAP header of its requests.
+         * The consumer accepts only this user, with the password of the
+         * wsSecurityPassword option, unless wsSecurityCallbackHandler or
+         * wsSecurityCredentials is set. Needs the
+         * org.apache.cxf:cxf-rt-ws-security dependency. Send a UsernameToken
+         * with a plain text password over HTTPS only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityUsername the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder wsSecurityUsername(String wsSecurityUsername) {
+            doSetProperty("wsSecurityUsername", wsSecurityUsername);
+            return this;
+        }
+        /**
          * The id of the CXF binding, which is a namespace URI, for example
          * http://cxf.apache.org/bindings/xformat for the XML binding without a
          * SOAP envelope. If not set, CXF uses the binding of the wsdl:port. The
@@ -1011,6 +1150,46 @@ public interface CxfEndpointBuilderFactory {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -1261,8 +1440,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to invoke a document-literal wrapped operation in its wrapped
          * form instead of its unwrapped form. If true and dataFormat is POJO,
          * the Camel message body of the request must hold the wrapper object in
-         * place of the parameters of the operation. The consumer does not use
-         * it.
+         * place of the parameters of the operation. Only the request is in
+         * wrapped form: the reply body is a MessageContentsList with the return
+         * value of the operation, as when this option is false, not the
+         * response wrapper object. The consumer does not use it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1280,8 +1461,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to invoke a document-literal wrapped operation in its wrapped
          * form instead of its unwrapped form. If true and dataFormat is POJO,
          * the Camel message body of the request must hold the wrapper object in
-         * place of the parameters of the operation. The consumer does not use
-         * it.
+         * place of the parameters of the operation. Only the request is in
+         * wrapped form: the reply body is a MessageContentsList with the return
+         * value of the operation, as when this option is false, not the
+         * response wrapper object. The consumer does not use it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1437,6 +1620,145 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option is a:
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityCallbackHandler(javax.security.auth.callback.CallbackHandler wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option will be converted to a
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityCallbackHandler(String wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityCredentials(Map<java.lang.String, java.lang.String> wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityCredentials(String wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * The password of a WS-Security UsernameToken. The producer sends it in
+         * the UsernameToken, and the consumer requires it for the user of the
+         * wsSecurityUsername option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityPassword the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityPassword(String wsSecurityPassword) {
+            doSetProperty("wsSecurityPassword", wsSecurityPassword);
+            return this;
+        }
+        /**
+         * The type of the password in a WS-Security UsernameToken: Text for
+         * PasswordText, or Digest for PasswordDigest. The producer sends this
+         * type, and the consumer requires it. Not used when the WSDL of the
+         * service has a WS-SecurityPolicy, which then decides the type. Digest
+         * is no replacement for HTTPS: it uses SHA-1, and the consumer needs
+         * the plain password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Text
+         * Group: security
+         * 
+         * @param wsSecurityPasswordType the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityPasswordType(String wsSecurityPasswordType) {
+            doSetProperty("wsSecurityPasswordType", wsSecurityPasswordType);
+            return this;
+        }
+        /**
+         * The user name of a WS-Security UsernameToken. The producer sends a
+         * UsernameToken with this user name in the SOAP header of its requests.
+         * The consumer accepts only this user, with the password of the
+         * wsSecurityPassword option, unless wsSecurityCallbackHandler or
+         * wsSecurityCredentials is set. Needs the
+         * org.apache.cxf:cxf-rt-ws-security dependency. Send a UsernameToken
+         * with a plain text password over HTTPS only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityUsername the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointProducerBuilder wsSecurityUsername(String wsSecurityUsername) {
+            doSetProperty("wsSecurityUsername", wsSecurityUsername);
             return this;
         }
         /**
@@ -1615,46 +1937,6 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer invokes the CXF Client without a callback and waits until
-         * the invocation returns, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfEndpointProducerBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer invokes the CXF Client without a callback and waits until
-         * the invocation returns, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfEndpointProducerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2109,6 +2391,46 @@ public interface CxfEndpointBuilderFactory {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -2347,6 +2669,145 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option is a:
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityCallbackHandler(javax.security.auth.callback.CallbackHandler wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * To use a custom javax.security.auth.callback.CallbackHandler for the
+         * WS-Security UsernameToken. CXF calls it with an
+         * org.apache.wss4j.common.ext.WSPasswordCallback that names the user,
+         * and the handler sets the password of that user. The producer uses it
+         * instead of wsSecurityPassword. The consumer uses it to look up the
+         * password of any user, for example from a vault, instead of
+         * wsSecurityUsername, wsSecurityPassword and wsSecurityCredentials.
+         * 
+         * The option will be converted to a
+         * <code>javax.security.auth.callback.CallbackHandler</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCallbackHandler the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityCallbackHandler(String wsSecurityCallbackHandler) {
+            doSetProperty("wsSecurityCallbackHandler", wsSecurityCallbackHandler);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityCredentials(Map<java.lang.String, java.lang.String> wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * A map of user name to password with the users that the consumer
+         * accepts in a WS-Security UsernameToken, as a reference to a
+         * java.util.Map bean, for example #bean:users. Used instead of
+         * wsSecurityUsername and wsSecurityPassword to accept more than one
+         * user without Java code. Not used when wsSecurityCallbackHandler is
+         * set. The producer does not use it.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityCredentials the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityCredentials(String wsSecurityCredentials) {
+            doSetProperty("wsSecurityCredentials", wsSecurityCredentials);
+            return this;
+        }
+        /**
+         * The password of a WS-Security UsernameToken. The producer sends it in
+         * the UsernameToken, and the consumer requires it for the user of the
+         * wsSecurityUsername option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityPassword the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityPassword(String wsSecurityPassword) {
+            doSetProperty("wsSecurityPassword", wsSecurityPassword);
+            return this;
+        }
+        /**
+         * The type of the password in a WS-Security UsernameToken: Text for
+         * PasswordText, or Digest for PasswordDigest. The producer sends this
+         * type, and the consumer requires it. Not used when the WSDL of the
+         * service has a WS-SecurityPolicy, which then decides the type. Digest
+         * is no replacement for HTTPS: it uses SHA-1, and the consumer needs
+         * the plain password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Text
+         * Group: security
+         * 
+         * @param wsSecurityPasswordType the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityPasswordType(String wsSecurityPasswordType) {
+            doSetProperty("wsSecurityPasswordType", wsSecurityPasswordType);
+            return this;
+        }
+        /**
+         * The user name of a WS-Security UsernameToken. The producer sends a
+         * UsernameToken with this user name in the SOAP header of its requests.
+         * The consumer accepts only this user, with the password of the
+         * wsSecurityPassword option, unless wsSecurityCallbackHandler or
+         * wsSecurityCredentials is set. Needs the
+         * org.apache.cxf:cxf-rt-ws-security dependency. Send a UsernameToken
+         * with a plain text password over HTTPS only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param wsSecurityUsername the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointBuilder wsSecurityUsername(String wsSecurityUsername) {
+            doSetProperty("wsSecurityUsername", wsSecurityUsername);
             return this;
         }
         /**
@@ -2936,6 +3397,46 @@ public interface CxfEndpointBuilderFactory {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     public interface CxfBuilders {
@@ -2975,8 +3476,10 @@ public interface CxfEndpointBuilderFactory {
          * Path parameter: address
          * The service address, for example http://localhost:9000/orders. The
          * consumer receives requests at this address, and the producer sends
-         * requests to it. The CamelDestinationOverrideUrl header replaces this
-         * address for a request that the producer sends over HTTP.
+         * requests to it. A producer with no address sends requests to the
+         * address that the WSDL (see wsdlURL) gives for the port. The
+         * CamelDestinationOverrideUrl header replaces this address for a
+         * request that the producer sends over HTTP.
          * 
          * @param path beanId:address
          * @return the dsl builder
@@ -3006,8 +3509,10 @@ public interface CxfEndpointBuilderFactory {
          * Path parameter: address
          * The service address, for example http://localhost:9000/orders. The
          * consumer receives requests at this address, and the producer sends
-         * requests to it. The CamelDestinationOverrideUrl header replaces this
-         * address for a request that the producer sends over HTTP.
+         * requests to it. A producer with no address sends requests to the
+         * address that the WSDL (see wsdlURL) gives for the port. The
+         * CamelDestinationOverrideUrl header replaces this address for a
+         * request that the producer sends over HTTP.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

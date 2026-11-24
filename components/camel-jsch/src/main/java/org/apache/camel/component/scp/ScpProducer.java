@@ -24,4 +24,13 @@ public class ScpProducer extends RemoteFileProducer<ScpFile> {
     protected ScpProducer(ScpEndpoint endpoint, RemoteFileOperations<ScpFile> operations) {
         super(endpoint, operations);
     }
+
+    /**
+     * The scp operations send the name of the file as given, with / as the only separator, so a backslash in it is not
+     * replaced by /.
+     */
+    @Override
+    protected boolean isBackslashNormalized() {
+        return false;
+    }
 }

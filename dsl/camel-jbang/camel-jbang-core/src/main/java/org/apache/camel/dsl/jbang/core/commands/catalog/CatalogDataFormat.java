@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.DataFormatModel;
 
 @CommandDefinition(name = "dataformat", description = "List data formats from the Camel Catalog", generateHelp = true,
@@ -29,10 +28,6 @@ import org.apache.camel.tooling.model.DataFormatModel;
                            "  camel catalog dataformat",
                            "  camel catalog dataformat --filter=json" })
 public class CatalogDataFormat extends CatalogBaseCommand {
-
-    public CatalogDataFormat(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     List<Row> collectRows() {

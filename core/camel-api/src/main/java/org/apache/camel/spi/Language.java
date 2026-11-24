@@ -21,7 +21,7 @@ import org.apache.camel.Predicate;
 
 /**
  * SPI base for every Camel expression and predicate language.
- * <p/>
+ * <p>
  * Implementations include {@code simple}, {@code groovy}, {@code jexl}, {@code mvel}, {@code xpath}, {@code jsonpath},
  * {@code spel}, and many others. They are resolved by name via
  * {@link org.apache.camel.CamelContext#resolveLanguage(String)}, which first checks the Camel registry and then falls
@@ -31,7 +31,7 @@ import org.apache.camel.Predicate;
  * thread-safe, reusable instance. The overloaded {@code Object[]} variants allow passing pre-parsed language-specific
  * options (e.g., XPath namespace maps or tokenizer delimiters) to avoid repeated parsing overhead. All implementations
  * must be thread-safe because expressions and predicates are evaluated concurrently on multiple exchanges.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/languages.html">Languages</a> in the Camel user manual.
  *
  * @see LanguageResolver

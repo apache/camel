@@ -47,9 +47,9 @@ public interface ConsumerCache extends Service {
     /**
      * Waits until a message is available and then returns it. Warning that this method could block indefinitely if no
      * messages are available.
-     * <p/>
-     * Will return <tt>null</tt> if the consumer is not started
-     * <p/>
+     * <p>
+     * Will return <code>null</code> if the consumer is not started
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
@@ -62,30 +62,30 @@ public interface ConsumerCache extends Service {
     /**
      * Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet
      * available.
-     * <p/>
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
      * @param  endpoint the endpoint to receive from
      * @param  timeout  the amount of time in milliseconds to wait for a message before timing out and returning
-     *                  <tt>null</tt>
+     *                  <code>null</code>
      *
-     * @return          the message exchange if one was available within the timeout period, or <tt>null</tt> if the
+     * @return          the message exchange if one was available within the timeout period, or <code>null</code> if the
      *                  timeout expired
      */
     @Nullable
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
-     * Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a message
+     * Attempts to receive a message exchange immediately without waiting and returning <code>null</code> if a message
      * exchange is not available yet.
-     * <p/>
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
      * @param  endpoint the endpoint to receive from
      *
-     * @return          the message exchange if one is immediately available otherwise <tt>null</tt>
+     * @return          the message exchange if one is immediately available otherwise <code>null</code>
      */
     @Nullable
     Exchange receiveNoWait(Endpoint endpoint);

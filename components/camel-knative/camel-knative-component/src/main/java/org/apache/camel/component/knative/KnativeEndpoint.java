@@ -184,6 +184,10 @@ public class KnativeEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    public boolean isSynchronous() {
+        return configuration.isSynchronous();
+    }
+
     @Override
     protected void doInit() {
         if (ObjectHelper.isEmpty(this.configuration.getTypeId())) {

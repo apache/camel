@@ -21,13 +21,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Represents a <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
  * messages when it is ready.
- * <p/>
+ * <p>
  * When you are done with the returned {@link Exchange} you must ensure to invoke
  * {@link org.apache.camel.spi.UnitOfWork#done(Exchange)} to signal to Camel that the {@link Exchange} is done.
- * <p/>
+ * <p>
  * This is needed to ensure any {@link org.apache.camel.spi.Synchronization} works is being executed. For example if you
  * consumed from a file endpoint, then the consumed file is only moved/delete when you done the {@link Exchange}.
- * <p/>
+ * <p>
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
@@ -40,9 +40,9 @@ public interface PollingConsumer extends Consumer {
     /**
      * Waits until a message is available and then returns it. Warning that this method could block indefinitely if no
      * messages are available.
-     * <p/>
-     * Will return <tt>null</tt> if the consumer is not started
-     * <p/>
+     * <p>
+     * Will return <code>null</code> if the consumer is not started
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
@@ -52,13 +52,13 @@ public interface PollingConsumer extends Consumer {
     Exchange receive();
 
     /**
-     * Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a message
+     * Attempts to receive a message exchange immediately without waiting and returning <code>null</code> if a message
      * exchange is not available yet.
-     * <p/>
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
-     * @return the message exchange if one is immediately available otherwise <tt>null</tt>
+     * @return the message exchange if one is immediately available otherwise <code>null</code>
      */
     @Nullable
     Exchange receiveNoWait();
@@ -66,14 +66,14 @@ public interface PollingConsumer extends Consumer {
     /**
      * Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet
      * available.
-     * <p/>
+     * <p>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
      *
      * @param  timeout the amount of time in milliseconds to wait for a message before timing out and returning
-     *                 <tt>null</tt>
+     *                 <code>null</code>
      *
-     * @return         the message exchange if one was available within the timeout period, or <tt>null</tt> if the
+     * @return         the message exchange if one was available within the timeout period, or <code>null</code> if the
      *                 timeout expired
      */
     @Nullable

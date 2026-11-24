@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.spi.BodyTypeRegistry;
 
 /**
- * Default {@link BodyTypeRegistry}: per route, per node, the distinct body types and their kinds in the order first
- * seen.
+ * Default {@link BodyTypeRegistry}: per route, per node, the distinct body types and their kinds, and the formats of
+ * the payloads, in the order first seen.
  */
 public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
 
@@ -38,10 +38,19 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
      */
     static final int MAX_TYPES_PER_NODE = 8;
 
+    /**
+     * The most distinct formats a node keeps: a node is nearly always reached with one, and the media types beyond the
+     * formats the catalog names come from the messages.
+     */
+    static final int MAX_FORMATS_PER_NODE = 8;
+
     private final Map<String, Map<String, NodeTypes>> routes = new ConcurrentHashMap<>();
 
     @Override
     public void addBodyType(String routeId, String nodeId, String bodyType, Kind kind) {
+        if (bodyType == null) {
+            return;
+        }
         // called for every node an exchange reaches while the message history is on: plain lookups first, and no
         // allocation when the node has seen the type before
         Map<String, NodeTypes> nodes = routes.get(routeId);
@@ -53,6 +62,28 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
             types = nodes.computeIfAbsent(nodeId, k -> new NodeTypes());
         }
         types.add(bodyType, kind);
+    }
+
+    @Override
+    public void addBodyFormat(String routeId, String nodeId, String format) {
+        if (format == null) {
+            return;
+        }
+        Map<String, NodeTypes> nodes = routes.get(routeId);
+        if (nodes == null) {
+            nodes = routes.computeIfAbsent(routeId, k -> new ConcurrentHashMap<>());
+        }
+        NodeTypes types = nodes.get(nodeId);
+        if (types == null) {
+            types = nodes.computeIfAbsent(nodeId, k -> new NodeTypes());
+        }
+        types.addFormat(format);
+    }
+
+    @Override
+    public List<String> getBodyFormats(String routeId, String nodeId) {
+        NodeTypes types = node(routeId, nodeId);
+        return types != null ? List.of(types.formats) : List.of();
     }
 
     @Override
@@ -106,13 +137,29 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
     }
 
     /**
-     * The distinct types and kinds of one node, as small arrays that are replaced when a new one is seen: reading them
-     * (on every exchange) takes no lock.
+     * The distinct types, kinds and formats of one node, as small arrays that are replaced when a new one is seen:
+     * reading them (on every exchange) takes no lock.
      */
     private static final class NodeTypes {
 
         private volatile TypeKind[] types = new TypeKind[0];
         private volatile Kind[] kinds = new Kind[0];
+        private volatile String[] formats = new String[0];
+
+        void addFormat(String format) {
+            String[] known = formats;
+            if (known.length >= MAX_FORMATS_PER_NODE || containsFormat(known, format)) {
+                return;
+            }
+            synchronized (this) {
+                String[] current = formats;
+                if (current.length < MAX_FORMATS_PER_NODE && !containsFormat(current, format)) {
+                    String[] next = Arrays.copyOf(current, current.length + 1);
+                    next[current.length] = format;
+                    formats = next;
+                }
+            }
+        }
 
         void add(String type, Kind kind) {
             TypeKind[] known = types;
@@ -152,6 +199,15 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
         private static boolean containsType(TypeKind[] types, String type) {
             for (TypeKind t : types) {
                 if (t.type().equals(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static boolean containsFormat(String[] formats, String format) {
+            for (String f : formats) {
+                if (f.equals(format)) {
                     return true;
                 }
             }

@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  * Defines the interface used for validating component/endpoint parameters. The central method of this interface is
  * {@link #verify(ComponentVerifierExtension.Scope, Map)} which takes a scope and a set of parameters which should be
  * verified.
- * <p/>
+ * <p>
  * The return value is a {@link ComponentVerifierExtension.Result} of the verification
  *
  */
@@ -310,11 +310,11 @@ public interface ComponentVerifierExtension extends ComponentExtension {
         /**
          * Interface defining an attribute which is a key for the detailed error messages. This is implemented by
          * several standard enums like {@link ExceptionAttribute}, {@link HttpAttribute} or {@link GroupAttribute} but
-         * can also implemented for component specific details. This is best done via {@link #asAttribute(String)} or
-         * using one of the other builder method in this error builder (like
-         * {@link org.apache.camel.component.extension.verifier.ResultErrorBuilder#detail(String, Object)}
+         * can also be implemented for component specific details. This is best done via {@link #asAttribute(String)} or
+         * using one of the other builder methods in this error builder (like
+         * {@code org.apache.camel.component.extension.verifier.ResultErrorBuilder#detail(String, Object)})
          * <p>
-         * With respecting to name, the same rules as for {@link Code} apply: Standard attributes are all upper case
+         * With respect to the name, the same rules as for {@link Code} apply: Standard attributes are all upper case
          * with _ as separators, whereas custom attributes are lower case with underscore separators.
          */
         interface Attribute extends Serializable {

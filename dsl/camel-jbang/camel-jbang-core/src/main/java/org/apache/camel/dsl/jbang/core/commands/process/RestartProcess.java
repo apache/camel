@@ -25,7 +25,6 @@ import java.util.List;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -58,10 +57,6 @@ public class RestartProcess extends ProcessBaseCommand {
                           + " duration such as 30s",
             defaultValue = "60000", converter = TimeoutConverter.class)
     long timeout = 60000;
-
-    public RestartProcess(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

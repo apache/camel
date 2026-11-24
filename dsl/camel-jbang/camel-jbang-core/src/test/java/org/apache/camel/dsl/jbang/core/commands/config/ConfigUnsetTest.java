@@ -34,7 +34,7 @@ class ConfigUnsetTest extends BaseConfigTestSupport {
                 kamelets-version=greatest
                 """);
 
-        ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
+        ConfigUnset command = new CamelJBangMain().withPrinter(printer).command(new ConfigUnset());
         command.key = "foo";
         command.doCall();
 
@@ -54,7 +54,7 @@ class ConfigUnsetTest extends BaseConfigTestSupport {
                 kamelets-version=greatest
                 """);
 
-        ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
+        ConfigUnset command = new CamelJBangMain().withPrinter(printer).command(new ConfigUnset());
         command.key = "foo";
         // a key that is not set is not found, as for camel config get (CAMEL-26931); it exited with 0
         Assertions.assertEquals(CliExitCode.NOT_FOUND, command.doCall());
@@ -75,7 +75,7 @@ class ConfigUnsetTest extends BaseConfigTestSupport {
                 foo=bar
                 """, true);
 
-        ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
+        ConfigUnset command = new CamelJBangMain().withPrinter(printer).command(new ConfigUnset());
         command.key = "foo";
         command.global = false;
         command.doCall();

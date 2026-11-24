@@ -45,6 +45,10 @@ public class PulsarConfiguration implements Cloneable {
     private String authenticationClass;
     @UriParam(label = "common")
     private String authenticationParams;
+    @UriParam(label = "security")
+    private String tlsTrustCertsFilePath;
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean hostnameVerification = true;
     @UriParam(label = "consumer")
     private boolean topicsPattern;
     @UriParam(label = "consumer", defaultValue = "PersistentOnly", enums = "PersistentOnly,NonPersistentOnly,AllTopics")
@@ -135,8 +139,12 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.",
               defaultValue = "true")
     private boolean batchingEnabled = true;
-    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT",
-              enums = "DEFAULT,KEY_BASED")
+    @UriParam(label = "producer",
+              description = "Control batching method used by the producer. DEFAULT batches the messages together"
+                            + " regardless of their key. KEY_BASED batches the messages of each key separately, so that a"
+                            + " Key_Shared subscription spreads the keys over its consumers. A custom BatcherBuilder can be"
+                            + " given as a bean reference.",
+              defaultValue = "DEFAULT", enums = "DEFAULT,KEY_BASED")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
     @UriParam(label = "producer",
               description = "The first message published will have a sequence Id of initialSequenceId plus one. The"
@@ -663,6 +671,32 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setAuthenticationParams(String authenticationParams) {
         this.authenticationParams = authenticationParams;
+    }
+
+    public String getTlsTrustCertsFilePath() {
+        return tlsTrustCertsFilePath;
+    }
+
+    /**
+     * The path of a PEM file with the certificates of the certificate authorities to trust, for a broker on
+     * pulsar+ssl:// whose certificate is not signed by an authority that the JVM trusts. Not used when a pulsarClient
+     * is given.
+     */
+    public void setTlsTrustCertsFilePath(String tlsTrustCertsFilePath) {
+        this.tlsTrustCertsFilePath = tlsTrustCertsFilePath;
+    }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the broker matches the host Camel connects to, with pulsar+ssl://. When
+     * disabled, any certificate trusted by the client is accepted, whatever host it was issued for. Not used when a
+     * pulsarClient is given.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
     }
 
     public String getHashingScheme() {

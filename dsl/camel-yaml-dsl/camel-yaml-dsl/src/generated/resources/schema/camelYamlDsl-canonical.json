@@ -2304,6 +2304,9 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
+          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -3485,7 +3488,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of headers to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3."
           },
           "id" : {
             "type" : "string",
@@ -3525,7 +3528,7 @@
           "excludePattern" : {
             "type" : "string",
             "title" : "Exclude Pattern",
-            "description" : "Name or pattern of properties to not remove. You can use comma to separate multiple patterns."
+            "description" : "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3."
           },
           "id" : {
             "type" : "string",
@@ -5902,6 +5905,9 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
+          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -6429,7 +6435,7 @@
             "type" : "string",
             "title" : "Library",
             "description" : "Which Avro library to use.",
-            "default" : "avroJackson",
+            "default" : "Jackson",
             "enum" : [ "ApacheAvro", "Jackson" ]
           },
           "moduleClassNames" : {
@@ -6849,6 +6855,12 @@
             "description" : "Whether to disable headers.",
             "default" : false
           },
+          "headerFromMapKeys" : {
+            "type" : "boolean",
+            "title" : "Header From Map Keys",
+            "description" : "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.",
+            "default" : false
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -7124,6 +7136,9 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+          },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
@@ -7773,6 +7788,12 @@
             "title" : "Access External Schema Protocols",
             "description" : "Only in use if schema validation has been enabled. Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element."
           },
+          "allowPartClassFromHeader" : {
+            "type" : "boolean",
+            "title" : "Allow Part Class From Header",
+            "description" : "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets these headers itself, not on routes that receive them from external systems.",
+            "default" : false
+          },
           "contentTypeHeader" : {
             "type" : "boolean",
             "title" : "Content Type Header",
@@ -8175,7 +8196,8 @@
           "algorithm" : {
             "type" : "number",
             "title" : "Algorithm",
-            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting."
+            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.",
+            "default" : 9
           },
           "armored" : {
             "type" : "boolean",
@@ -8191,7 +8213,8 @@
           "hashAlgorithm" : {
             "type" : "number",
             "title" : "Hash Algorithm",
-            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing."
+            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.",
+            "default" : 8
           },
           "id" : {
             "type" : "string",
@@ -8421,6 +8444,11 @@
             "default" : "GoogleProtobuf",
             "enum" : [ "GoogleProtobuf", "Jackson" ]
           },
+          "messageName" : {
+            "type" : "string",
+            "title" : "Message Name",
+            "description" : "The message type of the schema to use, such as Order, shop.Order or the nested Order.Line. By default the first message type of the schema."
+          },
           "moduleClassNames" : {
             "type" : "string",
             "title" : "Module Class Names",
@@ -8435,6 +8463,11 @@
             "type" : "string",
             "title" : "Object Mapper",
             "description" : "Lookup and use the existing ObjectMapper with the given id when using Jackson."
+          },
+          "schema" : {
+            "type" : "string",
+            "title" : "Schema",
+            "description" : "The protobuf schema, the text of a .proto file, used instead of instanceClass with the GoogleProtobuf library: messages are read into and written from a com.google.protobuf.DynamicMessage, so no class generated by protoc is needed. It may refer to a resource, such as classpath:order.proto, file:order.proto or an http URL. This needs camel-protobuf-schema on the classpath."
           },
           "schemaResolver" : {
             "type" : "string",
@@ -9175,6 +9208,59 @@
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
+      },
+      "org.apache.camel.model.dataformat.XsdJsonDataFormat" : {
+        "title" : "XSD JSON",
+        "description" : "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "attributePrefix" : {
+            "type" : "string",
+            "title" : "Attribute Prefix",
+            "description" : "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix."
+          },
+          "element" : {
+            "type" : "string",
+            "title" : "Element",
+            "description" : "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "ignoreUnknown" : {
+            "type" : "boolean",
+            "title" : "Ignore Unknown",
+            "description" : "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.",
+            "default" : false
+          },
+          "includeRoot" : {
+            "type" : "boolean",
+            "title" : "Include Root",
+            "description" : "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.",
+            "default" : false
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to indent the output, the JSON on unmarshal and the XML on marshal.",
+            "default" : false
+          },
+          "schema" : {
+            "type" : "string",
+            "title" : "Schema",
+            "description" : "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only."
+          },
+          "textName" : {
+            "type" : "string",
+            "title" : "Text Name",
+            "description" : "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.",
+            "default" : "value"
+          }
+        },
+        "required" : [ "schema" ]
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "title" : "YAML",
@@ -10756,6 +10842,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
           },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
+          },
           "namespacesRef" : {
             "type" : "string",
             "title" : "Namespaces Ref",
@@ -10825,6 +10916,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
           },
           "namespacesRef" : {
             "type" : "string",
@@ -10914,6 +11010,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
           },
           "namespacesRef" : {
             "type" : "string",
@@ -12634,7 +12735,7 @@
           "producerApiDoc" : {
             "type" : "string",
             "title" : "Producer Api Doc",
-            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document."
+            "description" : "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid according to the api document."
           },
           "producerComponent" : {
             "type" : "string",
@@ -13317,6 +13418,9 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+          },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"

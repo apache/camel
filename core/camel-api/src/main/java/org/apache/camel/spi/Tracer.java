@@ -26,18 +26,18 @@ import org.jspecify.annotations.Nullable;
 /**
  * SPI for intercepting {@link org.apache.camel.Exchange} flow at each EIP node in a route for tracing and debugging
  * purposes.
- * <p/>
+ * <p>
  * The tracer hooks into the routing pipeline at every {@link org.apache.camel.NamedNode} EIP and fires
  * {@link #traceBeforeNode}/{@link #traceAfterNode} around each step, plus
  * {@link #traceBeforeRoute}/{@link #traceAfterRoute} for the route entry and exit. Two built-in implementations exist:
  * {@link BacklogTracer} (buffered in-memory capture accessible via JMX or the developer console) and the OpenTelemetry
  * tracer in {@code camel-opentelemetry} (exports spans to distributed tracing backends).
- * <p/>
+ * <p>
  * Tracers support a standby mode: when {@link #isStandby()} is {@code true} the tracer is wired into the pipeline at
  * startup but does not record anything until manually enabled, which avoids restart overhead when toggling tracing via
  * JMX at runtime. The {@link #setTracePattern(String)} and {@link #setTraceTemplates(boolean)} options limit which
  * nodes are traced to reduce verbosity.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/tracer.html">Tracer</a> in the Camel user manual.
  *
  * @see   BacklogTracer
@@ -50,7 +50,7 @@ public interface Tracer extends StaticService {
      * Whether or not to trace the given processor definition.
      *
      * @param  definition the processor definition
-     * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
+     * @return            <code>true</code> to trace, <code>false</code> to skip tracing
      */
     boolean shouldTrace(NamedNode definition);
 

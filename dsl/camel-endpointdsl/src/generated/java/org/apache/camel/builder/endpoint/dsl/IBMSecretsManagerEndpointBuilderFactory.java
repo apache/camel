@@ -231,7 +231,8 @@ public interface IBMSecretsManagerEndpointBuilderFactory {
         /**
          * Overrides the desired operation to be used in the producer.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * org.apache.camel.component.ibm.secrets.manager.IBMSecretsManagerOperation} type.
          * 
          * Group: producer
          * 

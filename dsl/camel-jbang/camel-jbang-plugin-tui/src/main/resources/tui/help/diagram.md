@@ -193,7 +193,12 @@ a message takes: its box has a `⚠` in its top border, whether the types
 are shown or not. Where the arrows of a branch are side by side, the
 types are cut to the room there is: the first ones and how many more
 (`ByteArrayInputStreamCache +2`). The Info panel of the selected step
-lists them all with their kind, and in the topology the Info panel of a
+lists them all with their kind, and the formats of the payloads from their
+`Content-Type` (`byte[] · json`: json, xml, csv, yaml, text, binary, or the
+media type as it is); a step reached with more than one format is marked as
+one of more than one kind is. A step that calls a Kamelet has the data type
+the Kamelet takes after its types (`LinkedHashMap → json`), and its Info
+panel says what the Kamelet takes. In the topology the Info panel of a
 route says how many of its steps were reached with more than one type
 (`⚠ 1 mixed · 2 varied`).
 

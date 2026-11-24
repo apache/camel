@@ -33,6 +33,7 @@ import org.openstack4j.model.storage.object.SwiftContainer;
 import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 
+@Deprecated(since = "4.24")
 public class ContainerProducer extends AbstractOpenstackProducer {
 
     public ContainerProducer(SwiftEndpoint endpoint, OSClient client) {

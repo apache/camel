@@ -78,7 +78,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
         // Get file path from body or header
         String filePath = in.getHeader(WatsonxAiConstants.FILE_PATH, String.class);
         if (filePath == null || filePath.isEmpty()) {
-            filePath = in.getBody(String.class);
+            filePath = readAsText(in, "the file path");
         }
 
         if (filePath == null || filePath.isEmpty()) {
@@ -104,7 +104,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
         // Get classification ID from body or header
         String classificationId = in.getHeader(WatsonxAiConstants.CLASSIFICATION_ID, String.class);
         if (classificationId == null || classificationId.isEmpty()) {
-            classificationId = in.getBody(String.class);
+            classificationId = readAsText(in, "the classification id");
         }
 
         if (classificationId == null || classificationId.isEmpty()) {
@@ -211,7 +211,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
         // Get file name from body or header
         String fileName = in.getHeader(WatsonxAiConstants.FILE_NAME, String.class);
         if (fileName == null || fileName.isEmpty()) {
-            fileName = in.getBody(String.class);
+            fileName = readAsText(in, "the file name");
         }
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException(
@@ -233,7 +233,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
         // Get classification ID from body or header
         String classificationId = in.getHeader(WatsonxAiConstants.CLASSIFICATION_ID, String.class);
         if (classificationId == null || classificationId.isEmpty()) {
-            classificationId = in.getBody(String.class);
+            classificationId = readAsText(in, "the classification id");
         }
         if (classificationId == null || classificationId.isEmpty()) {
             throw new IllegalArgumentException(

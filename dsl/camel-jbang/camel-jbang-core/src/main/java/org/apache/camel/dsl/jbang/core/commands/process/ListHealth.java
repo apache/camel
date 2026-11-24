@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -33,12 +31,12 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.dsl.jbang.run.common.CliTimes;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -80,10 +78,6 @@ public class ListHealth extends ProcessWatchCommand {
 
     @Option(name = "depth", description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
-
-    public ListHealth(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {
@@ -142,21 +136,15 @@ public class ListHealth extends ProcessWatchCommand {
                     // calc how long time since the check was invoked
                     String time = d.getString("invocation.time");
                     if (time != null) {
-                        ZonedDateTime zdt = ZonedDateTime.parse(time);
-                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                        row.sinceLast = TimeUtils.printAge(delta);
+                        row.sinceLast = sinceNow(time);
                     }
                     time = d.getString("success.start.time");
                     if (time != null) {
-                        ZonedDateTime zdt = ZonedDateTime.parse(time);
-                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                        row.sinceStartSuccess = TimeUtils.printAge(delta);
+                        row.sinceStartSuccess = sinceNow(time);
                     }
                     time = d.getString("failure.start.time");
                     if (time != null) {
-                        ZonedDateTime zdt = ZonedDateTime.parse(time);
-                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                        row.sinceStartFailure = TimeUtils.printAge(delta);
+                        row.sinceStartFailure = sinceNow(time);
                     }
                     for (Map.Entry<String, Object> entry : d.entrySet()) {
                         String k = entry.getKey();
@@ -322,6 +310,14 @@ public class ListHealth extends ProcessWatchCommand {
         String s2 = r.sinceStartSuccess != null ? r.sinceStartSuccess : "-";
         String s3 = r.sinceStartFailure != null ? r.sinceStartFailure : "-";
         return s1 + "/" + s2 + "/" + s3;
+    }
+
+    /**
+     * How long ago (or ahead) a time of a health check is, such as {@code 2026-11-16T15:38:49.123+01:00[Europe/Paris]}:
+     * from its offset, as parsing the region would load the time zone rules (see {@link CliTimes}).
+     */
+    static String sinceNow(String time) {
+        return TimeUtils.printAge(Math.abs(System.currentTimeMillis() - CliTimes.parseEpochMillis(time)));
     }
 
     private static class Row {

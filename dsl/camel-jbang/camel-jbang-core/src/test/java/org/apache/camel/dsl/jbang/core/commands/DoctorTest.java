@@ -72,7 +72,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     @Test
     void mavenResolutionFailureFailsCommand() throws Exception {
         resolutionFailure = new MavenResolutionException("Product artifact unavailable");
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         assertThat(command.doCall()).isEqualTo(1);
         assertThat(printer.getOutput()).contains("Artifact resolution failed", "Product artifact unavailable", "Disk Space:");
@@ -81,7 +81,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     @Test
     void mavenInitializationFailureFailsCommand() throws Exception {
         initializationFailure = true;
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         assertThat(command.doCall()).isEqualTo(1);
         assertThat(printer.getOutput()).contains("Invalid Maven settings", "Disk Space:");
@@ -96,7 +96,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     @SetSystemProperty(key = CamelJBangConstants.DOWNLOAD, value = "false")
     @SetSystemProperty(key = CamelJBangConstants.FRESH, value = "true")
     void usesConfiguredMavenEnvironment() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         assertThat(command.doCall()).isZero();
         assertThat(downloaders.constructed()).hasSize(1);
@@ -117,7 +117,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void exitCodeFollowsTheChecks() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         int exit = command.doCall();
 
         // a check that fails (such as Maven on a machine without network) fails the command, a warning does not
@@ -127,7 +127,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     void shouldPrintChecksAsJson() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.jsonOutput = true;
         command.doCall();
 
@@ -145,7 +145,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     void optionalToolsAreWarnings() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.printOllamaStatus(OllamaDoctorSupport.Status.notRunning());
 
         assertThat(command.getChecks()).singleElement()
@@ -157,7 +157,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     void moreThanOneInstallFails() {
         Path locationA = Path.of("/home/user/.local/share/camel-cli/versions/4.22.0");
         Path locationB = Path.of("/opt/homebrew/Cellar/apache-camel/4.21.0/libexec");
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         command.checkInstallLocations(List.of(
                 new InstallDetector.InstallInfo(locationA, InstallDetector.InstallMethod.WEB_INSTALLER),
@@ -170,7 +170,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldPrintBanner() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         String output = printer.getOutput();
@@ -180,7 +180,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldCheckJava() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         String output = printer.getOutput();
@@ -191,7 +191,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldCheckCamelVersion() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         String output = printer.getOutput();
@@ -200,7 +200,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldCheckPorts() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         String output = printer.getOutput();
@@ -209,7 +209,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldCheckDiskSpace() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         String output = printer.getOutput();
@@ -218,7 +218,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldIncludeAllSections() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         List<String> lines = printer.getLines();
@@ -227,7 +227,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     void shouldReportOllamaSection() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.doCall();
 
         assertThat(printer.getOutput()).contains("Ollama:");
@@ -235,7 +235,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     void shouldReportOllamaNotDetectedWhenUnavailable() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         command.printOllamaStatus(OllamaDoctorSupport.Status.notRunning());
 
         assertThat(printer.getOutput())
@@ -245,7 +245,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
     @Test
     void shouldPrintRunningOllamaWithModels() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
         OllamaDoctorSupport.Status status = new OllamaDoctorSupport.Status(
                 true, "http://localhost:11434", List.of("qwen2.5:32b", "llama3.2:latest"));
 
@@ -260,7 +260,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     @Test
     void skipsInstallCheckOutsideLauncher() throws Exception {
         System.clearProperty("camel.launcher");
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         command.doCall();
 
@@ -272,7 +272,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     void reportsSingleInstallAsOkUnderLauncher() throws Exception {
         System.setProperty("camel.launcher", "true");
         try {
-            Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+            Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
             command.doCall();
 
@@ -289,7 +289,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         List<InstallDetector.InstallInfo> installs = List.of(
                 new InstallDetector.InstallInfo(locationA, InstallDetector.InstallMethod.WEB_INSTALLER),
                 new InstallDetector.InstallInfo(locationB, InstallDetector.InstallMethod.HOMEBREW));
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         boolean conflict = command.checkInstallLocations(installs, Optional.of(locationA.resolve("bin/camel.sh")));
 
@@ -304,7 +304,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         List<InstallDetector.InstallInfo> installs = List.of(
                 new InstallDetector.InstallInfo(versions.resolve("4.23.0"), InstallDetector.InstallMethod.WEB_INSTALLER),
                 new InstallDetector.InstallInfo(versions.resolve("4.22.2"), InstallDetector.InstallMethod.WEB_INSTALLER));
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         boolean conflict = command.checkInstallLocations(installs, Optional.of(versions.resolve("4.23.0/bin/camel.sh")));
 
@@ -327,7 +327,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
                 new InstallDetector.InstallInfo(
                         Path.of("/opt/homebrew/Cellar/apache-camel/4.21.0/libexec"),
                         InstallDetector.InstallMethod.HOMEBREW));
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         boolean conflict = command.checkInstallLocations(installs, Optional.empty());
 
@@ -340,7 +340,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         Path location = Path.of("/home/user/.local/share/camel-cli/versions/4.22.0");
         List<InstallDetector.InstallInfo> installs = List.of(
                 new InstallDetector.InstallInfo(location, InstallDetector.InstallMethod.WEB_INSTALLER));
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         boolean conflict = command.checkInstallLocations(installs, Optional.of(location.resolve("bin/camel.sh")));
 

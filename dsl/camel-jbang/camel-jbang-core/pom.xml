@@ -45,6 +45,12 @@
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
         <camel.surefire.parallel>false</camel.surefire.parallel>
+        <!-- the tests are short and start many CamelContexts: the C1 compiler only and the serial GC cost far less CPU
+             than the defaults (about 30% less in total), which matters as the CI machine runs other modules at the
+             same time. With the C1 compiler only the JVM reserves a code cache of 48m instead of 240m, which the
+             reused forks can fill ("CodeCache is full", then "Out of space in CodeCache for method handle intrinsic"
+             and a crashed fork), so the default size is set explicitly -->
+        <camel.surefire.fork.additional-vmargs>-XX:TieredStopAtLevel=1 -XX:ReservedCodeCacheSize=240m -XX:+UseSerialGC</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -52,6 +58,16 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-run</artifactId>
+        </dependency>
+        <!-- the CVE audit, shared with the TUI (CAMEL-27343) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-cve</artifactId>
+        </dependency>
+        <!-- the GenAI span attributes, read by the TUI and the MCP server (CAMEL-27312) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-observability-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -295,6 +311,56 @@
 
     <build>
         <plugins>
+            <!-- the aesh annotation processor generates the metadata of the commands at compile time (see
+                 CommandMetadataRegistry); not for the tests: aesh would also generate it for their sub classes of
+                 commands, which it cannot reach when they are private nested classes -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths combine.children="append">
+                        <path>
+                            <groupId>org.aesh</groupId>
+                            <artifactId>aesh-processor</artifactId>
+                            <version>${aesh-version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs combine.children="append">
+                        <arg>-AaeshNativeImageDisable=true</arg>
+                    </compilerArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <proc>none</proc>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- the CLI uses its own registry of the generated metadata (CommandMetadataRegistry): the one of the
+                 processor must not be found, as it has the metadata of commands that a plugin extends with options of
+                 its own (and it is in the package of the command the processor happens to see first) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>remove-aesh-metadata-registry</id>
+                        <!-- after the recompile execution (process-classes), which runs the processor again -->
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="${project.build.outputDirectory}/META-INF/aesh/registry"/>
+                                <delete file="${project.build.outputDirectory}/META-INF/services/org.aesh.command.metadata.MetadataRegistry"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- the tests jar has only the helpers the tests of the plugins use too -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>

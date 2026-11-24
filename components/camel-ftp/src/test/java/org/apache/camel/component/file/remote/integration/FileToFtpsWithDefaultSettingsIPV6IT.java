@@ -29,7 +29,8 @@ public class FileToFtpsWithDefaultSettingsIPV6IT extends FtpsServerExplicitTLSWi
 
     private String getFtpUrl() {
         return "ftps://admin@[::1]:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true";
+               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
+               + TRUST_STORE_OPTIONS;
     }
 
     @Test

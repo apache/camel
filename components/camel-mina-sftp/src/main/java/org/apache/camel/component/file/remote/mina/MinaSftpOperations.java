@@ -49,6 +49,7 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.FtpConstants;
+import org.apache.camel.component.file.remote.FtpUtils;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
@@ -113,11 +114,18 @@ public class MinaSftpOperations
      */
     private static final int MAX_BUFFER_SIZE = 126 * 1024 + 512; // ~126KB
 
+    // while the stop of the producer or the consumer waits for an operation of another thread, how often it checks
+    // whether the shutdown is forced, and then how long it waits for that operation to release the lock
+    private static final long DISCONNECT_ON_STOP_WAIT_MILLIS = 1000;
+
     private MinaSftpEndpoint endpoint;
     private SshClient sshClient;
-    private ClientSession session;
+    // volatile: disconnectOnStop reads it without the lock
+    private volatile ClientSession session;
     private SftpClient sftpClient;
     private final Lock lock = new ReentrantLock();
+    // whether connect, with its reconnect attempts, holds the lock
+    private volatile boolean connecting;
     /**
      * Tracks the current working directory for stepwise navigation.
      * <p/>
@@ -164,6 +172,7 @@ public class MinaSftpOperations
             if (isConnected()) {
                 return true;
             }
+            connecting = true;
 
             BlockingTask task = Tasks.foregroundTask()
                     .withBudget(Budgets.iterationBudget()
@@ -182,6 +191,7 @@ public class MinaSftpOperations
 
             return true;
         } finally {
+            connecting = false;
             lock.unlock();
         }
     }
@@ -886,6 +896,92 @@ public class MinaSftpOperations
         }
     }
 
+    /**
+     * Disconnects when the producer or the consumer stops. Another thread can still run an operation that holds the
+     * lock: an upload of the producer, or the poll of the consumer, which the stop of its scheduler interrupts, but
+     * which then changes back to the directory it started from (stepwise), on a server that may not answer.
+     * <p>
+     * As long as the shutdown of Camel is not forced, this method waits for that operation, as {@link #disconnect()}
+     * does: it can be a healthy but slow upload, when a producer cache evicts the producer, when an application stops a
+     * {@code ProducerTemplate}, or during a graceful shutdown, which stops the producers of a route whose consumer it
+     * stops right away (one that cannot be suspended) while its exchanges are still in flight.
+     * <p>
+     * Once the shutdown is forced, as its timeout elapsed, the operation is one that the shutdown gave up waiting for,
+     * such as an upload that hangs as long as the server does not answer (Apache MINA SSHD waits for an answer up to
+     * its idle timeout, 10 minutes by default). This method then closes the session without the lock, so that the
+     * operation fails and releases the lock. A connect in progress is waited for: the connect timeout and the reconnect
+     * attempts bound it, and its next attempt would open a new session.
+     * <p>
+     * With the lock, it disconnects also when not connected: a connect that failed, such as one whose password the
+     * server rejected, has already started the SSH client, whose threads {@link #disconnect()} releases.
+     */
+    @Override
+    public void disconnectOnStop() throws GenericFileOperationFailedException {
+        boolean locked = false;
+        boolean interrupted = false;
+        // a stop that began before the shutdown was forced (as above) is still waiting at that time, so check again
+        while (!locked) {
+            try {
+                locked = lock.tryLock(DISCONNECT_ON_STOP_WAIT_MILLIS, TimeUnit.MILLISECONDS);
+                if (!locked && !connecting && isForceShutdown()) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                // keep waiting, as lock() would: the shutdown task, which a shutdown cancels when it times out, is
+                // interrupted before the shutdown is forced; the interrupt is restored at the end
+                interrupted = true;
+            }
+        }
+        try {
+            if (locked) {
+                try {
+                    disconnect();
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                disconnectWithoutLock();
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean isForceShutdown() {
+        return endpoint.getCamelContext().getShutdownStrategy().isForceShutdown();
+    }
+
+    private void disconnectWithoutLock() {
+        ClientSession current = session;
+        if (current == null || !current.isOpen()) {
+            return;
+        }
+        String server = endpoint.getConfiguration().remoteServerInformation();
+        LOG.warn("The shutdown is forced: disconnecting from {} while another thread still runs an operation, such as an"
+                 + " upload or a download that hangs. The operation fails.",
+                server);
+        // closes the session at once, without waiting for the server: its SFTP channel closes, and the requests that
+        // wait for an answer of the server fail
+        current.close(true);
+        // then stop the SSH client as disconnect() does, once the operation released the lock
+        try {
+            if (lock.tryLock(DISCONNECT_ON_STOP_WAIT_MILLIS, TimeUnit.MILLISECONDS)) {
+                try {
+                    disconnect();
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                LOG.debug("The operation of another thread still holds the lock after the session to {} was closed",
+                        server);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
         lock.lock();
@@ -1072,16 +1168,21 @@ public class MinaSftpOperations
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
             }
+            if (path.isEmpty()) {
+                // the path is the current directory (such as sub/..), so stay in it
+                return;
+            }
 
             // not stepwise should change directory in one operation
             if (!endpoint.getConfiguration().isStepwise()) {
                 doChangeDirectory(path);
                 return;
             }
-            if (getCurrentDirectory().startsWith(path)) {
+            String current = getCurrentDirectory();
+            if (FtpUtils.isDirectoryOrParentOf(path, current)) {
                 // extract the path segment relative to the target path and make
                 // sure it keeps the preceding '/' for the regex op
-                String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
+                String p = current.substring(path.length() - (path.endsWith("/") ? 1 : 0));
                 if (p.isEmpty()) {
                     return;
                 }

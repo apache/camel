@@ -98,7 +98,8 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
             String username = configuration.getUsername();
             String password = configuration.getPassword();
             SSLContext sslContext
-                    = ConjurClientFactory.createSslContext(configuration.isVerifySsl(), configuration.getCertificatePath());
+                    = ConjurClientFactory.createSslContext(getCamelContext(), configuration.isVerifySsl(),
+                            configuration.getCertificatePath());
 
             if (ObjectHelper.isNotEmpty(authToken)) {
                 conjurClient = ConjurClientFactory.createWithToken(url, account, authToken, sslContext);

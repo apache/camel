@@ -71,7 +71,7 @@ PR comment: /component-test kafka http
 - **Status**: Temporarily disabled (INFRA-27808 — SonarCloud quality gate adjustment pending)
 - **Trigger**: `pull_request` (main branch) → `workflow_run` on SonarBuild completion
 - **Why two workflows**: `sonar-build.yml` runs in PR context (builds with JaCoCo coverage on core modules, uploads compiled classes artifact), `sonar-scan.yml` runs via `workflow_run` with secrets access to run the Sonar scanner and post results
-- **Coverage scope**: Currently limited to core modules (`camel-api`, `camel-core`, etc.) and `coverage` aggregator. Component coverage planned for future integration with `incremental-build.sh` module detection
+- **Coverage scope**: Currently limited to core modules (`camel-api`, `camel-core`, etc.), with one coverage report per module. Component coverage planned for future integration with `incremental-build.sh` module detection
 
 ### Other workflows
 

@@ -1,0 +1,411 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.kafka;
+
+import java.util.Locale;
+import java.util.Properties;
+
+import org.apache.camel.util.ObjectHelper;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
+
+/**
+ * The value serializer, value deserializer and registry properties that the schemaRegistryVendor and schemaFormat
+ * options set up for a schema registry vendor.
+ * <p/>
+ * The serializer and deserializer are class names and the properties are keys of the vendor serde libraries, so that
+ * Camel does not depend on any vendor library: the user adds the serde jar of the vendor. The keys and class names are
+ * the ones of the vendor libraries (Confluent kafka-avro-serializer 8.x, Apicurio Registry 3.x serdes, AWS Glue
+ * schema-registry-serde 1.1 and 2.0, and Azure azure-schemaregistry-kafka-avro 1.1).
+ */
+final class KafkaSchemaRegistry {
+
+    static final String CONFLUENT = "confluent";
+    static final String APICURIO = "apicurio";
+    static final String AWS_GLUE = "aws-glue";
+    static final String AZURE = "azure";
+
+    static final String AVRO = "avro";
+    static final String JSON = "json";
+    static final String PROTOBUF = "protobuf";
+
+    static final String VENDORS = CONFLUENT + "," + APICURIO + "," + AWS_GLUE + "," + AZURE;
+    static final String FORMATS = AVRO + "," + JSON + "," + PROTOBUF;
+
+    // Confluent (and Azure, which uses the same key names)
+    static final String CONFLUENT_URL = "schema.registry.url";
+    static final String CONFLUENT_SPECIFIC_AVRO_READER = "specific.avro.reader";
+    // Confluent registry login (SchemaRegistryClientConfig of kafka-schema-registry-client 8.x)
+    static final String CONFLUENT_BASIC_AUTH_SOURCE = "basic.auth.credentials.source";
+    static final String CONFLUENT_BASIC_AUTH_USER_INFO = "basic.auth.user.info";
+    static final String CONFLUENT_BEARER_AUTH_SOURCE = "bearer.auth.credentials.source";
+    static final String CONFLUENT_BEARER_AUTH_ISSUER_ENDPOINT = "bearer.auth.issuer.endpoint.url";
+    static final String CONFLUENT_BEARER_AUTH_CLIENT_ID = "bearer.auth.client.id";
+    static final String CONFLUENT_BEARER_AUTH_CLIENT_SECRET = "bearer.auth.client.secret";
+    static final String CONFLUENT_BEARER_AUTH_SCOPE = "bearer.auth.scope";
+    // Apicurio Registry 3.x (SchemaResolverConfig and AvroSerdeConfig)
+    static final String APICURIO_URL = "apicurio.registry.url";
+    static final String APICURIO_AUTH_USERNAME = "apicurio.registry.auth.username";
+    static final String APICURIO_AUTH_PASSWORD = "apicurio.registry.auth.password";
+    static final String APICURIO_AUTH_TOKEN_ENDPOINT = "apicurio.registry.auth.service.token.endpoint";
+    static final String APICURIO_AUTH_CLIENT_ID = "apicurio.registry.auth.client.id";
+    static final String APICURIO_AUTH_CLIENT_SECRET = "apicurio.registry.auth.client.secret";
+    static final String APICURIO_AUTH_CLIENT_SCOPE = "apicurio.registry.auth.client.scope";
+    static final String APICURIO_AUTO_REGISTER = "apicurio.registry.auto-register";
+    static final String APICURIO_SPECIFIC_AVRO_READER = "apicurio.registry.use-specific-avro-reader";
+    // AWS Glue (AWSSchemaRegistryConstants)
+    static final String GLUE_ENDPOINT = "endpoint";
+    static final String GLUE_DATA_FORMAT = "dataFormat";
+    static final String GLUE_AUTO_REGISTRATION = "schemaAutoRegistrationEnabled";
+    static final String GLUE_AVRO_RECORD_TYPE = "avroRecordType";
+    // Azure (AbstractKafkaSerdeConfig and KafkaAvroSerializerConfig)
+    static final String AZURE_USE_AZURE_CREDENTIAL = "use.azure.credential";
+    static final String AZURE_CREDENTIAL = "schema.registry.credential";
+    static final String AZURE_AUTO_REGISTER = "auto.register.schemas";
+
+    private static final String GLUE_SERIALIZER
+            = "com.amazonaws.services.schemaregistry.serializers.GlueSchemaRegistryKafkaSerializer";
+    private static final String GLUE_DESERIALIZER
+            = "com.amazonaws.services.schemaregistry.deserializers.GlueSchemaRegistryKafkaDeserializer";
+
+    private KafkaSchemaRegistry() {
+    }
+
+    /**
+     * The vendor in lower case, or null when no vendor is set. Fails for an unknown vendor, an unknown format, or a
+     * format the vendor does not support.
+     */
+    static String vendor(String vendor, String format) {
+        return vendor(vendor, format, hasJsonSchemaValidator3x());
+    }
+
+    /**
+     * Like {@link #vendor(String, String)} but with an explicit flag for the json-schema-validator version check, which
+     * allows unit tests to cover both the rejection and the happy path without depending on the classpath.
+     */
+    static String vendor(String vendor, String format, boolean jsonSchemaValidator3x) {
+        if (ObjectHelper.isEmpty(vendor)) {
+            return null;
+        }
+        String v = vendor.trim().toLowerCase(Locale.ROOT);
+        if (!CONFLUENT.equals(v) && !APICURIO.equals(v) && !AWS_GLUE.equals(v) && !AZURE.equals(v)) {
+            throw new IllegalArgumentException(
+                    "Unknown schemaRegistryVendor: " + vendor + ". The supported values are " + VENDORS
+                                               + ". Leave schemaRegistryVendor unset to configure the serializer, "
+                                               + "deserializer and registry properties yourself.");
+        }
+        String f = format(format);
+        if (AZURE.equals(v) && !AVRO.equals(f)) {
+            throw new IllegalArgumentException(
+                    "schemaRegistryVendor azure supports only schemaFormat avro, not " + f
+                                               + ": the Azure Schema Registry serde for Kafka "
+                                               + "(com.microsoft.azure:azure-schemaregistry-kafka-avro) is for Avro only.");
+        }
+        if (APICURIO.equals(v) && JSON.equals(f) && jsonSchemaValidator3x) {
+            throw new IllegalArgumentException(
+                    "schemaRegistryVendor apicurio with schemaFormat json fails at runtime with an IncompatibleClassChangeError:"
+                                               + " com.networknt:json-schema-validator 3.x is on the classpath, while the Apicurio Registry JSON Schema"
+                                               + " serde (io.apicurio:apicurio-registry-jsonschema-serde-kafka 3.x) depends on"
+                                               + " com.networknt:json-schema-validator 1.5.x. In 3.x, SchemaLoader changed from an interface to a class,"
+                                               + " so the serde classes fail to link against the 3.x classes already loaded."
+                                               + " For example, camel-yaml-dsl-validator, camel-json-validator and Camel JBang bring 3.x."
+                                               + " Use schemaFormat avro or protobuf with apicurio, or use schemaRegistryVendor confluent with"
+                                               + " schemaFormat json (the Confluent compatible API of Apicurio Registry works with confluent).");
+        }
+        return v;
+    }
+
+    /**
+     * Returns true when com.networknt:json-schema-validator 3.x is on the classpath. In 3.x, SchemaLoader changed from
+     * an interface to a class. The Apicurio Registry JSON Schema serde depends on 1.5.x (where it is an interface), so
+     * loading it on a classpath with 3.x throws an IncompatibleClassChangeError.
+     */
+    static boolean hasJsonSchemaValidator3x() {
+        try {
+            ClassLoader cl = KafkaSchemaRegistry.class.getClassLoader();
+            return !Class.forName("com.networknt.schema.resource.SchemaLoader", false, cl).isInterface();
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static String format(String format) {
+        if (ObjectHelper.isEmpty(format)) {
+            return AVRO;
+        }
+        String f = format.trim().toLowerCase(Locale.ROOT);
+        if (!AVRO.equals(f) && !JSON.equals(f) && !PROTOBUF.equals(f)) {
+            throw new IllegalArgumentException(
+                    "Unknown schemaFormat: " + format + ". The supported values are " + FORMATS + ".");
+        }
+        return f;
+    }
+
+    /**
+     * The value serializer class name of the vendor and format.
+     */
+    static String serializer(String vendor, String format) {
+        return serializerOf(vendor, format(format));
+    }
+
+    private static String serializerOf(String vendor, String f) {
+        return switch (vendor) {
+            case CONFLUENT -> switch (f) {
+                case JSON -> "io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer";
+                case PROTOBUF -> "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer";
+                default -> "io.confluent.kafka.serializers.KafkaAvroSerializer";
+            };
+            case APICURIO -> switch (f) {
+                case JSON -> "io.apicurio.registry.serde.jsonschema.JsonSchemaKafkaSerializer";
+                case PROTOBUF -> "io.apicurio.registry.serde.protobuf.ProtobufKafkaSerializer";
+                default -> "io.apicurio.registry.serde.avro.AvroKafkaSerializer";
+            };
+            case AWS_GLUE -> GLUE_SERIALIZER;
+            default -> "com.microsoft.azure.schemaregistry.kafka.avro.KafkaAvroSerializer";
+        };
+    }
+
+    /**
+     * The value deserializer class name of the vendor and format.
+     */
+    static String deserializer(String vendor, String format) {
+        return deserializerOf(vendor, format(format));
+    }
+
+    private static String deserializerOf(String vendor, String f) {
+        return switch (vendor) {
+            case CONFLUENT -> switch (f) {
+                case JSON -> "io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer";
+                case PROTOBUF -> "io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer";
+                default -> "io.confluent.kafka.serializers.KafkaAvroDeserializer";
+            };
+            case APICURIO -> switch (f) {
+                case JSON -> "io.apicurio.registry.serde.jsonschema.JsonSchemaKafkaDeserializer";
+                case PROTOBUF -> "io.apicurio.registry.serde.protobuf.ProtobufKafkaDeserializer";
+                default -> "io.apicurio.registry.serde.avro.AvroKafkaDeserializer";
+            };
+            case AWS_GLUE -> GLUE_DESERIALIZER;
+            default -> "com.microsoft.azure.schemaregistry.kafka.avro.KafkaAvroDeserializer";
+        };
+    }
+
+    /**
+     * The Maven artifact (groupId:artifactId) of the serializer and deserializer of the vendor and format.
+     */
+    static String artifact(String vendor, String format) {
+        String f = format(format);
+        return switch (vendor) {
+            case CONFLUENT -> switch (f) {
+                case JSON -> "io.confluent:kafka-json-schema-serializer";
+                case PROTOBUF -> "io.confluent:kafka-protobuf-serializer";
+                default -> "io.confluent:kafka-avro-serializer";
+            };
+            case APICURIO -> switch (f) {
+                case JSON -> "io.apicurio:apicurio-registry-jsonschema-serde-kafka";
+                case PROTOBUF -> "io.apicurio:apicurio-registry-protobuf-serde-kafka";
+                default -> "io.apicurio:apicurio-registry-avro-serde-kafka";
+            };
+            case AWS_GLUE -> "software.amazon.glue:schema-registry-serde";
+            default -> "com.microsoft.azure:azure-schemaregistry-kafka-avro";
+        };
+    }
+
+    /**
+     * The message for a serializer or deserializer of the vendor that cannot be loaded, which names the Maven artifact
+     * to add (and for Confluent, the repository).
+     *
+     * @param kind      serializer or deserializer
+     * @param className the class that cannot be loaded
+     */
+    static String missingSerdeMessage(String vendor, String format, String kind, String className) {
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("Cannot load the value ").append(kind).append(' ').append(className)
+                .append(" of schemaRegistryVendor ").append(vendor).append(" and schemaFormat ").append(format(format))
+                .append(". Add the Maven artifact ").append(artifact(vendor, format)).append(" to the classpath");
+        switch (vendor) {
+            case CONFLUENT -> sb.append(". The Confluent serde jars are not in Maven Central but in the Confluent Maven"
+                                        + " repository https://packages.confluent.io/maven/ (with Camel JBang:"
+                                        + " camel run --repos=confluent).");
+            case APICURIO -> sb.append(" (version 3.x).");
+            case AZURE -> sb.append(", with a recent com.azure:azure-core (its dependencies ask for an older one).");
+            default -> sb.append('.');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Adds the registry URL under the key of the vendor. Without a vendor, the URL is set as schema.registry.url, the
+     * key of Confluent and of the registries that follow its serde configuration.
+     */
+    static void applyUrl(Properties props, String vendor, String url) {
+        if (ObjectHelper.isEmpty(url)) {
+            return;
+        }
+        if (vendor == null) {
+            props.put(CONFLUENT_URL, url);
+            return;
+        }
+        switch (vendor) {
+            case APICURIO -> props.put(APICURIO_URL, url);
+            // Glue is addressed by region and registry name, the URL is an optional endpoint override
+            case AWS_GLUE -> props.put(GLUE_ENDPOINT, url);
+            default -> props.put(CONFLUENT_URL, url);
+        }
+    }
+
+    /**
+     * Adds the login to the registry under the keys of the vendor: basic auth with a username and password, or OAuth2
+     * client credentials with a client id. Only confluent and apicurio take a login from options: azure and aws-glue
+     * log in with the credentials of the environment, so a login option set for them fails. Without a vendor, nothing
+     * is set.
+     *
+     * @throws IllegalArgumentException if a login option is set for azure or aws-glue
+     */
+    static void applyLogin(
+            Properties props, String vendor, String username, String password,
+            String oauthTokenEndpoint, String oauthClientId, String oauthClientSecret, String oauthScope) {
+        if (vendor == null) {
+            return;
+        }
+        boolean basic = ObjectHelper.isNotEmpty(username);
+        boolean oauth = ObjectHelper.isNotEmpty(oauthClientId);
+        boolean any = basic || oauth || ObjectHelper.isNotEmpty(password) || ObjectHelper.isNotEmpty(oauthTokenEndpoint)
+                || ObjectHelper.isNotEmpty(oauthClientSecret) || ObjectHelper.isNotEmpty(oauthScope);
+        if (!any) {
+            return;
+        }
+        switch (vendor) {
+            case CONFLUENT -> {
+                if (basic) {
+                    props.put(CONFLUENT_BASIC_AUTH_SOURCE, "USER_INFO");
+                    props.put(CONFLUENT_BASIC_AUTH_USER_INFO, username + ":" + (password != null ? password : ""));
+                }
+                if (oauth) {
+                    props.put(CONFLUENT_BEARER_AUTH_SOURCE, "OAUTHBEARER");
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_ISSUER_ENDPOINT, oauthTokenEndpoint);
+                    props.put(CONFLUENT_BEARER_AUTH_CLIENT_ID, oauthClientId);
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_CLIENT_SECRET, oauthClientSecret);
+                    putIfNotEmpty(props, CONFLUENT_BEARER_AUTH_SCOPE, oauthScope);
+                }
+            }
+            case APICURIO -> {
+                if (basic) {
+                    props.put(APICURIO_AUTH_USERNAME, username);
+                    putIfNotEmpty(props, APICURIO_AUTH_PASSWORD, password);
+                }
+                if (oauth) {
+                    putIfNotEmpty(props, APICURIO_AUTH_TOKEN_ENDPOINT, oauthTokenEndpoint);
+                    props.put(APICURIO_AUTH_CLIENT_ID, oauthClientId);
+                    putIfNotEmpty(props, APICURIO_AUTH_CLIENT_SECRET, oauthClientSecret);
+                    putIfNotEmpty(props, APICURIO_AUTH_CLIENT_SCOPE, oauthScope);
+                }
+            }
+            default -> throw new IllegalArgumentException(
+                    "The schema registry login options are not used with schemaRegistryVendor " + vendor
+                                                          + ", which logs in with the credentials of the environment"
+                                                          + (AZURE.equals(vendor)
+                                                                  ? " (the Azure DefaultAzureCredential)"
+                                                                  : " (the AWS default credentials chain)")
+                                                          + ": remove them.");
+        }
+    }
+
+    private static void putIfNotEmpty(Properties props, String key, String value) {
+        if (ObjectHelper.isNotEmpty(value)) {
+            props.put(key, value);
+        }
+    }
+
+    /**
+     * Sets the value serializer (unless the user set one) and the producer properties of the vendor.
+     */
+    static void applyProducer(Properties props, String vendor, String format, boolean explicitSerializer) {
+        String f = format(format);
+        if (!explicitSerializer) {
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, serializerOf(vendor, f));
+        }
+        switch (vendor) {
+            // Confluent registers the schemas by default (auto.register.schemas=true)
+            case APICURIO -> props.put(APICURIO_AUTO_REGISTER, Boolean.TRUE);
+            case AWS_GLUE -> {
+                props.put(GLUE_DATA_FORMAT, f.toUpperCase(Locale.ROOT));
+                props.put(GLUE_AUTO_REGISTRATION, Boolean.TRUE);
+            }
+            case AZURE -> {
+                // the Azure serde reads its flags as java.lang.Boolean (a String fails)
+                props.put(AZURE_AUTO_REGISTER, Boolean.TRUE);
+                props.put(AZURE_USE_AZURE_CREDENTIAL, Boolean.TRUE);
+            }
+            default -> {
+                // nothing more for confluent
+            }
+        }
+    }
+
+    /**
+     * Sets the value deserializer (unless the user set one) and the consumer properties of the vendor.
+     */
+    static void applyConsumer(
+            Properties props, String vendor, String format, boolean specificAvroReader, boolean explicitDeserializer) {
+        String f = format(format);
+        if (!explicitDeserializer) {
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializerOf(vendor, f));
+        }
+        boolean avro = AVRO.equals(f);
+        switch (vendor) {
+            case APICURIO -> {
+                if (avro && specificAvroReader) {
+                    props.put(APICURIO_SPECIFIC_AVRO_READER, Boolean.TRUE);
+                }
+            }
+            case AWS_GLUE -> {
+                props.put(GLUE_DATA_FORMAT, f.toUpperCase(Locale.ROOT));
+                if (avro) {
+                    // read as a String by the Glue serde
+                    props.put(GLUE_AVRO_RECORD_TYPE, specificAvroReader ? "SPECIFIC_RECORD" : "GENERIC_RECORD");
+                }
+            }
+            case AZURE -> {
+                props.put(AZURE_USE_AZURE_CREDENTIAL, Boolean.TRUE);
+                if (specificAvroReader) {
+                    props.put(CONFLUENT_SPECIFIC_AVRO_READER, Boolean.TRUE);
+                }
+            }
+            default -> {
+                if (avro && specificAvroReader) {
+                    props.put(CONFLUENT_SPECIFIC_AVRO_READER, Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    /**
+     * Converts the flags of the Azure serde that are given as a String, such as from additionalProperties in a URI or
+     * YAML, to java.lang.Boolean: the Azure serde casts them to Boolean, and a String fails when the client is created.
+     * Does nothing for the other vendors, whose serdes parse a String.
+     */
+    static void applyBooleanFlags(Properties props, String vendor) {
+        if (!AZURE.equals(vendor)) {
+            return;
+        }
+        for (String key : new String[] { AZURE_AUTO_REGISTER, AZURE_USE_AZURE_CREDENTIAL, CONFLUENT_SPECIFIC_AVRO_READER }) {
+            if (props.get(key) instanceof String value) {
+                props.put(key, Boolean.valueOf(value.trim()));
+            }
+        }
+    }
+}

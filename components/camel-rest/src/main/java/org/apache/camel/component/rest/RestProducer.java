@@ -40,7 +40,9 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -367,13 +369,14 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
-            throw new IllegalArgumentException("JSON DataFormat " + name + " not found.");
+            throw new IllegalArgumentException(
+                    "JSON DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
         }
 
         if (json != null) {
             // lookup configurer
-            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                    .resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
+            PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext,
+                    name + "-dataformat-configurer", json);
             if (configurer == null) {
                 throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
             }
@@ -421,7 +424,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
-            throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
+            throw new IllegalArgumentException(
+                    "XML DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
         }
 
         if (jaxb != null) {

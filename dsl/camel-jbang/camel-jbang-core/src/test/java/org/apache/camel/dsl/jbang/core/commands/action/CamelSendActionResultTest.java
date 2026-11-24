@@ -224,7 +224,7 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
     }
 
     private CamelSendAction command(String... args) {
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(printer));
+        CamelSendAction command = new CamelJBangMain().withPrinter(printer).command(new CamelSendAction());
         CommandLineTestHelper.parse(command, args);
         // the status line on the printer, not the console
         command.loggingColor = false;

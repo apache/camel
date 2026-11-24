@@ -343,12 +343,15 @@ class AuthoringToolsFilePathsTest {
                 .contains("a symbolic link leads out");
         assertThat(error(ctx, "camel_write_file", Map.of("file", "dangling.yaml", "content", ROUTE)))
                 .contains("a symbolic link leads out");
+        assertThat(error(ctx, "camel_write_file", Map.of("file", "linked.yaml", "content", "changed")))
+                .contains("a symbolic link leads out");
         assertThat(error(ctx, "camel_write_file",
                 Map.of("directory", project.resolve("shared/sub").toString(), "file", "new.yaml", "content", ROUTE)))
                 .startsWith("No such directory");
         assertThat(outside.resolve("new.yaml")).doesNotExist();
         assertThat(outside.resolve("created.yaml")).doesNotExist();
         assertThat(outside.resolve("sub")).doesNotExist();
+        assertThat(outside.resolve("secret.yaml")).hasContent(ROUTE);
     }
 
     @Test

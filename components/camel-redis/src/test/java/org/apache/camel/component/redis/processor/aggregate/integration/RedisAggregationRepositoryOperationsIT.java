@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.redis.processor.aggregate.integration;
 
+import java.io.InvalidClassException;
+import java.net.URI;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.redis.processor.aggregate.RedisAggregationRepository;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.redisson.Redisson;
@@ -34,6 +38,7 @@ import org.redisson.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,13 +49,33 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
     @RegisterExtension
     static RedisService service = RedisServiceFactory.createSingletonService();
 
-    private RedisAggregationRepository createRepo(String mapName, boolean optimistic) {
+    @BeforeEach
+    void flushRedis() {
+        // the tests of the subclasses use the same map names
+        Config config = new Config();
+        config.useSingleServer().setAddress(String.format("redis://%s", service.getServiceAddress()));
+        RedissonClient client = Redisson.create(config);
+        try {
+            client.getKeys().flushall();
+        } finally {
+            client.shutdown();
+        }
+    }
+
+    /**
+     * Configures the repository before it starts.
+     */
+    protected void configure(RedisAggregationRepository repo) {
+    }
+
+    protected RedisAggregationRepository createRepo(String mapName, boolean optimistic) {
         RedisAggregationRepository repo = new RedisAggregationRepository(mapName, service.getServiceAddress(), optimistic);
+        configure(repo);
         repo.start();
         return repo;
     }
 
-    private Exchange createExchange(String body) {
+    protected Exchange createExchange(String body) {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(body);
         return exchange;
@@ -67,6 +92,39 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
             Exchange result = repo.get(context, "key1");
             assertNotNull(result);
             assertEquals("testBody", result.getIn().getBody(String.class));
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testBodyOfClassOutsideTheDeserializationFilterIsNotRead() {
+        RedisAggregationRepository repo = createRepo("deserializationFilterDefault", false);
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody(URI.create("http://localhost/orders"));
+            repo.add(context, "key1", exchange);
+
+            RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> repo.get(context, "key1"));
+            assertInstanceOf(InvalidClassException.class, e.getCause());
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testDeserializationFilterAllowsClass() {
+        RedisAggregationRepository repo
+                = new RedisAggregationRepository("deserializationFilterCustom", service.getServiceAddress(), false);
+        repo.setDeserializationFilter("java.net.URI;java.**;org.apache.camel.**;!*");
+        repo.start();
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody(URI.create("http://localhost/orders"));
+            repo.add(context, "key1", exchange);
+
+            Exchange result = repo.get(context, "key1");
+            assertEquals(URI.create("http://localhost/orders"), result.getIn().getBody());
         } finally {
             repo.stop();
         }
@@ -302,6 +360,7 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
         RedisAggregationRepository repo
                 = new RedisAggregationRepository("removeNoRecovery", service.getServiceAddress(), true);
         repo.setUseRecovery(false);
+        configure(repo);
         repo.start();
         try {
             Exchange exchange = createExchange("noRecover");

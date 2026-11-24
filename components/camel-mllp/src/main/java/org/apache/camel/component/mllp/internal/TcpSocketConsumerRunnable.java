@@ -41,7 +41,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
     MllpTcpServerConsumer consumer;
-    boolean running;
+    // true from the start, so a stop() before run() is not undone; written by the stopping thread
+    volatile boolean running = true;
 
     private final String localAddress;
     private final String remoteAddress;
@@ -122,7 +123,6 @@ public class TcpSocketConsumerRunnable implements Runnable {
     @SuppressWarnings("deprecation")
     // MDC deprecated since 4.19.0, use camel-mdc instead
     public void run() {
-        running = true;
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName());
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
@@ -137,6 +137,12 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         log.debug("Starting {} for {}", this.getClass().getSimpleName(), combinedAddress);
         try {
+            if (!running) {
+                // stopped between the check of startConsumer and the submit: the messages of the validation read are not
+                // sent to the stopping route (the finally block removes this runnable and resets the socket)
+                log.debug("{} for {} was stopped before it ran", this.getClass().getSimpleName(), combinedAddress);
+                return;
+            }
             if (mllpBuffer.hasCompleteEnvelope()) {
                 // Process all complete messages received during the validation read.
                 processBufferedMessages();

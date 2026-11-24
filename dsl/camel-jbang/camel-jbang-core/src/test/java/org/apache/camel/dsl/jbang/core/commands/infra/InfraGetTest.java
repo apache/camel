@@ -140,7 +140,7 @@ class InfraGetTest extends InfraCommandTestSupport {
     }
 
     private InfraGet command(String name) {
-        InfraGet command = new InfraGet(new CamelJBangMain().withPrinter(printer));
+        InfraGet command = new CamelJBangMain().withPrinter(printer).command(new InfraGet());
         command.name = name;
         // the pids in these tests are not real processes
         command.aliveCheck = pid -> true;

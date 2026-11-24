@@ -33,7 +33,7 @@ public class QuarkusExtensionRegistryMixin {
                           + RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL
                           + " unless camel.jbang.quarkus.platform.url system property is set"
                           + " (the \"/client/platforms\" suffix is removed if present).")
-    String quarkusExtensionRegistryBaseUri;
+    public String quarkusExtensionRegistryBaseUri;
 
     public static QuarkusExtensionRegistryMixin of(Path localRegistry) {
         QuarkusExtensionRegistryMixin result = new QuarkusExtensionRegistryMixin();

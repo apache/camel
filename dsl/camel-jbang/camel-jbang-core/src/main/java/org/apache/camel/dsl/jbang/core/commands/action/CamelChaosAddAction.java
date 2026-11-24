@@ -23,7 +23,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
 
@@ -68,10 +67,6 @@ public class CamelChaosAddAction extends CamelChaosAction {
             description = "Check the rules without adding them: each in plain words, and what it would hit in"
                           + " the integration now (the sends, polls, routes or steps, with their route)")
     boolean dryRun;
-
-    public CamelChaosAddAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

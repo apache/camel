@@ -27,7 +27,7 @@ class RunTransformMessageTest {
         // camel eval --isolated and camel transform message boot an empty Camel. Loading the plugins there is not
         // needed, and EvalSimpleTest, which uses the home of the developer, then rewrote the plugin class path cache of
         // the developer's Camel CLI with the class path of the test JVM (camel test run failed after that)
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         run.prepareTransformMessage("4.24.0", null);
 
         assertThat(run.skipPlugins).isTrue();

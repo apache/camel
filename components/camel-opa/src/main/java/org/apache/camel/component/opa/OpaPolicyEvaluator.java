@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,8 +27,17 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +53,9 @@ public abstract class OpaPolicyEvaluator {
     private static final Logger LOG = LoggerFactory.getLogger(OpaPolicyEvaluator.class);
 
     private static final String ALL_NAMES = "*";
+    private static final ObjectMapper INPUT_MAPPER = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> INPUT_TYPE = new TypeReference<>() {
+    };
 
     /**
      * Headers that carry a caller credential verbatim. They are withheld when {@code includeHeaders} is the wildcard,
@@ -56,10 +70,16 @@ public abstract class OpaPolicyEvaluator {
     private final Set<String> includedProperties;
     private final boolean includeBody;
     private final boolean failOpen;
+    private final Expression inputExpression;
     private final AtomicBoolean unreadableVerdictWarned = new AtomicBoolean();
 
     protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
                                  String includeProperties, boolean includeBody, boolean failOpen) {
+        this(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, null);
+    }
+
+    protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
+                                 String includeProperties, boolean includeBody, boolean failOpen, Expression inputExpression) {
         this.policyPath = ObjectHelper.notNull(policyPath, "policyPath");
         this.allowKey = ObjectHelper.isNotEmpty(allowKey) ? allowKey : "allow";
         // headers default to all of them, exchange properties to none: properties are mostly used to carry
@@ -68,6 +88,7 @@ public abstract class OpaPolicyEvaluator {
         this.includedProperties = parseNameFilter(includeProperties, false);
         this.includeBody = includeBody;
         this.failOpen = failOpen;
+        this.inputExpression = inputExpression;
     }
 
     /**
@@ -78,14 +99,66 @@ public abstract class OpaPolicyEvaluator {
      * @throws OpaPolicyEvaluationException when the policy could not be evaluated and {@code failOpen} is false
      */
     public boolean evaluate(Exchange exchange) throws OpaPolicyEvaluationException {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, observationEngine(), Operation.DECISION, null);
+        if (!observation.isEnabled()) {
+            return evaluateInternal(exchange, null);
+        }
+        long[] poolWait = observationEngine() == Engine.OPA_WASM ? new long[] { -1 } : null;
+        try {
+            boolean allowed = evaluateInternal(exchange, poolWait);
+            if (poolWait != null) {
+                observation.poolWait(poolWait[0]);
+            }
+            boolean failedOpen = Boolean.TRUE.equals(exchange.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN));
+            observation.complete(failedOpen ? Outcome.FAILED_OPEN : allowed ? Outcome.ALLOW : Outcome.DENY,
+                    failedOpen ? Failure.UNAVAILABLE : Failure.NONE);
+            return allowed;
+        } catch (OpaPolicyEvaluationException | RuntimeException e) {
+            if (poolWait != null) {
+                observation.poolWait(poolWait[0]);
+            }
+            boolean unavailable = observationUnavailable(e);
+            observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private boolean observationUnavailable(Exception failure) {
+        if (failure instanceof InputDocumentException) {
+            return false;
+        }
+        Exception cause = failure instanceof OpaPolicyEvaluationException && failure.getCause() instanceof Exception wrapped
+                ? wrapped : failure;
+        return isDecisionPointUnavailable(cause);
+    }
+
+    protected Engine observationEngine() {
+        return Engine.OPA_REST;
+    }
+
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
+        return evaluateDecision(input);
+    }
+
+    private boolean evaluateInternal(Exchange exchange, long[] poolWaitNanos) throws OpaPolicyEvaluationException {
         // a verdict the message arrived with is a claim, not evidence. Clear it before deciding anything, so that
         // every way out of this method - allowed, denied, or a failure the route goes on to handle - leaves only
         // what this component decided. Overwriting at the end is not enough: the paths that throw never get there,
         // and a route that handles the exception would resume routing with the sender's own verdict still on it
         clearDecisionHeaders(exchange);
+        Map<String, Object> input;
+        try {
+            input = buildInput(exchange);
+        } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
+            throw new InputDocumentException("Failed to build input for policy " + policyPath, exchange, e);
+        }
         Object decision;
         try {
-            decision = evaluateDecision(buildInput(exchange));
+            decision = evaluateDecision(input, poolWaitNanos);
         } catch (InterruptedException e) {
             // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
             // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed.
@@ -188,6 +261,33 @@ public abstract class OpaPolicyEvaluator {
      * {@code UNAVAILABLE} and failed open; they do not say which of the two happened.
      */
     public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, observationEngine(), Operation.BATCH, null);
+        try {
+            List<Boolean> verdicts = evaluateBatchInternal(exchange, elements);
+            if (observation.isEnabled()) {
+                @SuppressWarnings("unchecked")
+                List<OpaBatchOutcome> outcomes = exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES, List.class);
+                for (OpaBatchOutcome outcome : outcomes) {
+                    observation.item(outcome.isFailedOpen() ? Outcome.FAILED_OPEN
+                            : outcome.getFailureCategory() == OpaBatchOutcome.FailureCategory.UNAVAILABLE ? Outcome.UNAVAILABLE
+                            : outcome.getFailureCategory() != OpaBatchOutcome.FailureCategory.NONE ? Outcome.ERROR
+                            : outcome.isAllowed() ? Outcome.ALLOW : Outcome.DENY);
+                }
+                observation.completeBatch();
+            }
+            return verdicts;
+        } catch (OpaPolicyEvaluationException | RuntimeException e) {
+            boolean unavailable = observationUnavailable(e);
+            observation.remainingItems(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR, elements.size());
+            observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private List<Boolean> evaluateBatchInternal(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
         clearDecisionHeaders(exchange);
         // an empty list has nothing to authorize. Short-circuit before the engine call: an empty batch is a case the
         // OPA SDK does not define, and letting it reach the server could turn "nothing to decide" into a whole-batch
@@ -198,8 +298,13 @@ public abstract class OpaPolicyEvaluator {
             return verdicts;
         }
         Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
-        for (int i = 0; i < elements.size(); i++) {
-            inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+        try {
+            for (int i = 0; i < elements.size(); i++) {
+                inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+            }
+        } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
+            throw new InputDocumentException("Failed to build batch input for policy " + policyPath, exchange, e);
         }
 
         List<OpaBatchOutcome> outcomes = new ArrayList<>(elements.size());
@@ -300,6 +405,9 @@ public abstract class OpaPolicyEvaluator {
      * Builds the {@code input} document handed to OPA.
      */
     protected Map<String, Object> buildInput(Exchange exchange) {
+        if (inputExpression != null) {
+            return mappedInput(exchange);
+        }
         return buildInput(exchange, exchange.getMessage().getBody(), includeBody);
     }
 
@@ -308,6 +416,11 @@ public abstract class OpaPolicyEvaluator {
      * the element as the body so every element is authorized against the same shared headers and properties.
      */
     protected Map<String, Object> buildInput(Exchange exchange, Object body, boolean withBody) {
+        if (inputExpression != null) {
+            Exchange element = exchange.copy();
+            element.getMessage().setBody(body);
+            return mappedInput(element);
+        }
         Map<String, Object> input = new LinkedHashMap<>();
         Map<String, Object> headers = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
@@ -348,6 +461,19 @@ public abstract class OpaPolicyEvaluator {
             input.put("routeId", exchange.getFromRouteId());
         }
         return input;
+    }
+
+    private Map<String, Object> mappedInput(Exchange exchange) {
+        Object value = inputExpression.evaluate(exchange, Object.class);
+        if (value == null || value instanceof InputStream || value instanceof Reader) {
+            throw new IllegalArgumentException("inputExpression must produce a JSON object, not a null or streaming value");
+        }
+        JsonNode node = INPUT_MAPPER.valueToTree(value);
+        if (!node.isObject()) {
+            throw new IllegalArgumentException(
+                    "inputExpression must produce a JSON object, but was " + value.getClass().getName());
+        }
+        return INPUT_MAPPER.convertValue(node, INPUT_TYPE);
     }
 
     /**
@@ -509,4 +635,14 @@ public abstract class OpaPolicyEvaluator {
         }
         return exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
     }
+
+    /** Distinguishes input construction from backend availability when classifying an observation. */
+    private static final class InputDocumentException extends OpaPolicyEvaluationException {
+        private static final long serialVersionUID = 1L;
+
+        private InputDocumentException(String message, Exchange exchange, Exception cause) {
+            super(message, exchange, cause);
+        }
+    }
+
 }

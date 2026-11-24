@@ -22,11 +22,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown when a mandatory exchange property is not available on an {@link Exchange}.
- * <p/>
- * Typically raised by {@link org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)}
+ * <p>
+ * Typically raised by {@code org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)}
  * when a processor or EIP requires a specific property to be present.
  *
- * @see org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
  * @see NoSuchHeaderException
  */
 public class NoSuchPropertyException extends CamelExchangeException {

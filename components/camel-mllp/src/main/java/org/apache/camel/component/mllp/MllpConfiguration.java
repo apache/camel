@@ -205,7 +205,10 @@ public class MllpConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the default charset to use
+     * The charset of an HL7 message that has no MSH-18. The consumer decodes, and the producer encodes, a message in
+     * the charset named in MSH-18 of the message, and in this charset when the message has no MSH-18, or MSH-18 names a
+     * charset that is not supported. The CamelCharsetName header and exchange property are not used. The default is the
+     * defaultCharset of the component (ISO-8859-1).
      */
     public void setCharsetName(String charsetName) {
         this.charsetName = charsetName;
@@ -499,9 +502,8 @@ public class MllpConfiguration implements Cloneable {
      *
      * If enabled, HL7 Payloads received from external systems will be validated converted to a String.
      *
-     * If the charsetName property is set, that character set will be used for the conversion. If the charsetName
-     * property is not set, the value of MSH-18 will be used to determine th appropriate character set. If MSH-18 is not
-     * set, then the default ISO-8859-1 character set will be use.
+     * The value of MSH-18 is used to determine the character set for the conversion. If MSH-18 is not set, or names a
+     * character set that is not supported, the charsetName character set is used (ISO-8859-1 by default).
      *
      * @param stringPayload enabled if true, otherwise disabled
      */

@@ -32,6 +32,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
 import org.openstack4j.model.storage.block.builder.VolumeSnapshotBuilder;
 
+@Deprecated(since = "4.24")
 public class SnapshotProducer extends AbstractOpenstackProducer {
 
     public SnapshotProducer(CinderEndpoint endpoint, OSClient client) {

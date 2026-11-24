@@ -49,10 +49,6 @@ public class Shell extends CamelCommand {
     // Help colors: title=bold blue, command=38, args=italic, options=yellow, description=dark gray
     private static final String HELP_COLORS = "ti=1;34:co=38:ar=3:op=33:de=90";
 
-    public Shell(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         requireInteractiveTerminal("camel shell");

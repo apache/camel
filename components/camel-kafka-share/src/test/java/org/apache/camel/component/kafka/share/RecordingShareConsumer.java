@@ -46,7 +46,8 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
     private volatile int commits;
     private volatile int polls;
     private volatile boolean closed;
-    private RuntimeException pollFailure;
+    // an unchecked exception or an Error
+    private Throwable pollFailure;
     private RuntimeException subscribeFailure;
     private boolean hasRecords;
 
@@ -67,9 +68,12 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
     public synchronized ConsumerRecords<Object, Object> poll(Duration timeout) {
         polls++;
         if (pollFailure != null) {
-            RuntimeException failure = pollFailure;
+            Throwable failure = pollFailure;
             pollFailure = null;
-            throw failure;
+            if (failure instanceof Error error) {
+                throw error;
+            }
+            throw (RuntimeException) failure;
         }
         if (!hasRecords) {
             try {
@@ -118,6 +122,10 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
      * The next poll throws the exception.
      */
     synchronized void failNextPoll(RuntimeException failure) {
+        this.pollFailure = failure;
+    }
+
+    synchronized void failNextPoll(Error failure) {
         this.pollFailure = failure;
     }
 

@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Thrown when the Camel type-converter registry cannot find a converter capable of transforming a given value to the
  * requested target type.
- * <p/>
+ * <p>
  * This is the checked variant; for the unchecked exception raised when a converter is found but fails during execution,
  * see {@link TypeConversionException}.
  *
@@ -75,14 +75,14 @@ public class NoTypeConversionAvailableException extends CamelException {
     }
 
     /**
-     * Returns the required <tt>to</tt> type
+     * Returns the required <code>to</code> type
      */
     public Class<?> getToType() {
         return type;
     }
 
     /**
-     * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
+     * Returns the required <code>from</code> type. Returns <code>null</code> if the provided value was null.
      */
     public @Nullable Class<?> getFromType() {
         if (value != null) {

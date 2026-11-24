@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
@@ -56,10 +55,6 @@ public class CamelChaosLoadAction extends CamelChaosAction {
     @Argument(index = "1", description = "Name or pid of the running Camel integration (must match one); without it,"
                                          + " the only one running, or the only one with chaos switched on")
     String name;
-
-    public CamelChaosLoadAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

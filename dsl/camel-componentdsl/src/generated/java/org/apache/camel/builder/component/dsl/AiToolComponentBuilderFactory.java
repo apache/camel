@@ -56,7 +56,10 @@ public interface AiToolComponentBuilderFactory {
          * Raw JSON Schema for tool input parameters. Supports inline JSON and
          * resource references (classpath:, file:, resource:). Mutually
          * exclusive with the parameter multi-value options. Use for nested
-         * objects, arrays, oneOf, and other complex schemas.
+         * objects, arrays, oneOf, and other complex schemas. When the schema
+         * does not set additionalProperties, Camel adds additionalProperties:
+         * false, so a client that validates the input (such as the MCP server)
+         * refuses an undeclared argument.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -324,8 +327,10 @@ public interface AiToolComponentBuilderFactory {
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
-         * LLM. When omitted, the tool goes into a default pool available to all
-         * producers.
+         * LLM. When omitted, the tool goes into a default pool that is added to
+         * the tools of every tag a producer selects with its own tags option
+         * (producers without tags receive no registry tools, and the MCP server
+         * never exposes the default pool).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -374,6 +379,46 @@ public interface AiToolComponentBuilderFactory {
          */
         default AiToolComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        /**
+         * Comma-separated list of the roles a caller needs to call the tool,
+         * for example finance,controlling. Any one of them is enough unless
+         * allRolesRequired is set. The roles are checked before the route runs,
+         * against the caller's roles in the exchange property
+         * CamelAiToolSecurityPrincipalRoles: a call without that property is
+         * refused. A value that is set but names no role refuses every call.
+         * Set it on the component as the default of every tool route, or per
+         * endpoint to replace it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param allowedRoles the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder allowedRoles(java.lang.String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the caller needs all the roles in allowedRoles, rather than
+         * any one of them. Has no effect when allowedRoles is not set.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allRolesRequired the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder allRolesRequired(boolean allRolesRequired) {
+            doSetProperty("allRolesRequired", allRolesRequired);
             return this;
         }
     
@@ -441,6 +486,8 @@ public interface AiToolComponentBuilderFactory {
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "allowedRoles": getOrCreateConfiguration((AiToolComponent) component).setAllowedRoles((java.lang.String) value); return true;
+            case "allRolesRequired": getOrCreateConfiguration((AiToolComponent) component).setAllRolesRequired((boolean) value); return true;
             case "authorizationPolicy": getOrCreateConfiguration((AiToolComponent) component).setAuthorizationPolicy((org.apache.camel.spi.AuthorizationPolicy) value); return true;
             default: return false;
             }

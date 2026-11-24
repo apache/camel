@@ -1138,10 +1138,38 @@ public interface KafkaShareEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the group configuration share.auto.offset.reset of the share
+         * group when the consumer starts, through the Kafka Admin client:
+         * earliest, latest, or by_duration: followed by an ISO-8601 duration
+         * (such as by_duration:PT1H). It decides where a share-partition starts
+         * when the group first consumes it, so earliest lets a new share group
+         * read the records already in the topic (a new share group starts at
+         * the latest records). It is a setting of the group, so it applies to
+         * all the consumers of the group, and it does not move a
+         * share-partition that the group already consumes. The principal of the
+         * consumer needs the ALTER_CONFIGS permission on the group, and the
+         * consumer fails to start when the configuration cannot be set. When
+         * not set, the group configuration is left as it is.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param shareAutoOffsetReset the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder shareAutoOffsetReset(String shareAutoOffsetReset) {
+            doSetProperty("shareAutoOffsetReset", shareAutoOffsetReset);
+            return this;
+        }
+        /**
          * This enables the use of a specific Avro reader for use with the in
          * multiple Schema registries documentation with Avro Deserializers
          * implementation. This option is only available externally (not
-         * standard Apache Kafka).
+         * standard Apache Kafka). When schemaRegistryVendor is set, it is set
+         * under the property of the vendor (for apicurio
+         * apicurio.registry.use-specific-avro-reader, for aws-glue
+         * avroRecordType=SPECIFIC_RECORD).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1159,7 +1187,10 @@ public interface KafkaShareEndpointBuilderFactory {
          * This enables the use of a specific Avro reader for use with the in
          * multiple Schema registries documentation with Avro Deserializers
          * implementation. This option is only available externally (not
-         * standard Apache Kafka).
+         * standard Apache Kafka). When schemaRegistryVendor is set, it is set
+         * under the property of the vendor (for apicurio
+         * apicurio.registry.use-specific-avro-reader, for aws-glue
+         * avroRecordType=SPECIFIC_RECORD).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1190,10 +1221,35 @@ public interface KafkaShareEndpointBuilderFactory {
             return this;
         }
         /**
+         * The format of the record values in the schema registry, which selects
+         * the serializer and deserializer of the schemaRegistryVendor. Not
+         * every vendor supports every format: azure supports only avro. Only
+         * used when schemaRegistryVendor is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: avro
+         * Group: schema
+         * 
+         * @param schemaFormat the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaFormat(String schemaFormat) {
+            doSetProperty("schemaFormat", schemaFormat);
+            return this;
+        }
+        /**
          * URL of the schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in
          * multiple Schema registries documentation. This option is only
-         * available externally (not standard Apache Kafka).
+         * available externally (not standard Apache Kafka). When
+         * schemaRegistryVendor is set, the URL is set under the property of the
+         * vendor: schema.registry.url for confluent, apicurio.registry.url for
+         * apicurio (the URL of the registry API, such as
+         * http://localhost:8080/apis/registry/v3), schema.registry.url for
+         * azure (the fully qualified namespace, such as
+         * my-namespace.servicebus.windows.net), and endpoint for aws-glue
+         * (optional, as Glue is addressed by the AWS region).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1204,6 +1260,29 @@ public interface KafkaShareEndpointBuilderFactory {
          */
         default KafkaShareEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
+         * The schema registry vendor, which sets up the value serializer
+         * (producer), the value deserializer (consumer) and the registry
+         * properties of the vendor for the schemaFormat, so that you do not
+         * need to know the class names or the property names of the vendor. The
+         * schemaRegistryURL is set as the registry URL of the vendor. A
+         * valueSerializer or valueDeserializer other than the default, and
+         * additionalProperties, take precedence. The serde jars of the vendor
+         * must be on the classpath, as Camel does not include them. Leave it
+         * unset to configure the serializer, deserializer and registry
+         * properties yourself.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryVendor the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryVendor(String schemaRegistryVendor) {
+            doSetProperty("schemaRegistryVendor", schemaRegistryVendor);
             return this;
         }
         /**
@@ -1526,6 +1605,103 @@ public interface KafkaShareEndpointBuilderFactory {
          */
         default KafkaShareEndpointBuilder saslUsername(String saslUsername) {
             doSetProperty("saslUsername", saslUsername);
+            return this;
+        }
+        /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareEndpointBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
             return this;
         }
         /**

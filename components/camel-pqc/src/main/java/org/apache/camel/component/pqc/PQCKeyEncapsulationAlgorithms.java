@@ -24,6 +24,11 @@ public enum PQCKeyEncapsulationAlgorithms {
     // Experimental and non-standardized
     BIKE("BIKE", "BCPQC"),
     HQC("HQC", "BCPQC"),
+    /**
+     * @deprecated Classic McEliece is believed to be unsafe to use, and Bouncy Castle deprecated it in 1.87 and will
+     *             remove it in a future release. Use {@link #MLKEM} instead.
+     */
+    @Deprecated(since = "4.24")
     CMCE("CMCE", "BC"),
     SABER("SABER", "BCPQC"),
     FRODO("FrodoKEM", "BC"),

@@ -31,5 +31,7 @@ public class LocalKameletsITCase extends JBangTestSupport {
         executeBackground(
                 String.format("run --local-kamelet-dir=%s %s/user-source-consumer.camel.yaml", mountPoint(), mountPoint()));
         checkLogContains("Apache Camel " + version() + " (user-source-consumer) started");
+        // The consumer route logs the body that the local kamelet produces
+        checkLogContains("{\"id\": 1, \"first_name\": \"Camel\", \"last_name\": \"Rider\"}");
     }
 }

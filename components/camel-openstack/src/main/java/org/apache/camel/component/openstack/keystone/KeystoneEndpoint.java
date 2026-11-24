@@ -63,6 +63,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
                                    description = "The Region, Domain, Project, User or Group of openstack4j created, read or updated (null when "
                                                  + "get finds none), a List of them for getAll, true or false for checkUserGroup; delete, "
                                                  + "addUserToGroup and removeUserFromGroup keep the body"))
+@Deprecated(since = "4.24")
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")

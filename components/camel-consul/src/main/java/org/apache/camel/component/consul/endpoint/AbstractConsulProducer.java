@@ -80,6 +80,33 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return value;
     }
 
+    /**
+     * The key of the action: the CamelConsulKey header, else the key of this endpoint. A header that still holds the
+     * key a consul consumer received (a key/value that changed, an event) describes that message: when this endpoint
+     * has a key of its own, that key is used, so that a route from one key to another does not act on the key it came
+     * from.
+     */
+    protected String getKey(Message message) {
+        String key = message.getHeader(ConsulConstants.CONSUL_KEY, String.class);
+        String endpointKey = configuration.getKey();
+        if (key == null) {
+            return endpointKey;
+        }
+        if (endpointKey != null
+                && key.equals(message.getExchange().getProperty(ConsulConstants.CONSUL_RECEIVED_KEY, String.class))) {
+            return endpointKey;
+        }
+        return key;
+    }
+
+    protected String getMandatoryKey(Message message) throws NoSuchHeaderException {
+        String key = getKey(message);
+        if (key == null) {
+            throw new NoSuchHeaderException(message.getExchange(), ConsulConstants.CONSUL_KEY, String.class);
+        }
+        return key;
+    }
+
     protected QueryOptions buildQueryOptions(Message message, ConsulConfiguration conf) {
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
 

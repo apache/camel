@@ -207,7 +207,7 @@ class CamelHistoryActionTest extends ActionCommandTestSupport {
     }
 
     private CamelHistoryAction command(String... args) {
-        CamelHistoryAction command = new CamelHistoryAction(new CamelJBangMain().withPrinter(printer));
+        CamelHistoryAction command = new CamelJBangMain().withPrinter(printer).command(new CamelHistoryAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("--logging-color=false"), Arrays.stream(args)).toArray(String[]::new));
         return command;

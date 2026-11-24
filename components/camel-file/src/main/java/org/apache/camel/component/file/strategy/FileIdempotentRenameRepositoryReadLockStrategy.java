@@ -44,6 +44,9 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRenameRepositoryReadLockStrategy.class);
+    // exchange property (per file, see asReadLockKey) holding the key that acquireExclusiveReadLock added, so the
+    // release removes or confirms that same key whatever the route did to the headers the idempotentKey reads
+    private static final String READ_LOCK_IDEMPOTENT_KEY = "CamelFileLockIdempotentKey";
     private final FileRenameExclusiveReadLockStrategy rename;
     private GenericFileEndpoint<File> endpoint;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
@@ -79,6 +82,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
         // check if we can begin on this file
         String key = asKey(exchange, file);
+        exchange.setProperty(asReadLockKey(file, READ_LOCK_IDEMPOTENT_KEY), key);
         boolean answer = false;
         try {
             answer = idempotentRepository.add(exchange, key);
@@ -118,7 +122,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         boolean acquired
                 = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_IDEMPOTENT_ACQUIRED), false, Boolean.class);
         if (acquired) {
-            String key = asKey(exchange, file);
+            String key = asAcquiredKey(exchange, file);
             idempotentRepository.remove(exchange, key);
         }
         rename.releaseExclusiveReadLockOnAbort(operations, file, exchange);
@@ -128,7 +132,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     public void releaseExclusiveReadLockOnRollback(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(exchange, file);
+        String key = asAcquiredKey(exchange, file);
         if (removeOnRollback) {
             idempotentRepository.remove(exchange, key);
         } else {
@@ -143,7 +147,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     public void releaseExclusiveReadLockOnCommit(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(exchange, file);
+        String key = asAcquiredKey(exchange, file);
         if (removeOnCommit) {
             idempotentRepository.remove(exchange, key);
         } else {
@@ -252,6 +256,16 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
         }
         return key;
+    }
+
+    /**
+     * The key to release: the one that {@link #acquireExclusiveReadLock} added to the idempotent repository. The
+     * idempotentKey expression is not evaluated again, as the route may have changed the headers it reads (such as
+     * {@link Exchange#FILE_NAME}), which would release another key.
+     */
+    protected String asAcquiredKey(Exchange exchange, GenericFile<File> file) {
+        String key = exchange.getProperty(asReadLockKey(file, READ_LOCK_IDEMPOTENT_KEY), String.class);
+        return key != null ? key : asKey(exchange, file);
     }
 
     private static String asReadLockKey(GenericFile<File> file, String key) {

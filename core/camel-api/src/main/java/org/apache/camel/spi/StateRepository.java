@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * This {@link StateRepository} holds a set of key/value pairs for defining a particular <em>state</em> of a component.
  * For instance, it can be a set of indexes.
- * <p/>
+ * <p>
  * An {@link IdempotentRepository} behaves more or less like a {@code Set} whereas this {@link StateRepository} behaves
  * like a {@code Map}.
  *

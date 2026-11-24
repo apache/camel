@@ -31,21 +31,21 @@ public interface ShutdownAware extends ShutdownPrepared {
      * To defer shutdown during first phase of shutdown. This allows any pending exchanges to be completed and therefore
      * ensure a graceful shutdown without losing messages. At the very end when there are no more inflight and pending
      * messages the consumer could then safely be shutdown.
-     * <p/>
-     * This is needed by {@link org.apache.camel.component.seda.SedaConsumer}.
+     * <p>
+     * This is needed by {@code org.apache.camel.component.seda.SedaConsumer}.
      *
      * @param  shutdownRunningTask the configured option for how to act when shutting down running tasks.
-     * @return                     <tt>true</tt> to defer shutdown to very last.
+     * @return                     <code>true</code> to defer shutdown to very last.
      */
     boolean deferShutdown(ShutdownRunningTask shutdownRunningTask);
 
     /**
      * Gets the number of pending exchanges.
-     * <p/>
-     * Some consumers has internal queues with {@link org.apache.camel.Exchange} which are pending. For example the
-     * {@link org.apache.camel.component.seda.SedaConsumer}.
-     * <p/>
-     * Return <tt>zero</tt> to indicate no pending exchanges and therefore ready to shutdown.
+     * <p>
+     * Some consumers have internal queues with {@link org.apache.camel.Exchange} which are pending. For example the
+     * {@code org.apache.camel.component.seda.SedaConsumer}.
+     * <p>
+     * Return <code>zero</code> to indicate no pending exchanges and therefore ready to shutdown.
      *
      * @return number of pending exchanges
      */
@@ -53,15 +53,16 @@ public interface ShutdownAware extends ShutdownPrepared {
 
     /**
      * Gets the number of pending exchanges, while the route is being suspended or shutdown.
-     * <p/>
+     * <p>
      * This is invoked by the {@link org.apache.camel.spi.ShutdownStrategy} while it waits for the pending exchanges to
      * complete. Consumers which discard their pending exchanges on shutdown (for example the
-     * {@link org.apache.camel.component.seda.SedaConsumer} with the <tt>purgeWhenStopping</tt> option) must only do so
-     * when the route is being shutdown, and not when it is only being suspended.
-     * <p/>
+     * {@code org.apache.camel.component.seda.SedaConsumer} with the <code>purgeWhenStopping</code> option) must only do
+     * so when the route is being shutdown, and not when it is only being suspended.
+     * <p>
      * By default, this delegates to {@link #getPendingExchangesSize()}.
      *
-     * @param  suspendOnly <tt>true</tt> if the route is only being suspended, <tt>false</tt> if it is being shutdown
+     * @param  suspendOnly <code>true</code> if the route is only being suspended, <code>false</code> if it is being
+     *                     shutdown
      * @return             number of pending exchanges
      * @since              4.23
      */

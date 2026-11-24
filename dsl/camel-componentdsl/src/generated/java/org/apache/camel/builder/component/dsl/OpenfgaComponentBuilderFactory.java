@@ -61,7 +61,7 @@ public interface OpenfgaComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:8080
-         * Group: producer
+         * Group: common
          * 
          * @param apiUrl the value to set
          * @return the dsl builder
@@ -83,13 +83,35 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param authorizationModelId the value to set
          * @return the dsl builder
          */
         default OpenfgaComponentBuilder authorizationModelId(java.lang.String authorizationModelId) {
             doSetProperty("authorizationModelId", authorizationModelId);
+            return this;
+        }
+    
+        
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaBatchCheckMode&lt;/code&gt; type.
+         * 
+         * Default: client
+         * Group: common
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
             return this;
         }
     
@@ -110,7 +132,7 @@ public interface OpenfgaComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param conditionContext the value to set
          * @return the dsl builder
@@ -126,7 +148,7 @@ public interface OpenfgaComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaConfiguration&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param configuration the value to set
          * @return the dsl builder
@@ -146,7 +168,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param consistency the value to set
          * @return the dsl builder
@@ -182,7 +204,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param contextualTuples the value to set
          * @return the dsl builder
@@ -201,38 +223,13 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param continuationToken the value to set
          * @return the dsl builder
          */
         default OpenfgaComponentBuilder continuationToken(java.lang.String continuationToken) {
             doSetProperty("continuationToken", continuationToken);
-            return this;
-        }
-    
-        
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default OpenfgaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     
@@ -246,13 +243,54 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param object the value to set
          * @return the dsl builder
          */
         default OpenfgaComponentBuilder object(java.lang.String object) {
             doSetProperty("object", object);
+            return this;
+        }
+    
+        
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+    
+        
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: common
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
             return this;
         }
     
@@ -263,7 +301,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param pageSize the value to set
          * @return the dsl builder
@@ -283,7 +321,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param relation the value to set
          * @return the dsl builder
@@ -300,7 +338,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param relations the value to set
          * @return the dsl builder
@@ -320,7 +358,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param startTime the value to set
          * @return the dsl builder
@@ -338,7 +376,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param storeId the value to set
          * @return the dsl builder
@@ -355,7 +393,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param type the value to set
          * @return the dsl builder
@@ -388,7 +426,7 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param user the value to set
          * @return the dsl builder
@@ -407,13 +445,176 @@ public interface OpenfgaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param userFilters the value to set
          * @return the dsl builder
          */
         default OpenfgaComponentBuilder userFilters(java.lang.String userFilters) {
             doSetProperty("userFilters", userFilters);
+            return this;
+        }
+    
+        
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+    
+        /**
+         * Unique durable cursor key for this store, filter and projection. Only
+         * one consumer may own the key, including when configured at component
+         * level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param checkpointKey the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder checkpointKey(java.lang.String checkpointKey) {
+            doSetProperty("checkpointKey", checkpointKey);
+            return this;
+        }
+    
+        /**
+         * Durable cursor storage, required for a readChanges consumer. The
+         * repository must persist each update before returning, retain the
+         * previous value on failure, and use finite I/O deadlines. A repository
+         * that is a Camel service and not started yet is started by the
+         * consumer and stopped with it; one the application started stays under
+         * the application's control.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param checkpointRepository the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder checkpointRepository(org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> checkpointRepository) {
+            doSetProperty("checkpointRepository", checkpointRepository);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time to await the readChanges request for one consumer poll,
+         * in milliseconds. Must be positive.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: consumer (advanced)
+         * 
+         * @param changePollTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder changePollTimeout(long changePollTimeout) {
+            doSetProperty("changePollTimeout", changePollTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * Transport for streamedListObjects. Required with an injected
+         * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
+         * this transport's lifecycle. storeId and readTimeout remain required
+         * for streaming.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaStreamingClient&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param streamingClient the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamingClient(org.apache.camel.component.openfga.OpenFgaStreamingClient streamingClient) {
+            doSetProperty("streamingClient", streamingClient);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum characters in one streamed JSON record; must be positive.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 65536
+         * Group: producer (advanced)
+         * 
+         * @param streamMaxLineLength the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamMaxLineLength(int streamMaxLineLength) {
+            doSetProperty("streamMaxLineLength", streamMaxLineLength);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum streamed objects before iteration fails; must be positive. No
+         * partial answer is silently truncated.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: producer (advanced)
+         * 
+         * @param streamMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder streamMaxResults(int streamMaxResults) {
+            doSetProperty("streamMaxResults", streamMaxResults);
             return this;
         }
     
@@ -462,9 +663,29 @@ public interface OpenfgaComponentBuilderFactory {
     
         
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+    
+        
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -503,7 +724,9 @@ public interface OpenfgaComponentBuilderFactory {
          * An existing OpenFgaClient to use. When set, every option describing
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
-         * baked into the client that was handed over.
+         * baked into the client that was handed over. streamedListObjects
+         * additionally needs an explicit streamingClient, a storeId and a
+         * positive readTimeout.
          * 
          * The option is a:
          * &lt;code&gt;dev.openfga.sdk.api.client.OpenFgaClient&lt;/code&gt;
@@ -761,13 +984,15 @@ public interface OpenfgaComponentBuilderFactory {
             switch (name) {
             case "apiUrl": getOrCreateConfiguration((OpenFgaComponent) component).setApiUrl((java.lang.String) value); return true;
             case "authorizationModelId": getOrCreateConfiguration((OpenFgaComponent) component).setAuthorizationModelId((java.lang.String) value); return true;
+            case "batchCheckMode": getOrCreateConfiguration((OpenFgaComponent) component).setBatchCheckMode((org.apache.camel.component.openfga.OpenFgaBatchCheckMode) value); return true;
             case "conditionContext": getOrCreateConfiguration((OpenFgaComponent) component).setConditionContext((java.util.Map) value); return true;
             case "configuration": ((OpenFgaComponent) component).setConfiguration((org.apache.camel.component.openfga.OpenFgaConfiguration) value); return true;
             case "consistency": getOrCreateConfiguration((OpenFgaComponent) component).setConsistency((java.lang.String) value); return true;
             case "contextualTuples": getOrCreateConfiguration((OpenFgaComponent) component).setContextualTuples((java.lang.String) value); return true;
             case "continuationToken": getOrCreateConfiguration((OpenFgaComponent) component).setContinuationToken((java.lang.String) value); return true;
-            case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "object": getOrCreateConfiguration((OpenFgaComponent) component).setObject((java.lang.String) value); return true;
+            case "onDuplicate": getOrCreateConfiguration((OpenFgaComponent) component).setOnDuplicate((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
+            case "onMissing": getOrCreateConfiguration((OpenFgaComponent) component).setOnMissing((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
             case "pageSize": getOrCreateConfiguration((OpenFgaComponent) component).setPageSize((java.lang.Integer) value); return true;
             case "relation": getOrCreateConfiguration((OpenFgaComponent) component).setRelation((java.lang.String) value); return true;
             case "relations": getOrCreateConfiguration((OpenFgaComponent) component).setRelations((java.lang.String) value); return true;
@@ -776,8 +1001,17 @@ public interface OpenfgaComponentBuilderFactory {
             case "type": getOrCreateConfiguration((OpenFgaComponent) component).setType((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((OpenFgaComponent) component).setUser((java.lang.String) value); return true;
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((OpenFgaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "checkpointKey": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointKey((java.lang.String) value); return true;
+            case "checkpointRepository": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointRepository((org.apache.camel.spi.StateRepository) value); return true;
+            case "changePollTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setChangePollTimeout((long) value); return true;
+            case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "streamingClient": getOrCreateConfiguration((OpenFgaComponent) component).setStreamingClient((org.apache.camel.component.openfga.OpenFgaStreamingClient) value); return true;
+            case "streamMaxLineLength": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxLineLength((int) value); return true;
+            case "streamMaxResults": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxResults((int) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;
+            case "maxBatchSize": getOrCreateConfiguration((OpenFgaComponent) component).setMaxBatchSize((int) value); return true;
             case "maxParallelRequests": getOrCreateConfiguration((OpenFgaComponent) component).setMaxParallelRequests((int) value); return true;
             case "maxRetries": getOrCreateConfiguration((OpenFgaComponent) component).setMaxRetries((int) value); return true;
             case "openFgaClient": getOrCreateConfiguration((OpenFgaComponent) component).setOpenFgaClient((dev.openfga.sdk.api.client.OpenFgaClient) value); return true;

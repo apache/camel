@@ -158,6 +158,42 @@ public interface Timestream2EndpointBuilderFactory {
             return this;
         }
         /**
+         * For the query operation: read all the pages of the result, and give
+         * all the rows in one QueryResponse. Without it, the body is one page,
+         * and the CamelAwsTimestreamQueryNextToken header gives the token of
+         * the next page. Not used with pojoRequest.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param queryAllPages the value to set
+         * @return the dsl builder
+         */
+        default Timestream2EndpointBuilder queryAllPages(boolean queryAllPages) {
+            doSetProperty("queryAllPages", queryAllPages);
+            return this;
+        }
+        /**
+         * For the query operation: read all the pages of the result, and give
+         * all the rows in one QueryResponse. Without it, the body is one page,
+         * and the CamelAwsTimestreamQueryNextToken header gives the token of
+         * the next page. Not used with pojoRequest.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param queryAllPages the value to set
+         * @return the dsl builder
+         */
+        default Timestream2EndpointBuilder queryAllPages(String queryAllPages) {
+            doSetProperty("queryAllPages", queryAllPages);
+            return this;
+        }
+        /**
          * The region in which the Timestream client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example, ap-east-1) You'll need to use the name
@@ -997,7 +1033,7 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamQueryValidateOnly";
         }
         /**
-         * The total number of rows to be returned in the Query output.
+         * The maximum number of rows in a page of the Query output.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1007,6 +1043,21 @@ public interface Timestream2EndpointBuilderFactory {
          */
         public String awsTimestreamQueryMaxRows() {
             return "CamelAwsTimestreamQueryMaxRows";
+        }
+        /**
+         * The token of a page of a query result. As input, the query operation
+         * reads the page of this token; as output, it is the token of the next
+         * page, and it is removed after the last page. Set the same query
+         * string to read the next page.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTimestreamQueryNextToken}.
+         */
+        public String awsTimestreamQueryNextToken() {
+            return "CamelAwsTimestreamQueryNextToken";
         }
         /**
          * Max Results to be returned in output.

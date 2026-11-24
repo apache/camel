@@ -148,6 +148,10 @@ class RoutesTab extends AbstractDiagramTab {
      * Keys in the route table view (sort, top mode, description, open diagram, source, start/stop, suspend/resume).
      */
     private boolean handleTableKeys(KeyEvent ke) {
+        if (!diagram.isShowDiagram() && !sourceViewer.isVisible() && ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiAboutSelectedRoute();
+            return true;
+        }
         // Sort (only when not in diagram)
         if (!diagram.isShowDiagram() && ke.isChar('s')) {
             if (routeTopMode) {
@@ -815,6 +819,49 @@ class RoutesTab extends AbstractDiagramTab {
         }
     }
 
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        String label = aiHintLabel();
+        if (label != null) {
+            hint(spans, "Shift+F8", label);
+        }
+    }
+
+    /** The label of Shift+F8 for the selected route: fix its failures, else explain its time; null when not offered. */
+    String aiHintLabel() {
+        if (ctx.askAiCallback == null || diagram.isShowDiagram() || sourceViewer.isVisible()
+                || gotoNodePopup.isVisible()) {
+            return null;
+        }
+        RouteInfo route = selectedRoute();
+        if (route == null) {
+            return null;
+        }
+        if (RouteAiPrompt.hasFailures(route)) {
+            return "fix with AI";
+        }
+        return route.total > 0 ? "explain with AI" : null;
+    }
+
+    /**
+     * Shift+F8 on a route (CAMEL-25362): fix with AI when its exchanges fail, else explain with AI where its time goes.
+     */
+    private void askAiAboutSelectedRoute() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        RouteInfo route = selectedRoute();
+        if (info == null || route == null || ctx.askAiCallback == null) {
+            return;
+        }
+        if (RouteAiPrompt.hasFailures(route)) {
+            ctx.askAiCallback.ask(RouteAiPrompt.ofFailures(info, route));
+        } else if (route.total > 0) {
+            ctx.askAiCallback.ask(RouteAiPrompt.ofPerformance(info, route));
+        } else if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept("No exchanges in this route yet: ask the AI with F8", false);
+        }
+    }
+
     private String routeFromLabel(RouteInfo route) {
         if (showDescription && route.description != null && !route.description.isBlank()) {
             return route.description;
@@ -1014,12 +1061,12 @@ class RoutesTab extends AbstractDiagramTab {
                 || route.processors.stream().anyMatch(p -> p.p50Time >= 0);
         // a column only when a step has body types, as wide as the longest up to a limit: the info panel of the
         // diagram has them all; a space before them sets them apart from the inflight count
-        boolean bodyTypes = route.processors.stream().anyMatch(p -> !p.bodyTypes.isEmpty());
+        boolean bodyTypes = route.processors.stream().anyMatch(p -> !p.bodyTypes.isEmpty() || p.kameletInput != null);
         int bodyColWidth = 0;
         if (bodyTypes) {
             bodyColWidth = CharWidth.of("BODY TYPES");
             for (ProcessorInfo proc : route.processors) {
-                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds)));
+                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(KameletInputs.shortLabel(proc)));
             }
             bodyColWidth = Math.min(bodyColWidth, MAX_BODY_TYPES_WIDTH) + 1;
         }
@@ -1110,8 +1157,8 @@ class RoutesTab extends AbstractDiagramTab {
             cells.add(rightCell(String.valueOf(proc.inflight), 8));
             if (bodyTypes) {
                 cells.add(Cell.from(Span.styled(
-                        " " + TuiHelper.truncate(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds), bodyColWidth - 1),
-                        BodyTypes.style(proc.bodyKinds))));
+                        " " + TuiHelper.truncate(KameletInputs.shortLabel(proc), bodyColWidth - 1),
+                        KameletInputs.style(proc))));
             }
             cells.add(rightCell(procTimingCol, 20));
             cells.add(Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10)));

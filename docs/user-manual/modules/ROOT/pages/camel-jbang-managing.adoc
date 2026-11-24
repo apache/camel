@@ -36,7 +36,9 @@ stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `-
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_ — unless an
 integration has exactly that name: with `dude` and `dude2` running, `camel stop dude` stops only `dude`, and
 `camel stop dude*` stops both. Append `!` to match only that name (`camel stop dude!`), or give the PID.
-A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
+A PID can be a running Camel integration or its launcher, such as the JBang launcher of `camel run`, whose pid test
+tools like Citrus keep. `camel stop` then stops the Camel integrations the launcher started, without signalling the
+launcher. A name or PID that matches nothing exits with code `3`
 (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 
 Restart an integration (stop + re-launch):
@@ -1095,15 +1097,15 @@ xref:next@components:others:chaos.adoc#_chaos_in_a_pipeline[Chaos in a pipeline]
 
 With xref:next@components:others:sanitizer.adoc[camel-sanitizer] (`camel run --sanitizer`), a running integration
 reports where the processors of its routes break the contract of `AsyncProcessor`, such as a callback called twice or a
-processor that throws instead of calling its callback (rule R1), and warns about a step whose callback has not come
-(still pending). With `camel.sanitizer.checks=callback,commit` it also reports where the commit of a consumer runs
-twice, never, or with the outcome of another exchange (rule R2, which is on by default only in tests, as it costs more
-per message):
+processor that throws instead of calling its callback (rule R1), or one that returns a value other than the one its
+callback is called with (rule R3), and warns about a step whose callback has not come (still pending). With
+`camel.sanitizer.checks=callback,commit,threads` it also reports where the commit of a consumer runs twice, never, or
+with the outcome of another exchange (rule R2, which is on by default only in tests, as it costs more per message):
 
 [source,bash]
 ----
 camel run * --sanitizer
-camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit
+camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit,threads
 camel get sanitizer
 camel get sanitizer myapp --report
 ----

@@ -33,7 +33,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -82,6 +81,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
+
     @Option(name = "limit", description = "Filter routes by limiting to the given number of rows")
     int limit;
 
@@ -106,10 +109,6 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     @Option(name = "show-group", hasValue = false, description = "Include group column")
     boolean showGroup;
 
-    public CamelProcessorStatus(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
@@ -133,7 +132,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 row.description = o.getString("description");
                 row.note = o.getString("note");
                 row.nodePrefixId = o.getString("nodePrefixId");
-                row.processor = o.getString("from");
+                row.processor = ListingFormat.masked(o.getString("from"), mask);
                 row.source = o.getString("source");
                 row.state = o.getString("state");
                 Map<String, ?> stats = o.getMap("statistics");

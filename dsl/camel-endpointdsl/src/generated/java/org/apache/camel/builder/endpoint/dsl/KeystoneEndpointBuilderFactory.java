@@ -236,6 +236,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default KeystoneHeaderNameBuilder openstackKeystone() {
             return KeystoneHeaderNameBuilder.INSTANCE;
         }
@@ -256,6 +257,7 @@ public interface KeystoneEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default KeystoneEndpointBuilder openstackKeystone(String path) {
             return KeystoneEndpointBuilderFactory.endpointBuilder("openstack-keystone", path);
         }
@@ -278,6 +280,7 @@ public interface KeystoneEndpointBuilderFactory {
          * @param path host
          * @return the dsl builder
          */
+        @Deprecated
         default KeystoneEndpointBuilder openstackKeystone(String componentName, String path) {
             return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

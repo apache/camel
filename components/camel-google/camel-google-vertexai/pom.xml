@@ -62,6 +62,11 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
+                <!-- Exclude protobuf-java to use the aligned version needed by google-cloud-aiplatform (4.x) -->
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
                 <!-- Exclude auth libraries to use aligned versions from aiplatform -->
                 <exclusion>
                     <groupId>com.google.auth</groupId>
@@ -95,6 +100,15 @@
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-credentials</artifactId>
             <version>${google-auth-library-oauth2-http-version}</version>
+        </dependency>
+        <!-- Explicit protobuf-java dependency: google-genai 2.0.0 declares protobuf-java:3.25.5 as a direct compile
+             dependency, which wins over google-cloud-aiplatform's protobuf 4.x via Maven nearest-wins when the parent
+             dependencyManagement is not in scope (e.g. Camel JBang, standalone apps). Pin to the 4.x version needed
+             by proto-google-cloud-aiplatform-v1. -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf-version}</version>
         </dependency>
 
         <!-- for testing -->

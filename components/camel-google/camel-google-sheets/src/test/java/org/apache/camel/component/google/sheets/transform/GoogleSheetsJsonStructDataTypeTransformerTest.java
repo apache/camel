@@ -240,10 +240,11 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     @Test
     public void testTransformToValueRangeRowDimension() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
 
         String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
+                       "\"spreadsheetId\": \"other-spreadsheet\"," +
                        "\"A\": \"a1\"," +
                        "\"B\": \"b1\"" +
                        "}";
@@ -252,6 +253,8 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(spreadsheetId,
+                inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId"));
         Assertions.assertEquals("A1:B1", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
         Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
@@ -267,11 +270,12 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     @Test
     public void testTransformToValueRangeColumnNames() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "Foo,Bar");
 
         String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
+                       "\"spreadsheetId\": \"other-spreadsheet\"," +
                        "\"Foo\": \"a1\"," +
                        "\"Bar\": \"b1\"" +
                        "}";
@@ -280,6 +284,8 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(spreadsheetId,
+                inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId"));
         Assertions.assertEquals("A1:B1", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
         Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
@@ -293,14 +299,51 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     }
 
     @Test
+    public void testTransformToValueRangeKeepsTheSpreadsheetOfTheHeader() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B2");
+
+        inbound.getMessage().setBody("[{\"spreadsheetId\": \"other-1\", \"A\": \"a1\", \"B\": \"b1\"},"
+                                     + " {\"spreadsheetId\": \"other-2\", \"A\": \"a2\", \"B\": \"b2\"}]");
+
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(spreadsheetId,
+                inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId"));
+
+        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        Assertions.assertEquals(Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")), valueRange.getValues());
+    }
+
+    @Test
+    public void testTransformToValueRangeWithoutSpreadsheetHeaderLeavesTheSpreadsheetToTheEndpoint() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
+
+        inbound.getMessage().setBody("{\"spreadsheetId\": \"other-spreadsheet\", \"A\": \"a1\", \"B\": \"b1\"}");
+
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        // no header, so the producer uses the spreadsheetId option of the endpoint
+        Assertions.assertNull(inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertNull(inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId"));
+
+        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        Assertions.assertEquals(Collections.singletonList(Arrays.asList("a1", "b1")), valueRange.getValues());
+    }
+
+    @Test
     public void testTransformToValueRangeColumnDimension() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:A2");
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension",
                 RangeCoordinate.DIMENSION_COLUMNS);
 
         String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
+                       "\"spreadsheetId\": \"other-spreadsheet\"," +
                        "\"#1\": \"a1\"," +
                        "\"#2\": \"a2\"" +
                        "}";
@@ -309,6 +352,8 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(spreadsheetId,
+                inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId"));
         Assertions.assertEquals("A1:A2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
         Assertions.assertEquals(RangeCoordinate.DIMENSION_COLUMNS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));

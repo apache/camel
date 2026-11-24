@@ -21,6 +21,12 @@ import org.apache.camel.spi.Metadata;
 public final class FCHeaders {
 
     @Metadata(label = "producer",
+              description = "The operation that the producer performs. This header replaces the operation option. If this"
+                            + " header is not set, an exchange property of the same name replaces the operation option.",
+              javaType = "String")
+    public static final String OPERATION = FCProperties.OPERATION;
+
+    @Metadata(label = "producer",
               description = "The name of the service that contains the function. This header replaces the serviceName option."
                             + " If this header is not set, an exchange property of the same name replaces the serviceName"
                             + " option.",

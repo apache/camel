@@ -33,6 +33,11 @@
     <name>Camel :: Spring AI :: Vector Store</name>
     <description>Spring AI Vector Store</description>
 
+    <properties>
+        <!-- Qdrant is not available on these platforms -->
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

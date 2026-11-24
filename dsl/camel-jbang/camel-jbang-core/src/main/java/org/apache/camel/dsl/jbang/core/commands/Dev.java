@@ -26,10 +26,6 @@ import org.aesh.command.CommandDefinition;
                            "  camel dev --port=8080" })
 public class Dev extends Run {
 
-    public Dev(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // always enable dev mode

@@ -26,6 +26,7 @@ camel top processor [options]
 | `--group` | Filter processors by group |  | String[]
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter routes by limiting to the given number of rows |  | int
+| `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys | true | boolean
 | `--note` | Include note in the ID column (if available) |  | boolean
 | `--remote` | Break down counters into remote/total pairs |  | boolean
 | `--running` | Only include running processors |  | boolean

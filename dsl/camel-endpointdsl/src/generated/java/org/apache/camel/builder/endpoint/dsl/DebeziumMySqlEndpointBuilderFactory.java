@@ -931,42 +931,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Only relevant if parallel snapshotting is configured. During parallel
-         * snapshotting, multiple (4) connections open to the database client,
-         * and they each need their own unique connection ID. This offset is
-         * used to generate those IDs from the base configured cluster ID.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: mysql
-         * 
-         * @param databaseServerIdOffset the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMySqlEndpointBuilder databaseServerIdOffset(long databaseServerIdOffset) {
-            doSetProperty("databaseServerIdOffset", databaseServerIdOffset);
-            return this;
-        }
-        /**
-         * Only relevant if parallel snapshotting is configured. During parallel
-         * snapshotting, multiple (4) connections open to the database client,
-         * and they each need their own unique connection ID. This offset is
-         * used to generate those IDs from the base configured cluster ID.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: mysql
-         * 
-         * @param databaseServerIdOffset the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMySqlEndpointBuilder databaseServerIdOffset(String databaseServerIdOffset) {
-            doSetProperty("databaseServerIdOffset", databaseServerIdOffset);
-            return this;
-        }
-        /**
          * The location of the key store file. This is optional and can be used
          * for two-way authentication between the client and the database.
          * 
@@ -3609,6 +3573,24 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
             doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
+        /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is unavailable and not provided by the
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string represents hexadecimal encoded octets.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: __debezium_unavailable_value
+         * Group: mysql
+         * 
+         * @param unavailableValuePlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder unavailableValuePlaceholder(String unavailableValuePlaceholder) {
+            doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
             return this;
         }
         /**

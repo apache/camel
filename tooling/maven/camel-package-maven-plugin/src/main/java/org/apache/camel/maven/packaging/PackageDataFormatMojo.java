@@ -299,10 +299,17 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         });
     }
 
+    private static Set<String> asNames(String properties) {
+        return Stream.of(properties.split(",")).map(String::trim).filter(n -> !n.isEmpty()).collect(Collectors.toSet());
+    }
+
     private static DataFormatModel extractDataFormatModel(
             MavenProject project, String json, String name, Class<?> javaType,
             String includedProperties, String excludedProperties) {
         EipModel def = JsonMapper.generateEipModel(json);
+        // the names are matched whole, so that excluding schemaResolver keeps an option named schema
+        Set<String> excluded = asNames(excludedProperties);
+        Set<String> included = asNames(includedProperties);
         DataFormatModel model = new DataFormatModel();
         model.setName(name);
         model.setTitle(asModelTitle(name, def.getTitle()));
@@ -333,11 +340,11 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         for (EipOptionModel opt : def.getOptions()) {
             DataFormatOptionModel option = new DataFormatOptionModel();
 
-            if (excludedProperties.contains(opt.getName())) {
+            if (excluded.contains(opt.getName())) {
                 // skip excluded
                 continue;
             }
-            if (!includedProperties.isEmpty() && !includedProperties.contains(opt.getName())) {
+            if (!included.isEmpty() && !included.contains(opt.getName())) {
                 // skip if not included
                 continue;
             }

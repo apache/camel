@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier.language;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +24,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.util.ObjectHelper;
 
 public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<XQueryExpression> {
 
@@ -31,8 +33,17 @@ public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<X
     }
 
     private Map<String, String> resolveNamespaces() {
+        // the inline namespaces: the mappings of namespaceMappings, and the namespace entries, which win for the same prefix
+        Map<String, String> inline = new LinkedHashMap<>();
+        String mappings = parseString(definition.getNamespaceMappings());
+        if (ObjectHelper.isNotEmpty(mappings)) {
+            inline.putAll(new Namespaces(mappings).getNamespaces());
+        }
         if (definition.getNamespaces() != null && !definition.getNamespaces().isEmpty()) {
-            return parseMap(definition.getNamespaces());
+            inline.putAll(parseMap(definition.getNamespaces()));
+        }
+        if (!inline.isEmpty()) {
+            return inline;
         }
         if (definition.getNamespacesRef() != null) {
             return parseMap(mandatoryLookup(definition.getNamespacesRef(), Namespaces.class).getNamespaces());

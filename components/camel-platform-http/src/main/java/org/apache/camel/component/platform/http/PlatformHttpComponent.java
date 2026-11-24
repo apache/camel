@@ -65,6 +65,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     @Metadata(label = "advanced,consumer",
               description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
+    @Metadata(label = "advanced,consumer", defaultValue = "false",
+              description = "Whether the consumers route each request synchronously, as the default for the endpoints of this"
+                            + " component. When true, the route runs on a thread of the Vert.x worker pool, which waits until the"
+                            + " route is complete, so the size of the worker pool limits how many requests are routed at the same"
+                            + " time. When false, the worker thread is free as soon as the route continues on another thread"
+                            + " (such as an asynchronous producer). See the synchronous endpoint option."
+                            + " (currently only supported by camel-platform-http-vertx)")
+    private boolean synchronous;
     @Metadata(label = "advanced,consumer", defaultValue = "true",
               description = "Whether HTTP server should do preliminary validation of incoming requests, validating if Content-Type/Accept header, matches what"
                             + " is allowed according to consumes/produces configuration (if set). If validation fails HTTP Status 415/406 is returned."
@@ -92,6 +100,7 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         endpoint.setPlatformHttpEngine(engine);
         endpoint.setHandleWriteResponseError(handleWriteResponseError);
         endpoint.setRequestTimeout(requestTimeout);
+        endpoint.setSynchronous(synchronous);
         setEndpointHeaderFilterStrategy(endpoint);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -295,6 +304,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public boolean isServerRequestValidation() {

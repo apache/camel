@@ -311,8 +311,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "skipMessagesWithoutChange": target.getConfiguration().setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": target.getConfiguration().setSnapshotDatabaseErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
@@ -663,8 +661,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": return int.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
         case "snapshotfetchsize":
@@ -1016,8 +1012,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "skipMessagesWithoutChange": return target.getConfiguration().isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
-        case "snapshotdatabaseerrorsmaxretries":
-        case "snapshotDatabaseErrorsMaxRetries": return target.getConfiguration().getSnapshotDatabaseErrorsMaxRetries();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":

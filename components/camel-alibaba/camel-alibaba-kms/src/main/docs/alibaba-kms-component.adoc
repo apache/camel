@@ -57,8 +57,11 @@ The component supports the following operations:
 `encrypt` encrypts the `plaintext` option or the `CamelAlibabaKmsPlaintext` header when one is set, else the message
 body. A `String` is encrypted in UTF-8, and a `byte[]`, an `InputStream` or a file as its bytes, so binary data is
 kept. The component sends these bytes to KMS in Base64, so the `plaintext` that `decrypt` returns for them is Base64:
-decode it to get the original bytes back. A `Map` or a POJO does not convert to bytes and fails with an
-`InvalidPayloadException`, so marshal it first. A message without a body fails with an `IllegalArgumentException`.
+decode it to get the original bytes back. A `Map` or a POJO fails instead of being encrypted as its `toString()`: in
+the body with an `InvalidPayloadException`, and in the header or in the exchange property of the same name with an
+`IllegalArgumentException`. Marshal such a value first, for example with `marshal().json()`. A value whose text is
+its `toString()`, such as a `UUID`, a `URI` or a `java.time` value, is encrypted as that text. A message without a
+body fails with an `IllegalArgumentException`.
 
 === Producer example
 

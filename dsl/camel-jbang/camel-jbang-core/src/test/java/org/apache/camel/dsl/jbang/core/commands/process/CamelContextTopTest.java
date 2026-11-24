@@ -39,7 +39,7 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
         addMemoryAndThreads(status, 256_000_000L, 8, 10);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextTop command = new CamelContextTop(new CamelJBangMain().withPrinter(printer));
+        CamelContextTop command = new CamelJBangMain().withPrinter(printer).command(new CamelContextTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -68,7 +68,7 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
         stats.put("load15", "0.05");
         writeStatusFile(TEST_PID, status);
 
-        CamelContextTop command = new CamelContextTop(new CamelJBangMain().withPrinter(printer));
+        CamelContextTop command = new CamelJBangMain().withPrinter(printer).command(new CamelContextTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -107,7 +107,7 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
     }
 
     private void assertHighBeforeLow(long firstPid, long secondPid) throws Exception {
-        CamelContextTop command = new CamelContextTop(new CamelJBangMain().withPrinter(printer));
+        CamelContextTop command = new CamelJBangMain().withPrinter(printer).command(new CamelContextTop());
         command.sort = "mem";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -130,7 +130,7 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelContextTop command = new CamelContextTop(new CamelJBangMain().withPrinter(printer));
+        CamelContextTop command = new CamelJBangMain().withPrinter(printer).command(new CamelContextTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -151,7 +151,7 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
         addMemoryAndThreads(status, 128_000_000L, 4, 4);
         writeStatusFile(TEST_PID, status);
 
-        CamelContextTop command = new CamelContextTop(new CamelJBangMain().withPrinter(printer));
+        CamelContextTop command = new CamelJBangMain().withPrinter(printer).command(new CamelContextTop());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

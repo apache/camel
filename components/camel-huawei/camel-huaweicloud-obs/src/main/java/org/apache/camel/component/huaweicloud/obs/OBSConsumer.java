@@ -184,12 +184,16 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             // update number of pending exchanges
             pendingExchanges = total - index - 1;
 
+            // the object to move or delete once the exchange is done. It is taken now, as the route may change or
+            // remove the bucket and key headers before it ends (the producer takes the bucket to write to from the
+            // bucket name header)
+            final String bucketName = exchange.getIn().getHeader(OBSHeaders.BUCKET_NAME, String.class);
             final String objectKey = exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     try {
-                        processComplete(exchange);
+                        processComplete(bucketName, objectKey);
                     } finally {
                         inProgress.remove(objectKey);
                     }
@@ -328,12 +332,13 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * To handle the exchange after it has been processed
+     * Moves or deletes the consumed object after its exchange has been processed, with {@code moveAfterRead} or
+     * {@code deleteAfterRead}.
+     *
+     * @param bucketName the bucket the object was consumed from
+     * @param objectKey  the key of the consumed object
      */
-    private void processComplete(Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(OBSHeaders.BUCKET_NAME, String.class);
-        String objectKey = exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class);
-
+    private void processComplete(String bucketName, String objectKey) {
         // copy object to destination bucket
         if (endpoint.isMoveAfterRead()) {
             obsClient.copyObject(bucketName, objectKey, endpoint.getDestinationBucket(), objectKey);

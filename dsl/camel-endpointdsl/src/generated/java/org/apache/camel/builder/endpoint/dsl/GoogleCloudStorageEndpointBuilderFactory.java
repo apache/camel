@@ -1308,6 +1308,42 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Cloud Storage class of the objects that the producer uploads.
+         * When not set, an object gets the default storage class of its bucket.
+         * The CamelGoogleCloudStorageStorageClass header overrides it per
+         * message.
+         * 
+         * The option is a: <code>com.google.cloud.storage.StorageClass</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param objectStorageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder objectStorageClass(com.google.cloud.storage.StorageClass objectStorageClass) {
+            doSetProperty("objectStorageClass", objectStorageClass);
+            return this;
+        }
+        /**
+         * The Cloud Storage class of the objects that the producer uploads.
+         * When not set, an object gets the default storage class of its bucket.
+         * The CamelGoogleCloudStorageStorageClass header overrides it per
+         * message.
+         * 
+         * The option will be converted to a
+         * <code>com.google.cloud.storage.StorageClass</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param objectStorageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder objectStorageClass(String objectStorageClass) {
+            doSetProperty("objectStorageClass", objectStorageClass);
+            return this;
+        }
+        /**
          * Set the operation for the producer.
          * 
          * The option is a:
@@ -2088,7 +2124,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return "CamelGoogleCloudStorageMetageneration";
         }
         /**
-         * The storage class of the object.
+         * The storage class of the object. When uploading an object, it sets
+         * the storage class of the object, and takes precedence over the
+         * objectStorageClass option; a name such as NEARLINE can be given.
          * 
          * The option is a: {@code com.google.cloud.storage.StorageClass} type.
          * 

@@ -50,19 +50,24 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long startTime = System.currentTimeMillis() + 500;
+                    // the route does not auto start (see below), so the scheduled start is the only way to start it;
+                    // the delay leaves time to check that the route is stopped before the trigger fires
+                    long startTime = System.currentTimeMillis() + 2000;
                     policy.setRouteStartDate(new Date(startTime));
                     policy.setRouteStartRepeatCount(1);
                     policy.setRouteStartRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
+                            .autoStartup(false)
                             .routePolicy(policy)
                             .to("mock:success");
                 }
             });
             context.start();
-            context.getRouteController().stopRoute("test");
+
+            // the route is not started until the scheduled start fires
+            assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
 
             Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));

@@ -217,6 +217,23 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
+== Lazy session creation
+
+By default, the producer connects to the SMSC when it starts. With `lazySessionCreation=true`, it connects when it
+sends the first message instead, so the route can start while the SMSC is not available.
+
+The producer connects with the `systemId` and `password` of the endpoint. To connect with another system id and
+password chosen by the route, set `allowSystemIdAndPasswordFromHeaders=true` as well: the producer then takes them
+from the `CamelSmppSystemId` and `CamelSmppPassword` headers of the first message, when both are set, and keeps using
+them when it reconnects. Without this option, these headers are ignored.
+
+----
+smpp://localhost:2775?lazySessionCreation=true&allowSystemIdAndPasswordFromHeaders=true
+----
+
+Enable `allowSystemIdAndPasswordFromHeaders` only when the route sets these headers itself, and remove them from
+messages that come from elsewhere.
+
 == Exception handling
 
 This component supports the general Camel exception handling

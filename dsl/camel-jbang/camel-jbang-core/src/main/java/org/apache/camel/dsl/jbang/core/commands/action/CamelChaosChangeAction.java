@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
 
@@ -50,10 +49,6 @@ public class CamelChaosChangeAction extends CamelChaosAction {
     @Option(name = "rule", description = "The new rule, one rule in its one-line text form, as one entry of camel.chaos.rules",
             required = true)
     String rule;
-
-    public CamelChaosChangeAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

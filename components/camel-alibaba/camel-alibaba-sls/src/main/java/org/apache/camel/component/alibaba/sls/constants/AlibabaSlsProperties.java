@@ -16,59 +16,24 @@
  */
 package org.apache.camel.component.alibaba.sls.constants;
 
-import org.apache.camel.spi.Metadata;
-
 public final class AlibabaSlsProperties {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaSlsOperation";
-
-    @Metadata(label = "producer", description = "SLS project name override", javaType = "String")
     public static final String PROJECT = "CamelAlibabaSlsProject";
-
-    @Metadata(label = "producer", description = "SLS log store name override", javaType = "String")
     public static final String LOG_STORE_NAME = "CamelAlibabaSlsLogStoreName";
-
-    @Metadata(label = "producer", description = "Log query string override", javaType = "String")
     public static final String QUERY = "CamelAlibabaSlsQuery";
-
-    @Metadata(label = "producer", description = "Query start time override (Unix timestamp in seconds)", javaType = "Integer")
     public static final String FROM = "CamelAlibabaSlsFrom";
-
-    @Metadata(label = "producer", description = "Query end time override (Unix timestamp in seconds)", javaType = "Integer")
     public static final String TO = "CamelAlibabaSlsTo";
-
-    @Metadata(label = "producer", description = "Maximum number of log lines to return", javaType = "Long")
     public static final String LINE = "CamelAlibabaSlsLine";
-
-    @Metadata(label = "producer", description = "Log query offset", javaType = "Long")
     public static final String OFFSET = "CamelAlibabaSlsOffset";
-
-    @Metadata(label = "producer", description = "Log topic filter override", javaType = "String")
     public static final String TOPIC = "CamelAlibabaSlsTopic";
-
-    @Metadata(label = "producer", description = "Whether to return logs in reverse order", javaType = "Boolean")
     public static final String REVERSE = "CamelAlibabaSlsReverse";
-
-    @Metadata(label = "producer", description = "Log store name prefix filter for listLogStores", javaType = "String")
-    public static final String LOGSTORE_NAME = "CamelAlibabaSlsLogstoreName";
-
-    @Metadata(label = "producer", description = "List mode for listLogStores", javaType = "String")
+    public static final String LOGSTORE_NAME = "CamelAlibabaSlsListLogStoreName";
     public static final String MODE = "CamelAlibabaSlsMode";
-
-    @Metadata(label = "producer", description = "Page size for listLogStores", javaType = "Integer")
     public static final String SIZE = "CamelAlibabaSlsSize";
-
-    @Metadata(label = "producer", description = "Pagination offset for listLogStores", javaType = "Integer")
     public static final String LIST_OFFSET = "CamelAlibabaSlsListOffset";
-
-    @Metadata(label = "producer", description = "Telemetry type filter for listLogStores", javaType = "String")
     public static final String TELEMETRY_TYPE = "CamelAlibabaSlsTelemetryType";
-
-    @Metadata(label = "producer", description = "Request id returned by SLS", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaSlsRequestId";
-
-    @Metadata(label = "producer", description = "HTTP status code from SLS response", javaType = "Integer")
     public static final String STATUS_CODE = "CamelAlibabaSlsStatusCode";
 
     private AlibabaSlsProperties() {

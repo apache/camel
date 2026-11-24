@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.spi.InMemoryStrategy;
 import org.atmosphere.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class MemoryWebSocketStore implements WebSocketStore {
+public class MemoryWebSocketStore implements WebSocketStore, InMemoryStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(MemoryWebSocketStore.class);
 
     private Map<String, WebSocket> values;
@@ -36,6 +37,11 @@ public class MemoryWebSocketStore implements WebSocketStore {
     public MemoryWebSocketStore() {
         values = new ConcurrentHashMap<>();
         keys = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public boolean isInMemory() {
+        return true;
     }
 
     /* (non-Javadoc)

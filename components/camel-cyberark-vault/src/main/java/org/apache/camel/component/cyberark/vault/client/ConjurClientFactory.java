@@ -35,7 +35,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.cyberark.vault.client.impl.ConjurClientImpl;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,16 +135,17 @@ public final class ConjurClientFactory {
     /**
      * Create the SSL context for the HTTPS connections to Conjur, from the verifySsl and certificatePath options.
      *
+     * @param  camelContext             the Camel context, to load a classpath: resource
      * @param  verifySsl                whether to verify the certificate and the host name of the server. When false,
      *                                  any server is trusted and the certificate path is not used.
-     * @param  certificatePath          the path of a file with the certificates (PEM or DER) to trust instead of the
-     *                                  default trust store of the JVM, for example the certificate of a private CA, or
-     *                                  null
+     * @param  certificatePath          the file with the certificates (PEM or DER) to trust instead of the default
+     *                                  trust store of the JVM, for example the certificate of a private CA, or null. A
+     *                                  path of the file system, or a resource with the file: or classpath: prefix.
      * @return                          the SSL context, or null to use the default SSL context of the JVM
      * @throws IOException              if the certificate file cannot be read
      * @throws GeneralSecurityException if the file has no certificate, or the SSL context cannot be created
      */
-    public static SSLContext createSslContext(boolean verifySsl, String certificatePath)
+    public static SSLContext createSslContext(CamelContext camelContext, boolean verifySsl, String certificatePath)
             throws IOException, GeneralSecurityException {
         if (!verifySsl) {
             LOG.warn("SSL verification is disabled (verifySsl=false): the certificate and the host name of the"
@@ -156,7 +159,7 @@ public final class ConjurClientFactory {
         }
 
         Collection<? extends Certificate> certificates;
-        try (InputStream in = Files.newInputStream(Path.of(certificatePath))) {
+        try (InputStream in = openCertificate(camelContext, certificatePath)) {
             certificates = CertificateFactory.getInstance("X.509").generateCertificates(in);
         }
         if (certificates.isEmpty()) {
@@ -173,6 +176,24 @@ public final class ConjurClientFactory {
         SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
         sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
         return sslContext;
+    }
+
+    /**
+     * Opens the file of the certificatePath option: a classpath: or file: resource, or a path of the file system when
+     * there is no prefix. Other prefixes, such as http:, are rejected, as the certificates to trust should not come
+     * from the network.
+     */
+    private static InputStream openCertificate(CamelContext camelContext, String certificatePath) throws IOException {
+        if (certificatePath.startsWith("classpath:") || certificatePath.startsWith("file:")) {
+            return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, certificatePath);
+        }
+        // a prefix has at least two letters, so a Windows drive such as C: is a path of the file system
+        if (certificatePath.matches("[a-zA-Z][a-zA-Z0-9+.-]+:.*")) {
+            throw new IllegalArgumentException(
+                    "The certificatePath option only supports the classpath: and file: prefixes, or a path of the file"
+                                               + " system: " + certificatePath);
+        }
+        return Files.newInputStream(Path.of(certificatePath));
     }
 
     /**

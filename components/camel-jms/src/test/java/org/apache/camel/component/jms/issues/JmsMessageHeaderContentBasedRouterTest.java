@@ -36,6 +36,10 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  */
 public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
 
+    private static final String START_QUEUE
+            = queueNameForClass("activemq:queue:JmsMessageHeaderContentBasedRouterTest.start",
+                    JmsMessageHeaderContentBasedRouterTest.class);
+
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
@@ -48,7 +52,7 @@ public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:JmsInOutRoutingSlipTest.start", "Hello World");
+        template.sendBody(START_QUEUE, "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -66,7 +70,7 @@ public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
                 Predicate isA = header("route").isEqualTo("a");
                 Predicate isB = header("route").isEqualTo("b");
 
-                from("activemq:queue:JmsInOutRoutingSlipTest.start")
+                from(START_QUEUE)
                         .bean(MyPreProcessorBean.class, "determineRouting")
                         .choice()
                         .when(isA).to("mock:a")

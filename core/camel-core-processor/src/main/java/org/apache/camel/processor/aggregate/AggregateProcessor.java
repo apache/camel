@@ -137,6 +137,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     private ExceptionHandler exceptionHandler;
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
+    // with optimistic locking: the correlation keys of the groups that a completion is removing from the repository,
+    // and that are put in closedCorrelationKeys once removed (correlation key -> number of such completions)
+    private final Map<String, Integer> closingCorrelationKeys = new ConcurrentHashMap<>();
     private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
     private final Set<String> inProgressCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final WaitableInteger inProgressCount = new WaitableInteger();
@@ -581,6 +584,9 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         Exchange answer;
         Exchange originalExchange = aggregationRepository.get(newExchange.getContext(), key);
+        if (optimisticLocking && closedCorrelationKeys != null) {
+            checkClosedCorrelationKey(key, newExchange);
+        }
         Exchange oldExchange = originalExchange;
 
         Integer size = 1;
@@ -730,6 +736,30 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
+    }
+
+    /**
+     * With optimistic locking, checks the correlation key again after the group was read from the repository.
+     * <p>
+     * The check before the read is not enough, as there is no lock: a completion can remove the group from the
+     * repository after that check, and close the key only after the read, which then finds no group and would start a
+     * new group for the closed key. A completion therefore marks the key as closing before it removes the group (see
+     * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), and this check runs after the read: if the
+     * read found no group because a completion removed it, the key is seen as closing or closed. If the read found the
+     * group, adding to it fails when a completion removes it (optimistic locking), and is tried again.
+     * <p>
+     * The closing keys are read before the closed keys, as a completion closes the key before it ends the closing.
+     */
+    private void checkClosedCorrelationKey(String key, Exchange exchange) throws ClosedCorrelationKeyException {
+        if (closingCorrelationKeys.containsKey(key)) {
+            // the completion may still fail (optimistic locking) and leave the key open, so try again, and the next
+            // attempt is rejected once the key is closed
+            LOG.trace("The group with correlation key: {} is being completed, will try again", key);
+            throw new OptimisticLockingAggregationRepository.OptimisticLockingException();
+        }
+        if (closedCorrelationKeys.containsKey(key)) {
+            throw new ClosedCorrelationKeyException(key, exchange);
+        }
     }
 
     protected void doAggregationComplete(
@@ -938,11 +968,22 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (completing) {
             markCompleting(aggregated.getExchangeId());
         }
+        // with optimistic locking there is no lock, so the key is marked as closing from before the group is removed
+        // until the key is closed (or the remove failed), see checkClosedCorrelationKey. The mark is kept apart from
+        // the closed keys, so a remove that fails (the group was changed or completed by another thread) never reopens
+        // a key that another completion has closed, and a bounded (LRU) closed keys cache cannot evict it.
+        final boolean closing = original != null && optimisticLocking && closedCorrelationKeys != null;
+        if (closing) {
+            closingCorrelationKeys.merge(key, 1, Integer::sum);
+        }
         Exchange answer = null;
         try {
             answer = doOnCompletion(key, original, aggregated, fromTimeout, aggregateFailed);
             return answer;
         } finally {
+            if (closing) {
+                closingCorrelationKeys.computeIfPresent(key, (k, count) -> count > 1 ? count - 1 : null);
+            }
             if (completing && answer == null) {
                 // not removed, or not to be sent
                 unmarkCompleting(aggregated.getExchangeId());
@@ -1917,8 +1958,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                                                         exchange,
                                                         exchange.getException());
                                     } else {
-                                        // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
-                                        recoverable.confirm(camelContext, exchangeId);
+                                        // it was ok, so it is done (remove its redelivery state as well), and confirm it,
+                                        // so we wont recover it again
+                                        redeliveryState.remove(exchange.getExchangeId());
+                                        confirmMovedToDeadLetter(exchangeId);
                                     }
                                 } else {
                                     // update current redelivery state
@@ -1989,6 +2032,28 @@ public class AggregateProcessor extends BaseProcessorSupport
                 LOG.debug("Removal of exchange {} confirmed.", exchangeId);
             } else {
                 LOG.warn("Still unable to confirm removal of exchange {}.", exchangeId);
+            }
+        }
+
+        private void confirmMovedToDeadLetter(String exchangeId) {
+            boolean confirmed;
+            try {
+                confirmed = recoverable.confirmWithResult(camelContext, exchangeId);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // as when it returns false, and go on with the other exchanges of the scan
+                LOG.warn("Error confirming the recovered exchange with id: {}, which was moved to the dead letter channel."
+                         + " It is kept as not confirmed: the recover task will try to confirm it again, and will not move it"
+                         + " again.",
+                        exchangeId, e);
+                confirmed = false;
+            }
+            if (!confirmed) {
+                // keep it as not confirmed, as a processed exchange whose confirm failed (AggregateOnCompletion), so the
+                // recover task tries to confirm it again instead of recovering it and moving it again
+                unconfirmedCompleteExchanges.add(exchangeId);
             }
         }
     }

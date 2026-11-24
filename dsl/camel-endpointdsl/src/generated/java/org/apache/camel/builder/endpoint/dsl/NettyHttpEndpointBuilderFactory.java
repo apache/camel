@@ -1393,8 +1393,12 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a shared Netty HTTP server. See Netty HTTP Server Example for
-         * more details.
+         * To use a shared Netty HTTP server, so that several applications in
+         * one JVM can use the same port. Deprecation note: The shared Netty
+         * HTTP server was added for OSGi/Karaf, so that several applications in
+         * one JVM could use the same port. Use a netty-http consumer per port,
+         * where several routes can use the same port, or the platform-http
+         * component.
          * 
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
@@ -1404,13 +1408,18 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param nettySharedHttpServer the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(org.apache.camel.component.netty.http.NettySharedHttpServer nettySharedHttpServer) {
             doSetProperty("nettySharedHttpServer", nettySharedHttpServer);
             return this;
         }
         /**
-         * To use a shared Netty HTTP server. See Netty HTTP Server Example for
-         * more details.
+         * To use a shared Netty HTTP server, so that several applications in
+         * one JVM can use the same port. Deprecation note: The shared Netty
+         * HTTP server was added for OSGi/Karaf, so that several applications in
+         * one JVM could use the same port. Use a netty-http consumer per port,
+         * where several routes can use the same port, or the platform-http
+         * component.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
@@ -1420,6 +1429,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param nettySharedHttpServer the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(String nettySharedHttpServer) {
             doSetProperty("nettySharedHttpServer", nettySharedHttpServer);
             return this;

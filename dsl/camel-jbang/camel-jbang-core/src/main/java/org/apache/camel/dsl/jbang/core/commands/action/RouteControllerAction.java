@@ -30,7 +30,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -88,10 +87,6 @@ public class RouteControllerAction extends ActionWatchCommand {
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
-
-    public RouteControllerAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doWatchCall() throws Exception {

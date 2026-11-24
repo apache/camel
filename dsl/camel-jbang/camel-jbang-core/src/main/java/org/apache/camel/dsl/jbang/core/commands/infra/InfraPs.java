@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "ps", description = "Displays running services", generateHelp = true,
                    footer = {
@@ -33,10 +32,6 @@ public class InfraPs extends InfraBaseCommand {
 
     @Arguments(description = "Service name")
     List<String> serviceName;
-
-    public InfraPs(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected boolean showPidColumn() {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.Map;
+
 /**
  * Optional Micrometer Observation backend for GenAI operations. Implementations must not expose Micrometer Observation
  * types on this interface so {@link GenAiObservabilityImpl} can load without micrometer-observation on the classpath.
@@ -25,12 +27,17 @@ interface GenAiMicrometerObservationBackend {
     boolean isAvailable();
 
     /**
-     * Starts a Micrometer Observation for the GenAI client call. Returns {@code null} when the registry produces a
-     * no-op Observation.
+     * Starts a Micrometer Observation for the GenAI client call, nested under {@code parent} when not {@code null}.
+     * Returns {@code null} when the registry produces a no-op Observation.
      */
-    Handle start(GenAiObservationContext context);
+    Handle start(GenAiObservationContext context, Handle parent);
 
     interface Handle {
-        void stop(Throwable error);
+
+        /**
+         * Stops the Observation, adding the attributes collected for the call as high-cardinality key values (they
+         * reach the trace, never the metric tags).
+         */
+        void stop(Map<String, Object> attributes, Throwable error);
     }
 }

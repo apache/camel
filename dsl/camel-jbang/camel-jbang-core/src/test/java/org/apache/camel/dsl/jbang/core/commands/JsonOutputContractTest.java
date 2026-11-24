@@ -241,8 +241,8 @@ class JsonOutputContractTest {
 
         @Override
         public void postAddCommands(CommandTree commandLine, String[] args) {
-            commandLine.addSubcommand("test-fail", new CommandTree(new FailCommand(this)));
-            commandLine.addSubcommand("test-crash", new CommandTree(new CrashCommand(this)));
+            commandLine.addSubcommand("test-fail", new CommandTree(command(new FailCommand())));
+            commandLine.addSubcommand("test-crash", new CommandTree(command(new CrashCommand())));
         }
 
         @Override
@@ -262,10 +262,6 @@ class JsonOutputContractTest {
         @Option(name = "json", hasValue = false)
         boolean json;
 
-        FailCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         public Integer doCall() {
             throw new CliException(code, message);
@@ -276,10 +272,6 @@ class JsonOutputContractTest {
     static class CrashCommand extends CamelCommand {
         @Option(name = "json", hasValue = false)
         boolean json;
-
-        CrashCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         public Integer doCall() {

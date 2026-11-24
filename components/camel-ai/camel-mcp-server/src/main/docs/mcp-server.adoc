@@ -191,7 +191,7 @@ and stdio. Changes to prompt routes are announced with
 === Tool annotation hints
 
 `ai-tool` routes can declare optional MCP `ToolAnnotations` hints
-(`title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`).
+(`title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`, `returnDirect`).
 The bridge passes them through to the MCP engine. See
 xref:ROOT:ai-tool-component.adoc#_mcp_tool_annotation_hints[MCP Tool Annotation Hints]
 for configuration examples. Hints are advisory UX metadata only — not authorization.
@@ -218,7 +218,16 @@ Tag patterns support wildcards: use `+*+` to expose all tagged tools, or a
 prefix pattern like `+crm*+` to expose all tags starting with `crm`:
 
 The MCP endpoint is then served at `http://<host>:<port>/mcp` on the Camel
-main HTTP server. Any MCP client can connect over streamable HTTP, for
+main HTTP server.
+
+On Camel JBang (`camel run`), `camel.server.mcp-enabled = true` turns the HTTP server on by itself, so
+`camel.server.enabled = true` can be left out, and `camel-mcp-server` and `camel-platform-http-main` are downloaded on
+demand. As `camel.server.enabled`, the `camel.server.mcp-*` options work from every property source:
+`application.properties`, `--prop`, JVM system properties (`-D`) and environment variables, for example
+`camel run tools.yaml --prop camel.server.mcp-enabled=true --mcp-tags=crm`. To keep the HTTP server off, set
+`camel.server.enabled = false`.
+
+On Camel Main, the HTTP server is not turned on by itself: set `camel.server.enabled = true` as shown above. Any MCP client can connect over streamable HTTP, for
 example another Camel integration using the
 xref:ROOT:openai-component.adoc[camel-openai] MCP client:
 
@@ -254,13 +263,14 @@ camel run tools.yaml --mcp-stdio --mcp-tags=crm,agent
 ----
 
 NOTE: `--mcp-tags` configures the ai-tool MCP server (`camel.server.mcp-tags`) and works with
-`--mcp-stdio` or HTTP transport when `camel.server.mcp-enabled` is set in properties. It is
+`--mcp-stdio` or HTTP transport when `camel.server.mcp-enabled` is set (in properties, with `--prop`, as a JVM system
+property or an environment variable). It is
 not used by `--mcp`, which exposes dev/diagnostics MCP tools on the management HTTP server.
 
 Logging and startup summaries are routed to stderr so stdout carries MCP
 JSON-RPC only. Camel JBang configures a stderr Log4j2 appender automatically
 when `--mcp-stdio` is used or when `camel.server.mcp-transport=stdio` is set
-in the profile. On Camel Main, configure logging to stderr yourself (for
+(in the profile, with `--prop`, as a JVM system property or an environment variable). On Camel Main, configure logging to stderr yourself (for
 example using the `log4j2-mcp-stdio.properties` resource shipped in
 `camel-mcp-server`). Anything else written to `System.out` while the MCP server runs, such as
 a `stream:out` endpoint or a `System.out.println` in a bean, goes to stderr as well.
@@ -335,6 +345,15 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   sessions on the Vert.x streamable transport. Sessions with no activity for
   longer than this interval are evicted. `0` disables idle eviction. |
   `300000` | engine
+| `camel.server.mcp-protocol-era` | The MCP protocol versions served: `dual`
+  (both the versions that open with an `initialize` handshake, 2025-11-25 and
+  earlier, and protocol version 2026-07-28, on the same endpoint), `legacy` (only
+  the former, as before Camel 4.24) or `modern` (only 2026-07-28). Serving
+  2026-07-28 is a preview. See <<_protocol_versions>>. | `dual` | engine
+| `camel.server.mcp-stateless` | Serve the clients that open with `initialize`
+  without a session: no `Mcp-Session-Id` is returned, so a restart or a request
+  reaching another instance does not end their session. Clients of 2026-07-28
+  never get a session. See <<_serving_without_sessions>>. | `false` | engine
 | `camel.server.mcp-allowed-origins` | Comma-separated list of origins allowed
   to call the MCP endpoint, such as `+https://app.example.com+` or
   `+http://localhost:*+` (`+:*+` matches any port). A request without an `Origin`
@@ -401,6 +420,106 @@ emit `notifications/tools/list_changed`, `notifications/resources/list_changed`
 and `notifications/prompts/list_changed` to connected clients. Per-resource
 subscriptions (`resources/subscribe`) are not offered: the server advertises
 `resources` with `listChanged` only.
+
+The sessions, the `GET` channel and the session options above belong to the
+protocol versions that open with an `initialize` handshake; see the next section
+for protocol version 2026-07-28.
+
+=== Protocol versions
+
+The Vert.x engine serves two kinds of MCP clients on the same endpoint, and
+chooses for each request from the protocol version it carries:
+
+* Clients of the protocol versions that open with an `initialize` handshake
+  (2025-11-25 and earlier) get a session, kept in memory by the application, as
+  described above. The session ends when the application restarts (for example
+  when Camel JBang reloads it), and a request that reaches another instance finds
+  no session, so several instances need session affinity in front of them.
+* Clients of protocol version 2026-07-28 have no session: every request carries
+  its protocol version and the client capabilities, and is served on its own. A
+  restart, or a request reaching another instance, is invisible to such a client,
+  and several instances need no session affinity. It is told about changed lists
+  of tools, resources or prompts through a `subscriptions/listen` request, whose
+  answer is a stream that stays open. A request of 2026-07-28 must also carry the
+  `MCP-Protocol-Version`, `Mcp-Method` and, for `tools/call`, `resources/read` and
+  `prompts/get`, `Mcp-Name` headers; when they disagree with the body, it is
+  answered with HTTP 400 and error `-32020`. A gateway in front of several
+  instances may route on these headers, but the server compares them with the
+  body only for protocol version 2026-07-28: the `Mcp-Method` and `Mcp-Name`
+  headers of a request of an older version, or without `MCP-Protocol-Version`,
+  may name another method or tool than its body. A gateway that routes or
+  authorizes on these headers must therefore reject the requests without
+  `MCP-Protocol-Version: 2026-07-28`, or the instances must run with
+  `mcp-protocol-era = modern`.
+
+Which protocol a client uses is up to the client. Many clients still open with
+`initialize`, and some (for example the client of the MCP Python SDK) first try
+protocol version 2026-07-28 and fall back to `initialize` when the server does
+not serve it.
+
+`camel.server.mcp-protocol-era` restricts the protocol versions served:
+
+[cols="1,3"]
+|===
+| `mcp-protocol-era` | Served
+
+| `dual` (default)
+| Both, as described above.
+
+| `legacy`
+| Only the protocol versions that open with `initialize`, with sessions, as
+  before Camel 4.24. A request of protocol version 2026-07-28 is answered as
+  any request without a session.
+
+| `modern`
+| Only protocol version 2026-07-28: no session at all, so any instance can answer
+  any request. An `initialize` request is answered with HTTP 400 and an error that
+  names the supported versions, and `GET` or `DELETE` on the endpoint with
+  HTTP 405.
+|===
+
+NOTE: Serving protocol version 2026-07-28 is a preview: it is built on the
+`io.modelcontextprotocol.modern` API of the MCP Java SDK, which may still
+change in minor releases. Set `camel.server.mcp-protocol-era = legacy` to serve
+only the protocol versions that open with `initialize`.
+
+==== Serving without sessions
+
+Several instances without session affinity, autoscaling, rolling restarts or a
+reloading Camel JBang all end the sessions of the clients that open with
+`initialize`. Clients of protocol version 2026-07-28 are not affected, but many
+clients still open with `initialize`. For them, the MCP streamable HTTP transport
+lets a server keep no session at all, and `camel.server.mcp-stateless = true`
+does so:
+
+* the answer to `initialize` carries no `Mcp-Session-Id`, and every request is
+  served on its own, so any instance can answer it and a restart is invisible to
+  the client;
+* the server cannot send such a client anything outside the answer to a request:
+  the client is not notified when tools, resources or prompts change (it sees the
+  change at its next list request, and the lists do not advertise
+  `listChanged`), and features that need a server-initiated request, such as
+  sampling or elicitation, are not available;
+* a `GET` or `DELETE` on the endpoint is answered with HTTP 405, and the session
+  keep-alive and idle TTL options do not apply.
+
+[source,properties]
+----
+camel.server.mcp-enabled = true
+camel.server.mcp-tags = crm
+# no session for any client: any instance can answer any request
+camel.server.mcp-stateless = true
+----
+
+With `mcp-protocol-era = legacy` and `mcp-stateless = true`, a request of
+protocol version 2026-07-28 is answered with HTTP 400 and an `Invalid Request`
+error (`-32600`) that names the supported versions, as with sessions, so a
+client that also speaks an older version falls back to `initialize`.
+
+Origin, `Host` and OAuth checks apply to every request whatever its protocol
+version. A request without a session, of 2026-07-28 or with `mcp-stateless`, is
+authenticated on its own, so its OAuth token does not need the subject claim a
+session requires to know its owner.
 
 === Stdio engine
 
@@ -495,9 +614,15 @@ For an authenticated tool call, the bridge exposes the following exchange proper
 
 * `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes`, and `CamelMcpOAuthClaims` contain the subject,
   scopes, and claims from the validated token.
-* `CamelMcpSecurityPrincipalName` and `CamelMcpSecurityPrincipalRoles` expose the runtime-neutral
-  caller name and roles when available. Roles are extracted from common `roles`,
-  `realm_access.roles`, or `groups` claim shapes.
+* `CamelAiToolSecurityPrincipalName` and `CamelAiToolSecurityPrincipalRoles` expose the runtime-neutral
+  caller name and roles when available. The roles are the first of the `roles`,
+  `realm_access.roles` and `groups` claims that is an array: the claims are not merged, and
+  client roles (`resource_access`) are not read. With Keycloak, realm roles work as issued, and a
+  client role or a group needs a mapper into the `roles` claim, which is then read instead of the
+  realm roles; the group mapper writes the full path (`/finance-team`) unless its "Full group path"
+  switch is off. The `allowedRoles` option of an xref:ROOT:ai-tool-component.adoc[ai-tool] route
+  checks these roles before the route runs. Without an authenticated caller, as over stdio or on a
+  server without authentication, they are not set and a tool with `allowedRoles` refuses every call.
 * `CamelOAuthTokenValidationResult` contains the full Camel OAuth validation result for route code
   that already consumes the standard HTTP OAuth exchange property.
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -29,7 +30,6 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +40,6 @@ import org.slf4j.LoggerFactory;
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileConsumer.class);
-
-    /**
-     * Remote paths always use {@code /}, regardless of the platform Camel runs on.
-     */
-    private static final char REMOTE_PATH_SEPARATOR = '/';
 
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
@@ -71,18 +66,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     /**
      * The file name comes from the directory listing returned by the remote server and is not guaranteed to be a single
-     * path segment, so the path resolved from it is compacted and checked to still be inside the directory being polled
-     * before the file is accepted for retrieval, deletion or renaming.
+     * path segment, so the path resolved from it is compacted the way the server resolves it, and checked to still be
+     * inside the directory being polled before the file is accepted for retrieval, deletion or renaming (see
+     * {@link GenericFileHelper#isWithinRemoteDirectory(String, String)}).
      */
     @Override
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
-        if (absoluteFilePath == null) {
-            return false;
-        }
-        String directory = getEndpoint().getConfiguration().getDirectory();
-        String compactDir = directory != null ? FileUtil.compactPath(directory, REMOTE_PATH_SEPARATOR) : "";
-        return GenericFileHelper.isWithinDirectory(
-                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR), compactDir, REMOTE_PATH_SEPARATOR);
+        return GenericFileHelper.isWithinRemoteDirectory(
+                absoluteFilePath, getEndpoint().getConfiguration().getDirectory());
     }
 
     @Override
@@ -99,20 +90,22 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
-        Exception cause;
+        Exception cause = null;
+        boolean connected = false;
+        boolean autoCreateFailed = false;
         try {
             connectIfNecessary();
             loggedIn = true;
+            connected = true;
             if (!autoCreatedDone) {
                 autoCreateIfNecessary();
                 autoCreatedDone = true;
             }
         } catch (Exception e) {
             cause = e;
-            String msg = "Cannot connect/login to: " + remoteServer();
-            if (loggedIn && !autoCreatedDone) {
-                msg = "Cannot auto-create starting directory at: " + remoteServer();
-            }
+            // connected, so the starting directory could not be created
+            autoCreateFailed = connected;
+            String msg = autoCreateFailed ? cannotAutoCreate() : "Cannot connect/login to: " + remoteServer();
             LOG.debug(msg, cause);
             loggedIn = false;
             if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
@@ -120,8 +113,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         }
 
-        if (loggedIn && !autoCreatedDone) {
-            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+        if (autoCreateFailed) {
+            String message = cannotAutoCreate() + reason(cause) + ". Will skip this poll.";
             if (!autoCreateWarning) {
                 LOG.warn(message);
                 autoCreateWarning = true;
@@ -129,7 +122,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             return false;
         }
         if (!loggedIn) {
-            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            String message = "Cannot connect/login to: " + remoteServer() + reason(cause) + ". Will skip this poll.";
             if (!loggedInWarning) {
                 LOG.warn(message);
                 loggedInWarning = true;
@@ -144,6 +137,26 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         forceConsumerAsReady();
 
         return true;
+    }
+
+    private String cannotAutoCreate() {
+        return "Cannot auto-create starting directory " + endpoint.getConfiguration().getDirectory() + " at: "
+               + remoteServer();
+    }
+
+    /**
+     * Why the poll is skipped, for the WARN: the message of the cause when there is one, as the sftp operations wrap
+     * the error of the SSH client in an exception whose message only names the server. On one line, as the message can
+     * hold the reply of the server, such as an ftp reply of several lines.
+     */
+    private static String reason(Exception cause) {
+        if (cause == null) {
+            return "";
+        }
+        Throwable reason = cause.getCause() != null ? cause.getCause() : cause;
+        String message = reason.getMessage() != null ? reason.getMessage() : reason.getClass().getName();
+        return " due to: "
+               + message.lines().map(String::strip).filter(line -> !line.isEmpty()).collect(Collectors.joining(" "));
     }
 
     @Override
@@ -214,7 +227,25 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        disconnect();
+        // the stop of the scheduler interrupts a poll in progress, which can then still run an operation that the server
+        // does not answer, such as the change back to the directory it started from
+        disconnectOnStop();
+    }
+
+    private void disconnectOnStop() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
+
+        try {
+            getOperations().disconnectOnStop();
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
+        }
     }
 
     protected void disconnect() {

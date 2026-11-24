@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -31,7 +30,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -79,10 +77,6 @@ public class CatalogKamelet extends CamelCommand {
     @Mixin
     MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
-    public CatalogKamelet(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // the options are wrong whatever the catalog has, so before loading it
@@ -108,8 +102,8 @@ public class CatalogKamelet extends CamelCommand {
         }
         if (filterName != null) {
             String text = filterName.toLowerCase(Locale.ROOT);
-            // a Kamelet may have no description
-            rows.removeIf(r -> !text.equalsIgnoreCase(r.name)
+            // a part of the name, as camel catalog component does; a Kamelet may have no description
+            rows.removeIf(r -> !r.name.toLowerCase(Locale.ROOT).contains(text)
                     && (r.description == null || !r.description.toLowerCase(Locale.ROOT).contains(text)));
         }
 
@@ -144,12 +138,7 @@ public class CatalogKamelet extends CamelCommand {
      * The Kamelets of the catalog of the Kamelets version.
      */
     protected List<KameletModel> loadKamelets() throws Exception {
-        Map<String, Object> kamelets = KameletCatalogHelper.loadKamelets(kameletsVersion, mavenResolver.repos());
-        List<KameletModel> models = new ArrayList<>();
-        for (Object o : kamelets.values()) {
-            models.add(KameletCatalogHelper.createModel(o, false));
-        }
-        return models;
+        return KameletCatalogHelper.loadKameletSummaries(kameletsVersion, mavenResolver.repos());
     }
 
     private static JsonObject toJson(KameletModel r) {

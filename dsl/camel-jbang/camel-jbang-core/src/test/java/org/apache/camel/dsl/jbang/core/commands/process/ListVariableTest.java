@@ -40,7 +40,7 @@ class ListVariableTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListVariable command = new ListVariable(new CamelJBangMain().withPrinter(printer));
+        ListVariable command = new CamelJBangMain().withPrinter(printer).command(new ListVariable());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -63,7 +63,7 @@ class ListVariableTest extends ProcessCommandTestSupport {
         root.put("variables", variablesObj(variableEntry("myKey", "String", "hello")));
         writeStatusFile(TEST_PID, root);
 
-        ListVariable command = new ListVariable(new CamelJBangMain().withPrinter(printer));
+        ListVariable command = new CamelJBangMain().withPrinter(printer).command(new ListVariable());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -88,7 +88,7 @@ class ListVariableTest extends ProcessCommandTestSupport {
         root.put("variables", variablesObj(variableEntry("counter", "Integer", "42")));
         writeStatusFile(TEST_PID, root);
 
-        ListVariable command = new ListVariable(new CamelJBangMain().withPrinter(printer));
+        ListVariable command = new CamelJBangMain().withPrinter(printer).command(new ListVariable());
         command.sort = "pid";
         command.jsonOutput = true;
 

@@ -552,6 +552,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("univocityFixed", "camel-univocity-parsers"),
             Map.<String, String> entry("univocityTsv", "camel-univocity-parsers"),
             Map.<String, String> entry("xmlSecurity", "camel-xmlsecurity"),
+            Map.<String, String> entry("xsdJson", "camel-xsd-json"),
             Map.<String, String> entry("zipDeflater", "camel-zip-deflater"),
             Map.<String, String> entry("zipFile", "camel-zipfile")
     // DATAFORMATS: END

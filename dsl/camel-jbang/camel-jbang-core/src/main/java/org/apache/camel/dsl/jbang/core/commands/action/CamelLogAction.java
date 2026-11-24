@@ -43,7 +43,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -146,10 +145,6 @@ public class CamelLogAction extends ActionBaseCommand {
     private final SimpleDateFormat sdfSB = new SimpleDateFormat(TIMESTAMP_SB);
 
     private final Map<String, Ansi.Color> colors = new HashMap<>();
-
-    public CamelLogAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

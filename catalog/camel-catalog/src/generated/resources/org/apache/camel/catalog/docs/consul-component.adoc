@@ -154,6 +154,14 @@ The body is the value base64 encoded, as Consul stores it, unless `valueAsString
             message: "${header.CamelConsulKey} is now ${body}"
 ----
 
+The `kv` and `event` consumers set the `CamelConsulKey` header to the key (or event name) they received. While the
+header still holds that key, a producer that has a `key` of its own uses its `key`, so a route from one key to another
+(`from("consul:kv?key=a").to("consul:kv?key=b&action=PUT")`) writes `b`, not `a`. A key header set by the route is used,
+and a producer without `key` acts on the received key, for example to delete each key of a recursive watch once it is
+processed. To act on the received key with a producer that has a `key`, remove the `CamelConsulReceivedKey` exchange
+property (which the consumers set to the received key) before the producer, such as with
+`.removeProperty(ConsulConstants.CONSUL_RECEIVED_KEY)`.
+
 The client connects to the Consul agent at `http://localhost:8500`, unless you set the `url` option,
 for example with `camel.component.consul.url` in `application.properties`.
 

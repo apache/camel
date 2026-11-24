@@ -113,7 +113,21 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     protected Path exportBaseDir;
     // the working directory, which is deleted and created again when running
-    Path workDir = CommandLineHelper.getWorkDir();
+    protected Path workDir = CommandLineHelper.getWorkDir();
+
+    public Path getWorkDir() {
+        return workDir;
+    }
+
+    public void setWorkDir(Path workDir) {
+        this.workDir = workDir;
+    }
+
+    public Run withWorkDir(Path workDir) {
+        this.workDir = workDir;
+        return this;
+    }
+
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;
@@ -183,6 +197,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     @Option(name = "spring-boot-version", description = "Spring Boot version", defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
+
+    @Option(name = "packaging", description = "Project packaging (jar or war; WAR requires --runtime=spring-boot)",
+            defaultValue = "jar")
+    String packaging = "jar";
 
     @Option(name = "profile", description = "Profile to run (${COMPLETION-CANDIDATES}).", defaultValue = "dev",
             inherited = true, completer = ProfileCompletionCandidates.class)
@@ -307,8 +325,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     @Option(name = "sanitizer", hasValue = false,
             description = "Add camel-sanitizer, which reports where the processors of the routes break the contract of"
-                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit also where the commits of the"
-                          + " consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod."
+                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit,threads also where the commits of"
+                          + " the consumers do not run exactly once (camel get sanitizer); on with profile dev, never with"
+                          + " prod."
                           + " Not with Quarkus yet")
     boolean sanitizer;
 
@@ -356,10 +375,6 @@ public class Run extends CamelCommand implements CommandLifecycle {
             description = "Run an example by name (timer-log or route/aggregator), list the groups when no name is given, or list one group by its name (route).",
             fallbackValue = "")
     String example;
-
-    public Run(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public boolean disarrangeLogging() {
@@ -842,6 +857,12 @@ public class Run extends CamelCommand implements CommandLifecycle {
         sourceDir = request.sourceDir;
         runtime = request.runtime;
 
+        String packagingError = request.packagingError();
+        if (packagingError != null) {
+            printer().printErr(packagingError);
+            return 1;
+        }
+
         if (RuntimeType.quarkus == runtime) {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
@@ -1183,6 +1204,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         request.packageScanJars = packageScanJars;
         request.camelVersion = camelVersion;
         request.springBootVersion = springBootVersion;
+        request.packaging = packaging;
         request.camelSpringBootVersion = camelSpringBootVersion;
         request.quarkusPlatform = quarkusPlatform != null ? quarkusPlatform.toPlatform() : null;
         request.kameletsVersion = kameletsVersion;

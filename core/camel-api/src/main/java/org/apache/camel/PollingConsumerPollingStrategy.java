@@ -18,11 +18,9 @@ package org.apache.camel;
 
 /**
  * Strategy that allows {@link Consumer}s to influence the {@link PollingConsumer}.
- * <p/>
+ * <p>
  * For example this is used by schedule based consumers to be able to suspend/resume upon polling using a
- * {@link PollingConsumer}.
- *
- * @see org.apache.camel.support.EventDrivenPollingConsumer
+ * {@link PollingConsumer}, such as {@code org.apache.camel.support.EventDrivenPollingConsumer}.
  */
 public interface PollingConsumerPollingStrategy {
 

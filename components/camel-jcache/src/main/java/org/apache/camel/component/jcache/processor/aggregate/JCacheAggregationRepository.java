@@ -30,6 +30,7 @@ import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class JCacheAggregationRepository extends ServiceSupport
-        implements CamelContextAware, OptimisticLockingAggregationRepository {
+        implements CamelContextAware, OptimisticLockingAggregationRepository, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
@@ -96,6 +97,14 @@ public class JCacheAggregationRepository extends ServiceSupport
 
     public void setCache(Cache<String, DefaultExchangeHolder> cache) {
         this.cache = cache;
+    }
+
+    /**
+     * Whether the aggregates are kept only in memory; see {@link JCacheHelper#isInMemory(Cache)}.
+     */
+    @Override
+    public boolean isInMemory() {
+        return JCacheHelper.isInMemory(cache);
     }
 
     public boolean isOptimistic() {
@@ -213,7 +222,16 @@ public class JCacheAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        cacheManager.close();
+        if (cacheManager != null) {
+            cacheManager.close();
+            if (cacheManager.getConfiguration() != null) {
+                // the cache was opened from the configuration, and closing the manager released it (and closed it,
+                // when nothing else uses it): it is opened again on the next start, as a repository that is stopped
+                // can be started again (such as when its route is removed and added again)
+                cache = null;
+            }
+            cacheManager = null;
+        }
     }
 
     protected Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {

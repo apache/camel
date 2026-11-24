@@ -131,7 +131,10 @@ The annotations flow through the existing build pipeline:
    generates `SecurityUtils.java` in `camel-util`, containing a static map of property patterns
    to security categories
 4. **Runtime detection** — at startup, `SecurityUtils.detectViolations()` checks all resolved
-   properties against the generated map
+   properties against the generated map. Once the routes are loaded, camel-main also checks the properties of the
+   beans that the route files define (the `beans` section of a YAML or XML DSL file, and the Spring XML and Blueprint
+   XML beans, kept as `BeanFactoryDefinition` in the model), under the key of a bean configured from properties:
+   `camel.beans.<name>.<property>`
 
 No new build plugins are needed. The existing `@UriParam` → JSON → code generation pipeline
 handles everything.

@@ -596,8 +596,10 @@ final class EndpointChecks {
                 continue;
             }
             String name = pair.substring(0, eq);
-            String value = pair.substring(eq + 1);
-            if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
+            String value = withoutRaw(pair.substring(eq + 1));
+            if (!name.equals("include") && !name.equals("exclude") || value.contains("{{")) {
+                // a value with a property placeholder, such as RAW({{?include}}) in a Kamelet, is only known at
+                // runtime, and {{ is no regex (CAMEL-27365)
                 continue;
             }
             String unquoted = withoutQuoteCharacters(value);
@@ -630,6 +632,17 @@ final class EndpointChecks {
                            + "=" + value);
             }
         }
+    }
+
+    /**
+     * The value inside RAW(...) or RAW{...}, which is not part of the value; the value itself when it is not in RAW.
+     */
+    static String withoutRaw(String value) {
+        if (value.length() > 5 && (value.startsWith("RAW(") && value.endsWith(")")
+                || value.startsWith("RAW{") && value.endsWith("}"))) {
+            return value.substring(4, value.length() - 1);
+        }
+        return value;
     }
 
     /**

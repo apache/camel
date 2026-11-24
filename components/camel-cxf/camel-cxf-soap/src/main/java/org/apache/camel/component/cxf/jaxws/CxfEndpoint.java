@@ -32,6 +32,7 @@ import jakarta.xml.ws.WebServiceProvider;
 import jakarta.xml.ws.handler.Handler;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.security.auth.callback.CallbackHandler;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -96,6 +97,8 @@ import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.endpoint.ServerLifeCycleListener;
+import org.apache.cxf.endpoint.ServerLifeCycleManager;
 import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
@@ -255,8 +258,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private DataFormat dataFormat = DataFormat.POJO;
     @UriPath(label = "service",
              description = "The service address, for example http://localhost:9000/orders. The consumer receives requests at"
-                           + " this address, and the producer sends requests to it. The CamelDestinationOverrideUrl header"
-                           + " replaces this address for a request that the producer sends over HTTP.")
+                           + " this address, and the producer sends requests to it. A producer with no address sends"
+                           + " requests to the address that the WSDL (see wsdlURL) gives for the port. The"
+                           + " CamelDestinationOverrideUrl header replaces this address for a request that the producer"
+                           + " sends over HTTP.")
     private String address;
     @UriParam(label = "service")
     private String wsdlURL;
@@ -306,8 +311,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "producer",
               description = "Whether to invoke a document-literal wrapped operation in its wrapped form instead of its"
                             + " unwrapped form. If true and dataFormat is POJO, the Camel message body of the request must"
-                            + " hold the wrapper object in place of the parameters of the operation. The consumer does not use"
-                            + " it.")
+                            + " hold the wrapper object in place of the parameters of the operation. Only the request is in"
+                            + " wrapped form: the reply body is a MessageContentsList with the return value of the operation,"
+                            + " as when this option is false, not the response wrapper object. The consumer does not use it.")
     private boolean wrapped;
     @UriParam(label = "producer",
               description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that"
@@ -398,6 +404,37 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                             + " the protocol header Authorization of its HTTP requests. Only used when the username option is"
                             + " set. Not used for reading the WSDL that wsdlURL points to. The consumer does not use it.")
     private String password;
+    @UriParam(label = "security", displayName = "WS-Security Username", security = "secret",
+              description = "The user name of a WS-Security UsernameToken. The producer sends a UsernameToken with this user"
+                            + " name in the SOAP header of its requests. The consumer accepts only this user, with the"
+                            + " password of the wsSecurityPassword option, unless wsSecurityCallbackHandler or"
+                            + " wsSecurityCredentials is set. Needs the org.apache.cxf:cxf-rt-ws-security dependency."
+                            + " Send a UsernameToken with a plain text password over HTTPS only.")
+    private String wsSecurityUsername;
+    @UriParam(label = "security", displayName = "WS-Security Password", security = "secret",
+              description = "The password of a WS-Security UsernameToken. The producer sends it in the UsernameToken, and"
+                            + " the consumer requires it for the user of the wsSecurityUsername option.")
+    private String wsSecurityPassword;
+    @UriParam(label = "security", displayName = "WS-Security Password Type", enums = "Text,Digest", defaultValue = "Text",
+              description = "The type of the password in a WS-Security UsernameToken: Text for PasswordText, or Digest for"
+                            + " PasswordDigest. The producer sends this type, and the consumer requires it. Not used when"
+                            + " the WSDL of the service has a WS-SecurityPolicy, which then decides the type. Digest is no"
+                            + " replacement for HTTPS: it uses SHA-1, and the consumer needs the plain password.")
+    private String wsSecurityPasswordType = "Text";
+    @UriParam(label = "security", displayName = "WS-Security Callback Handler",
+              description = "To use a custom javax.security.auth.callback.CallbackHandler for the WS-Security"
+                            + " UsernameToken. CXF calls it with an org.apache.wss4j.common.ext.WSPasswordCallback that"
+                            + " names the user, and the handler sets the password of that user. The producer uses it"
+                            + " instead of wsSecurityPassword. The consumer uses it to look up the password of any user,"
+                            + " for example from a vault, instead of wsSecurityUsername, wsSecurityPassword and"
+                            + " wsSecurityCredentials.")
+    private CallbackHandler wsSecurityCallbackHandler;
+    @UriParam(label = "security", displayName = "WS-Security Credentials",
+              description = "A map of user name to password with the users that the consumer accepts in a WS-Security"
+                            + " UsernameToken, as a reference to a java.util.Map bean, for example #bean:users. Used instead"
+                            + " of wsSecurityUsername and wsSecurityPassword to accept more than one user without Java"
+                            + " code. Not used when wsSecurityCallbackHandler is set. The producer does not use it.")
+    private Map<String, String> wsSecurityCredentials;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
     @UriParam(label = "producer",
@@ -406,7 +443,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                             + " cookies in the handler itself, and an ExchangeCookieHandler keeps them in an exchange"
                             + " property. The consumer does not use it.")
     private CookieHandler cookieHandler;
-    @UriParam(defaultValue = "false", label = "producer,advanced",
+    @UriParam(defaultValue = "false", label = "advanced",
               description = "Whether to always process the exchange synchronously. If true, the producer invokes the CXF"
                             + " Client without a callback and waits until the invocation returns, and the consumer runs the"
                             + " route without a CXF continuation. The component sets it to the value of its own synchronous"
@@ -559,6 +596,18 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         var factories = getCamelContext().getRegistry().findByType(HttpDestinationFactory.class);
         for (var factory : factories) {
             sfb.getBus().setExtension(factory, HttpDestinationFactory.class);
+        }
+        // add custom server lifecycle listeners (such as camel-cxf-platform-http, which serves the endpoint on the
+        // platform-http server when the server starts)
+        var listeners = getCamelContext().getRegistry().findByType(ServerLifeCycleListener.class);
+        if (!listeners.isEmpty()) {
+            ServerLifeCycleManager manager = sfb.getBus().getExtension(ServerLifeCycleManager.class);
+            if (manager != null) {
+                for (var listener : listeners) {
+                    // a listener that is already registered (a shared bus) is not added again
+                    manager.registerListener(listener);
+                }
+            }
         }
 
         getNullSafeCxfConfigurer().configure(sfb);
@@ -743,8 +792,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             setServiceFactory(factoryBean, serviceFactoryBean);
         }
 
-        // address
-        factoryBean.setAddress(getAddress());
+        // address: an empty address (cxf:// with no address) is no address, so CXF uses the address of the port in
+        // the WSDL instead of overriding it with an empty one
+        String address = getAddress();
+        factoryBean.setAddress(ObjectHelper.isEmpty(address) ? null : address);
 
         // wsdl url
         if (getWsdlURL() != null) {
@@ -1304,6 +1355,28 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (cxfBinding instanceof HeaderFilterStrategyAware headerFilterStrategyAware) {
             headerFilterStrategyAware.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
+        if (isWsSecurityUsernameTokenEnabled()) {
+            validateWsSecurityOptions();
+        }
+    }
+
+    private void validateWsSecurityOptions() {
+        if (getDataFormat().dealias() == DataFormat.RAW) {
+            // CXF does not process the SOAP envelope in RAW mode, so no token would be sent or checked
+            throw new IllegalArgumentException(
+                    "The wsSecurity options are not supported with dataFormat=RAW. Use PAYLOAD, POJO or CXF_MESSAGE instead.");
+        }
+        if (!"Text".equals(wsSecurityPasswordType) && !"Digest".equals(wsSecurityPasswordType)) {
+            throw new IllegalArgumentException(
+                    "The option wsSecurityPasswordType must be Text or Digest, was: " + wsSecurityPasswordType);
+        }
+        try {
+            getCamelContext().getClassResolver()
+                    .resolveMandatoryClass("org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(
+                    "The wsSecurity options need the org.apache.cxf:cxf-rt-ws-security dependency on the classpath", e);
+        }
     }
 
     @Override
@@ -1350,11 +1423,65 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.username = username;
     }
 
+    public String getWsSecurityUsername() {
+        return wsSecurityUsername;
+    }
+
+    public void setWsSecurityUsername(String wsSecurityUsername) {
+        this.wsSecurityUsername = wsSecurityUsername;
+    }
+
+    public String getWsSecurityPassword() {
+        return wsSecurityPassword;
+    }
+
+    public void setWsSecurityPassword(String wsSecurityPassword) {
+        this.wsSecurityPassword = wsSecurityPassword;
+    }
+
+    public String getWsSecurityPasswordType() {
+        return wsSecurityPasswordType;
+    }
+
+    public void setWsSecurityPasswordType(String wsSecurityPasswordType) {
+        this.wsSecurityPasswordType = wsSecurityPasswordType;
+    }
+
+    public CallbackHandler getWsSecurityCallbackHandler() {
+        return wsSecurityCallbackHandler;
+    }
+
+    public void setWsSecurityCallbackHandler(CallbackHandler wsSecurityCallbackHandler) {
+        this.wsSecurityCallbackHandler = wsSecurityCallbackHandler;
+    }
+
+    public Map<String, String> getWsSecurityCredentials() {
+        return wsSecurityCredentials;
+    }
+
+    public void setWsSecurityCredentials(Map<String, String> wsSecurityCredentials) {
+        this.wsSecurityCredentials = wsSecurityCredentials;
+    }
+
+    /**
+     * Whether a WS-Security UsernameToken option (wsSecurityUsername, wsSecurityPassword, wsSecurityCallbackHandler or
+     * wsSecurityCredentials) is set.
+     */
+    public boolean isWsSecurityUsernameTokenEnabled() {
+        return ObjectHelper.isNotEmpty(wsSecurityUsername) || ObjectHelper.isNotEmpty(wsSecurityPassword)
+                || wsSecurityCallbackHandler != null || wsSecurityCredentials != null;
+    }
+
     public CxfConfigurer getChainedCxfConfigurer() {
-        return ChainedCxfConfigurer
+        ChainedCxfConfigurer answer = ChainedCxfConfigurer
                 .create(getNullSafeCxfConfigurer(),
                         SslCxfConfigurer.create(sslContextParameters, getCamelContext()))
                 .addChild(HostnameVerifierCxfConfigurer.create(hostnameVerifier));
+        if (isWsSecurityUsernameTokenEnabled()) {
+            // only loaded when an option is set, as it needs the optional cxf-rt-ws-security dependency
+            answer = answer.addChild(WsSecurityUsernameTokenConfigurer.create(this));
+        }
+        return answer;
     }
 
     private CxfConfigurer getNullSafeCxfConfigurer() {

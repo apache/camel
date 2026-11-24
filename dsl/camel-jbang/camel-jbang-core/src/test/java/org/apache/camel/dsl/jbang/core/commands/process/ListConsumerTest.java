@@ -31,6 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
@@ -43,7 +44,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -66,7 +67,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -91,7 +92,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -107,6 +108,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
             String output = printer.getOutput();
             assertTrue(output.startsWith("["), "JSON output should be array");
             assertTrue(output.contains("timer:tick"));
+            assertTrue(output.contains("Timer"), "Consumer suffix should be removed from type");
         }
     }
 
@@ -117,7 +119,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(consumer()));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -146,7 +148,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         root.put("consumers", consumerContainer(c));
         writeStatusFile(TEST_PID, root);
 
-        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -160,6 +162,32 @@ class ListConsumerTest extends ProcessCommandTestSupport {
 
             assertEquals(0, exit);
             assertTrue(printer.getOutput().contains("\"type\":\"org.apache.camel.component.timer.Timer\""));
+        }
+    }
+
+    @Test
+    void testJsonOutputMasksSecretOptionsOfUri() throws Exception {
+        JsonObject c = consumer();
+        c.put("uri", "sftp://scott@localhost/inbox?password=RAW(tiger)&delay=5000");
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("consumers", consumerContainer(c));
+        writeStatusFile(TEST_PID, root);
+
+        ListConsumer command = new CamelJBangMain().withPrinter(printer).command(new ListConsumer());
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            assertTrue(output.contains("password=xxxxxx&delay=5000"), output);
+            assertFalse(output.contains("tiger"), output);
         }
     }
 

@@ -33,6 +33,7 @@ import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.openstack.OSFactory;
 
+@Deprecated(since = "4.24")
 public abstract class AbstractOpenstackProducer extends DefaultProducer {
 
     protected OSClient os;

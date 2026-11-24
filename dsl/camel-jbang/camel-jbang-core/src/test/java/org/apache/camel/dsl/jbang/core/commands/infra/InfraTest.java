@@ -28,18 +28,18 @@ import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-@UsesFixedPort
 public class InfraTest extends CamelCommandBaseTestSupport {
 
     /**
      * This test asserts that the reflection in InfraRun works as expected. In case of issues in the reflection, most
      * probably the affected module is camel-test-infra-common
      */
+    @UsesFixedPort
     @Test
     public void runService() throws Exception {
         // infraRun.doCall() is blocking, run on a new thread.
         Thread thread = new Thread(() -> {
-            InfraRun infraRun = new InfraRun(new CamelJBangMain().withPrinter(printer));
+            InfraRun infraRun = new CamelJBangMain().withPrinter(printer).command(new InfraRun());
             infraRun.setServiceName(List.of("ftp"));
             try {
                 infraRun.doCall();
@@ -62,7 +62,7 @@ public class InfraTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void listServices() throws Exception {
-        InfraList infraList = new InfraList(new CamelJBangMain().withPrinter(printer));
+        InfraList infraList = new CamelJBangMain().withPrinter(printer).command(new InfraList());
 
         infraList.doCall();
 

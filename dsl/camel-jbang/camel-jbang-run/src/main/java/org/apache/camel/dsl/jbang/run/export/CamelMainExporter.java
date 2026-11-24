@@ -157,6 +157,11 @@ class CamelMainExporter extends Exporter {
                                 // old option name for Camel 4.13 and older
                                 prop.put("camel.server.health-check-enabled", "true");
                             }
+                            // the health check does not start without camel-health, and the dependencies were
+                            // resolved from the application.properties before this added it
+                            if (!hasCamelArtifact(deps, "camel-health")) {
+                                deps.add("camel:health");
+                            }
                         }
                     }
                     port = ExportHelper.httpManagementPort(settings);
@@ -337,6 +342,16 @@ class CamelMainExporter extends Exporter {
             answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
         }
 
+        // a cxf consumer is served on the platform-http server, as in camel run, which adds camel-cxf-platform-http
+        // (since 4.24) for an integration with a cxf consumer, not for cxf producers only
+        if (hasCamelArtifact(answer, "camel-cxf-platform-http")) {
+            if (request.camelVersion != null && !VersionHelper.isGE(request.camelVersion, "4.24.0")) {
+                removeCamelArtifact(answer, "camel-cxf-platform-http");
+            } else if (!hasCamelArtifact(answer, "camel-platform-http-main")) {
+                answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            }
+        }
+
         boolean main = hasCamelArtifact(answer, "camel-platform-http-main");
         if (hasOpenapi(answer) && !main) {
             // include http server if using openapi
@@ -379,8 +394,6 @@ class CamelMainExporter extends Exporter {
         // log4j configuration
         InputStream is = CamelMainExporter.class.getResourceAsStream("/log4j2-main.properties");
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
-        is = CamelMainExporter.class.getResourceAsStream("/export/log4j2.component.properties");
-        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
     }
 
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {

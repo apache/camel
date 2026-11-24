@@ -48,6 +48,10 @@ class AiPromptComponentTest extends CamelTestSupport {
                 from("ai-prompt:ordered?tags=tests&argument.second.description=Second"
                      + "&argument.first.description=First")
                         .setBody(constant("ordered"));
+
+                from("ai-prompt:suspendable?tags=tests&description=A prompt whose route is suspended and resumed")
+                        .routeId("suspendable-route")
+                        .setBody(constant("suspendable result"));
             }
         };
     }
@@ -108,5 +112,36 @@ class AiPromptComponentTest extends CamelTestSupport {
         assertThat(result).isInstanceOf(AiPromptResult.ArgumentError.class);
         assertThat(((AiPromptResult.ArgumentError) result).message())
                 .contains("Missing required argument 'name'");
+    }
+
+    @Test
+    void suspendedPromptRefusesRequestsUntilItsRouteResumes() throws Exception {
+        // a caller can hold a spec it obtained before the route was suspended
+        AiPromptSpec spec = findSpec("suspendable");
+        context.getRouteController().suspendRoute("suspendable-route");
+
+        AiPromptResult refused = AiPromptExecutor.execute(
+                spec, Map.of(), spec.getConsumer().getEndpoint().createExchange());
+
+        assertThat(refused).isInstanceOf(AiPromptResult.ExecutionError.class);
+        AiPromptResult.ExecutionError error = (AiPromptResult.ExecutionError) refused;
+        assertThat(error.message()).isEqualTo("Prompt 'suspendable' is suspended");
+        assertThat(error.cause()).isInstanceOf(IllegalStateException.class)
+                .hasMessage("Prompt 'suspendable' is suspended");
+
+        context.getRouteController().resumeRoute("suspendable-route");
+
+        assertThat(findSpec("suspendable")).isSameAs(spec);
+        AiPromptResult result = AiPromptExecutor.execute(
+                spec, Map.of(), spec.getConsumer().getEndpoint().createExchange());
+        assertThat(result).isInstanceOf(AiPromptResult.Success.class);
+        assertThat(((AiPromptResult.Success) result).value()).isEqualTo("suspendable result");
+    }
+
+    private AiPromptSpec findSpec(String promptName) {
+        return AiPromptRegistry.getOrCreate(context).getPromptsByTag("tests").stream()
+                .filter(prompt -> promptName.equals(prompt.getName()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Prompt not found: " + promptName));
     }
 }

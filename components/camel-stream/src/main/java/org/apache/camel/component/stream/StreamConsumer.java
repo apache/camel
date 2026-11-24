@@ -54,6 +54,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private static final String TYPES = "in,file,http";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
+    // the least time to wait before the stream is opened again after it could not be opened or read when scanning
+    private static final long SCAN_FAILURE_DELAY = 1000;
     private ExecutorService executor;
     private FileWatcherStrategy fileWatcher;
     private volatile boolean watchFileChanged;
@@ -66,6 +68,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private volatile boolean initialPromptDone;
     private volatile boolean streamOpenedOnStart;
     private final List<String> lines = new CopyOnWriteArrayList<>();
+    // the failures in a row to open or read a scanned stream (reset once data is read again), and whether the scan
+    // must wait before it opens the stream again, only used by the thread that reads
+    private int scanFailures;
+    private boolean scanFailedBeforeSleep;
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -101,6 +107,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             streamOpenedOnStart = true;
         }
 
+        scanFailures = 0;
+        scanFailedBeforeSleep = false;
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
                 endpoint.getEndpointUri());
         executor.execute(this);
@@ -193,28 +201,39 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private void readFromStreamRawMode() throws Exception {
         long index = 0;
-        InputStream is = initializeStreamRawMode();
 
         if (endpoint.isScanStream()) {
+            InputStream is = openScannedStream(this::initializeStreamRawMode);
             // repeat scanning from stream
             while (isRunAllowed()) {
 
                 byte[] data = null;
-                try {
-                    data = is.readAllBytes();
-                } catch (IOException e) {
-                    // ignore
+                if (is != null) {
+                    try {
+                        data = is.readAllBytes();
+                    } catch (IOException e) {
+                        // such as an HTTP connection that is lost: the stream ends here, and is opened again (retry)
+                        scanFailed("Cannot read from the stream", e);
+                        is = null;
+                    }
                 }
                 boolean eos = data == null || data.length == 0;
+                if (!eos) {
+                    scanRecovered();
+                }
 
-                if (isRunAllowed() && endpoint.isRetry()) {
+                if (!eos && isRunAllowed()) {
+                    // a scanned stream is never complete
+                    index = processRaw(data, index, false);
+                } else if (eos && isRunAllowed() && endpoint.isRetry() && !scanFailedBeforeSleep) {
+                    // not right after a failure: then the stream is opened again after the sleep below
                     boolean reOpen = true;
                     if (endpoint.isFileWatcher()) {
                         reOpen = watchFileChanged;
                     }
                     if (reOpen) {
                         LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
-                        is = initializeStreamRawMode();
+                        is = openScannedStream(this::initializeStreamRawMode);
                         // we have re-initialized the stream so lower changed flag
                         if (endpoint.isFileWatcher()) {
                             watchFileChanged = false;
@@ -225,24 +244,20 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 }
 
                 // sleep only if there is no input
-                if (eos) {
-                    try {
-                        Thread.sleep(endpoint.getScanStreamDelay());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                if (eos && !sleepBeforeNextScan()) {
+                    break;
                 }
             }
         } else {
+            InputStream is = initializeStreamRawMode();
             // regular read stream once until end of stream
             boolean eos = false;
-            byte[] data = null;
             while (!eos && isRunAllowed()) {
                 if (endpoint.getPromptMessage() != null) {
                     doPromptMessage();
                 }
 
+                byte[] data = null;
                 try {
                     data = is.readAllBytes();
                 } catch (IOException e) {
@@ -250,7 +265,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 }
                 eos = data == null || data.length == 0;
                 if (!eos) {
-                    processRaw(data, index);
+                    index = processRaw(data, index);
                 }
             }
         }
@@ -259,28 +274,39 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private void readFromStreamLineMode() throws Exception {
         long index = 0;
         String line;
-        BufferedReader br = initializeStreamLineMode();
 
         if (endpoint.isScanStream()) {
+            BufferedReader br = openScannedStream(this::initializeStreamLineMode);
             // repeat scanning from stream
             while (isRunAllowed()) {
                 if (br != null) {
-                    line = br.readLine();
-                    LOG.trace("Read line: {}", line);
+                    try {
+                        line = br.readLine();
+                        LOG.trace("Read line: {}", line);
+                        if (line != null) {
+                            scanRecovered();
+                        }
+                    } catch (IOException e) {
+                        // such as an HTTP connection that is lost: the stream ends here, and is opened again (retry)
+                        scanFailed("Cannot read from the stream", e);
+                        br = null;
+                        line = null;
+                    }
                 } else {
                     line = null;
                 }
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     index = processLine(line, false, index);
-                } else if (eos && isRunAllowed() && endpoint.isRetry()) {
+                } else if (eos && isRunAllowed() && endpoint.isRetry() && !scanFailedBeforeSleep) {
+                    // not right after a failure: then the stream is opened again after the sleep below
                     boolean reOpen = true;
                     if (endpoint.isFileWatcher()) {
                         reOpen = watchFileChanged;
                     }
                     if (reOpen) {
                         LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
-                        br = initializeStreamLineMode();
+                        br = openScannedStream(this::initializeStreamLineMode);
                         // we have re-initialized the stream so lower changed flag
                         if (endpoint.isFileWatcher()) {
                             watchFileChanged = false;
@@ -291,16 +317,12 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 }
 
                 // sleep only if there is no input
-                if (eos) {
-                    try {
-                        Thread.sleep(endpoint.getScanStreamDelay());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                if (eos && !sleepBeforeNextScan()) {
+                    break;
                 }
             }
         } else {
+            BufferedReader br = initializeStreamLineMode();
             // regular read stream once until end of stream
             boolean eos = false;
             String line2 = null;
@@ -328,6 +350,77 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             processLine(null, true, index);
         }
         // important: do not close the reader as it will close the standard system.in etc.
+    }
+
+    /**
+     * Opens the scanned stream. A stream that cannot be opened (such as an HTTP server that cannot be reached) is
+     * reported and gives null, as a file that does not exist yet does: the scan opens it again later (retry) instead of
+     * ending, which would leave the consumer started without reading anything.
+     */
+    private <T> T openScannedStream(ScannedStreamOpener<T> opener) throws InterruptedException {
+        try {
+            return opener.open();
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            scanFailed("Cannot open the stream", e);
+            return null;
+        }
+    }
+
+    private void scanFailed(String message, Exception cause) {
+        if (!isRunAllowed()) {
+            // stopping: the stream was closed by the stop
+            return;
+        }
+        scanFailures++;
+        scanFailedBeforeSleep = true;
+        // the stream is opened again only with the retry option, as at the end of the stream
+        String next = endpoint.isRetry() ? ", it is opened again" : ", set the retry option to open it again";
+        if (scanFailures == 1) {
+            getExceptionHandler().handleException(message + " of " + endpoint + next, cause);
+        } else {
+            LOG.debug("{} of {} ({} times in a row){}", message, endpoint, scanFailures, next, cause);
+        }
+    }
+
+    /**
+     * Data was read from the scanned stream: a failure after this is the first one in a row again. The counter is not
+     * reset when the stream is opened, as a server that answers and then drops the connection before any data every
+     * time would otherwise report every failure to the exception handler.
+     */
+    private void scanRecovered() {
+        if (scanFailures > 0) {
+            LOG.info("Reading from the stream of {} again after {} failed attempts", endpoint, scanFailures);
+            scanFailures = 0;
+        }
+    }
+
+    /**
+     * Waits before the next scan of the stream: the scan stream delay, and at least one second after the stream could
+     * not be opened or read, so that a server that is down is not asked in a loop. Without retry a stream that failed
+     * is not opened again, and the scan keeps waiting at least one second until it is stopped.
+     *
+     * @return false if interrupted (the consumer is stopping)
+     */
+    private boolean sleepBeforeNextScan() {
+        long delay = endpoint.getScanStreamDelay();
+        if (scanFailedBeforeSleep || scanFailures > 0 && !endpoint.isRetry()) {
+            delay = Math.max(delay, SCAN_FAILURE_DELAY);
+            scanFailedBeforeSleep = false;
+        }
+        try {
+            Thread.sleep(delay);
+            return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    @FunctionalInterface
+    private interface ScannedStreamOpener<T> {
+        T open() throws Exception;
     }
 
     /**
@@ -372,9 +465,17 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
      * Strategy method for processing the data
      */
     protected long processRaw(byte[] body, long index) throws Exception {
+        return processRaw(body, index, true);
+    }
+
+    /**
+     * Strategy method for processing the data. last tells whether this is the last exchange of the stream; it is false
+     * for each scan of a scanned stream, which is never complete.
+     */
+    protected long processRaw(byte[] body, long index, boolean last) throws Exception {
         lock.lock();
         try {
-            Exchange exchange = createExchange(body, index++, true);
+            Exchange exchange = createExchange(body, index++, last);
             getProcessor().process(exchange);
             return index;
         } finally {

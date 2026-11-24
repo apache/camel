@@ -148,7 +148,7 @@ class CamelSourceTopTest extends ActionCommandTestSupport {
     @Test
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        CamelSourceTop command = new CamelSourceTop(new CamelJBangMain().withPrinter(printer));
+        CamelSourceTop command = new CamelJBangMain().withPrinter(printer).command(new CamelSourceTop());
         CommandLineTestHelper.parse(command, "doesNotExist");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -159,7 +159,7 @@ class CamelSourceTopTest extends ActionCommandTestSupport {
     }
 
     private CamelSourceTop command(String... args) {
-        CamelSourceTop command = new CamelSourceTop(new CamelJBangMain().withPrinter(printer));
+        CamelSourceTop command = new CamelJBangMain().withPrinter(printer).command(new CamelSourceTop());
         CommandLineTestHelper.parse(command, Stream.concat(Stream.of("myApp"), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

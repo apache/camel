@@ -112,10 +112,6 @@ public class Overview extends CamelCommand {
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    public Overview(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public boolean isJsonOutput() {
         return "json".equals(format);

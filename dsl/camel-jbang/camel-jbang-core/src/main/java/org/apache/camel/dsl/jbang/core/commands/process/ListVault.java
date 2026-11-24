@@ -29,7 +29,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -68,10 +67,6 @@ public class ListVault extends ProcessWatchCommand {
     @Option(name = "sort", description = "Sort by pid, name", defaultValue = "pid",
             completer = PidNameCompletionCandidates.class)
     String sort;
-
-    public ListVault(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

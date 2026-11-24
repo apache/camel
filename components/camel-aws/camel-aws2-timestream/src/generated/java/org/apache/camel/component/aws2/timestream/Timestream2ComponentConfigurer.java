@@ -59,6 +59,8 @@ public class Timestream2ComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
+        case "queryallpages":
+        case "queryAllPages": getOrCreateConfiguration(target).setQueryAllPages(property(camelContext, boolean.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -114,6 +116,8 @@ public class Timestream2ComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": return java.lang.Integer.class;
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queryallpages":
+        case "queryAllPages": return boolean.class;
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
@@ -165,6 +169,8 @@ public class Timestream2ComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
         case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "queryallpages":
+        case "queryAllPages": return getOrCreateConfiguration(target).isQueryAllPages();
         case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();

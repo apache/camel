@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.joltcommunity.jolt.exception.JsonUnmarshalException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -32,17 +33,22 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * The default inputType (Hydrated) parses a body that is JSON text, bytes, a stream or a file.
+ * The default inputType (Hydrated) parses a body that is JSON text, bytes, a stream, a file or a Jackson JsonNode.
  */
 public class JoltHydratedInputTest extends CamelTestSupport {
 
     private static final String JSON = "{\"name\": \"Camel\"}";
+    // numbers, nesting and an array, to compare a node with the same JSON as text
+    private static final String NESTED_JSON
+            = "{\"name\": \"Camel\", \"age\": 19, \"rating\": 4.5, \"big\": 12345678901234,"
+              + " \"tags\": [\"integration\", \"eip\"], \"active\": true, \"owner\": {\"org\": \"ASF\"}, \"none\": null}";
 
     @TempDir
     Path tempDir;
@@ -108,6 +114,39 @@ public class JoltHydratedInputTest extends CamelTestSupport {
     }
 
     @Test
+    public void testJackson3JsonNode() {
+        assertFullName("Camel", template.requestBody("direct:shiftr", JsonMapper.shared().readTree(JSON)));
+    }
+
+    @Test
+    public void testJackson2JsonNode() throws Exception {
+        assertFullName("Camel", template.requestBody("direct:shiftr", new ObjectMapper().readTree(JSON)));
+    }
+
+    @Test
+    public void testJackson3ArrayNode() {
+        Object out = template.requestBody("direct:sortr", JsonMapper.shared().readTree("[\"b\", \"a\"]"));
+        assertEquals(List.of("b", "a"), assertInstanceOf(List.class, out));
+    }
+
+    @Test
+    public void testJackson2ArrayNode() throws Exception {
+        Object out = template.requestBody("direct:sortr", new ObjectMapper().readTree("[\"b\", \"a\"]"));
+        assertEquals(List.of("b", "a"), assertInstanceOf(List.class, out));
+    }
+
+    @Test
+    public void testJsonNodeGivesTheSameResultAsJsonText() throws Exception {
+        // the identity spec (Sortr) shows the tree that Jolt gets, with the number types of the parsed JSON
+        Object fromText = template.requestBody("direct:sortr", NESTED_JSON);
+        assertInstanceOf(Map.class, fromText);
+        assertEquals(fromText, template.requestBody("direct:sortr", JsonMapper.shared().readTree(NESTED_JSON)));
+        assertEquals(fromText, template.requestBody("direct:sortr", new ObjectMapper().readTree(NESTED_JSON)));
+        assertEquals(fromText, template.requestBody("direct:sortr-string", JsonMapper.shared().readTree(NESTED_JSON)));
+        assertEquals(fromText, template.requestBody("direct:sortr-string", new ObjectMapper().readTree(NESTED_JSON)));
+    }
+
+    @Test
     public void testTextThatIsNotJsonIsKept() {
         assertEquals("hello", template.requestBody("direct:sortr", "hello"));
     }
@@ -132,6 +171,8 @@ public class JoltHydratedInputTest extends CamelTestSupport {
                         .to("jolt:org/apache/camel/component/jolt/shiftr.json?transformDsl=Shiftr");
                 from("direct:sortr")
                         .to("jolt:dummy?transformDsl=Sortr");
+                from("direct:sortr-string")
+                        .to("jolt:dummy?transformDsl=Sortr&inputType=JsonString");
             }
         };
     }

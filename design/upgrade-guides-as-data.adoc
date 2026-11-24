@@ -1,0 +1,485 @@
+---
+title: Upgrade guides as data in the Camel catalog
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-11-21
+last-updated: 2026-11-22
+status: proposed
+see-also:
+  - "CAMEL-27359"
+  - "CAMEL-27352"
+  - "CAMEL-27351"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+The upgrade guides (`docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_*.adoc`) are written for people
+who read them on the website, one page per minor release. A tool that helps with an upgrade needs the same content
+as data: the entries that apply between the version in use and the target, the components each entry is about,
+whether it is a removal or a deprecation, and a link to the entry on the website.
+
+This proposal adds a build step that turns the guides into JSON, one entry per change, and ships the JSON in
+`camel-catalog`, as the catalog already ships the Camel releases and the security advisories:
+
+[source,json]
+----
+{
+  "id": "4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given",
+  "change": "4.24/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given",
+  "guide": "4.22",
+  "from": "4.22.2",
+  "to": "4.22.3",
+  "title": "camel-ftp - sftp uses remote file and directory names as given",
+  "components": ["camel-ftp"],
+  "kind": "change",
+  "breaking": false,
+  "summary": "The sftp component now uses a remote file or directory name exactly as given, also when it contains * or ?.",
+  "text": "...the entry, as Markdown...",
+  "url": "https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_ftp_sftp_uses_remote_file_and_directory_names_as_given"
+}
+----
+
+The AsciiDoc stays the source. Guide authors write it as they do today. Checks in the build find the mistakes of the
+guides, which are fixed in the guides, so the JSON is as accurate as the guides can be made. The document also defines the rule for
+choosing the entries of an upgrade from one version to another, so every tool lists the same entries.
+
+The point is that the format is shared. The Camel CLI, the MCP server, an IDE plugin, Camel Kit or a tool nobody has
+written yet can each build their own upgrade help on the same data. None of them has to parse AsciiDoc.
+
+== Motivation
+
+Today a tool that wants the guides parses the AsciiDoc itself:
+
+- The MCP server (`camel-jbang-mcp`) copies the guide files into its JAR at build time (`copy-migration-guides` in
+  its `pom.xml`). `MigrationData` splits them into sections at the `==` and `===` headings, and searches them with
+  BM25 for `camel_migration_guide_search`. It does not know which component an entry is about, or whether an entry
+  of a patch release is already in the version in use.
+- The upgrade view planned in CAMEL-27352 (the Camel CLI `camel update check` and a screen of the Camel TUI) needs the
+  entries between two versions, per component, so it can show only the entries that touch the components the
+  integration uses. The guides are not in the CLI, so it would have to parse them again.
+- The https://github.com/apache/camel-upgrade-recipes/[Camel Upgrade Recipes] automate part of a migration. They
+  would gain from knowing which guide entries a recipe covers, so a tool can say "this entry is done for you, these
+  you do by hand".
+- An IDE plugin, Karavan or Camel Kit would each write a third, fourth and fifth parser.
+
+Each parser has its own idea of where an entry starts and ends, which version it belongs to, and which component it is
+about. The guides have more structure than a quick parser sees:
+
+- A guide has a `==` section per release: the minor release (`== Upgrading Camel 4.21 to 4.22`) and the patch
+  releases of an LTS line (`== Upgrading from 4.22.2 to 4.22.3`). Some guides also have a `==` section that is not a
+  release (`== Camel Spring Boot`, `== Removed deprecated components`).
+- An entry is usually a `===` heading, but the 4.23 guide groups its entries under `=== Breaking Changes` and
+  `=== Deprecated Components and Features`, with an entry per `====` heading.
+- A change that is backported has an entry in each line it went into: the 4.18 guide, the 4.22 guide, and the minor
+  guide of the release where it landed on main. A tool that lists all three tells the user the same thing three
+  times. A tool that lists the minor entry to a user who already has the backport tells them about a change they have.
+
+A parser in the catalog build, run once, with tests and with warnings when a guide does not fit the rules, is better
+than one per tool.
+
+== Goals
+
+- One JSON entry per change, with the release that brings it, the components it is about, its kind and a link to the
+  website.
+- A written rule for which entries apply to an upgrade from version A to version B, including patch releases and
+  backports, which every tool follows.
+- The JSON in `camel-catalog`, read through `CamelCatalog`, and as plain files in the JAR for a tool that is not
+  written in Java.
+- Data as accurate as we can make it: checks in the build that find the mistakes of the guides (a section in the wrong
+  guide, a missing patch release, a backport with no entry on the minor guide), a pass that fixes the ones there are
+  today, and a strict build afterwards, so the guides stay correct for the website as well as for the JSON.
+
+== Non-goals
+
+- Changing the code of a project. That is the job of the Camel Upgrade Recipes and `camel update run`.
+- A new authoring format. The guides stay AsciiDoc, written as today. The conventions in
+  <<Conventions for guide authors>> are the ones most entries follow already.
+- The upgrade view itself (CAMEL-27352). It is one user of the data, not part of this design.
+- The guides of Camel Spring Boot and Camel Quarkus, which live in their own repositories. They can produce the same
+  format later (see <<Open questions>>).
+
+== Proposal
+
+=== The files
+
+A new goal of `camel-package-maven-plugin`, `prepare-upgrade-guides`, runs in the normal `camel-catalog` build, next to
+`prepare-catalog`. Unlike the releases and the advisories, which are synced from camel-website by a profile, the
+guides live in this repository, so the JSON is generated in every build and committed like the other generated
+catalog files:
+
+----
+catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/upgrade-guides/
+  index.json
+  camel-4x-upgrade-guide-4_1.json
+  ...
+  camel-4x-upgrade-guide-4_24.json
+----
+
+`index.json` lists the guides:
+
+[source,json]
+----
+{
+  "schemaVersion": 1,
+  "guides": [
+    {
+      "guide": "4.22",
+      "file": "camel-4x-upgrade-guide-4_22.json",
+      "title": "Upgrade guide 4.21 -> 4.22 LTS",
+      "lts": true,
+      "url": "https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html",
+      "sections": [
+        { "from": "4.22.2", "to": "4.22.3" },
+        { "from": "4.22.1", "to": "4.22.2" },
+        { "from": "4.22.0", "to": "4.22.1" },
+        { "from": "4.21", "to": "4.22" }
+      ],
+      "entries": 214
+    }
+  ]
+}
+----
+
+Each guide file is a JSON array of entries. The 4.x guides are 2 MB of AsciiDoc. The JSON, with the text as Markdown,
+is about 2 MB too, and about 600 KB as stored (compressed) in the JAR.
+
+=== The entry
+
+[cols="1,1,4"]
+|===
+| Field | Type | What it is
+
+| `id`
+| string
+| The id of the entry, unique in the catalog: the release of its section, `/`, and the slug of its title. The release
+  is the `to` of the section: `4.24` for a minor section, `4.22.3` for a patch section. The slug is the title in lower
+  case, with each run of characters that are not `a-z` or `0-9` replaced by one `-`, and no `-` at the start or the
+  end. It has no maximum length. A second entry with the same title in one section gets `-2`, a third `-3`, and so
+  on (each with a warning, see <<Checks in the build>>).
+  Example: `4.22.3/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given`.
+
+| `change`
+| string
+| The id of the change the entry is about. For an entry of a minor section, its own `id`: each change lands on `main`
+  once, in one minor release. For an entry of a patch section, the `id` of the minor entry it is a backport of (see
+  <<Backports>>), or its own `id` when there is none. The rule of <<Which entries apply to an upgrade>> works on
+  `change`.
+
+| `guide`
+| string
+| The minor version of the guide the entry is in: `4.22`.
+
+| `from`, `to`
+| string
+| The `==` section the entry is in. For a minor section `4.21` and `4.22`, for a patch section `4.22.2` and
+  `4.22.3`. A `==` section that is not a release (`== Camel Spring Boot`) belongs to the minor release of its guide.
+
+| `title`
+| string
+| The heading of the entry, as written.
+
+| `group`
+| string, optional
+| The `===` heading an entry is grouped under, when the entry is a `====` heading: `Breaking Changes`,
+  `camel-core - Enterprise Integration Patterns (EIPs)`.
+
+| `components`
+| array of strings
+| The Maven artifact ids the entry is about: `camel-ftp`, `camel-core`, `camel-yaml-dsl`. Empty for a general entry
+  (Java DSL, EIPs, Spring Boot).
+
+| `eips`
+| array of strings, optional
+| The EIPs an entry is about, when the heading names them (`=== Recipient List, Split and Multicast EIP`). A value is
+  the `name` of the EIP model in the catalog (`models/split.json`, `CamelCatalog.findModelNames()`): case-sensitive,
+  in camel case, such as `split` and `recipientList`.
+
+| `kind`
+| string
+| `change`, `deprecation` or `removal`. A rename (of an option, a header, a page, a class) is a `change`, with the old
+  and the new name in the text. There is no `addition`: the upgrade guides are for migration only, not for new
+  features (the upgrade guide rule of `CLAUDE.md`), so an entry about a new feature is a `change` too.
+
+| `breaking`
+| boolean
+| `true` when the heading or its group says it is a breaking change (`(Breaking change)`, `- potential breaking change`,
+  `=== Breaking Changes`).
+
+| `summary`
+| string
+| The first sentence of the entry, as plain text: for a list, a table or a one-line view.
+
+| `text`
+| string
+| The whole entry, as Markdown (see <<The text>>).
+
+| `url`
+| string
+| The entry on the website: the page of the guide and the anchor of the heading.
+|===
+
+New fields can be added in a later version of the format. A tool ignores the fields it does not know. A change that
+breaks a reader increases `schemaVersion`.
+
+=== From AsciiDoc to entries
+
+The goal reads each guide line by line, as `MigrationData` does today, and skips the content of delimited blocks
+(`----`, `....`, `====`, `|===`), so a heading inside an example is not taken for one.
+
+Sections::
+* `== Upgrading Camel X.Y to X.Z` is a minor section, `from` X.Y and `to` X.Z.
+* `== Upgrading from X.Y.A to X.Y.B` is a patch section. The versions are as written: `4.18.1 to 4.18.3` skips 4.18.2,
+  which was not released.
+* Any other `==` section belongs to the minor release of the guide.
+
+Entries::
+* A `===` heading with no `====` heading under it is one entry.
+* A `===` heading with `====` headings under it is a group. Each `====` heading is an entry, with the `===` heading as
+  its `group`. The text between the `===` heading and the first `====` heading, if any, is one more entry, titled as
+  the group.
+* The list under `Removed deprecated components` (as a `==` or a `===` heading) gives one entry of kind `removal` per
+  component in the list.
+
+Components::
+* The part of the heading before ` - ` or ` (` is split at `,`, `/` and ` and `. Each part that is a Maven artifact id of
+  this repository is a component of the entry: `=== camel-file / camel-aws2-s3 / camel-ibm-cos` names three.
+* A small alias file maps names that are not artifact ids: `camel-jbang` to the Camel CLI artifacts, `camel-sftp` and
+  `camel-ftps` to `camel-ftp`, `camel-cxf` to `camel-cxf-soap` and `camel-cxf-rest`. A removed component (`camel-irc`,
+  `camel-ironmq`) is not an artifact any more: its name is kept as written, as it is the name a project that still
+  uses it has in its `pom.xml`.
+* An entry of a group with no component in its own heading gets the components of the group heading:
+  `==== Split EIP - ...` under `=== camel-core - Enterprise Integration Patterns (EIPs)` is about `camel-core`.
+
+Kind::
+* `removal` for a heading or group with `(Removal)`, `Removed`, or the list of removed components.
+* `deprecation` for a heading or group with `(Deprecation)`, `(deprecated)`, `Deprecated` or ending in `deprecated`.
+* `change` for all other entries.
+
+URL::
+The anchor is the id Asciidoctor gives the heading on the website: `_` and the title in lower case, with the characters
+that are not a letter, a digit, a space, `-` or `.` removed, and each space, `-` or `.` replaced by `_`. A second
+heading with the same title on the page gets `_2`, as the second `=== camel-kafka` of the 4.19 guide does. A test
+checks the goal against the ids of a guide rendered with Asciidoctor.
+
+The goal does not use a full AsciiDoc parser. The guides use a small part of AsciiDoc (headings, lists, source
+blocks, tables, admonitions, `xref:`), and the line reader that `MigrationData` uses has worked on all of them.
+
+=== The text
+
+`text` is the entry as Markdown: a source block becomes a fenced code block with its language, an admonition a quote
+starting with `**NOTE:**`, an `xref:` a link to the page on the website, and a table a GitHub table. A table that has
+blocks inside a cell (lists, code), which Markdown tables cannot hold, becomes a fenced code block with the language
+`asciidoc`. So `text` is always Markdown, and the exception is marked the way Markdown marks any code: a tool that
+renders Markdown shows the table as source, and a tool that wants it can find it by the language.
+Today the 4.x guides have 294 source blocks, 121 tables, 51 admonitions and 88 `xref:` links.
+
+Markdown reads well in a terminal, in an IDE tooltip and in a prompt for an AI, and most tools can render it. The
+alternative, the raw AsciiDoc, is in <<Open questions>>.
+
+=== Which entries apply to an upgrade
+
+This is the rule every tool follows, so `camel update check`, the MCP server and an IDE plugin agree on what an
+upgrade from version A to version B brings.
+
+A version `V` on the line `L` (its major and minor: `4.18.2` is on the line `4.18`) *has* an entry `e` when:
+
+* `e` is in a minor section and `e.to` is `L` or older, or
+* `e` is in a patch section of the guide of `L` and `e.to` is `V` or older.
+
+`V` *has* a change when it has an entry with that `change`. Versions are compared as numbers, part by part
+(`4.22.10` is newer than `4.22.9`).
+
+The entries of an upgrade from `A` to `B` are, for each change `B` has and `A` does not, one entry: the entry of the
+patch sections of `B`'s line when there is one (its text speaks of that line), else the entry of the minor section. A
+change has one entry in a minor section and at most one in the patch sections of each line, so there is no other
+choice to make.
+
+An example, from 4.18.2 to 4.22.3:
+
+* The entries of the minor sections of 4.19, 4.20, 4.21 and 4.22 are listed.
+* The entries of the patch sections 4.22.0 to 4.22.3 are listed.
+* The entries of the patch sections 4.18.3 to 4.18.6 are not listed for what they are: they are changes of the 4.18
+  line, and 4.22.3 has them only if they went into 4.22 as well, which its own entries say.
+* An entry of 4.19 whose change was backported to 4.18.1 is not listed: 4.18.2 has the change already, from the
+  4.18.1 patch section, whose entry has the same `change`.
+* The `=== camel-jbang` entries of 4.20 and 4.21 are both listed. They are two changes with the same title, and each
+  has its own `change`.
+* `camel-ftp - sftp uses remote file and directory names as given` is in the 4.18.6, 4.22.3 and 4.24 sections. 4.22.3
+  has it and 4.18.2 does not, so it is listed once, with the text of the 4.22.3 entry.
+
+The rule also answers a question an upgrade tool should ask: does `B` lack a change `A` has? From 4.18.6 to 4.22.2,
+the sftp change above is in `A` and not in `B`, because it went into 4.22.3. A tool can say "4.22.2 does not have
+this fix from 4.18.6 yet, take 4.22.3". This is information for the user, as the entries are: each tool decides how
+to show it (a line in the CLI output, a row in a view, a field in an MCP answer). It is not an error.
+
+A downgrade (`B` older than `A`) has no entries. A tool says so instead of listing nothing.
+
+==== Backports
+
+The goal finds the minor entry of a patch entry by its title: the backport of a change has the same heading as the
+entry of the minor release where the change landed on `main`. That release is newer than the line of the patch
+section, so only the minor sections of newer guides are searched. Titles such as `=== camel-kafka` are in many guides
+(246 minor entries share their title with an entry of another minor guide), which is why the id of an entry is not its
+title alone, and why the match must find exactly one entry.
+
+When the title cannot be the same, an AsciiDoc comment under the heading names the minor entry. A comment is not
+shown on the website, and does not change the anchor of the heading:
+
+[source,asciidoc]
+----
+=== camel-ftp - sftp no longer treats * and ? in a name as wildcards
+// upgrade-guide-change: 4.24/camel-ftp-sftp-uses-remote-file-and-directory-names-as-given
+----
+
+Today 242 of the 356 entries of patch sections match exactly one minor entry. 27 match several, and 87 match none.
+An entry with no match, or with several, is its own change: a tool lists it next to the minor entry, one entry too
+many rather than one too few. The goal warns about both, and the pass over the guides fixes them (see
+<<Checks in the build>>).
+
+=== Which catalog to read
+
+The entries of an LTS line are added on `main` (the upgrade guide rule of `CLAUDE.md`), so a catalog knows the
+entries of the releases made before it: the 4.24.0 catalog has the entries of 4.22.3, and not those of 4.22.4 if that
+comes later. A tool reads the catalog it ships with. When the target version is newer than the version of that
+catalog, compared by the full version (a 4.22.2 catalog and a 4.22.3 target count), the tool also loads the catalog of
+the target (`CatalogLoader`), and uses the entries of both, one per `id`, the newer catalog first.
+
+=== Checks in the build
+
+The JSON is only as good as the guides. Where a guide is wrong, the fix goes in the guide, not in a special case of
+the parser, so the website and the JSON say the same. The goal checks:
+
+* A patch section in the guide of another line, or with versions that are not on the line of its guide.
+* A gap in the patch sections of a line: a released patch version (from the releases in the catalog) that no section
+  goes to. A release with nothing to say gets a section that says `No changes`, which gives no entry.
+* A section version that is neither released nor the next patch release of its line.
+* A heading whose components it cannot place: a name that starts with `camel-` and is neither an artifact id, an
+  alias, nor a removed component.
+* A heading that starts with a component and goes on with no ` - ` before the summary (`=== camel-stomp removal`).
+* An entry of a patch section that matches no minor entry (87 today), or several (27 today), see <<Backports>>.
+* An `upgrade-guide-change` comment that names no entry.
+* Two entries with the same title in one section (5 today), which share an anchor on the website only by luck of
+  order.
+
+Some mistakes always fail the build, as they also break the page on the website: a delimited block that is not
+closed, and a guide that is not valid UTF-8. A heading with no text under it gives no entry, and a warning.
+
+The other checks start as warnings. Step 3 of <<Order of work>>, the pass over the guides, fixes what they find (see
+<<Mistakes in the guides today>>), and the last pull request of that step makes the build strict on `main`
+(`-Dcamel.upgrade-guides.strict=true` by default). From then on, a new mistake fails the pull request that brings it,
+as a missing generated file does today. Until then, nobody has to fix a warning before their pull request is merged.
+
+=== Mistakes in the guides today
+
+A prototype of the parser and the checks, run on the 4.x guides of `main` (2031 entries, 1702 with a component), found:
+
+* The 4.14 guide has a section `== Upgrading from 4.10.0 to 4.10.1` ("No changes"), copied from the 4.10 guide. It
+  should be 4.14.0 to 4.14.1. As it is, a tool would give the 4.10.1 release a section in the 4.14 guide.
+* The 4.8 guide has no section from 4.8.3 to 4.8.4: it goes from `4.8.2 to 4.8.3` to `4.8.4 to 4.8.7`.
+* 87 of the 356 entries of patch sections match no minor entry, and 27 match several. Some are titles that changed
+  when the entry was copied, some are generic titles (`=== camel-kafka`). Some may be backports whose entry on the
+  minor guide is missing, which the pass checks one by one, against the commits.
+* Headings that name a component in a form the parser cannot split: `camel-stomp removal`,
+  `camel-vertx-websocket clientOptions type changed from HttpClientOptions to WebSocketClientOptions`,
+  `camel-opentelemetry2 — Embedded OTLP receiver ...` (an em dash), `camel-dynamic-router EIP component`.
+* Names that are not artifacts: `camel-simple` (the language is in `camel-core-languages`), `camel-cxfrs`,
+  `camel-aws`, `camel-aws2`, `camel-google`, `camel-tests`. Each becomes the artifact, or an alias when it is a family
+  of components.
+* Entries of Camel Spring Boot starters (`camel-jolokia-starter binds to loopback`, ...) in the guides of this
+  repository. They keep their place, and get `runtime` `spring-boot` (see <<Open questions>>).
+* Five sections with two entries of the same title, such as the two `=== camel-kafka` of the 4.19 guide. Both are
+  merged into one, or each gets a summary in its title.
+
+The 4.18.6 and 4.22.3 sections are for releases still to come, which the check allows (the next patch of the line).
+
+The pass is one pull request per kind of fix, so each is easy to review.
+
+=== Conventions for guide authors
+
+What most entries do already, written down:
+
+* Start the heading with the artifact id, then ` - ` and what changed: `=== camel-ftp - sftp uses remote file and
+  directory names as given`. Several components are separated by `,`.
+* Give a backported change the same heading in every guide, and a heading that says what changed, not only the
+  component, so it matches one entry.
+* Mark a deprecation or a removal in the heading: `(Deprecation)`, `(Removal)`, or group the entries under a
+  `Deprecated` or `Removed` heading.
+
+These go in the upgrade guide section of `CLAUDE.md` and in the contributing docs.
+
+=== The API
+
+A model in `camel-tooling-model`, `UpgradeGuideEntryModel`, with the fields of the entry, as `ReleaseModel` and
+`SecurityAdvisoryModel` have theirs. In `CamelCatalog`:
+
+[source,java]
+----
+/**
+ * All the entries of the upgrade guides in this catalog.
+ */
+List<UpgradeGuideEntryModel> camelUpgradeGuideEntries();
+----
+
+The rule of <<Which entries apply to an upgrade>> is in one helper in `camel-catalog`, `UpgradeGuideHelper`, with
+`entries(all, from, to)` and `missing(all, from, to)`, and tests built from the example above. A tool in another
+language reads the JSON from the `camel-catalog` JAR and follows the rule as written here.
+
+=== Who uses it
+
+* The MCP server reads the entries from the catalog instead of its own copy of the guides. Its search stays as it is,
+  over the entries, and its results gain the components and the link.
+* `camel update check` and the upgrade view of CAMEL-27352: the entries between the version in use and the target,
+  the ones about the components the integration uses first.
+* The Camel Upgrade Recipes could name the `change` of the entries a recipe covers, so a tool can say which entries are
+  automated.
+* An IDE plugin could show the entries of a component when the user changes its version.
+
+=== Order of work
+
+1. This design.
+2. The goal, the JSON, the model and `CamelCatalog.camelUpgradeGuideEntries()`, with the checks as warnings.
+3. The pass over the guides: fix the sections, align the titles of backported entries, add the missing entries,
+   and fix the headings the goal cannot place. Then the checks become strict.
+4. The MCP server reads the entries from the catalog.
+5. The users: `camel update check` and the upgrade view (CAMEL-27352).
+
+== Alternatives considered
+
+Each tool parses the AsciiDoc:: what happens today. Every parser makes its own choices, and none has the checks that
+make the guides more regular.
+
+The guides written as YAML or JSON:: the data would be exact, but the guides are prose for people first, written by
+many contributors in pull requests. A second format, or two copies, would drift.
+
+A full AsciiDoc parser (AsciidoctorJ) in the build:: exact, but a JRuby dependency in the catalog build for a small part
+of AsciiDoc that a line reader handles.
+
+The JSON published on the website only:: a tool without network access, or on an older version, could not read it,
+and the catalog is where Camel tools already look for release data.
+
+== Compatibility
+
+The format is new, so nothing breaks. `schemaVersion` and the rule "ignore unknown fields" leave room to add fields.
+The MCP server keeps its tool names and arguments when it moves to the catalog data.
+
+== Open questions
+
+* `text` as Markdown (proposed) or the raw AsciiDoc. Markdown is easier for every reader, and needs a converter in the
+  build. AsciiDoc is exact and needs nothing, but each tool then converts it or shows the markup.
+* The 3.x guides and the 2.x to 3.0 and 3.x to 4.0 migration guides, which the MCP server also searches. They could use
+  the same format, with fewer components found, as their headings are less regular.
+* Camel Spring Boot and Camel Quarkus have guides of their own. The same goal could run in their builds, so a tool
+  reads one format for all three.
+* A `recipes` field, with the Camel Upgrade Recipes that cover an entry, filled from the recipes project.
+* A `runtime` field (`spring-boot`, `quarkus`) for the entries that apply to one runtime only, such as the Camel
+  Spring Boot starters and the `== Camel Spring Boot` sections.
+
+== Related tickets
+
+* CAMEL-27359: the JSON in the catalog, the checks and the fixes of the guides (this design).
+* CAMEL-27352: the upgrade view, the first user of the data.
+* CAMEL-27351: the release data (LTS, end of life, latest patch) the upgrade view uses next to the entries.

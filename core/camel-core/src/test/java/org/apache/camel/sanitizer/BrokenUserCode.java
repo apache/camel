@@ -18,6 +18,8 @@ package org.apache.camel.sanitizer;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +31,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -164,6 +167,160 @@ final class BrokenUserCode {
                 }
             }, "user-late-callback").start();
             throw new IllegalStateException("Forced by ThrowsThenCallsBack");
+        }
+    }
+
+    /**
+     * Rule R3: hands the exchange to a worker thread that calls the callback with false, so the worker continues the
+     * exchange, while process waits for it and then returns true, as if it had done the work on the calling thread. A
+     * caller that uses the return value continues the exchange a second time.
+     */
+    static final class ReturnsTrueAfterAsyncDone extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            Thread worker = new Thread(() -> callback.done(false), "user-worker");
+            worker.start();
+            try {
+                worker.join(TimeUnit.SECONDS.toMillis(10));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Rule R3: calls the callback with true from a worker thread and returns false.
+     */
+    static final class ReturnsFalseCallbackTrue extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            new Thread(() -> callback.done(true), "user-worker").start();
+            return false;
+        }
+    }
+
+    /**
+     * Rule R3: calls the callback with true on the calling thread, and then returns false.
+     */
+    static final class ReturnsFalseAfterSyncDone extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            callback.done(true);
+            return false;
+        }
+    }
+
+    /**
+     * Rule R3: returns true, and only then lets a worker thread call the callback with false. Whether the sanitizer
+     * sees the callback before or after the return depends on the threads, which decides the kind of the report.
+     */
+    static final class ReturnsTrueThenCallsBack extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            CountDownLatch returning = new CountDownLatch(1);
+            new Thread(() -> {
+                try {
+                    if (returning.await(10, TimeUnit.SECONDS)) {
+                        callback.done(false);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }, "user-worker").start();
+            returning.countDown();
+            return true;
+        }
+    }
+
+    /**
+     * Correct: hands the exchange to a thread of its pool, which calls the callback with false, and returns false.
+     */
+    static final class CorrectAsync extends AsyncProcessorSupport {
+
+        private final ExecutorService pool;
+
+        CorrectAsync(ExecutorService pool) {
+            this.pool = pool;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            pool.execute(() -> {
+                exchange.getMessage().setHeader("worker", Thread.currentThread().getName());
+                callback.done(false);
+            });
+            return false;
+        }
+    }
+
+    /**
+     * Rule R3, the overlaps: sends the exchange itself, not a copy, to another route on a thread of its pool (a wire
+     * tap by hand), and goes on. The route and the other route then use the same exchange at the same time. The
+     * callback is called once and with the value process returns, so rules R1 and the contract of R3 have nothing to
+     * report.
+     */
+    static final class SendsTheExchangeAside extends AsyncProcessorSupport {
+
+        final CountDownLatch asideDone = new CountDownLatch(1);
+        private final ExecutorService pool;
+        private final ProducerTemplate template;
+        private final String uri;
+
+        SendsTheExchangeAside(ExecutorService pool, ProducerTemplate template, String uri) {
+            this.pool = pool;
+            this.template = template;
+            this.uri = uri;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            pool.execute(() -> {
+                try {
+                    template.send(uri, exchange);
+                } finally {
+                    asideDone.countDown();
+                }
+            });
+            callback.done(true);
+            return true;
+        }
+    }
+
+    /**
+     * Correct, as the caller of a circuit breaker: runs the exchange through another route on a thread of its pool, and
+     * waits for that task before it calls its callback. The caller only waits meanwhile, so the exchange is used by one
+     * thread at a time.
+     */
+    static final class WaitsForItsTask extends AsyncProcessorSupport {
+
+        private final ExecutorService pool;
+        private final ProducerTemplate template;
+        private final String uri;
+
+        WaitsForItsTask(ExecutorService pool, ProducerTemplate template, String uri) {
+            this.pool = pool;
+            this.template = template;
+            this.uri = uri;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            Future<?> task = pool.submit(() -> template.send(uri, exchange));
+            try {
+                task.get(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                exchange.setException(e);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
         }
     }
 

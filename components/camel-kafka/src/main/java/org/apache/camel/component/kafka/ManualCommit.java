@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class ManualCommit implements Processor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BatchManualCommit.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManualCommit.class);
 
     @Override
     public void process(Exchange exchange) throws Exception {

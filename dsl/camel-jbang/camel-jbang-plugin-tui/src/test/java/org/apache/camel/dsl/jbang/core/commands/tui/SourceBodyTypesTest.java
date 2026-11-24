@@ -223,6 +223,26 @@ class SourceBodyTypesTest {
     }
 
     @Test
+    void theFormatsOfThePayloads() {
+        RouteInfo route = new RouteInfo();
+        route.source = "MyRoute.java:10";
+        ProcessorInfo json = processor("MyRoute.java:12", List.of("byte[]"), List.of("payload"));
+        json.bodyFormats = List.of("json");
+        route.processors.add(json);
+        // one kind, but the format depends on the message (CAMEL-27468)
+        ProcessorInfo varied = processor("MyRoute.java:14", List.of("java.lang.String"), List.of("payload"));
+        varied.bodyFormats = List.of("xml", "csv");
+        route.processors.add(varied);
+
+        Map<Integer, LiveLine> lines = LiveRunLines.of(List.of(route), "/work/MyRoute.java");
+
+        assertThat(lines.get(11).bodyFormats()).containsExactly("json");
+        assertThat(lines.get(11).mixed()).isFalse();
+        assertThat(lines.get(13).bodyFormats()).containsExactly("xml", "csv");
+        assertThat(lines.get(13).mixed()).isTrue();
+    }
+
+    @Test
     void theStepsOfALineTogether() {
         RouteInfo route = new RouteInfo();
         route.source = "MyRoute.java:10";
@@ -238,6 +258,7 @@ class SourceBodyTypesTest {
         assertThat(lines.get(11).bodyTypes()).containsExactly("java.lang.String", "java.util.LinkedHashMap");
         assertThat(lines.get(11).mixed()).isFalse();
         assertThat(lines.get(13).mixed()).isTrue();
+        assertThat(lines.get(11).bodyFormats()).isEmpty();
         assertThat(lines.get(14).bodyTypes()).isEmpty();
         assertThat(lines.get(14)).isEqualTo(new LiveLine(0, 0, 0));
     }

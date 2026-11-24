@@ -16,10 +16,12 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.SimpleCamelContext;
+import org.apache.camel.main.util.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KnownDependenciesResolverTest {
 
@@ -174,6 +177,83 @@ public class KnownDependenciesResolverTest {
         assertImport(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter",
                 "camel-semantic-wolf-defender");
         assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiEndpoint", "camel-typesafe-ai");
+    }
+
+    @Test
+    void theShippedMappingResolvesTheKafkaSchemaRegistrySerdes() {
+        // the serializers and deserializers that the schemaRegistryVendor and schemaFormat options of camel-kafka set,
+        // with the versions of parent/pom.xml (passed by surefire)
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        String confluent = System.getProperty("confluent-serializer-version");
+        String apicurio = System.getProperty("apicurio-registry-sdk-version");
+        String glue = System.getProperty("aws-glue-schema-registry-version");
+        String azure = System.getProperty("azure-schemaregistry-kafka-avro-version");
+        assertNotNull(confluent, "confluent-serializer-version");
+
+        for (String c : new String[] { "KafkaAvroSerializer", "KafkaAvroDeserializer" }) {
+            assertGav(resolver, "io.confluent.kafka.serializers." + c, "io.confluent:kafka-avro-serializer:" + confluent);
+        }
+        for (String c : new String[] { "KafkaJsonSchemaSerializer", "KafkaJsonSchemaDeserializer" }) {
+            assertGav(resolver, "io.confluent.kafka.serializers.json." + c,
+                    "io.confluent:kafka-json-schema-serializer:" + confluent);
+        }
+        for (String c : new String[] { "KafkaProtobufSerializer", "KafkaProtobufDeserializer" }) {
+            assertGav(resolver, "io.confluent.kafka.serializers.protobuf." + c,
+                    "io.confluent:kafka-protobuf-serializer:" + confluent);
+        }
+        for (String c : new String[] { "AvroKafkaSerializer", "AvroKafkaDeserializer" }) {
+            assertGav(resolver, "io.apicurio.registry.serde.avro." + c,
+                    "io.apicurio:apicurio-registry-avro-serde-kafka:" + apicurio);
+        }
+        for (String c : new String[] { "JsonSchemaKafkaSerializer", "JsonSchemaKafkaDeserializer" }) {
+            assertGav(resolver, "io.apicurio.registry.serde.jsonschema." + c,
+                    "io.apicurio:apicurio-registry-jsonschema-serde-kafka:" + apicurio);
+        }
+        for (String c : new String[] { "ProtobufKafkaSerializer", "ProtobufKafkaDeserializer" }) {
+            assertGav(resolver, "io.apicurio.registry.serde.protobuf." + c,
+                    "io.apicurio:apicurio-registry-protobuf-serde-kafka:" + apicurio);
+        }
+        assertGav(resolver, "com.amazonaws.services.schemaregistry.serializers.GlueSchemaRegistryKafkaSerializer",
+                "software.amazon.glue:schema-registry-serde:" + glue);
+        assertGav(resolver, "com.amazonaws.services.schemaregistry.deserializers.GlueSchemaRegistryKafkaDeserializer",
+                "software.amazon.glue:schema-registry-serde:" + glue);
+
+        // the Azure serde comes with a recent azure-core, as its dependencies ask for an old one
+        for (String c : new String[] { "KafkaAvroSerializer", "KafkaAvroDeserializer" }) {
+            List<MavenGav> gavs = resolver.mavenGavsForClass("com.microsoft.azure.schemaregistry.kafka.avro." + c);
+            assertEquals(2, gavs.size(), c);
+            assertEquals("com.microsoft.azure:azure-schemaregistry-kafka-avro:" + azure, gavs.get(0).toString());
+            assertEquals("com.azure", gavs.get(1).getGroupId());
+            assertEquals("azure-core", gavs.get(1).getArtifactId());
+            // TokenRequestContext.isCaeEnabled() that azure-identity calls is in azure-core 1.54.1 and later
+            assertTrue(VersionHelper.isGE(gavs.get(1).getVersion(), "1.54.1"), gavs.get(1).getVersion());
+            // a single dependency for the callers that take one
+            assertEquals(gavs.get(0).toString(),
+                    resolver.mavenGavForClass("com.microsoft.azure.schemaregistry.kafka.avro." + c).toString());
+        }
+        // the other classes of the vendors are not mapped
+        assertNull(resolver.mavenGavForClass("io.confluent.kafka.serializers.Other"));
+        assertNull(resolver.mavenGavForClass("io.apicurio.registry.serde.Other"));
+    }
+
+    @Test
+    void aMappingCanListMoreDependencies() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.addMappings(Map.of("org.example.Both", "org.example:first:1.0, org.example:second:2.0"));
+
+        List<MavenGav> gavs = resolver.mavenGavsForClass("org.example.Both");
+        assertEquals(List.of("org.example:first:1.0", "org.example:second:2.0"),
+                gavs.stream().map(MavenGav::toString).toList());
+        assertEquals("org.example:first:1.0", resolver.mavenGavForClass("org.example.Both").toString());
+        assertEquals(gavs.toString(), resolver.mavenGavsForImport("org.example.Both").toString());
+        assertTrue(resolver.mavenGavsForClass("org.example.Unknown").isEmpty());
+    }
+
+    private static void assertGav(KnownDependenciesResolver resolver, String className, String gav) {
+        List<MavenGav> gavs = resolver.mavenGavsForClass(className);
+        assertEquals(List.of(gav), gavs.stream().map(MavenGav::toString).toList(), className);
     }
 
     private static void assertImport(KnownDependenciesResolver resolver, String className, String artifactId) {

@@ -37,7 +37,9 @@ class RouteDiagramHelperTest {
                   {"type": "unmarshal", "id": "unmarshal1", "level": 1, "code": "unmarshal[json]",
                    "bodyTypes": ["org.apache.camel.converter.stream.ByteArrayInputStreamCache"], "bodyKinds": ["payload"]},
                   {"type": "to", "id": "to1", "level": 1, "code": "to[file:outbox]",
-                   "bodyTypes": ["byte[]", "java.util.LinkedHashMap"], "bodyKinds": ["payload", "data"]}]}]}
+                   "bodyTypes": ["byte[]", "java.util.LinkedHashMap"], "bodyKinds": ["payload", "data"],
+                   "bodyFormats": ["json"], "kameletInput": {"kamelet": "postgresql-sink", "dataType": "json",
+                     "transformer": "application-json", "takesBody": true}}]}]}
                 """, (JsonObject) null);
 
         RouteInfo route = RouteDiagramHelper.parseRoutes(structure).get(0);
@@ -51,6 +53,13 @@ class RouteDiagramHelperTest {
                 .containsExactly("org.apache.camel.converter.stream.ByteArrayInputStreamCache");
         assertThat(to.bodyTypes).containsExactly("byte[]", "java.util.LinkedHashMap");
         assertThat(to.bodyKinds).containsExactly("payload", "data");
+        assertThat(to.bodyFormats).containsExactly("json");
+        assertThat(route.nodes.get(2).bodyFormats).isEmpty();
+        // the data type the Kamelet the step calls turns the body into (CAMEL-27475)
+        assertThat(to.kameletInput.dataType()).isEqualTo("json");
+        assertThat(to.kameletInput.kamelet()).isEqualTo("postgresql-sink");
+        assertThat(to.kameletInput.takesBody()).isTrue();
+        assertThat(route.nodes.get(2).kameletInput).isNull();
     }
 
     @Test

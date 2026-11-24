@@ -24,6 +24,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpensearchComponent target = (OpensearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.opensearch.client.RestClient.class, value)); return true;
@@ -65,6 +67,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "client": return org.opensearch.client.RestClient.class;
@@ -102,6 +106,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpensearchComponent target = (OpensearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return target.getApiKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "client": return target.getClient();

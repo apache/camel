@@ -40,6 +40,7 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("contextPathIsClassName", definition.getContextPathIsClassName());
         properties.put("partClass", definition.getPartClass());
         properties.put("partNamespace", definition.getPartNamespace());
+        properties.put("allowPartClassFromHeader", definition.getAllowPartClassFromHeader());
         properties.put("encoding", definition.getEncoding());
         properties.put("namespacePrefix", asRef(definition.getNamespacePrefix()));
         properties.put("schema", definition.getSchema());

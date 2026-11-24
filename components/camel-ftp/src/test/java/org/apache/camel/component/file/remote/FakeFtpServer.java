@@ -69,7 +69,10 @@ final class FakeFtpServer implements Closeable {
     });
     private final Map<String, byte[]> files = new ConcurrentHashMap<>();
     private final Set<String> directories = ConcurrentHashMap.newKeySet();
+    private final Map<String, List<String>> listedDirectories = new ConcurrentHashMap<>();
+    private volatile boolean absoluteNames;
     private final List<Connection> connections = new CopyOnWriteArrayList<>();
+    private final List<String> commands = new CopyOnWriteArrayList<>();
     private final AtomicInteger connectionIds = new AtomicInteger();
     private volatile Predicate<String> trigger;
     private volatile Stall stall = Stall.BEFORE_REPLY;
@@ -95,6 +98,19 @@ final class FakeFtpServer implements Closeable {
         files.put(file, content);
     }
 
+    /** Lists the absolute path of each file, as some servers do, instead of its name. */
+    void listAbsoluteNames() {
+        absoluteNames = true;
+    }
+
+    /**
+     * Lists a directory entry with the given name in the listing of the directory, whatever the name is, as a server
+     * can.
+     */
+    void addListedDirectory(String directory, String name) {
+        listedDirectories.computeIfAbsent(normalize(directory), d -> new CopyOnWriteArrayList<>()).add(name);
+    }
+
     Map<String, byte[]> files() {
         return files;
     }
@@ -117,6 +133,11 @@ final class FakeFtpServer implements Closeable {
         List<String> answer = new ArrayList<>();
         connections.forEach(c -> answer.addAll(c.unanswered));
         return answer;
+    }
+
+    /** Every command line the server received, on any connection, in the order received. */
+    List<String> commands() {
+        return commands;
     }
 
     /** How many control connections the client has opened so far. */
@@ -181,6 +202,7 @@ final class FakeFtpServer implements Closeable {
                 reply("220 fake FTP server ready (connection " + id + ")");
                 String line;
                 while ((line = in.readLine()) != null) {
+                    commands.add(line);
                     Predicate<String> t = trigger;
                     if (!silent && t != null && t.test(line)) {
                         // one shot: only the first matching connection stalls
@@ -282,13 +304,20 @@ final class FakeFtpServer implements Closeable {
             StringBuilder listing = new StringBuilder();
             for (Map.Entry<String, byte[]> e : new TreeMap<>(files).entrySet()) {
                 if (parentOf(e.getKey()).equals(dir)) {
-                    String name = e.getKey().substring(e.getKey().lastIndexOf('/') + 1);
+                    String name = absoluteNames ? e.getKey() : e.getKey().substring(e.getKey().lastIndexOf('/') + 1);
                     if (cmd.equals("NLST")) {
                         listing.append(name).append("\r\n");
                     } else {
                         listing.append("-rw-r--r-- 1 camel camel ").append(e.getValue().length)
                                 .append(" Jan 01  2025 ").append(name).append("\r\n");
                     }
+                }
+            }
+            for (String name : listedDirectories.getOrDefault(dir, List.of())) {
+                if (cmd.equals("NLST")) {
+                    listing.append(name).append("\r\n");
+                } else {
+                    listing.append("drwxr-xr-x 1 camel camel 0 Jan 01  2025 ").append(name).append("\r\n");
                 }
             }
             transfer(listing.toString().getBytes(StandardCharsets.UTF_8));

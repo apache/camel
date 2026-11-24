@@ -32,7 +32,7 @@ class ColorOutputTest {
     @Test
     void noColorsWhenTheOutputIsNoTerminal() {
         // the forked JVM of the test has no terminal, and the command prints to the console
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain());
+        CamelSendAction command = new CamelJBangMain().command(new CamelSendAction());
         CommandLineTestHelper.parse(command, "--endpoint=direct:foo");
 
         assertThat(command.colorOutput(true)).isFalse();
@@ -41,7 +41,7 @@ class ColorOutputTest {
 
     @Test
     void colorsWhenTheOptionIsGiven() {
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain());
+        CamelSendAction command = new CamelJBangMain().command(new CamelSendAction());
         CommandLineTestHelper.parse(command, "--endpoint=direct:foo", "--logging-color");
 
         assertThat(command.colorOutput(true)).isTrue();
@@ -50,7 +50,7 @@ class ColorOutputTest {
     @Test
     void anotherPrinterKeepsTheOption() {
         // such as the TUI or the MCP server, which take the output of the command
-        CamelSendAction command = new CamelSendAction(new CamelJBangMain().withPrinter(new StringPrinter()));
+        CamelSendAction command = new CamelJBangMain().withPrinter(new StringPrinter()).command(new CamelSendAction());
         CommandLineTestHelper.parse(command, "--endpoint=direct:foo");
 
         assertThat(command.colorOutput(true)).isTrue();

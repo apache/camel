@@ -144,7 +144,7 @@ class ExplainTest extends CamelCommandBaseTestSupport {
     }
 
     private Explain command(String... args) {
-        Explain command = new Explain(new CamelJBangMain().withPrinter(printer));
+        Explain command = new CamelJBangMain().withPrinter(printer).command(new Explain());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Arrays.stream(args), Stream.of("--api-type=ollama", "--url=" + llm.url(), "--model=test"))
                         .toArray(String[]::new));

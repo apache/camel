@@ -66,6 +66,12 @@ public final class Kamelet {
     public static final String PARENT_PROCESSOR_ID = "parentProcessorId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
     public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
+    /**
+     * The route property with the output data type of a Kamelet, set by the Kamelet YAML loader. The producer of
+     * {@code kamelet:sink} applies it when the message is handed on, before the consuming route, or the steps after a
+     * Kamelet EIP, run.
+     */
+    public static final String OUTPUT_TYPE_PROPERTY = "kameletOutputType";
     static final String ADVANCED_OPTIONS = "internal.advanced.options";
 
     // use a running counter as uuid

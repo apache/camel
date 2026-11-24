@@ -119,6 +119,30 @@ YAML::
 ----
 ====
 
+The client consumer routes the messages of its WebSocket one after the other, in the order they are received. To
+route them in parallel, on the threads of the Vert.x worker pool and in any order, set `parallelProcessing=true`.
+
+Some servers only send messages to a client that asked for them, such as a feed that needs a subscribe request. Set
+`connectMessage` to the text to send each time the consumer connects: when it starts and after each reconnect.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: vertx-websocket:my.websocket.com:8080/feed
+      parameters:
+        consumeAsClient: true
+        connectMessage: '{"op":"subscribe","channel":"prices"}'
+      steps:
+        - log:
+            message: "Got WebSocket message ${body}"
+----
+
+The query parameters of the URI that are not options of the component are sent to the remote server. Like any endpoint
+URI, Camel decodes the URI before the component reads it, so write a value that contains `+`, `&` or `%` (such as a
+token or a signature) as a raw value, for example `token=RAW(a+b/c=)`. It then reaches the server as written. See
+xref:manual::endpoint.adoc#_configuring_parameter_values_using_raw_values_such_as_passwords[raw values].
+
 === Path & query parameters
 
 The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
@@ -207,6 +231,10 @@ YAML::
             message: "New message from ${header.user} (${header.role}) >>> ${body}"
 ----
 ====
+
+A message the producer sends completes on a Vert.x event loop thread. The route then continues on a thread of the
+Vert.x worker pool, so a step after the producer may block (such as an HTTP call, or another `vertx-websocket` producer
+that connects to a server) without stalling the WebSocket I/O of that event loop.
 
 === Sending messages to peers connected to the vertx-websocket server consumer
 

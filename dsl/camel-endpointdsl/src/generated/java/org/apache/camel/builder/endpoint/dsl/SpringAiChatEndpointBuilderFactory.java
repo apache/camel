@@ -552,8 +552,10 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * List of custom advisors to add to the ChatClient. These advisors will
          * be added after the built-in advisors (SimpleLogger, SafeGuard,
-         * ChatMemory, QuestionAnswer) in the order they are provided in the
-         * list.
+         * QuestionAnswer) in the order they are provided in the list. When the
+         * list has a memory advisor, such as the session advisors, the endpoint
+         * adds no memory advisor of its own (sessionService, chatMemory or
+         * chatMemoryVectorStore).
          * 
          * The option is a:
          * <code>java.util.List&lt;org.springframework.ai.chat.client.advisor.api.Advisor&gt;</code> type.
@@ -570,8 +572,10 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * List of custom advisors to add to the ChatClient. These advisors will
          * be added after the built-in advisors (SimpleLogger, SafeGuard,
-         * ChatMemory, QuestionAnswer) in the order they are provided in the
-         * list.
+         * QuestionAnswer) in the order they are provided in the list. When the
+         * list has a memory advisor, such as the session advisors, the endpoint
+         * adds no memory advisor of its own (sessionService, chatMemory or
+         * chatMemoryVectorStore).
          * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.springframework.ai.chat.client.advisor.api.Advisor&gt;</code> type.
@@ -588,7 +592,9 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * ChatMemory instance for maintaining conversation history across
          * requests. When provided, conversation context will be automatically
-         * managed using MessageChatMemoryAdvisor.
+         * managed using MessageChatMemoryAdvisor. Deprecation note: Spring AI
+         * 2.1 deprecates ChatMemory for removal in Spring AI 3.0. Use
+         * sessionService.
          * 
          * The option is a:
          * <code>org.springframework.ai.chat.memory.ChatMemory</code> type.
@@ -598,6 +604,7 @@ public interface SpringAiChatEndpointBuilderFactory {
          * @param chatMemory the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSpringAiChatEndpointBuilder chatMemory(org.springframework.ai.chat.memory.ChatMemory chatMemory) {
             doSetProperty("chatMemory", chatMemory);
             return this;
@@ -605,7 +612,9 @@ public interface SpringAiChatEndpointBuilderFactory {
         /**
          * ChatMemory instance for maintaining conversation history across
          * requests. When provided, conversation context will be automatically
-         * managed using MessageChatMemoryAdvisor.
+         * managed using MessageChatMemoryAdvisor. Deprecation note: Spring AI
+         * 2.1 deprecates ChatMemory for removal in Spring AI 3.0. Use
+         * sessionService.
          * 
          * The option will be converted to a
          * <code>org.springframework.ai.chat.memory.ChatMemory</code> type.
@@ -615,6 +624,7 @@ public interface SpringAiChatEndpointBuilderFactory {
          * @param chatMemory the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSpringAiChatEndpointBuilder chatMemory(String chatMemory) {
             doSetProperty("chatMemory", chatMemory);
             return this;
@@ -623,8 +633,9 @@ public interface SpringAiChatEndpointBuilderFactory {
          * VectorStore instance for maintaining conversation history using
          * semantic search. When provided, conversation context will be
          * automatically managed using VectorStoreChatMemoryAdvisor. This is an
-         * alternative to chatMemory that uses vector embeddings for long-term
-         * memory with semantic retrieval.
+         * alternative to sessionService and chatMemory that uses vector
+         * embeddings for long-term memory with semantic retrieval. When
+         * sessionService or chatMemory is set, it is used instead.
          * 
          * The option is a:
          * <code>org.springframework.ai.vectorstore.VectorStore</code> type.
@@ -642,8 +653,9 @@ public interface SpringAiChatEndpointBuilderFactory {
          * VectorStore instance for maintaining conversation history using
          * semantic search. When provided, conversation context will be
          * automatically managed using VectorStoreChatMemoryAdvisor. This is an
-         * alternative to chatMemory that uses vector embeddings for long-term
-         * memory with semantic retrieval.
+         * alternative to sessionService and chatMemory that uses vector
+         * embeddings for long-term memory with semantic retrieval. When
+         * sessionService or chatMemory is set, it is used instead.
          * 
          * The option will be converted to a
          * <code>org.springframework.ai.vectorstore.VectorStore</code> type.
@@ -757,11 +769,17 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
-         * mcpServer..args= (stdio), mcpServer..url= (sse),
-         * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
-         * camel-oauth). This is a multi-value option with prefix: mcpServer.
+         * MCP server configurations. Define servers using prefix notation,
+         * where myServer stands for the name of the server:
+         * mcpServer.myServer.transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (streamableHttp/sse,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -780,11 +798,17 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
-         * mcpServer..args= (stdio), mcpServer..url= (sse),
-         * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
-         * camel-oauth). This is a multi-value option with prefix: mcpServer.
+         * MCP server configurations. Define servers using prefix notation,
+         * where myServer stands for the name of the server:
+         * mcpServer.myServer.transportType=streamableHttp|stdio|sse (sse is
+         * deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (streamableHttp/sse,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -878,6 +902,80 @@ public interface SpringAiChatEndpointBuilderFactory {
          */
         default AdvancedSpringAiChatEndpointBuilder outputFormat(String outputFormat) {
             doSetProperty("outputFormat", outputFormat);
+            return this;
+        }
+        /**
+         * The number of the newest messages of the session that sessionService
+         * sends to the model, extended back to the start of their turn, so that
+         * a tool call is never sent without its result. The session keeps every
+         * message. 0 sends the whole session.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param sessionMessageWindow the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringAiChatEndpointBuilder sessionMessageWindow(int sessionMessageWindow) {
+            doSetProperty("sessionMessageWindow", sessionMessageWindow);
+            return this;
+        }
+        /**
+         * The number of the newest messages of the session that sessionService
+         * sends to the model, extended back to the start of their turn, so that
+         * a tool call is never sent without its result. The session keeps every
+         * message. 0 sends the whole session.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param sessionMessageWindow the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringAiChatEndpointBuilder sessionMessageWindow(String sessionMessageWindow) {
+            doSetProperty("sessionMessageWindow", sessionMessageWindow);
+            return this;
+        }
+        /**
+         * Spring AI SessionService for keeping the conversation history across
+         * requests, in a session. The CamelSpringAiChatConversationId header
+         * selects the session, which is created on first use. Without the
+         * header, no memory is used. When it is set, sessionService is used
+         * instead of chatMemory and chatMemoryVectorStore.
+         * 
+         * The option is a:
+         * <code>org.springframework.ai.session.SessionService</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param sessionService the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringAiChatEndpointBuilder sessionService(org.springframework.ai.session.SessionService sessionService) {
+            doSetProperty("sessionService", sessionService);
+            return this;
+        }
+        /**
+         * Spring AI SessionService for keeping the conversation history across
+         * requests, in a session. The CamelSpringAiChatConversationId header
+         * selects the session, which is created on first use. Without the
+         * header, no memory is used. When it is set, sessionService is used
+         * instead of chatMemory and chatMemoryVectorStore.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ai.session.SessionService</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param sessionService the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringAiChatEndpointBuilder sessionService(String sessionService) {
+            doSetProperty("sessionService", sessionService);
             return this;
         }
         /**
@@ -1366,7 +1464,8 @@ public interface SpringAiChatEndpointBuilderFactory {
             return "CamelSpringAiChatPromptTemplate";
         }
         /**
-         * Augmented data for RAG as List.
+         * Augmented data for RAG, as a List of
+         * org.springframework.ai.document.Document.
          * 
          * The option is a: {@code
          * java.util.List<org.springframework.ai.document.Document>} type.
@@ -1601,8 +1700,10 @@ public interface SpringAiChatEndpointBuilderFactory {
             return "CamelSpringAiChatSystemMetadata";
         }
         /**
-         * Conversation ID for managing separate conversation contexts in chat
-         * memory.
+         * The conversation ID. It selects the session (sessionService) or the
+         * conversation (chatMemory, chatMemoryVectorStore), and is passed to
+         * every memory advisor, also to those of the advisors option or of a
+         * configured chatClient. Session advisors require it.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1638,6 +1739,35 @@ public interface SpringAiChatEndpointBuilderFactory {
          */
         public String springAiChatFinishReason() {
             return "CamelSpringAiChatFinishReason";
+        }
+        /**
+         * The category of the finish reason, the same for every provider:
+         * COMPLETED, TRUNCATED (a token or length limit), TOOL_CALL, FILTERED
+         * (a content filter, or a refusal of the SafeGuard advisor), OTHER or
+         * UNSPECIFIED.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringAiChatFinishReasonCategory}.
+         */
+        public String springAiChatFinishReasonCategory() {
+            return "CamelSpringAiChatFinishReasonCategory";
+        }
+        /**
+         * The reasoning of the model for its reply (thinking, thoughts or
+         * reasoning content), when the model returns it as text.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringAiChatReasoning}.
+         */
+        public String springAiChatReasoning() {
+            return "CamelSpringAiChatReasoning";
         }
         /**
          * The name of the AI model used to generate the response.

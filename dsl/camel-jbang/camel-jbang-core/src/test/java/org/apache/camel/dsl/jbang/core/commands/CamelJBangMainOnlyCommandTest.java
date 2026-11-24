@@ -52,6 +52,16 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void cmdCreatesOnlyItself() {
+        // no plugin adds to cmd, so it needs neither the other commands nor the plugins
+        CommandTree commandLine = execute("cmd", "reset-stats", "--help");
+
+        assertEquals(Set.of("cmd"), commandLine.getSubcommands().keySet());
+        assertTrue(commandLine.getSubcommands().get("cmd").getSubcommands().containsKey("send"));
+        assertTrue(CamelJBangMain.hasOnlyCommand(commandLine, "cmd", "reset-stats", "--help"));
+    }
+
+    @Test
     public void theHelpCreatesAllCommands() {
         assertAllCommands(execute("--help"));
         assertAllCommands(execute());
@@ -89,12 +99,14 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void theCommandsThatUseTheOtherCommandsOrThePluginsCreateAllCommands() {
-        for (String command : List.of("shell", "completion", "run", "export", "cmd")) {
+        for (String command : List.of("shell", "completion", "run", "export")) {
             assertNull(CamelJBangMain.onlyCommand(command, "--foo"), command);
         }
         assertNull(CamelJBangMain.onlyCommand("--verbose", "version"));
         assertEquals("version", CamelJBangMain.onlyCommand("version", "get"));
         assertEquals("version", CamelJBangMain.onlyCommand("version", "--help"));
+        // no plugin adds to cmd
+        assertEquals("cmd", CamelJBangMain.onlyCommand("cmd", "send", "--body=hello"));
         assertNull(CamelJBangMain.onlyCommand("--help"));
     }
 

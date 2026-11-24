@@ -147,11 +147,11 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         StringPrinter out = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(out);
         CommandTree commandLine = new CommandTree(main)
-                .addSubcommand("echo", new CommandTree(new EchoCommand(main)))
-                .addSubcommand("other", new CommandTree(new EchoCommand(main)))
-                .addSubcommand("dev", new CommandTree(new DevCommand(main)))
-                .addSubcommand("plugin", new CommandTree(new PluginCommand(main))
-                        .addSubcommand("echo", new CommandTree(new EchoCommand(main))));
+                .addSubcommand("echo", new CommandTree(main.command(new EchoCommand())))
+                .addSubcommand("other", new CommandTree(main.command(new EchoCommand())))
+                .addSubcommand("dev", new CommandTree(main.command(new DevCommand())))
+                .addSubcommand("plugin", new CommandTree(main.command(new PluginCommand()))
+                        .addSubcommand("echo", new CommandTree(main.command(new EchoCommand()))));
         // augmentWithUserConfiguration must NOT throw for a malformed config
         CommandLineHelper.augmentWithUserConfiguration(commandLine, out);
 
@@ -193,11 +193,11 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         StringPrinter out = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(out);
         CommandTree commandLine = new CommandTree(main)
-                .addSubcommand("echo", new CommandTree(new EchoCommand(main)))
-                .addSubcommand("other", new CommandTree(new EchoCommand(main)))
-                .addSubcommand("dev", new CommandTree(new DevCommand(main)))
-                .addSubcommand("plugin", new CommandTree(new PluginCommand(main))
-                        .addSubcommand("echo", new CommandTree(new EchoCommand(main))));
+                .addSubcommand("echo", new CommandTree(main.command(new EchoCommand())))
+                .addSubcommand("other", new CommandTree(main.command(new EchoCommand())))
+                .addSubcommand("dev", new CommandTree(main.command(new DevCommand())))
+                .addSubcommand("plugin", new CommandTree(main.command(new PluginCommand()))
+                        .addSubcommand("echo", new CommandTree(main.command(new EchoCommand()))));
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
 
         try {
@@ -218,10 +218,6 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         @Option(name = "repos")
         String repos;
 
-        EchoCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         protected boolean disarrangeLogging() {
             return false;
@@ -240,10 +236,6 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
 
         @Option(name = "reload", aliases = { "dev" }, hasValue = false)
         boolean dev;
-
-        DevCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         protected boolean disarrangeLogging() {

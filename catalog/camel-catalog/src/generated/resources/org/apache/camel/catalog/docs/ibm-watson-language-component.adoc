@@ -1,10 +1,11 @@
-= IBM Watson Language Component
+= IBM Watson Language Component (deprecated)
 :doctitle: IBM Watson Language
 :shortname: ibm-watson-language
 :artifactid: camel-ibm-watson-language
 :description: Perform natural language processing using IBM Watson Natural Language Understanding
 :since: 4.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

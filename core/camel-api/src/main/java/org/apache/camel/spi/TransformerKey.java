@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Composite lookup key for the {@link TransformerRegistry}, encoding a from-{@link DataType} / to-{@link DataType} pair
  * as a single string value for efficient map-based lookup.
- * <p/>
+ * <p>
  * The string form is {@code "fromType/toType"} when both ends are specified, or just {@code "toType"} when the from
  * side is {@link DataType#ANY} (scheme-only transformer that applies to any input type). This normalization ensures
  * that scheme-based transformers (e.g. all {@code json:*} conversions) can be resolved with a single registry lookup

@@ -50,6 +50,36 @@ public class Namespaces {
     }
 
     /**
+     * Creates a namespace context from prefix to URI mappings in a single string, such as
+     * {@code p1=http://acme.com/one,p2=http://acme.com/two}. The mappings are separated by commas or new lines, and the
+     * prefix and the URI by the first {@code =}. Whitespace around them is ignored, and an empty string has no
+     * mappings. This allows to configure several namespaces from one property, for example a bean referred to by the
+     * {@code namespacesRef} of an xpath.
+     *
+     * @param  mappings                 the mappings, such as {@code p1=uri1,p2=uri2}
+     * @throws IllegalArgumentException if a mapping has no prefix or no URI
+     */
+    public Namespaces(String mappings) {
+        if (mappings == null) {
+            return;
+        }
+        for (String mapping : mappings.split("[,\\r\\n]")) {
+            String entry = mapping.trim();
+            if (entry.isEmpty()) {
+                continue;
+            }
+            int separator = entry.indexOf('=');
+            String prefix = separator > 0 ? entry.substring(0, separator).trim() : "";
+            String uri = separator > 0 ? entry.substring(separator + 1).trim() : "";
+            if (prefix.isEmpty() || uri.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Invalid namespace mapping: " + entry + ". Use prefix=uri, such as p1=http://acme.com/one");
+            }
+            add(prefix, uri);
+        }
+    }
+
+    /**
      * Returns true if the given namespaceURI is empty or if it matches the given expected namespace
      */
     public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {

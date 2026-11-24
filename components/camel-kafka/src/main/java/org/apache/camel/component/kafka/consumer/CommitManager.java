@@ -54,6 +54,18 @@ public interface CommitManager {
     void recordOffset(TopicPartition partition, long partitionLastOffset);
 
     /**
+     * Forgets the offset recorded for the given partition without committing it. Called when the partition is revoked
+     * (after its commit, whether the commit succeeded or not) or lost: the consumer no longer owns the partition, and
+     * an offset kept for it could be committed after the partition is assigned to the consumer again, which would move
+     * back the offset that another consumer committed in the meantime.
+     *
+     * @param partition the partition that is no longer assigned to the consumer
+     */
+    default void discardRecordedOffset(TopicPartition partition) {
+        // NO-OP
+    }
+
+    /**
      * Records the last processed offset and commits it, for an asynchronous manual commit. A commit manager that
      * commits asynchronously leaves the commit to the consumer thread (see {@link #commitRequestedOffsets()}), so this
      * can be called from any thread.

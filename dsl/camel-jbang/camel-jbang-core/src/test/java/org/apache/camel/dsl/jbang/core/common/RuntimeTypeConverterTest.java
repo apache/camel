@@ -20,6 +20,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RuntimeTypeConverterTest {
 
@@ -32,4 +33,11 @@ class RuntimeTypeConverterTest {
         assertThat(new RunRuntimeTypeConverter().convert("jbang")).isEqualTo(RuntimeType.jbang);
         assertThat(new RunRuntimeTypeConverter().convert("camel-main")).isEqualTo(RuntimeType.main);
     }
+
+    @Test
+    void rejectsTomcatAsRuntime() {
+        assertThatThrownBy(() -> new RuntimeTypeConverter().convert("tomcat"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
 }

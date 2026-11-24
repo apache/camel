@@ -6,7 +6,7 @@
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 
 *Since Camel {since}*
 
@@ -52,8 +52,8 @@ Maven users will need to add the following dependency to their `pom.xml`.
 openfga:operation[?options]
 ------------------------------------------------------------
 
-Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `readTuples`,
-`readChanges`, `expand`, `writeTuples` or `deleteTuples`.
+Where `operation` is one of `check`, `batchCheck`, `listObjects`, `streamedListObjects`, `listRelations`, `listUsers`, `readTuples`,
+`readChanges`, `expand`, `writeTuples`, `deleteTuples` or `write`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -250,6 +250,25 @@ from("direct:listDocuments")
 
 The body comes back holding only the identifiers the check allowed, in the order it was given them.
 
+By default, `batchCheckMode=client` sends one Check request per object, with at most `maxParallelRequests`
+(default 10) in flight. This is compatible with older OpenFGA servers.
+
+For OpenFGA 1.8.0 or later, set `batchCheckMode=server` to use the native BatchCheck API. The SDK groups checks into
+HTTP requests containing at most `maxBatchSize` checks (default 50, configurable from 1 to 50; 50 is the default
+per-request limit of an OpenFGA server, `max-checks-per-batch-check`, and the component does not go above it even
+when a server is configured to accept more), and sends at most `maxParallelRequests` of those requests concurrently. Results are correlated back to their input positions, preserving
+order and duplicate identifiers even when the server returns answers out of order. For example:
+
+[source,java]
+------------------------------------------------------------
+.to("openfga:batchCheck?storeId={{fga.store}}&relation=reader&user=user:anne"
+    + "&batchCheckMode=server&maxBatchSize=50&maxParallelRequests=2")
+------------------------------------------------------------
+
+The bounded wait accounts for the number of HTTP-request waves in the selected mode. An item error, an incomplete
+response, or a failed request fails the entire filter, including when `failOpen=true`; server mode does not silently
+fall back to client mode. SDK request retries remain governed by `maxRetries`.
+
 `listObjects` answers the same question from the other end — ask OpenFGA which objects the subject can reach,
 rather than filtering a list you already have:
 
@@ -285,6 +304,87 @@ YAML::
 
 `listRelations` and `listUsers` round this out: what a subject may do with one object, and who may do something
 with it. Both replace the body with a `List<String>`.
+
+=== Streaming object queries
+
+`streamedListObjects` uses OpenFGA's streamed object query and returns an
+`OpenFgaObjectIterator`, implementing `Iterator<String>` and `java.io.Closeable`.
+It opens the response lazily on first iteration and reads as the caller advances,
+without collecting the full result list or adding a producer queue. A bounded
+reader buffer provides pull backpressure. Ordinary `listObjects` still returns a
+complete list; neither operation offers continuation-token pagination.
+
+Use a streaming splitter to process each object incrementally:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:enumerate")
+    .to("openfga:streamedListObjects?storeId={{fga.store}}"
+        + "&authorizationModelId={{fga.model}}&relation=reader"
+        + "&user=user:${exchangeProperty.subject}&type=document")
+    .split(body()).streaming()
+        .to("direct:processObject")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:enumerate
+      steps:
+        - to:
+            uri: openfga:streamedListObjects
+            parameters:
+              storeId: "{{fga.store}}"
+              authorizationModelId: "{{fga.model}}"
+              relation: reader
+              user: "user:${exchangeProperty.subject}"
+              type: document
+        - split:
+            simple: "${body}"
+            streaming: true
+            steps:
+              - to:
+                  uri: direct:processObject
+----
+====
+
+For `ProducerTemplate.requestBody`, consume the returned `OpenFgaObjectIterator`
+in a try-with-resources block. It remains usable after the exchange completes.
+Always close it when abandoning iteration. The streaming splitter closes a
+`Closeable` iterator; exhaustion, failure and producer stop also close the response.
+
+`isComplete()` becomes true only after iteration observes the end of the response.
+Closing early leaves it false. Server errors, malformed records, timeouts and
+connection errors throw from `hasNext()` or `next()`, including after earlier
+objects have been delivered. Treat those earlier objects as partial results.
+`failOpen` does not suppress streaming query failures. The component does not retry
+this stream automatically, because replay could repeat objects already delivered.
+
+`streamMaxResults` defaults to 10000 and fails iteration if another object arrives;
+it never silently truncates the answer. `streamMaxLineLength` defaults to 65536
+characters and bounds one JSON record. Both must be positive. `readTimeout` bounds
+waiting for response headers and each blocking attempt to read the next record;
+it does not limit time spent processing an object between calls. Closing the
+iterator cancels an in-flight request and closes an active response body.
+
+The operation preserves `authorizationModelId`, `consistency`, `conditionContext`
+and configured contextual tuples. With the component-created client it uses the
+SDK's authentication, serialization and TLS configuration. SDK 0.11 does not
+expose a cancellable response-body handle from an injected `OpenFgaClient`.
+Therefore an injected SDK client requires an explicit `streamingClient` implementing
+`OpenFgaStreamingClient`, plus `storeId` and a positive `readTimeout`. This SPI must
+return the actual cancellable request future and its closeable response body;
+the application owns the SPI client's lifecycle. Endpoint credentials are not used
+to guess the configuration of an injected SDK client.
+
 
 === Granting and revoking access
 
@@ -353,6 +453,41 @@ producer fails and names the part that is missing.
 
 A typed wildcard — `user:*`, OpenFGA's "everyone" — is accepted here, because writing that tuple is how a resource
 is shared publicly and is a deliberate act by the route. It is *refused* as the subject of a check; see below.
+
+=== Mutation conflicts and atomic updates
+
+By default, `onDuplicate=error` makes an existing relationship fail a write, and `onMissing=error` makes an absent
+relationship fail a delete. On OpenFGA 1.10.0 or later, select `onDuplicate=ignore` or `onMissing=ignore` explicitly
+for reconciliation routes that should leave an already-satisfied operation unchanged. These options apply to
+`writeTuples` and `deleteTuples`, respectively, and both apply to `write`.
+
+Use `write` to grant and revoke relationships in one atomic request. With no configured `user`/`relation`/`object`,
+the body is a Map containing `writes` and/or `deletes` collections. Each entry is an ordinary Map with `user`,
+`relation` and `object`; a `timestamp` entry, as `readTuples` returns it, is ignored, so a page of `readTuples` can be
+revoked as it is. A `condition` entry is written through on a write and ignored on a delete. Other body shapes or entry
+fields are rejected. For example:
+
+[source,java]
+------------------------------------------------------------
+Map<String, Object> changes = Map.of(
+    "writes", List.of(Map.of("user", "user:anne", "relation", "writer", "object", "document:budget")),
+    "deletes", List.of(Map.of("user", "user:anne", "relation", "reader", "object", "document:budget")));
+template.requestBody("openfga:write?storeId={{fga.store}}&authorizationModelId={{fga.model}}", changes);
+------------------------------------------------------------
+
+The component requires at least one tuple and rejects an all-empty write, and the sum of writes and deletes cannot
+exceed 100. It rejects larger transactions before calling OpenFGA and never splits this atomic update into
+independently committed requests. A failed transaction remains a failure even when `failOpen=true`. The component
+applies an endpoint-configured model revision to the transaction. A server configured with a lower tuple limit can
+reject a request within the component's limit.
+
+The configured-tuple precedence also applies to `write`: when any of `user`/`relation`/`object` is configured, that
+triple supplies one write, the body is ignored, and no deletes are taken from it. A missing configured part fails
+rather than falling back to the body.
+
+Successful mutations preserve the input body. `CamelOpenFgaWrittenTuples` and `CamelOpenFgaDeletedTuples` report the
+number of submitted operations, including any that the selected ignore mode skipped; they do not report the number of
+rows changed in storage. The combined `write` operation sets both counters, including zero for an omitted side.
 
 == Security
 
@@ -509,8 +644,9 @@ YAML::
 ----
 ====
 
-It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`. On `batchCheck` the batch fans
-out into one check per object and the context goes on *every* item, so each object is judged against the same facts.
+It applies to `check`, `batchCheck`, `listObjects`, `streamedListObjects`, `listRelations` and `listUsers`. On
+`batchCheck` the context goes on *every* item in either client or server mode, so each object is judged against the
+same facts.
 
 `OpenFgaSecurityPolicy` takes both options as well, through `setContextualTuples` and `setConditionContext`. They are
 no more dangerous on the policy than on an endpoint and no less: either way the value comes from whoever configured
@@ -697,22 +833,36 @@ when the changed tuple has one.
 Both are paged. `pageSize` bounds one request, and the token the page returns arrives on
 `CamelOpenFgaContinuationToken`; feed it back through `continuationToken` to read on.
 
-A `readChanges` poller has to carry that token from one exchange to the *next*, which an exchange property cannot do:
-every timer fire is a new exchange, so a property left on the previous one is gone and each poll would start from the
-beginning again. Use a global variable, which outlives the exchange:
+=== Consuming the change log with durable checkpoints
+
+Only `readChanges` supports consumption. It polls one bounded page per scheduled
+poll and sends a `List<Map<String, Object>>` containing the changes, in server
+order, to the route. Configure `pageSize` to bound the requested page size; empty
+tail pages do not produce exchanges. Standard scheduled polling options, such as
+`delay`, `initialDelay` and polling backoff, control the schedule.
+
+Register an application-provided `org.apache.camel.spi.StateRepository<String, String>`
+as `changeCheckpoints`. A repository that is a Camel service, such as `FileStateRepository`,
+is started by the consumer when the application has not started it, and stopped again when
+the route stops; a repository the application started stays under the application's control.
+A repository that several routes share, each with its own `checkpointKey`, should be started
+and stopped by the application: otherwise the first route to start owns it and stops it with
+that route, and a stopped `FileStateRepository` answers `null` to the other routes, which then
+start again from `startTime` or the beginning:
 
 [tabs]
 ====
 Java::
 +
 [source,java]
-------------------------------------------------------------
-from("timer:sync?period=30000")
-        .to("openfga:readChanges?storeId={{fga.store}}&type=document"
-            + "&continuationToken=${variable.global:fgaToken}")
-        .setVariable("global:fgaToken", header("CamelOpenFgaContinuationToken"))
-        .split(body()).to("direct:applyChange");
-------------------------------------------------------------
+----
+from("openfga:readChanges?storeId={{fga.store}}&type=document"
+    + "&checkpointRepository=#changeCheckpoints&checkpointKey=documents-projection-v1"
+    + "&pageSize=100&delay=1000&changePollTimeout=30000")
+    .split(body()).shareUnitOfWork().stopOnException()
+        .to("direct:applyChange")
+    .end();
+----
 
 YAML::
 +
@@ -720,33 +870,80 @@ YAML::
 ----
 - route:
     from:
-      uri: timer:sync
+      uri: openfga:readChanges
       parameters:
-        period: 30000
+        storeId: "{{fga.store}}"
+        type: document
+        checkpointRepository: "#changeCheckpoints"
+        checkpointKey: documents-projection-v1
+        pageSize: 100
+        delay: 1000
+        changePollTimeout: 30000
       steps:
-        - to:
-            uri: openfga:readChanges
-            parameters:
-              storeId: "{{fga.store}}"
-              type: document
-              continuationToken: "${variable.global:fgaToken}"
-        - setVariable:
-            name: "global:fgaToken"
-            expression:
-              header:
-                expression: CamelOpenFgaContinuationToken
         - split:
             expression:
               simple:
                 expression: "${body}"
+            shareUnitOfWork: true
+            stopOnException: true
             steps:
               - to:
                   uri: direct:applyChange
 ----
 ====
 
-A global variable lives in the `CamelContext`, so it does not survive a restart. A poller that must resume across one
-should keep the token wherever the deployment already persists state rather than rely on it.
+Both `checkpointRepository` and `checkpointKey` are required. Implement the
+repository with durable storage: `getState(key)` returns the last committed cursor
+or null, and `setState(key, cursor)` must atomically persist it before returning.
+A failed store must preserve the previous value. Repository methods must impose
+finite I/O deadlines. Camel does not substitute an in-memory repository and does
+not own the repository's lifecycle. Reuse a state repository only when it meets
+these durability and failure requirements; an in-memory repository cannot resume
+after a process restart.
+
+Choose a stable key unique to the server, store, type filter and projection.
+Exactly one active consumer may own a key; the SPI does not provide distributed
+leader election. For clustered deployments, consider xref:master-component.adoc[master]
+to run one active route. A component-level checkpoint key must still be unique
+for every consumer. Use a different key when deliberately rebuilding a projection
+or changing its filter. `continuationToken` is not accepted on a consumer;
+the durable repository is its only cursor source. `startTime` applies only
+before a cursor exists and must remain consistent across restarts.
+
+After the whole page succeeds, the consumer durably stores its next token.
+A route exception or rollback leaves the checkpoint unchanged. A handled route
+exception counts as successful processing, so do not mark an incomplete
+projection as handled. With a splitter, propagate failure to the parent page as
+in the example. Avoid fire-and-forget processing when the checkpoint must cover
+the resulting work.
+
+Delivery is *at least once*. A crash after applying changes but before storing
+the checkpoint, a failed checkpoint write, or shutdown during page processing can
+repeat the complete page on the next poll or restart. Make projection updates
+idempotent. The checkpoint and downstream side effects do not form one atomic
+transaction. Ordering is preserved within each server page and between polls
+of a single consumer; parallel route processing can change application order.
+
+The repository is reloaded on each poll. An empty tail page retains an echoed
+cursor, an advanced empty-page cursor is stored, and a missing token never erases
+the existing bookmark. Read failures, including expired or invalid server cursors,
+are reported through the polling error handler; they never silently restart at
+the beginning. Cursor validity and retained history depend on the OpenFGA server
+and its storage configuration. Plan recovery or a projection rebuild when the
+server can no longer resume a bookmark; checkpoints cannot guarantee indefinite
+replay.
+
+`changePollTimeout` bounds awaiting the page request and cancels it on expiry.
+Stopping the consumer cancels a pending request and prevents acknowledging an
+unfinished page. SDK request timeouts still apply. Route processing and repository
+calls must cooperate with Camel shutdown and their own deadlines; the consumer
+does not forcibly interrupt arbitrary application code. `failOpen` does not
+suppress polling or checkpoint failures.
+
+The `readChanges` producer remains available for manual polling. Its caller owns
+cursor persistence and must save the returned `CamelOpenFgaContinuationToken`
+only after successfully processing the complete page. An exchange property or
+global variable is not a durable checkpoint across restarts.
 
 `startTime` bounds where a first read begins — without it a first `readChanges` on a busy store pages through the whole
 history before reaching anything current.
@@ -823,3 +1020,10 @@ YAML::
                   uri: direct:serveOrder
 ----
 ====
+
+== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.

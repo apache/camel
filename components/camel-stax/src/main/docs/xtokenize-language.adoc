@@ -115,6 +115,10 @@ URI as the value.
 If the expression declares namespaces inline as well, then the inline namespaces win and
 `namespacesRef` is ignored.
 
+Instead of a bean, several namespaces can also be given inline in one string, with the `namespaceMappings` option,
+such as `namespaceMappings: "c=http://acme.com/cheese,w=http://acme.com/wine"`. See the
+xref:xpath-language.adoc#_several_namespaces_in_one_string[XPath] language for the syntax.
+
 == Example
 
 Suppose the input XML contains multiple orders:

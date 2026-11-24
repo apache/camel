@@ -19,6 +19,7 @@ package org.apache.camel.support.task.task;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Task;
 import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -132,13 +134,56 @@ class BackgroundTaskRegistryTest {
     @Test
     @Timeout(15)
     void testRunReturnsAndUnregistersWhenSupplierThrows() throws Exception {
+        assertRunReturnsAndUnregistersWhenSupplierThrows(new IllegalStateException("boom"));
+    }
+
+    @DisplayName("Test that run() returns and unregisters when the supplier throws an Error")
+    @Test
+    @Timeout(15)
+    void testRunReturnsAndUnregistersWhenSupplierThrowsAnError() throws Exception {
+        // such as a NoClassDefFoundError of a client library: before, the Error ended the schedule, and run() blocked
+        // forever
+        assertRunReturnsAndUnregistersWhenSupplierThrows(new NoClassDefFoundError("boom"));
+    }
+
+    @DisplayName("Test that a scheduled task fails and unregisters when the supplier throws an Error")
+    @Test
+    @Timeout(15)
+    void testScheduledTaskFailsAndUnregistersWhenSupplierThrowsAnError() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withScheduledExecutor(executor)
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofMillis(100))
+                            .withInitialDelay(Duration.ZERO)
+                            .withUnlimitedDuration()
+                            .build())
+                    .build();
+            NoClassDefFoundError error = new NoClassDefFoundError("boom");
+            task.schedule(camelContext, () -> {
+                throw error;
+            });
+            // before, the status stayed Active and the task stayed in the registry
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertThat(task.getStatus()).isEqualTo(Task.Status.Failed);
+                assertThat(task.getException()).isSameAs(error);
+                assertThat(registry.getTasks()).isEmpty();
+            });
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private void assertRunReturnsAndUnregistersWhenSupplierThrows(Throwable failure) throws Exception {
         AtomicBoolean runReturned = new AtomicBoolean(false);
         AtomicBoolean completed = new AtomicBoolean(true);
 
         // an unlimited-duration task: before CAMEL-24286 a thrown supplier exception left the latch
         // un-counted, so run() blocked forever here and the task leaked in the registry
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         BackgroundTask task = Tasks.backgroundTask()
-                .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
+                .withScheduledExecutor(executor)
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(100))
                         .withInitialDelay(Duration.ZERO)
@@ -149,7 +194,10 @@ class BackgroundTaskRegistryTest {
         // daemon so a regression (run() hanging forever) cannot keep the JVM alive
         Thread runner = new Thread(() -> {
             boolean result = task.run(camelContext, () -> {
-                throw new IllegalStateException("boom");
+                if (failure instanceof Error error) {
+                    throw error;
+                }
+                throw (RuntimeException) failure;
             });
             completed.set(result);
             runReturned.set(true);
@@ -169,6 +217,9 @@ class BackgroundTaskRegistryTest {
                 .untilAsserted(() -> assertThat(registry.getTasks())
                         .as("the failed task must not leak in the registry")
                         .isEmpty());
+        assertThat(task.getStatus()).isEqualTo(Task.Status.Failed);
+        assertThat(task.getException()).isSameAs(failure);
+        executor.shutdownNow();
     }
 
     @DisplayName("Test that task is removed from registry after supplier succeeds")

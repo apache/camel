@@ -150,7 +150,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                             + " If the component has disabled cookie management then this option is disabled too.")
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer,security",
-              description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
+              description = "If this option is true, camel-http sends the Basic credentials or the Bearer token with the first"
+                            + " request, without waiting for the server to ask for them with a 401 response.")
     private boolean authenticationPreemptive;
     @UriParam(label = "producer,advanced", description = "Whether the HTTP GET should include the message body or not."
                                                          + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
@@ -301,9 +302,6 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
-        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
-            clientBuilder.setConnectionManagerShared(true);
-        }
 
         if (!useSystemProperties) {
             // configure http proxy from camelContext
@@ -349,6 +347,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(clientBuilder);
+        }
+
+        // Apply the shared-manager flag after all configurers have run so that the endpoint's decision
+        // is final.  An OAuth2ClientConfigurer sets connManagerShared=true before building the token
+        // client, then resets it to false so the endpoint's own client is not affected by that
+        // override.  Setting the flag here, after the configurer loop, ensures the endpoint always
+        // wins: if the endpoint uses the component's shared connection manager, its client will not
+        // own it; if it owns its own manager, it will close it on doStop().
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
         }
 
         if (httpActivityListener != null) {
@@ -547,7 +555,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * If this option is true, camel-http sends preemptive basic authentication to the server.
+     * If this option is true, camel-http sends the Basic credentials or the Bearer token with the first request,
+     * without waiting for the server to ask for them with a 401 response.
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;

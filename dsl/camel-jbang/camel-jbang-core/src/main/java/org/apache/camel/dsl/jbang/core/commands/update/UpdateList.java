@@ -109,10 +109,6 @@ public class UpdateList extends CamelCommand {
     private static final String QUARKUS_FIRST_RECIPE_VERSION = "1.0.22";
     private static final String QUARKUS_FIRST_UPDATABLE_VERSION = "4.4.0";
 
-    public UpdateList(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();

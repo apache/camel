@@ -51,13 +51,14 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     void disconnect() throws GenericFileOperationFailedException;
 
     /**
-     * Disconnects from the remote server when the producer stops.
+     * Disconnects from the remote server when the producer or the consumer stops.
      * <p>
-     * Another thread can still run an operation at that time. As long as the shutdown of Camel is not forced, such as
-     * when a producer cache evicts the producer, this method should wait for it, as {@link #disconnect()} does: it can
-     * be a healthy but slow upload. Once the shutdown is forced, the operation is one that the shutdown gave up waiting
-     * for, such as an upload that hangs as long as the server does not answer: unlike {@link #disconnect()}, this
-     * method should then not wait for it without bound, but disconnect anyway, so that the operation fails.
+     * Another thread can still run an operation at that time: an upload of the producer, or the poll of the consumer.
+     * As long as the shutdown of Camel is not forced, such as when a producer cache evicts the producer, this method
+     * should wait for it, as {@link #disconnect()} does: it can be a healthy but slow upload. Once the shutdown is
+     * forced, the operation is one that the shutdown gave up waiting for, such as an upload that hangs as long as the
+     * server does not answer: unlike {@link #disconnect()}, this method should then not wait for it without bound, but
+     * disconnect anyway, so that the operation fails.
      * <p>
      * The default implementation disconnects as {@link #disconnect()} does, when connected.
      *
@@ -83,6 +84,18 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean sendNoop() throws GenericFileOperationFailedException;
+
+    /**
+     * Whether the server completed an operation on this connection so recently that a noop before the next upload would
+     * not show anything new about the connection. The default returns <tt>false</tt>, so the producer always sends the
+     * noop.
+     *
+     * @return <tt>true</tt> if the producer can skip the noop before the next upload
+     * @since  4.24
+     */
+    default boolean isRecentlyUsed() {
+        return false;
+    }
 
     /**
      * Sends a site command to the remote server

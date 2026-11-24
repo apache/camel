@@ -75,7 +75,7 @@ camel kubernetes run [options]
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | quarkus | RuntimeType
 | `--service-account` | The service account used to run the application. |  | String
 | `--skip-plugins` | Skip plugins during export | false | boolean
-| `--spring-boot-version` | Spring Boot version | 4.1.2 | String
+| `--spring-boot-version` | Spring Boot version | 4.2.0 | String
 | `--trait` | Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello". |  | String[]
 | `--verbose` | Verbose output of build/deploy progress |  | boolean
 | `--volume` | Mount a volume into the integration container, for instance "-v pvcname:/container/path". |  | String[]

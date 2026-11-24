@@ -42,6 +42,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -137,14 +138,75 @@ public final class MainHelper {
                     LOG.trace("Skipping Kubernetes Service OS environment variable: {}", k);
                 } else {
                     if (k.startsWith(pk) || k.startsWith(pk2)) {
-                        String key = k.toLowerCase(Locale.US).replace('_', '.');
-                        answer.put(key, v);
+                        answer.put(envVariableToKey(k), v);
                     }
                 }
             });
         }
 
         return answer;
+    }
+
+    /**
+     * The configuration key for an OS environment variable. A variable that matches the key of a camel-main option when
+     * underscores are ignored is mapped to that key, so the underscores between the words of an option are optional
+     * ({@code CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY} and {@code CAMEL_VAULT_GCP_SERVICEACCOUNTKEY} are both
+     * {@code camel.vault.gcp.serviceaccountkey}). Any other variable has each underscore turned into a dot.
+     *
+     * @param  name the name of the environment variable
+     * @return      the configuration key, in lower case
+     */
+    static String envVariableToKey(String name) {
+        String key = MainOptionKeys.KEYS.get(normalizeEnvName(name));
+        if (key != null) {
+            return key;
+        }
+        return name.toLowerCase(Locale.US).replace('_', '.');
+    }
+
+    private static String normalizeEnvName(String name) {
+        StringBuilder sb = new StringBuilder(name.length());
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch != '_' && ch != '.' && ch != '-') {
+                sb.append(Character.toUpperCase(ch));
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * The keys of the camel-main options (in lower case), by their name without dots, dashes and underscores in upper
+     * case. Loaded only when an OS environment variable is mapped to a configuration key.
+     */
+    private static final class MainOptionKeys {
+        private static final Map<String, String> KEYS = load();
+
+        private static Map<String, String> load() {
+            Map<String, String> answer = new HashMap<>();
+            Set<String> ambiguous = new HashSet<>();
+            try (InputStream is = MainHelper.class.getResourceAsStream("/org/apache/camel/main/main-options.properties")) {
+                if (is == null) {
+                    return answer;
+                }
+                for (String line : IOHelper.loadText(is).split("\n")) {
+                    String key = line.trim();
+                    if (key.isEmpty() || key.startsWith("#")) {
+                        continue;
+                    }
+                    String name = normalizeEnvName(key);
+                    String existing = answer.put(name, key.toLowerCase(Locale.US));
+                    if (existing != null && !existing.equals(key.toLowerCase(Locale.US))) {
+                        ambiguous.add(name);
+                    }
+                }
+            } catch (IOException e) {
+                LOG.debug("Cannot load the camel-main option keys due to: {}. This exception is ignored.", e.getMessage(), e);
+            }
+            // two options that differ only by dots, dashes or underscores keep the default mapping
+            ambiguous.forEach(answer::remove);
+            return answer;
+        }
     }
 
     public static Map<String, String> filterEnvVariables(String[] prefixes) {
@@ -440,7 +502,7 @@ public final class MainHelper {
             return null;
         }
         PropertyConfigurer configurer
-                = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name + "-" + kind, context);
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(context, name + "-" + kind, target);
         // the configurer that PackageDataFormatMojo or PackageLanguageMojo generates for a type is named after it
         if (configurer != null && configurer.getClass().getName().equals(target.getClass().getName() + "Configurer")) {
             return configurer;

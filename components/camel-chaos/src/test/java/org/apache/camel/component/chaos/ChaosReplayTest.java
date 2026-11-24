@@ -66,8 +66,8 @@ class ChaosReplayTest extends ChaosTestSupport {
             @Override
             public void configure() {
                 from("file:target/chaos-replay/inbox?initialDelay=0&delay=50").routeId("inbox").to("mock:inbox")
-                        .to("seda:ship");
-                from("seda:ship").routeId("ship").to("file:target/chaos-replay/archive");
+                        .to("seda:ship?pollTimeout=10");
+                from("seda:ship?pollTimeout=10").routeId("ship").to("file:target/chaos-replay/archive");
                 from("file:target/chaos-replay/orders?move=done/${file:name}&initialDelay=0&delay=50").routeId("orders")
                         .to("mock:orders");
                 from("file:target/chaos-replay/kept?noop=true&initialDelay=0&delay=50").routeId("kept").to("mock:kept");

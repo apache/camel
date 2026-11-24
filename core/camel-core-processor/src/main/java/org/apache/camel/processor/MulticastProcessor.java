@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +50,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
@@ -168,6 +170,9 @@ public class MulticastProcessor extends BaseProcessorSupport
     protected final Processor onPrepare;
     protected final ProcessorExchangeFactory processorExchangeFactory;
     private final Lock lock = new ReentrantLock();
+    // the parallel tasks that are not done yet, so doShutdown can fail those whose parts the shut down thread pool
+    // never runs
+    private final Set<MulticastTask> parallelTasks = ConcurrentHashMap.newKeySet();
     private final AsyncProcessorAwaitManager awaitManager;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
@@ -405,6 +410,12 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (RejectedExecutionException e) {
                 state.reject();
             }
+            if (shutdownExecutorService && executorService.isShutdown()) {
+                // doShutdown shut the thread pool down meanwhile, maybe before it saw this task: with the CallerRuns
+                // policy the pool drops the task without an exception, so fail the exchange here (a no-op when
+                // doShutdown or reject() completed it already)
+                state.doFailed(new RouteStoppingException("The exchange cannot complete: the thread pool is shut down"));
+            }
         } else {
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleQueue(state);
@@ -490,6 +501,20 @@ public class MulticastProcessor extends BaseProcessorSupport
             } else {
                 this.completion = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
             }
+            if (isParallelProcessing()) {
+                parallelTasks.add(this);
+            }
+        }
+
+        /**
+         * Marks this task as done, which only one caller can do.
+         */
+        private boolean markDone() {
+            if (done.compareAndSet(false, true)) {
+                parallelTasks.remove(this);
+                return true;
+            }
+            return false;
         }
 
         @Override
@@ -529,6 +554,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                     }
                 }
             } catch (Exception e) {
+                doFailed(e);
+            } catch (VirtualMachineError e) {
+                // left as before, as in DelegateSyncProcessor
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy: thrown on, it would leave the exchange without its done
                 doFailed(e);
             }
         }
@@ -583,19 +614,24 @@ public class MulticastProcessor extends BaseProcessorSupport
                 doTimeoutDone(result.get(), true);
             } catch (Exception e) {
                 doTimeoutFailed(e);
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy
+                doTimeoutFailed(e);
             } finally {
                 lock.unlock();
             }
         }
 
         protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
 
         protected void doDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
+            if (markDone()) {
                 cancelTimeoutTask();
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
@@ -607,7 +643,15 @@ public class MulticastProcessor extends BaseProcessorSupport
          * completed (for example by the timeout), and handed back to the caller, is not changed afterwards.
          */
         protected void doFailed(Exception e) {
-            if (done.compareAndSet(false, true)) {
+            doFailed((Throwable) e);
+        }
+
+        /**
+         * Same as {@link #doFailed(Exception)} for any {@link Throwable}, such as an Error that is not a
+         * {@link VirtualMachineError} (set on the exchange wrapped in a CamelExecutionException).
+         */
+        protected void doFailed(Throwable e) {
+            if (markDone()) {
                 cancelTimeoutTask();
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
@@ -620,7 +664,14 @@ public class MulticastProcessor extends BaseProcessorSupport
          * Same as {@link #doFailed(Exception)} but called from the timeout task, which must not cancel itself.
          */
         protected void doTimeoutFailed(Exception e) {
-            if (done.compareAndSet(false, true)) {
+            doTimeoutFailed((Throwable) e);
+        }
+
+        /**
+         * Same as {@link #doTimeoutFailed(Exception)} for any {@link Throwable}.
+         */
+        protected void doTimeoutFailed(Throwable e) {
+            if (markDone()) {
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
@@ -628,9 +679,15 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         }
 
-        private void logFailedAfterDone(Exception e) {
-            LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
-                    original.getExchangeId(), e);
+        private void logFailedAfterDone(Throwable e) {
+            if (e instanceof Exception) {
+                LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
+                        original.getExchangeId(), e);
+            } else {
+                // an Error reached the thread before, so it is not only logged at DEBUG now
+                LOG.warn("Error occurred after the exchange was already completed, so it is not set on exchange: {}",
+                        original.getExchangeId(), e);
+            }
         }
 
         private void cancelTimeoutTask() {
@@ -759,6 +816,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the iterator of a streaming split
+                doFailed(e);
             }
         }
 
@@ -791,6 +853,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                 try {
                     next = doRun();
                 } catch (Exception e) {
+                    doFailed(e);
+                    return;
+                } catch (VirtualMachineError e) {
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error of the iterator
                     doFailed(e);
                     return;
                 }
@@ -834,6 +902,12 @@ public class MulticastProcessor extends BaseProcessorSupport
             try {
                 sync.process(exchange);
             } catch (Exception e) {
+                exchange.setException(e);
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on)
+                throw e;
+            } catch (Throwable e) {
+                // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);
             } finally {
                 afterSend(pair, watch, original);
@@ -1258,7 +1332,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (onPrepare != null) {
             try {
                 onPrepare.process(exchange);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on)
+                throw e;
+            } catch (Throwable e) {
+                // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);
             }
         }
@@ -1432,6 +1510,14 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doShutdown() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            // an exchange that still waits for a part (its route was stopped by force) never completes once the thread
+            // pool is shut down, as the queued parts are dropped: fail it, so its caller does not wait for ever
+            for (MulticastTask task : parallelTasks) {
+                task.doFailed(new RouteStoppingException("The exchange cannot complete: the thread pool is shut down"));
+            }
+        }
         ServiceHelper.stopAndShutdownServices(
                 processors, errorHandlers != null ? errorHandlers.values() : null,
                 aggregationStrategy, processorExchangeFactory);
@@ -1440,9 +1526,6 @@ public class MulticastProcessor extends BaseProcessorSupport
             errorHandlers.clear();
         }
 
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
         if (shutdownAggregateExecutorService && aggregateExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(aggregateExecutorService);
         }

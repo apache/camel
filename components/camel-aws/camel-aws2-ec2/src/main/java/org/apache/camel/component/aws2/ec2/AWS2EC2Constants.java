@@ -54,7 +54,8 @@ public interface AWS2EC2Constants {
     String INSTANCES_CLIENT_TOKEN = "CamelAwsEC2InstancesClientToken";
     @Metadata(description = "The placement for the instance.", javaType = "software.amazon.awssdk.services.ec2.model.Placement")
     String INSTANCES_PLACEMENT = "CamelAwsEC2InstancesPlacement";
-    @Metadata(description = "A collection of tags to add or remove from EC2 resources", javaType = "Collection<Tag>")
+    @Metadata(description = "A collection of tags to add or remove from EC2 resources",
+              javaType = "Collection<software.amazon.awssdk.services.ec2.model.Tag>")
     String INSTANCES_TAGS = "CamelAwsEC2InstancesTags";
     @Metadata(description = "The ID of the subnet to launch the instance into.", javaType = "String")
     String SUBNET_ID = "CamelAwsEC2SubnetId";

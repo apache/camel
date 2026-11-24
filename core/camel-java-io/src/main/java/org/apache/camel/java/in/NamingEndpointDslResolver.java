@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.camel.util.URISupport;
+
 /**
  * The endpoint DSL by the rules it is generated with: the factory is the component scheme in camel case
  * ({@code platformHttp} is {@code platform-http}), its argument is the path, and each builder method is the option of
@@ -74,7 +76,7 @@ final class NamingEndpointDslResolver implements EndpointDslResolver {
         }
         String uri = scheme + "://" + path;
         if (!query.isEmpty()) {
-            uri += (path.contains("?") ? "&" : "?") + query;
+            uri += (URISupport.indexOfQuestionMark(path) != -1 ? "&" : "?") + query;
         }
         return new Endpoint(uri, problems);
     }

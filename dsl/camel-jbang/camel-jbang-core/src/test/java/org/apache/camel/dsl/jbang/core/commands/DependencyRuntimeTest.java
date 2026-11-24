@@ -58,7 +58,7 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
 
     @BeforeEach
     void setUp() {
-        command = new DependencyRuntime(new CamelJBangMain().withPrinter(printer));
+        command = new CamelJBangMain().withPrinter(printer).command(new DependencyRuntime());
 
         pomFilePath = tempDir.toPath().resolve("pom.xml");
         command.pomXml = pomFilePath;

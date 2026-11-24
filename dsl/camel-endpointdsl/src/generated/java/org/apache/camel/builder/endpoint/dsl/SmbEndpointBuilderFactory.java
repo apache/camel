@@ -127,16 +127,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -561,8 +563,10 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Is used to exclude files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antExclude for wildcards, or excludeExt to
+         * exclude files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -667,6 +671,8 @@ public interface SmbEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -685,6 +691,8 @@ public interface SmbEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * Setting only idempotentRepository or idempotentKey does not turn it
+         * on.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -742,7 +750,10 @@ public interface SmbEndpointBuilderFactory {
          * To use a custom idempotent key. By default the absolute path of the
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
+         * idempotentKey=${file:name}-${file:size}. It is used only with
+         * idempotent=true (noop=true turns it on), or by an idempotent read
+         * lock (readLock=idempotent, idempotent-changed or idempotent-rename)
+         * of the file component.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -758,7 +769,10 @@ public interface SmbEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -775,7 +789,10 @@ public interface SmbEndpointBuilderFactory {
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified
-         * and idempotent is true.
+         * and idempotent is true. It is used only with idempotent=true
+         * (noop=true turns it on), or by an idempotent read lock
+         * (readLock=idempotent, idempotent-changed or idempotent-rename) of the
+         * file component. Set without them, it does not skip any file.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -791,8 +808,10 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Is used to include files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antInclude for wildcards, or includeExt to
+         * include files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -1782,6 +1801,44 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
          * The password to access the share.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2391,6 +2448,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -2423,8 +2510,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -2439,7 +2558,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -2451,6 +2572,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointConsumerBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }
@@ -2549,16 +2734,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -2843,6 +3030,44 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointProducerBuilder domain(String domain) {
             doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
             return this;
         }
         /**
@@ -3270,6 +3495,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -3302,8 +3557,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -3318,7 +3605,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -3330,6 +3619,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointProducerBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }
@@ -3429,16 +3782,18 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -3512,6 +3867,44 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointBuilder domain(String domain) {
             doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder encryptData(boolean encryptData) {
+            doSetProperty("encryptData", encryptData);
+            return this;
+        }
+        /**
+         * Whether to encrypt the messages to and from the server (SMB 3
+         * encryption), so the file content is not sent in the clear. A share
+         * that requires encryption (for Samba, smb encrypt = required) refuses
+         * the connection with STATUS_ACCESS_DENIED unless this option is
+         * enabled. The server must support SMB 3 encryption.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param encryptData the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder encryptData(String encryptData) {
+            doSetProperty("encryptData", encryptData);
             return this;
         }
         /**
@@ -3656,6 +4049,36 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder connectTimeout(int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The timeout for establishing the TCP connection to the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly.
          * 
@@ -3688,8 +4111,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder readTimeout(int readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a read of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
          * 
@@ -3704,7 +4159,9 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * An optional SMB client configuration, can be used to configure client
-         * specific configurations, like timeouts.
+         * specific configurations, like timeouts. Cannot be combined with the
+         * encryptData, connectTimeout, readTimeout, writeTimeout and
+         * transactTimeout options: set them on the SmbConfig instead.
          * 
          * The option will be converted to a
          * <code>com.hierynomus.smbj.SmbConfig</code> type.
@@ -3716,6 +4173,70 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointBuilder smbConfig(String smbConfig) {
             doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder transactTimeout(int transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer the other requests, such as
+         * listing a directory, opening, closing, renaming and deleting a file,
+         * and logging off.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param transactTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder transactTimeout(String transactTimeout) {
+            doSetProperty("transactTimeout", transactTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder writeTimeout(int writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The timeout for the server to answer a write of file content.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
     }

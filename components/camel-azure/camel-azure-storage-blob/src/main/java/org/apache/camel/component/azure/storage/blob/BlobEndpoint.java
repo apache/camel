@@ -174,6 +174,7 @@ public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServi
         }
         BlobConsumer consumer = new BlobConsumer(this, processor);
         configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
         return consumer;
     }
 

@@ -41,7 +41,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        ListCircuitBreaker command = new CamelJBangMain().withPrinter(printer).command(new ListCircuitBreaker());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -64,7 +64,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         root.put("resilience4j", cbContainer(cbEntry("CLOSED")));
         writeStatusFile(TEST_PID, root);
 
-        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        ListCircuitBreaker command = new CamelJBangMain().withPrinter(printer).command(new ListCircuitBreaker());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -92,7 +92,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         root.put("resilience4j", cbContainer(cbEntry("OPEN")));
         writeStatusFile(TEST_PID, root);
 
-        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        ListCircuitBreaker command = new CamelJBangMain().withPrinter(printer).command(new ListCircuitBreaker());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -115,7 +115,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         root.put("resilience4j", cbContainer(cbEntry("CLOSED")));
         writeStatusFile(TEST_PID, root);
 
-        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        ListCircuitBreaker command = new CamelJBangMain().withPrinter(printer).command(new ListCircuitBreaker());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -141,7 +141,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         root.put("fault-tolerance", cbContainer(faultToleranceEntry("OPEN")));
         writeStatusFile(TEST_PID, root);
 
-        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        ListCircuitBreaker command = new CamelJBangMain().withPrinter(printer).command(new ListCircuitBreaker());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

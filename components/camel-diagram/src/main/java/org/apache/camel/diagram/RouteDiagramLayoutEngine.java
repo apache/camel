@@ -332,6 +332,31 @@ public class RouteDiagramLayoutEngine {
          * as a step that writes the body fails for the data, and one that reads fields fails for the payload.
          */
         public List<String> bodyKinds = List.of();
+        /**
+         * The formats of the payloads the step has been reached with, from their Content-Type header: json, xml, csv,
+         * yaml, text or binary, or the media type as it is. More than one is marked as a step of more than one kind is.
+         */
+        public List<String> bodyFormats = List.of();
+        /**
+         * The data type the Kamelet the step calls turns the body into, such as json for postgresql-sink, when the
+         * tooling knows it (kameletInput of the route structure, from the Kamelet and the catalog); null otherwise.
+         */
+        public KameletInputInfo kameletInput;
+    }
+
+    /**
+     * The data type a Kamelet turns the body into before its route sees it: its default in data type and its data type
+     * transformer.
+     *
+     * @param kamelet     the Kamelet, such as postgresql-sink
+     * @param dataType    the data type, such as json
+     * @param transformer the data type transformer, such as application-json
+     * @param description what the Kamelet takes, as its data type describes it, or null
+     * @param takesBody   whether the transformer takes the bodies the step was reached with: false when the catalog
+     *                    says it does not, null when it is not known or no message reached the step
+     */
+    public record KameletInputInfo(
+            String kamelet, String dataType, String transformer, String description, Boolean takesBody) {
     }
 
     public static class RouteInfo {

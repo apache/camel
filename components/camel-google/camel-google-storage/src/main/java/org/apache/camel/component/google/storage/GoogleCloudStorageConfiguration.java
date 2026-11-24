@@ -58,8 +58,16 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
     private String storageLocation = "US-EAST1";
 
     @UriParam(label = "common", defaultValue = "STANDARD",
+              enums = "STANDARD,NEARLINE,COLDLINE,ARCHIVE,REGIONAL,MULTI_REGIONAL,DURABLE_REDUCED_AVAILABILITY",
               description = "The Cloud Storage class to use when creating the new buckets")
     private StorageClass storageClass = StorageClass.STANDARD;
+
+    @UriParam(label = "producer",
+              enums = "STANDARD,NEARLINE,COLDLINE,ARCHIVE,REGIONAL,MULTI_REGIONAL,DURABLE_REDUCED_AVAILABILITY",
+              description = "The Cloud Storage class of the objects that the producer uploads. When not set, an object gets"
+                            + " the default storage class of its bucket. The CamelGoogleCloudStorageStorageClass header"
+                            + " overrides it per message.")
+    private StorageClass objectStorageClass;
 
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
@@ -194,6 +202,18 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
      */
     public void setStorageClass(StorageClass storageClass) {
         this.storageClass = storageClass;
+    }
+
+    public StorageClass getObjectStorageClass() {
+        return objectStorageClass;
+    }
+
+    /**
+     * The Cloud Storage class of the objects that the producer uploads. When not set, an object gets the default
+     * storage class of its bucket.
+     */
+    public void setObjectStorageClass(StorageClass objectStorageClass) {
+        this.objectStorageClass = objectStorageClass;
     }
 
     public Storage getStorageClient() {

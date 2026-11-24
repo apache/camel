@@ -219,13 +219,21 @@ what you change lasts for that session only, so your own settings are left as th
 
 | Proxy Host | `camel.tui.proxyHost`
 | HTTP proxy for the TUI's own lookups, such as the
-  xref:camel-jbang-tui-observe.adoc#_cve_audit[CVE Audit] queries to OSV.dev. When empty, the JVM
-  default proxy settings are used.
+  xref:camel-jbang-tui-observe.adoc#_cve_audit[CVE Audit] queries to OSV.dev. When empty, the active proxy of the
+  Maven settings (`~/.m2/settings.xml`) is used, with its username and password, else the `HTTPS_PROXY` and
+  `NO_PROXY` environment variables, else the JVM default proxy settings. A proxy that needs a login is set in the Maven
+  settings or in `HTTPS_PROXY`, not here, so no password is kept in the TUI settings.
 |
 
 | Proxy Port | `camel.tui.proxyPort`
 | Port of the proxy host.
 | `8080`
+
+| OSV Database | `camel.tui.osvDatabase`
+| Where the xref:camel-jbang-tui-observe.adoc#_cve_audit[CVE Audit] gets the vulnerabilities from. Empty for the
+  OSV.dev API; `default` for the offline OSV database (the export of OSV.dev, downloaded once a day and matched
+  locally, so no coordinates leave the machine); a URL to download that export from a mirror; or a ZIP file on disk.
+|
 
 | Shell History | `camel.tui.shell.history`
 | How many commands the embedded shell remembers (see <<_input_history,Input history>>).

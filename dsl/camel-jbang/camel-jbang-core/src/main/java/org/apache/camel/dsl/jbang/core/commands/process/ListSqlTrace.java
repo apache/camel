@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,10 +29,11 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
+import org.apache.camel.dsl.jbang.run.common.CliTimes;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -59,9 +57,9 @@ public class ListSqlTrace extends ProcessWatchCommand {
             completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    public ListSqlTrace(CamelJBangMain main) {
-        super(main);
-    }
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
 
     @Override
     public Integer doProcessWatchCall() throws Exception {
@@ -88,7 +86,7 @@ public class ListSqlTrace extends ProcessWatchCommand {
                         row.routeId = o.getString("routeId");
                         row.query = o.getString("query");
                         row.category = o.getString("category");
-                        row.endpoint = o.getString("endpoint");
+                        row.endpoint = ListingFormat.masked(o.getString("endpoint"), mask);
                         row.duration = o.getLongOrDefault("duration", 0);
                         row.rowCount = o.getIntegerOrDefault("rowCount", 0);
                         row.updateCount = o.getIntegerOrDefault("updateCount", 0);
@@ -156,8 +154,7 @@ public class ListSqlTrace extends ProcessWatchCommand {
 
     private String formatTime(Row r) {
         if (r.timestamp > 0) {
-            return LocalDateTime.ofInstant(Instant.ofEpochMilli(r.timestamp), ZoneId.systemDefault())
-                    .format(TIME_FMT);
+            return CliTimes.localDateTime(r.timestamp).format(TIME_FMT);
         }
         return "";
     }

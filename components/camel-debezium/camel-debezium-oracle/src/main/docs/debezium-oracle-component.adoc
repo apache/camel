@@ -33,10 +33,17 @@ Before the engine starts polling, the consumer health check reports the configur
 (`DOWN` by default). It reports `UP` once the connector tasks have started and the engine enters its polling phase,
 even if no change events have arrived. This does not indicate that an initial snapshot has completed.
 
-If the embedded engine stops with an error, for example because the connector cannot reach the database or
-the offset store cannot be read, it is not restarted: the route stays started but receives no further events.
-The failure is reported to the consumer exception handler and turns the route health check `DOWN`, so it can
-be picked up by a readiness probe.
+The consumer starts when the engine has started the connector tasks, which is before an initial snapshot is done,
+so a long snapshot does not delay the start. If the engine fails while it starts, for example because the connector
+cannot reach the database, the database is not set up for change data capture, or the offset store cannot be read,
+the consumer fails to start, and so does the route, with the error of Debezium as the cause.
+Debezium gives each task `internal.task.management.timeout.ms` (40 seconds by default, set with
+`additionalProperties.internal.task.management.timeout.ms`) to start, and the start waits that long for each task and
+once more for the connector; if the engine has not reported back by then, the route starts anyway, with a `WARN` in the log.
+
+If the embedded engine stops with an error later, it is not restarted: the route stays started but receives no further
+events. The failure is reported to the consumer exception handler (with `bridgeErrorHandler=true`, to the error handler
+of the route) and turns the route health check `DOWN`, so it can be picked up by a readiness probe.
 ====
 
 Maven users will need to add the following dependency to their `pom.xml` for this component.
@@ -87,6 +94,21 @@ transformation adds the operation, with `additionalProperties.transforms.unwrap.
 See below for more details.
 
 
+== Where the position is saved
+
+Debezium saves how far the connector got, so that after a restart it goes on from there. With the default
+`offsetStorage` (`org.apache.kafka.connect.storage.FileOffsetBackingStore`), the position is saved to the file of
+`offsetStorageFileName`. The file is created when it does not exist, but its folder must exist and be writable: the
+consumer fails when it starts otherwise, as without it nothing is saved and a restart sends everything again, the
+snapshot included. A relative name is in the folder the integration runs in, such as `data/offset-file-1.dat`.
+
+With the file schema history (`schemaHistoryInternal=io.debezium.storage.file.history.FileSchemaHistory`), the file of
+`schemaHistoryInternalFileFilename` is checked as well; Debezium creates its folders when they do not exist.
+
+To save the position in a Kafka topic instead, such as for an integration that has no lasting disk, set `offsetStorage`
+to `org.apache.kafka.connect.storage.KafkaOffsetBackingStore`, with `offsetStorageTopic`, `offsetStoragePartitions`,
+`offsetStorageReplicationFactor` and the Kafka brokers as `additionalProperties.bootstrap.servers`.
+
 == Examples
 
 === Consuming events
@@ -99,7 +121,7 @@ Java::
 +
 [source,java]
 ----
-from("debezium-oracle:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&topicPrefix=my-app-connector&schemaHistoryInternalFileFilename=/usr/history-file-1.dat")
+from("debezium-oracle:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&topicPrefix=my-app-connector&schemaHistoryInternalFileFilename=data/history-file-1.dat")
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
@@ -114,7 +136,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="debezium-oracle:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&amp;databaseHostname=localhost&amp;databaseUser=debezium&amp;databasePassword=dbz&amp;topicPrefix=my-app-connector&amp;schemaHistoryInternalFileFilename=/usr/history-file-1.dat"/>
+  <from uri="debezium-oracle:dbz-test-1?offsetStorageFileName=data/offset-file-1.dat&amp;databaseHostname=localhost&amp;databaseUser=debezium&amp;databasePassword=dbz&amp;topicPrefix=my-app-connector&amp;schemaHistoryInternalFileFilename=data/history-file-1.dat"/>
   <log message="Event received from Debezium : ${body}"/>
   <log message="    with this identifier ${headers.CamelDebeziumIdentifier}"/>
   <log message="    with these source metadata ${headers.CamelDebeziumSourceMetadata}"/>
@@ -133,12 +155,12 @@ YAML::
     from:
       uri: debezium-oracle:dbz-test-1
       parameters:
-        offsetStorageFileName: /usr/offset-file-1.dat
+        offsetStorageFileName: data/offset-file-1.dat
         databaseHostname: localhost
         databaseUser: debezium
         databasePassword: dbz
         topicPrefix: my-app-connector
-        schemaHistoryInternalFileFilename: /usr/history-file-1.dat
+        schemaHistoryInternalFileFilename: data/history-file-1.dat
       steps:
         - log:
             message: "Event received from Debezium : ${body}"

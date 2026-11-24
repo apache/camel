@@ -26,16 +26,16 @@ import java.lang.annotation.Target;
  * The message body a component, data format, language or EIP works with: the body it needs, and the body it leaves
  * after it. The build carries it into the catalog, so tooling can say what the body is after a step without running the
  * route: the validators, the catalog tools and the documentation.
- * <p/>
+ * <p>
  * Put it on the endpoint class (the class with {@link UriEndpoint}), the data format class, the language class or the
  * model class of an EIP. A subclass does not have the body types of its superclass, as it may change the body: it
  * declares its own. An EIP whose processor is in another module, such as a circuit breaker, still has its body types on
  * its model class: they are the contract of every implementation.
- * <p/>
+ * <p>
  * Each side that is given says what the body is with the default options. A side that is not given is not known, and
  * tooling must not guess it. A side whose body depends on what the other system sends, or on a class the user
  * configures, says {@link BodyType.Carrier#UNKNOWN}.
- * <p/>
+ * <p>
  * For example the file component: the consumer gives the file it read, the producer writes text, bytes, a stream or a
  * file, and leaves the body as it was:
  *

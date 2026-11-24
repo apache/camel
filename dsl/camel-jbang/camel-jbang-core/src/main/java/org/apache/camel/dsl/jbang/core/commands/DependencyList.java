@@ -53,7 +53,7 @@ import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
                            "Examples:",
                            "  camel dependency list hello.java",
                            "  camel dependency list hello.java --output=gav" })
-public class DependencyList extends Export {
+public class DependencyList extends ExportCommandBase {
 
     protected static String tempExportDir() {
         return CommandLineHelper.getWorkDir().resolve("export").toString();
@@ -73,10 +73,6 @@ public class DependencyList extends Export {
     @Option(name = "output", description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "gav",
             completer = OutputFormatCompletionCandidates.class)
     protected String output;
-
-    public DependencyList(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

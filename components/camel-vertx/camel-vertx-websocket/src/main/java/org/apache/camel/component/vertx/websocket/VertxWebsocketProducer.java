@@ -72,7 +72,7 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             }
 
             VertxWebsocketResultHandler vertxWebsocketResultHandler
-                    = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
+                    = new VertxWebsocketResultHandler(getEndpoint().getVertx(), exchange, callback, connectedPeers.keySet());
 
             // Send message to each peer then record and process the results asynchronously
             connectedPeers.forEach((connectionKey, webSocket) -> {

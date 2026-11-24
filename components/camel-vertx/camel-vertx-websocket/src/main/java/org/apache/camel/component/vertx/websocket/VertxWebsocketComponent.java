@@ -64,6 +64,10 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private boolean allowOriginHeader = true;
     @Metadata(label = "advanced")
     private String originHeaderUrl;
+    @Metadata(label = "consumer",
+              description = "Whether the consumers route each message synchronously, as the default for the endpoints of this"
+                            + " component. See the synchronous endpoint option.")
+    private boolean synchronous;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -91,6 +95,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         configuration.setHandshakeHeaders(handshakeHeaders);
 
         VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
+        endpoint.setSynchronous(synchronous);
         setProperties(endpoint, parameters);
 
         URI endpointUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(wsUri));
@@ -113,10 +118,12 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
                 path = "/";
             }
 
-            websocketURI = new URI(
-                    websocketURI.getScheme(), websocketURI.getUserInfo(),
-                    host, port, path, websocketURI.getQuery(),
-                    websocketURI.getFragment());
+            // keep the query as it is encoded: the multi-argument URI constructor would decode %2B and %26 of a RAW value
+            String rawQuery = websocketURI.getRawQuery();
+            websocketURI = new URI(websocketURI.getScheme(), websocketURI.getUserInfo(), host, port, path, null, null);
+            if (rawQuery != null) {
+                websocketURI = URISupport.createURIWithQuery(websocketURI, rawQuery);
+            }
         }
 
         configuration.setWebsocketURI(websocketURI);
@@ -357,5 +364,16 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
     public int getDefaultPort() {
         return this.defaultPort;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether the consumers route each message synchronously, as the default for the endpoints of this component.
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

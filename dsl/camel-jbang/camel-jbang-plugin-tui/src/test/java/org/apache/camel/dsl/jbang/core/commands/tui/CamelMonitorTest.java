@@ -49,7 +49,7 @@ class CamelMonitorTest {
 
     @Test
     void doCallRejectsInvalidThemeBeforeAnyTuiSetup() {
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), Thread.currentThread().getContextClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(Thread.currentThread().getContextClassLoader()));
         monitor.theme = "sepia";
 
         CliException ex = assertThrows(CliException.class, monitor::doCall,
@@ -162,7 +162,7 @@ class CamelMonitorTest {
 
     @Test
     void aiPanelQuitCommandRequestsTuiQuit() {
-        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
         TestRunner runner = new TestRunner();
         monitor.setRunnerForTesting(runner::quit);
 

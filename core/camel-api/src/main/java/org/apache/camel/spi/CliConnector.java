@@ -21,14 +21,14 @@ import org.apache.camel.StaticService;
 
 /**
  * SPI that exposes a Camel integration to the Camel CLI for local inspection and control.
- * <p/>
+ * <p>
  * An implementation is created by {@link CliConnectorFactory} and added as a {@link org.apache.camel.Service} to the
  * {@link org.apache.camel.CamelContext} lifecycle. Once started, it opens a local communication channel (typically a
  * platform-specific named pipe or unix-domain socket) that the {@code camel} CLI process attaches to for commands such
  * as {@code camel get}, {@code camel top}, {@code camel trace}, and {@code camel stop}. The {@link #sigterm()} method
  * is invoked when the CLI requests a graceful shutdown; {@link #updateDelay(int)} allows the CLI to tune the
  * connector's internal poll frequency.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI (JBang)</a> in the Camel user manual.
  *
  * @see   CliConnectorFactory

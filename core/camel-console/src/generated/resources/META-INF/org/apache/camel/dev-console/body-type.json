@@ -40,7 +40,7 @@
       "autowired": false,
       "secret": false,
       "defaultValue": false,
-      "description": "Whether to include only the steps that have been reached with more than one body type"
+      "description": "Whether to include only the steps that have been reached with more than one body type, or more than one format"
     }
   },
   "response": {
@@ -93,6 +93,13 @@
                       "type": "string"
                     },
                     "description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention"
+                  },
+                  "bodyFormats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The formats of the payloads this processor has been reached with, from their Content-Type header, in the order first seen: json, xml, csv, yaml, text or binary, or the media type as it is for any other. More than one means the format varied (only present when a payload had a Content-Type)"
                   }
                 }
               },

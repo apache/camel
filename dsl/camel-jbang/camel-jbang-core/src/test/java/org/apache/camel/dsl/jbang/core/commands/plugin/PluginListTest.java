@@ -38,7 +38,7 @@ class PluginListTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldListDefaultPlugins() throws Exception {
-        PluginList command = new PluginList(new CamelJBangMain().withPrinter(printer));
+        PluginList command = new CamelJBangMain().withPrinter(printer).command(new PluginList());
         command.doCall();
 
         List<String> output = printer.getLines();
@@ -50,7 +50,7 @@ class PluginListTest extends CamelCommandBaseTestSupport {
     public void shouldListAllPlugins() throws Exception {
         PluginHelper.enable(PluginType.KUBERNETES);
 
-        PluginList command = new PluginList(new CamelJBangMain().withPrinter(printer));
+        PluginList command = new CamelJBangMain().withPrinter(printer).command(new PluginList());
         command.doCall();
 
         List<String> output = printer.getLines();

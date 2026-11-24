@@ -28,6 +28,18 @@ The top bar shows aggregate statistics:
 Select a statement with Up/Down to see full details below the table:
 SQL text, endpoint URI, route, exchange ID, timing, and row counts.
 
+## Fix or Explain with AI
+
+Press `Shift+F8` on a statement that failed to ask the AI to fix it: the
+question has the SQL, its endpoint, the route and source line it ran
+at, and the error of its exchange. The AI tells whether the cause is in
+the project, and fixes it there, or in the database.
+
+On a slow statement (100 ms or more), `Shift+F8` asks the AI to explain
+why it is slow: the SQL, its time and rows, and how often the same SQL
+ran. The AI suggests what could make it faster and changes no file
+unless you agree.
+
 ## Keys
 
 - `Up/Down` — select statement
@@ -37,3 +49,4 @@ SQL text, endpoint URI, route, exchange ID, timing, and row counts.
 - `S` — reverse sort order
 - `w` — toggle word wrap
 - `F4` — edit the selected statement in the SQL Query tab
+- `Shift+F8` — fix with AI a statement that failed, or explain with AI a slow one

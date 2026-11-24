@@ -19,7 +19,9 @@ package org.apache.camel.model;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -449,7 +451,7 @@ public final class RouteDefinitionHelper {
         initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions,
                 interceptSendToEndpointDefinitions);
         // then on completion
-        initOnCompletions(abstracts, upper, onCompletions);
+        initOnCompletions(route, abstracts, upper, onCompletions);
         // then sagas
         initSagas(abstracts, lower);
         // then transactions
@@ -604,7 +606,21 @@ public final class RouteDefinitionHelper {
             List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
-        // move the abstracts interceptors into the dedicated list
+        // Build an identity set of the passed-in (context-scoped) intercepts before merging the route's own abstracts.
+        // Using identity (not equals) avoids false positives when two definitions are structurally equal.
+        Set<Object> contextScoped = Collections.newSetFromMap(new IdentityHashMap<>());
+        if (intercepts != null) {
+            contextScoped.addAll(intercepts);
+        }
+        if (interceptFromDefinitions != null) {
+            contextScoped.addAll(interceptFromDefinitions);
+        }
+        if (interceptSendToEndpointDefinitions != null) {
+            contextScoped.addAll(interceptSendToEndpointDefinitions);
+        }
+
+        // Merge the route's own inline intercepts (from abstracts) into the shared lists — same as before the fix,
+        // preserving the original single-pass insertion order.
         for (ProcessorDefinition processor : abstracts) {
             if (processor instanceof InterceptSendToEndpointDefinition interceptSendToEndpointDefinition) {
                 if (interceptSendToEndpointDefinitions == null) {
@@ -624,18 +640,27 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions,
+                interceptSendToEndpointDefinitions, contextScoped);
     }
 
     private static void doInitInterceptors(
             CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
-            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+            Set<Object> contextScoped) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
+                if (contextScoped.contains(intercept)) {
+                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                    intercept.setRouteScoped(false);
+                    // keep a persistent reference on the route definition — InterceptReifier will remove the intercept
+                    // from route.getOutputs() during context.start(), so the YAML dumper needs another way to find it
+                    route.addContextScopedIntercept(intercept);
+                }
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -700,6 +725,10 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
+                    if (contextScoped.contains(intercept)) {
+                        // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                        intercept.setRouteScoped(false);
+                    }
                     // init the parent
                     initParent(intercept);
                     // add as first output so intercept is handled before the
@@ -715,6 +744,10 @@ public final class RouteDefinitionHelper {
         if (interceptSendToEndpointDefinitions != null && !interceptSendToEndpointDefinitions.isEmpty()) {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
+                if (contextScoped.contains(intercept)) {
+                    // mark as context-scoped so the YAML dumper can distinguish them from route-scoped intercepts
+                    intercept.setRouteScoped(false);
+                }
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -727,7 +760,7 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initOnCompletions(
-            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
             List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
@@ -741,8 +774,13 @@ public final class RouteDefinitionHelper {
         // only add global onCompletion if there are no route already
         if (completions.isEmpty() && onCompletions != null) {
             completions = onCompletions;
-            // init the parent
+            // init the parent and record as context-scoped for the YAML dumper
+            // NOTE: do NOT call setRouteScoped(false) here — routeScoped already drives runtime behaviour in
+            // OnCompletionProcessor.shouldSkip() and OnCompletionReifier per-configuration dedup. Named route
+            // configurations intentionally keep routeScoped=true (see CAMEL-25135). Instead, track them on the
+            // route via a separate transient list that the YAML dumper can read without touching the runtime flag.
             for (OnCompletionDefinition global : completions) {
+                route.addContextScopedOnCompletion(global);
                 initParent(global);
             }
         }

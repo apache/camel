@@ -38,7 +38,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
@@ -111,10 +110,6 @@ public class CamelSpanAction extends ActionBaseCommand {
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
-
-    public CamelSpanAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

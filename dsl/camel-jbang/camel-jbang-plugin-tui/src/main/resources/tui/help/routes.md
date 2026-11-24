@@ -27,7 +27,7 @@ Below the routes are the steps of the selected route, with the same numbers:
 - **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
 - **REDEL** — The redeliveries of the error handler at this step: an exchange that failed here and was tried again, whether the next attempt succeeded or not. The route row counts the exchanges that completed after a redelivery. Shown when the error handler redelivered an exchange of the route, or handled one
 - **HAND** — The failures the error handler handled, such as an exchange moved to a dead letter channel: the route counts them as done, not failed, so FAIL stays 0
-- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
+- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on), and the format of the payload from its Content-Type, such as `byte[] · json`; for a step that calls a Kamelet, the data type the Kamelet takes, such as `LinkedHashMap → json`
 
 ## Percentile Latency (P50/P95/P99)
 
@@ -65,6 +65,20 @@ includes processor-level breakdown and load averages. This shows every
 processor (step) inside a route, not just the route totals.
 
 - **LOAD** — Three throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU. Higher values mean more messages flowing through. The three windows help you see if traffic is increasing or decreasing
+
+## Fix or Explain with AI
+
+Press `Shift+F8` on a route to ask the AI about it:
+
+- When exchanges failed in the route, or its error handler handled
+  failures, the AI is asked to fix it ("fix with AI"): the question has
+  the counts, the steps the exchanges fail at with their source lines,
+  and the last error of the route.
+- Otherwise, when the route had exchanges, the AI is asked to explain
+  where the time goes ("explain with AI"): the question has the mean,
+  max and percentile times, and the slowest steps with their source
+  lines. The AI suggests what could make it faster and changes no file
+  unless you agree.
 
 ## Route Diagram
 
@@ -149,6 +163,7 @@ in the diagram.
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `t` — toggle Top mode
+- `Shift+F8` — fix with AI a route whose exchanges fail, or explain with AI where its time goes
 
 **Topology view:**
 - `↑↓←→` — navigate between route boxes

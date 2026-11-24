@@ -48,6 +48,9 @@ The presence of this dependency will provide the following components:
 * camel-micrometer-prometheus
 * camel-opentelemetry2
 
+NOTE: the GenAI spans and metrics of the Camel AI components are not included. Add `camel-ai-observability` to the
+application when you want them, see xref:others:ai-observability.adoc[AI Observability].
+
 NOTE: mind that we're using the `camel-opentelemetry2` implementation which has slight differences from `camel-opentelemetry`.
 
 There's no need to add any further configuration.

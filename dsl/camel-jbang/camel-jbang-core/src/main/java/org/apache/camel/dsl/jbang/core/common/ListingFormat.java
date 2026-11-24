@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.Comparator;
 import java.util.function.Function;
 
+import org.apache.camel.util.URISupport;
+
 /**
  * The values the listings of running integrations show the same way, such as the short form of an endpoint URI.
  */
@@ -38,6 +40,18 @@ public final class ListingFormat {
             }
         }
         return uri;
+    }
+
+    /**
+     * The endpoint URI with the values of its sensitive options (such as passwords and access keys) masked as
+     * <tt>xxxxxx</tt>, the same way Camel logs it, or as it is when not masked.
+     *
+     * @param uri  the endpoint URI, as the integration has it
+     * @param mask whether to mask the sensitive values (the --mask option); when {@code false} the URI is returned
+     *             as-is
+     */
+    public static String masked(String uri, boolean mask) {
+        return mask && uri != null ? URISupport.sanitizeUri(uri) : uri;
     }
 
     /**

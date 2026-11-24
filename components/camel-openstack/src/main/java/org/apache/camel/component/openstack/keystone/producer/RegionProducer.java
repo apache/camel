@@ -31,6 +31,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Region;
 import org.openstack4j.model.identity.v3.builder.RegionBuilder;
 
+@Deprecated(since = "4.24")
 public class RegionProducer extends AbstractKeystoneProducer {
 
     public RegionProducer(KeystoneEndpoint endpoint, OSClient client) {

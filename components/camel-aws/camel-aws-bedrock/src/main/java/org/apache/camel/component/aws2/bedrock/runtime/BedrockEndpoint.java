@@ -44,18 +44,19 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
              headersClass = BedrockConstants.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                   byOption = {
-                                          @BodyType.When(option = "operation", value = "converse", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "converse", carriers = Carrier.TEXT),
                                           @BodyType.When(option = "operation", value = "converseStream",
-                                                         carriers = Carrier.ANY),
+                                                         carriers = Carrier.TEXT),
                                           @BodyType.When(option = "operation", value = "applyGuardrail",
-                                                         carriers = Carrier.ANY) },
+                                                         carriers = Carrier.TEXT) },
                                   description = "The request of the model as JSON text for the invoke operations, which also"
                                                 + " need the CamelAwsBedrockContentType and CamelAwsBedrockAcceptContentType"
                                                 + " headers. Bytes, a stream or a file are sent as they are, and a Map or a"
                                                 + " Jackson JsonNode is marshalled to JSON: marshal another POJO to JSON first."
-                                                + " No body fails. converse,"
-                                                + " converseStream and applyGuardrail take their input from headers, such as"
-                                                + " CamelAwsBedrockConverseMessages. With pojoRequest=true an"
+                                                + " No body fails. converse and converseStream take the messages of the"
+                                                + " CamelAwsBedrockConverseMessages header, or else the body as text as one user"
+                                                + " message; applyGuardrail takes the CamelAwsBedrockGuardrailContent header, or"
+                                                + " else the body as text. With pojoRequest=true an"
                                                 + " InvokeModelRequest of the AWS SDK: another body fails"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST },
                                    byOption = {

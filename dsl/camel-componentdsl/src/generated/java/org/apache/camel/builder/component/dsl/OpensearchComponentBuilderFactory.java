@@ -258,6 +258,25 @@ public interface OpensearchComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * API key to authenticate with, sent in the Authorization header
+         * instead of a user and password: the token OpenSearch returns when the
+         * key is created (it starts with os_), as is. API keys need OpenSearch
+         * 3.7 or newer. The key is only sent to the configured hosts and the
+         * nodes found by the sniffer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default OpensearchComponentBuilder apiKey(java.lang.String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+    
         
         /**
          * Enable SSL.
@@ -364,6 +383,7 @@ public interface OpensearchComponentBuilderFactory {
             case "openSearchClient": ((OpensearchComponent) component).setOpenSearchClient((org.opensearch.client.opensearch.OpenSearchClient) value); return true;
             case "sniffAfterFailureDelay": ((OpensearchComponent) component).setSniffAfterFailureDelay((int) value); return true;
             case "snifferInterval": ((OpensearchComponent) component).setSnifferInterval((int) value); return true;
+            case "apiKey": ((OpensearchComponent) component).setApiKey((java.lang.String) value); return true;
             case "enableSSL": ((OpensearchComponent) component).setEnableSSL((boolean) value); return true;
             case "password": ((OpensearchComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": ((OpensearchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

@@ -538,6 +538,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeXMLSecurityDataFormat(XMLSecurityDataFormat def) {
         return wrapNode("xmlSecurity", doWriteXMLSecurityDataFormat(def));
     }
+    public JsonObject writeXsdJsonDataFormat(XsdJsonDataFormat def) {
+        return wrapNode("xsdJson", doWriteXsdJsonDataFormat(def));
+    }
     public JsonObject writeYAMLDataFormat(YAMLDataFormat def) {
         return wrapNode("yaml", doWriteYAMLDataFormat(def));
     }
@@ -1236,6 +1239,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(jo, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(jo, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(jo, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(jo, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(jo, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(jo, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);
@@ -2040,6 +2044,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(jo, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(jo, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(jo, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(jo, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(jo, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(jo, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);
@@ -2193,7 +2198,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClassName", def.getInstanceClassName(), null);
-        doWriteAttribute(jo, "library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute(jo, "library", toString(def.getLibrary()), "Jackson");
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(jo, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(jo, "include", def.getInclude(), null);
@@ -2293,6 +2298,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "escape", def.getEscape(), null);
         doWriteAttribute(jo, "headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute(jo, "header", def.getHeader(), null);
+        doWriteAttribute(jo, "headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute(jo, "allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute(jo, "ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute(jo, "ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
@@ -2373,6 +2379,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                     case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) item, this::doWriteUniVocityFixedDataFormat);
                     case "UniVocityTsvDataFormat" -> doWriteChildElement(jo, "univocityTsv", (UniVocityTsvDataFormat) item, this::doWriteUniVocityTsvDataFormat);
                     case "XMLSecurityDataFormat" -> doWriteChildElement(jo, "xmlSecurity", (XMLSecurityDataFormat) item, this::doWriteXMLSecurityDataFormat);
+                    case "XsdJsonDataFormat" -> doWriteChildElement(jo, "xsdJson", (XsdJsonDataFormat) item, this::doWriteXsdJsonDataFormat);
                     case "YAMLDataFormat" -> doWriteChildElement(jo, "yaml", (YAMLDataFormat) item, this::doWriteYAMLDataFormat);
                     case "ZipDeflaterDataFormat" -> doWriteChildElement(jo, "zipDeflater", (ZipDeflaterDataFormat) item, this::doWriteZipDeflaterDataFormat);
                     case "ZipFileDataFormat" -> doWriteChildElement(jo, "zipFile", (ZipFileDataFormat) item, this::doWriteZipFileDataFormat);
@@ -2534,6 +2541,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "fragment", def.getFragment(), null);
         doWriteAttribute(jo, "partClass", def.getPartClass(), null);
         doWriteAttribute(jo, "partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute(jo, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute(jo, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(jo, "xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute(jo, "schemaLocation", def.getSchemaLocation(), null);
@@ -2620,9 +2628,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "armored", def.getArmored(), "false");
         doWriteAttribute(jo, "integrity", def.getIntegrity(), "true");
         doWriteAttribute(jo, "provider", def.getProvider(), null);
-        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), null);
+        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), "9");
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;
@@ -2653,6 +2661,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClass", def.getInstanceClass(), null);
+        doWriteAttribute(jo, "schema", def.getSchema(), null);
+        doWriteAttribute(jo, "messageName", def.getMessageName(), null);
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
         doWriteAttribute(jo, "useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute(jo, "autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");
@@ -2821,6 +2831,18 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
         doWriteAttribute(jo, "mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
         doWriteAttribute(jo, "addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
+        return jo;
+    }
+    protected JsonObject doWriteXsdJsonDataFormat(XsdJsonDataFormat def) {
+        JsonObject jo = new JsonObject();
+        doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "schema", def.getSchema(), null);
+        doWriteAttribute(jo, "element", def.getElement(), null);
+        doWriteAttribute(jo, "includeRoot", def.getIncludeRoot(), "false");
+        doWriteAttribute(jo, "attributePrefix", def.getAttributePrefix(), null);
+        doWriteAttribute(jo, "textName", def.getTextName(), "value");
+        doWriteAttribute(jo, "ignoreUnknown", def.getIgnoreUnknown(), "false");
+        doWriteAttribute(jo, "prettyPrint", def.getPrettyPrint(), "false");
         return jo;
     }
     protected JsonObject doWriteYAMLDataFormat(YAMLDataFormat def) {
@@ -3023,7 +3045,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "method", def.getMethod(), null);
         doWriteAttribute(jo, "scope", def.getScope(), "Singleton");
         doWriteAttribute(jo, "validate", def.getValidate(), "true");
-        doWriteValue(jo, def.getExpression());
+        doWriteNonEmptyValue(jo, def.getExpression());
         return jo;
     }
     protected JsonObject doWriteMvelExpression(MvelExpression def) {
@@ -3035,6 +3057,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteNamespaceAwareExpressionAttributes(JsonObject jo, NamespaceAwareExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute(jo, "namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(JsonObject jo, NamespaceAwareExpression def) {
         doWriteChildList(jo, null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
@@ -3572,6 +3595,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
                 case "UniVocityTsvDataFormat" -> doWriteChildElement(jo, "univocityTsv", (UniVocityTsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityTsvDataFormat);
                 case "XMLSecurityDataFormat" -> doWriteChildElement(jo, "xmlSecurity", (XMLSecurityDataFormat) def.getDataFormatType(), this::doWriteXMLSecurityDataFormat);
+                case "XsdJsonDataFormat" -> doWriteChildElement(jo, "xsdJson", (XsdJsonDataFormat) def.getDataFormatType(), this::doWriteXsdJsonDataFormat);
                 case "YAMLDataFormat" -> doWriteChildElement(jo, "yaml", (YAMLDataFormat) def.getDataFormatType(), this::doWriteYAMLDataFormat);
                 case "ZipDeflaterDataFormat" -> doWriteChildElement(jo, "zipDeflater", (ZipDeflaterDataFormat) def.getDataFormatType(), this::doWriteZipDeflaterDataFormat);
                 case "ZipFileDataFormat" -> doWriteChildElement(jo, "zipFile", (ZipFileDataFormat) def.getDataFormatType(), this::doWriteZipFileDataFormat);

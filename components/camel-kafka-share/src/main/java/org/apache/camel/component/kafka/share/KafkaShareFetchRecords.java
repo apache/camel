@@ -113,6 +113,15 @@ class KafkaShareFetchRecords implements Runnable {
                 pollAndProcess();
             }
             LOG.info("Terminating Kafka share consumer thread {} receiving from {}", threadId, topics);
+        } catch (VirtualMachineError e) {
+            // an OutOfMemoryError or StackOverflowError is thrown on as is, as the JVM may not be able to log it
+            throw e;
+        } catch (RuntimeException | Error e) {
+            // what the poll loop does not handle, such as an Error that a deserializer throws in poll (the Kafka client
+            // only wraps a RuntimeException of a deserializer in a RecordDeserializationException): this task runs in an
+            // executor that keeps what it throws in a Future that nobody reads, so terminate visibly
+            terminateOnUnhandledFailure(e);
+            throw e;
         } finally {
             closeConsumer();
             if (reconnectPool != null) {
@@ -120,6 +129,15 @@ class KafkaShareFetchRecords implements Runnable {
                 reconnectPool = null;
             }
         }
+    }
+
+    private void terminateOnUnhandledFailure(Throwable cause) {
+        String msg = "Terminating Kafka share consumer thread " + threadId + " receiving from " + topics + " due to "
+                     + cause + ". Restart the route or the application to recover.";
+        LOG.error(msg, cause);
+        lastError = new KafkaConsumerFatalException(msg, cause);
+        // the share consumer is closed when run() ends, and its records are delivered to the other consumers
+        terminated = true;
     }
 
     /**

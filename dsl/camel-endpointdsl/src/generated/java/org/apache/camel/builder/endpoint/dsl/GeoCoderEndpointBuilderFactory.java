@@ -78,7 +78,10 @@ public interface GeoCoderEndpointBuilderFactory {
             return this;
         }
         /**
-         * The language to use.
+         * The language of the answer (such as the address, the country and the
+         * city), as a language code such as en, de or fr. It is sent as the
+         * accept-language parameter to Nominatim and as the language parameter
+         * to Google.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

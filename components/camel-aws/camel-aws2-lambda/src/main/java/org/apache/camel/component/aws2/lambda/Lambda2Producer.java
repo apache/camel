@@ -304,7 +304,22 @@ public class Lambda2Producer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(InvokeRequest.class);
         } else {
             InvokeRequest.Builder builder = InvokeRequest.builder();
-            request = builder.functionName(getEndpoint().getFunction()).payload(determinePayload(exchange)).build();
+            builder.functionName(getEndpoint().getFunction()).payload(determinePayload(exchange));
+            String invocationType = exchange.getIn().getHeader(Lambda2Constants.INVOCATION_TYPE, String.class);
+            if (ObjectHelper.isEmpty(invocationType)) {
+                invocationType = getConfiguration().getInvocationType();
+            }
+            if (ObjectHelper.isNotEmpty(invocationType)) {
+                builder.invocationType(invocationType);
+            }
+            String logType = exchange.getIn().getHeader(Lambda2Constants.LOG_TYPE, String.class);
+            if (ObjectHelper.isEmpty(logType)) {
+                logType = getConfiguration().getLogType();
+            }
+            if (ObjectHelper.isNotEmpty(logType)) {
+                builder.logType(logType);
+            }
+            request = builder.build();
         }
         try {
             result = lambdaClient.invoke(request);
@@ -313,7 +328,8 @@ public class Lambda2Producer extends DefaultProducer {
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
-        message.setBody(result.payload().asUtf8String());
+        // an Event or DryRun invocation answers with an empty payload
+        message.setBody(result.payload() != null ? result.payload().asUtf8String() : null);
         message.setHeader(Lambda2Constants.STATUS_CODE, result.statusCode());
         message.setHeader(Lambda2Constants.FUNCTION_ERROR, result.functionError());
         message.setHeader(Lambda2Constants.LOG_RESULT, result.logResult());

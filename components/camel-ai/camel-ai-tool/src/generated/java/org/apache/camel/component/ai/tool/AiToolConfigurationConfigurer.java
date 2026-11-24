@@ -24,6 +24,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": target.setAllRolesRequired(property(camelContext, boolean.class, value)); return true;
+        case "allowedroles":
+        case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
         case "argschema":
         case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "argumentsasbody":
@@ -56,6 +60,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": return boolean.class;
+        case "allowedroles":
+        case "allowedRoles": return java.lang.String.class;
         case "argschema":
         case "argSchema": return java.lang.String.class;
         case "argumentsasbody":
@@ -89,6 +97,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allrolesrequired":
+        case "allRolesRequired": return target.isAllRolesRequired();
+        case "allowedroles":
+        case "allowedRoles": return target.getAllowedRoles();
         case "argschema":
         case "argSchema": return target.getArgSchema();
         case "argumentsasbody":

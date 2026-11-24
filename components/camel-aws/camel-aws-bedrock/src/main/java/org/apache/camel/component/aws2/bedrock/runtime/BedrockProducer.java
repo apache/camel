@@ -39,6 +39,7 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
@@ -47,6 +48,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBloc
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
 import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
@@ -742,15 +744,7 @@ public class BedrockProducer extends DefaultProducer {
             builder.modelId(getConfiguration().getModelId());
 
             // Get messages from header or body
-            @SuppressWarnings("unchecked")
-            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
-                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
-            if (ObjectHelper.isNotEmpty(messages)) {
-                builder.messages(messages);
-            } else {
-                throw new IllegalArgumentException(
-                        "Converse operation requires messages in header " + BedrockConstants.CONVERSE_MESSAGES);
-            }
+            builder.messages(determineConverseMessages(exchange, "Converse"));
 
             // Optional: System prompts
             @SuppressWarnings("unchecked")
@@ -839,6 +833,30 @@ public class BedrockProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The messages of converse and converseStream: the CamelAwsBedrockConverseMessages header, or else the body as text
+     * as one user message.
+     */
+    private static List<software.amazon.awssdk.services.bedrockruntime.model.Message> determineConverseMessages(
+            Exchange exchange, String operation) {
+        @SuppressWarnings("unchecked")
+        List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
+                = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
+        if (ObjectHelper.isNotEmpty(messages)) {
+            return messages;
+        }
+        String text = exchange.getMessage().getBody(String.class);
+        if (ObjectHelper.isEmpty(text)) {
+            throw new IllegalArgumentException(
+                    operation + " operation requires messages in header " + BedrockConstants.CONVERSE_MESSAGES
+                                               + " or a text body");
+        }
+        return List.of(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                .role(ConversationRole.USER)
+                .content(ContentBlock.fromText(text))
+                .build());
+    }
+
     private void converseStream(Exchange exchange) throws InvalidPayloadException {
         ConverseStreamRequest request;
 
@@ -858,15 +876,7 @@ public class BedrockProducer extends DefaultProducer {
             builder.modelId(getConfiguration().getModelId());
 
             // Get messages from header or body
-            @SuppressWarnings("unchecked")
-            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
-                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
-            if (ObjectHelper.isNotEmpty(messages)) {
-                builder.messages(messages);
-            } else {
-                throw new IllegalArgumentException(
-                        "ConverseStream operation requires messages in header " + BedrockConstants.CONVERSE_MESSAGES);
-            }
+            builder.messages(determineConverseMessages(exchange, "ConverseStream"));
 
             // Optional: System prompts
             @SuppressWarnings("unchecked")
@@ -1038,15 +1048,20 @@ public class BedrockProducer extends DefaultProducer {
             }
             builder.source(GuardrailContentSource.fromValue(source));
 
-            // Content blocks from header
+            // Content blocks from header, or the text of the body
             @SuppressWarnings("unchecked")
             List<GuardrailContentBlock> content
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONTENT, List.class);
             if (ObjectHelper.isNotEmpty(content)) {
                 builder.content(content);
             } else {
-                throw new IllegalArgumentException(
-                        "ApplyGuardrail operation requires content in header " + BedrockConstants.GUARDRAIL_CONTENT);
+                String text = exchange.getMessage().getBody(String.class);
+                if (ObjectHelper.isEmpty(text)) {
+                    throw new IllegalArgumentException(
+                            "ApplyGuardrail operation requires content in header " + BedrockConstants.GUARDRAIL_CONTENT
+                                                       + " or a text body");
+                }
+                builder.content(GuardrailContentBlock.fromText(GuardrailTextBlock.builder().text(text).build()));
             }
 
             request = builder.build();

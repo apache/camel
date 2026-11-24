@@ -23,7 +23,6 @@ import java.util.List;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 
@@ -46,10 +45,6 @@ public class McpCommand extends CamelCommand {
 
     // the JBang command, which runs the MCP server
     String jbang = "jbang";
-
-    public McpCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

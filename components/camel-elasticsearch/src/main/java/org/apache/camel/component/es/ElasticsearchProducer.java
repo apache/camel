@@ -62,6 +62,7 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -519,7 +520,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         }
     }
 
-    private RestClient createClient() {
+    RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
         // the credentials provider reads the nodes from the client, as the sniffer can change them
         final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
@@ -530,6 +531,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
             if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+            if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
+                httpClientBuilder.addInterceptorLast(
+                        new NodeScopedApiKeyInterceptor(configuration.getApiKey(), () -> nodeHosts(restClientRef.get())));
             }
             if (configuration.getSslContextParameters() != null) {
                 // Use SSLContextParameters (allows configuring named groups, signature schemes, cipher suites and
@@ -561,7 +566,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      * null when no credentials are configured.
      */
     CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
-        if (configuration.getUser() == null || configuration.getPassword() == null) {
+        if (ObjectHelper.isEmpty(configuration.getUser()) || ObjectHelper.isEmpty(configuration.getPassword())) {
             return null;
         }
         return new NodeScopedCredentialsProvider(

@@ -39,6 +39,12 @@ public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "whether to remove or keep the key on failure")
     Boolean isRemoveOnFailure();
 
+    @ManagedAttribute(description = "The class name of the idempotent repository")
+    String getIdempotentRepositoryClassName();
+
+    @ManagedAttribute(description = "Whether the repository keeps the keys only in memory (lost when the application stops)")
+    boolean isIdempotentRepositoryInMemory();
+
     @ManagedAttribute(description = "Current count of duplicate Messages")
     long getDuplicateMessageCount();
 

@@ -133,10 +133,6 @@ public class Explain extends CamelCommand {
             defaultValue = "true")
     boolean stream = true;
 
-    public Explain(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (!"text".equals(format) && !"markdown".equals(format)) {

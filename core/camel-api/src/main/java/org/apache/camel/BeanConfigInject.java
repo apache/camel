@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a field, method, constructor, or parameter as an injection point for a configuration bean.
- * <p/>
+ * <p>
  * {@link #value()} specifies the root property prefix (e.g. {@code camel.component.mycomp}). During bean
  * post-processing Camel first looks for an existing instance in the {@link org.apache.camel.spi.Registry}; if none is
  * found it creates a new instance of the declared type and binds all matching properties from that prefix using Camel's

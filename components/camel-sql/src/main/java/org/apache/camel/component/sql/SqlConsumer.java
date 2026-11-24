@@ -257,72 +257,92 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     total);
         }
 
-        for (int index = 0; index < total && isBatchAllowed(); index++) {
-            // only loop if we are started (allowed to run)
-            DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
-            Exchange exchange = holder.exchange;
-            Object data = holder.data;
+        int index = 0;
+        try {
+            for (; index < total && isBatchAllowed(); index++) {
+                // only loop if we are started (allowed to run)
+                DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
+                Exchange exchange = holder.exchange;
+                Object data = holder.data;
 
-            // add current index and total as properties
-            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
-            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
-            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
+                // add current index and total as properties
+                exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+                exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+                exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
-            // update pending number of exchanges
-            pendingExchanges = total - index - 1;
+                // update pending number of exchanges
+                pendingExchanges = total - index - 1;
 
-            // process the current exchange
-            try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-
-            // a rollback only exchange (without an exception) did not complete successfully either; markRollbackOnlyLast
-            // reaches the consumer as the last transaction when no transacted() EIP consumed the flag, so honor it too
-            boolean failed = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
-
-            if (getEndpoint().isTransacted() && failed) {
-                // break out as we are transacted and should rollback
-                Exception cause = exchange.getException();
-                if (cause == null) {
-                    // rollback only, there was no error (the exception must be created before the exchange is released)
-                    cause = new RollbackExchangeException(
-                            "Rollback transaction as the exchange was marked as rollback only", exchange);
+                // process the current exchange
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
-                // must release exchange
-                releaseExchange(exchange, false);
-                throw cause;
-            }
 
-            // pick the on consume to use
-            String sql = failed ? onConsumeFailed : onConsume;
-            try {
-                // we can only run on consume if there was data
-                if (data != null && sql != null) {
-                    int updateCount;
-                    if (namedJdbcTemplate != null && sqlProcessingStrategy instanceof SqlNamedProcessingStrategy) {
-                        SqlNamedProcessingStrategy namedProcessingStrategy = (SqlNamedProcessingStrategy) sqlProcessingStrategy;
-                        updateCount = namedProcessingStrategy.commit(getEndpoint(), exchange, data, namedJdbcTemplate,
-                                parameterSource, sql);
+                // a rollback only exchange (without an exception) did not complete successfully either; markRollbackOnlyLast
+                // reaches the consumer as the last transaction when no transacted() EIP consumed the flag, so honor it too
+                boolean failed = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
+
+                if (getEndpoint().isTransacted() && failed) {
+                    // break out as we are transacted and should rollback
+                    Exception cause = exchange.getException();
+                    if (cause == null) {
+                        // rollback only, there was no error (the exception must be created before the exchange is released)
+                        cause = new RollbackExchangeException(
+                                "Rollback transaction as the exchange was marked as rollback only", exchange);
+                    }
+                    // must release exchange
+                    releaseExchange(exchange, false);
+                    throw cause;
+                }
+
+                // pick the on consume to use
+                String sql = failed ? onConsumeFailed : onConsume;
+                try {
+                    // we can only run on consume if there was data
+                    if (data != null && sql != null) {
+                        int updateCount;
+                        if (namedJdbcTemplate != null && sqlProcessingStrategy instanceof SqlNamedProcessingStrategy) {
+                            SqlNamedProcessingStrategy namedProcessingStrategy
+                                    = (SqlNamedProcessingStrategy) sqlProcessingStrategy;
+                            updateCount = namedProcessingStrategy.commit(getEndpoint(), exchange, data, namedJdbcTemplate,
+                                    parameterSource, sql);
+                        } else {
+                            updateCount = sqlProcessingStrategy.commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
+                        }
+                        if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
+                            String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount
+                                         + " executing query: " + sql;
+                            throw new SQLException(msg);
+                        }
+                    }
+                } catch (Exception e) {
+                    if (breakBatchOnConsumeFail) {
+                        throw e;
                     } else {
-                        updateCount = sqlProcessingStrategy.commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
+                        handleException("Error executing onConsume/onConsumeFailed query " + sql, e);
                     }
-                    if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
-                        String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount
-                                     + " executing query: " + sql;
-                        throw new SQLException(msg);
-                    }
+                } finally {
+                    releaseExchange(exchange, false);
                 }
-            } catch (Exception e) {
-                if (breakBatchOnConsumeFail) {
-                    throw e;
-                } else {
-                    handleException("Error executing onConsume/onConsumeFailed query " + sql, e);
-                }
-            } finally {
-                releaseExchange(exchange, false);
             }
+        } finally {
+            // the exchanges of the rows that were not routed: the consumer is stopping, or a failed row or a failed onConsume
+            // query ended the batch (transacted, breakBatchOnConsumeFail)
+            releaseNotRouted(exchanges);
+        }
+
+        if (index < total) {
+            // the consumer is stopping and routed only part of the batch. The onConsumeBatchComplete query is for the
+            // whole batch (it cannot tell the rows apart, for example "delete from projects"): it is not run, so the
+            // rows that were not routed are left as they are and are consumed again by the next poll
+            if (onConsumeBatchComplete != null) {
+                LOG.info("Not running the onConsumeBatchComplete query, as the consumer is stopping and routed only {} of"
+                         + " the {} rows of the batch",
+                        index, total);
+            }
+            return total;
         }
 
         try {
@@ -347,6 +367,16 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return total;
+    }
+
+    /**
+     * Releases the exchanges of the rows that the consumer did not route, as it is stopping or the batch ended early.
+     */
+    private void releaseNotRouted(Queue<Object> exchanges) {
+        Object next;
+        while ((next = exchanges.poll()) != null) {
+            releaseExchange(ObjectHelper.cast(DataHolder.class, next).exchange, false);
+        }
     }
 
     public String getOnConsume() {

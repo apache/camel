@@ -22,12 +22,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI strategy for reloading Camel at runtime when a change is detected.
- * <p/>
+ * <p>
  * A reload is triggered via {@link #onReload(Object)}, and the strategy tracks success and failure counts
  * ({@link #getReloadCounter()}, {@link #getFailedCounter()}) and the {@link #getLastError() last error}. Concrete
  * strategies target different scopes: {@link ContextReloadStrategy} reloads routes and property placeholders in the
  * running context, while {@link ResourceReloadStrategy} reloads from changed {@link Resource}s.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/context-reload.html">Context Reload</a> in the Camel user manual.
  *
  * @see ContextReloadStrategy

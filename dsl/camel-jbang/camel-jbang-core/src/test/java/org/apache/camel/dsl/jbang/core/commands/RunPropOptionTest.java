@@ -29,7 +29,7 @@ class RunPropOptionTest {
 
     @Test
     void aPropertyAfterASpace() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "route.camel.yaml", "--prop", "greeting=Hi");
 
         assertThat(run.property).containsExactly("greeting=Hi");
@@ -38,7 +38,7 @@ class RunPropOptionTest {
 
     @Test
     void propertiesInEveryForm() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "--prop=a=1", "--prop", "b=2", "--property", "c=3", "route.camel.yaml");
 
         assertThat(run.property).containsExactly("a=1", "b=2", "c=3");
@@ -47,7 +47,7 @@ class RunPropOptionTest {
 
     @Test
     void aScriptPropertyAfterASpace() {
-        Script script = new Script(new CamelJBangMain());
+        Script script = new CamelJBangMain().command(new Script());
         CommandLineTestHelper.parse(script, "--prop", "greeting=Hi", "route.camel.yaml");
 
         assertThat(script.property).containsExactly("greeting=Hi");

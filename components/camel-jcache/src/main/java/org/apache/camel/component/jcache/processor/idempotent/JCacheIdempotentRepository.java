@@ -28,6 +28,7 @@ import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based message id repository")
-public class JCacheIdempotentRepository extends ServiceSupport implements CamelContextAware, IdempotentRepository {
+public class JCacheIdempotentRepository extends ServiceSupport
+        implements CamelContextAware, IdempotentRepository, InMemoryStrategy {
 
     private CamelContext camelContext;
     private Cache<String, Boolean> cache;
@@ -109,6 +111,15 @@ public class JCacheIdempotentRepository extends ServiceSupport implements CamelC
         return configuration.getCacheName();
     }
 
+    /**
+     * Whether the keys are kept only in memory; see {@link JCacheHelper#isInMemory(Cache)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return JCacheHelper.isInMemory(cache);
+    }
+
     @Override
     public boolean confirm(String key) {
         return cache.replace(key, false, true);
@@ -131,6 +142,13 @@ public class JCacheIdempotentRepository extends ServiceSupport implements CamelC
     protected void doStop() throws Exception {
         if (cacheManager != null) {
             cacheManager.close();
+            if (cacheManager.getConfiguration() != null) {
+                // the cache was opened from the configuration, and closing the manager released it (and closed it,
+                // when nothing else uses it): it is opened again on the next start, as a repository that is stopped
+                // can be started again (such as when its route is removed and added again)
+                cache = null;
+            }
+            cacheManager = null;
         }
     }
 }

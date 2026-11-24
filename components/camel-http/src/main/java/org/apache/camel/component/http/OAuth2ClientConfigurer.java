@@ -99,8 +99,20 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
-        // create a new http client only used for oauth token requests
+        // Build the OAuth2 token client from the endpoint's builder so it inherits TLS settings
+        // (sslContextParameters, x509HostnameVerifier), proxy configuration, timeouts, and all other
+        // httpClient.* options.  Mark the connection manager as shared so the token client does not
+        // consider itself the owner: when the token client closes on doStop(), it must NOT shut down the
+        // endpoint's connection pool.  HttpEndpoint.doStop() closes the connection manager explicitly
+        // when it is not the component's shared manager (CAMEL-27233).
+        clientBuilder.setConnectionManagerShared(true);
         this.httpClient = clientBuilder.build();
+        // Restore connManagerShared=false so that the endpoint's own client, built from this same
+        // builder after all configurers have run (HttpEndpoint.createHttpClient()), does not suppress
+        // IdleConnectionEvictor when evictIdleConnections/evictExpiredConnections was configured.
+        // HttpEndpoint.createHttpClient() will set connManagerShared=true again on its own if it
+        // determines that the endpoint is using the component's shared connection manager.
+        clientBuilder.setConnectionManagerShared(false);
 
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
             URI requestUri = getUriFromRequest(request);

@@ -588,6 +588,48 @@ public final class StringExpressionBuilder {
     }
 
     /**
+     * Returns an expression that unescapes the given expression (or message body if <code>null</code>) according to the
+     * escape kind: the inverse of {@link #escapeExpression(EscapeHelper.Kind, String)}.
+     *
+     * @param kind       the kind of escaping (html, xml, json, js, sql, url)
+     * @param expression the expression to unescape, or <code>null</code> to use the message body
+     */
+    public static Expression unescapeExpression(final EscapeHelper.Kind kind, final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                return EscapeHelper.unescape(kind, value);
+            }
+
+            @Override
+            public String toString() {
+                String name = kind.name().toLowerCase(Locale.ROOT);
+                if (expression != null) {
+                    return "unescape(" + name + "," + expression + ")";
+                } else {
+                    return "unescape(" + name + ")";
+                }
+            }
+        };
+    }
+
+    /**
      * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
      */
     public static Expression normalizeWhitespaceExpression(final String expression) {

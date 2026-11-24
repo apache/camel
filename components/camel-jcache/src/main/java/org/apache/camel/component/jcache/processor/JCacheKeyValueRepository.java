@@ -33,6 +33,7 @@ import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.KeyValueRepositoryHelper;
@@ -57,7 +58,8 @@ import org.apache.camel.util.ObjectHelper;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based key-value repository")
-public class JCacheKeyValueRepository extends ServiceSupport implements CamelContextAware, KeyValueRepository {
+public class JCacheKeyValueRepository extends ServiceSupport
+        implements CamelContextAware, KeyValueRepository, InMemoryStrategy {
 
     private CamelContext camelContext;
     private Cache<String, KeyValueTtlValue> cache;
@@ -239,6 +241,15 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
         cache.clear();
     }
 
+    /**
+     * Whether the entries are kept only in memory; see {@link JCacheHelper#isInMemory(Cache)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return JCacheHelper.isInMemory(cache);
+    }
+
     @Override
     @ManagedAttribute(description = "The number of entries in the repository")
     public int size() {
@@ -271,6 +282,13 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     protected void doStop() throws Exception {
         if (cacheManager != null) {
             cacheManager.close();
+            if (cacheManager.getConfiguration() != null) {
+                // the cache was opened from the configuration, and closing the manager released it (and closed it,
+                // when nothing else uses it): it is opened again on the next start, as a repository that is stopped
+                // can be started again (such as when its route is removed and added again)
+                cache = null;
+            }
+            cacheManager = null;
         }
     }
 }

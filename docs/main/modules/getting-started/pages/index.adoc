@@ -48,7 +48,7 @@ The Javadoc API that are the most relevant for Camel end users are in the follow
 [[BookGettingStarted-CreatingYourFirstProject]]
 == Creating your first project
 
-We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] 3.9.6 or greater and a https://adoptium.net/temurin/[JDK] version 17 or greater installed on your system.
+We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] 3.9.12 or greater and a https://adoptium.net/temurin/[JDK] version 17 or greater installed on your system.
 
 [NOTE]
 ====

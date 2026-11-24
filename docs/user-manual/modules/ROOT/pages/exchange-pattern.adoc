@@ -38,6 +38,9 @@ xref:components::seda-component.adoc[SEDA], and xref:components::amqp-component.
 These components use the pattern to decide between fire-and-forget and request/reply messaging.
 For example, with JMS `InOnly` sends a message to a queue without waiting for a reply,
 while `InOut` sets up a temporary reply queue (via `JMSReplyTo`) and waits for a response.
+An exchange created by a consumer that answers its caller, such as HTTP, REST or platform-http, or by a
+`request` method of a `ProducerTemplate`, is `InOut`. So a `to("jms:queue:foo")` in its route waits for a reply, up to
+the `requestTimeout` of the endpoint. Use `jms:queue:foo?exchangePattern=InOnly` when no reply is expected.
 
 For example to override the default pattern on a xref:components::jms-component.adoc[JMS]
 endpoint you could use the `exchangePattern` parameter in the Endpoint xref:uris.adoc[URI]

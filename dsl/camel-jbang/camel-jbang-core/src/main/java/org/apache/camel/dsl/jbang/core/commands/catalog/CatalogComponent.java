@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.ComponentModel;
 
 @CommandDefinition(name = "component", description = "List components from the Camel Catalog", generateHelp = true,
@@ -30,15 +29,11 @@ import org.apache.camel.tooling.model.ComponentModel;
                            "  camel catalog component --filter=kafka" })
 public class CatalogComponent extends CatalogBaseCommand {
 
-    public CatalogComponent(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     List<CatalogBaseCommand.Row> collectRows() {
         List<Row> rows = new ArrayList<>();
         for (String name : findComponentNames(catalog)) {
-            ComponentModel model = catalog.componentModel(name);
+            ComponentModel model = CatalogModelHeader.componentModel(catalog, name);
             if (model != null) {
                 Row row = new Row();
                 row.name = model.getScheme();

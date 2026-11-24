@@ -46,6 +46,11 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "kamelet.yaml";
+    /**
+     * The route property with the output data type of a Kamelet, which the kamelet producer applies when the message is
+     * handed to {@code kamelet:sink} (the same key as {@code Kamelet.OUTPUT_TYPE_PROPERTY}).
+     */
+    public static final String OUTPUT_TYPE_PROPERTY = "kameletOutputType";
 
     public KameletRoutesBuilderLoader() {
         super(EXTENSION);
@@ -120,7 +125,10 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (out != null) {
             String dataType = extractKameletDataType(out);
             if (dataType != null) {
-                rtd.route().outputType(dataType);
+                // a Kamelet hands each message on with kamelet:sink, which runs the consuming route of a source, or
+                // the steps after a Kamelet EIP, inside the template route, so an output type of the route would be
+                // applied only after them: the kamelet producer applies it when the message is handed to kamelet:sink
+                rtd.route().routeProperty(OUTPUT_TYPE_PROPERTY, dataType);
             }
         }
     }

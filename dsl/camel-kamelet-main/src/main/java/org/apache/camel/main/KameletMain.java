@@ -49,6 +49,7 @@ import org.apache.camel.main.download.DependencyDownloadFactoryFinderResolver;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DependencyDownloaderClassResolver;
 import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
+import org.apache.camel.main.download.DependencyDownloaderCxf;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
@@ -769,6 +770,8 @@ public class KameletMain extends MainCommandLineSupport {
             Object kameletsVersion = getInitialProperties().get(getInstanceType() + ".kameletsVersion");
             answer.addService(new DependencyDownloaderKamelet(
                     answer, kameletsVersion != null ? kameletsVersion.toString() : null));
+            // a cxf consumer is served on the platform-http server
+            answer.addService(new DependencyDownloaderCxf(answer, silent));
             answer.addService(new DependencyDownloaderPropertiesComponent(answer, knownDeps, silent));
 
             // reloader
@@ -901,6 +904,10 @@ public class KameletMain extends MainCommandLineSupport {
         camelContext.setApplicationContextClassLoader(cl);
         if ("true".equals(getInitialProperties().get(getInstanceType() + ".mcp"))) {
             applyMcpManagementHost(camelContext);
+        }
+        // not while exporting, transforming or resolving dependencies, which run no HTTP server
+        if (!silent && !"true".equals(getInitialProperties().get(getInstanceType() + ".export"))) {
+            applyMcpHttpServer(camelContext);
         }
         // auto configure camel afterwards
         super.autoconfigure(camelContext);
@@ -1137,6 +1144,39 @@ public class KameletMain extends MainCommandLineSupport {
             }
         }
         configure().httpManagementServer().withHost("127.0.0.1");
+    }
+
+    /**
+     * camel.server.mcp-enabled serves the ai-tool, ai-resource and ai-prompt routes over MCP on the HTTP server, so it
+     * turns the HTTP server on when camel.server.enabled is not configured. Decided before the auto configuration, when
+     * every property source (application.properties, --prop, JVM system properties, environment variables) can be
+     * resolved, so the CLI does not have to decide it up front: camel-platform-http-main and camel-mcp-server are then
+     * downloaded on demand (CAMEL-27404). Not for MCP over stdio, which needs no HTTP server, and not when
+     * camel.server.enabled is configured, such as camel.server.enabled=false.
+     */
+    void applyMcpHttpServer(CamelContext camelContext) {
+        HttpServerConfigurationProperties server = configure().httpServer();
+        boolean mcpEnabled = resolveServerProperty(camelContext, "mcp-enabled", "mcpEnabled")
+                .map(v -> "true".equalsIgnoreCase(v.trim()))
+                .orElse(server.isMcpEnabled());
+        if (!mcpEnabled) {
+            return;
+        }
+        String transport
+                = resolveServerProperty(camelContext, "mcp-transport", "mcpTransport").orElse(server.getMcpTransport());
+        if (transport != null && "stdio".equalsIgnoreCase(transport.trim())) {
+            return;
+        }
+        if (camelContext.getPropertiesComponent().resolveProperty("camel.server.enabled").isPresent()) {
+            return;
+        }
+        server.setEnabled(true);
+    }
+
+    private static Optional<String> resolveServerProperty(CamelContext camelContext, String dashed, String camelCase) {
+        var pc = camelContext.getPropertiesComponent();
+        Optional<String> answer = pc.resolveProperty("camel.server." + dashed);
+        return answer.isPresent() ? answer : pc.resolveProperty("camel.server." + camelCase);
     }
 
     private static String getPid() {

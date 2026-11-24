@@ -18,10 +18,12 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated("Writes system properties: as a lock writer among the concurrent tests, it would hold back every test reading them until the longest one ends")
 public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
     @Override

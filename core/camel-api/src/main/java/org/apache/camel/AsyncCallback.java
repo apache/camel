@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * The callback interface for an {@link AsyncProcessor} so that it can notify you when an {@link Exchange} is done.
- * <p/>
+ * <p>
  * For example a {@link AsyncProcessor} should invoke the done method when the {@link Exchange} is ready to be continued
  * routed. This allows to implement asynchronous {@link Producer} which can continue routing {@link Exchange} when all
  * the data has been gathered. This allows to build non-blocking request/reply communication.
@@ -29,18 +29,19 @@ public interface AsyncCallback extends Runnable {
 
     /**
      * This method is invoked once the {@link Exchange} is done.
-     * <p/>
+     * <p>
      * If an exception occurred while processing the exchange, the exception field of the {@link Exchange} being
      * processed will hold the caused exception.
-     * <p/>
+     * <p>
      * It is called exactly once for each call of {@link AsyncProcessor#process(Exchange, AsyncCallback)} it was given
      * to, also when the processing failed, and never a second time: a second call can continue an exchange that was
      * already continued. See the contract in {@link AsyncProcessor}.
      *
-     * @param doneSync is <tt>true</tt> if the processing of the {@link Exchange} was completed by a synchronous thread.
-     *                 Otherwise, its <tt>false</tt> to indicate it was completed by an asynchronous thread. It is the
-     *                 value that {@link AsyncProcessor#process(Exchange, AsyncCallback)} returns, except for a
-     *                 processor that hands its callback to the reactive executor (see {@link AsyncProcessor}).
+     * @param doneSync is <code>true</code> if the processing of the {@link Exchange} was completed by a synchronous
+     *                 thread. Otherwise, it's <code>false</code> to indicate it was completed by an asynchronous
+     *                 thread. It is the value that {@link AsyncProcessor#process(Exchange, AsyncCallback)} returns,
+     *                 except for a processor that hands its callback to the reactive executor (see
+     *                 {@link AsyncProcessor}).
      */
     void done(boolean doneSync);
 

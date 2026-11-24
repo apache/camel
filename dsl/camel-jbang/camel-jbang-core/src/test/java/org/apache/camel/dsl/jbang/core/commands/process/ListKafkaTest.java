@@ -37,7 +37,7 @@ class ListKafkaTest extends ProcessCommandTestSupport {
     void testDisplaysKafkaConsumer() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithKafkaConsumer("myRoute", "kafka:orders", "my-group", "orders", 0, 42L));
 
-        ListKafka command = new ListKafka(new CamelJBangMain().withPrinter(printer));
+        ListKafka command = new CamelJBangMain().withPrinter(printer).command(new ListKafka());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -60,7 +60,7 @@ class ListKafkaTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("noKafkaApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListKafka command = new ListKafka(new CamelJBangMain().withPrinter(printer));
+        ListKafka command = new CamelJBangMain().withPrinter(printer).command(new ListKafka());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -77,7 +77,7 @@ class ListKafkaTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        ListKafka command = new ListKafka(new CamelJBangMain().withPrinter(printer));
+        ListKafka command = new CamelJBangMain().withPrinter(printer).command(new ListKafka());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -96,7 +96,7 @@ class ListKafkaTest extends ProcessCommandTestSupport {
     void testJsonOutput() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithKafkaConsumer("myRoute", "kafka:events", "event-group", "events", 1, 7L));
 
-        ListKafka command = new ListKafka(new CamelJBangMain().withPrinter(printer));
+        ListKafka command = new CamelJBangMain().withPrinter(printer).command(new ListKafka());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

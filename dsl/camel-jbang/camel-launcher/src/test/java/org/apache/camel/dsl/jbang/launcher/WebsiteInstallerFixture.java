@@ -368,6 +368,8 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                + "  version) echo \"Camel " + version + "\"; exit " + versionExitCode + " ;;\n"
                + "  echo-args) shift; echo \"$@\"; exit 0 ;;\n"
                + "  exit-code) exit \"$2\" ;;\n"
+               // camel self-update runs camel plugin update with the CLI it installed
+               + "  plugin) echo \"Camel " + version + " ran: camel $*\"; exit \"${CAMEL_TEST_PLUGIN_EXIT:-0}\" ;;\n"
                + "esac\n"
                + "echo \"Camel " + version + "\"\n";
     }

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.io.LineNumberReader;
-import java.io.StringReader;
-
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.messages.Message;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
@@ -43,18 +40,17 @@ public class GroovyValidationException extends Exception {
         if (getCause() instanceof MultipleCompilationErrorsException me) {
             Message gm = me.getErrorCollector().getLastError();
             if (gm instanceof SyntaxErrorMessage sem) {
-                LineNumberReader lr = new LineNumberReader(new StringReader(script));
-                int pos = -1;
+                // find the start of the line of the error in the script itself. The Groovy compiler starts a new line
+                // after each \n, so the line separator of the platform does not matter.
+                int lineStart = 0;
                 for (int i = 1; i < sem.getCause().getLine(); i++) {
-                    try {
-                        String line = lr.readLine();
-                        pos += line.length() + System.lineSeparator().length();
-                    } catch (Exception e) {
-                        // ignore
+                    int lineEnd = script.indexOf('\n', lineStart);
+                    if (lineEnd == -1) {
+                        break;
                     }
+                    lineStart = lineEnd + 1;
                 }
-                pos += sem.getCause().getStartColumn();
-                return pos;
+                return lineStart + sem.getCause().getStartColumn() - 1;
             }
         }
         return -1;

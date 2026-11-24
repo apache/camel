@@ -1,0 +1,491 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.opa;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@Timeout(10)
+class OpaReloadableWasmEvaluatorTest {
+
+    private static OpaWasmEvaluator.Bundle bundle(int version) {
+        return new OpaWasmEvaluator.Bundle(new byte[] { (byte) version }, "{\"version\":" + version + "}");
+    }
+
+    private OpaReloadableWasmEvaluator evaluator(
+            DefaultCamelContext context,
+            OpaReloadableWasmEvaluator.BundleLoader loader,
+            OpaReloadableWasmEvaluator.EvaluatorFactory factory)
+            throws Exception {
+        return new OpaReloadableWasmEvaluator(context, 0, loader, factory, "authz/allow", "allow", "*", "", false, false);
+    }
+
+    @Test
+    void publishesChangedContentAndSkipsUnchangedContent() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        when(old.evaluateDecision(anyMap())).thenReturn(false);
+        when(replacement.evaluateDecision(anyMap())).thenReturn(true);
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> b.wasm()[0] == 1 ? old : replacement)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            assertThat(evaluator.reload()).isFalse();
+            verify(old, never()).close();
+            content.set(bundle(2));
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).hasSize(64).isNotEqualTo(original);
+            assertThat(evaluator.evaluateDecision(Map.of())).isEqualTo(true);
+            verify(old).close();
+            assertThat(evaluator.reload()).isFalse();
+        }
+        verify(replacement).close();
+    }
+
+    @Test
+    void failedReplacementRetainsLastValidatedRevisionAndSafeDiagnostics() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        when(old.evaluateDecision(anyMap())).thenReturn(true);
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> {
+                 if (b.wasm()[0] == 2) {
+                     throw new IOException("secret resource credentials");
+                 }
+                 return old;
+             })) {
+            String revision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(bundle(2));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(IOException.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(revision);
+            assertThat(evaluator.getReloadStatus().getLastReloadFailureType()).isEqualTo(IOException.class.getName());
+            assertThat(evaluator.getReloadStatus().getLastFailedReload()).isNotNull();
+            assertThat(evaluator.evaluateDecision(Map.of())).isEqualTo(true);
+            verify(old, never()).close();
+            content.set(bundle(1));
+            var failedAt = evaluator.getReloadStatus().getLastFailedReload();
+            assertThat(evaluator.reload()).isFalse();
+            // a later successful check moves the check time and keeps the failure visible
+            assertThat(evaluator.getReloadStatus().getLastSuccessfulCheck()).isAfterOrEqualTo(failedAt);
+            assertThat(evaluator.getReloadStatus().getLastReloadFailureType()).isEqualTo(IOException.class.getName());
+            assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(failedAt);
+        }
+    }
+
+    @Test
+    void oldEvaluationsDrainWithoutBlockingNewRevision() throws Exception {
+        var entered = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        when(old.evaluateDecision(anyMap())).thenAnswer(call -> {
+            entered.countDown();
+            assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+            return false;
+        });
+        when(replacement.evaluateDecision(anyMap())).thenReturn(true);
+        var executor = Executors.newSingleThreadExecutor();
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> b.wasm()[0] == 1 ? old : replacement)) {
+            var decision = executor.submit(() -> evaluator.evaluateDecision(Map.of()));
+            assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+            content.set(bundle(2));
+            assertThat(evaluator.reload()).isTrue();
+            verify(old, never()).close();
+            assertThat(evaluator.evaluateDecision(Map.of())).isEqualTo(true);
+            release.countDown();
+            assertThat(decision.get(5, TimeUnit.SECONDS)).isEqualTo(false);
+            verify(old).close();
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void closeDuringWarmupRejectsAndClosesUnpublishedReplacement() throws Exception {
+        var warming = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        var executor = Executors.newSingleThreadExecutor();
+        try (var context = new DefaultCamelContext()) {
+            var evaluator = evaluator(context, content::get, b -> {
+                if (b.wasm()[0] == 1) {
+                    return old;
+                }
+                warming.countDown();
+                assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+                return replacement;
+            });
+            String revision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(bundle(2));
+            var reload = executor.submit(() -> {
+                assertThatThrownBy(evaluator::reload).isInstanceOf(IllegalStateException.class);
+            });
+            assertThat(warming.await(5, TimeUnit.SECONDS)).isTrue();
+            evaluator.close();
+            release.countDown();
+            reload.get(5, TimeUnit.SECONDS);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(revision);
+            verify(old).close();
+            verify(replacement).close();
+            evaluator.close();
+            verify(old, times(1)).close();
+            assertThatThrownBy(() -> evaluator.evaluateDecision(Map.of())).isInstanceOf(IllegalStateException.class);
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void stoppedWatcherCannotPublishAnInFlightReload() throws Exception {
+        var warming = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        var executor = Executors.newSingleThreadExecutor();
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> {
+                 if (b.wasm()[0] == 2) {
+                     warming.countDown();
+                     assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+                     return replacement;
+                 }
+                 return old;
+             })) {
+            String revision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(bundle(2));
+            var reload = executor.submit(() -> {
+                assertThatThrownBy(evaluator::reload).isInstanceOf(IllegalStateException.class);
+            });
+            assertThat(warming.await(5, TimeUnit.SECONDS)).isTrue();
+            evaluator.stopWatching();
+            release.countDown();
+            reload.get(5, TimeUnit.SECONDS);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(revision);
+            verify(replacement).close();
+            verify(old, never()).close();
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void managedWatcherLoadsChangedResourceAndCanRestart() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 10, content::get,
+                     b -> b.wasm()[0] == 1 ? old : replacement,
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            evaluator.startWatching();
+            content.set(bundle(2));
+            await().atMost(5, TimeUnit.SECONDS)
+                    .until(() -> !evaluator.getReloadStatus().getActiveRevision().equals(original));
+            evaluator.stopWatching();
+            verify(old).close();
+            evaluator.startWatching();
+            evaluator.stopWatching();
+        }
+        verify(replacement).close();
+    }
+
+    @Test
+    void managedWatcherDoesNotBuildTheSameFailedContentAgain() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var loads = new AtomicInteger();
+        var creations = new AtomicInteger();
+        var old = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 10, () -> {
+                         loads.incrementAndGet();
+                         return content.get();
+                     },
+                     b -> {
+                         if (b.wasm()[0] == 2) {
+                             creations.incrementAndGet();
+                             throw new IOException("module rejected");
+                         }
+                         return old;
+                     },
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            evaluator.startWatching();
+            content.set(bundle(2));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> evaluator.getReloadStatus().getLastFailedReload() != null);
+            int loadsAtFailure = loads.get();
+            // the polls go on reading the resource, but the content that failed is not built again
+            await().atMost(5, TimeUnit.SECONDS).until(() -> loads.get() >= loadsAtFailure + 3);
+            assertThat(creations).hasValue(1);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+            // an explicit reload tries again
+            assertThatThrownBy(evaluator::reload).isInstanceOf(IOException.class);
+            assertThat(creations).hasValue(2);
+            evaluator.stopWatching();
+        }
+    }
+
+    @Test
+    void pollingSkipsUnchangedMalformedDataButExplicitReloadRetriesAndChangedContentRecovers() throws Exception {
+        for (String invalidData : List.of("{", "{} {}")) {
+            var content = new AtomicReference<>(bundle(1));
+            var loads = new AtomicInteger();
+            var creations = new AtomicInteger();
+            var old = mock(OpaWasmEvaluator.class);
+            var replacement = mock(OpaWasmEvaluator.class);
+            try (var context = new DefaultCamelContext();
+                 var evaluator = new OpaReloadableWasmEvaluator(
+                         context, 10, () -> {
+                             loads.incrementAndGet();
+                             return content.get();
+                         }, b -> {
+                             creations.incrementAndGet();
+                             return b.wasm()[0] == 1 ? old : replacement;
+                         }, "authz/allow", "allow", "*", "", false, false)) {
+                String original = evaluator.getReloadStatus().getActiveRevision();
+                content.set(new OpaWasmEvaluator.Bundle(new byte[] { 2 }, invalidData));
+                evaluator.startWatching();
+                await().atMost(5, TimeUnit.SECONDS)
+                        .until(() -> evaluator.getReloadStatus().getLastFailedReload() != null);
+                var failedAt = evaluator.getReloadStatus().getLastFailedReload();
+                int loadsAtFailure = loads.get();
+                await().atMost(5, TimeUnit.SECONDS).until(() -> loads.get() >= loadsAtFailure + 3);
+                assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(failedAt);
+                assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+                assertThat(creations).hasValue(1);
+
+                assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+                var retriedAt = evaluator.getReloadStatus().getLastFailedReload();
+                assertThat(retriedAt).isAfter(failedAt);
+                assertThat(creations).hasValue(1);
+
+                content.set(bundle(2));
+                await().atMost(5, TimeUnit.SECONDS)
+                        .until(() -> !evaluator.getReloadStatus().getActiveRevision().equals(original));
+                assertThat(creations).hasValue(2);
+                assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(retriedAt);
+                evaluator.stopWatching();
+                verify(old).close();
+            }
+            verify(replacement).close();
+        }
+    }
+
+    @Test
+    void aLoaderThatReusesItsBufferDoesNotChangeTheBuiltModule() throws Exception {
+        // the loader hands out the same byte array on every load, and overwrites it when the resource changes
+        byte[] buffer = { 1 };
+        var built = new ArrayList<byte[]>();
+        var old = mock(OpaWasmEvaluator.class);
+        var replacement = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 0, () -> new OpaWasmEvaluator.Bundle(buffer, null),
+                     b -> {
+                         built.add(b.wasm());
+                         return b.wasm()[0] == 1 ? old : replacement;
+                     },
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            buffer[0] = 2;
+            assertThat(evaluator.reload()).isTrue();
+            String reloaded = evaluator.getReloadStatus().getActiveRevision();
+            assertThat(reloaded).isNotEqualTo(original);
+            assertThat(built).hasSize(2).allSatisfy(wasm -> assertThat(wasm).isNotSameAs(buffer));
+
+            // the loader overwrites its buffer: the module built from it and its revision stay as they were
+            buffer[0] = 1;
+            assertThat(built.get(1)).containsExactly(2);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(reloaded);
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+            assertThat(built).hasSize(3);
+            assertThat(built.get(1)).containsExactly(2);
+        }
+    }
+
+    @Test
+    void anErrorFromTheFactoryIsRememberedLikeAnException() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var loads = new AtomicInteger();
+        var creations = new AtomicInteger();
+        var old = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = new OpaReloadableWasmEvaluator(
+                     context, 10, () -> {
+                         loads.incrementAndGet();
+                         return content.get();
+                     },
+                     b -> {
+                         if (b.wasm()[0] == 2) {
+                             creations.incrementAndGet();
+                             throw new LinkageError("module compiler failure");
+                         }
+                         return old;
+                     },
+                     "authz/allow", "allow", "*", "", false, false)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            content.set(bundle(2));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(LinkageError.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(original);
+            assertThat(evaluator.getReloadStatus().getLastReloadFailureType()).isEqualTo(LinkageError.class.getName());
+            assertThat(evaluator.getReloadStatus().getLastFailedReload()).isNotNull();
+            // the polls do not build the same failing content again either
+            evaluator.startWatching();
+            int loadsBefore = loads.get();
+            await().atMost(5, TimeUnit.SECONDS).until(() -> loads.get() >= loadsBefore + 3);
+            assertThat(creations).hasValue(1);
+            evaluator.stopWatching();
+        }
+    }
+
+    @Test
+    void revisionIncludesDataAndDistinguishesMissingDataFromEmptyObject() throws Exception {
+        var content = new AtomicReference<>(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, null));
+        var first = mock(OpaWasmEvaluator.class);
+        var second = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> b.data() == null ? first : second)) {
+            String original = evaluator.getReloadStatus().getActiveRevision();
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, "{}"));
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isNotEqualTo(original);
+        }
+    }
+
+    @Test
+    void closeDrainsAdmittedDecisionWithoutClosingItsPoolEarly() throws Exception {
+        var entered = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var delegate = mock(OpaWasmEvaluator.class);
+        when(delegate.evaluateDecision(anyMap())).thenAnswer(call -> {
+            entered.countDown();
+            assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+            return true;
+        });
+        var executor = Executors.newSingleThreadExecutor();
+        try (var context = new DefaultCamelContext()) {
+            var evaluator = evaluator(context, () -> bundle(1), b -> delegate);
+            var decision = executor.submit(() -> evaluator.evaluateDecision(Map.of()));
+            assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+            evaluator.close();
+            verify(delegate, never()).close();
+            assertThatThrownBy(evaluator::reload).isInstanceOf(IllegalStateException.class);
+            release.countDown();
+            assertThat(decision.get(5, TimeUnit.SECONDS)).isEqualTo(true);
+            verify(delegate).close();
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void defaultDoesNotReloadResourceOnEachDecision() throws Exception {
+        var loads = new AtomicInteger();
+        var delegate = mock(OpaWasmEvaluator.class);
+        when(delegate.evaluateDecision(anyMap())).thenReturn(true);
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, () -> {
+                 loads.incrementAndGet();
+                 return bundle(1);
+             }, b -> delegate)) {
+            evaluator.startWatching();
+            evaluator.evaluateDecision(Map.of());
+            evaluator.evaluateDecision(Map.of());
+            assertThat(loads.get()).isEqualTo(1);
+        }
+    }
+
+    @Test
+    void malformedDataNeverReachesReplacementFactory() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var creations = new AtomicInteger();
+        var delegate = mock(OpaWasmEvaluator.class);
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> {
+                 creations.incrementAndGet();
+                 return delegate;
+             })) {
+            String revision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, "{invalid"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, "{} {}"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 1 }, " "));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(IllegalArgumentException.class);
+            assertThat(creations.get()).isEqualTo(1);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(revision);
+        }
+    }
+
+    @Test
+    void rapidReloadsCloseEachRetiredSnapshotOnce() throws Exception {
+        var content = new AtomicReference<>(bundle(1));
+        var delegates = new ArrayList<OpaWasmEvaluator>();
+        try (var context = new DefaultCamelContext();
+             var evaluator = evaluator(context, content::get, b -> {
+                 var delegate = mock(OpaWasmEvaluator.class);
+                 when(delegate.evaluateDecision(anyMap())).thenReturn((int) b.wasm()[0]);
+                 delegates.add(delegate);
+                 return delegate;
+             })) {
+            for (int version = 2; version <= 10; version++) {
+                content.set(bundle(version));
+                assertThat(evaluator.reload()).isTrue();
+                assertThat(evaluator.evaluateDecision(Map.of())).isEqualTo(version);
+                verify(delegates.get(version - 2)).close();
+                verify(delegates.get(version - 1), never()).close();
+            }
+        }
+        for (var delegate : delegates) {
+            verify(delegate, times(1)).close();
+        }
+    }
+
+}

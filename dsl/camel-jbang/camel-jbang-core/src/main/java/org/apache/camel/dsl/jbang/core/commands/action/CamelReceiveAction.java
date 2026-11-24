@@ -47,7 +47,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
@@ -226,7 +225,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     @Option(name = "output", description = "Output format (${COMPLETION-CANDIDATES})",
             completer = OutputFormatCompletionCandidates.class)
-    private String output;
+    String output;
 
     @Mixin
     MavenResolverMixin mavenResolver;
@@ -240,10 +239,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
     private boolean prefixShown;
     private MessageTableHelper tableHelper;
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
-
-    public CamelReceiveAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {
@@ -307,13 +302,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     private Integer doCallLocal(boolean autoDump) throws Exception {
         AtomicReference<KameletMain> ref = new AtomicReference<>();
-        Run run = new Run(this.getMain()) {
+        Run run = new Run() {
             @Override
             protected int runKameletMain(ConfiguredRun run) throws Exception {
                 ref.set(run.getMain());
                 return super.runKameletMain(run);
             }
         };
+        run.setCamelMain(this.getMain());
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;

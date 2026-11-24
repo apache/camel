@@ -29,6 +29,7 @@ import java.util.Map;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -2752,7 +2753,7 @@ public class KeycloakProducer extends DefaultProducer {
             }
             String domainName = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_DOMAIN, String.class);
             if (ObjectHelper.isNotEmpty(domainName)) {
-                OrganizationDomainRepresentation domain = new OrganizationDomainRepresentation();
+                OrganizationDomainRepresentation domain = new LegacyOrganizationDomain();
                 domain.setName(domainName);
                 org.addDomain(domain);
             }
@@ -3073,5 +3074,13 @@ public class KeycloakProducer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Organization domain without the fields added after Keycloak 26.0 (autoRedirect, identityProviderAlias). The
+     * producer never sets them, and a Keycloak 26.0 server rejects an unknown field with HTTP 400.
+     */
+    @JsonIgnoreProperties({ "autoRedirect", "identityProviderAlias" })
+    private static final class LegacyOrganizationDomain extends OrganizationDomainRepresentation {
     }
 }

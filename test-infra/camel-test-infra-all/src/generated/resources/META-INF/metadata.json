@@ -18,7 +18,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -29,7 +29,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -40,7 +40,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
@@ -62,7 +62,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
@@ -95,7 +95,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
@@ -128,7 +128,18 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-openfga",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.22.1",
+  "serviceVersion" : "v1.23.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.google.bigquery.services.GoogleBigQueryInfraService",
+  "description" : "Local Google BigQuery service with Floci GCP",
+  "implementation" : "org.apache.camel.test.infra.google.bigquery.services.GoogleBigQueryLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "bigquery" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-bigquery",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.12.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -139,7 +150,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
@@ -227,7 +238,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryInfraService",
@@ -238,7 +249,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-apicurio-registry",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.3.4",
+  "serviceVersion" : "3.3.5",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
@@ -293,7 +304,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-qdrant",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.20.0-unprivileged",
+  "serviceVersion" : "v1.20.2-unprivileged",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
@@ -359,7 +370,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.iggy.services.IggyInfraService",
@@ -381,7 +392,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.zookeeper.services.ZooKeeperInfraService",
@@ -436,7 +447,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-nats",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.15.1",
+  "serviceVersion" : "2.15.3",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
@@ -513,7 +524,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.couchdb.services.CouchDbInfraService",
@@ -571,6 +582,17 @@
   "serviceVersion" : "1.22.4-static",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreInfraService",
+  "description" : "Local Google Cloud Firestore service with Floci GCP",
+  "implementation" : "org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "firestore" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-firestore",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.12.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
   "description" : "OpenSearch is a distributed search and analytics engine",
   "implementation" : "org.apache.camel.test.infra.opensearch.services.OpenSearchLocalContainerInfraService",
@@ -579,7 +601,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opensearch",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.9.0",
+  "serviceVersion" : "3.10.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
@@ -623,7 +645,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -634,7 +656,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
@@ -689,7 +711,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-mosquitto",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.0.22",
+  "serviceVersion" : "2.0.23",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -700,7 +722,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -711,7 +733,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cassandra.services.CassandraInfraService",
@@ -733,7 +755,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hazelcast.services.HazelcastInfraService",
@@ -790,6 +812,17 @@
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "RELEASE.2025-09-07T16-13-09Z-cpuv1",
   "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.google.secret.manager.services.GoogleSecretManagerInfraService",
+  "description" : "Local Google Secret Manager service with Floci GCP",
+  "implementation" : "org.apache.camel.test.infra.google.secret.manager.services.GoogleSecretManagerLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "secret-manager" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-secret-manager",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.12.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded SFTP Server",
@@ -876,7 +909,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "0.40.13",
+  "serviceVersion" : "0.40.17",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -887,7 +920,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
+  "serviceVersion" : "2.5.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.functions.services.AzureFunctionsInfraService",

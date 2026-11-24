@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Per-route policy controlling whether the route stops immediately or defers during
  * <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful shutdown</a>.
- * <p/>
+ * <p>
  * Set on a route via the DSL {@code .shutdownRoute(ShutdownRoute.Defer)} call. Deferring is useful for shared internal
  * routes (for example a {@code direct:} or {@code seda:} route used by many other routes) that must remain active until
  * all dependent routes have stopped processing their in-flight exchanges. The

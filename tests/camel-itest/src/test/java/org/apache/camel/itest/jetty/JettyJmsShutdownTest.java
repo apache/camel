@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
 @ContextConfiguration
@@ -59,11 +61,15 @@ public class JettyJmsShutdownTest {
 
     @Test
     void testShutdown() throws Exception {
+        // wait until all 3 messages are in progress in the consumer route
+        NotifyBuilder notify
+                = new NotifyBuilder(camelContext).fromRoute("JettyJmsShutdownTest-consumer").whenReceived(3).create();
+
         Future<String> reply1 = template.asyncRequestBody(URL, "World", String.class);
         Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
         Future<String> reply3 = template.asyncRequestBody(URL, "Tiger", String.class);
 
-        Thread.sleep(1000);
+        assertTrue(notify.matches(30, TimeUnit.SECONDS), "All messages should be received by the consumer route");
 
         // shutdown while in progress
         camelContext.stop();

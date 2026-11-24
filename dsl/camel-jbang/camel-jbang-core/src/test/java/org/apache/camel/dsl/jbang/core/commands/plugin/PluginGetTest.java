@@ -46,7 +46,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldGetEmptyPlugins() throws Exception {
-        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        PluginGet command = new CamelJBangMain().withPrinter(printer).command(new PluginGet());
         command.doCall();
 
         // CAMEL-26931: it printed nothing at all
@@ -58,7 +58,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
     public void shouldGetPlugin() throws Exception {
         PluginHelper.enable(PluginType.KUBERNETES);
 
-        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        PluginGet command = new CamelJBangMain().withPrinter(printer).command(new PluginGet());
         command.doCall();
 
         List<String> output = printer.getLines();
@@ -88,7 +88,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
                 """;
         Files.writeString(customConfig, configContent, StandardOpenOption.CREATE);
 
-        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        PluginGet command = new CamelJBangMain().withPrinter(printer).command(new PluginGet());
         command.pluginConfig = customConfig.toString();
         command.doCall();
 
@@ -116,7 +116,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
                 """;
         Files.writeString(configFile, configContent, StandardOpenOption.CREATE);
 
-        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        PluginGet command = new CamelJBangMain().withPrinter(printer).command(new PluginGet());
         command.pluginConfig = configDir.toString();
         command.doCall();
 
@@ -138,7 +138,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
 
         PluginHelper.savePluginConfig(pluginConfig);
 
-        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        PluginGet command = new CamelJBangMain().withPrinter(printer).command(new PluginGet());
         command.doCall();
 
         List<String> output = printer.getLines();

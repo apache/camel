@@ -17,11 +17,16 @@
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,9 +44,24 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
-        // restart the SFTP server now
+        // Restart the SFTP server. Wait at least 1100 ms before the second upload so that
+        // isRecentlyUsed() (which caches the last-used timestamp for 1 second) returns false
+        // regardless of whether JSch has already processed the EOF from the old connection.
+        // With isRecentlyUsed() returning false, preWriteCheck() calls sendNoop(), which does a
+        // round-trip REALPATH that detects the stale session and triggers a reconnect.
         service.tearDownServer();
         service.setUpServer();
+        int port = service.getPort();
+        await().pollDelay(1100, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
+                .pollInterval(50, TimeUnit.MILLISECONDS)
+                .until(() -> {
+                    try (Socket s = new Socket()) {
+                        s.connect(new InetSocketAddress("localhost", port), 100);
+                        return true;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                });
 
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="

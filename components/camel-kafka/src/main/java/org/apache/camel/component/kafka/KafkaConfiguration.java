@@ -230,6 +230,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         applyCommonClientProperties(props);
         addPropertyIfNotEmpty(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializer());
         addPropertyIfNotEmpty(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializer());
+        applySchemaRegistryProducerProperties(props, getValueSerializer());
         addPropertyIfNotEmpty(props, ProducerConfig.ACKS_CONFIG, getRequestRequiredAcks());
         addPropertyIfNotEmpty(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotEmpty(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
@@ -261,6 +262,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         applyCommonClientProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializer());
         addPropertyIfNotEmpty(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializer());
+        applySchemaRegistryConsumerProperties(props);
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MIN_BYTES_CONFIG, getFetchMinBytes());
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MAX_BYTES_CONFIG, getFetchMaxBytes());
         // classic-only properties: skip when using the new consumer protocol (KIP-848)
@@ -285,7 +287,6 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
         addPropertyIfNotEmpty(props, ConsumerConfig.CHECK_CRCS_CONFIG, getCheckCrcs());
         addPropertyIfNotEmpty(props, ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, getFetchWaitMaxMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.ISOLATION_LEVEL_CONFIG, getIsolationLevel());
-        addPropertyIfNotFalse(props, "specific.avro.reader", isSpecificAvroReader());
 
         applySecurityProperties(props);
         applyAdditionalProperties(props);
@@ -311,8 +312,11 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
 
     /**
      * A string that uniquely identifies the group of consumer processes to which this consumer belongs. By setting the
-     * same group id, multiple processes can indicate that they are all part of the same consumer group. This option is
-     * required for consumers.
+     * same group id, multiple processes can indicate that they are all part of the same consumer group. It takes
+     * precedence over a group.id set in additionalProperties. If neither is set, the consumer uses a generated group
+     * id, a new one at each start, and logs a WARN: it does not resume from the offsets committed before a restart, and
+     * each instance of the application receives every record. Set it on a consumer that must resume after a restart or
+     * share the records with other instances.
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
@@ -327,7 +331,9 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
      * set, the consumer is treated as a static member, which means that only one instance with this ID is allowed in
      * the consumer group at any time. This can be used in combination with a larger session timeout to avoid group
      * rebalances caused by transient unavailability (e.g., process restarts). If not set, the consumer will join the
-     * group as a dynamic member, which is the traditional behavior.
+     * group as a dynamic member, which is the traditional behavior. When consumersCount is greater than 1, each
+     * consumer is a static member of its own, with this ID followed by a dash and the index of the consumer (myId-0,
+     * myId-1, ...).
      */
     public void setGroupInstanceId(String groupInstanceId) {
         this.groupInstanceId = groupInstanceId;
@@ -375,7 +381,9 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
 
     /**
      * The number of consumers that connect to kafka server. Each consumer is run on a separate thread that retrieves
-     * and process the incoming data.
+     * and process the incoming data. Each consumer is a member of the consumer group, so the consumers beyond the
+     * number of partitions of the topic (counting the consumers of all the application instances) get no records. With
+     * groupInstanceId, each consumer gets its own group instance id.
      */
     public void setConsumersCount(int consumersCount) {
         this.consumersCount = consumersCount;

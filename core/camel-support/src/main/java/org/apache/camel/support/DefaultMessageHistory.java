@@ -26,7 +26,6 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageSizeStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default {@link org.apache.camel.MessageHistory}.
@@ -105,7 +104,8 @@ public class DefaultMessageHistory implements MessageHistory {
 
     /**
      * Captures the body's type and size as the node is reached, as {@link #captureBody(Exchange)} does, and records the
-     * type in the registry, which keeps what each node was reached with across the exchanges (CAMEL-25750).
+     * type in the registry, which keeps what each node was reached with across the exchanges (CAMEL-25750), and the
+     * format of a payload from its {@code Content-Type} header (CAMEL-27468).
      *
      * @param exchange the exchange that reached the node
      * @param registry the registry to record the type in, looked up once by the factory (null to not record it)
@@ -113,10 +113,19 @@ public class DefaultMessageHistory implements MessageHistory {
     public void captureBody(Exchange exchange, BodyTypeRegistry registry) {
         Message current = exchange.getMessage();
         Object body = current.getBody();
-        bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        bodyType = body != null ? BodyFacts.className(body) : "null";
         bodyDataType = body instanceof Map<?, ?> || body instanceof Collection<?> ? BodyFacts.typeName(body) : null;
         if (registry != null && routeId != null && nodeId != null) {
-            registry.addBodyType(routeId, nodeId, bodyType, BodyFacts.kindOf(body));
+            BodyTypeRegistry.Kind kind = BodyFacts.kindOf(body);
+            registry.addBodyType(routeId, nodeId, bodyType, kind);
+            if (kind == BodyTypeRegistry.Kind.PAYLOAD) {
+                // the Content-Type tells what the text, bytes or stream hold (CAMEL-27468); on data it is a left-over
+                // of the payload it was unmarshalled from, and not about the body any more
+                String format = BodyFacts.formatOf(current.getHeader(Exchange.CONTENT_TYPE));
+                if (format != null) {
+                    registry.addBodyFormat(routeId, nodeId, format);
+                }
+            }
         }
         CamelContext context = exchange.getContext();
         if (body == null) {

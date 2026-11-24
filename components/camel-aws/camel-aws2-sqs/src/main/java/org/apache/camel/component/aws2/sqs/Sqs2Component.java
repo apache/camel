@@ -79,6 +79,12 @@ public class Sqs2Component extends HealthCheckComponent {
             throw new IllegalArgumentException(
                     "Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
+        // the extender runs every visibilityTimeout / 2 whole seconds, so with less than 2 seconds it is always late
+        if (configuration.isExtendMessageVisibility() && configuration.getVisibilityTimeout() < 2) {
+            throw new IllegalArgumentException(
+                    "Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be at least 2 seconds, was: "
+                                               + configuration.getVisibilityTimeout());
+        }
         return sqsEndpoint;
     }
 

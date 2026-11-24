@@ -42,6 +42,8 @@ public final class SanitizerTestSession {
     private static final Set<SanitizerTestSession> OPEN = ConcurrentHashMap.newKeySet();
 
     private final String name;
+    // the sampling of the watch windows of rule R3 the test class asks for, or -1 when it does not
+    private final int overlapSampling;
     private final ConcurrentLinkedQueue<SanitizerViolation> violations = new ConcurrentLinkedQueue<>();
     // how many violations wait for drain(): at most Sanitizer.MAX_KEPT are kept, so a route that breaks the rule at each
     // message does not fill the memory; the test fails with the first ones
@@ -50,8 +52,9 @@ public final class SanitizerTestSession {
     private volatile boolean installed;
     private volatile boolean turnedOff;
 
-    private SanitizerTestSession(String name) {
+    private SanitizerTestSession(String name, int overlapSampling) {
         this.name = name;
+        this.overlapSampling = overlapSampling;
     }
 
     /**
@@ -60,7 +63,19 @@ public final class SanitizerTestSession {
      * @param name the name of the session, such as the name of the test class
      */
     public static SanitizerTestSession open(String name) {
-        SanitizerTestSession session = new SanitizerTestSession(name);
+        return open(name, -1);
+    }
+
+    /**
+     * Opens a session whose test class sets the sampling of the watch windows of rule R3.
+     *
+     * @param name            the name of the session, such as the name of the test class
+     * @param overlapSampling every how many points a watch window is opened in the contexts tied to the session; 0 for
+     *                        none; -1 for the default ({@code camel.sanitizer.overlapSampling} when it is set, else
+     *                        100)
+     */
+    public static SanitizerTestSession open(String name, int overlapSampling) {
+        SanitizerTestSession session = new SanitizerTestSession(name, overlapSampling);
         OPEN.add(session);
         return session;
     }
@@ -138,6 +153,13 @@ public final class SanitizerTestSession {
 
     void turnedOff() {
         turnedOff = true;
+    }
+
+    /**
+     * The sampling of the watch windows of rule R3 the test class asks for, or -1 when it does not.
+     */
+    int getOverlapSampling() {
+        return overlapSampling;
     }
 
     boolean isClosed() {

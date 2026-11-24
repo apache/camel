@@ -375,6 +375,31 @@ Because the keys use underscore, then they are quoted.
 
 IMPORTANT: To use map values for parameters, then the `uri` must only refer to the name of the component, ie `plc4x` and not `plc4x:foo`
 
+=== Option names and map keys
+
+Write an option under `parameters` in camelCase, as the documentation of the component lists it, such as
+`serviceClass`.
+
+A key can start with the prefix of a map option, such as `properties.` of the CXF component or `scheduler.` of a
+polling consumer. Then the rest of the key, after the prefix, is passed on as it is written. The keys of a map value
+are passed on as they are written as well.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:orders"
+      steps:
+        - to:
+            uri: "cxf://http://localhost:8080/orders"
+            parameters:
+              serviceClass: "com.foo.OrderService"
+              properties.ws-security.username: "alice"
+              properties.security.callback-handler: "#myHandler"
+----
+
+Here CXF gets the properties `ws-security.username` and `security.callback-handler` as they are written.
+
 == Defining beans
 
 In addition to the general support for creating beans provided by xref:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provides a convenient syntax to define and configure them:

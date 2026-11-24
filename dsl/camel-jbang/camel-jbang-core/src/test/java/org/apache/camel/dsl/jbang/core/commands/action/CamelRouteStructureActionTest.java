@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -43,7 +44,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testRequestsRouteStructureFromNamedIntegrationAndRendersSource() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
@@ -65,7 +67,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testShowsTheBodyTypesEachStepWasReachedWith() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
 
@@ -73,7 +76,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
 
         assertEquals(0, exit);
         String out = printer.getOutput();
-        assertTrue(out.contains("body: GenericFile"), out);
+        // the format of the payload, from its Content-Type
+        assertTrue(out.contains("body: GenericFile · json"), out);
         // a step reached with a Map by some messages and with a text by others shows both, and their kinds
         assertTrue(out.contains("body: LinkedHashMap | String (data and payload)"), out);
         // two types of one kind are dynamic, but need no attention
@@ -91,7 +95,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testVariedShowsOnlyTheStepsReachedWithMoreThanOneBodyType() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.varied = true;
@@ -112,7 +117,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testVariedSaysWhenNoStepVaried() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.varied = true;
@@ -145,7 +151,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testRawShowsOnlyTheCode() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.raw = true;
@@ -162,13 +169,55 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     void testBodyTypesBySimpleNames() {
         assertEquals("String | byte[] | String[]",
                 CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "byte[]", "java.lang.String[]"),
-                        List.of("payload")));
+                        List.of("payload"), null));
         assertEquals("null | String | LinkedHashMap (null, payload and data)",
                 CamelRouteStructureAction.bodyTypes(List.of("null", "java.lang.String", "java.util.LinkedHashMap"),
-                        List.of("null", "payload", "data")));
+                        List.of("null", "payload", "data"), null));
         // an older Camel says no kinds
         assertEquals("String | LinkedHashMap",
-                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"), null));
+                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"), null, null));
+    }
+
+    @Test
+    void testBodyTypesWithTheFormats() {
+        // the formats of the payloads, from their Content-Type (CAMEL-27468)
+        assertEquals("byte[] · json",
+                CamelRouteStructureAction.bodyTypes(List.of("byte[]"), List.of("payload"), List.of("json")));
+        assertEquals("String | LinkedHashMap · xml | csv (payload and data)",
+                CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"),
+                        List.of("payload", "data"), List.of("xml", "csv")));
+    }
+
+    @Test
+    void testTheDataTypeOfTheKameletAStepCalls() {
+        // CAMEL-27475: the Map of a row becomes the JSON that postgresql-sink takes
+        Map<String, Object> json = Map.of("dataType", "json", "transformer", "application-json", "takesBody", true);
+        assertEquals("LinkedHashMap → json", CamelRouteStructureAction.bodyText(
+                List.of("java.util.LinkedHashMap"), List.of("data"), null, json));
+        // not reached yet: the data type alone
+        assertEquals("→ json", CamelRouteStructureAction.bodyText(null, null, null,
+                Map.of("dataType", "json", "transformer", "application-json")));
+        // a body the transformer does not take
+        assertEquals("ArrayList → text (text-plain does not take it)", CamelRouteStructureAction.bodyText(
+                List.of("java.util.ArrayList"), List.of("collection"), null,
+                Map.of("dataType", "text", "transformer", "text-plain", "takesBody", false)));
+        // no Kamelet
+        assertEquals("byte[] · json", CamelRouteStructureAction.bodyText(
+                List.of("byte[]"), List.of("payload"), List.of("json"), null));
+    }
+
+    @Test
+    void testOnlyVariedKeepsAStepOfMoreThanOneFormat() {
+        JsonObject line = codeLine(5, "to", "to1", 1, "to[http://stock]", List.of("byte[]"), List.of("payload"));
+        line.put("bodyFormats", new JsonArray(List.of("json", "xml")));
+        JsonObject route = new JsonObject();
+        route.put("routeId", "orders");
+        route.put("code", new JsonArray(List.of(line)));
+        JsonObject response = new JsonObject();
+        response.put("routes", new JsonArray(List.of(route)));
+
+        JsonArray routes = CamelRouteStructureAction.onlyVaried(response).getCollection("routes");
+        assertEquals(1, routes.size());
     }
 
     @Test
@@ -211,7 +260,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     @Test
     void testJsonOfAFilterThatMatchesNothingIsNotFound() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.jsonOutput = true;
@@ -227,7 +277,8 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
     private JsonArray jsonRoutes(Consumer<CamelRouteStructureAction> options) throws Exception {
         printer = new StringPrinter();
         writeStatusFile(TEST_PID, "myApp");
-        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStructureAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStructureAction());
         command.name = "myApp";
         command.sort = "name";
         command.jsonOutput = true;
@@ -305,8 +356,10 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
         JsonArray codeLines = new JsonArray();
         codeLines.add(codeLine(1, "route", "orders", 0, "route[orders]", null, null));
         codeLines.add(codeLine(2, "from", "orders", 1, "from[file:inbox]", null, null));
-        codeLines.add(codeLine(5, "unmarshal", "unmarshal1", 2, "unmarshal[json]",
-                List.of("org.apache.camel.component.file.GenericFile"), List.of("payload")));
+        JsonObject unmarshal = codeLine(5, "unmarshal", "unmarshal1", 2, "unmarshal[json]",
+                List.of("org.apache.camel.component.file.GenericFile"), List.of("payload"));
+        unmarshal.put("bodyFormats", new JsonArray(List.of("json")));
+        codeLines.add(unmarshal);
         codeLines.add(codeLine(8, "to", "to1", 2, "to[http://stock/api/reserve]",
                 List.of("java.util.LinkedHashMap", "java.lang.String"), List.of("data", "payload")));
         codeLines.add(codeLine(11, "log", "log1", 2, "log[${body}]",

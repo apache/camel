@@ -24,7 +24,7 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(56);
+        Set<String> props = new HashSet<>(57);
         props.add("accountKey");
         props.add("accountName");
         props.add("backoffErrorThreshold");
@@ -40,6 +40,7 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
         props.add("dataCount");
         props.add("dataLakeServiceClient");
         props.add("delay");
+        props.add("deleteAfterRead");
         props.add("directoryName");
         props.add("downloadLinkExpiration");
         props.add("exceptionHandler");

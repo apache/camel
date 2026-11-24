@@ -37,8 +37,8 @@ public final class FCUtils {
     }
 
     public static Client createClient(FCEndpoint endpoint) throws Exception {
-        if (ObjectHelper.isEmpty(endpoint.getRegion()) && ObjectHelper.isEmpty(endpoint.getEndpoint())) {
-            throw new IllegalArgumentException("Region or endpoint is required");
+        if (ObjectHelper.isEmpty(endpoint.getEndpoint())) {
+            throw new IllegalArgumentException("Endpoint is required");
         }
 
         return new Client(
@@ -46,21 +46,15 @@ public final class FCUtils {
                         endpoint.getAccessKey(),
                         endpoint.getSecretKey(),
                         endpoint.getServiceKeys(),
-                        endpoint.getRegion(),
                         endpoint.getEndpoint()));
     }
 
     private static Config createTeaConfig(
-            String accessKey, String secretKey, ServiceKeys serviceKeys, String region, String endpoint) {
+            String accessKey, String secretKey, ServiceKeys serviceKeys, String endpoint) {
         Config config = new Config();
         config.setAccessKeyId(OpenApiClientSupport.resolveAccessKey(accessKey, serviceKeys));
         config.setAccessKeySecret(OpenApiClientSupport.resolveSecretKey(secretKey, serviceKeys));
-        if (ObjectHelper.isNotEmpty(region)) {
-            config.setRegionId(region);
-        }
-        if (ObjectHelper.isNotEmpty(endpoint)) {
-            config.setEndpoint(endpoint);
-        }
+        config.setEndpoint(endpoint);
         return config;
     }
 

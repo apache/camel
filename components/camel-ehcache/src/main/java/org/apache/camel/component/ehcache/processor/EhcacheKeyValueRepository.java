@@ -27,6 +27,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.KeyValueRepositoryHelper;
@@ -53,7 +54,7 @@ import org.ehcache.CacheManager;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Ehcache based key-value repository")
-public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValueRepository {
+public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValueRepository, InMemoryStrategy {
 
     private Cache<String, KeyValueTtlValue> cache;
     private EhcacheManager ehcacheManager;
@@ -231,6 +232,12 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @ManagedOperation(description = "Clear all entries")
     public void clear() {
         cache.clear();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return EhcacheManager.isInMemory(cache);
     }
 
     @Override

@@ -538,6 +538,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-cve</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-maven</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -715,6 +720,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-common</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cxf-platform-http</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1404,6 +1414,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbang-wsdl</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jcache</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -2060,6 +2075,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-protobuf-schema</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2765,6 +2785,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xpath</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xsd-json</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

@@ -34,17 +34,17 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy that creates the managed wrapper objects Camel registers in JMX for its internal artifacts.
- * <p/>
+ * <p>
  * Before Camel can register a {@link org.apache.camel.CamelContext}, {@link org.apache.camel.Route},
  * {@link org.apache.camel.Processor}, {@link org.apache.camel.Component}, or other runtime object as an MBean, it needs
  * a managed facade that exposes the right attributes and operations. This strategy supplies those facades (for example,
  * {@code ManagedCamelContext}, {@code ManagedRoute}, {@code ManagedProcessor}) for each artifact type.
- * <p/>
+ * <p>
  * The {@link ManagementStrategy} calls the appropriate {@code getManagedObjectFor*} method, then the returned object is
  * assembled into a {@link javax.management.modelmbean.ModelMBean} by {@link ManagementMBeanAssembler} and registered
  * under the {@link javax.management.ObjectName} computed by {@link ManagementObjectNameStrategy}. Replacing this
  * strategy allows advanced users to substitute custom MBean facades for any Camel type.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see ManagementObjectNameStrategy

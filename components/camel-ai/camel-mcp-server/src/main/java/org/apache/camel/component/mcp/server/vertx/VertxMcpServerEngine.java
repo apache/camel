@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server.vertx;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -23,10 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.modern.server.feature.McpChangeFeed;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures;
+import io.modelcontextprotocol.server.McpStatelessSyncServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -34,6 +39,7 @@ import io.vertx.ext.auth.User;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpPromptSdkSupport;
+import org.apache.camel.component.mcp.server.McpProtocolEra;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerEngine;
@@ -94,7 +100,12 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     private McpServerInfo info;
     private McpJsonMapper jsonMapper;
     private VertxMcpStreamableServerTransportProvider transport;
+    // the servers this engine runs, depending on the protocol era and the stateless option; null when not served
     private McpSyncServer server;
+    private McpStatelessSyncServer statelessServer;
+    private McpModernCatalog modernCatalog;
+    private VertxMcpModernTransport modernTransport;
+    private Duration modernKeepAliveInterval = VertxMcpModernTransport.DEFAULT_KEEP_ALIVE_INTERVAL;
     private String targetServerType = VertxPlatformHttpRouter.SERVER_TYPE_SERVER;
 
     @Override
@@ -136,6 +147,19 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     }
 
     @Override
+    public boolean supportsProtocolEraConfiguration() {
+        return true;
+    }
+
+    /**
+     * The interval of the keep-alive comments on a stream answering a request of protocol version 2026-07-28, such as a
+     * {@code subscriptions/listen} stream; {@code null} or zero for none. Defaults to 30 seconds.
+     */
+    void setModernKeepAliveInterval(Duration modernKeepAliveInterval) {
+        this.modernKeepAliveInterval = modernKeepAliveInterval;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         VertxPlatformHttpRouter router = lookupRouter();
         validateOAuthResourceMetadataPath(router);
@@ -152,26 +176,52 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs(), info.allowedOrigins(),
                 camelContext, oauthSecurity, info.requiredScopes(), info.resourceUri(),
                 authorizationServerIssuer, allowInsecureAuthorizationServer, info.allowedHosts());
-        McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
-                .serverInfo(buildServerInfo(info))
-                // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are
-                // notified when ai-resource routes start or stop
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).prompts(true).build())
-                .immediateExecution(true);
-        if (info.instructions() != null && !info.instructions().isBlank()) {
-            specification.instructions(info.instructions());
+        McpProtocolEra era = info.protocolEra();
+        if (info.sessions()) {
+            McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
+                    .serverInfo(buildServerInfo(info))
+                    // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are
+                    // notified when ai-resource routes start or stop
+                    .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).prompts(true)
+                            .build())
+                    .immediateExecution(true);
+            if (info.instructions() != null && !info.instructions().isBlank()) {
+                specification.instructions(info.instructions());
+            }
+            server = specification.build();
         }
-        server = specification.build();
-        // register routes only once the server has set the session factory on the transport
+        VertxMcpStatelessServerTransport statelessTransport = null;
+        if (era.servesLegacy() && info.stateless()) {
+            statelessTransport = new VertxMcpStatelessServerTransport(jsonMapper);
+            McpServer.StatelessSyncSpecification specification = McpServer.sync(statelessTransport)
+                    .serverInfo(buildServerInfo(info))
+                    // without a session the server cannot notify clients, so no list advertises listChanged
+                    .capabilities(McpSchema.ServerCapabilities.builder().tools(false).resources(false, false)
+                            .prompts(false).build())
+                    .immediateExecution(true);
+            if (info.instructions() != null && !info.instructions().isBlank()) {
+                specification.instructions(info.instructions());
+            }
+            statelessServer = specification.build();
+        }
+        if (era.servesModern()) {
+            McpChangeFeed changes = new McpChangeFeed();
+            modernCatalog = new McpModernCatalog(jsonMapper, changes);
+            modernTransport = VertxMcpModernTransport.create(info, modernCatalog, changes, jsonMapper,
+                    modernKeepAliveInterval);
+        }
+        transport.serveProtocols(era, info.sessions(), statelessTransport, modernTransport);
+        // register routes only once the servers are built (the session server sets the session factory)
         transport.registerRoutes(router);
 
         PlatformHttpComponent platformHttpComponent
                 = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
         if (platformHttpComponent != null) {
-            platformHttpComponent.addHttpEndpoint(info.path(), "GET,POST,DELETE", APPLICATION_JSON,
-                    "application/json,text/event-stream", null);
+            platformHttpComponent.addHttpEndpoint(info.path(), info.sessions() ? "GET,POST,DELETE" : "POST",
+                    APPLICATION_JSON, "application/json,text/event-stream", null);
         }
-        LOG.info("MCP server '{}' serving tools, resources and prompts on path {}", info.serverName(), info.path());
+        LOG.info("MCP server '{}' serving tools, resources and prompts on path {} (protocol era {}{})",
+                info.serverName(), info.path(), era.value(), info.stateless() ? ", stateless" : "");
     }
 
     /**
@@ -201,6 +251,15 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             server.closeGracefully();
             server = null;
         }
+        if (statelessServer != null) {
+            statelessServer.closeGracefully();
+            statelessServer = null;
+        }
+        if (modernTransport != null) {
+            modernTransport.closeGracefully();
+            modernTransport = null;
+            modernCatalog = null;
+        }
         PlatformHttpComponent platformHttpComponent
                 = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
         if (platformHttpComponent != null && info != null) {
@@ -212,29 +271,50 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void toolAdded(McpServerTool tool) {
         McpSchema.Tool mcpTool = buildMcpTool(tool);
-        McpServerFeatures.SyncToolSpecification spec = McpServerFeatures.SyncToolSpecification.builder()
-                .tool(mcpTool)
-                .callHandler((exchange, request) -> {
-                    Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
-                    Object principal = exchange.transportContext() != null
-                            ? exchange.transportContext().get(TRANSPORT_PRINCIPAL_KEY) : null;
-                    Object oauthValue = exchange.transportContext() != null
-                            ? exchange.transportContext().get(TRANSPORT_OAUTH_RESULT_KEY) : null;
-                    OAuthTokenValidationResult oauthResult = oauthValue instanceof OAuthTokenValidationResult value
-                            ? value : null;
-                    McpToolCallContext context = toToolCallContext(principal, oauthResult);
-                    McpToolCallResult result = tool.handler().call(arguments, context);
-                    McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
-                            .addTextContent(result.text())
-                            .isError(result.isError());
-                    if (result.structuredContent() != null) {
-                        builder.structuredContent(result.structuredContent());
-                    }
-                    return builder.build();
-                })
-                .build();
-        server.addTool(spec);
+        if (server != null) {
+            server.addTool(McpServerFeatures.SyncToolSpecification.builder()
+                    .tool(mcpTool)
+                    .callHandler((exchange, request) -> callTool(tool, exchange.transportContext(), request))
+                    .build());
+        }
+        if (statelessServer != null) {
+            statelessServer.addTool(McpStatelessServerFeatures.SyncToolSpecification.builder()
+                    .tool(mcpTool)
+                    .callHandler((transportContext, request) -> callTool(tool, transportContext, request))
+                    .build());
+        }
+        if (modernCatalog != null) {
+            modernCatalog.addTool(tool);
+        }
         LOG.debug("MCP tool added: {}", tool.name());
+    }
+
+    private static McpSchema.CallToolResult callTool(
+            McpServerTool tool, McpTransportContext transportContext, McpSchema.CallToolRequest request) {
+        Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
+        McpToolCallResult result = tool.handler().call(arguments, toToolCallContext(transportContext));
+        McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
+                .addTextContent(result.text())
+                .isError(result.isError());
+        if (result.structuredContent() != null) {
+            builder.structuredContent(result.structuredContent());
+        }
+        return builder.build();
+    }
+
+    /**
+     * The tool-call context of the caller whose principal and OAuth validation result the transport stored in the MCP
+     * transport context.
+     */
+    static McpToolCallContext toToolCallContext(McpTransportContext transportContext) {
+        if (transportContext == null) {
+            return McpToolCallContext.EMPTY;
+        }
+        Object principal = transportContext.get(TRANSPORT_PRINCIPAL_KEY);
+        OAuthTokenValidationResult oauthResult
+                = transportContext.get(TRANSPORT_OAUTH_RESULT_KEY) instanceof OAuthTokenValidationResult value
+                        ? value : null;
+        return toToolCallContext(principal, oauthResult);
     }
 
     /**
@@ -314,7 +394,15 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void toolRemoved(String toolName) {
         try {
-            server.removeTool(toolName);
+            if (server != null) {
+                server.removeTool(toolName);
+            }
+            if (statelessServer != null) {
+                statelessServer.removeTool(toolName);
+            }
+            if (modernCatalog != null) {
+                modernCatalog.removeTool(toolName);
+            }
             LOG.debug("MCP tool removed: {}", toolName);
         } catch (Exception e) {
             LOG.debug("Failed to remove MCP tool {}: {}", toolName, e.getMessage());
@@ -324,34 +412,52 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void resourceAdded(McpServerResource resource) {
         McpSchema.Resource mcpResource = buildMcpResource(resource);
-        McpServerFeatures.SyncResourceSpecification spec = new McpServerFeatures.SyncResourceSpecification(
-                mcpResource,
-                (exchange, request) -> {
-                    McpResourceReadResult result = resource.handler().read();
-                    if (result.isError()) {
-                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-                                .message(result.errorMessage())
-                                .build();
-                    }
-                    McpSchema.ResourceContents contents;
-                    if (result.blob() != null) {
-                        contents = new McpSchema.BlobResourceContents(
-                                resource.uri(), resource.mimeType(),
-                                Base64.getEncoder().encodeToString(result.blob()));
-                    } else {
-                        contents = new McpSchema.TextResourceContents(
-                                resource.uri(), resource.mimeType(), result.text());
-                    }
-                    return new McpSchema.ReadResourceResult(List.of(contents));
-                });
-        server.addResource(spec);
+        if (server != null) {
+            server.addResource(new McpServerFeatures.SyncResourceSpecification(
+                    mcpResource,
+                    (exchange, request) -> readResult(resource.uri(), resource.mimeType(), resource.handler().read())));
+        }
+        if (statelessServer != null) {
+            statelessServer.addResource(new McpStatelessServerFeatures.SyncResourceSpecification(
+                    mcpResource,
+                    (transportContext, request) -> readResult(resource.uri(), resource.mimeType(),
+                            resource.handler().read())));
+        }
+        if (modernCatalog != null) {
+            modernCatalog.addResource(resource);
+        }
         LOG.debug("MCP resource added: {}", resource.uri());
+    }
+
+    private static McpSchema.ReadResourceResult readResult(String uri, String mimeType, McpResourceReadResult result) {
+        if (result.isError()) {
+            throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                    .message(result.errorMessage())
+                    .build();
+        }
+        McpSchema.ResourceContents contents;
+        if (result.blob() != null) {
+            contents = McpSchema.BlobResourceContents.builder(uri, Base64.getEncoder().encodeToString(result.blob()))
+                    .mimeType(mimeType)
+                    .build();
+        } else {
+            contents = McpSchema.TextResourceContents.builder(uri, result.text()).mimeType(mimeType).build();
+        }
+        return McpSchema.ReadResourceResult.builder(List.of(contents)).build();
     }
 
     @Override
     public void resourceRemoved(String resourceUri) {
         try {
-            server.removeResource(resourceUri);
+            if (server != null) {
+                server.removeResource(resourceUri);
+            }
+            if (statelessServer != null) {
+                statelessServer.removeResource(resourceUri);
+            }
+            if (modernCatalog != null) {
+                modernCatalog.removeResource(resourceUri);
+            }
             LOG.debug("MCP resource removed: {}", resourceUri);
         } catch (Exception e) {
             LOG.debug("Failed to remove MCP resource {}: {}", resourceUri, e.getMessage());
@@ -372,41 +478,41 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         if (resourceTemplate.title() != null && !resourceTemplate.title().isBlank()) {
             builder.title(resourceTemplate.title());
         }
-        McpServerFeatures.SyncResourceTemplateSpecification spec = new McpServerFeatures.SyncResourceTemplateSpecification(
-                builder.build(),
-                (exchange, request) -> {
-                    McpResourceReadResult result = resourceTemplate.handler().read(request.uri());
-                    if (result.isError()) {
-                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-                                .message(result.errorMessage())
-                                .build();
-                    }
-                    McpSchema.ResourceContents contents;
-                    if (result.blob() != null) {
-                        contents = new McpSchema.BlobResourceContents(
-                                request.uri(), resourceTemplate.mimeType(),
-                                Base64.getEncoder().encodeToString(result.blob()));
-                    } else {
-                        contents = new McpSchema.TextResourceContents(
-                                request.uri(), resourceTemplate.mimeType(), result.text());
-                    }
-                    return new McpSchema.ReadResourceResult(List.of(contents));
-                });
-        server.addResourceTemplate(spec);
+        McpSchema.ResourceTemplate mcpTemplate = builder.build();
+        if (server != null) {
+            server.addResourceTemplate(new McpServerFeatures.SyncResourceTemplateSpecification(
+                    mcpTemplate,
+                    (exchange, request) -> readResult(request.uri(), resourceTemplate.mimeType(),
+                            resourceTemplate.handler().read(request.uri()))));
+        }
+        if (statelessServer != null) {
+            statelessServer.addResourceTemplate(new McpStatelessServerFeatures.SyncResourceTemplateSpecification(
+                    mcpTemplate,
+                    (transportContext, request) -> readResult(request.uri(), resourceTemplate.mimeType(),
+                            resourceTemplate.handler().read(request.uri()))));
+        }
+        if (modernCatalog != null) {
+            modernCatalog.addResourceTemplate(resourceTemplate);
+        }
         LOG.debug("MCP resource template added: {}", resourceTemplate.uriTemplate());
     }
 
     @Override
     public void resourceTemplateRemoved(String uriTemplate) {
         try {
-            server.removeResourceTemplate(uriTemplate);
-            // MCP Java SDK 2.1.0 does not send resources/list_changed when a template is removed.
-            // Remove this workaround when the SDK's removeResourceTemplate() sends that notification itself.
-            server.notifyResourcesListChanged();
+            if (server != null) {
+                // the SDK notifies resources/list_changed itself
+                server.removeResourceTemplate(uriTemplate);
+            }
+            if (statelessServer != null) {
+                statelessServer.removeResourceTemplate(uriTemplate);
+            }
+            if (modernCatalog != null) {
+                modernCatalog.removeResourceTemplate(uriTemplate);
+            }
             LOG.debug("MCP resource template removed: {}", uriTemplate);
         } catch (Exception e) {
-            LOG.debug("Failed to remove MCP resource template {} or notify clients: {}",
-                    uriTemplate, e.getMessage());
+            LOG.debug("Failed to remove MCP resource template {}: {}", uriTemplate, e.getMessage());
         }
     }
 
@@ -417,14 +523,30 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public void promptAdded(McpServerPrompt prompt) {
-        server.addPrompt(McpPromptSdkSupport.buildSpecification(prompt, jsonMapper));
+        if (server != null) {
+            server.addPrompt(McpPromptSdkSupport.buildSpecification(prompt, jsonMapper));
+        }
+        if (statelessServer != null) {
+            statelessServer.addPrompt(McpPromptSdkSupport.buildStatelessSpecification(prompt, jsonMapper));
+        }
+        if (modernCatalog != null) {
+            modernCatalog.addPrompt(prompt);
+        }
         LOG.debug("MCP prompt added: {}", prompt.name());
     }
 
     @Override
     public void promptRemoved(String promptName) {
         try {
-            server.removePrompt(promptName);
+            if (server != null) {
+                server.removePrompt(promptName);
+            }
+            if (statelessServer != null) {
+                statelessServer.removePrompt(promptName);
+            }
+            if (modernCatalog != null) {
+                modernCatalog.removePrompt(promptName);
+            }
             LOG.debug("MCP prompt removed: {}", promptName);
         } catch (Exception e) {
             LOG.debug("Failed to remove MCP prompt {}: {}", promptName, e.getMessage());
@@ -441,9 +563,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     }
 
     private static McpSchema.Resource buildMcpResource(McpServerResource resource) {
-        McpSchema.Resource.Builder builder = McpSchema.Resource.builder()
-                .uri(resource.uri())
-                .name(resource.name())
+        McpSchema.Resource.Builder builder = McpSchema.Resource.builder(resource.uri(), resource.name())
                 .description(resource.description())
                 .mimeType(resource.mimeType());
         if (resource.title() != null && !resource.title().isBlank()) {

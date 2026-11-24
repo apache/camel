@@ -229,7 +229,7 @@ class CamelProcessorStatusTest extends ProcessCommandTestSupport {
     }
 
     private CamelProcessorStatus command(String... args) {
-        CamelProcessorStatus command = new CamelProcessorStatus(new CamelJBangMain().withPrinter(printer));
+        CamelProcessorStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelProcessorStatus());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

@@ -21,17 +21,22 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 @Metadata(label = "bean",
           description = "SpringCache based message id repository.",
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "SpringCache based message id repository")
-public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
+
+    // spring-context-support is not a dependency of camel-spring
+    private static final String CAFFEINE_CACHE = "org.springframework.cache.caffeine.CaffeineCache";
 
     @Metadata(required = true, description = "The Spring Cache Manager")
     private CacheManager manager;
@@ -96,6 +101,16 @@ public class SpringCacheIdempotentRepository extends ServiceSupport implements I
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {
         return cacheName;
+    }
+
+    /**
+     * Whether the keys are kept only in memory: a ConcurrentMapCache (the default of Spring Boot) and a CaffeineCache
+     * keep them in the heap of this JVM. Other caches, such as a RedisCache, keep them elsewhere or cannot tell.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return cache instanceof ConcurrentMapCache || cache != null && CAFFEINE_CACHE.equals(cache.getClass().getName());
     }
 
     @Override

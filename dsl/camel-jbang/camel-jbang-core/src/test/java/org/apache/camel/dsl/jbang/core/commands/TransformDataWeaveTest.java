@@ -54,7 +54,7 @@ class TransformDataWeaveTest {
                 """);
 
         StringPrinter printer = new StringPrinter();
-        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        TransformDataWeave cmd = new CamelJBangMain().withPrinter(printer).command(new TransformDataWeave());
         CommandLineTestHelper.parse(cmd, "--input=" + dir.toString());
         int exit = cmd.doCall();
 
@@ -71,7 +71,7 @@ class TransformDataWeaveTest {
     @Test
     void inlineExpressionParseErrorReturnsNonZero() throws Exception {
         StringPrinter printer = new StringPrinter();
-        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        TransformDataWeave cmd = new CamelJBangMain().withPrinter(printer).command(new TransformDataWeave());
         // Unclosed parenthesis — expect() throws DataWeaveConversionException
         CommandLineTestHelper.parse(cmd, "--expression=(a + b");
         int exit = cmd.doCall();
@@ -87,7 +87,7 @@ class TransformDataWeaveTest {
     @Test
     void missingInputIsUsageError() throws Exception {
         StringPrinter printer = new StringPrinter();
-        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        TransformDataWeave cmd = new CamelJBangMain().withPrinter(printer).command(new TransformDataWeave());
         CommandLineTestHelper.parse(cmd);
         int exit = cmd.doCall();
 
@@ -101,7 +101,7 @@ class TransformDataWeaveTest {
     @Test
     void missingInputPathIsNotFound() throws Exception {
         StringPrinter printer = new StringPrinter();
-        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        TransformDataWeave cmd = new CamelJBangMain().withPrinter(printer).command(new TransformDataWeave());
         CommandLineTestHelper.parse(cmd, "--input=" + dir.resolve("missing.dwl"));
         int exit = cmd.doCall();
 
@@ -115,7 +115,7 @@ class TransformDataWeaveTest {
     @Test
     void summaryIsNotPartOfTheOutput() throws Exception {
         StringPrinter printer = new StringPrinter();
-        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        TransformDataWeave cmd = new CamelJBangMain().withPrinter(printer).command(new TransformDataWeave());
         CommandLineTestHelper.parse(cmd, "--expression=payload.name");
         int exit = cmd.doCall();
 

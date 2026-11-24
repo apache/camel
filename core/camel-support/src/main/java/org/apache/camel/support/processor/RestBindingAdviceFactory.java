@@ -36,11 +36,16 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.util.ArtifactUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory to create {@link RestBindingAdvice} from the given configuration.
  */
 public class RestBindingAdviceFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdviceFactory.class);
 
     // matched by name: camel-support cannot depend on camel-jackson3, and JSON has no binding factory SPI
     private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3.";
@@ -50,7 +55,7 @@ public class RestBindingAdviceFactory {
     // type comes from the type and outType of the verb, not from a header or the options of the data format
     private static final Set<String> NOT_INHERITED_OPTIONS
             = Set.of("objectmapper", "xmlmapper", "allowunmarshalltype", "allowjmstype", "unmarshaltype", "uselist",
-                    "collectiontype", "partclass");
+                    "collectiontype", "partclass", "allowpartclassfromheader");
 
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration
@@ -66,6 +71,7 @@ public class RestBindingAdviceFactory {
         RestConfiguration config = camelContext.getRestConfiguration();
         DataFormat json = null;
         DataFormat outJson = null;
+        String jsonName = null;
         // include json if we have client request validator as we need a json parser
         if (mode.contains("json") || "auto".equals(mode) || bc.isClientRequestValidation()) {
             String name = config.getJsonDataFormat();
@@ -90,6 +96,13 @@ public class RestBindingAdviceFactory {
             } else {
                 json = createDataFormat(camelContext, name);
                 outJson = createDataFormat(camelContext, name);
+            }
+            jsonName = name;
+
+            // is json binding required? (fail now, as the xml binding does, rather than on every request)
+            if (mode.contains("json") && json == null) {
+                throw new IllegalArgumentException(
+                        "JSON DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
             }
 
             if (json != null) {
@@ -121,7 +134,15 @@ public class RestBindingAdviceFactory {
 
             // is xml binding required?
             if (mode.contains("xml") && xml == null) {
-                throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
+                throw new IllegalArgumentException(
+                        "XML DataFormat " + name + " not found" + ArtifactUtils.dataFormatHint(name) + ".");
+            }
+
+            // auto binds the formats it finds, so with neither it binds nothing, which is not what auto is set for
+            if ("auto".equals(mode) && json == null && xml == null) {
+                LOG.warn("Rest DSL bindingMode auto binds no request or response body: neither the JSON data format {}{}"
+                         + " nor the XML data format {}{} is on the classpath. Add one of them, or set bindingMode to off.",
+                        jsonName, artifactNote(jsonName), name, artifactNote(name));
             }
 
             if (xml != null) {
@@ -177,8 +198,8 @@ public class RestBindingAdviceFactory {
     }
 
     private static void copyOptions(CamelContext camelContext, String name, DataFormat source, DataFormat target) {
-        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer(name + "-dataformat", camelContext);
+        PropertyConfigurer configurer
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext, name + "-dataformat", source);
         if (configurer == null) {
             configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, source);
         }
@@ -330,6 +351,14 @@ public class RestBindingAdviceFactory {
     private static boolean isKeyKnownPrefix(String key) {
         return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
                 || key.startsWith("xml.out.");
+    }
+
+    /**
+     * The artifact of a Camel data format in parentheses, or what the hint says of a name that is not one.
+     */
+    private static String artifactNote(String name) {
+        String artifact = ArtifactUtils.dataFormatArtifact(name);
+        return artifact != null ? " (" + artifact + ")" : ArtifactUtils.dataFormatHint(name);
     }
 
     private static Object lookupByName(CamelContext camelContext, String name) {

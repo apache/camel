@@ -199,12 +199,12 @@ public class PluginHelperTest {
         // built-in non-plugin-consuming commands → short-circuit
         assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "version"));
         assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "get", "bean"));
+        assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "cmd", "browse"));
 
         // plugin-consuming built-ins → must load
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "run", "foo.yaml"));
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "export"));
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "shell"));
-        assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "cmd", "browse"));
 
         // unknown command (likely plugin-provided) → must load
         assertTrue(PluginHelper.shouldDiscoverPlugins(cl, "kubernetes", "run"));
@@ -311,6 +311,10 @@ public class PluginHelperTest {
                 camelVersion);
         // stored with a command of its own: the warning names the plugin, which camel plugin delete takes
         customizer.put("command", "customize");
+        // a release that camel plugin add selected: camel plugin update selects the one for this Camel version
+        customizer.put("dependency", "org.example.plugins:camel-jbang-plugin-customize:1.0.0");
+        ((JsonObject) customizer.get("resolved")).put("gav", customizer.getString("dependency"));
+        customizer.put("camelVersions", "[4.0.0,4.1.0)");
         writeConfig(exporter, customizer);
         StringPrinter printer = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
@@ -326,11 +330,15 @@ public class PluginHelperTest {
                         + "NoClassDefFoundError ";
         for (String name : List.of("exporter", "customizer")) {
             assertTrue(printer.getStderr().contains("Plugin " + name + " cannot be loaded (" + reason), printer.getStderr());
-            assertTrue(printer.getStderr().contains("so camel export goes on without it: run camel plugin add " + name
-                                                    + " to select a release for this Camel version, or remove it with"
-                                                    + " camel plugin delete " + name),
-                    printer.getStderr());
         }
+        assertTrue(printer.getStderr().contains("so camel export goes on without it: run camel plugin add exporter"
+                                                + " to select a release for this Camel version, or remove it with"
+                                                + " camel plugin delete exporter"),
+                printer.getStderr());
+        assertTrue(printer.getStderr().contains("so camel export goes on without it: run camel plugin update customizer"
+                                                + " to select the release built for this Camel version, or remove it with"
+                                                + " camel plugin delete customizer"),
+                printer.getStderr());
     }
 
     @Test
@@ -478,7 +486,7 @@ public class PluginHelperTest {
         Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "compat");
         assertEquals(1, plugins.size());
         assertEquals("WARN: compat is built for Camel [4.0.0,4.1.0) but this CLI is " + camelVersion
-                     + ". Run 'camel plugin add compat' to select a matching release.",
+                     + ". Run 'camel plugin update compat' to select the release built for this Camel version (if it is published).",
                 printer.getStderr());
 
         // once
@@ -494,7 +502,7 @@ public class PluginHelperTest {
         entry.put("camelVersions", "[4.22.0,4.23.0)");
         PluginHelper.compatibilityCheck(printer, "4.23.0", "fixture-named", entry);
         assertEquals("WARN: fixture-named 1.6.2 is built for Camel [4.22.0,4.23.0) but this CLI is 4.23.0."
-                     + " Run 'camel plugin add fixture-named' to select a matching release.",
+                     + " Run 'camel plugin update fixture-named' to select the release built for this Camel version (if it is published).",
                 printer.getStderr());
     }
 
@@ -520,7 +528,7 @@ public class PluginHelperTest {
         // the CLI moved to another Camel version, where a matching release may exist
         PluginHelper.compatibilityCheck(printer, "4.22.0", "fixture-older", entry);
         assertEquals("WARN: fixture-older 1.4.2 is built for Camel [4.18.0,4.19.0) but this CLI is 4.22.0."
-                     + " Run 'camel plugin add fixture-older' to select a matching release.",
+                     + " Run 'camel plugin update fixture-older' to select the release built for this Camel version (if it is published).",
                 printer.getStderr());
     }
 

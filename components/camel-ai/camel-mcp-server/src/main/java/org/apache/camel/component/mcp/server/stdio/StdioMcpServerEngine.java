@@ -393,14 +393,11 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             return;
         }
         try {
+            // the SDK notifies resources/list_changed itself
             server.removeResourceTemplate(uriTemplate);
-            // MCP Java SDK 2.1.0 does not send resources/list_changed when a template is removed.
-            // Remove this workaround when the SDK's removeResourceTemplate() sends that notification itself.
-            server.notifyResourcesListChanged();
             LOG.debug("MCP resource template removed: {}", uriTemplate);
         } catch (Exception e) {
-            LOG.debug("Failed to remove MCP resource template {} or notify client: {}",
-                    uriTemplate, e.getMessage());
+            LOG.debug("Failed to remove MCP resource template {}: {}", uriTemplate, e.getMessage());
         }
     }
 

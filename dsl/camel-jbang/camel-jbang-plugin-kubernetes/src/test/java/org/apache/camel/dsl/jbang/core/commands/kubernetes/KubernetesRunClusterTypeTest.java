@@ -176,7 +176,7 @@ class KubernetesRunClusterTypeTest {
     }
 
     private KubernetesRun detectCluster(String... args) {
-        KubernetesRun command = new KubernetesRun(new CamelJBangMain().withPrinter(printer));
+        KubernetesRun command = new CamelJBangMain().withPrinter(printer).command(new KubernetesRun());
         CommandLineTestHelper.parse(command, args);
         command.detectCluster();
         return command;

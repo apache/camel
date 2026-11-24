@@ -17,8 +17,11 @@
 package org.apache.camel.component.cassandra;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
@@ -32,7 +35,8 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
  * Cassandra 2 CQL3 producer.
  * <dl>
  * <dt>In Message</dt>
- * <dd>Bound parameters: Collection of Objects, Array of Objects, Simple Object
+ * <dd>Bound parameters: Map of named values (for named markers such as {@code :login}), Collection of Objects, Array of
+ * Objects, Simple Object
  * <dd>
  * <dt>Out Message</dt>
  * <dd>List of all Rows
@@ -95,14 +99,16 @@ public class CassandraProducer extends DefaultProducer {
         if (messageCql instanceof String && ((String) messageCql).isEmpty()) {
             messageCql = null;
         }
-        Object[] cqlParams = getCqlParams(message);
+        // a Map body binds the markers by name, any other body by position
+        Map<?, ?> namedParams = message.getBody() instanceof Map<?, ?> map ? map : null;
+        Object[] cqlParams = namedParams == null ? getCqlParams(message) : null;
 
         ResultSet resultSet;
         CqlSession session = getEndpoint().getSessionHolder().getSession();
         if (isPrepareStatements()) {
-            resultSet = executePreparedStatement(session, messageCql, cqlParams);
+            resultSet = executePreparedStatement(session, messageCql, cqlParams, namedParams);
         } else {
-            resultSet = executeStatement(session, messageCql, cqlParams);
+            resultSet = executeStatement(session, messageCql, cqlParams, namedParams);
         }
         return resultSet;
     }
@@ -110,7 +116,8 @@ public class CassandraProducer extends DefaultProducer {
     /**
      * Execute CQL as PreparedStatement
      */
-    private ResultSet executePreparedStatement(CqlSession session, Object messageCql, Object[] cqlParams) {
+    private ResultSet executePreparedStatement(
+            CqlSession session, Object messageCql, Object[] cqlParams, Map<?, ?> namedParams) {
         ResultSet resultSet;
         PreparedStatement lPreparedStatement;
         if (messageCql == null) {
@@ -125,7 +132,9 @@ public class CassandraProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
-        if (isEmpty(cqlParams)) {
+        if (namedParams != null) {
+            resultSet = session.execute(lPreparedStatement.bind(namedValues(lPreparedStatement, namedParams)));
+        } else if (isEmpty(cqlParams)) {
             resultSet = session.execute(lPreparedStatement.bind());
         } else {
             resultSet = session.execute(lPreparedStatement.bind(cqlParams));
@@ -136,7 +145,7 @@ public class CassandraProducer extends DefaultProducer {
     /**
      * Execute CQL as is
      */
-    private ResultSet executeStatement(CqlSession session, Object messageCql, Object[] cqlParams) {
+    private ResultSet executeStatement(CqlSession session, Object messageCql, Object[] cqlParams, Map<?, ?> namedParams) {
         ResultSet resultSet = null;
         String cql = null;
         SimpleStatement statement = null;
@@ -154,6 +163,10 @@ public class CassandraProducer extends DefaultProducer {
         }
         if (statement != null) {
             resultSet = session.execute(statement);
+        } else if (namedParams != null) {
+            Map<String, Object> values = new LinkedHashMap<>();
+            namedParams.forEach((name, value) -> values.put(String.valueOf(name), value));
+            resultSet = session.execute(SimpleStatement.newInstance(cql, values));
         } else if (isEmpty(cqlParams)) {
             resultSet = session.execute(cql);
         } else {
@@ -161,6 +174,33 @@ public class CassandraProducer extends DefaultProducer {
                     SimpleStatement.builder(cql).addPositionalValues(cqlParams).build());
         }
         return resultSet;
+    }
+
+    /**
+     * The values of the bind markers of a prepared statement, in order, taken by name from the Map body.
+     */
+    private static Object[] namedValues(PreparedStatement statement, Map<?, ?> namedParams) {
+        ColumnDefinitions markers = statement.getVariableDefinitions();
+        Object[] values = new Object[markers.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = namedValue(namedParams, markers.get(i).getName().asInternal());
+        }
+        return values;
+    }
+
+    private static Object namedValue(Map<?, ?> namedParams, String name) {
+        if (namedParams.containsKey(name)) {
+            return namedParams.get(name);
+        }
+        // an unquoted marker such as :firstName is lower case in CQL, so match the keys ignoring case
+        for (Map.Entry<?, ?> entry : namedParams.entrySet()) {
+            if (entry.getKey() != null && name.equalsIgnoreCase(entry.getKey().toString())) {
+                return entry.getValue();
+            }
+        }
+        throw new IllegalArgumentException(
+                "The Map body has no value for the bind marker :" + name + " of the CQL statement. The keys of the body are: "
+                                           + namedParams.keySet());
     }
 
     @Override

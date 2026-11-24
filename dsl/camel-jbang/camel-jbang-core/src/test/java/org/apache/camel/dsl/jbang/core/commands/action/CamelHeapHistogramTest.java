@@ -70,7 +70,7 @@ class CamelHeapHistogramTest extends ActionCommandTestSupport {
     private List<String> classNames(String... args) throws Exception {
         writeStatusFile(TEST_PID, "orders");
         printer = new StringPrinter();
-        CamelHeapHistogram command = new CamelHeapHistogram(new CamelJBangMain().withPrinter(printer));
+        CamelHeapHistogram command = new CamelJBangMain().withPrinter(printer).command(new CamelHeapHistogram());
         CommandLineTestHelper.parse(command, args);
         command.name = "orders";
         command.jsonOutput = true;

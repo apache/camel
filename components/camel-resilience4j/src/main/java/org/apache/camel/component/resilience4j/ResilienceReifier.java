@@ -253,10 +253,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             shutdownThreadPool = true;
         }
 
+        // the thread pool runs the calls; in asynchronous mode the processor schedules the timeouts on its own threads
         processor.setExecutorService(executorService);
-        if (isAsync && executorService instanceof ScheduledExecutorService ses) {
-            processor.setScheduledExecutorService(ses);
-        }
         processor.setShutdownExecutorService(shutdownThreadPool);
     }
 

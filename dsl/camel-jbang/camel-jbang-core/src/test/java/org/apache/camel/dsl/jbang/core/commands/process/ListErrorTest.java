@@ -207,7 +207,7 @@ class ListErrorTest extends ProcessCommandTestSupport {
     }
 
     private ListError command(String... args) {
-        ListError command = new ListError(new CamelJBangMain().withPrinter(printer));
+        ListError command = new CamelJBangMain().withPrinter(printer).command(new ListError());
         CommandLineTestHelper.parse(command, Stream.concat(Stream.of("--logging-color=false"), Arrays.stream(args))
                 .toArray(String[]::new));
         return command;

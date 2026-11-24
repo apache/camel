@@ -157,6 +157,29 @@ public class LwModelToJavaDumperTest {
     }
 
     /**
+     * The exclude patterns given in Java are written as arguments again, not as the single excludePattern that holds
+     * them for XML and YAML.
+     */
+    @Test
+    public void testDumpSeveralExcludePatterns() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").routeId("excludes")
+                            .removeHeaders("*", "header1", "Camel*", "{{keep}}")
+                            .removeProperties("p*", "p1", "p3")
+                            .to("mock:result");
+                }
+            });
+            String java = new LwModelToJavaDumper().dumpModelAsJava(context, context.getRouteDefinition("excludes"));
+            assertThat(java).contains(
+                    ".removeHeaders(\"*\", \"header1\", \"Camel*\", \"{{keep}}\")",
+                    ".removeProperties(\"p*\", \"p1\", \"p3\")");
+        }
+    }
+
+    /**
      * An option set to its documented default value is written: when it is not set, the option takes the value of a
      * parent level (the rest configuration for a verb, the error handler for the redelivery of an onException).
      */

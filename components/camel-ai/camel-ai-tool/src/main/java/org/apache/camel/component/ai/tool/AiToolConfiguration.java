@@ -38,7 +38,10 @@ public class AiToolConfiguration implements Cloneable {
     @Metadata(label = "consumer")
     @UriParam(description = "Comma-separated list of tags used to group tools. "
                             + "Producers filter the registry by these tags to select which tools to expose to the LLM. "
-                            + "When omitted, the tool goes into a default pool available to all producers.")
+                            + "When omitted, the tool goes into a default pool that is added to the tools of every tag "
+                            + "a producer selects with its own tags option "
+                            + "(producers without tags receive no registry tools, "
+                            + "and the MCP server never exposes the default pool).")
     private String tags;
 
     @Metadata(label = "consumer")
@@ -58,7 +61,10 @@ public class AiToolConfiguration implements Cloneable {
 
     @UriParam(description = "Raw JSON Schema for tool input parameters. Supports inline JSON and resource "
                             + "references (classpath:, file:, resource:). Mutually exclusive with the parameter "
-                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas.")
+                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas. "
+                            + "When the schema does not set additionalProperties, Camel adds additionalProperties: false, "
+                            + "so a client that validates the input (such as the MCP server) refuses an undeclared "
+                            + "argument.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
 
@@ -132,6 +138,21 @@ public class AiToolConfiguration implements Cloneable {
                             + "headers carry the model-controlled tool arguments). A denied call surfaces to the "
                             + "model as a short refusal rather than a stack trace.")
     private AuthorizationPolicy authorizationPolicy;
+
+    @Metadata(label = "consumer,security")
+    @UriParam(description = "Comma-separated list of the roles a caller needs to call the tool, for example "
+                            + "finance,controlling. Any one of them is enough unless allRolesRequired is set. The roles "
+                            + "are checked before the route runs, against the caller's roles in the exchange property "
+                            + "CamelAiToolSecurityPrincipalRoles: a call without that property is refused. A value "
+                            + "that is set but names no role refuses every call. Set it on the component as the "
+                            + "default of every tool route, or per endpoint to replace it.")
+    private String allowedRoles;
+
+    @Metadata(label = "consumer,security")
+    @UriParam(defaultValue = "false", description = "Whether the caller needs all the roles in allowedRoles, rather "
+                                                    + "than any one of them. Has no effect when allowedRoles is not "
+                                                    + "set.")
+    private boolean allRolesRequired;
 
     public AiToolConfiguration() {
     }
@@ -254,6 +275,82 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setAuthorizationPolicy(AuthorizationPolicy authorizationPolicy) {
         this.authorizationPolicy = authorizationPolicy;
+    }
+
+    public String getAllowedRoles() {
+        return allowedRoles;
+    }
+
+    public void setAllowedRoles(String allowedRoles) {
+        this.allowedRoles = allowedRoles;
+    }
+
+    public boolean isAllRolesRequired() {
+        return allRolesRequired;
+    }
+
+    public void setAllRolesRequired(boolean allRolesRequired) {
+        this.allRolesRequired = allRolesRequired;
+    }
+
+    /**
+     * Copies onto this configuration every value that is set on the other one, and keeps the values of this
+     * configuration that the other one does not set. A value is set when it is not null, or, for a boolean option whose
+     * default is false, when it is true. A new option must be added here too; AiToolConfigurationOverrideWithTest fails
+     * when one is missing.
+     */
+    void overrideWith(AiToolConfiguration other) {
+        if (other.tags != null) {
+            tags = other.tags;
+        }
+        if (other.description != null) {
+            description = other.description;
+        }
+        if (other.parameters != null) {
+            parameters = new HashMap<>(other.parameters);
+        }
+        if (other.argSchema != null) {
+            argSchema = other.argSchema;
+        }
+        if (other.argumentsAsBody) {
+            argumentsAsBody = true;
+        }
+        if (other.outputParameters != null) {
+            outputParameters = new HashMap<>(other.outputParameters);
+        }
+        if (other.outputSchema != null) {
+            outputSchema = other.outputSchema;
+        }
+        if (other.title != null) {
+            title = other.title;
+        }
+        if (other.readOnlyHint != null) {
+            readOnlyHint = other.readOnlyHint;
+        }
+        if (other.destructiveHint != null) {
+            destructiveHint = other.destructiveHint;
+        }
+        if (other.idempotentHint != null) {
+            idempotentHint = other.idempotentHint;
+        }
+        if (other.openWorldHint != null) {
+            openWorldHint = other.openWorldHint;
+        }
+        if (other.returnDirect != null) {
+            returnDirect = other.returnDirect;
+        }
+        if (other.searchable) {
+            searchable = true;
+        }
+        if (other.authorizationPolicy != null) {
+            authorizationPolicy = other.authorizationPolicy;
+        }
+        if (other.allowedRoles != null) {
+            allowedRoles = other.allowedRoles;
+        }
+        if (other.allRolesRequired) {
+            allRolesRequired = true;
+        }
     }
 
     public AiToolConfiguration copy() {

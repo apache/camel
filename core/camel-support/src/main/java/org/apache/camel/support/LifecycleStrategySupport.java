@@ -245,8 +245,8 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     }
 
     protected static void doAutoWire(String name, String kind, Object target, CamelContext camelContext) {
-        PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        PropertyConfigurer pc
+                = PropertyConfigurerHelper.resolvePropertyConfigurerByName(camelContext, name + "-" + kind, target);
         if (pc instanceof PropertyConfigurerGetter getter) {
             String[] names = getter.getAutowiredNames();
             if (names != null) {

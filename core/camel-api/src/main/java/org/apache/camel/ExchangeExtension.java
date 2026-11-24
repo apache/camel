@@ -27,9 +27,9 @@ import org.jspecify.annotations.Nullable;
 /**
  * Internal extension surface of {@link Exchange} exposing methods and APIs not intended for Camel end users, but used
  * inside Camel for optimization, SPI integration, custom component development, and advanced use cases.
- * <p/>
+ * <p>
  * An instance is obtained by calling {@link Exchange#getExchangeExtension()}.
- * <p/>
+ * <p>
  * The contract of this interface may change between minor releases without the usual deprecation cycle that applies to
  * the main {@link Exchange} API.
  *
@@ -192,8 +192,8 @@ public interface ExchangeExtension {
      * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
      * @param  onCompletion the callback instance that is being checked for
-     * @return              <tt>true</tt>, if callback instance is already contained on this exchange, else
-     *                      <tt>false</tt>
+     * @return              <code>true</code>, if callback instance is already contained on this exchange, else
+     *                      <code>false</code>
      */
     boolean containsOnCompletion(Synchronization onCompletion);
 
@@ -286,13 +286,13 @@ public interface ExchangeExtension {
     /**
      * Sets whether this exchange is marked to stop and not continue routing.
      *
-     * @param routeStop <tt>true</tt> to stop routing
+     * @param routeStop <code>true</code> to stop routing
      */
     void setRouteStop(boolean routeStop);
 
     /**
      * To copy the internal properties from this exchange to the target exchange
-     * <p/>
+     * <p>
      * This method is only intended for Camel internally.
      *
      * @param target the target exchange
@@ -321,7 +321,7 @@ public interface ExchangeExtension {
     /**
      * Gets the internal properties from this exchange. The known set of internal keys is defined in
      * {@link ExchangePropertyKey}.
-     * <p/>
+     * <p>
      * This method is only intended for Camel internally.
      *
      * @return all the internal properties in a Map
@@ -372,13 +372,13 @@ public interface ExchangeExtension {
 
     /**
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
-     * <p/>
+     * <p>
      * <b>Important: </b> It is not always possible to determine if the message is a redelivery or not, and therefore
-     * <tt>false</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
+     * <code>false</code> is returned. Such an example would be a JDBC message. However JMS brokers provide details if a
      * message is redelivered.
      *
      * @param  message the camel message
-     * @return         <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
+     * @return         <code>true</code> if redelivered, <code>false</code> if not or not able to determine
      */
     boolean isExternalRedelivered(Message message);
 

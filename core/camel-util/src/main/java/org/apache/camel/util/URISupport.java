@@ -286,6 +286,33 @@ public final class URISupport {
     }
 
     /**
+     * The index of the first ? sign in the uri that is not inside a property placeholder, such as the ? of an optional
+     * placeholder {{?name}}.
+     *
+     * @param  uri the uri, which may still have property placeholders
+     * @return     the index, or -1 if there is no such ? sign
+     */
+    public static int indexOfQuestionMark(String uri) {
+        if (uri == null) {
+            return -1;
+        }
+        int depth = 0;
+        for (int i = 0; i < uri.length(); i++) {
+            char ch = uri.charAt(i);
+            if (ch == '{' && uri.startsWith("{{", i)) {
+                depth++;
+                i++;
+            } else if (ch == '}' && depth > 0 && uri.startsWith("}}", i)) {
+                depth--;
+                i++;
+            } else if (ch == '?' && depth == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Strips the query parameters from the uri
      *
      * @param  uri the uri

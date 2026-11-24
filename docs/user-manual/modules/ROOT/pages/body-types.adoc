@@ -257,6 +257,10 @@ spec:
           format: application-octet-stream
 ----
 
+A Kamelet that leaves the body as it is can declare the `application-x-unchanged` data type. Examples are a filter,
+or an action that only sets headers. Its transformer changes nothing and sets no `Content-Type`: it takes
+any body, and the body after the Kamelet is the body before it.
+
 The Camel CLI reads the data types of the Kamelets of the Kamelet catalog and of the project's own `.kamelet.yaml`
 files. The YAML validator walks a route that starts with `from: kamelet:aws-s3-source` with bytes. It reports a body
 that a Kamelet sink cannot take before a `to: kamelet:...`. `camel_catalog_kamelet_doc` lists the data types of a

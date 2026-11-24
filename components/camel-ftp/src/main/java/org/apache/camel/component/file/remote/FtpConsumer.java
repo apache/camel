@@ -20,6 +20,7 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -96,22 +97,31 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
-        String currentDir = null;
-        if (isStepwise()) {
-            // must remember current dir so we stay in that directory after the
-            // poll
-            currentDir = operations.getCurrentDirectory();
+        // the walk through the directories changes the current directory (stepwise), so it holds the lock of the
+        // operations: a file of the previous poll that is committed meanwhile on another thread (such as a seda
+        // consumer) would else be deleted or moved from the directory the walk is in
+        ReentrantLock lock = getOperations().lock;
+        lock.lock();
+        try {
+            String currentDir = null;
+            if (isStepwise()) {
+                // must remember current dir so we stay in that directory after the
+                // poll
+                currentDir = operations.getCurrentDirectory();
+            }
+
+            // strip trailing slash
+            fileName = FileUtil.stripTrailingSeparator(fileName);
+
+            boolean answer = doPollDirectory(dynamic, fileName, null, fileList, depth);
+            if (currentDir != null) {
+                operations.changeCurrentDirectory(currentDir);
+            }
+
+            return answer;
+        } finally {
+            lock.unlock();
         }
-
-        // strip trailing slash
-        fileName = FileUtil.stripTrailingSeparator(fileName);
-
-        boolean answer = doPollDirectory(dynamic, fileName, null, fileList, depth);
-        if (currentDir != null) {
-            operations.changeCurrentDirectory(currentDir);
-        }
-
-        return answer;
     }
 
     protected boolean pollSubDirectory(
@@ -189,14 +199,28 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             Exchange dynamic,
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            // a server that lists the absolute path of each entry (handleDirectoryParserAbsoluteResult) names the directory
+            // by its last segment
+            boolean absoluteResult = ((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult();
+            String directoryName = absoluteResult ? FtpUtils.extractDirNameFromAbsolutePath(file.getName()) : file.getName();
+            if ((isStepwise() || absoluteResult) && !FtpUtils.isSubDirectoryName(directoryName)) {
+                LOG.debug("Skipping directory as its name is not the name of a directory in {}: {}", absolutePath,
+                        file.getName());
+                return false;
+            }
+            if (absoluteResult && !isListedIn(file.getName(), absolutePath, directoryName)) {
+                LOG.debug("Skipping directory as its absolute path is not in {}: {}", absolutePath, file.getName());
+                return false;
+            }
             // calculate the absolute file path using util class
             String absoluteFilePath = absoluteFilePath(absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
                     = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
             Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
-            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relativePath, true, files)) {
-                // recursive scan and add the sub files and folders
-                String subDirectory = file.getName();
+            if (isValidFile(dynamic, remote, directoryName, absoluteFilePath, relativePath, true, files)) {
+                // recursive scan and add the sub files and folders, changing into the directory by its name, relative
+                // to the directory being listed
+                String subDirectory = directoryName;
                 String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
                 boolean canPollMore = pollSubDirectory(dynamic, path, subDirectory, fileList, depth);
                 if (!canPollMore) {
@@ -205,6 +229,50 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
         }
         return false;
+    }
+
+    /**
+     * Whether a directory entry, as listed by the server, is in the directory being listed. A server that lists the
+     * absolute path of each entry (handleDirectoryParserAbsoluteResult) lists the entries of the listed directory, so
+     * the absolute path ends with the path of the listed directory and the name of the entry, or is that path when the
+     * path of the listed directory starts with a drive, such as C:/data/in. A relative name must be the name of the
+     * entry, followed by / at most, as a relative path of more than one name is not an entry of the listed directory.
+     * Both paths are compacted first.
+     *
+     * @param  listed        the name of the entry as listed
+     * @param  absolutePath  the path of the listed directory
+     * @param  directoryName the name of the entry
+     * @return               {@code true} if the entry is in the listed directory
+     */
+    static boolean isListedIn(String listed, String absolutePath, String directoryName) {
+        if (!isAbsolute(listed)) {
+            // one name, which may end with a /, as a relative path of more than one name is not an entry of the listed
+            // directory
+            String name = listed;
+            while (name.length() > 1 && name.endsWith("/")) {
+                name = name.substring(0, name.length() - 1);
+            }
+            return name.indexOf('/') == -1 && name.indexOf('\\') == -1 && name.equals(directoryName);
+        }
+        String path = GenericFileHelper.compactPathForContainment(listed, '/');
+        String directory = FileUtil.stripLeadingSeparator(
+                GenericFileHelper.compactPathForContainment(absolutePath != null ? absolutePath : "", '/'));
+        String expected = directory.isEmpty() ? directoryName : directory + "/" + directoryName;
+        // a path with a drive is the path of the listed directory and the name of the entry when that directory starts
+        // with the same drive, so it does not start with a /
+        return path.endsWith("/" + expected) || !path.isEmpty() && isAbsolute(path) && path.equals(expected);
+    }
+
+    /**
+     * Whether a path from a listing starts at a root: with a / or a \, or with a drive such as C:/ or C:\.
+     */
+    private static boolean isAbsolute(String path) {
+        char first = path.charAt(0);
+        if (first == '/' || first == '\\') {
+            return true;
+        }
+        return path.length() > 2 && path.charAt(1) == ':' && (path.charAt(2) == '/' || path.charAt(2) == '\\')
+                && (first >= 'a' && first <= 'z' || first >= 'A' && first <= 'Z');
     }
 
     private void handleFile(

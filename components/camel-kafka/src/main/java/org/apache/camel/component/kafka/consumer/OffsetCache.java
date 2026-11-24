@@ -47,7 +47,10 @@ final class OffsetCache {
                 offsetAndMetadata.offset(),
                 topicPartition.topic(), topicPartition.partition());
 
-        lastProcessedOffset.remove(topicPartition);
+        // an earlier commit can complete after a newer offset was recorded (the callback of an async commit runs in a
+        // later poll): keep the newer offset, which is not committed yet
+        lastProcessedOffset.computeIfPresent(topicPartition,
+                (partition, lastOffset) -> lastOffset < offsetAndMetadata.offset() ? null : lastOffset);
     }
 
     public void remove(TopicPartition partition) {

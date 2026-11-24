@@ -97,6 +97,40 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldRejectPrefixedUpwardsPathsWhenPollingTheSessionRoot() throws Exception {
+        for (String uri : new String[] { "ftp://hostname", "ftps://hostname", "sftp://hostname" }) {
+            RemoteFileConsumer<?> consumer = consumer(uri);
+
+            // a scheme or a drive at the start of the name is a directory name to the server, like any other
+            assertFalse(consumer.isWithinStartingDirectory("http:/../../other/secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("https:/../../other/secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("file:/../../other/secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("classpath:/../../other/secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("a:/../../other/secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("http:\\..\\..\\other\\secret.txt"), uri);
+            // a listed path is used with its backslashes replaced by /, so a backslash separates segments
+            assertTrue(consumer.isWithinStartingDirectory("a\\b/../../secret.txt"), uri);
+            assertFalse(consumer.isWithinStartingDirectory("a\\..\\..\\secret.txt"), uri);
+
+            // names that stay inside
+            assertTrue(consumer.isWithinStartingDirectory("http:/secret.txt"), uri);
+            assertTrue(consumer.isWithinStartingDirectory("report 10:30.txt"), uri);
+            assertTrue(consumer.isWithinStartingDirectory("sub/../secret.txt"), uri);
+        }
+    }
+
+    @Test
+    void shouldRejectPrefixedPathsEscapingTheStartingDirectory() throws Exception {
+        RemoteFileConsumer<?> consumer = consumer("ftp://hostname/poll");
+
+        assertFalse(consumer.isWithinStartingDirectory("poll/http:/../../secret.txt"));
+        assertFalse(consumer.isWithinStartingDirectory("poll/a:/../../secret.txt"));
+        assertTrue(consumer.isWithinStartingDirectory("poll/a\\b/../../secret.txt"));
+        assertFalse(consumer.isWithinStartingDirectory("poll/a\\b/../../../secret.txt"));
+        assertTrue(consumer.isWithinStartingDirectory("poll/http:/secret.txt"));
+    }
+
+    @Test
     void shouldNotResolveListedFilesThatAreNotSymbolicLinks() {
         StubSftpOperations server = new StubSftpOperations().file("/home/camel/poll/hello.txt");
         AbstractSftpConsumer consumer = sftpConsumer("sftp://hostname/poll", server);

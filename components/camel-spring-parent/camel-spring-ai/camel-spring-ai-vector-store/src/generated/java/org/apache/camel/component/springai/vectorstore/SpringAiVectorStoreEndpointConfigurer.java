@@ -29,6 +29,8 @@ public class SpringAiVectorStoreEndpointConfigurer extends PropertyConfigurerSup
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation.class, value)); return true;
+        case "searchbyvector":
+        case "searchByVector": target.getConfiguration().setSearchByVector(property(camelContext, boolean.class, value)); return true;
         case "similaritythreshold":
         case "similarityThreshold": target.getConfiguration().setSimilarityThreshold(property(camelContext, double.class, value)); return true;
         case "topk":
@@ -52,6 +54,8 @@ public class SpringAiVectorStoreEndpointConfigurer extends PropertyConfigurerSup
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation.class;
+        case "searchbyvector":
+        case "searchByVector": return boolean.class;
         case "similaritythreshold":
         case "similarityThreshold": return double.class;
         case "topk":
@@ -71,6 +75,8 @@ public class SpringAiVectorStoreEndpointConfigurer extends PropertyConfigurerSup
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "searchbyvector":
+        case "searchByVector": return target.getConfiguration().isSearchByVector();
         case "similaritythreshold":
         case "similarityThreshold": return target.getConfiguration().getSimilarityThreshold();
         case "topk":

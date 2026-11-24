@@ -47,6 +47,10 @@ import java.util.List;
  * @param allowedHosts               hosts allowed in the {@code Host} header of a request to the MCP endpoint (exact,
  *                                   or {@code host:*} for any port or none); {@code null} does not check the
  *                                   {@code Host} header. Since 4.24.
+ * @param protocolEra                the MCP protocol versions served; {@code null} for {@link McpProtocolEra#DUAL}.
+ *                                   Since 4.24.
+ * @param stateless                  whether clients that open with an {@code initialize} handshake are served without a
+ *                                   session; clients of protocol version 2026-07-28 never get one. Since 4.24.
  *
  * @since                            4.22
  */
@@ -65,7 +69,9 @@ public record McpServerInfo(
         String oauthProfile,
         String requiredScopes,
         String resourceUri,
-        List<String> allowedHosts) {
+        List<String> allowedHosts,
+        McpProtocolEra protocolEra,
+        boolean stateless) {
 
     public McpServerInfo(String serverName, String version, String path) {
         this(serverName, version, path,
@@ -141,6 +147,37 @@ public record McpServerInfo(
              resourceUri, null);
     }
 
+    /**
+     * Compatibility constructor preserving the signature from before the protocol era. Both protocol eras are served
+     * ({@link McpProtocolEra#DUAL}) when this constructor is used.
+     *
+     * @param serverName                 the MCP server name
+     * @param version                    the MCP server version
+     * @param path                       the HTTP endpoint path
+     * @param sessionKeepAliveIntervalMs keep-alive interval in milliseconds
+     * @param sessionIdleTtlMs           session idle TTL in milliseconds
+     * @param title                      optional display title
+     * @param description                optional server description
+     * @param websiteUrl                 optional server website URL
+     * @param instructions               optional server instructions
+     * @param icons                      optional server icons
+     * @param allowedOrigins             allowed HTTP origins, or null for the default
+     * @param oauthProfile               the camel-oauth profile, or null when disabled
+     * @param requiredScopes             comma-separated OAuth scopes required by the MCP HTTP endpoint
+     * @param resourceUri                explicit public HTTPS URI of the protected MCP resource
+     * @param allowedHosts               allowed Host header values, or null to not check the Host header
+     */
+    public McpServerInfo(String serverName, String version, String path,
+                         long sessionKeepAliveIntervalMs, long sessionIdleTtlMs,
+                         String title, String description, String websiteUrl, String instructions,
+                         List<McpServerIcon> icons, List<String> allowedOrigins,
+                         String oauthProfile, String requiredScopes, String resourceUri,
+                         List<String> allowedHosts) {
+        this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
+             title, description, websiteUrl, instructions, icons, allowedOrigins, oauthProfile, requiredScopes,
+             resourceUri, allowedHosts, McpProtocolEra.DUAL, false);
+    }
+
     public McpServerInfo {
         if (sessionKeepAliveIntervalMs < 0) {
             throw new IllegalArgumentException("sessionKeepAliveIntervalMs must be >= 0");
@@ -157,5 +194,18 @@ public record McpServerInfo(
         if (allowedHosts != null) {
             allowedHosts = List.copyOf(allowedHosts);
         }
+        if (protocolEra == null) {
+            protocolEra = McpProtocolEra.DUAL;
+        }
+    }
+
+    /**
+     * Whether the engine keeps sessions: only for clients that open with an {@code initialize} handshake, and only when
+     * {@link #stateless()} is off.
+     *
+     * @since 4.24
+     */
+    public boolean sessions() {
+        return protocolEra.servesLegacy() && !stateless;
     }
 }

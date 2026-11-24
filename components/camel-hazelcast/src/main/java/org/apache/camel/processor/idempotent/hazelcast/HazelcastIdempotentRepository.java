@@ -22,8 +22,10 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
+import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
           description = "Idempotent repository that uses Hazelcast cache to store message ids.",
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
-public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
 
     protected boolean useLocalHzInstance;
 
@@ -73,6 +75,10 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
     protected void doStop() throws Exception {
         if (useLocalHzInstance) {
             hazelcastInstance.getLifecycleService().shutdown();
+            // a start after this stop (a route removed and added again, CamelContext started again) creates a new
+            // local instance, as the one shut down cannot be used anymore
+            hazelcastInstance = null;
+            useLocalHzInstance = false;
         }
     }
 
@@ -119,6 +125,15 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
     @Override
     public void clear() {
         repo.clear();
+    }
+
+    /**
+     * Whether the keys are kept only in memory, decided when asked as the cluster changes; see
+     * {@link HazelcastUtil#isInMemory(HazelcastInstance, String)}.
+     */
+    @Override
+    public boolean isInMemory() {
+        return repo != null && HazelcastUtil.isInMemory(hazelcastInstance, repositoryName);
     }
 
     public String getRepositoryName() {

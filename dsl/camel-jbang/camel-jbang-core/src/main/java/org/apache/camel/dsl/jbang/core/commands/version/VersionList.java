@@ -53,7 +53,6 @@ import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -158,10 +157,6 @@ public class VersionList extends CamelCommand {
 
     @Mixin
     QuarkusExtensionRegistryMixin quarkusExtensionRegistry = new QuarkusExtensionRegistryMixin();
-
-    public VersionList(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

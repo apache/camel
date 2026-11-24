@@ -25,7 +25,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -63,10 +62,6 @@ public class Hawtio extends CamelCommand {
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private volatile long pid;
 
-    public Hawtio(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (openUrl && !isOptionGiven("--open-url") && !EnvironmentHelper.isInteractiveTerminal()) {
@@ -93,7 +88,7 @@ public class Hawtio extends CamelCommand {
     }
 
     protected Integer connectJolokia() throws Exception {
-        Jolokia jolokia = new Jolokia(getMain());
+        Jolokia jolokia = getMain().command(new Jolokia());
         jolokia.name = name;
         int exit = jolokia.call();
         this.pid = jolokia.getPid();
@@ -101,7 +96,7 @@ public class Hawtio extends CamelCommand {
     }
 
     protected void disconnectJolokia() throws Exception {
-        Jolokia jolokia = new Jolokia(getMain());
+        Jolokia jolokia = getMain().command(new Jolokia());
         jolokia.name = Long.toString(pid);
         jolokia.stop = true;
         jolokia.call();

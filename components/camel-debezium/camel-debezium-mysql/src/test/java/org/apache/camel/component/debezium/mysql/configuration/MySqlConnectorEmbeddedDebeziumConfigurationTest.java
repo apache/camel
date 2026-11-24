@@ -63,7 +63,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseServerId(123);
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternal("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
@@ -83,7 +83,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setDatabasePassword("test_pwd");
         configuration.setDatabaseServerId(123);
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
@@ -95,7 +95,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_pwd", configuration.getDatabasePassword());
         assertEquals(123, configuration.getDatabaseServerId());
         assertEquals("test_server", configuration.getTopicPrefix());
-        assertEquals("/offset/file", configuration.getOffsetStorageFileName());
+        assertEquals("target/offset-file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
 

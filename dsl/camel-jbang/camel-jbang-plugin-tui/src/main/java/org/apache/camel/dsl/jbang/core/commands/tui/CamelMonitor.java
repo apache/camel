@@ -65,7 +65,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -262,8 +261,7 @@ public class CamelMonitor extends CamelCommand {
 
     private final ClassLoader classLoader;
 
-    public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
-        super(main);
+    public CamelMonitor(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -939,7 +937,7 @@ public class CamelMonitor extends CamelCommand {
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
         mcpFacade.setFullScan(dataService::forceFullScan, dataService::fullScansDone);
         aiPanel.setMcpFacade(mcpFacade);
-        aiPanel.setOtelSpans(dataService.otelSpans());
+        aiPanel.setGenAiUsage(dataService.genAiUsage());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
     }
@@ -2462,10 +2460,11 @@ public class CamelMonitor extends CamelCommand {
      * what the active tab shows (each tab fetches its own in {@link MonitorTab#refreshWhileVisible()}).
      */
     private void refreshConditionalData() {
-        if (aiPanel.isOpen() && aiPanel.isStatsView()
-                && ctx.selectedPid != null && aiPanel.spanRefreshRequested) {
-            aiPanel.spanRefreshRequested = false;
-            dataService.refreshSpanData();
+        if (aiPanel.isOpen() && aiPanel.isStatsView() && ctx.selectedPid != null) {
+            // at once when the view opens, then every few seconds while it is open
+            boolean now = aiPanel.usageRefreshRequested;
+            aiPanel.usageRefreshRequested = false;
+            dataService.refreshGenAiData(now);
         }
         if (ollamaMonitor != null) {
             // cheap and throttled: keeps the More menu's Ollama entry in step with whether a server answers

@@ -1632,11 +1632,9 @@ class SourceTab extends AbstractTab {
                 return base;
             }
             List<SourceViewer.DocEntry> extra = new ArrayList<>();
-            // the body types the steps of the line have been reached with, while it runs as shown (CAMEL-25897)
-            SourceViewer.DocEntry bodyTypes = sourceViewer.liveColumn().bodyTypesDoc(row);
-            if (bodyTypes != null) {
-                extra.add(bodyTypes);
-            }
+            // the body types the steps of the line have been reached with, while it runs as shown (CAMEL-25897), and
+            // what the Kamelet the line calls takes (CAMEL-27475)
+            extra.addAll(sourceViewer.liveColumn().docs(row));
             extra.addAll(assist.placeholderDocs(lines.get(row)));
             ProjectBeans.Location bean = projectBeans().refOn(lines.get(row));
             if (bean != null) {

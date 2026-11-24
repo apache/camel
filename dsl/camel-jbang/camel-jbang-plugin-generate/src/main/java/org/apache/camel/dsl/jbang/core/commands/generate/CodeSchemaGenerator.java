@@ -30,7 +30,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -82,10 +81,6 @@ public class CodeSchemaGenerator extends CamelCommand {
 
     @Mixin
     MavenResolverMixin mavenResolver;
-
-    public CodeSchemaGenerator(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -609,6 +609,26 @@ This operation will return a download link url for the file OBJECT_NAME in the b
 With the option `autoCreateBucket` users are able to avoid the autocreation of a Bucket in case it doesn't exist. The default for this option is `true`.
 If set to false, any operation on a not-existent bucket won't be successful and an error will be returned.
 
+=== Storage class
+
+The `storageClass` option sets the storage class of a bucket that the component creates (see `autoCreateBucket`).
+The objects in a bucket get the default storage class of the bucket.
+
+To upload an object with another storage class, for example an archive file as `COLDLINE` into a `STANDARD` bucket,
+set the producer option `objectStorageClass`, or the `CamelGoogleCloudStorageStorageClass` header for each message.
+The header takes precedence over the option.
+
+[source,java]
+----
+from("direct:archive")
+    .to("google-storage://myCamelBucket?objectStorageClass=COLDLINE");
+----
+
+The consumer and the `getObject` operation set the `CamelGoogleCloudStorageStorageClass` header to the storage class of
+the object they read. A route that copies objects from one bucket to another with the producer therefore keeps the
+storage class of each object. Remove the header to use the `objectStorageClass` option or the default of the
+destination bucket instead.
+
 === MoveAfterRead consumer option
 
 In addition to `deleteAfterRead` it has been added another option, `moveAfterRead`.
@@ -656,5 +676,9 @@ YAML::
 ====
 
 In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
+
+The consumer deletes or moves the object it consumed, whatever the route does with the `CamelGoogleCloudStorageObjectName`
+and `CamelGoogleCloudStorageBucketName` headers. A route can set the object name header to write a copy of the object
+under another name.
 
 

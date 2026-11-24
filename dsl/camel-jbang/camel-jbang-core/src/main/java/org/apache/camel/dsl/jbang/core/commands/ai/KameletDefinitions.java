@@ -106,17 +106,41 @@ public final class KameletDefinitions {
         return def != null ? def : catalog().get(name);
     }
 
+    /**
+     * The Kamelet of the project directory, else of the catalog of the given version, such as the one a running
+     * integration uses (camel run --kamelets-version), or null.
+     *
+     * @param version the version of the Kamelet catalog, or null for the one of the Camel CLI
+     */
+    public static Definition find(String name, Path directory, String version) {
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        Definition def = directory != null ? projectKamelets(directory).get(name) : null;
+        return def != null ? def : catalog(version).get(name);
+    }
+
     /** The Kamelets of the catalog by name; empty when the catalog cannot be read (offline, say). */
     public static Map<String, Definition> catalog() {
+        return catalog(null);
+    }
+
+    /**
+     * The Kamelets of the catalog of a version by name; empty when the catalog cannot be read (offline, say).
+     *
+     * @param version the version, or null for the one of the Camel CLI
+     */
+    public static Map<String, Definition> catalog(String version) {
         Map<String, Definition> fixed = testCatalog;
         if (fixed != null) {
             return fixed;
         }
-        String version;
-        try {
-            version = VersionHelper.extractKameletsVersion();
-        } catch (Exception e) {
-            version = null;
+        if (version == null || version.isBlank()) {
+            try {
+                version = VersionHelper.extractKameletsVersion();
+            } catch (Exception e) {
+                version = null;
+            }
         }
         if (version == null) {
             return Map.of();

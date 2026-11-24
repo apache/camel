@@ -60,7 +60,7 @@ Ask your assistant, or type it yourself, one step at a time, and run after each:
 
 - `skipDuplicate: true`, the default: the duplicate is dropped without a word.
 - Replace the in-memory repository with a file one,
-  `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` with a `fileStore` property: the ids
+  `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` with a `fileName` property: the ids
   then survive a restart, and on the next run every order is a duplicate.
 - Add an order for a customer without a file: `pollEnrich` waits for its `timeout` and the variable stays empty.
 

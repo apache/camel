@@ -43,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
@@ -56,6 +55,10 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUT
 public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryRoutePolicy.class);
+
+    // the route policy of camel-micrometer, which camel-opentelemetry-metrics does not depend on
+    private static final String MICROMETER_ROUTE_POLICY
+            = "org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicy";
 
     private final OpenTelemetryRoutePolicyFactory factory;
     private Meter meter;
@@ -125,6 +128,15 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
     @Override
     public void onInit(Route route) {
         super.onInit(route);
+
+        // both route policies measure the same route metrics, so a route can have only one of them
+        if (route.getRoutePolicyList().stream()
+                .anyMatch(policy -> MICROMETER_ROUTE_POLICY.equals(policy.getClass().getName()))) {
+            throw new IllegalStateException(
+                    "Route " + route.getRouteId() + " has both OpenTelemetryRoutePolicy and MicrometerRoutePolicy."
+                                            + " Use only one of camel-opentelemetry-metrics or camel-micrometer.");
+        }
+
         if (meter == null) {
             this.meter = CamelContextHelper.findSingleByType(route.getCamelContext(), Meter.class);
         }
@@ -330,7 +342,8 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
         private String propertyName(Exchange exchange) {
             String id = route != null ? route.getId() : "context:" + camelContext.getName();
-            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, id, exchange.getExchangeId());
+            // named after this policy, so another metrics route policy on the same route does not overwrite it
+            return "OpenTelemetryRoutePolicy-" + id + "-" + exchange.getExchangeId();
         }
 
         private LongCounter createCounter(String meterName, String description) {

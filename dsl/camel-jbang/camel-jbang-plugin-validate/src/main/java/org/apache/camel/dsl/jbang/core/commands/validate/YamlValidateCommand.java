@@ -33,7 +33,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -68,10 +67,6 @@ public class YamlValidateCommand extends CamelCommand {
 
     @Arguments(required = true, description = "The Camel YAML source files to parse.", paramLabel = "files")
     List<String> files = new ArrayList<>();
-
-    public YamlValidateCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

@@ -98,20 +98,38 @@ public class MllpTcpClientProducerBodyConversionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStringBodyCharsetPropertyIsTheCharsetUsed() throws Exception {
+    public void testStringBodyIgnoresCharsetProperty() throws Exception {
         String testMessage = Hl7TestMessageGenerator.generateMessage().replace("PID|", "PID|Ærø|");
         received.expectedMessageCount(1);
 
-        // an exchange from another endpoint: its charset wins over charsetName=ISO-8859-1 of the endpoint
+        // an exchange from another endpoint: charsetName=ISO-8859-1 of the endpoint wins over its charset
         Exchange exchange = template.send(producerUri().replace("UTF-8", "ISO-8859-1"),
                 ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody(testMessage)
                         .build());
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
         assertNull(exchange.getException());
-        assertArrayEquals(testMessage.getBytes(StandardCharsets.UTF_8),
+        assertArrayEquals(testMessage.getBytes(StandardCharsets.ISO_8859_1),
                 received.getExchanges().get(0).getMessage().getBody(byte[].class));
         assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
+    }
+
+    @Test
+    public void testConvertedBodyIgnoresCharsetProperty() throws Exception {
+        String testMessage = Hl7TestMessageGenerator.generateMessage().replace("PID|", "PID|Ærø|");
+        received.expectedMessageCount(1);
+
+        // the text of a converted body is in charsetName=UTF-8, and the charset of the exchange is kept
+        Exchange exchange = template.send(producerUri(),
+                ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "ISO-8859-1")
+                        .withHeader(Exchange.CHARSET_NAME, "ISO-8859-1").withBody(new StringReader(testMessage)).build());
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        assertNull(exchange.getException());
+        assertArrayEquals(testMessage.getBytes(StandardCharsets.UTF_8),
+                received.getExchanges().get(0).getMessage().getBody(byte[].class));
+        assertEquals("ISO-8859-1", exchange.getProperty(Exchange.CHARSET_NAME));
+        assertEquals("ISO-8859-1", exchange.getMessage().getHeader(Exchange.CHARSET_NAME));
     }
 
     @Test

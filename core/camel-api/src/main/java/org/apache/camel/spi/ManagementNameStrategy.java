@@ -21,22 +21,22 @@ import org.jspecify.annotations.Nullable;
 /**
  * Strategy for assigning the {@code name} segment of the {@link javax.management.ObjectName} for a managed
  * {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * A strategy is needed because multiple {@link org.apache.camel.CamelContext} instances can run in the same JVM and
  * share the same JMX {@link javax.management.MBeanServer}. The strategy either computes a unique name automatically
  * (using an incrementing counter or the context name) or enforces a fixed name so the JMX key remains stable across
  * restarts.
- * <p/>
+ * <p>
  * The naming pattern supports at least the following tokens:
  * <ul>
  * <li>{@code #camelId#} - the Camel context id (its configured name)</li>
  * <li>{@code #name#} - same as {@code #camelId#}</li>
  * <li>{@code #counter#} - an incrementing counter that guarantees uniqueness</li>
  * </ul>
- * <p/>
+ * <p>
  * This strategy controls only the {@code name=} key within the domain; the full {@link javax.management.ObjectName}
  * construction (including all other key-value pairs) is the responsibility of {@link ManagementObjectNameStrategy}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see CamelContextNameStrategy
@@ -48,7 +48,7 @@ public interface ManagementNameStrategy {
     /**
      * Gets the custom name pattern.
      *
-     * @return the custom name pattern, or <tt>null</tt> if using the default pattern strategy.
+     * @return the custom name pattern, or <code>null</code> if using the default pattern strategy.
      */
     @Nullable
     String getNamePattern();
@@ -62,7 +62,7 @@ public interface ManagementNameStrategy {
 
     /**
      * Gets the name
-     * <p/>
+     * <p>
      * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
      * is always fixed.
      *
@@ -72,7 +72,7 @@ public interface ManagementNameStrategy {
 
     /**
      * Gets the next calculated name, if this strategy is not using fixed names.
-     * <p/>
+     * <p>
      * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
      * is always fixed.
      *
@@ -81,9 +81,9 @@ public interface ManagementNameStrategy {
     String getNextName();
 
     /**
-     * Whether the name will be fixed, or allow re-calculation such as by using an unique counter.
+     * Whether the name will be fixed, or allow re-calculation such as by using a unique counter.
      *
-     * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
+     * @return <code>true</code> for fixed names, <code>false</code> for names which can be re-calculated
      */
     boolean isFixedName();
 

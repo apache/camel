@@ -20,9 +20,9 @@ import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 public class PQCDefaultXMSSMaterial {
     public static final KeyPair keyPair;

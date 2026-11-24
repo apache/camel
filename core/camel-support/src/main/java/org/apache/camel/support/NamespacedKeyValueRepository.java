@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
@@ -44,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
           description = "A KeyValueRepository that partitions keys using a namespace prefix.",
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
-public class NamespacedKeyValueRepository extends ServiceSupport implements KeyValueRepository {
+public class NamespacedKeyValueRepository extends ServiceSupport implements KeyValueRepository, InMemoryStrategy {
 
     private KeyValueRepository delegate;
     private String prefix;
@@ -101,6 +102,14 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
      */
     public void setDelegate(KeyValueRepository delegate) {
         this.delegate = delegate;
+    }
+
+    /**
+     * Whether the entries are kept only in memory, as the delegated {@link KeyValueRepository} keeps them.
+     */
+    @Override
+    public boolean isInMemory() {
+        return delegate instanceof InMemoryStrategy s && s.isInMemory();
     }
 
     /**

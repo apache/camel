@@ -35,6 +35,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Data type uses Jackson Protobuf data format to marshal given JsonNode in Exchange body to a binary (byte array)
@@ -46,12 +47,21 @@ import org.apache.camel.spi.Transformer;
 @BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                      description = "Needs the Protobuf schema in the X-Content-Schema exchange property: a"
                                                    + " Json object or array as text, Protobuf binary, a JsonNode or a POJO; a"
-                                                   + " Map or a null body fail"),
-           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "binary"))
+                                                   + " Map or a null body fail. Bytes or a stream with the Content-Type"
+                                                   + " application/protobuf or protobuf/binary are Protobuf binary already, and are kept as"
+                                                   + " they are, without the schema"),
+           transformerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM }, javaType = "byte[]", format = "binary",
+                                      description = "Protobuf binary as bytes; a body that is Protobuf binary already is kept,"
+                                                    + " also a stream, with its Content-Type"))
 public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
+        if (isProtobufBinary(message)) {
+            // Protobuf binary already, as a marshal to Protobuf leaves it: kept as it is, with its Content-Type
+            return;
+        }
+
         ProtobufSchema schema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, ProtobufSchema.class);
 
         if (schema == null) {
@@ -94,6 +104,21 @@ public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
         return Protobuf.mapper().reader().forType(JsonNode.class).with(schema)
                 .readValue(getBodyAsStream(message));
+    }
+
+    /**
+     * Whether the body is Protobuf binary already: bytes or a stream with the Content-Type {@code application/protobuf}
+     * or {@code protobuf/binary}, as a marshal to Protobuf and this data type set it.
+     */
+    private static boolean isProtobufBinary(Message message) {
+        Object body = message.getBody();
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (!(body instanceof byte[] || body instanceof InputStream) || contentType == null) {
+            return false;
+        }
+        String mediaType = StringHelper.before(contentType, ";", contentType).trim();
+        return MimeType.PROTOBUF.type().equalsIgnoreCase(mediaType)
+                || MimeType.PROTOBUF_BINARY.type().equalsIgnoreCase(mediaType);
     }
 
     private InputStream getBodyAsStream(Message message) throws InvalidPayloadException {

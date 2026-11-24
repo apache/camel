@@ -24,7 +24,7 @@ import org.apache.camel.NamedNode;
 
 /**
  * SPI that serialises Camel route model definitions to their XML DSL representation.
- * <p/>
+ * <p>
  * The implementation is provided by {@code camel-xml-io} and discovered via the service key {@link #FACTORY}. Callers
  * supply a {@link org.apache.camel.CamelContext} and a {@link org.apache.camel.NamedNode} route definition; the dumper
  * returns a formatted XML string. The overloaded
@@ -33,7 +33,7 @@ import org.apache.camel.NamedNode;
  * metadata. Separate methods handle bean definitions and global data-format definitions. The primary consumers are
  * {@code camel-jbang} export commands, the developer console, and {@link org.apache.camel.CamelContext} route-dump
  * helpers.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI (camel-jbang)</a> for the export commands
  * that use this dumper.
  *

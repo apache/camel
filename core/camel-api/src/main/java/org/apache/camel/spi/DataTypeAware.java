@@ -24,9 +24,9 @@ import org.jspecify.annotations.Nullable;
  * is not available until it's unmarshaled into Java object. The {@link DataType} stored in a DataTypeAware message
  * carries that missing data type information even if it's marshaled, and whatever the Java class of the body is. This
  * type information is used to detect required {@link Transformer} and {@link Validator}.
- * <p/>
- * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
- * Otherwise, data type is default off.
+ * <p>
+ * Data type is automatically turned on if one or more routes have been explicitly configured with input and output
+ * types. Otherwise, data type is off by default.
  *
  * @see DataType
  * @see Transformer
