@@ -154,7 +154,8 @@ class MllpTcpServerConsumerStopTest extends CamelTestSupport {
         consumer = new HeldConsumer(endpoint(), exchange -> {
             processing.countDown();
             try {
-                Thread.sleep(20000);
+                // blocks like a slow processor until it is interrupted
+                new CountDownLatch(1).await(20, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 interrupted.countDown();
                 Thread.currentThread().interrupt();
