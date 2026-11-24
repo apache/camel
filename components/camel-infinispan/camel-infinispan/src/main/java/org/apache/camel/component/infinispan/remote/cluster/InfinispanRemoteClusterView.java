@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cluster.CamelClusterMember;
@@ -143,9 +145,12 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
     private final class LeadershipService extends ServiceSupport {
         private final int lifespan;
         private final AtomicBoolean running;
+        // held while running is set to false on stop and while a run takes the leadership, so that a run still in
+        // progress when the service is stopped cannot make the local member the leader again
+        private final Lock leadershipLock = new ReentrantLock();
 
         private ScheduledExecutorService executorService;
-        private Long version;
+        private volatile Long version;
 
         LeadershipService() {
             this.lifespan = (int) configuration.getLifespanTimeUnit().toSeconds(configuration.getLifespan());
@@ -182,19 +187,28 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
         protected void doStop() throws Exception {
             super.doStop();
 
-            this.running.set(false);
-
-            if (cache != null) {
-                cache.removeClientListener(this);
+            leadershipLock.lock();
+            try {
+                this.running.set(false);
+            } finally {
+                leadershipLock.unlock();
             }
 
-            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
-
             try {
-                // tell the listeners (such as clustered routes) that the local member is no longer the leader, before
-                // the leader key is removed and another member can take over the leadership
+                // tell the listeners (such as clustered routes) that the local member is no longer the leader right
+                // away, as it no longer refreshes the leader key, and before the leader key is removed and another
+                // member can take over the leadership
                 setLeader(false);
             } finally {
+                if (cache != null) {
+                    cache.removeClientListener(this);
+                }
+
+                // a run in progress does not wait for the lock of this service (held while stopping), so this waits
+                // until that run ends, or interrupts it after the shutdown await termination if it is still waiting
+                // for the server
+                getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+
                 try {
                     if (cache != null) {
                         if (this.version != null) {
@@ -210,6 +224,21 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
             }
         }
 
+        /**
+         * Makes the local member the leader, unless this service has been stopped meanwhile (stopping gives up the
+         * leadership, and releases the leader key with the version this run reads afterwards).
+         */
+        private void takeLeadership() {
+            leadershipLock.lock();
+            try {
+                if (running.get()) {
+                    setLeader(true);
+                }
+            } finally {
+                leadershipLock.unlock();
+            }
+        }
+
         private boolean isLeader() {
             return getLocalMember().isLeader();
         }
@@ -219,16 +248,14 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
         }
 
         private void run() {
-            lock.lock();
-            try {
-                if (!running.get()) {
-                    return;
-                }
+            // without the lock of this service: stopping holds it while it waits for the run in progress to end
+            if (!running.get()) {
+                return;
+            }
 
-                refreshLeadership();
+            refreshLeadership();
+            if (running.get()) {
                 refreshMembership();
-            } finally {
-                lock.unlock();
             }
         }
 
@@ -253,7 +280,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                     }
                 }
 
-                if (!isLeader()) {
+                if (!isLeader() && running.get()) {
                     LOGGER.debug("Try to acquire lock key={}, id={}", leaderKey, localId);
 
                     Object result = cache.withFlags(Flag.FORCE_RETURN_VALUE)
@@ -261,7 +288,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
 
                     if (result == null) {
                         // Acquired the key so I'm the leader.
-                        setLeader(true);
+                        takeLeadership();
 
                         // Get the version
                         version = cache.getWithMetadata(leaderKey).getVersion();
@@ -270,7 +297,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                     } else if (Objects.equals(getClusterService().getId(), result) && !isLeader()) {
                         // Hey, I may have recovered from failure (or reboot was really
                         // fast) and my key was still there so yeah, I'm the leader again!
-                        setLeader(true);
+                        takeLeadership();
 
                         // Get the version
                         version = cache.getWithMetadata(leaderKey).getVersion();
@@ -285,9 +312,15 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
             } catch (Exception e) {
                 // an exception must not end the periodic refresh of the leadership (as it would with an exception
                 // thrown out of this task), and as the leadership could not be refreshed, give it up until the next run
-                LOGGER.warn("Error while refreshing the leadership of id={} (will try again): {}",
-                        getLocalMember().getId(), e.getMessage());
-                LOGGER.debug("Error while refreshing the leadership", e);
+                if (running.get()) {
+                    LOGGER.warn("Error while refreshing the leadership of id={} (will try again): {}",
+                            getLocalMember().getId(), e.getMessage());
+                    LOGGER.debug("Error while refreshing the leadership", e);
+                } else {
+                    // such as a call interrupted by stopping
+                    LOGGER.debug("Error while refreshing the leadership of id={} while stopping",
+                            getLocalMember().getId(), e);
+                }
                 try {
                     setLeader(false);
                 } catch (Exception ex) {
