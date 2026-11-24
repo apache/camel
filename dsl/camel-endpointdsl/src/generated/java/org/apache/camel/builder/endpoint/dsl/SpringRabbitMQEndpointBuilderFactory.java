@@ -119,7 +119,11 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * The routing key for the dead letter exchange.
+         * The routing key for the dead letter exchange (the
+         * x-dead-letter-routing-key of the consumer queue). An auto-declared
+         * deadLetterQueue is bound to the dead letter exchange with this
+         * routing key: it is required for a direct or topic dead letter
+         * exchange, and not needed for a fanout or headers one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -454,9 +458,9 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many times a Rabbitmq consumer will try the same message if Camel
-         * failed to process the message (The number of attempts includes the
-         * initial try).
+         * How many times a Rabbitmq consumer will retry the same message if
+         * Camel failed to process the message. The first try is not counted, so
+         * 5 means up to 6 tries.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -471,9 +475,9 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many times a Rabbitmq consumer will try the same message if Camel
-         * failed to process the message (The number of attempts includes the
-         * initial try).
+         * How many times a Rabbitmq consumer will retry the same message if
+         * Camel failed to process the message. The first try is not counted, so
+         * 5 means up to 6 tries.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1076,7 +1080,11 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * The routing key for the dead letter exchange.
+         * The routing key for the dead letter exchange (the
+         * x-dead-letter-routing-key of the consumer queue). An auto-declared
+         * deadLetterQueue is bound to the dead letter exchange with this
+         * routing key: it is required for a direct or topic dead letter
+         * exchange, and not needed for a fanout or headers one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1773,7 +1781,11 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * The routing key for the dead letter exchange.
+         * The routing key for the dead letter exchange (the
+         * x-dead-letter-routing-key of the consumer queue). An auto-declared
+         * deadLetterQueue is bound to the dead letter exchange with this
+         * routing key: it is required for a direct or topic dead letter
+         * exchange, and not needed for a fanout or headers one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
