@@ -804,7 +804,8 @@ When a poll leaves files of the directory for the next poll (beyond
 `maxMessagesPerPoll`, or not started, for example when the read lock is not
 acquired), the _done file_ is kept until they are consumed; meanwhile the
 polls consume every file of the directory, as they do whenever the _done file_
-is there.
+is there. With `recursive=true` each directory has its own _done file_, which
+the last file of that directory in the poll deletes.
 
 [NOTE]
 ====
