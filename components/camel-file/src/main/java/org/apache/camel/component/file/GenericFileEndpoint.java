@@ -340,7 +340,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                       + "${date:now:yyyMMdd}")
     protected Predicate filterDirectory;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "Filters the file based on "
-                                                                                      + "Simple language. For example to filter on file size, you can use ${file:size} > 5000")
+                                                                                      + "Simple language. For example to filter on the file extension, you can use ${file:ext} == 'txt'")
     protected Predicate filterFile;
     @UriParam(label = "consumer,filter", defaultValue = "true", description = "Sets case sensitive flag on ant filter.")
     protected boolean antFilterCaseSensitive = true;
@@ -352,8 +352,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
               description = "Ant style filter exclusion. If both antInclude and antExclude are used, antExclude takes precedence over antInclude. Multiple exclusions may be specified in comma-delimited format.")
     protected String antExclude;
     @UriParam(label = "consumer,sort",
-              description = "Pluggable sorter as a "
-                            + "java.util.Comparator<org.apache.camel.component.file.GenericFile> class.")
+              description = "Pluggable sorter as a java.util.Comparator class that compares "
+                            + "org.apache.camel.component.file.GenericFile objects.")
     protected Comparator<GenericFile<T>> sorter;
     @UriParam(label = "consumer,sort", javaType = "java.lang.String", description = "Built-in sort by using the "
                                                                                     + "File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort "

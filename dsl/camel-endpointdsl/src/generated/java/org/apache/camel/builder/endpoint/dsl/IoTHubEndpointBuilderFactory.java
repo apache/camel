@@ -341,8 +341,9 @@ public interface IoTHubEndpointBuilderFactory {
             return "CamelAzureIoTHubDeliveryMode";
         }
         /**
-         * Device twin reported properties to apply, as a Map. Used for TWIN
-         * delivery and, in BOTH mode, alongside the telemetry message body.
+         * Device twin reported properties to apply, as a java.util.Map with
+         * String keys. Used for TWIN delivery and, in BOTH mode, alongside the
+         * telemetry message body.
          * 
          * The option is a: {@code java.util.Map} type.
          * 

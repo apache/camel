@@ -374,7 +374,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * The target to capture changes from. For 'database' scope, this is the
          * database name. For 'collection' scope, this is the collection name as
-         * ..
+         * &amp;lt;databaseName&amp;gt;.&amp;lt;collectionName&amp;gt;.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -451,8 +451,10 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '&amp;lt;converter.prefix&amp;gt;.type' config option and configured
+         * using options
+         * '&amp;lt;converter.prefix&amp;gt;.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -561,7 +563,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -577,7 +579,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1685,7 +1687,9 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '&amp;lt;post.processor.prefix&amp;gt;.type' config option and
+         * configured using options
+         * '&amp;lt;post.processor.prefix.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1879,8 +1883,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1896,8 +1900,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2016,10 +2020,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * This property contains a comma-separated list of ., for which the
+         * This property contains a comma-separated list of
+         * &amp;lt;dbName&amp;gt;.&amp;lt;collectionName&amp;gt;, for which the
          * initial snapshot may be a subset of data present in the data source.
          * The subset would be defined by mongodb filter query specified as
-         * value for property snapshot.collection.filter.override..
+         * value for property
+         * snapshot.collection.filter.override.&amp;lt;dbname&amp;gt;.&amp;lt;collectionName&amp;gt;.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

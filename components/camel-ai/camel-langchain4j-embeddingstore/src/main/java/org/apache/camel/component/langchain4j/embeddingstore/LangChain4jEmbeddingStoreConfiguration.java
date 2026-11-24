@@ -61,7 +61,7 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
     @UriParam(description = "Minimum similarity score threshold for SEARCH operation (0.0 to 1.0)")
     private Double minScore;
 
-    @UriParam(description = "When true, SEARCH returns List<String> with text content instead of List<EmbeddingMatch>",
+    @UriParam(description = "When true, SEARCH returns a list of strings with the text content instead of a list of EmbeddingMatch objects",
               defaultValue = "false")
     private boolean returnTextContent = false;
 

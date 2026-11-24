@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -109,6 +110,19 @@ public class ConnectorConfigGeneratorTest {
         assertThrows(IllegalArgumentException.class,
                 () -> ConnectorConfigGenerator.create(connector, MySqlConnectorConfig.class, null, Collections.emptySet(),
                         Collections.emptyMap(), additionalFields));
+    }
+
+    @Test
+    void testIfAngleBracketsOfTheDescriptionAreEscaped() {
+        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(
+                new MySqlConnector(), MySqlConnectorConfig.class, null, Collections.emptySet(), Collections.emptyMap());
+
+        final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
+
+        // message.key.columns documents the pattern '<fully-qualified table name>:<key columns>'
+        assertTrue(connectorFieldsAsString.contains("&lt;fully-qualified"), "the placeholder should be escaped");
+        assertFalse(connectorFieldsAsString.contains("<fully-qualified"), "the placeholder should be escaped");
+        assertEquals("a &lt;b&gt; c", ConnectorConfigGenerator.escapeAngleBrackets("a <b> c"));
     }
 
     private String declarationOf(final String generatedClass, final String fieldName) {

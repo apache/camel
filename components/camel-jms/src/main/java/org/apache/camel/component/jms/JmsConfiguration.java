@@ -168,7 +168,7 @@ public class JmsConfiguration implements Cloneable {
     private int replyToConcurrentConsumers = 1;
     @UriParam(defaultValue = "-1", label = "advanced",
               description = "The number of messages per task. -1 is unlimited."
-                            + " If you use a range for concurrent consumers (eg min < max), then this option can be used to set"
+                            + " If you use a range for concurrent consumers (eg the minimum is lower than the maximum), then this option can be used to set"
                             + " a value to eg 100 to control how fast the consumers will shrink when less work is required.")
     private int maxMessagesPerTask = -1;
     @UriParam(label = "advanced",

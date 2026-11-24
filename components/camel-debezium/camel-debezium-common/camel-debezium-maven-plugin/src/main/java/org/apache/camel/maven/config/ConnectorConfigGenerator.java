@@ -319,7 +319,7 @@ public final class ConnectorConfigGenerator {
                             fieldName);
                 }
 
-                method.getJavaDoc().setFullText(description);
+                method.getJavaDoc().setFullText(escapeAngleBrackets(description));
 
                 // getters
                 javaClass.addMethod()
@@ -329,6 +329,16 @@ public final class ConnectorConfigGenerator {
                         .setBody(String.format("return %s;", fieldConfig.getFieldName()));
             }
         });
+    }
+
+    /**
+     * Escapes the angle brackets of the Debezium documentation, which has placeholders such as
+     * {@code <fully-qualified table name>}, generic types, XML elements and operators but no HTML. The javadoc of the
+     * setter is the description of the option, and the generated metadata removes everything between angle brackets and
+     * every angle bracket that is left, so this text would be lost (CAMEL-27452).
+     */
+    static String escapeAngleBrackets(String description) {
+        return description.replace("<", "&lt;").replace(">", "&gt;");
     }
 
     private void setCreateConnectorConfigurationMethod() {

@@ -677,8 +677,10 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '&amp;lt;converter.prefix&amp;gt;.type' config option and configured
+         * using options
+         * '&amp;lt;converter.prefix&amp;gt;.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1125,7 +1127,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1141,7 +1143,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1899,9 +1901,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * schema metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
-         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
-         * storage.
+         * io.debezium.relational.TableMappingStorage&amp;lt;io.debezium.relational.TableSchema&amp;gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1918,9 +1918,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * table metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
-         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
-         * storage.
+         * io.debezium.relational.TableMappingStorage&amp;lt;io.debezium.relational.Table&amp;gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1937,12 +1935,13 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':', where the table names could be defined as
-         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector, and the key columns are a comma-separated list of
-         * columns representing the custom key. For any table without an
-         * explicit key configuration the table's primary key column(s) will be
-         * used as message key. Example:
+         * match the pattern '&amp;lt;fully-qualified table
+         * name&amp;gt;:&amp;lt;key columns&amp;gt;', where the table names
+         * could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME),
+         * depending on the specific connector, and the key columns are a
+         * comma-separated list of columns representing the custom key. For any
+         * table without an explicit key configuration the table's primary key
+         * column(s) will be used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2294,7 +2293,9 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '&amp;lt;post.processor.prefix&amp;gt;.type' config option and
+         * configured using options
+         * '&amp;lt;post.processor.prefix.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2671,8 +2672,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2688,8 +2689,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

@@ -232,12 +232,13 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     /**
      * A semicolon-separated list of expressions that match fully-qualified
      * tables and column(s) to be used as message key. Each expression must
-     * match the pattern '<fully-qualified table name>:<key columns>', where the
-     * table names could be defined as (DB_NAME.TABLE_NAME) or
-     * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and the
-     * key columns are a comma-separated list of columns representing the custom
-     * key. For any table without an explicit key configuration the table's
-     * primary key column(s) will be used as message key. Example:
+     * match the pattern '&lt;fully-qualified table name&gt;:&lt;key
+     * columns&gt;', where the table names could be defined as
+     * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
+     * specific connector, and the key columns are a comma-separated list of
+     * columns representing the custom key. For any table without an explicit
+     * key configuration the table's primary key column(s) will be used as
+     * message key. Example:
      * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id
      */
     public void setMessageKeyColumns(String messageKeyColumns) {
@@ -379,8 +380,9 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '&lt;converter.prefix&gt;.type'
+     * config option and configured using options
+     * '&lt;converter.prefix&gt;.&lt;option&gt;'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -706,9 +708,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for table
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
-     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
-     * in-memory storage.
+     * io.debezium.relational.TableMappingStorage&lt;io.debezium.relational.Table&gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
      */
     public void setMemoryManagementTablesClass(
             String memoryManagementTablesClass) {
@@ -1004,7 +1004,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for schema
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage&lt;io.debezium.relational.TableSchema&gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
      */
     public void setMemoryManagementSchemasClass(
             String memoryManagementSchemasClass) {
@@ -1293,7 +1293,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries on connection errors before failing (-1 =
-     * no limit, 0 = disabled, > 0 = num of retries).
+     * no limit, 0 = disabled, &gt; 0 = num of retries).
      */
     public void setErrorsMaxRetries(int errorsMaxRetries) {
         this.errorsMaxRetries = errorsMaxRetries;
@@ -1530,7 +1530,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries after encountering an error emitting a
-     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
      * Defaults to 0.
      */
     public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
@@ -1580,8 +1580,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '&lt;post.processor.prefix&gt;.type' config option and configured using
+     * options '&lt;post.processor.prefix.&lt;option&gt;'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;

@@ -4110,8 +4110,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the
-         * object. The value is a grantee expression such as id=, emailAddress=
-         * or uri=.
+         * object. The value is a grantee expression: id= followed by the
+         * canonical user ID, emailAddress= followed by the email address, or
+         * uri= followed by the URI of the group.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4124,7 +4125,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Allows the grantee to read the object data and its metadata. The
-         * value is a grantee expression such as id=, emailAddress= or uri=.
+         * value is a grantee expression: id= followed by the canonical user ID,
+         * emailAddress= followed by the email address, or uri= followed by the
+         * URI of the group.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4137,7 +4140,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Allows the grantee to read the object ACL. The value is a grantee
-         * expression such as id=, emailAddress= or uri=.
+         * expression: id= followed by the canonical user ID, emailAddress=
+         * followed by the email address, or uri= followed by the URI of the
+         * group.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4150,7 +4155,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Allows the grantee to write the ACL for the object. The value is a
-         * grantee expression such as id=, emailAddress= or uri=.
+         * grantee expression: id= followed by the canonical user ID,
+         * emailAddress= followed by the email address, or uri= followed by the
+         * URI of the group.
          * 
          * The option is a: {@code String} type.
          * 

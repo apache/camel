@@ -28,7 +28,7 @@ public final class OpenFeatureConstants {
               applicableFor = "openfeature")
     public static final String TARGETING_KEY = "CamelOpenFeatureTargetingKey";
 
-    @Metadata(description = "A Map<String, Object> of additional evaluation context key-value pairs.",
+    @Metadata(description = "A java.util.Map with String keys of additional evaluation context key-value pairs.",
               javaType = "java.util.Map", applicableFor = "openfeature")
     public static final String EVALUATION_CONTEXT = "CamelOpenFeatureEvaluationContext";
 

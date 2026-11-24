@@ -353,8 +353,9 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '&lt;converter.prefix&gt;.type'
+     * config option and configured using options
+     * '&lt;converter.prefix&gt;.&lt;option&gt;'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -1095,10 +1096,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * This property contains a comma-separated list of
-     * <dbName>.<collectionName>, for which  the initial snapshot may be a
-     * subset of data present in the data source. The subset would be defined by
-     * mongodb filter query specified as value for property
-     * snapshot.collection.filter.override.<dbname>.<collectionName>
+     * &lt;dbName&gt;.&lt;collectionName&gt;, for which  the initial snapshot
+     * may be a subset of data present in the data source. The subset would be
+     * defined by mongodb filter query specified as value for property
+     * snapshot.collection.filter.override.&lt;dbname&gt;.&lt;collectionName&gt;
      */
     public void setSnapshotCollectionFilterOverrides(
             String snapshotCollectionFilterOverrides) {
@@ -1111,7 +1112,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries on connection errors before failing (-1 =
-     * no limit, 0 = disabled, > 0 = num of retries).
+     * no limit, 0 = disabled, &gt; 0 = num of retries).
      */
     public void setErrorsMaxRetries(int errorsMaxRetries) {
         this.errorsMaxRetries = errorsMaxRetries;
@@ -1124,7 +1125,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     /**
      * The target to capture changes from. For 'database' scope, this is the
      * database name. For 'collection' scope, this is the collection name as
-     * <databaseName>.<collectionName>.
+     * &lt;databaseName&gt;.&lt;collectionName&gt;.
      */
     public void setCaptureTarget(String captureTarget) {
         this.captureTarget = captureTarget;
@@ -1301,7 +1302,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries after encountering an error emitting a
-     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
      * Defaults to 0.
      */
     public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
@@ -1327,8 +1328,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '&lt;post.processor.prefix&gt;.type' config option and configured using
+     * options '&lt;post.processor.prefix.&lt;option&gt;'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;

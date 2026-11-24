@@ -1962,9 +1962,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1980,9 +1980,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4615,9 +4615,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4633,9 +4633,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -6416,9 +6416,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -6434,9 +6434,9 @@ public interface ActiveMQ6EndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

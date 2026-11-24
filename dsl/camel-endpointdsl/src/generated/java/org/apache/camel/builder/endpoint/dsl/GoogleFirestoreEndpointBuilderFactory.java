@@ -1299,8 +1299,11 @@ public interface GoogleFirestoreEndpointBuilderFactory {
             return "CamelGoogleFirestoreQueryField";
         }
         /**
-         * The operator for query filtering (e.g., ==, , =, !=, array-contains,
-         * in, array-contains-any, not-in).
+         * The operator for query filtering: == (or eq), != (or ne), lt (less
+         * than), lte (less than or equal), gt (greater than), gte (greater than
+         * or equal), array-contains, in, array-contains-any or not-in. The lt,
+         * lte, gt and gte operators can also be given as their comparison
+         * symbols.
          * 
          * The option is a: {@code String} type.
          * 

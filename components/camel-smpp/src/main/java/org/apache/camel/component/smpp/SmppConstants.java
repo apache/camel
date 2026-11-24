@@ -54,7 +54,7 @@ public interface SmppConstants {
     String DELIVERED = "CamelSmppDelivered";
     @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the\n" +
                             "destination SME address(es). For mobile terminated messages, this is the\n" +
-                            "directory number of the recipient MS. It must be a `List<String>` for\n" +
+                            "directory number of the recipient MS. It must be a list of strings for\n" +
                             "SubmitMulti and a `String` otherwise.\n" +
                             "*Consumer:* *only for DeliverSm and DataSm:* Defines the destination SME address.\n" +
                             "For mobile terminated messages, this is the directory number of the\n" +
@@ -92,9 +92,9 @@ public interface SmppConstants {
               javaType = "String")
     String ENCODING = "CamelSmppEncoding";
     @Metadata(description = "*Producer:* *only for SubmitMultiSm* The errors which\n" +
-                            "occurred by sending the short message(s) the form `Map<String, List<Map<String, Object>>>` (messageID : (destAddr :\n"
+                            "occurred by sending the short message(s), as a map from the message ID to a list of maps, each with the\n"
                             +
-                            "address, error : errorCode)).\n" +
+                            "destination address (CamelSmppDestAddr key) and the error code (CamelSmppError key).\n" +
                             "*Consumer:* *only for smsc DeliveryReceipt* Where appropriate this may hold a\n" +
                             "Network specific error code or an SMSC error code for the attempted\n" +
                             "delivery of the message. These errors are Network or SMSC specific and\n" +
@@ -126,7 +126,7 @@ public interface SmppConstants {
     @Metadata(description = "*Producer:* The id to identify the submitted short message(s) for later use.\n" +
                             "In case of a ReplaceSm, QuerySm, CancelSm and DataSm this\n" +
                             "header value is a `String`. In case of a SubmitSm or SubmitMultiSm this\n" +
-                            "header value is a `List<String>`.\n" +
+                            "header value is a list of strings.\n" +
                             "*Consumer:* *only for smsc DeliveryReceipt and DataSm* The message ID allocated to\n" +
                             "the message by the SMSC when originally submitted.",
               javaType = "String or List<String>")
@@ -264,21 +264,21 @@ public interface SmppConstants {
     String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
     @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti and\n" +
                             "DataSm* The optional parameter which are send to the SMSC. The value is\n" +
-                            "converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.COctetString`, \n" +
-                            "`byte[]` -> `org.jsmpp.bean.OptionalParameter.OctetString`, \n" +
-                            "`Byte` -> `org.jsmpp.bean.OptionalParameter.Byte`,\n" +
-                            "`Integer` -> `org.jsmpp.bean.OptionalParameter.Int`,\n" +
-                            "`Short` -> `org.jsmpp.bean.OptionalParameter.Short`, \n" +
-                            "`null` -> `org.jsmpp.bean.OptionalParameter.Null`\n" +
+                            "converted in the following way: `String` to `org.jsmpp.bean.OptionalParameter.COctetString`, \n" +
+                            "`byte[]` to `org.jsmpp.bean.OptionalParameter.OctetString`, \n" +
+                            "`Byte` to `org.jsmpp.bean.OptionalParameter.Byte`,\n" +
+                            "`Integer` to `org.jsmpp.bean.OptionalParameter.Int`,\n" +
+                            "`Short` to `org.jsmpp.bean.OptionalParameter.Short`, \n" +
+                            "`null` to `org.jsmpp.bean.OptionalParameter.Null`\n" +
                             "*Consumer:* *only for DeliverSm* The optional\n" +
                             "parameters send back by the SMSC. The key is the `Short` code for the\n" +
                             "optional parameter. The value is converted in the following way: \n" +
-                            "`org.jsmpp.bean.OptionalParameter.COctetString` -> `String`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.OctetString` -> `byte[]`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Byte` -> `Byte`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Int` -> `Integer`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Short` -> `Short`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Null` -> `null`",
+                            "`org.jsmpp.bean.OptionalParameter.COctetString` to `String`,\n" +
+                            "`org.jsmpp.bean.OptionalParameter.OctetString` to `byte[]`,\n" +
+                            "`org.jsmpp.bean.OptionalParameter.Byte` to `Byte`,\n" +
+                            "`org.jsmpp.bean.OptionalParameter.Int` to `Integer`,\n" +
+                            "`org.jsmpp.bean.OptionalParameter.Short` to `Short`,\n" +
+                            "`org.jsmpp.bean.OptionalParameter.Null` to `null`",
               javaType = "Map<Short, Object>")
     String OPTIONAL_PARAMETER = "CamelSmppOptionalParameter";
     @Metadata(label = "producer", description = "*only for SubmitSm,\n" +

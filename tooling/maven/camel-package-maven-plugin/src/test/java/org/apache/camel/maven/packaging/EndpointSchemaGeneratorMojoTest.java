@@ -239,6 +239,85 @@ class EndpointSchemaGeneratorMojoTest {
 
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Use mcpServer.<name>.url to set the URL.", "The grantee as id=<canonical-user-id>.",
+            "The operator: ==, <, >, <= or >=.", "A <code>List<String></code> of names.", "A value > 0 retries.",
+            "Use {@code Map<String, Object>}." })
+    void failsOnAnOptionDescriptionWithTextBetweenAngleBrackets(String description) {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setKind("parameter");
+        option.setName("query");
+        option.setDescription(description);
+        model.setScheme("some");
+        model.addEndpointOption(option);
+
+        MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.validateDescriptions(model));
+        assertTrue(e.getMessage().contains("The some component"), e.getMessage());
+        assertTrue(e.getMessage().contains("parameter query ("), e.getMessage());
+    }
+
+    @Test
+    void failsOnAHeaderDescriptionWithAPlaceholderAndNamesTheRemovedText() {
+        EndpointHeaderModel header = new EndpointHeaderModel();
+        header.setKind("header");
+        header.setName("CamelSomeGrant");
+        header.setDescription("The grantee as id=<canonical-user-id>.");
+        ComponentModel.ComponentOptionModel option = new ComponentModel.ComponentOptionModel();
+        option.setKind("property");
+        option.setName("path");
+        option.setDescription("A path such as <Edge Node ID>-bdSeqNum.");
+        model.setScheme("some");
+        model.addEndpointHeader(header);
+        model.addComponentOption(option);
+
+        MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.validateDescriptions(model));
+        assertTrue(e.getMessage().contains("property path (<Edge Node ID>)"), e.getMessage());
+        assertTrue(e.getMessage().contains("header CamelSomeGrant (<canonical-user-id>)"), e.getMessage());
+    }
+
+    @Test
+    void failsOnADeprecationNoteWithAPlaceholder() {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setKind("parameter");
+        option.setName("query");
+        option.setDescription("The query.");
+        option.setDeprecationNote("Use the <name> option instead.");
+        model.addEndpointOption(option);
+
+        assertThrows(MojoExecutionException.class, () -> mojo.validateDescriptions(model));
+    }
+
+    @Test
+    void acceptsDescriptionsWithOnlyHtmlTags() throws MojoExecutionException {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setKind("parameter");
+        option.setName("query");
+        option.setDescription("The <b>query</b> to run.<p/> See <a href=\"https://example.com\">the docs</a>,"
+                              + " <code>{@code foo}</code> and <ul><li>one</li><li>two</li></ul><br />");
+        EndpointHeaderModel header = new EndpointHeaderModel();
+        header.setKind("header");
+        header.setName("CamelSomeQuery");
+        header.setDescription("Use 5 or more, {@link Map} and {@code a=b}.");
+        model.addEndpointOption(option);
+        model.addEndpointHeader(header);
+
+        mojo.validateDescriptions(model);
+    }
+
+    @Test
+    void ignoresAnOptionThatIsNotGenerated() throws MojoExecutionException {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setKind("parameter");
+        option.setName("query");
+        option.setLabel("producer");
+        option.setDescription("Use mcpServer.<name>.url to set the URL.");
+        model.setConsumerOnly(true);
+        model.addEndpointOption(option);
+
+        mojo.validateDescriptions(model);
+    }
+
     @Test
     void testEndpointWithBodyTypes() throws Exception {
         // CAMEL-24961: the body a step needs and the body it leaves, in the order of the annotation

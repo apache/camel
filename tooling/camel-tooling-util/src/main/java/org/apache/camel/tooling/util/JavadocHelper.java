@@ -16,11 +16,29 @@
  */
 package org.apache.camel.tooling.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 public final class JavadocHelper {
 
     private static final String VALID_CHARS = ".,-='/\\!&%():;#${}?*+[]|";
+
+    // what the sanitizer removes as a tag: everything between angle brackets
+    private static final Pattern TAG = Pattern.compile("<.*?>");
+    // an HTML start, end or empty element tag, such as <p>, </p>, <br/> or <a href="...">
+    private static final Pattern HTML_TAG = Pattern.compile("</?([a-zA-Z][a-zA-Z0-9]*)(?:\\s[^<>]*)?/?>");
+    // the HTML elements that are used in javadoc
+    private static final Set<String> HTML_TAG_NAMES = Set.of(
+            "a", "abbr", "b", "big", "blockquote", "br", "caption", "cite", "code", "dd", "del", "dfn", "div", "dl", "dt",
+            "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "s",
+            "samp", "small", "span", "strike", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr",
+            "tt", "u", "ul", "var");
 
     private JavadocHelper() {
     }
@@ -36,7 +54,86 @@ public final class JavadocHelper {
             return null;
         }
 
-        // lets just use what java accepts as identifiers
+        String s = joinLines(javadoc, summary);
+        // remove all XML tags
+        s = TAG.matcher(s).replaceAll("");
+        // remove {@link inlined javadoc links which is special handled
+        s = s.replaceAll("\\{@link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("\\{@link\\s([\\w]+)}", "$1");
+        // also remove the commonly mistake to do with @{link
+        s = s.replaceAll("@\\{link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("@\\{link\\s([\\w]+)}", "$1");
+
+        // Code and literal tags can contain spaces and punctuation, not just Java identifiers.
+        s = s.replaceAll("\\{@(?:code|literal)\\s+([^{}]*)}", "$1");
+
+        // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
+        // use #? to remove leading # in case its a local reference
+        s = s.replaceAll("\\{@\\w+\\s#?([\\w.#(\\d,)]+)}", "$1");
+
+        // create a new line
+        StringBuilder cb = new StringBuilder(s.length() + 16);
+        for (char c : s.toCharArray()) {
+            if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
+                cb.append(c);
+            } else if (Character.isWhitespace(c)) {
+                // always use space as whitespace, also for line feeds etc
+                cb.append(' ');
+            }
+        }
+        s = cb.toString();
+
+        // remove double whitespaces, and trim
+        s = s.replaceAll("\\s+", " ");
+        // unescape http links
+        s = s.replaceAll("\\\\(http:|https:)", "$1");
+        return s.trim();
+    }
+
+    /**
+     * Finds the text with angle brackets that {@link #sanitizeDescription(String, boolean)} removes from the javadoc
+     * and that is not an HTML tag: the text between angle brackets, such as a placeholder ({@code <name>}) or a generic
+     * type ({@code List<String>}), and a lone angle bracket, such as in an operator ({@code <=}). The sanitizer removes
+     * everything between angle brackets, and then every angle bracket that is left, so this text would be lost.
+     *
+     * @param  javadoc the javadoc
+     * @param  summary whether only the summary is used, as in {@link #sanitizeDescription(String, boolean)}
+     * @return         the removed text that is not an HTML tag, or an empty list. The text between angle brackets comes
+     *                 first, then each lone angle bracket with the text around it.
+     */
+    public static List<String> findRemovedAngleBracketText(String javadoc, boolean summary) {
+        if (isNullOrEmpty(javadoc)) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>();
+        Matcher matcher = TAG.matcher(joinLines(javadoc, summary));
+        StringBuilder rest = new StringBuilder();
+        while (matcher.find()) {
+            String tag = matcher.group();
+            if (!isHtmlTag(tag)) {
+                answer.add(tag);
+            }
+            matcher.appendReplacement(rest, " ");
+        }
+        matcher.appendTail(rest);
+        for (int i = 0; i < rest.length(); i++) {
+            char c = rest.charAt(i);
+            if (c == '<' || c == '>') {
+                answer.add(rest.substring(Math.max(0, i - 10), Math.min(rest.length(), i + 11)).trim());
+            }
+        }
+        return answer;
+    }
+
+    private static boolean isHtmlTag(String tag) {
+        if (tag.startsWith("<!--") && tag.endsWith("-->")) {
+            return true;
+        }
+        Matcher matcher = HTML_TAG.matcher(tag);
+        return matcher.matches() && HTML_TAG_NAMES.contains(matcher.group(1).toLowerCase(Locale.ROOT));
+    }
+
+    private static String joinLines(String javadoc, boolean summary) {
         StringBuilder sb = new StringBuilder(javadoc.length());
 
         // split into lines
@@ -86,40 +183,7 @@ public final class JavadocHelper {
             first = false;
         }
 
-        String s = sb.toString();
-        // remove all XML tags
-        s = s.replaceAll("<.*?>", "");
-        // remove {@link inlined javadoc links which is special handled
-        s = s.replaceAll("\\{@link\\s\\w+\\s(\\w+)}", "$1");
-        s = s.replaceAll("\\{@link\\s([\\w]+)}", "$1");
-        // also remove the commonly mistake to do with @{link
-        s = s.replaceAll("@\\{link\\s\\w+\\s(\\w+)}", "$1");
-        s = s.replaceAll("@\\{link\\s([\\w]+)}", "$1");
-
-        // Code and literal tags can contain spaces and punctuation, not just Java identifiers.
-        s = s.replaceAll("\\{@(?:code|literal)\\s+([^{}]*)}", "$1");
-
-        // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
-        // use #? to remove leading # in case its a local reference
-        s = s.replaceAll("\\{@\\w+\\s#?([\\w.#(\\d,)]+)}", "$1");
-
-        // create a new line
-        StringBuilder cb = new StringBuilder(s.length() + 16);
-        for (char c : s.toCharArray()) {
-            if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
-                cb.append(c);
-            } else if (Character.isWhitespace(c)) {
-                // always use space as whitespace, also for line feeds etc
-                cb.append(' ');
-            }
-        }
-        s = cb.toString();
-
-        // remove double whitespaces, and trim
-        s = s.replaceAll("\\s+", " ");
-        // unescape http links
-        s = s.replaceAll("\\\\(http:|https:)", "$1");
-        return s.trim();
+        return sb.toString();
     }
 
     /**

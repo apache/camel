@@ -334,6 +334,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String excludedEndpointProperties = getExcludedEnd(classElement.getAnnotation(Metadata.class));
 
         // enhance and generate
+        validateDescriptions(componentModel);
         enhanceComponentModel(componentModel, parentData, excludedEndpointProperties, excludedComponentProperties);
 
         // if the component has known class name
@@ -739,6 +740,35 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             parentData.getEndpointHeaders().stream()
                     .filter(header -> !headerNames.contains(header.getName()))
                     .forEach(header -> componentModel.getEndpointHeaders().add(header));
+        }
+    }
+
+    /**
+     * Fails when the description of an option or header has angle brackets that are not part of an HTML tag, such as a
+     * placeholder ({@code <name>}), a generic type ({@code List<String>}) or an operator ({@code <=}). The description
+     * is sanitized for the JSON metadata, which removes everything between angle brackets, and every angle bracket that
+     * is left, so that text would be lost in the catalog, the documentation and the endpoint DSL (CAMEL-27452).
+     */
+    void validateDescriptions(ComponentModel componentModel) throws MojoExecutionException {
+        List<String> invalid = new ArrayList<>();
+        Stream.of(componentModel.getComponentOptions(), componentModel.getEndpointOptions(),
+                componentModel.getEndpointHeaders())
+                .flatMap(List::stream)
+                .filter(option -> !filterOutOption(componentModel, option))
+                .forEach(option -> {
+                    List<String> removed
+                            = JavadocHelper.findRemovedAngleBracketText(getDocumentationWithNotes(option), false);
+                    if (!removed.isEmpty()) {
+                        invalid.add(option.getKind() + " " + option.getName() + " (" + String.join(" | ", removed) + ")");
+                    }
+                });
+        if (!invalid.isEmpty()) {
+            throw new MojoExecutionException(
+                    "The " + componentModel.getScheme() + " component has option or header descriptions with angle"
+                                             + " brackets that are not part of an HTML tag. The generated metadata removes"
+                                             + " everything between angle brackets, and every angle bracket that is left,"
+                                             + " so this text would be lost. Write these descriptions without angle"
+                                             + " brackets: " + String.join(", ", invalid));
         }
     }
 

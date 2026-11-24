@@ -80,12 +80,12 @@ public interface OpaComponentBuilderFactory {
          * expects a List body, evaluates one input document per element - each
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
-         * header, a List parallel to the input. An element whose evaluation
-         * failed is denied, unless failOpen is set and its decision point was
-         * unavailable; the batch is never allowed or denied as a whole because
-         * one element failed. Only for evaluationMode=rest: it saves the
-         * per-element HTTP round-trip via OPA's batch API, which has no meaning
-         * for in-process wasm.
+         * header, a list of booleans parallel to the input. An element whose
+         * evaluation failed is denied, unless failOpen is set and its decision
+         * point was unavailable; the batch is never allowed or denied as a
+         * whole because one element failed. Only for evaluationMode=rest: it
+         * saves the per-element HTTP round-trip via OPA's batch API, which has
+         * no meaning for in-process wasm.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

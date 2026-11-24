@@ -412,8 +412,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '&amp;lt;converter.prefix&amp;gt;.type' config option and configured
+         * using options
+         * '&amp;lt;converter.prefix&amp;gt;.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -804,7 +806,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -820,7 +822,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1497,9 +1499,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * schema metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
-         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
-         * storage.
+         * io.debezium.relational.TableMappingStorage&amp;lt;io.debezium.relational.TableSchema&amp;gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1516,9 +1516,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * table metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
-         * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
-         * storage.
+         * io.debezium.relational.TableMappingStorage&amp;lt;io.debezium.relational.Table&amp;gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1535,12 +1533,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':', where the table names could be defined as
-         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector, and the key columns are a comma-separated list of
-         * columns representing the custom key. For any table without an
-         * explicit key configuration the table's primary key column(s) will be
-         * used as message key. Example:
+         * match the pattern '&amp;lt;fully-qualified table
+         * name&amp;gt;:&amp;lt;key columns&amp;gt;', where the table names
+         * could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME),
+         * depending on the specific connector, and the key columns are a
+         * comma-separated list of columns representing the custom key. For any
+         * table without an explicit key configuration the table's primary key
+         * column(s) will be used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1904,7 +1903,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '&amp;lt;post.processor.prefix&amp;gt;.type' config option and
+         * configured using options
+         * '&amp;lt;post.processor.prefix.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1957,11 +1958,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * If no publication exists, the connector will create a new publication
          * for all tables. Note this requires that the configured user has
          * access. If the publication already exists, it will be used. i.e
-         * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
-         * exists, the connector will create a new publication for all those
-         * tables matchingthe current filter configuration (see table/database
-         * include/exclude list properties). If the publication already exists,
-         * it will be used. i.e CREATE PUBLICATION FOR TABLE.
+         * CREATE PUBLICATION &amp;lt;publication_name&amp;gt; FOR ALL
+         * TABLES;FILTERED - If no publication exists, the connector will create
+         * a new publication for all those tables matchingthe current filter
+         * configuration (see table/database include/exclude list properties).
+         * If the publication already exists, it will be used. i.e CREATE
+         * PUBLICATION &amp;lt;publication_name&amp;gt; FOR TABLE &amp;lt;tbl1,
+         * tbl2, etc&amp;gt;.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2063,7 +2066,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * the existing value in databaseA comma-separated list of regular
          * expressions that match fully-qualified tables and Replica Identity
          * value to be used in the table. Each expression must match the pattern
-         * ':', where the table names could be defined as
+         * '&amp;lt;fully-qualified table name&amp;gt;:&amp;lt;replica
+         * identity&amp;gt;', where the table names could be defined as
          * (SCHEMA_NAME.TABLE_NAME), and the replica identity values are:
          * DEFAULT - Records the old values of the columns of the primary key,
          * if any. This is the default for non-system tables.INDEX index_name -
@@ -2258,8 +2262,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2275,8 +2279,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

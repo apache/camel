@@ -378,7 +378,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * The target to capture changes from. For 'database' scope, this is the
          * database name. For 'collection' scope, this is the collection name as
-         * ..
+         * &amp;lt;databaseName&amp;gt;.&amp;lt;collectionName&amp;gt;.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -444,8 +444,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '&amp;lt;converter.prefix&amp;gt;.type' config option and configured
+         * using options
+         * '&amp;lt;converter.prefix&amp;gt;.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -547,7 +549,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
         
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &amp;gt; 0 = num of retries).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1361,7 +1363,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '&amp;lt;post.processor.prefix&amp;gt;.type' config option and
+         * configured using options
+         * '&amp;lt;post.processor.prefix.&amp;lt;option&amp;gt;'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1503,8 +1507,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
-         * Defaults to 0.
+         * window event (-1 = no limit, 0 = disabled, &amp;gt; 0 = num of
+         * retries). Defaults to 0.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1596,10 +1600,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
     
         /**
-         * This property contains a comma-separated list of ., for which the
+         * This property contains a comma-separated list of
+         * &amp;lt;dbName&amp;gt;.&amp;lt;collectionName&amp;gt;, for which the
          * initial snapshot may be a subset of data present in the data source.
          * The subset would be defined by mongodb filter query specified as
-         * value for property snapshot.collection.filter.override..
+         * value for property
+         * snapshot.collection.filter.override.&amp;lt;dbname&amp;gt;.&amp;lt;collectionName&amp;gt;.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

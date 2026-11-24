@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tooling.util;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -102,6 +104,39 @@ public class JavadocHelperTest {
         Assertions.assertEquals("Use foo bar* and :?name. More details.",
                 JavadocHelper.sanitizeDescription(javadoc, false));
         Assertions.assertEquals("Use foo bar* and :?name.", JavadocHelper.sanitizeDescription(javadoc, true));
+    }
+
+    @Test
+    void testFindRemovedAngleBracketText() {
+        Assertions.assertEquals(List.of("<name>", "<value>"),
+                JavadocHelper.findRemovedAngleBracketText("Use mcpServer.<name>.url=<value>.", false));
+        Assertions.assertEquals(List.of("<String>"),
+                JavadocHelper.findRemovedAngleBracketText("A <code>List<String></code> of names.", false));
+        Assertions.assertEquals(List.of("< >", "<=>"),
+                JavadocHelper.findRemovedAngleBracketText("The operator: ==, < >, <=> or !=.", false));
+        // the sanitizer removes from the first opening to the first closing angle bracket
+        Assertions.assertEquals(List.of("< 5 and <b>"),
+                JavadocHelper.findRemovedAngleBracketText("When x < 5 and <b>y</b> is set.", false));
+        // the sanitizer also removes the angle brackets that are left
+        Assertions.assertEquals(List.of("disabled, > 0 = retri"),
+                JavadocHelper.findRemovedAngleBracketText("0 = disabled, > 0 = retries.", false));
+        Assertions.assertEquals(List.of("<, >", "<=, >"),
+                JavadocHelper.findRemovedAngleBracketText("==, <, >, <=, >= or !=.", false));
+        Assertions.assertEquals(List.of("x <= 5"), JavadocHelper.findRemovedAngleBracketText("x <= 5", false));
+        // what a summary does not use is not removed
+        Assertions.assertEquals(List.of(),
+                JavadocHelper.findRemovedAngleBracketText("The summary.\nUse <name> here.", true));
+        Assertions.assertEquals(List.of("<name>"),
+                JavadocHelper.findRemovedAngleBracketText("The summary.\nUse <name> here.", false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Plain text without tags.", "The <b>query</b> to run.<p/> See <a href=\"https://example.com\">the docs</a>.",
+            "<ul><li>one</li><LI>two</LI></ul><br /><!-- comment --><pre>code</pre><tt>tt</tt>",
+            "<table><tr><th>a</th></tr><tr><td>b</td></tr></table>", "Use {@code a=b} and {@link Map}." })
+    void testFindRemovedAngleBracketTextAcceptsHtml(String javadoc) {
+        Assertions.assertEquals(List.of(), JavadocHelper.findRemovedAngleBracketText(javadoc, false));
     }
 
     @Test
