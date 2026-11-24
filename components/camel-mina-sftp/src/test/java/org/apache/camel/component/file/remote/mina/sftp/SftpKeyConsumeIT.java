@@ -68,7 +68,7 @@ public class SftpKeyConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
+                     + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
                         .routeId("foo").autoStartup(false).to("mock:result");
             }
         };

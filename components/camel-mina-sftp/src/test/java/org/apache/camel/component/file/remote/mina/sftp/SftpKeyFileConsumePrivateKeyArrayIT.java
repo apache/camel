@@ -55,7 +55,7 @@ public class SftpKeyFileConsumePrivateKeyArrayIT extends SftpServerTestSupport {
 
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
                      + service.getKnownHostsFile()
-                     + "&privateKey=#myKey&privateKeyPassphrase=secret&delay=10000&disconnect=true")
+                     + "&privateKey=#myKey&privateKeyPassphrase=secret&disconnect=true")
                         .routeId("foo").autoStartup(false).to("mock:result");
             }
         };

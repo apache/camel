@@ -48,7 +48,7 @@ public class SftpSimpleConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&knownHostsFile="
+                     + "?username=admin&password=admin&disconnect=true&knownHostsFile="
                      + service.getKnownHostsFile()).routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
