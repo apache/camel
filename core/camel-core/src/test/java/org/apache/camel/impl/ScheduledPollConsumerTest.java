@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -25,11 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -247,6 +251,67 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
             }
         });
         return consumer;
+    }
+
+    @Test
+    public void testErrorOnPollWithOtherSchedulerIsTheLastError() {
+        // such as the Spring or Quartz scheduler, which keep running the task after an Error
+        final LinkageError expectedError = new LinkageError("Simulated error on poll");
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, new AtomicInteger());
+        consumer.setScheduler(new OtherScheduler());
+        consumer.start();
+        pollUntilErrorIsNext(consumer);
+
+        // the Error is still thrown to the scheduler
+        assertSame(expectedError, assertThrows(LinkageError.class, consumer::run));
+        // but the task keeps polling, so the consumer is not kept DOWN until restart
+        assertNull(consumer.getFatalError());
+        HealthCheck.Result result = consumer.getHealthCheck().call();
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertSame(expectedError, result.getError().orElse(null));
+
+        // the next successful poll reports the consumer as healthy again, as for an exception
+        consumer.run();
+        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+
+        consumer.stop();
+    }
+
+    private static final class OtherScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
+
+        private CamelContext camelContext;
+
+        @Override
+        public void onInit(Consumer consumer) {
+        }
+
+        @Override
+        public void scheduleTask(Runnable task) {
+            // the test runs the polls itself
+        }
+
+        @Override
+        public void unscheduleTask() {
+        }
+
+        @Override
+        public void startScheduler() {
+        }
+
+        @Override
+        public boolean isSchedulerStarted() {
+            return true;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
     }
 
     /**

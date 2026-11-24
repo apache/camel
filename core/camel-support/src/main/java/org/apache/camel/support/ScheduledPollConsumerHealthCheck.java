@@ -27,8 +27,8 @@ import org.apache.camel.util.URISupport;
 /**
  * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer} when reporting the health,
  * and the poll in progress when it runs longer than {@link ScheduledPollConsumer#getHealthCheckMaxPollDuration()}. It
- * is DOWN after a poll threw an {@link Error} (see {@link ScheduledPollConsumer#getFatalError()}) until the consumer is
- * restarted.
+ * is DOWN after a poll threw an {@link Error} with the default scheduler (see
+ * {@link ScheduledPollConsumer#getFatalError()}) until the consumer is restarted.
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
@@ -94,7 +94,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
             return builder.unknown().build();
         }
 
-        // a poll that threw an Error ended its scheduled task, so the consumer polls no more (or with fewer tasks when
+        // with the default scheduler, a poll that threw an Error ended its scheduled task, so the consumer polls no more (or with fewer tasks when
         // scheduler.concurrentConsumers > 1) until it is restarted, even if other polls succeed
         Throwable fatalError = consumer.getFatalError();
         if (fatalError != null) {

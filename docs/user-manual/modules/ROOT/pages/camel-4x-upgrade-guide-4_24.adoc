@@ -224,9 +224,9 @@ Split is no longer added to it either, and is logged instead. Use `throwExceptio
 
 === camel-support - a scheduled poll consumer is DOWN after an Error until the route is restarted
 
-When a poll of a scheduled poll consumer throws an `Error` (such as an `OutOfMemoryError` from the route), the
-scheduled task that ran it stops polling. Previously the health check of the consumer stayed UP in this case; now it
-flips to DOWN, with the `Error`, and stays DOWN until the route is restarted, even if other tasks
+When a poll of a scheduled poll consumer with the default scheduler throws an `Error` (such as an `OutOfMemoryError`
+from the route), the scheduled task that ran it stops polling. Previously the health check of the consumer stayed UP in
+this case; now it flips to DOWN, with the `Error`, and stays DOWN until the route is restarted, even if other tasks
 (`scheduler.concurrentConsumers`) keep polling. The restart may wait for the shutdown timeout, as the failed exchange
 may stay inflight (see xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor]).
 

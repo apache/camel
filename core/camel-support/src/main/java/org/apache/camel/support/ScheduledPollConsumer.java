@@ -158,9 +158,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
         } catch (Error e) {
             // need to log so there is visibility as otherwise the user may not see anything in logs
-            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}."
-                      + " The scheduled task has stopped polling and will not run again until the route is restarted.",
-                    this.getEndpoint(), e.getMessage(), e);
+            if (isErrorEndingTask()) {
+                LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}."
+                          + " The scheduled task has stopped polling and will not run again until the route is restarted.",
+                        this.getEndpoint(), e.getMessage(), e);
+            } else {
+                LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
+                        this.getEndpoint(), e.getMessage(), e);
+            }
             throw e;
         } catch (Throwable e) {
             LOG.error("Error occurred during running scheduled task on: {}, due: {}."
@@ -385,7 +390,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             // now first pool is done after the poll is complete
             firstPollDone = true;
 
-            if (cause instanceof Error) {
+            if (cause instanceof Error && isErrorEndingTask()) {
                 // keep the error until the consumer is stopped, so the health check stays DOWN even if other tasks
                 // (scheduler.concurrentConsumers > 1) keep polling successfully. Under the lock, so a stop and start
                 // after the generation check cannot leave the marker on the restarted consumer
@@ -396,8 +401,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         }
 
         if (cause instanceof Error error) {
-            // the JVM may be in an unknown state, so this task stops polling for good: run() logs and rethrows this,
-            // which ends the scheduled task
+            // the JVM may be in an unknown state, so run() logs and rethrows this: with the default scheduler this ends
+            // the scheduled task
             throw error;
         }
 
@@ -405,6 +410,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 successCounter.longValue(), errorCounter.longValue());
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
+    }
+
+    /**
+     * Whether an {@link Error} thrown by a run ends the scheduled task: the default scheduler runs the task on a
+     * {@link java.util.concurrent.ScheduledExecutorService}, which does not run it again after it threw, while other
+     * schedulers (such as Spring or Quartz) catch it and keep running the task.
+     */
+    private boolean isErrorEndingTask() {
+        return scheduler instanceof DefaultScheduledPollConsumerScheduler;
     }
 
     /**
@@ -691,8 +705,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     /**
      * The first {@link Error} (such as an {@link OutOfMemoryError}) a poll threw since the consumer was started, or
-     * null if none. The scheduled task that polled stops polling after an Error, so unlike {@link #getLastError()} this
-     * is not cleared by a later successful poll, only when the consumer is stopped (such as by restarting the route).
+     * null if none. With the default scheduler, the scheduled task that polled stops polling after an Error, so unlike
+     * {@link #getLastError()} this is not cleared by a later successful poll, only when the consumer is stopped (such
+     * as by restarting the route). Other schedulers (such as Spring or Quartz) keep running the task after an Error, so
+     * with them this is always null, and the Error is the {@link #getLastError()} instead.
      *
      * @since 4.24
      */
