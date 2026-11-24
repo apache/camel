@@ -351,6 +351,34 @@ class OAuthHttpSecuritySupportTest {
     }
 
     @Test
+    void stepUpChallengeIncludesHintsFromWiredValidationConfig() {
+        // End-to-end test: config is wired via create(), so validationConfig carries
+        // requiredAcr and maxAuthAgeSeconds, and authenticate() emits the full challenge.
+        OAuthTokenValidationResult stepUpResult = OAuthTokenValidationResult.invalid(
+                ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, "acr mismatch");
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, new StubFactory(stepUpResult));
+        context.getPropertiesComponent().addInitialProperty("camel.oauth.stepup.required-acr", "2");
+        context.getPropertiesComponent().addInitialProperty("camel.oauth.stepup.max-auth-age-seconds", "300");
+
+        OAuthHttpSecuritySupport security = OAuthHttpSecuritySupport.create(context, "stepup");
+        assertNotNull(security);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(OAuthHttpSecuritySupport.AUTHORIZATION, "Bearer token");
+
+        assertFalse(security.authenticate(exchange));
+        assertEquals(OAuthHttpSecuritySupport.UNAUTHORIZED,
+                exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        String wwwAuth = exchange.getMessage().getHeader(OAuthHttpSecuritySupport.WWW_AUTHENTICATE, String.class);
+        assertNotNull(wwwAuth);
+        assertTrue(wwwAuth.contains("insufficient_user_authentication"));
+        assertTrue(wwwAuth.contains("acr_values=\"2\""));
+        assertTrue(wwwAuth.contains("max_age=300"));
+        assertTrue(exchange.isRouteStop());
+    }
+
+    @Test
     void insufficientUserAuthenticationChallengeIncludesAcrValues() {
         OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
                 .setRequiredAcr(Set.of("2"))

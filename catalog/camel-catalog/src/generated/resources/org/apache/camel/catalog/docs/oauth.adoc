@@ -173,7 +173,12 @@ values to Camel, they are also treated as malformed.
 
 HTTP integrations reject missing credentials and invalid tokens with HTTP 401. Missing
 credentials receive the bare `WWW-Authenticate: Bearer` challenge, while invalid tokens receive
-the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge. When a token does not meet the configured step-up requirements (see `required-acr` and `max-auth-age-seconds`), it is rejected with HTTP 401 and a `WWW-Authenticate: Bearer error="insufficient_user_authentication"` challenge including `acr_values` and/or `max_age` hints per RFC 9470. Malformed `Authorization`
+the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge.
+When a token does not meet the configured step-up requirements (see `required-acr` and
+`max-auth-age-seconds`), it is rejected with HTTP 401 and a
+`WWW-Authenticate: Bearer error="insufficient_user_authentication"` challenge including
+`acr_values` and/or `max_age` hints per RFC 9470.
+Malformed `Authorization`
 headers are rejected with HTTP 400 and the
 RFC 6750 `WWW-Authenticate: Bearer error="invalid_request"` challenge. Token validation
 infrastructure failures are rejected with HTTP 503. For valid tokens, the validation result is

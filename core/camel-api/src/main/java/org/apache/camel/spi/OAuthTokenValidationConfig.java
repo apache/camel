@@ -481,7 +481,7 @@ public class OAuthTokenValidationConfig {
 
     /**
      * Required Authentication Context Class Reference (ACR) values for RFC 9470 step-up authentication. When set, the
-     * token {@code acr} claim must contain one of these values; otherwise the token is rejected with
+     * token {@code acr} claim must be one of these values; otherwise the token is rejected with
      * {@link org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode#INSUFFICIENT_USER_AUTHENTICATION}.
      * <p>
      * Example values: {@code "2"} (Keycloak MFA level), {@code "urn:mace:incommon:iap:silver"}.
