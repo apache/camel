@@ -2628,9 +2628,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "armored", def.getArmored(), "false");
         doWriteAttribute(jo, "integrity", def.getIntegrity(), "true");
         doWriteAttribute(jo, "provider", def.getProvider(), null);
-        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), null);
+        doWriteAttribute(jo, "algorithm", def.getAlgorithm(), "9");
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;
@@ -3057,6 +3057,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteNamespaceAwareExpressionAttributes(JsonObject jo, NamespaceAwareExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute(jo, "namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(JsonObject jo, NamespaceAwareExpression def) {
         doWriteChildList(jo, null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);

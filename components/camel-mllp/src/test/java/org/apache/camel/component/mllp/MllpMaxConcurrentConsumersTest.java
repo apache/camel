@@ -31,18 +31,21 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests related to maxConcurrentConsumers configuration
  */
 public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
-    @RegisterExtension
-    AvailablePortFinder.Port mllpClientPort1 = AvailablePortFinder.find();
+    static final String TEST_MESSAGE
+            = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
+    static final String ROUTE_ID = "mllp-max-concurrent-consumers-route";
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpClientPort2 = AvailablePortFinder.find();
+    AvailablePortFinder.Port mllpClientPort1 = AvailablePortFinder.find();
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -63,8 +66,9 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(mllpClientPort1.getPort());
 
+        // both clients connect to the same consumer
         mllpClient2.setMllpHost("localhost");
-        mllpClient2.setMllpPort(mllpClientPort2.getPort());
+        mllpClient2.setMllpPort(mllpClientPort1.getPort());
     }
 
     @SuppressWarnings("deprecation")
@@ -98,15 +102,53 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         mllpClient.connect();
-
-        String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
-        mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE, 10000);
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
-        // second connection should fail
-        assertThrows(MllpJUnitResourceException.class,
-                () -> mllpClient2.connect());
+        // the second connection is accepted by the operating system, and then reset by the consumer: no acknowledgement
+        mllpClient2.connect();
+        assertEquals("", sendAndReceiveAcknowledgement(mllpClient2), "the second connection should be reset");
+
+        // the rejected connection is not kept by the consumer
+        MllpTcpServerConsumer consumer = (MllpTcpServerConsumer) context.getRoute(ROUTE_ID).getConsumer();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getConsumerRunnables().size() == 1);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConnectionAfterTheOtherOneClosedIsServed() throws Exception {
+        addTestRoute(1);
+        result.expectedMessageCount(2);
+
+        mllpClient.connect();
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE, 10000);
+        mllpClient.close();
+
+        // once the first connection has ended, the consumer serves a new one
+        MllpTcpServerConsumer consumer = (MllpTcpServerConsumer) context.getRoute(ROUTE_ID).getConsumer();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getConsumerRunnables().isEmpty());
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            mllpClient2.connect();
+            try {
+                assertTrue(sendAndReceiveAcknowledgement(mllpClient2).contains("MSA|AA"));
+            } finally {
+                mllpClient2.close();
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+    }
+
+    /**
+     * The acknowledgement, or an empty string when the consumer closed or reset the connection.
+     */
+    static String sendAndReceiveAcknowledgement(MllpClientResource client) throws Exception {
+        try {
+            return client.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE, 10000);
+        } catch (MllpJUnitResourceException e) {
+            return "";
+        }
     }
 
     void addTestRoute(int maxConcurrentConsumers) throws Exception {
@@ -114,7 +156,7 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                String routeId = "mllp-max-concurrent-consumers-route";
+                String routeId = ROUTE_ID;
 
                 fromF("mllp://%s:%d?maxConcurrentConsumers=%d&autoAck=true&connectTimeout=100&receiveTimeout=1000",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), maxConcurrentConsumers)

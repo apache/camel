@@ -23,6 +23,11 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,14 +66,18 @@ final class SpiffeJwtSecurityProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, Engine.SPIFFE, Operation.VALIDATE_JWT, null);
         try {
             JwtSvid svid = SpiffeJwtValidator.validate(
-                    endpoint.getWorkloadApiClient(), exchange, endpoint.getConfiguration().getAudience(), false);
+                    endpoint.getWorkloadApiClient(), exchange, endpoint.getConfiguration().getAudience(), false, false);
             if (!policy.isAuthorized(svid.getSpiffeId())) {
                 throw new IllegalArgumentException("Validated SPIFFE identity is not authorized by this policy");
             }
             SpiffeJwtValidator.recordIdentity(exchange, svid, false);
+            observation.complete(Outcome.ALLOW, Failure.NONE);
         } catch (Exception e) {
+            SpiffeJwtValidator.recordFailure(observation, e);
             // Only the class of the failure is logged: the message of the SDK exception may contain the credential.
             // A failure that is not a verdict on the token, such as the Workload API being unreachable, is worth a
             // warning, since to the caller every failure is the same 401 and an outage would look like a 401 storm.

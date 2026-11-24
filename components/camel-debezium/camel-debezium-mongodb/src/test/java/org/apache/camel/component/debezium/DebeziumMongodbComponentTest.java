@@ -33,7 +33,7 @@ public class DebeziumMongodbComponentTest {
     @Test
     void testIfConnectorEndpointCreatedWithConfig() throws Exception {
         final Map<String, Object> params = new HashMap<>();
-        params.put("offsetStorageFileName", "/offset_test_file");
+        params.put("offsetStorageFileName", "target/offset_test_file");
         params.put("mongodbConnectionString", "mongodb://localhost:27017/?replicaSet=rs0");
         params.put("mongodbUser", "dbz");
         params.put("mongodbPassword", "pwd");
@@ -41,7 +41,7 @@ public class DebeziumMongodbComponentTest {
         params.put("schemaHistoryInternalFileFilename", "/db_history_file_test");
 
         final String remaining = "test_name";
-        final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
+        final String uri = "debezium?name=test_name&offsetStorageFileName=target/offset-test&"
                            + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
                            + "databaseServerName=test&schemaHistoryInternalFileFilename=/test";
 
@@ -55,7 +55,7 @@ public class DebeziumMongodbComponentTest {
             final MongoDbConnectorEmbeddedDebeziumConfiguration configuration
                     = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
-            assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
+            assertEquals("target/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("mongodb://localhost:27017/?replicaSet=rs0", configuration.getMongodbConnectionString());
             assertEquals("dbz", configuration.getMongodbUser());
             assertEquals("pwd", configuration.getMongodbPassword());
@@ -70,7 +70,7 @@ public class DebeziumMongodbComponentTest {
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
         configuration.setMongodbPassword("pwd");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setTopicPrefix("test");
 
         final String uri = "debezium:dummy";

@@ -1525,9 +1525,9 @@ Options:
                             can be separated by comma)
       --json                Output in JSON Format
       --varied              To show only the steps that have been reached with
-                            more than one body type, as the running integration
-                            has seen them (the message history records them,
-                            such as with camel run --dev)
+                            more than one body type or format, as the running
+                            integration has seen them (the message history
+                            records them, such as with camel run --dev)
       --ignore-loading-error
                             Whether to ignore route loading and compilation
                             errors (use this with care!)
@@ -5855,6 +5855,8 @@ plugin commands:
     delete  Removes a plugin
     get     Get installed plugins
     list    List all available plugins
+    update  Update the community plugins to the releases built for this Camel
+            CLI
 
 == camel plugin add --help
 Add new plugin
@@ -5946,6 +5948,31 @@ Options:
 Examples:
   camel plugin list
   camel plugin list --json
+
+== camel plugin update --help
+Update the community plugins to the releases built for this Camel CLI
+Usage: camel plugin update [-h] [--dry-run] [--plugin-config=<plugin-config>]
+                            [<name>]
+
+Options:
+  -h, --help                Display this help and exit
+      --dry-run             Report what would change, without downloading the
+                            plugins or changing anything
+      --plugin-config=<plugin-config>
+                            Path to a custom plugin configuration file or
+                            directory. Only applies to the plugin subcommands;
+                            for plugin commands themselves (e.g. 'camel
+                            kubernetes'), set CAMEL_CLI_PLUGIN_CONFIG instead.
+  <name>                    The plugin to update (default: all the plugins)
+
+Examples:
+  camel plugin update
+  camel plugin update forage
+  camel plugin update --dry-run
+
+Only a community plugin whose release camel plugin add selected is changed.
+A plugin added with --version or --gav, a plugin of the Apache Camel project,
+and a plugin added before the CLI selected releases are only reported.
 
 == camel ps --help
 List running Camel integrations

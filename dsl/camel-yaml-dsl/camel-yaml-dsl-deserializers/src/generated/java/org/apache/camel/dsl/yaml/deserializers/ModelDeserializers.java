@@ -11293,10 +11293,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "algorithm", type = "number", description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting.", displayName = "Algorithm"),
+                    @YamlProperty(name = "algorithm", type = "number", defaultValue = "9", description = "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.", displayName = "Algorithm"),
                     @YamlProperty(name = "armored", type = "boolean", defaultValue = "false", description = "This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.", displayName = "Armored"),
                     @YamlProperty(name = "compressionAlgorithm", type = "number", description = "Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags. Only relevant for encrypting.", displayName = "Compression Algorithm"),
-                    @YamlProperty(name = "hashAlgorithm", type = "number", description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing.", displayName = "Hash Algorithm"),
+                    @YamlProperty(name = "hashAlgorithm", type = "number", defaultValue = "8", description = "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.", displayName = "Hash Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "integrity", type = "boolean", defaultValue = "true", description = "Adds an integrity check/sign into the encryption file.", displayName = "Integrity"),
                     @YamlProperty(name = "keyFileName", type = "string", description = "Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).", displayName = "Key File Name"),
@@ -21344,6 +21344,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default), w - wrapping the extracted token in its ancestor context, u - unwrapping the extracted token to its child content, t - extracting the text content of the specified element.", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespaceMappings", type = "string", description = "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.", displayName = "Namespace Mappings"),
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
@@ -21394,6 +21395,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespaceMappings": {
+                    String val = asText(node);
+                    target.setNamespaceMappings(val);
                     break;
                 }
                 case "namespacesRef": {
@@ -21454,6 +21460,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "logNamespaces", type = "boolean", defaultValue = "false", description = "Whether to log namespaces which can assist during troubleshooting.", displayName = "Log Namespaces"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespaceMappings", type = "string", description = "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.", displayName = "Namespace Mappings"),
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "objectModel", type = "string", description = "The XPath object model to use.", displayName = "Object Model"),
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.", displayName = "Pre Compile"),
@@ -21514,6 +21521,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespaceMappings": {
+                    String val = asText(node);
+                    target.setNamespaceMappings(val);
                     break;
                 }
                 case "namespacesRef": {
@@ -21597,6 +21609,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespaceMappings", type = "string", description = "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.", displayName = "Namespace Mappings"),
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
@@ -21642,6 +21655,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespaceMappings": {
+                    String val = asText(node);
+                    target.setNamespaceMappings(val);
                     break;
                 }
                 case "namespacesRef": {

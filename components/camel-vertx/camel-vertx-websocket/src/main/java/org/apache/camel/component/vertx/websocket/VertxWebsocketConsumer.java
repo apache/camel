@@ -18,6 +18,8 @@ package org.apache.camel.component.vertx.websocket;
 
 import java.util.Map;
 
+import io.vertx.core.Context;
+import io.vertx.core.Promise;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
@@ -124,22 +126,49 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     protected void processExchange(Exchange exchange, RoutingContext routingContext) {
-        routingContext.vertx().executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
-                .onComplete(result -> {
-                    try {
-                        if (result.failed()) {
-                            Throwable cause = result.cause();
-                            getExceptionHandler().handleException(cause);
-                            routingContext.fail(cause);
-                        }
-                    } finally {
-                        doneUoW(exchange);
-                        releaseExchange(exchange, false);
+        if (getEndpoint().isSynchronous()) {
+            // synchronous path: run on worker, block until done
+            routingContext.vertx().executeBlocking(() -> {
+                createUoW(exchange);
+                getProcessor().process(exchange);
+                return null;
+            }, false).onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                        routingContext.fail(cause);
                     }
-                });
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        } else {
+            // async path: Promise + runOnContext
+            Context context = routingContext.vertx().getOrCreateContext();
+            Promise<Void> done = Promise.promise();
+            try {
+                routingContext.vertx().executeBlocking(() -> {
+                    createUoW(exchange);
+                    getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+                    return null;
+                }, false).onFailure(done::tryFail);
+            } catch (Exception e) {
+                done.tryFail(e);
+            }
+            done.future().onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                        routingContext.fail(cause);
+                    }
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        }
     }
 }

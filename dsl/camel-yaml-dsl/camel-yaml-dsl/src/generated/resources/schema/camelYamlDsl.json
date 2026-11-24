@@ -10327,7 +10327,8 @@
           "algorithm" : {
             "type" : "number",
             "title" : "Algorithm",
-            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting."
+            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.",
+            "default" : 9
           },
           "armored" : {
             "type" : "boolean",
@@ -10343,7 +10344,8 @@
           "hashAlgorithm" : {
             "type" : "number",
             "title" : "Hash Algorithm",
-            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing."
+            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.",
+            "default" : 8
           },
           "id" : {
             "type" : "string",
@@ -13235,6 +13237,11 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
+            },
             "namespacesRef" : {
               "type" : "string",
               "title" : "Namespaces Ref",
@@ -13308,6 +13315,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
             },
             "namespacesRef" : {
               "type" : "string",
@@ -13401,6 +13413,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
             },
             "namespacesRef" : {
               "type" : "string",

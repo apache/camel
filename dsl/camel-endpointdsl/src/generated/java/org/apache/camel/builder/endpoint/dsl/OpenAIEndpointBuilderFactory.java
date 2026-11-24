@@ -1373,13 +1373,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1399,13 +1404,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1870,8 +1880,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1887,8 +1898,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -2303,8 +2315,10 @@ public interface OpenAIEndpointBuilderFactory {
          * Client Credentials grant. When set, the token is acquired from the
          * configured identity provider and used instead of apiKey. Requires
          * camel-oauth on the classpath. The profile properties are resolved
-         * from camel.oauth..client-id, camel.oauth..client-secret, and
-         * camel.oauth..token-endpoint.
+         * from camel.oauth.myProfile.client-id,
+         * camel.oauth.myProfile.client-secret, and
+         * camel.oauth.myProfile.token-endpoint, where myProfile is the profile
+         * name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3985,13 +3999,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4011,13 +4030,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4482,8 +4506,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -4499,8 +4524,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -4835,8 +4861,10 @@ public interface OpenAIEndpointBuilderFactory {
          * Client Credentials grant. When set, the token is acquired from the
          * configured identity provider and used instead of apiKey. Requires
          * camel-oauth on the classpath. The profile properties are resolved
-         * from camel.oauth..client-id, camel.oauth..client-secret, and
-         * camel.oauth..token-endpoint.
+         * from camel.oauth.myProfile.client-id,
+         * camel.oauth.myProfile.client-secret, and
+         * camel.oauth.myProfile.token-endpoint, where myProfile is the profile
+         * name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6446,13 +6474,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -6472,13 +6505,18 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
-         * using prefix notation:
-         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
-         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
-         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * using prefix notation, where myServer stands for the name of the
+         * server: mcpServer.myServer.transportType=stdio|sse|streamableHttp
+         * (sse is deprecated), mcpServer.myServer.command=npx (stdio),
+         * mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated),
+         * mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp,
+         * the URL of the endpoint of the server, path included, such as
+         * http://localhost:8080/sse for sse),
+         * mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth), mcpServer.myServer.toolNames=tool1,tool2
+         * (optional comma-separated include list to restrict which tools are
+         * registered from this server). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -6943,8 +6981,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -6960,8 +6999,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Strip ... blocks from model responses (used by reasoning models like
-         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * Strip the think blocks (from the opening to the closing think tag)
+         * from model responses (used by reasoning models like Qwen3,
+         * DeepSeek-R1). The thinking content is stored in the
          * CamelOpenAIThinkingContent header.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -7296,8 +7336,10 @@ public interface OpenAIEndpointBuilderFactory {
          * Client Credentials grant. When set, the token is acquired from the
          * configured identity provider and used instead of apiKey. Requires
          * camel-oauth on the classpath. The profile properties are resolved
-         * from camel.oauth..client-id, camel.oauth..client-secret, and
-         * camel.oauth..token-endpoint.
+         * from camel.oauth.myProfile.client-id,
+         * camel.oauth.myProfile.client-secret, and
+         * camel.oauth.myProfile.token-endpoint, where myProfile is the profile
+         * name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -7876,7 +7918,8 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIJsonSchemaStrict";
         }
         /**
-         * Whether to strip ... blocks from the response body.
+         * Whether to strip the think blocks (from the opening to the closing
+         * think tag) from the response body.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -7903,7 +7946,8 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIMediaType";
         }
         /**
-         * The thinking content extracted from ... blocks in the model response.
+         * The thinking content extracted from the think blocks (from the
+         * opening to the closing think tag) in the model response.
          * 
          * The option is a: {@code String} type.
          * 

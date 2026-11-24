@@ -75,6 +75,12 @@
             <artifactId>debezium-storage-file</artifactId>
             <version>${debezium-version}</version>
         </dependency>
+        <!-- the offset stores of Kafka (file and topic) work through its OffsetStoreProvider (Kafka 4.x) -->
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-storage-kafka</artifactId>
+            <version>${debezium-version}</version>
+        </dependency>
         <dependency>
             <groupId>at.yawk.lz4</groupId>
             <artifactId>lz4-java</artifactId>

@@ -44,6 +44,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,8 +96,9 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
         assertTrue(view.getLeader().isEmpty());
         assertFalse(services.get(leader).isLeader(NS));
         assertNull(recorders.get(leader).getCurrentLeader());
-        // the lease no longer names the pod (which is still ready), so the other pod takes over
-        assertNull(getHolder());
+        // the lease no longer names the pod (which is still ready), so the other pod takes over (the other pod may
+        // have taken the lease already, so the lease is not expected to be empty here)
+        assertNotEquals(leader, getHolder());
         recorders.get(other).waitForLeader(other::equals, 3L * LEASE_TIME_MILLIS, TimeUnit.MILLISECONDS);
         assertTrue(services.get(other).isLeader(NS));
         assertEquals(other, getHolder());
@@ -214,7 +216,8 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
         service.stop();
         long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-        assertTrue(millis < RENEW_DEADLINE_MILLIS / 2, "The stop of " + GROUPS.size() + " groups took " + millis + " ms");
+        // a release that is tried waits until the renew deadline, so the stop would take at least that long
+        assertTrue(millis < RENEW_DEADLINE_MILLIS, "The stop of " + GROUPS.size() + " groups took " + millis + " ms");
         for (String group : GROUPS) {
             assertTrue(service.getView(group).isStopped());
             assertEquals("mypod1", getHolder(type, simulators, group));
@@ -294,8 +297,7 @@ class KubernetesClusterViewStopTest extends CamelTestSupport {
             @Override
             protected KubernetesConfiguration setConfigDefaults(
                     KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
-                // a client for each view, as when the views create their clients from the master URL (a client set on
-                // the configuration is shared by the views, and closed by the first view that stops)
+                // a client for each view, as when the views create their clients from the master URL
                 configuration.setKubernetesClient(server.createClient());
                 return super.setConfigDefaults(configuration, lockConfiguration);
             }

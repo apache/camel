@@ -302,9 +302,6 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
-        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
-            clientBuilder.setConnectionManagerShared(true);
-        }
 
         if (!useSystemProperties) {
             // configure http proxy from camelContext
@@ -350,6 +347,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(clientBuilder);
+        }
+
+        // Apply the shared-manager flag after all configurers have run so that the endpoint's decision
+        // is final.  An OAuth2ClientConfigurer sets connManagerShared=true before building the token
+        // client, then resets it to false so the endpoint's own client is not affected by that
+        // override.  Setting the flag here, after the configurer loop, ensures the endpoint always
+        // wins: if the endpoint uses the component's shared connection manager, its client will not
+        // own it; if it owns its own manager, it will close it on doStop().
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
         }
 
         if (httpActivityListener != null) {

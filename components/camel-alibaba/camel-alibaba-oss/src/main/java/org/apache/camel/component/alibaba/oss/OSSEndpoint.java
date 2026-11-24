@@ -83,7 +83,6 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The region ID of Object Storage Service, for example cn-hangzhou. The SDK uses it to sign"
                             + " requests, and to build the endpoint when the endpoint option is not set.",
               displayName = "Service region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of Object Storage Service, for example oss-cn-hangzhou.aliyuncs.com. If not set, the"
@@ -101,27 +100,24 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
                             + " the serviceKeys option is used.",
               displayName = "API access key (AK)", security = "secret",
               label = "security")
-    @Metadata(required = true)
     private String accessKey;
 
     @UriParam(description = "The AccessKey secret of the AccessKey pair for Object Storage Service. If not set, the secretKey"
                             + " of the serviceKeys option is used.",
               displayName = "API secret key (SK)", security = "secret",
               label = "security")
-    @Metadata(required = true)
     private String secretKey;
 
     @UriParam(description = "The name of the object for the producer, or of the destination object for copyObject. The"
                             + " CamelAlibabaOssObjectName exchange property replaces this option, and a header of the same name"
                             + " replaces both.",
-              displayName = "Object Name")
+              displayName = "Object Name", label = "producer")
     private String objectName;
 
     @UriParam(description = "The prefix of the names of the objects to list, for the consumer and for listObjects. The"
                             + " CamelAlibabaOssPrefix exchange property replaces this option for the producer, and a header of"
                             + " the same name replaces both.",
-              displayName = "Prefix",
-              label = "consumer")
+              displayName = "Prefix")
     private String prefix;
 
     @UriParam(description = "The maximum number of objects that the producer returns for listObjects, or all of them if no"
@@ -129,7 +125,7 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
                             + " CamelAlibabaOssMaxKeys exchange property replaces this option, and a header of the same name"
                             + " replaces both.",
               displayName = "Max Keys",
-              label = "consumer,producer")
+              label = "producer")
     private Integer maxKeys;
 
     @UriParam(description = "Whether to delete the object from the bucket after it is processed successfully. If false, the"

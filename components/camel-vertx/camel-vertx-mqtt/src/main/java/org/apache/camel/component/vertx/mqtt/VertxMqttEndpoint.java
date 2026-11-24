@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import java.util.function.Consumer;
+
 import io.vertx.core.buffer.Buffer;
 import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.mqtt.MqttClientWillOptions;
 import org.apache.camel.Category;
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
@@ -89,7 +90,7 @@ public class VertxMqttEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public org.apache.camel.Consumer createConsumer(Processor processor) throws Exception {
         final VertxMqttConsumer consumer = new VertxMqttConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
@@ -102,12 +103,30 @@ public class VertxMqttEndpoint extends DefaultEndpoint implements EndpointServic
      * @return the started connection
      */
     synchronized VertxMqttConnection acquireConnection() throws Exception {
+        return acquireConnection(null);
+    }
+
+    /**
+     * Takes the connection of this endpoint, as {@link #acquireConnection()}.
+     *
+     * @param  user given the connection before it is started, when this call creates it, or else the started one: a
+     *              consumer subscribes there, so that the messages a session the broker kept sends right after the
+     *              CONNACK find their handler
+     * @return      the started connection
+     */
+    synchronized VertxMqttConnection acquireConnection(final Consumer<VertxMqttConnection> user)
+            throws Exception {
         if (connection == null) {
             final VertxMqttConnection created = new VertxMqttConnection(
                     getComponent().getVertx(), broker,
                     createClientOptions(), configuration);
+            if (user != null) {
+                user.accept(created);
+            }
             created.start();
             connection = created;
+        } else if (user != null) {
+            user.accept(connection);
         }
         connectionUsers++;
         return connection;
@@ -115,12 +134,15 @@ public class VertxMqttEndpoint extends DefaultEndpoint implements EndpointServic
 
     /**
      * Gives back the connection taken with {@link #acquireConnection()}, stopping it with its last user.
+     *
+     * @return whether another user still holds the connection, which then keeps running
      */
-    synchronized void releaseConnection() {
+    synchronized boolean releaseConnection() {
         if (connectionUsers > 0 && --connectionUsers == 0 && connection != null) {
             connection.stop();
             connection = null;
         }
+        return connectionUsers > 0;
     }
 
     @Override

@@ -108,6 +108,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
             String output = printer.getOutput();
             assertTrue(output.startsWith("["), "JSON output should be array");
             assertTrue(output.contains("timer:tick"));
+            assertTrue(output.contains("Timer"), "Consumer suffix should be removed from type");
         }
     }
 

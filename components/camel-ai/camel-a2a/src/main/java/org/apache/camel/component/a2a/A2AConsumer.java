@@ -35,6 +35,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import org.apache.camel.Consumer;
@@ -107,8 +108,8 @@ public class A2AConsumer extends DefaultConsumer {
 
     private final MessageSendOperation messageSendOperation;
     private final List<Consumer> httpConsumers = new ArrayList<>();
-    private final ConcurrentHashMap<String, Future<?>> inFlightTasks = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, ScheduledFuture<?>> timeoutFutures = new ConcurrentHashMap<>();
+    // the latest run of each task on the async executor; a follow-up message on a running task starts a second run
+    private final ConcurrentHashMap<String, TaskRun> inFlightTasks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> taskOwners = new ConcurrentHashMap<>();
     private ExecutorService asyncExecutor;
     private ScheduledExecutorService asyncTimeoutScheduler;
@@ -285,17 +286,15 @@ public class A2AConsumer extends DefaultConsumer {
 
     private void cancelAllInFlight() {
         A2ATaskStore store = getEndpoint().getTaskStore();
-        inFlightTasks.forEach((taskId, future) -> {
-            if (inFlightTasks.remove(taskId, future)) {
-                future.cancel(true);
+        inFlightTasks.forEach((taskId, run) -> {
+            inFlightTasks.remove(taskId, run);
+            run.cancelTimeout();
+            if (run.end()) {
+                run.cancel();
                 store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
-                releasePermit(false);
+                releasePermit(run, false);
             }
         });
-        for (ScheduledFuture<?> timeoutFuture : timeoutFutures.values()) {
-            timeoutFuture.cancel(false);
-        }
-        timeoutFutures.clear();
     }
 
     // ---- Capacity limiting ----
@@ -317,16 +316,33 @@ public class A2AConsumer extends DefaultConsumer {
         }
     }
 
+    /**
+     * Gives the permit of a run back to the semaphore it was taken from: a run that outlives a stop and a new start of
+     * the consumer must not add a permit to the semaphore of the new start.
+     */
+    private void releasePermit(TaskRun run, boolean drain) {
+        Semaphore permits = run.permits;
+        if (permits != null) {
+            permits.release();
+            if (drain) {
+                drainPendingQueue();
+            }
+        }
+    }
+
     private void drainPendingQueue() {
-        if (pendingTaskQueue == null || pendingTaskQueue.isEmpty()) {
+        // the stop sets both fields to null
+        LinkedBlockingQueue<PendingTask> queue = pendingTaskQueue;
+        Semaphore permits = taskPermits;
+        if (queue == null || permits == null || queue.isEmpty()) {
             return;
         }
-        if (!taskPermits.tryAcquire()) {
+        if (!permits.tryAcquire()) {
             return;
         }
-        PendingTask pending = pendingTaskQueue.poll();
+        PendingTask pending = queue.poll();
         if (pending == null) {
-            taskPermits.release();
+            permits.release();
             return;
         }
         try {
@@ -388,6 +404,46 @@ public class A2AConsumer extends DefaultConsumer {
     }
 
     private record PendingTask(String taskId, String contextId, Exchange processorExchange) {
+    }
+
+    /**
+     * One run of a task on the async executor and the permit it holds. A follow-up message on a task that is still
+     * running starts a second run of the same task, which replaces the first one in {@code inFlightTasks}, so the
+     * permit belongs to the run and not to the map entry. Whoever ends the run first (its worker, its timeout, a cancel
+     * or the stop) releases the permit, exactly once, to the semaphore of the start of the consumer that gave it.
+     */
+    private static final class TaskRun {
+        private final AtomicBoolean ended = new AtomicBoolean();
+        // null when maxConcurrentTasks is 0 (no limit)
+        private final Semaphore permits;
+        private volatile Future<?> future;
+        private volatile ScheduledFuture<?> timeout;
+
+        TaskRun(Semaphore permits) {
+            this.permits = permits;
+        }
+
+        /**
+         * @return true for the one caller that ends the run, which then releases its permit
+         */
+        boolean end() {
+            return ended.compareAndSet(false, true);
+        }
+
+        void cancelTimeout() {
+            ScheduledFuture<?> t = timeout;
+            if (t != null) {
+                t.cancel(false);
+            }
+        }
+
+        void cancel() {
+            Future<?> f = future;
+            if (f != null) {
+                f.cancel(true);
+            }
+            cancelTimeout();
+        }
     }
 
     private void registerRoute(
@@ -1268,11 +1324,11 @@ public class A2AConsumer extends DefaultConsumer {
                 releasePermit();
                 throw e;
             }
-        } else if (pendingTaskQueue != null
-                && pendingTaskQueue.offer(new PendingTask(taskId, contextId, processorExchange))) {
-            store.put(taskId, submittedTask);
+        } else if (queueTask(store, taskId, contextId, processorExchange, submittedTask)) {
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(buildStatusEvent(submittedTask)));
-            LOG.debug("Task {} queued (queue size: {})", taskId, pendingTaskQueue.size());
+            LOG.debug("Task {} queued", taskId);
+            // a task that ended while this request was queueing found the queue empty and did not start this one
+            drainPendingQueue();
         } else {
             throw new ServerBusyException(
                     "Agent at capacity: "
@@ -1286,12 +1342,49 @@ public class A2AConsumer extends DefaultConsumer {
         return response;
     }
 
+    /**
+     * Stores the task as SUBMITTED and queues it. The task is stored first: once it is queued, a task that ends on
+     * another thread can start it at once, and a SUBMITTED stored after its run would stay for good. A full queue is
+     * refused before the store is touched (a put of a new task can evict a terminal task once maxStoredTasks is
+     * reached); only when another request takes the last place in between is what was in the store put back.
+     *
+     * @return false if the queue is full (the store is then as before)
+     */
+    private boolean queueTask(
+            A2ATaskStore store, String taskId, String contextId, Exchange processorExchange, Task submittedTask) {
+        LinkedBlockingQueue<PendingTask> queue = pendingTaskQueue;
+        if (queue == null || queue.remainingCapacity() == 0) {
+            return false;
+        }
+        Task previous = store.get(taskId);
+        store.put(taskId, submittedTask);
+        if (queue.offer(new PendingTask(taskId, contextId, processorExchange))) {
+            return true;
+        }
+        if (previous == null) {
+            store.delete(taskId);
+        } else {
+            store.put(taskId, previous);
+        }
+        return false;
+    }
+
+    private static boolean isCanceled(Task task) {
+        return task != null && task.status() != null && task.status().state() == TaskState.CANCELED;
+    }
+
     private void submitAsyncTask(String taskId, String contextId, Exchange processorExchange) {
         A2ATaskStore store = getEndpoint().getTaskStore();
 
+        TaskRun run = new TaskRun(taskPermits);
         FutureTask<Void> future = new FutureTask<>(() -> {
             try {
                 Task workingTask = store.get(taskId);
+                if (isCanceled(workingTask)) {
+                    // canceled before this run started, for example while the drain of the queue held it
+                    LOG.debug("Not running canceled task {}", taskId);
+                    return null;
+                }
                 if (workingTask != null) {
                     store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.WORKING));
                 }
@@ -1315,43 +1408,53 @@ public class A2AConsumer extends DefaultConsumer {
                 LOG.error("Async task processing failed for taskId={}", taskId, e);
                 store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
             } finally {
-                boolean weOwnPermit = inFlightTasks.remove(taskId) != null;
-                ScheduledFuture<?> timeoutFuture = timeoutFutures.remove(taskId);
-                if (timeoutFuture != null) {
-                    timeoutFuture.cancel(false);
-                }
-                if (weOwnPermit) {
-                    releasePermit();
-                }
+                endRun(taskId, run);
             }
             return null;
         });
-        inFlightTasks.put(taskId, future);
-        ScheduledFuture<?> timeoutFuture = null;
+        submitRun(taskId, run, future, () -> {
+            store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
+            LOG.warn("Async task timed out after {}ms for taskId={}",
+                    getEndpoint().getConfiguration().getAsyncTimeout(), taskId);
+        });
+    }
+
+    /**
+     * Registers the run, schedules its timeout and hands it to the async executor. The timeout ends the run (and
+     * releases its permit) only when the worker has not ended it yet.
+     */
+    private void submitRun(String taskId, TaskRun run, FutureTask<Void> future, Runnable onTimeout) {
+        run.future = future;
+        inFlightTasks.put(taskId, run);
         try {
             long asyncTimeout = getEndpoint().getConfiguration().getAsyncTimeout();
             if (asyncTimeout > 0) {
-                timeoutFuture = asyncTimeoutScheduler.schedule(() -> {
-                    timeoutFutures.remove(taskId);
-                    Future<?> f = inFlightTasks.remove(taskId);
-                    if (f != null && !f.isDone()) {
-                        f.cancel(true);
-                        store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
-                        releasePermit();
-                        LOG.warn("Async task timed out after {}ms for taskId={}", asyncTimeout, taskId);
+                run.timeout = asyncTimeoutScheduler.schedule(() -> {
+                    if (run.end()) {
+                        inFlightTasks.remove(taskId, run);
+                        future.cancel(true);
+                        onTimeout.run();
+                        releasePermit(run, true);
                     }
                 }, asyncTimeout, TimeUnit.MILLISECONDS);
-                timeoutFutures.put(taskId, timeoutFuture);
             }
             asyncExecutor.execute(future);
         } catch (RuntimeException e) {
-            inFlightTasks.remove(taskId, future);
-            future.cancel(true);
-            if (timeoutFuture != null) {
-                timeoutFutures.remove(taskId, timeoutFuture);
-                timeoutFuture.cancel(false);
-            }
+            inFlightTasks.remove(taskId, run);
+            run.cancel();
             throw e;
+        }
+    }
+
+    /**
+     * The worker of the run is done: releases the permit unless the timeout, a cancel or the stop already ended the
+     * run.
+     */
+    private void endRun(String taskId, TaskRun run) {
+        inFlightTasks.remove(taskId, run);
+        run.cancelTimeout();
+        if (run.end()) {
+            releasePermit(run, true);
         }
     }
 
@@ -1467,14 +1570,10 @@ public class A2AConsumer extends DefaultConsumer {
         if (task == null) {
             throw new TaskNotFoundException("Task not found: " + taskId);
         }
-        Future<?> inFlight = inFlightTasks.remove(taskId);
-        if (inFlight != null) {
-            inFlight.cancel(true);
-            ScheduledFuture<?> timeoutFuture = timeoutFutures.remove(taskId);
-            if (timeoutFuture != null) {
-                timeoutFuture.cancel(false);
-            }
-            releasePermit();
+        TaskRun inFlight = inFlightTasks.remove(taskId);
+        if (inFlight != null && inFlight.end()) {
+            inFlight.cancel();
+            releasePermit(inFlight, true);
         }
         if (pendingTaskQueue != null) {
             pendingTaskQueue.removeIf(pending -> taskId.equals(pending.taskId()));
@@ -1497,8 +1596,13 @@ public class A2AConsumer extends DefaultConsumer {
         processorExchange.getMessage().setHeader(A2AConstants.STREAM_EMITTER, emitter);
 
         A2ATaskStore store = getEndpoint().getTaskStore();
+        TaskRun run = new TaskRun(taskPermits);
         FutureTask<Void> future = new FutureTask<>(() -> {
             try {
+                if (isCanceled(store.get(taskId))) {
+                    LOG.debug("Not running canceled streaming task {}", taskId);
+                    return null;
+                }
                 invokeExtensionHandlersBeforeRoute(processorExchange);
                 getProcessor().process(processorExchange);
                 if (processorExchange.getException() != null) {
@@ -1520,45 +1624,16 @@ public class A2AConsumer extends DefaultConsumer {
                 store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
             } finally {
                 emitter.close();
-                boolean weOwnPermit = inFlightTasks.remove(taskId) != null;
-                ScheduledFuture<?> timeoutFuture = timeoutFutures.remove(taskId);
-                if (timeoutFuture != null) {
-                    timeoutFuture.cancel(false);
-                }
-                if (weOwnPermit) {
-                    releasePermit();
-                }
+                endRun(taskId, run);
             }
             return null;
         });
-        inFlightTasks.put(taskId, future);
-        ScheduledFuture<?> timeoutFuture = null;
-        try {
-            long asyncTimeout = getEndpoint().getConfiguration().getAsyncTimeout();
-            if (asyncTimeout > 0) {
-                timeoutFuture = asyncTimeoutScheduler.schedule(() -> {
-                    timeoutFutures.remove(taskId);
-                    Future<?> f = inFlightTasks.remove(taskId);
-                    if (f != null && !f.isDone()) {
-                        f.cancel(true);
-                        store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
-                        emitter.close();
-                        releasePermit();
-                        LOG.warn("Streaming task timed out after {}ms for taskId={}", asyncTimeout, taskId);
-                    }
-                }, asyncTimeout, TimeUnit.MILLISECONDS);
-                timeoutFutures.put(taskId, timeoutFuture);
-            }
-            asyncExecutor.execute(future);
-        } catch (RuntimeException e) {
-            inFlightTasks.remove(taskId, future);
-            future.cancel(true);
-            if (timeoutFuture != null) {
-                timeoutFutures.remove(taskId, timeoutFuture);
-                timeoutFuture.cancel(false);
-            }
-            throw e;
-        }
+        submitRun(taskId, run, future, () -> {
+            store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
+            emitter.close();
+            LOG.warn("Streaming task timed out after {}ms for taskId={}",
+                    getEndpoint().getConfiguration().getAsyncTimeout(), taskId);
+        });
     }
 
     private ListTasksResponse processListTasks(TaskListRequest request, Exchange exchange) {
@@ -1819,14 +1894,8 @@ public class A2AConsumer extends DefaultConsumer {
             return;
         }
         A2ATaskStore store = getEndpoint().getTaskStore();
-        Future<?> future = inFlightTasks.remove(taskId);
-        if (future != null) {
-            future.cancel(true);
-        }
-        ScheduledFuture<?> timeoutFuture = timeoutFutures.remove(taskId);
-        if (timeoutFuture != null) {
-            timeoutFuture.cancel(false);
-        }
+        // a run whose submission failed is removed by submitRun; a run in inFlightTasks belongs to another message of
+        // the same task
         if (subscriber != null) {
             store.removeSubscriber(taskId, subscriber);
         }

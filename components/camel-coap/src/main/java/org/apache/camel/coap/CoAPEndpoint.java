@@ -560,6 +560,13 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
 
     private void configureIdentity(DtlsConnectorConfig.Builder builder) throws GeneralSecurityException, IOException {
         KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
+        if (keyManagers.getKeyManager() != null) {
+            // DTLS reads the private key and certificate chain from the key store, so an existing key manager
+            // cannot be used (coap+tcp uses the SSLContext of the sslContextParameters, which supports it)
+            throw new IllegalArgumentException(
+                    "A KeyManager set on the key managers of sslContextParameters is not supported with DTLS (coaps):"
+                                               + " configure a keyStore instead");
+        }
         KeyStore keyStore = keyManagers.getKeyStore().createKeyStore();
 
         // Use the configured alias or fall back to the first alias in

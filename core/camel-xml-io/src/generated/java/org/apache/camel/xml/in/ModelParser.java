@@ -2420,6 +2420,7 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends NamespaceAwareExpression> AttributeHandler<T> namespaceAwareExpressionAttributeHandler() {
         return (def, key, val) -> switch (key) {
+            case "namespaceMappings": def.setNamespaceMappings(val); yield true;
             case "namespacesRef": def.setNamespacesRef(val); yield true;
             default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
         };

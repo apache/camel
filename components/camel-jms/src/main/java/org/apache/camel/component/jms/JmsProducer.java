@@ -83,6 +83,11 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (started.get()) {
                     return;
                 }
+                if (!isRunAllowed()) {
+                    // this request passed the check in process() before the producer was stopped: do not create a reply
+                    // manager that nothing would stop (the lock is the one of the producer's start and stop)
+                    throw new RejectedExecutionException("Producer is not running: " + this);
+                }
 
                 // must use the classloader from the application context when creating reply manager,
                 // as it should inherit the classloader from app context and not the current which may be

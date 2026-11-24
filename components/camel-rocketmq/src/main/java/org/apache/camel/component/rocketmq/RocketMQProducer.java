@@ -145,6 +145,11 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                 if (started.get()) {
                     return;
                 }
+                if (!isRunAllowed()) {
+                    // this request passed the check in process() before the producer was stopped: do not create a reply
+                    // manager that nothing would stop (the lock is the one of the producer's start and stop)
+                    throw new RejectedExecutionException("Producer is not running: " + this);
+                }
                 LOG.debug("Starting reply manager");
                 ClassLoader current = Thread.currentThread().getContextClassLoader();
                 ClassLoader ac = getEndpoint().getCamelContext().getApplicationContextClassLoader();
@@ -187,7 +192,11 @@ public class RocketMQProducer extends DefaultAsyncProducer {
         }
     }
 
-    private ReplyManager createReplyManager() {
+    /**
+     * Creates and starts the reply manager of this producer (protected so that tests can replace it, as in
+     * JmsProducer).
+     */
+    protected ReplyManager createReplyManager() {
         RocketMQReplyManagerSupport replyManager = new RocketMQReplyManagerSupport(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());
         String name = "RocketMQReplyManagerTimeoutChecker[" + getEndpoint().getTopicName() + "]";

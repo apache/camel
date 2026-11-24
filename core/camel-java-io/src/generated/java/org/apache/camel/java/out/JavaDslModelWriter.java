@@ -3260,9 +3260,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "armored", def.getArmored(), "false");
         doWriteAttribute(sb, "integrity", def.getIntegrity(), "true");
         doWriteAttribute(sb, "provider", def.getProvider(), null);
-        doWriteAttribute(sb, "algorithm", def.getAlgorithm(), null);
+        doWriteAttribute(sb, "algorithm", def.getAlgorithm(), "9");
         doWriteAttribute(sb, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute(sb, "hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute(sb, "hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute(sb, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute(sb, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
     }
@@ -3598,6 +3598,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteNamespaceAwareExpressionAttributes(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute(sb, "namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteChildList(sb, "namespace", def.getNamespace(), this::doWritePropertyDefinition);

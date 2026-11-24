@@ -47,8 +47,10 @@
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <!-- the tests are short and start many CamelContexts: the C1 compiler only and the serial GC cost far less CPU
              than the defaults (about 30% less in total), which matters as the CI machine runs other modules at the
-             same time -->
-        <camel.surefire.fork.additional-vmargs>-XX:TieredStopAtLevel=1 -XX:+UseSerialGC</camel.surefire.fork.additional-vmargs>
+             same time. With the C1 compiler only the JVM reserves a code cache of 48m instead of 240m, which the
+             reused forks can fill ("CodeCache is full", then "Out of space in CodeCache for method handle intrinsic"
+             and a crashed fork), so the default size is set explicitly -->
+        <camel.surefire.fork.additional-vmargs>-XX:TieredStopAtLevel=1 -XX:ReservedCodeCacheSize=240m -XX:+UseSerialGC</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>

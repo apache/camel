@@ -270,7 +270,12 @@ public class RuntimeTools {
           description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
                         + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
                         + " bodyKinds: null, payload, data or collection. More than one kind needs attention: a step that"
-                        + " writes fails for data, one that reads fields fails for a payload. The routes tool counts them"
+                        + " writes fails for data, one that reads fields fails for a payload. bodyFormats: the format of"
+                        + " the payload from its Content-Type (json, xml, csv, yaml, text, binary or the media type), to"
+                        + " compare with the format the catalog says a step takes. kameletInput: the data type a"
+                        + " Kamelet the step calls turns the body into, such as json for postgresql-sink, which writes a"
+                        + " Map as JSON; takesBody false when its transformer does not take the body. The routes tool"
+                        + " counts them"
                         + " per route (mixedBodyKinds). The checksum of each route says which version of the route the"
                         + " facts of its lines are of.")
     public JsonObject camel_runtime_route_structure(
@@ -279,7 +284,7 @@ public class RuntimeTools {
                      required = false) String routeId,
             @ToolArg(description = "Only the overall structure, without the options and expressions (default false)",
                      required = false) Boolean brief,
-            @ToolArg(description = "Only the steps reached with more than one body type (default false)",
+            @ToolArg(description = "Only the steps reached with more than one body type or format (default false)",
                      required = false) Boolean varied) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");

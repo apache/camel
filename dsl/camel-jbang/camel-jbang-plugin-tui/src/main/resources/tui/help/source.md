@@ -59,6 +59,19 @@ body depends on the path a message takes: it has a `⚠` in the gutter and its
 types in the warning color (`⚠ byte[] | LinkedHashMap (payload and data)`). The quick
 documentation of the line lists them all.
 
+A payload with a `Content-Type` has its format after its type, by the names
+of the catalog: `byte[] · json` (json, xml, csv, yaml, text, binary, or the
+media type as it is). A step reached with more than one format
+(`⚠ String · xml | csv`) is marked as one of more than one kind is.
+
+A step that calls a Kamelet also says the data type the Kamelet takes, which
+Camel turns the body into before the Kamelet sees it: `LinkedHashMap → json`
+for `postgresql-sink`, or `→ json` before a message has reached it. A Map is
+fine there: the data type transformer writes it as JSON (Kamelets come from
+event-driven integration, where the data is JSON). A body the transformer
+does not take is marked: `⚠ ArrayList → text (text-plain does not take it)`.
+The quick documentation of the line says what the Kamelet takes.
+
 The live run data and the body types are of the version of the file the
 integration runs: while it is not running as saved (see below), the numbers
 are dimmed and the body types are left out, as the lines may be others.

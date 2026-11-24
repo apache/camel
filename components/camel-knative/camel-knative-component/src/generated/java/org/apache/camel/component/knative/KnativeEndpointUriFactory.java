@@ -24,7 +24,7 @@ public class KnativeEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(20);
         props.add("apiVersion");
         props.add("bridgeErrorHandler");
         props.add("ceOverride");
@@ -41,6 +41,7 @@ public class KnativeEndpointUriFactory extends org.apache.camel.support.componen
         props.add("reply");
         props.add("replyWithCloudEvent");
         props.add("sinkBinding");
+        props.add("synchronous");
         props.add("transportOptions");
         props.add("type");
         props.add("typeId");

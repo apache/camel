@@ -17,7 +17,7 @@
 package org.apache.camel.component.debezium;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,16 +31,17 @@ public final class DebeziumTypeConverter {
     }
 
     /**
-     * Convert {@link Struct} to {@link HashMap}. A nested {@link Struct} is converted to a {@link Map} too, also inside
-     * a list (an array field) or as the value of a map (a map field). As a result of the conversion, the schema data
-     * will be lost which is expected.
+     * Convert {@link Struct} to a {@link Map}, in the order of the fields of the schema of the Struct (the order of the
+     * columns of the table), so the JSON of the Map has the columns in that order. A nested {@link Struct} is converted
+     * to a {@link Map} too, also inside a list (an array field) or as the value of a map (a map field, which keeps its
+     * order). As a result of the conversion, the schema data will be lost which is expected.
      *
      * @param  struct
      * @return        {@link Map}
      */
     @Converter
     public static Map<String, Object> toMap(final Struct struct) {
-        final HashMap<String, Object> fieldsToValues = new HashMap<>();
+        final Map<String, Object> fieldsToValues = new LinkedHashMap<>();
 
         struct.schema().fields().forEach(field -> fieldsToValues.put(field.name(), convertValue(struct.get(field))));
 
@@ -56,7 +57,7 @@ public final class DebeziumTypeConverter {
             list.forEach(element -> answer.add(convertValue(element)));
             return answer;
         } else if (value instanceof Map<?, ?> map) {
-            final Map<Object, Object> answer = new HashMap<>();
+            final Map<Object, Object> answer = new LinkedHashMap<>();
             map.forEach((key, element) -> answer.put(convertValue(key), convertValue(element)));
             return answer;
         }

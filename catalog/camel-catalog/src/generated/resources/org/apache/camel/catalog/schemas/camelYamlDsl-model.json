@@ -12979,8 +12979,9 @@
       "children" : [ {
         "name" : "algorithm",
         "type" : "number",
-        "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting.",
-        "title" : "Algorithm"
+        "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.",
+        "title" : "Algorithm",
+        "default" : "9"
       }, {
         "name" : "armored",
         "type" : "boolean",
@@ -12995,8 +12996,9 @@
       }, {
         "name" : "hashAlgorithm",
         "type" : "number",
-        "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing.",
-        "title" : "Hash Algorithm"
+        "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.",
+        "title" : "Hash Algorithm",
+        "default" : "8"
       }, {
         "name" : "id",
         "type" : "string",
@@ -16421,6 +16423,11 @@
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
       }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
+      }, {
         "name" : "namespacesRef",
         "type" : "string",
         "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
@@ -16485,6 +16492,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
       }, {
         "name" : "namespacesRef",
         "type" : "string",
@@ -16569,6 +16581,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
       }, {
         "name" : "namespacesRef",
         "type" : "string",

@@ -27,7 +27,10 @@ import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -38,6 +41,9 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
 public final class GenericFileHelper {
+
+    // the separators that split a path into segments when compacting it for a containment check
+    private static final Pattern SEPARATORS = Pattern.compile("[/\\\\]");
 
     private GenericFileHelper() {
     }
@@ -187,9 +193,10 @@ public final class GenericFileHelper {
      * Determines whether a compacted target path is contained within a compacted directory path, using a path-segment
      * boundary comparison. Unlike a bare string prefix test, a sibling directory whose name merely extends the
      * directory name (for example {@code /work} versus {@code /workspace}) is not considered contained. A trailing
-     * separator on the directory is tolerated, and an empty directory imposes no boundary.
+     * separator on the directory is tolerated, and an empty directory imposes no boundary other than that the target
+     * must not go above it.
      *
-     * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String)})
+     * @param  compactTarget the compacted target path (see {@link #compactPathForContainment(String, char)})
      * @param  compactDir    the compacted directory the target must stay within
      * @return               {@code true} if the target is the directory itself or a path inside it
      * @see                  #isWithinDirectory(String, String, char)
@@ -203,15 +210,15 @@ public final class GenericFileHelper {
      * separator. Remote file paths always use {@code /} regardless of the platform Camel runs on, so remote callers
      * must pass {@code '/'} rather than relying on {@link File#separatorChar}.
      *
-     * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String, char)})
+     * @param  compactTarget the compacted target path (see {@link #compactPathForContainment(String, char)})
      * @param  compactDir    the compacted directory the target must stay within
      * @param  separator     the path separator both paths are expressed with
      * @return               {@code true} if the target is the directory itself or a path inside it
      */
     public static boolean isWithinDirectory(String compactTarget, String compactDir, char separator) {
-        // a target that still resolves upwards after compaction escapes any root, even when no boundary is
-        // configured, so it is never contained
-        if (compactTarget.equals("..") || compactTarget.startsWith(".." + separator)) {
+        // a .. segment left after compaction goes above the start of the path, so the target escapes any root, even
+        // when no boundary is configured, and is never contained
+        if (hasParentSegment(compactTarget)) {
             return false;
         }
         if (compactDir.isEmpty()) {
@@ -225,6 +232,82 @@ public final class GenericFileHelper {
             dir = dir.substring(0, dir.length() - 1);
         }
         return compactTarget.equals(dir) || compactTarget.startsWith(dir + separator);
+    }
+
+    /**
+     * Determines whether a path on a remote server stays within a directory on that server, such as a path built from a
+     * name in the listing of the server. Both paths are compacted with
+     * {@link #compactPathForContainment(String, char)}, the way the server resolves them. A backslash separates
+     * segments, as / does: see {@link #isAmbiguousRemotePath(String)} for a path that is used without replacing its
+     * backslashes.
+     *
+     * @param  target    the path, not compacted
+     * @param  directory the directory the path must stay within, not compacted, or empty or {@code null} when no
+     *                   directory is configured
+     * @return           {@code true} if the path is the directory itself or a path inside it
+     */
+    public static boolean isWithinRemoteDirectory(String target, String directory) {
+        if (target == null) {
+            return false;
+        }
+        return isWithinDirectory(
+                compactPathForContainment(target, '/'), compactPathForContainment(directory != null ? directory : "", '/'),
+                '/');
+    }
+
+    /**
+     * Whether a remote path has both a backslash and a {@code ..} segment. A backslash is a path separator to some
+     * servers (such as a server on Windows) and part of a name to others, and the FTP client compacts the directory of
+     * a stepwise operation on the file separator of the platform Camel runs on only, so where such a path goes depends
+     * on the server and that platform, unless its backslashes are replaced by / before it is used.
+     *
+     * @param  path the path
+     * @return      {@code true} if the path has both a backslash and a {@code ..} segment
+     */
+    public static boolean isAmbiguousRemotePath(String path) {
+        return path != null && path.indexOf('\\') != -1 && hasParentSegment(path);
+    }
+
+    /**
+     * Compacts a path for {@link #isWithinDirectory(String, String, char)} the way a file system or a server resolves
+     * it: segment by segment, dropping empty and {@code .} segments, and dropping a {@code ..} segment together with
+     * the segment before it. Both {@code /} and {@code \} separate segments. Unlike
+     * {@link FileUtil#compactPath(String)} no part of the path has a special meaning: a scheme such as {@code http:} or
+     * {@code file:}, or a drive such as {@code C:}, is a segment like any other, as it is to a server. A {@code ..}
+     * segment that goes above the start of the path is kept, so that the path is not contained in any directory.
+     *
+     * @param  path      the path
+     * @param  separator the separator to join the segments of the compacted path with
+     * @return           the compacted path, which starts with the separator if the path starts with {@code /} or
+     *                   {@code \}, or {@code null} if the path is {@code null}
+     */
+    public static String compactPathForContainment(String path, char separator) {
+        if (path == null) {
+            return null;
+        }
+        boolean absolute = !path.isEmpty() && (path.charAt(0) == '/' || path.charAt(0) == '\\');
+        Deque<String> segments = new ArrayDeque<>();
+        for (String segment : SEPARATORS.split(path)) {
+            if (segment.isEmpty() || ".".equals(segment)) {
+                continue;
+            }
+            if ("..".equals(segment) && !segments.isEmpty() && !"..".equals(segments.peekLast())) {
+                segments.removeLast();
+            } else {
+                segments.addLast(segment);
+            }
+        }
+        String compacted = String.join(String.valueOf(separator), segments);
+        return absolute ? separator + compacted : compacted;
+    }
+
+    private static boolean hasParentSegment(String path) {
+        for (String segment : SEPARATORS.split(path)) {
+            if ("..".equals(segment)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

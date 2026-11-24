@@ -333,6 +333,7 @@ final class StatusParser {
                         // the body types the step has been reached with, and their kinds (CAMEL-25750)
                         pi.bodyTypes = stringList(pj.get("bodyTypes"));
                         pi.bodyKinds = stringList(pj.get("bodyKinds"));
+                        pi.bodyFormats = stringList(pj.get("bodyFormats"));
 
                         Map<String, ?> ps = pj.getMap("statistics");
                         pi.statistics = ps;
@@ -874,6 +875,10 @@ final class StatusParser {
                 for (Object p : propArr) {
                     JsonObject pj = (JsonObject) p;
                     String key = pj.getString("key");
+                    if ("camel.jbang.kameletsVersion".equals(key)) {
+                        // the Kamelets the integration runs, for what they take (CAMEL-27475)
+                        info.kameletsVersion = objToString(pj.get("value"));
+                    }
                     if (key != null && !key.startsWith("camel.jbang.")) {
                         ConfigurationTab.ConfigProperty cp = new ConfigurationTab.ConfigProperty();
                         cp.key = key;

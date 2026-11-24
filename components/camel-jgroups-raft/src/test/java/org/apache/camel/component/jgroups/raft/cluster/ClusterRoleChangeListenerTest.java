@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.cluster.CamelClusterEventListener;
 import org.jgroups.protocols.raft.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,6 +66,20 @@ public class ClusterRoleChangeListenerTest {
         // It must now de-master the view without throwing.
         assertDoesNotThrow(() -> listener.roleChanged(Role.Learner));
         assertFalse(view.isMaster());
+    }
+
+    @Test
+    void roleChangeAfterTheViewStoppedIsIgnored() throws Exception {
+        AtomicInteger events = new AtomicInteger();
+        view.addEventListener((CamelClusterEventListener.Leadership) (v, leader) -> events.incrementAndGet());
+        // the view stops, while the handle of the node may still notify a role change to the view's listener
+        view.doStop();
+        int afterStop = events.get();
+
+        listener.roleChanged(Role.Leader);
+        assertFalse(view.isMaster());
+        assertFalse(view.getLeader().isPresent());
+        assertEquals(afterStop, events.get(), "A stopped view must not fire a leadership event");
     }
 
     @Test

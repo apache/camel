@@ -199,6 +199,19 @@ Starting in 4.24:
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
 
+=== camel-core - Idempotent Consumer processes an exchange that a calling route redelivers
+
+When the error handler of a calling route redelivers an exchange that failed inside an Idempotent Consumer (for
+example `to("direct:sub")` where the sub route uses `noErrorHandler`, or an exception that escapes a `doTry` block of
+the sub route), the Idempotent Consumer took the redelivered exchange for a duplicate of itself, as the message id it
+had added was still in the repository: the message was skipped (or routed on with `CamelDuplicateMessage=true` when
+`skipDuplicate=false`), the exchange completed without an error, never reached a dead letter channel, and the message
+id stayed in the repository. The redelivered exchange is now processed again. The same applies when a `doCatch` of the
+calling route sends the failed exchange to the sub route again. This applies with `eager=true`, `removeOnFailure=true`
+and `completionEager=false` (the defaults); with `completionEager=true` the message id was already removed when the
+exchange failed. An exchange that failed after the Idempotent Consumer still does not run the Idempotent Consumer
+again, and with `removeOnFailure=false` the redelivery is still a duplicate.
+
 === camel-core - throwException with an exception instance gets no suppressed exceptions
 
 A `throwException` step given an exception instance (`throwException(new MyException("..."))` in Java, or a bean with
@@ -536,17 +549,73 @@ stream caching enabled) or a reader, or with `fileExist=Append`: that upload fai
 directory. The directories that a consumer moves files into (`move`, `preMove`, `moveFailed`) are still checked each
 time.
 
-With the default `sendNoop=true`, the ftp producer no longer sends a `NOOP` before an upload when the server completed
+With the default `sendNoop=true`, the ftp and sftp producers no longer send a `NOOP` before an upload when the server completed
 an upload, a download or a `NOOP` on that connection less than a second before. A connection that the server closed
 within that second is then found by the upload, which fails, instead of by the `NOOP`, after which the producer would
 have connected again; the next upload connects again. The consumer still sends a `NOOP` before each poll, and the
-health check before each check.
+health check before each check. For sftp, the noop is now an SFTP `REALPATH` round-trip (answered by the server)
+instead of an SSH keep-alive write (fire-and-forget), so a stale session that was idle for more than a
+second is detected before the next upload. This also
+means the sftp consumer with the default `sendNoop=true` sends one `REALPATH` request per poll.
 
 The absolute paths that the SFTP server sees do not change. The FTP server sees fewer `CWD` and `PWD` commands, and its
 current directory between two uploads is the directory of the last file, not the starting directory. `FtpOperations`
 `getClient()` changes back to the starting directory before it returns the client; code that keeps the `FTPClient` (for
 example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
 must change directory itself.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch - an absolute file name is refused when the endpoint has no directory
+
+With the default `jailStartingDirectory=true`, a producer whose endpoint has no directory (for example
+`+sftp://user@host+`, which uploads into the home directory of the login) now refuses an absolute file name: a name
+starting with `/` or `\`, or with a drive such as `C:/`, `C:\` or `C:` alone, which a server on Windows takes as
+absolute (on other servers such a name was written as a relative name). The exchange fails with an
+`IllegalArgumentException` stating that the filename is jailed to the starting directory. A name such as `a:b.txt` is
+not refused.
+
+When the endpoint has a directory, an absolute name is relative to it, as before. To write files at absolute paths
+from an endpoint without a directory, set `jailStartingDirectory=false` on the endpoint. This also applies to the `scp`
+producer, which wrote a name starting with `/` relative to the home directory: use a relative name instead.
+
+=== camel-ftp - handleDirectoryParserAbsoluteResult: a recursive poll changes into a listed directory by its name
+
+With `handleDirectoryParserAbsoluteResult=true` (for a server that lists the absolute path of each entry), a recursive
+poll now changes into a listed sub directory by its name, relative to the directory that it lists, instead of the
+absolute path that the server listed, and skips a listed directory whose absolute path is not in the directory that it
+lists. The files of such a sub directory are now downloaded from that directory; before, their download could fail, as
+their path was built from the absolute path of the sub directory. A listed sub directory is matched by its name, so a
+hidden directory (whose name starts with a dot) is skipped, as with other servers. Listed files are matched as listed,
+as before.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - the starting directory check resolves a name as a server does
+
+The check that a file is in the starting directory (`jailStartingDirectory=true`, the default, for a producer, and the
+same check of a consumer) now resolves the `.` and `..` segments of a name the way a server does, and refuses a name
+with a `..` segment that goes above the start of the name, also when the endpoint has no directory or its directory is
+the root (`/`). A name that starts like a scheme or a drive, such as `http:`, `file:` or `C:`, is resolved like any
+other name. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the starting
+directory. Remove the `..` segments from such a name.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - a file name with both a backslash and a `..` segment is refused in some configurations
+
+With `jailStartingDirectory=true` (the default), a producer now refuses a file name that has both a backslash and a
+`..` segment, such as `sub\..\report.txt`, when the `separator` option is `Windows` or `Auto`, when the producer
+writes a temp file (`tempPrefix` or `tempFileName`) or a done file (`doneFileName`), or when `checksumFileAlgorithm` is
+set (with `checksumWriteFile` at its default, `true`). Where such a name goes depends on the server and on the platform
+that Camel runs on. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the
+starting directory. With the default options, the producer replaces each backslash by `/` and writes such a name as
+before. Remove the backslashes or the `..` segments from the name.
+
+The `scp` producer (camel-jsch) sends a name as given, so it refuses such a name whatever its options.
+
+=== camel-ftp, camel-mina-sftp - a stepwise recursive poll skips a listed directory whose name is not one name
+
+A recursive consumer with `stepwise=true` (the default) changes into each sub directory by its name, and back to its
+parent afterwards. It now skips a directory from the listing of the server whose name is blank, `.` or `..`, or has a
+`/` or a `\` (other than a trailing `/`), and logs it at DEBUG level, as such a name would leave the poll in another
+directory than the one it lists. A backslash is a valid character in the name of a directory on a server on Linux: to
+poll such a directory, set `stepwise=false`. With `handleDirectoryParserAbsoluteResult=true`, a backslash always
+separates names, so such a directory cannot be polled.
 
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
@@ -584,6 +653,19 @@ of as Micrometer Observations. The `gen_ai.client.operation` timer is then recor
 `MeterRegistry` rather than by the Observation's meter handler, so it has no `error` tag and no
 `gen_ai.client.operation.active` long task timer. Applications that trace through Micrometer only, or with
 `camel-micrometer-observability`, keep the Observations.
+
+=== camel-openai, camel-spring-ai-chat - the path of the mcpServer url is the endpoint of the MCP server
+
+With `transportType=streamableHttp` (camel-openai) or `transportType=sse` (camel-openai and camel-spring-ai-chat), the
+path and the query of `mcpServer.<name>.url` are now used: the Streamable HTTP requests, and the request that opens the
+SSE stream, go to that URL. The SSE messages still go to the message endpoint that the server sends. Before, the MCP SDK
+replaced the path of the URL with `/mcp` (Streamable HTTP) or `/sse` (SSE) and dropped its query, so
+`url=http://host:8080/api/mcp` sent the requests to `http://host:8080/mcp`, and an MCP server on another path could not
+be reached. A URL without a path, such as `http://host:8080`, still uses `/mcp` or `/sse`.
+
+A URL whose path is not the endpoint of the server, such as `http://host:8080/v1` for a server on `/mcp`, worked
+because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
+path. The URL must be absolute, with a scheme and a host.
 
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
@@ -854,6 +936,15 @@ The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch
 Apache MINA SSHD leaves it off by default, so a small request, such as one that reads the next part of a directory
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
+
+=== camel-mllp - maxConcurrentConsumers limits the connections again
+
+The MLLP consumer resets a new connection when `maxConcurrentConsumers` connections are already being served, as the
+option documents. Since Camel 4.18 the consumer thread pool ran such a connection on the thread that validated it
+instead, so the option had no effect. A client that opened more connections than `maxConcurrentConsumers` (default 5)
+now gets the extra ones reset. To serve more connections at the same time, set `maxConcurrentConsumers` to the number
+of connections the clients open. With virtual threads enabled and `maxConcurrentConsumers` above 1, the consumer pool
+has no limit, as before.
 
 === camel-atmosphere-websocket - events carry the query parameters of their own connection
 
@@ -1239,6 +1330,15 @@ pool bounds the requests in flight, set `synchronous=true` on the endpoint, or
 `camel.component.platform-http.synchronous=true` for all of them. A route that stays in the asynchronous mode and needs
 a bound sets one itself, for example with `throttle(n).concurrentRequestsMode().asyncDelayed()`: with `asyncDelayed`, a
 request that waits for a permit does not hold a worker thread either.
+
+=== camel-knative-http, camel-vertx-websocket - a route with an asynchronous step no longer holds a worker thread
+
+A `camel-knative-http` or `camel-vertx-websocket` consumer route with an asynchronous step, such as a `vertx-http`
+call, no longer holds a Vert.x worker thread while it waits for that step. So the size of the worker pool no
+longer limits how many messages of such a route are in flight at the same time.
+
+To keep the old behaviour, where the worker thread waits until the route is complete and the worker pool bounds
+the messages in flight, set `synchronous=true` on the endpoint.
 
 === camel-http - authMethod=Bearer and authMethod=NTLM are applied
 
@@ -2450,6 +2550,16 @@ with another element type fails. SEARCH fails on a `List` body.
 REMOVE now fails when the body is not text (a `String`, bytes or a stream) or a `Collection` of `String` IDs. Before, a
 `Map` or a number body removed the ID made of its `toString()`, which usually removed nothing.
 
+=== camel-jbang - camel run and camel export add the JDBC driver of debezium-mysql and debezium-db2
+
+The MySQL JDBC driver (`com.mysql:mysql-connector-j`, GPL) and the Db2 JDBC driver (`com.ibm.db2:jcc`, IBM
+International Program License Agreement) are not dependencies of `camel-debezium-mysql` and `camel-debezium-db2`, so a
+route with `debezium-mysql` or `debezium-db2` failed on `camel run` with a `ClassNotFoundException` unless the driver
+was added with `--dep`. `camel run` now downloads the driver in the version Camel manages, and `camel export` adds it,
+with that version, to the exported project (Camel Main, Spring Boot and Quarkus). A driver you add yourself, with
+`--dep`, `camel.jbang.dependencies` or in the project's POM, is used instead. Remove the driver from the exported
+project if its license does not suit you.
+
 === camel-jbang - camel run uses MariaDB Connector/J 4
 
 Camel is upgraded to MariaDB Connector/J 4.0 (`org.mariadb.jdbc:mariadb-java-client`), which is the version
@@ -2469,6 +2579,15 @@ changes:
 
 See the https://github.com/mariadb-corporation/mariadb-connector-j/blob/main/CHANGELOG.md[MariaDB Connector/J changelog]
 for the other changes.
+
+=== camel-jbang - camel run uses the Microsoft SQL Server JDBC driver 13
+
+`camel run` downloads the Microsoft SQL Server JDBC driver 13.6 (`com.microsoft.sqlserver:mssql-jdbc`), instead of
+12.10, for a route or application that uses it. Since 13.2, the driver reads a column of the SQL Server `vector` type
+as a vector, where 12.x read it as a JSON string. Set `vectorTypeSupport=off` in the JDBC URL to keep reading it as a
+JSON string.
+
+See the https://github.com/microsoft/mssql-jdbc/releases[mssql-jdbc release notes] for the other changes.
 
 === camel-jbang - the Camel CLI uses aesh instead of picocli
 
@@ -2595,8 +2714,9 @@ thread dumps and JMX change:
   the size of the default thread pool profile (10 threads by default).
 - A thread pool given with `timeoutExecutorService` now runs only the calls, not the timeouts. A thread pool that was
   sized to cover both can be made smaller.
-- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a `CircuitBreakerTimeout`
-  thread. Keep them non-blocking, or give that thread pool enough threads (see the Resilience4j EIP page).
+- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a thread of one more thread
+  pool of the Circuit Breaker, a cached thread pool named `CircuitBreakerFallback`, so a fallback that blocks does not
+  hold a `CircuitBreakerTimeout` thread.
 - A Circuit Breaker with `timeoutEnabled` (asynchronous or not) keeps the thread pools that Camel created for it while
   its route is stopped, and shuts them down when the route is removed or the CamelContext stops. Before, stopping the
   route shut the thread pool of the calls down, and after the route was started again, the calls through the Circuit
@@ -3434,6 +3554,13 @@ the initial state (`camel.health.initial-state`, DOWN by default) while the firs
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
 
+=== camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
+
+A `vertx-websocket` consumer with `consumeAsClient=true` used to route the received messages in parallel, on the
+threads of the Vert.x worker pool, so they could reach the route in any order. It now routes the messages of its
+WebSocket one after the other, in the order they are received. To route them in parallel as before, set the new
+option `parallelProcessing=true`.
+
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
 All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
@@ -3572,6 +3699,17 @@ was written. Meanwhile the polls consume every file of the directory, as they do
 also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file per call: the done file is now kept
 until the last file of the directory is received, where before the first received file deleted it. This applies to
 camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
+
+=== camel-file, camel-ftp, camel-sftp, camel-mina-sftp, camel-smb, camel-azure-files - with recursive=true the done file of each directory is deleted
+
+No option or default changes. With `recursive=true` and a done file with a fixed name (such as `doneFileName=ready`),
+a poll that consumes files of several directories deletes the done file of each of these directories after the last
+file of that directory, as documented. Before, it deleted only the done file of the directory of the last file of the
+poll, and the done files of the other directories stayed, so that the next files written there were consumed without
+a new done file. So a file of such a directory that failed in the poll before the last file of that directory (and was
+not moved with `moveFailed`) is now consumed again only after a new done file is written, as it already was in the
+directory of the last file of the poll. A done file is still kept while the poll leaves files of its directory for the
+next poll, and a dynamic done file name (`${file:name}.done`) is deleted for each file as before.
 
 === camel-file - poll and pollEnrich evaluate the fileName on the current message
 
@@ -3871,6 +4009,33 @@ The `debezium-mongodb` consumer no longer reads the `patch` field for an update,
 changed fields of an update are now in the new `CamelDebeziumUpdateDescription` header.
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
+
+=== camel-debezium - the folder of the offset file must exist, and the Map keeps the order of the columns
+
+With the default file offset store, a `debezium-*` endpoint now fails to start when the folder of
+`offsetStorageFileName` does not exist or cannot be written, or when the file exists and cannot be written. The error
+names the file. Before, the consumer started, every save of its position failed with only a WARN in the log, and after
+a restart everything was sent again, the snapshot included. Create the folder, or use a file in a folder that exists.
+With the file schema history (`schemaHistoryInternal=io.debezium.storage.file.history.FileSchemaHistory`), the file
+of `schemaHistoryInternalFileFilename` must be writable too; its folders may be missing, as Debezium creates them.
+
+The `Struct` to `Map` type converter now gives a `LinkedHashMap` in the order of the fields of the `Struct` (the order
+of the columns of the table), nested `Struct` values included, so the JSON of the `Map` has the columns in that order.
+Before, it was a `HashMap` with no defined order.
+
+=== camel-debezium - the route fails to start when the Debezium engine cannot start
+
+A `debezium-*` consumer now waits, when it starts, until the Debezium engine has started the connector tasks (which is
+before an initial snapshot is done), and fails to start when the engine fails meanwhile, with the error of Debezium as
+the cause: for example a database that cannot be reached or refuses the TLS connection, a MySQL server with
+`binlog_format=STATEMENT`, or a lost schema history. The route, and so the application, then fails to start (with the
+supervising route controller, the route is started again later). Before, the route started, was never ready, and the
+only sign of the failure was a WARN in the log. The start waits as long as Debezium waits for the tasks to start
+(`internal.task.management.timeout.ms`, 40 seconds by default, for each task and once more for the connector); if the
+engine has not reported back by then, the route starts as before, with a WARN in the log.
+
+A failure of the engine after it has started is still reported to the consumer exception handler (to the error handler
+of the route with `bridgeErrorHandler=true`) and turns the health check of the route `DOWN`.
 
 === camel-debezium-mysql - a signed TINYINT column is a Byte
 
@@ -4499,6 +4664,13 @@ provider is detected as before.
 * `camel transform route --format` other than `xml`, `yaml` or `java` exits with `2` (it ran the routes and printed
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
+
+=== camel-xml-jaxp - XML parse errors are no longer logged at ERROR by the type converter
+
+When a message body that is not well-formed XML is converted to a DOM `Document` (for example by `xpath`), the
+`XmlConverter` used to log the parse error at ERROR, with its stack trace, and then fail with the same
+`SAXParseException`. It now only fails with the exception, which the route can handle (`doTry`, `onException`) or
+which the error handler logs. Parser warnings and recoverable errors are logged at DEBUG.
 
 === camel-xml-io, camel-yaml-io, camel-java-io - route dumps keep options set to their default value
 
@@ -7123,6 +7295,35 @@ with the stack trace, at every poll that lists the object). Before, the poll fai
 page again, so one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got, and the next poll then reads the next page of the listing.
 
+=== camel-alibaba-oss - region, accessKey and secretKey are no longer marked as required
+
+The `region`, `accessKey` and `secretKey` options of `alibaba-oss` are no longer marked as required. To create the
+client, the Camel endpoint needs the `region` or the `endpoint` option. It takes each key of the AccessKey pair from its
+own option or from the `serviceKeys` option. It needs none of these options when the `ossClient` option is set or
+autowired. So the endpoint validation of the catalog no longer reports a URI without them as missing required options.
+The behavior of the component at runtime does not change.
+
+=== camel-alibaba-oss - objectName and maxKeys are producer options, and prefix is also a producer option
+
+The `objectName` option of the `alibaba-oss` endpoint now has the label `producer`, as only the producer uses it. In the
+Endpoint DSL, `OSSEndpointConsumerBuilder` no longer has its method. So `from(alibabaOss(...).objectName(...))` no
+longer compiles. Code compiled against an earlier version that calls it on the `alibabaOss(...)` builder must be
+recompiled. Remove the option from consumer endpoints, where it had no effect. The endpoint validation of the catalog
+now reports it in consumer-only mode.
+
+The `prefix` option no longer has the label `consumer`, as the producer uses it too for `listObjects`. The `maxKeys`
+option now has only the label `producer`, as the consumer does not use it. In the Endpoint DSL,
+`OSSEndpointProducerBuilder` now has the methods of both options. Before, it had neither, and no builder had `maxKeys`.
+The endpoint validation of the catalog no longer reports the two options in producer-only mode.
+
+The catalog and the Endpoint DSL now list six more headers, which only the producer reads. They are
+`CamelAlibabaOssOperation`, `CamelAlibabaOssObjectName`, `CamelAlibabaOssSourceBucketName`,
+`CamelAlibabaOssSourceObjectName`, `CamelAlibabaOssPrefix` and `CamelAlibabaOssMaxKeys`. `OSSHeaders` has a constant for
+each. The other nine headers now have the label `common` instead of `consumer`, as the producer sets them too for
+`getObject`.
+
+The behavior of the component at runtime does not change.
+
 === camel-alibaba-fc - invokeFunction sends a stream or a file as its bytes
 
 The `invokeFunction` operation of `alibaba-fc` now sends a stream or a file body (an `InputStream`, a `java.io.File`,
@@ -7253,6 +7454,22 @@ earlier version must be recompiled, and a subclass that overrides `initClient()`
 `ClientConfigurations` of `camel-alibaba-mns` no longer has the record components `accessKey`, `secretKey`, `region` and
 `accountEndpoint`, which no code read. Code that creates the record, or calls one of these four accessors, needs a
 change. The producer no longer needs an AccessKey pair when the `mnsClient` option is set or autowired.
+
+=== camel-alibaba-mns - operation and topicName are producer options, and waitSeconds is a consumer option
+
+The `operation` and `topicName` options of the `alibaba-mns` endpoint now have the label `producer`, as only the
+producer uses them. The `waitSeconds` option now has the label `consumer`, as only the consumer uses it. In the Endpoint
+DSL, `MNSEndpointConsumerBuilder` no longer has the methods of `operation` and `topicName`. `MNSEndpointProducerBuilder`
+no longer has the methods of `waitSeconds`. So `from(alibabaMns(...).operation(...))` and
+`to(alibabaMns(...).waitSeconds(...))` no longer compile. Code compiled against an earlier version that calls one of the
+three on the `alibabaMns(...)` builder must be recompiled.
+
+Remove `operation` and `topicName` from consumer endpoints, and `waitSeconds` from producer endpoints. They had no
+effect there. The endpoint validation of the catalog now reports `operation` and `topicName` in consumer-only mode, and
+`waitSeconds` in producer-only mode.
+
+The `CamelAlibabaMnsPriority` header now has the label `common` instead of `producer`, as the consumer sets it too. The
+behavior of the component at runtime does not change.
 
 === camel-minio - a listed object that cannot be got is skipped
 
@@ -9543,6 +9760,21 @@ Used as an expression, for example in `setBody`, `setHeader` or `setProperty`, t
 `defaultValue` of the endpoint as text (`false` unless set) and logged a `TYPE_MISMATCH` warning. String flags give
 their text as before, and number and object flags still give the `defaultValue`. Predicates are unchanged.
 
+=== camel-openfeature - deadline option now applies to file-based providers
+
+The `deadline` option (default `500` ms) is now also passed to file-based (in-process) `flagd` providers
+(`flags` and `flagsResource`), where it controls the initialization wait timeout used internally as
+`deadline * 2`. Previously it was only applied to remote gRPC connections.
+
+If you use a file-based provider and see initialization timeouts under load, raise the deadline on the
+endpoint or component (for example `deadline=5000`).
+
+If you previously relied on the `FLAGD_DEADLINE_MS` environment variable to tune the initialization wait
+for file-based providers, switch to `deadline=NNNN` on the Camel endpoint or component instead, as Camel
+now explicitly passes `deadline` to the file-based `FlagdOptions` and the environment variable no longer
+takes effect for them.
+
+
 === camel-datasonnet - a null result and a stream body
 
 An expression whose result is `null` now gives `null` instead of a `Document` without content, unless `resultType` is
@@ -9751,13 +9983,27 @@ level (the `org.apache.cxf.services` loggers). The component no longer depends o
 version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
 the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
 `camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
-moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+moves to newer releases on its own: run `camel plugin update` to select the newest matching release.
 When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
 version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
 `LATEST` as before.
 
 `--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
 registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-jbang - camel self-update updates the plugins
+
+After installing a new Camel CLI, `camel self-update` runs `camel plugin update` with it. This updates
+`~/.camel-jbang-plugins.json`: community plugins whose release `camel plugin add` selected move to the newest release
+built for the new version, when the plugin has one.
+
+A plugin may publish its release for a new Camel version some time after the Camel release. Until then,
+`camel plugin update` keeps the current release and warns, and the CLI reminds to run it again when the plugin is loaded.
+
+Plugins added with `--version` or `--gav`, the plugins of the Apache Camel project, and plugins added as `LATEST` are not
+changed. Use `camel self-update --skip-plugins` to leave the plugins as they are. `camel self-update` of Camel CLI 4.23
+and older does not update the plugins: run `camel plugin update` once after updating. See
+xref:camel-jbang-projects.adoc#_updating_plugins[Updating plugins].
 
 === camel-spring - a CamelEvent only goes to the consumers of the same name
 
@@ -11107,3 +11353,57 @@ unset, and the producer uses its `indexName` option.
 
 A route that relied on the `embeddings` index must set the `CamelPineconeIndexName` header to `embeddings`,
 or configure `indexName=embeddings` on the endpoint.
+
+=== camel-aws2-sqs - extendMessageVisibility requires a visibilityTimeout of at least 2 seconds
+
+An `aws2-sqs` endpoint with `extendMessageVisibility=true` now fails to be created when `visibilityTimeout` is below 2
+seconds. The task that extends the visibility runs every half of the visibility timeout, in whole seconds, and extends a
+message once 80% of its visibility timeout has passed. With a `visibilityTimeout` of 1 second, each extension came when
+the message was already visible again, so another consumer received it while the first one still processed it. With 0
+or a negative value, `extendMessageVisibility` was silently ignored.
+
+The consumer also logs a warning at startup when `visibilityTimeout` is below 10 seconds, as the extension then has only 1
+to 2 seconds before the message becomes visible again. Use a `visibilityTimeout` of 10 seconds or more with
+`extendMessageVisibility`.
+
+=== camel-crypto-pgp - AES-256 and SHA-256 are the default algorithms
+
+The `pgp` data format now encrypts with AES-256 (`algorithm=9`) instead of CAST5 (`algorithm=3`), and signs with the
+SHA-256 hash (`hashAlgorithm=8`) instead of SHA-1 (`hashAlgorithm=2`). CAST5 is a cipher with a 64-bit block, and SHA-1
+is no longer collision resistant; current OpenPGP implementations such as GnuPG prefer AES and the SHA-2 hashes.
+
+Decrypting and verifying are not affected, as the algorithms of a message are read from the message itself: messages
+made with CAST5 or SHA-1 are still decrypted and verified.
+
+A receiver that only supports CAST5 or SHA-1 needs the old values set on the data format that encrypts or signs, for
+example in Java with `setAlgorithm(SymmetricKeyAlgorithmTags.CAST5)` and `setHashAlgorithm(HashAlgorithmTags.SHA1)`,
+or in XML and YAML with:
+
+[source,xml]
+----
+<marshal>
+  <pgp keyFileName="pubring.gpg" keyUserid="alice@example.com" algorithm="3" hashAlgorithm="2"/>
+</marshal>
+----
+
+[source,yaml]
+----
+- marshal:
+    pgp:
+      keyFileName: pubring.gpg
+      keyUserid: alice@example.com
+      algorithm: 3
+      hashAlgorithm: 2
+----
+
+The `CamelPGPDataFormatEncryptionAlgorithm` and `CamelPGPDataFormatSignatureHashAlgorithm` headers still override
+these options for a single message.
+
+=== camel-platform-http-vertx - a header whose name is not a valid HTTP header name is no longer written to the response
+
+platform-http on the Vert.x engine (Camel Main and Camel Quarkus) maps the fields of an
+`application/x-www-form-urlencoded` request, and the request's query parameters, to message headers. When one of these
+names is not a valid HTTP header name (an RFC 9110 token, for example a name with a space, a comma or a colon), the
+response now leaves out that header and logs it at DEBUG level, instead of failing the whole response with a 500 after
+the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
+response must set it in a header with a valid name.

@@ -571,17 +571,56 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         return value;
     }
 
-    private static void jailedCheck(String answer, String baseDir) {
+    private void jailedCheck(String answer, String baseDir) {
         // check for file must be within starting directory (need to compact
-        // first as the name can be using relative paths via ../ etc)
-        String compatchAnswer = FileUtil.compactPath(answer);
-        String compatchBaseDir = FileUtil.compactPath(baseDir);
-        if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
+        // first as the name can be using relative paths via ../ etc), the way
+        // the file system or the remote server resolves the path
+        String compatchAnswer = GenericFileHelper.compactPathForContainment(answer, File.separatorChar);
+        String compatchBaseDir = GenericFileHelper.compactPathForContainment(baseDir, File.separatorChar);
+        boolean within;
+        if (endpoint.getConfiguration().needToNormalize()) {
+            within = GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir);
+        } else if (baseDir.isEmpty() && isAbsoluteName(answer)) {
+            // without a directory a remote endpoint starts in the home directory of the login, which an absolute name
+            // is not within
+            within = false;
+        } else {
+            // the path is used on a remote server, which may take a backslash in it as part of a name, unless the
+            // backslashes are replaced by / before the path is used
+            within = GenericFileHelper.isWithinRemoteDirectory(answer, baseDir)
+                    && (isBackslashNormalized() || !GenericFileHelper.isAmbiguousRemotePath(answer));
+        }
+        if (!within) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + compatchAnswer
                                                + " as the filename is jailed to the starting directory: "
                                                + compatchBaseDir);
         }
+    }
+
+    /**
+     * Whether a backslash in the name of a file to write is replaced by / before the name is used, so that it separates
+     * segments as / does. Only consulted for an endpoint whose names are not normalized for the platform Camel runs on.
+     */
+    protected boolean isBackslashNormalized() {
+        return false;
+    }
+
+    /**
+     * Whether the name starts at a root: with a / or a \, or with a drive such as C:/ or C:\ that a server on Windows
+     * takes as absolute. A name such as a:b.txt does not.
+     */
+    private static boolean isAbsoluteName(String name) {
+        if (name.isEmpty()) {
+            return false;
+        }
+        char first = name.charAt(0);
+        if (first == '/' || first == '\\') {
+            return true;
+        }
+        boolean drive = name.length() >= 2 && name.charAt(1) == ':'
+                && (first >= 'a' && first <= 'z' || first >= 'A' && first <= 'Z');
+        return drive && (name.length() == 2 || name.charAt(2) == '/' || name.charAt(2) == '\\');
     }
 
     private String evaluateName(Exchange exchange, Expression expression, Object value) {

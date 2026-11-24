@@ -27,6 +27,7 @@
         "null"
       ],
       "javaType": "java.lang.String",
+      "format": "text",
       "description": "A String, or null for a null body"
     }
   }

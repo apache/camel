@@ -501,6 +501,20 @@ class KafkaSchemaRegistryVendorTest {
     }
 
     @Test
+    void apicurioWithJsonFailsWhenJsonSchemaValidator3xIsOnTheClasspath() {
+        // Test the rejection branch directly via the injectable overload, without depending on the classpath.
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> KafkaSchemaRegistry.vendor("apicurio", "json", true));
+        assertTrue(e.getMessage().contains("schemaRegistryVendor apicurio with schemaFormat json fails at runtime"),
+                e.getMessage());
+        assertTrue(e.getMessage().contains("IncompatibleClassChangeError"), e.getMessage());
+        assertTrue(e.getMessage().contains("com.networknt:json-schema-validator"), e.getMessage());
+
+        // The happy path (json-schema-validator 1.5.x on the classpath) must not reject it.
+        assertDoesNotThrow(() -> KafkaSchemaRegistry.vendor("apicurio", "json", false));
+    }
+
+    @Test
     void unknownVendorOrFormatFails() {
         KafkaConfiguration config = new KafkaConfiguration();
         config.setSchemaRegistryVendor("custom");
@@ -536,6 +550,8 @@ class KafkaSchemaRegistryVendorTest {
         } finally {
             producer.stop();
         }
+        // The apicurio+json rejection is tested via the injectable vendor() overload in
+        // apicurioWithJsonFailsWhenJsonSchemaValidator3xIsOnTheClasspath.
     }
 
     static Stream<Arguments> artifacts() {

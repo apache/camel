@@ -18,9 +18,6 @@ package org.apache.camel.dataformat.xsdjson;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,19 +77,32 @@ class XsdJsonSecurityTest extends XsdJsonTestSupport {
     @Test
     void nestingDepthIsLimited() throws Exception {
         XsdJsonDataFormat df = dataFormat("classpath:xsdjson/shop.xsd", d -> d.setElement("tree"));
-        // the XML parser of the JDK may have a lower limit (jdk.xml.maxElementDepth) than the data format
-        String xml = "<tree xmlns=\"urn:shop\">" + "<node>".repeat(600) + "</node>".repeat(600) + "</tree>";
-        assertThatThrownBy(() -> toJson(df, xml))
+        // the XML parser of the JDK may have a lower limit (jdk.xml.maxElementDepth) than the data format,
+        // XsdJsonWoodstoxTest checks the limit of the data format in the XML to JSON direction
+        assertThat(thrownOnThread(BIG_STACK, () -> toJson(df, nestedXml(600))))
                 .satisfies(e -> assertThat(e.getMessage()).containsAnyOf("depth", "nested deeper than 512"));
 
-        Map<String, Object> tree = new LinkedHashMap<>();
-        Map<String, Object> current = tree;
-        for (int i = 0; i < 600; i++) {
-            Map<String, Object> node = new LinkedHashMap<>();
-            current.put("node", List.of(node));
-            current = node;
-        }
-        assertThatThrownBy(() -> toXml(df, tree)).hasMessageContaining("The JSON is nested deeper than 512");
+        // on a stack that holds 512 levels, the limit of the data format applies
+        assertThat(thrownOnThread(BIG_STACK, () -> toXml(df, nestedTree(512)))).isNull();
+        assertThat(thrownOnThread(BIG_STACK, () -> toXml(df, nestedTree(513))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("The JSON is nested deeper than 512 elements at /tree/node[0]/node[0]");
+    }
+
+    @Test
+    void nestingOnASmallStackIsRefused() throws Exception {
+        XsdJsonDataFormat df = dataFormat("classpath:xsdjson/shop.xsd", d -> d.setElement("tree"));
+        // load the classes first, so that the stack of the small thread is not exhausted by the class loading
+        toXml(df, nestedTree(3));
+
+        // an IllegalArgumentException that says where the stack overflowed, never a StackOverflowError
+        assertThat(thrownOnThread(SMALL_STACK, () -> toXml(df, nestedTree(512))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasCauseInstanceOf(StackOverflowError.class)
+                .hasMessageMatching(
+                        "The JSON is nested too deep for the thread stack, which overflowed after the conversion"
+                                    + " reached level \\d+"
+                                    + " \\(the data format allows 512 levels\\)");
     }
 
     @Test

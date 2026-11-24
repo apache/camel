@@ -49,6 +49,7 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.FtpConstants;
+import org.apache.camel.component.file.remote.FtpUtils;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
@@ -1143,16 +1144,21 @@ public class MinaSftpOperations
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
             }
+            if (path.isEmpty()) {
+                // the path is the current directory (such as sub/..), so stay in it
+                return;
+            }
 
             // not stepwise should change directory in one operation
             if (!endpoint.getConfiguration().isStepwise()) {
                 doChangeDirectory(path);
                 return;
             }
-            if (getCurrentDirectory().startsWith(path)) {
+            String current = getCurrentDirectory();
+            if (FtpUtils.isDirectoryOrParentOf(path, current)) {
                 // extract the path segment relative to the target path and make
                 // sure it keeps the preceding '/' for the regex op
-                String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
+                String p = current.substring(path.length() - (path.endsWith("/") ? 1 : 0));
                 if (p.isEmpty()) {
                     return;
                 }

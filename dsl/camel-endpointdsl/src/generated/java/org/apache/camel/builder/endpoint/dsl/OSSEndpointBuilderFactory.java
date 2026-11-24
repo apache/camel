@@ -60,19 +60,20 @@ public interface OSSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the object for the producer, or of the destination object
-         * for copyObject. The CamelAlibabaOssObjectName exchange property
-         * replaces this option, and a header of the same name replaces both.
+         * The prefix of the names of the objects to list, for the consumer and
+         * for listObjects. The CamelAlibabaOssPrefix exchange property replaces
+         * this option for the producer, and a header of the same name replaces
+         * both.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
-         * @param objectName the value to set
+         * @param prefix the value to set
          * @return the dsl builder
          */
-        default OSSEndpointConsumerBuilder objectName(String objectName) {
-            doSetProperty("objectName", objectName);
+        default OSSEndpointConsumerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -82,7 +83,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param region the value to set
@@ -198,23 +198,6 @@ public interface OSSEndpointBuilderFactory {
          */
         default OSSEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * The prefix of the names of the objects to list, for the consumer and
-         * for listObjects. The CamelAlibabaOssPrefix exchange property replaces
-         * this option for the producer, and a header of the same name replaces
-         * both.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param prefix the value to set
-         * @return the dsl builder
-         */
-        default OSSEndpointConsumerBuilder prefix(String prefix) {
-            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -754,7 +737,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accessKey the value to set
@@ -770,7 +752,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param secretKey the value to set
@@ -1045,19 +1026,20 @@ public interface OSSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the object for the producer, or of the destination object
-         * for copyObject. The CamelAlibabaOssObjectName exchange property
-         * replaces this option, and a header of the same name replaces both.
+         * The prefix of the names of the objects to list, for the consumer and
+         * for listObjects. The CamelAlibabaOssPrefix exchange property replaces
+         * this option for the producer, and a header of the same name replaces
+         * both.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
-         * @param objectName the value to set
+         * @param prefix the value to set
          * @return the dsl builder
          */
-        default OSSEndpointProducerBuilder objectName(String objectName) {
-            doSetProperty("objectName", objectName);
+        default OSSEndpointProducerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -1067,7 +1049,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param region the value to set
@@ -1075,6 +1056,59 @@ public interface OSSEndpointBuilderFactory {
          */
         default OSSEndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * The maximum number of objects that the producer returns for
+         * listObjects, or all of them if no value is set. Object Storage
+         * Service accepts a value of at most 1000. The CamelAlibabaOssMaxKeys
+         * exchange property replaces this option, and a header of the same name
+         * replaces both.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param maxKeys the value to set
+         * @return the dsl builder
+         */
+        default OSSEndpointProducerBuilder maxKeys(Integer maxKeys) {
+            doSetProperty("maxKeys", maxKeys);
+            return this;
+        }
+        /**
+         * The maximum number of objects that the producer returns for
+         * listObjects, or all of them if no value is set. Object Storage
+         * Service accepts a value of at most 1000. The CamelAlibabaOssMaxKeys
+         * exchange property replaces this option, and a header of the same name
+         * replaces both.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param maxKeys the value to set
+         * @return the dsl builder
+         */
+        default OSSEndpointProducerBuilder maxKeys(String maxKeys) {
+            doSetProperty("maxKeys", maxKeys);
+            return this;
+        }
+        /**
+         * The name of the object for the producer, or of the destination object
+         * for copyObject. The CamelAlibabaOssObjectName exchange property
+         * replaces this option, and a header of the same name replaces both.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default OSSEndpointProducerBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
             return this;
         }
         /**
@@ -1099,7 +1133,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accessKey the value to set
@@ -1115,7 +1148,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param secretKey the value to set
@@ -1283,19 +1315,20 @@ public interface OSSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the object for the producer, or of the destination object
-         * for copyObject. The CamelAlibabaOssObjectName exchange property
-         * replaces this option, and a header of the same name replaces both.
+         * The prefix of the names of the objects to list, for the consumer and
+         * for listObjects. The CamelAlibabaOssPrefix exchange property replaces
+         * this option for the producer, and a header of the same name replaces
+         * both.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
-         * @param objectName the value to set
+         * @param prefix the value to set
          * @return the dsl builder
          */
-        default OSSEndpointBuilder objectName(String objectName) {
-            doSetProperty("objectName", objectName);
+        default OSSEndpointBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -1305,7 +1338,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param region the value to set
@@ -1321,7 +1353,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accessKey the value to set
@@ -1337,7 +1368,6 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param secretKey the value to set
@@ -1508,6 +1538,20 @@ public interface OSSEndpointBuilderFactory {
         public static final OSSHeaderNameBuilder INSTANCE = new OSSHeaderNameBuilder();
 
         /**
+         * The operation that the producer performs. An exchange property of the
+         * same name replaces the operation option, and this header replaces
+         * both.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssOperation}.
+         */
+        public String alibabaOssOperation() {
+            return "CamelAlibabaOssOperation";
+        }
+        /**
          * The name of the bucket. The consumer sets it for a consumed object,
          * and the producer for getObject. An exchange property of the same name
          * replaces the bucketName option for the producer, and this header
@@ -1515,7 +1559,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssBucketName}.
          */
@@ -1523,11 +1567,81 @@ public interface OSSEndpointBuilderFactory {
             return "CamelAlibabaOssBucketName";
         }
         /**
+         * The name of the object, or of the destination object for copyObject.
+         * An exchange property of the same name replaces the objectName option,
+         * and this header replaces both.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssObjectName}.
+         */
+        public String alibabaOssObjectName() {
+            return "CamelAlibabaOssObjectName";
+        }
+        /**
+         * The name of the source bucket for copyObject, which requires it. If
+         * this header is not set, the producer uses an exchange property of the
+         * same name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssSourceBucketName}.
+         */
+        public String alibabaOssSourceBucketName() {
+            return "CamelAlibabaOssSourceBucketName";
+        }
+        /**
+         * The name of the source object for copyObject, which requires it. If
+         * this header is not set, the producer uses an exchange property of the
+         * same name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssSourceObjectName}.
+         */
+        public String alibabaOssSourceObjectName() {
+            return "CamelAlibabaOssSourceObjectName";
+        }
+        /**
+         * The prefix of the names of the objects that listObjects returns. An
+         * exchange property of the same name replaces the prefix option for the
+         * producer, and this header replaces both.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssPrefix}.
+         */
+        public String alibabaOssPrefix() {
+            return "CamelAlibabaOssPrefix";
+        }
+        /**
+         * The maximum number of objects that listObjects returns. An exchange
+         * property of the same name replaces the maxKeys option, and this
+         * header replaces both.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaOssMaxKeys}.
+         */
+        public String alibabaOssMaxKeys() {
+            return "CamelAlibabaOssMaxKeys";
+        }
+        /**
          * The key that the object is stored under.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssObjectKey}.
          */
@@ -1539,7 +1653,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssLastModified}.
          */
@@ -1553,7 +1667,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssETag}.
          */
@@ -1565,7 +1679,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssContentMD5}.
          */
@@ -1577,7 +1691,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssObjectType}.
          */
@@ -1589,7 +1703,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssContentLength}.
          */
@@ -1601,7 +1715,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AlibabaOssContentType}.
          */
@@ -1614,7 +1728,7 @@ public interface OSSEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code FileName}.
          */

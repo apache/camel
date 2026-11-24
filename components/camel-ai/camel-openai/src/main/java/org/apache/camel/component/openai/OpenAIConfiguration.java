@@ -64,8 +64,8 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
                             + "When set, the token is acquired from the configured identity provider and used instead of apiKey. "
                             + "Requires camel-oauth on the classpath. The profile properties are resolved from "
-                            + "camel.oauth.<profileName>.client-id, camel.oauth.<profileName>.client-secret, "
-                            + "and camel.oauth.<profileName>.token-endpoint.")
+                            + "camel.oauth.myProfile.client-id, camel.oauth.myProfile.client-secret, "
+                            + "and camel.oauth.myProfile.token-endpoint, where myProfile is the profile name.")
     private String oauthProfile;
 
     @UriParam
@@ -230,7 +230,8 @@ public class OpenAIConfiguration implements Cloneable {
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Strip <think>...</think> blocks from model responses (used by reasoning models like Qwen3, DeepSeek-R1). "
+    @Metadata(description = "Strip the think blocks (from the opening to the closing think tag) from model responses "
+                            + "(used by reasoning models like Qwen3, DeepSeek-R1). "
                             + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
     private boolean stripThinking = false;
 
@@ -262,11 +263,15 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
-                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
-                            + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
-                            + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
-                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth), "
-                            + "mcpServer.<name>.toolNames=<comma-separated> (optional include list to restrict which tools are registered from this server)")
+                            + "Define servers using prefix notation, where myServer stands for the name of the server: "
+                            + "mcpServer.myServer.transportType=stdio|sse|streamableHttp (sse is deprecated), "
+                            + "mcpServer.myServer.command=npx (stdio), "
+                            + "mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated), "
+                            + "mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp, the URL of the endpoint "
+                            + "of the server, path included, such as http://localhost:8080/sse for sse), "
+                            + "mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP auth, requires camel-oauth), "
+                            + "mcpServer.myServer.toolNames=tool1,tool2 (optional comma-separated include list to restrict "
+                            + "which tools are registered from this server)")
     private Map<String, Object> mcpServer;
 
     @UriParam(defaultValue = "50")

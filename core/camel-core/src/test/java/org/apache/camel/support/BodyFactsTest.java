@@ -72,6 +72,10 @@ public class BodyFactsTest extends ContextTestSupport {
                         .process(e -> seen.add(BodyFacts.hint(e, Need.DATA)));
                 from("direct:marshalled").marshal(new TextDataFormat())
                         .process(e -> seen.add(BodyFacts.describe(e) + ": " + BodyFacts.hint(e, Need.DATA)));
+                from("direct:split").split(body()).process(e -> seen.add(BodyFacts.describe(e)));
+                from("direct:splitToItem").split(body()).to("direct:item");
+                from("direct:item").process(e -> seen.add(BodyFacts.describe(e)));
+                from("direct:afterSplit").split(body()).log("item").end().process(e -> seen.add(BodyFacts.describe(e)));
             }
         };
     }
@@ -97,6 +101,33 @@ public class BodyFactsTest extends ContextTestSupport {
         template.sendBody("direct:setBy", "hello");
         assertEquals(1, seen.size());
         assertTrue(seen.get(0).startsWith("the body is a Map (LinkedHashMap), set by setBody"), seen.get(0));
+    }
+
+    @Test
+    public void testTheSplitSetTheBodyOfAnItem() {
+        // r36 (sftp s2): the rows of a CSV file were split, and the store of a row in onException said the Map was
+        // unchanged since from: sftp, as the split gives each item a message history of its own
+        template.sendBody("direct:split", List.of(new LinkedHashMap<>(Map.of("sku", "A1")), new LinkedHashMap<>()));
+        assertEquals(2, seen.size());
+        for (String s : seen) {
+            assertTrue(s.startsWith("the body is a Map (LinkedHashMap), set by split"), s);
+        }
+    }
+
+    @Test
+    public void testTheSplitSetTheBodyOfAnItemSentToAnotherRoute() {
+        template.sendBody("direct:splitToItem", List.of("A1", "B2"));
+        assertEquals(2, seen.size());
+        for (String s : seen) {
+            assertTrue(s.startsWith("the body is text (a String), set by split"), s);
+        }
+    }
+
+    @Test
+    public void testTheConsumerGaveTheBodyThatWasSplit() {
+        // after the split the message goes on with its own body, which the split did not set
+        template.sendBody("direct:afterSplit", new ArrayList<>(List.of("A1", "B2")));
+        assertEquals(List.of("the body is a List (ArrayList), unchanged since from: direct://afterSplit"), seen);
     }
 
     @Test
@@ -258,6 +289,35 @@ public class BodyFactsTest extends ContextTestSupport {
         public Iterator<Map.Entry<String, Object>> iterator() {
             return entrySet().iterator();
         }
+    }
+
+    @Test
+    public void testTheFormatOfAContentType() {
+        // the names of the catalog, as the Kamelet data types set them
+        assertEquals("json", BodyFacts.formatOf("application/json"));
+        assertEquals("json", BodyFacts.formatOf("application/json; charset=UTF-8"));
+        assertEquals("json", BodyFacts.formatOf("application/fhir+json"));
+        assertEquals("xml", BodyFacts.formatOf("application/xml"));
+        assertEquals("xml", BodyFacts.formatOf("text/xml"));
+        assertEquals("xml", BodyFacts.formatOf("application/soap+xml; charset=utf-8"));
+        assertEquals("csv", BodyFacts.formatOf("text/csv"));
+        assertEquals("yaml", BodyFacts.formatOf("application/yaml"));
+        assertEquals("yaml", BodyFacts.formatOf("application/x-yaml"));
+        assertEquals("text", BodyFacts.formatOf("text/plain"));
+        assertEquals("text", BodyFacts.formatOf("TEXT/HTML; charset=UTF-8"));
+        assertEquals("binary", BodyFacts.formatOf("application/octet-stream"));
+        // any other media type as it is, without its parameters
+        assertEquals("application/pdf", BodyFacts.formatOf("application/pdf"));
+        assertEquals("image/png", BodyFacts.formatOf("Image/PNG; q=0.9"));
+        // the value comes from the message: what is not a media type is not shown
+        assertNull(BodyFacts.formatOf(null));
+        assertNull(BodyFacts.formatOf(""));
+        assertNull(BodyFacts.formatOf("json"));
+        assertNull(BodyFacts.formatOf("application/"));
+        assertNull(BodyFacts.formatOf("text/plain\u001b[31m"));
+        assertNull(BodyFacts.formatOf("a/b/c"));
+        assertNull(BodyFacts.formatOf("application/" + "x".repeat(100)));
+        assertNull(BodyFacts.formatOf("application/json; " + "x".repeat(300)));
     }
 
     @Test

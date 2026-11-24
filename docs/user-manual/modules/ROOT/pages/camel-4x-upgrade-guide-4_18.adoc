@@ -11,6 +11,37 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.18.6 to 4.18.7
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - the starting directory check resolves a name as a server does
+
+The check that a file is in the starting directory (`jailStartingDirectory=true`, the default, for a producer, and the
+same check of a consumer) now resolves the `.` and `..` segments of a name the way a server does, and refuses a name
+with a `..` segment that goes above the start of the name, also when the endpoint has no directory or its directory is
+the root (`/`). A name that starts like a scheme or a drive, such as `http:`, `file:` or `C:`, is resolved like any
+other name. For example, a producer without a directory now refuses `/../report.txt`, which a server wrote as
+`/report.txt`. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the starting
+directory. Remove the `..` segments from such a name.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - a file name with both a backslash and a `..` segment is refused in some configurations
+
+With `jailStartingDirectory=true` (the default), a producer now refuses a file name that has both a backslash and a
+`..` segment, such as `sub\..\report.txt`, when the `separator` option is `Windows` or `Auto`, when the producer
+writes a temp file (`tempPrefix` or `tempFileName`) or a done file (`doneFileName`), or when `checksumFileAlgorithm` is
+set (with `checksumWriteFile` at its default, `true`). Where such a name goes depends on the server and on the platform
+that Camel runs on. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the
+starting directory. With the default options, the producer replaces each backslash by `/` and writes such a name as
+before. Remove the backslashes or the `..` segments from the name.
+
+=== camel-ftp, camel-mina-sftp - a stepwise recursive poll skips a listed directory whose name is not one name
+
+A recursive consumer with `stepwise=true` (the default) changes into each sub directory by its name, and back to its
+parent afterwards. It now skips a directory from the listing of the server whose name is blank, `.` or `..`, or has a
+`/` or a `\` (other than a trailing `/`), and logs it at DEBUG level, as such a name would leave the poll in another
+directory than the one it lists. With `handleDirectoryParserAbsoluteResult=true` (ftp and ftps), the last name of the
+path that the server lists is checked. A backslash is a valid character in the name of a directory on a server on
+Linux: to poll such a directory, set `stepwise=false`.
+
 == Upgrading from 4.18.5 to 4.18.6
 
 === camel-aws2-sns - string array message attributes

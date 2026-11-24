@@ -41,7 +41,6 @@ import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.main.download.DependencyDownloader;
-import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.JsonObject;
@@ -258,23 +257,7 @@ public class PluginAdd extends PluginBaseCommand {
                     "No release of %s is built for Camel CLI %s. Selected %s %s, the newest release for an older Camel version (%s)."
                             .formatted(name, cli, name, version, older.compat().describe()));
         } else if (result instanceof NoMatch noMatch) {
-            StringBuilder sb = new StringBuilder();
-            switch (noMatch.reason()) {
-                case CLI_NEWER -> sb.append("No release of %s is built for Camel CLI %s yet. The newest, %s %s, is %s."
-                        .formatted(name, cli, name, noMatch.newestVersion(), noMatch.newest().describe()));
-                case CLI_OLDER -> sb.append("No release of %s is built for Camel CLI %s or an older Camel version."
-                        .formatted(name, cli));
-                default -> sb.append("No release of %s tells which Camel versions it supports.".formatted(name));
-            }
-            sb.append(" Using LATEST.");
-            if (!noMatch.newestPerLine().isEmpty()) {
-                sb.append(System.lineSeparator()).append("Newest release per Camel version:");
-                noMatch.newestPerLine().forEach((line, v) -> sb.append(System.lineSeparator())
-                        .append("  Camel %s: %s %s".formatted(line, name, v)));
-                sb.append(System.lineSeparator())
-                        .append("To use one of them: camel plugin add %s --version <version>".formatted(name));
-            }
-            printer().printWarn(sb.toString());
+            printer().printWarn(noMatchWarning(name, cli, noMatch, "Using LATEST.", false));
         } else if (result instanceof Unavailable unavailable) {
             printer().printWarn("Could not check plugin compatibility (%s). Using LATEST.".formatted(unavailable.reason()));
         }
@@ -289,24 +272,42 @@ public class PluginAdd extends PluginBaseCommand {
     private boolean useRelease(JsonObject plugin, String release, Compat compat) {
         version = release;
         String releaseGav = "%s:%s:%s".formatted(groupId, artifactId, version);
-        Optional<Plugin> resolved;
-        try {
-            resolved = downloadPlugin(releaseGav);
-        } catch (Exception e) {
-            printer().printErr("Cannot download " + releaseGav, e);
-            return false;
-        } catch (LinkageError e) {
-            // built for another Camel version (CAMEL-26964)
-            printer().printErr("Cannot load " + releaseGav + ": " + PluginHelper.notLinked(cliVersion(), e));
-            return false;
-        }
-        if (resolved.isEmpty()) {
-            printer().printErr("Cannot download " + releaseGav);
+        if (!loads(releaseGav, () -> downloadPlugin(releaseGav))) {
             return false;
         }
         plugin.put("camelVersions", compat.range());
         plugin.put("camelVersionsSource", compat.source().label());
         return true;
+    }
+
+    /**
+     * The warning when no release of a plugin can be selected for the Camel CLI, with the newest release per Camel
+     * version that was found.
+     *
+     * @param outcome  what is done instead, such as {@code Using LATEST.}
+     * @param updating whether camel plugin update warns, which does not update a plugin added with --version
+     */
+    static String noMatchWarning(String name, String cli, NoMatch noMatch, String outcome, boolean updating) {
+        StringBuilder sb = new StringBuilder();
+        switch (noMatch.reason()) {
+            case CLI_NEWER -> sb.append("No release of %s is built for Camel CLI %s yet. The newest, %s %s, is %s."
+                    .formatted(name, cli, name, noMatch.newestVersion(), noMatch.newest().describe()));
+            case CLI_OLDER -> sb.append("No release of %s is built for Camel CLI %s or an older Camel version."
+                    .formatted(name, cli));
+            default -> sb.append("No release of %s tells which Camel versions it supports.".formatted(name));
+        }
+        sb.append(' ').append(outcome);
+        if (!noMatch.newestPerLine().isEmpty()) {
+            sb.append(System.lineSeparator()).append("Newest release per Camel version:");
+            noMatch.newestPerLine().forEach((line, v) -> sb.append(System.lineSeparator())
+                    .append("  Camel %s: %s %s".formatted(line, name, v)));
+            sb.append(System.lineSeparator())
+                    .append("To use one of them: camel plugin add %s --version <version>".formatted(name));
+            if (updating) {
+                sb.append(" (camel plugin update then keeps that version)");
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -359,23 +360,10 @@ public class PluginAdd extends PluginBaseCommand {
     }
 
     /**
-     * The version of this Camel CLI.
-     */
-    String cliVersion() {
-        return new DefaultCamelCatalog().getCatalogVersion();
-    }
-
-    /**
      * A started downloader to read the releases and POMs of a plugin with.
      */
     DependencyDownloader newDownloader() {
-        DependencyDownloader downloader = new MavenDependencyDownloader();
-        if (repositories != null && !repositories.isBlank()) {
-            downloader.setRepositories(repositories);
-        }
-        downloader.setPreferLocal(true);
-        downloader.start();
-        return downloader;
+        return newDownloader(repositories);
     }
 
     /**

@@ -2626,9 +2626,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("armored", def.getArmored(), "false");
         doWriteAttribute("integrity", def.getIntegrity(), "true");
         doWriteAttribute("provider", def.getProvider(), null);
-        doWriteAttribute("algorithm", def.getAlgorithm(), null);
+        doWriteAttribute("algorithm", def.getAlgorithm(), "9");
         doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         endElement(name);
@@ -3055,6 +3055,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteNamespaceAwareExpressionAttributes(NamespaceAwareExpression def) throws IOException {
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute("namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(NamespaceAwareExpression def) throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);

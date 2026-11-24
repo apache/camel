@@ -46,7 +46,8 @@ public class BodyTypeDevConsole extends AbstractDevConsole {
             @Metadata(description = "The source line number (only present when known)") Integer line,
             @Metadata(description = "The code representation of this processor") String code,
             @Metadata(description = "The body types this processor has been reached with, across the messages, in the order first seen: more than one means the type varied") List<String> bodyTypes,
-            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention") List<String> bodyKinds) {
+            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention") List<String> bodyKinds,
+            @Metadata(description = "The formats of the payloads this processor has been reached with, from their Content-Type header, in the order first seen: json, xml, csv, yaml, text or binary, or the media type as it is for any other. More than one means the format varied (only present when a payload had a Content-Type)") List<String> bodyFormats) {
     }
 
     public record RouteEntry(
@@ -64,7 +65,7 @@ public class BodyTypeDevConsole extends AbstractDevConsole {
     public static final String FILTER = "filter";
 
     @Metadata(label = "query",
-              description = "Whether to include only the steps that have been reached with more than one body type",
+              description = "Whether to include only the steps that have been reached with more than one body type, or more than one format",
               javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String VARIED = "varied";
 
@@ -93,7 +94,8 @@ public class BodyTypeDevConsole extends AbstractDevConsole {
                 String num = step.line() != null ? String.format("%4d:  ", step.line()) : "       ";
                 String text = String.format("%-" + width + "s   body: %s", Jsoner.unescape(step.code()),
                         RouteStructureDevConsole.bodyTypesText(
-                                new RouteStructureDevConsole.LineBodyTypes(step.bodyTypes(), step.bodyKinds())));
+                                new RouteStructureDevConsole.LineBodyTypes(
+                                        step.bodyTypes(), step.bodyKinds(), step.bodyFormats())));
                 sb.append(num).append(text).append("\n");
             }
             sb.append("\n");
@@ -136,13 +138,13 @@ public class BodyTypeDevConsole extends AbstractDevConsole {
                     = RouteStructureDevConsole.bodyTypesPerLine(getCamelContext(), routeId, lines);
             for (int i = 0; i < lines.size(); i++) {
                 RouteStructureDevConsole.LineBodyTypes types = bodyTypes.get(i);
-                if (types == null || varied && types.types().size() < 2) {
+                if (types == null || varied && types.types().size() < 2 && types.formats().size() < 2) {
                     continue;
                 }
                 ModelDumpLine line = lines.get(i);
                 answer.add(new StepEntry(
                         line.id(), line.type(), extractSourceLocationLineNumber(line.location()), Jsoner.escape(line.code()),
-                        types.types(), types.kinds()));
+                        types.types(), types.kinds(), types.formats().isEmpty() ? null : types.formats()));
             }
         } catch (Exception e) {
             // the route has no model to dump, such as a route added without one

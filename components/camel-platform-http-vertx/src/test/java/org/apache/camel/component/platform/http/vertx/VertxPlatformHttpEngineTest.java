@@ -1428,7 +1428,7 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
-    public void testResponseBadQueryParamErrorHandled() throws Exception {
+    public void testResponseSkipsHeaderWithInvalidName() throws Exception {
         final CamelContext context = createCamelContextForTest();
 
         try {
@@ -1442,10 +1442,49 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            // Add a query param that Vert.x cannot handle
+            // a query param name that is not a valid HTTP header name (RFC 9110 token) is skipped, not a 500 (CAMEL-27236)
             get("/error/response?::")
                     .then()
-                    .statusCode(500);
+                    .statusCode(200)
+                    .body(equalTo("Error"))
+                    .header("::", nullValue());
+
+            get("/error/response?my%20key=1")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Error"))
+                    .header("my key", nullValue());
+
+            // a form field name that is not a valid HTTP header name is skipped the same way
+            given()
+                    .formParam("my key", "1")
+                    .when()
+                    .post("/error/response")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Error"))
+                    .header("my key", nullValue());
+
+            // a form body without = becomes a field name with an empty value, as sent by curl -d "some text"
+            given()
+                    .contentType(ContentType.URLENC)
+                    .body("How long do I have?")
+                    .when()
+                    .post("/error/response")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Error"))
+                    .header("How long do I have?", nullValue());
+
+            // a valid field name still round-trips as a response header
+            given()
+                    .formParam("q", "How long do I have?")
+                    .when()
+                    .post("/error/response")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Error"))
+                    .header("q", "How long do I have?");
         } finally {
             context.stop();
         }
