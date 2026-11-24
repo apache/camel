@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -59,8 +61,9 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
     private int pending;
     private boolean paused;
     private boolean draining;
-    // A failed exchange asked for a reconnect, made once the exchanges already received are done and acknowledged
-    private MqttClient redeliveryFrom;
+    // Failed exchanges asked for a reconnect, made once the exchanges already received are done and acknowledged: the
+    // clients their messages arrived on, as the reconnect is only needed when one of them is the current client
+    private final List<MqttClient> redeliveryFrom = new ArrayList<>();
 
     public VertxMqttConsumer(VertxMqttEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -86,16 +89,25 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             pending = 0;
             paused = false;
             draining = false;
-            redeliveryFrom = null;
+            redeliveryFrom.clear();
         }
         // A pool of its own for every consumer: a shared worker executor of the same name shares its threads
         // A route may take long: no blocked thread warnings of Vert.x for the worker
         worker = getEndpoint().getComponent().getVertx().createSharedWorkerExecutor(
                 "VertxMqttConsumer[%s]@%x".formatted(getEndpoint().getTopic(), System.identityHashCode(this)), 1,
                 Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        connection = getEndpoint().acquireConnection();
+        // Subscribed before a connection this consumer starts connects: a session the broker kept sends the messages
+        // it holds right after the CONNACK, and they need the handler (and this consumer the connection) by then
+        try {
+            getEndpoint().acquireConnection(acquired -> {
+                connection = acquired;
+                acquired.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos(), this::received);
+            });
+        } catch (Exception e) {
+            connection = null;
+            throw e;
+        }
         connection.addFailureListener(failureListener);
-        connection.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos(), this::received);
     }
 
     @Override
@@ -109,7 +121,13 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             // A session the broker keeps (no clean start) keeps the subscription, messages wait there meanwhile
             running.unsubscribe(getEndpoint().getConfiguration().isCleanStart());
             connection = null;
-            getEndpoint().releaseConnection();
+            // A producer of the endpoint may keep the connection: it must read again, for its acknowledgements and the
+            // keep alive, and for a consumer started again on it. A connection that stops with this consumer stays
+            // paused: read again, it would acknowledge and drop the messages that wait unread, which a session the
+            // broker keeps (no clean start) delivers again after the next connect
+            if (getEndpoint().releaseConnection()) {
+                running.pause(false);
+            }
         }
         final WorkerExecutor stopping = worker;
         worker = null;
@@ -208,17 +226,17 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             if (running != null) {
                 running.pause(true);
             }
-        } else if (paused && !draining && redeliveryFrom == null && pending <= maxPending / 2) {
+        } else if (paused && !draining && redeliveryFrom.isEmpty() && pending <= maxPending / 2) {
             paused = false;
             if (running != null) {
                 running.pause(false);
             }
         }
         if (pending == 0) {
-            if (redeliveryFrom != null && running != null && !draining) {
+            if (!redeliveryFrom.isEmpty() && running != null && !draining) {
                 // Everything received before is done: close for the redelivery, and read again on the next connection
-                running.redeliver(redeliveryFrom);
-                redeliveryFrom = null;
+                running.redeliver(List.copyOf(redeliveryFrom));
+                redeliveryFrom.clear();
                 paused = false;
                 running.pause(false);
             }
@@ -249,12 +267,14 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
      * deliver those again as well.
      */
     private synchronized void requestRedelivery(VertxMqttConnection running, MqttClient receiver) {
-        if (redeliveryFrom == null) {
-            redeliveryFrom = receiver;
-            if (!paused) {
-                paused = true;
-                running.pause(true);
-            }
+        // Every receiver, not only the first: a message that failed on an earlier connection comes again on the
+        // current one, and when that copy fails too, the close has to happen on the current client
+        if (!redeliveryFrom.contains(receiver)) {
+            redeliveryFrom.add(receiver);
+        }
+        if (!paused) {
+            paused = true;
+            running.pause(true);
         }
     }
 
