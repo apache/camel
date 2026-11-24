@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
@@ -104,6 +105,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     // the largest page that LookupEvents accepts
     private static final int LOOKUP_MAX_RESULTS = 50;
+    // the longest one call to CloudTrail or SQS may take, retries included: the task runs on the thread that runs every
+    // periodic task of the CamelContext, so a call that hangs must not hold that thread for longer than this
+    static final Duration API_CALL_TIMEOUT = Duration.ofSeconds(10);
     // the events that change the value of a secret, looked up one by one
     private static final List<String> UPDATE_EVENT_NAMES
             = List.of(SECRETSMANAGER_UPDATE_EVENT, SECRETSMANAGER_UPDATE_SECRET_EVENT);
@@ -116,6 +120,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private String secrets;
     private CloudTrailClient cloudTrailClient;
     private SqsClient sqsClient;
+    private Duration apiCallTimeout = API_CALL_TIMEOUT;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
     // the time the task started to look for updates: no check looks up events before it
@@ -174,6 +179,13 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         return lastReloadTime;
     }
 
+    /**
+     * The longest one call to CloudTrail or SQS may take, retries included (for testing).
+     */
+    void setApiCallTimeout(Duration apiCallTimeout) {
+        this.apiCallTimeout = apiCallTimeout;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -219,8 +231,10 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 queueUrl = awsVaultConfiguration.getSqsQueueUrl();
             }
         }
+        ClientOverrideConfiguration overrideConfiguration
+                = ClientOverrideConfiguration.builder().apiCallTimeout(apiCallTimeout).build();
         if (!useSqsNotification) {
-            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder().overrideConfiguration(overrideConfiguration);
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
 
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
@@ -243,7 +257,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 startedAt = lastTime;
             }
         } else {
-            SqsClientBuilder clientBuilder = SqsClient.builder();
+            SqsClientBuilder clientBuilder = SqsClient.builder().overrideConfiguration(overrideConfiguration);
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
@@ -392,7 +406,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             }
         } else {
             try {
-                ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl);
+                // no long polling, whatever the receive wait time of the queue: the check runs again after the refresh
+                // period, and it must not wait on the thread of the periodic tasks (nor for longer than the call timeout)
+                ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl).waitTimeSeconds(0);
 
                 LOG.trace("Receiving messages with request [{}]...", request);
 
