@@ -137,6 +137,12 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         log.debug("Starting {} for {}", this.getClass().getSimpleName(), combinedAddress);
         try {
+            if (!running) {
+                // stopped between the check of startConsumer and the submit: the messages of the validation read are not
+                // sent to the stopping route (the finally block removes this runnable and resets the socket)
+                log.debug("{} for {} was stopped before it ran", this.getClass().getSimpleName(), combinedAddress);
+                return;
+            }
             if (mllpBuffer.hasCompleteEnvelope()) {
                 // Process all complete messages received during the validation read.
                 processBufferedMessages();

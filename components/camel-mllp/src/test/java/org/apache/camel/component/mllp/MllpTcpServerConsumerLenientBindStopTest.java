@@ -19,15 +19,18 @@ package org.apache.camel.component.mllp;
 import java.net.ServerSocket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.component.mllp.internal.TcpServerBindThread;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,12 +63,12 @@ class MllpTcpServerConsumerLenientBindStopTest extends CamelTestSupport {
         consumer = new MllpTcpServerConsumer(lenientEndpoint(), exchange -> {
         }) {
             @Override
-            public void startAcceptThread(ServerSocket serverSocket) {
+            public void startAcceptThread(ServerSocket serverSocket, TcpServerBindThread owner) {
                 // the bind thread has bound the port: let the consumer stop before it starts the accept thread
                 boundSocket.set(serverSocket);
                 bound.countDown();
                 awaitUninterruptibly(stopped);
-                super.startAcceptThread(serverSocket);
+                super.startAcceptThread(serverSocket, owner);
             }
         };
 
@@ -83,6 +86,46 @@ class MllpTcpServerConsumerLenientBindStopTest extends CamelTestSupport {
         await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerBindThread") == 0);
         assertEquals(0, threads("TcpServerAcceptThread"), "no accept thread must run after the stop");
         assertTrue(boundSocket.get().isClosed(), "the stopped consumer must release its port");
+    }
+
+    @Test
+    void testBindOfPreviousStartCompletingAfterRestartDoesNotStartAcceptThread() throws Exception {
+        CountDownLatch bound = new CountDownLatch(1);
+        AtomicReference<ServerSocket> boundSocket = new AtomicReference<>();
+        AtomicBoolean first = new AtomicBoolean(true);
+        consumer = new MllpTcpServerConsumer(lenientEndpoint(), exchange -> {
+        }) {
+            @Override
+            public void startAcceptThread(ServerSocket serverSocket, TcpServerBindThread owner) {
+                if (first.getAndSet(false)) {
+                    // the bind thread of the first start has bound the port: let the consumer stop and start again
+                    // before it starts the accept thread
+                    boundSocket.set(serverSocket);
+                    bound.countDown();
+                    awaitUninterruptibly(stopped);
+                }
+                super.startAcceptThread(serverSocket, owner);
+            }
+        };
+
+        try (ServerSocket busy = new ServerSocket(port.getPort())) {
+            consumer.start();
+            await().atMost(5, TimeUnit.SECONDS).until(() -> threads("TcpServerBindThread") == 1);
+        }
+
+        assertTrue(bound.await(10, TimeUnit.SECONDS), "the bind thread must bind the freed port");
+        // a quick restart: the new start has its own bind thread, which retries while the old one holds the port
+        consumer.stop();
+        consumer.start();
+        stopped.countDown();
+
+        // the bind thread of the first start closes its socket instead of starting an accept thread for the new start,
+        // and the bind thread of the new start then binds the port and starts the only accept thread
+        await().atMost(10, TimeUnit.SECONDS).until(() -> boundSocket.get().isClosed());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerAcceptThread") == 1);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerBindThread") == 0);
+        assertEquals(1, threads("TcpServerAcceptThread"));
+        assertEquals(port.getPort(), consumer.getLocalPort());
     }
 
     @Test
@@ -104,6 +147,11 @@ class MllpTcpServerConsumerLenientBindStopTest extends CamelTestSupport {
         return context.getEndpoint(
                 "mllp://localhost:" + port.getPort() + "?lenientBind=true&bindRetryInterval=100&bindTimeout=30000",
                 MllpEndpoint.class);
+    }
+
+    private static ConditionFactory await() {
+        // the tests of the module run in parallel: an exception in a thread of another test must not fail the wait
+        return Awaitility.await().dontCatchUncaughtExceptions();
     }
 
     private long threads(String prefix) {

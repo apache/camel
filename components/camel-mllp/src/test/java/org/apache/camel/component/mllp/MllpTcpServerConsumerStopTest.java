@@ -22,59 +22,81 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A connection that the consumer accepted, and was still validating (its first read) when the route stopped, must not
- * be served after the stop, nor next to the connections of the next start.
+ * A connection that the consumer accepted, and was still validating (its first read) when the consumer stopped, must
+ * not be served after the stop, nor next to the connections of the next start. A route stop, or a suspend and resume by
+ * a route policy, stops and starts the consumer, as the tests do.
  */
 class MllpTcpServerConsumerStopTest extends CamelTestSupport {
 
     static final String MESSAGE = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||\r";
-    static final String ROUTE_ID = "mllp-stop";
 
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                fromF("mllp://localhost:%d?maxConcurrentConsumers=1&reuseAddress=true&receiveTimeout=2000&autoAck=true",
-                        port.getPort())
-                        .routeId(ROUTE_ID).to("mock:result");
-            }
-        };
+    // when set, the next connection that ends its validation read waits for this latch before startConsumer runs
+    private final AtomicReference<CountDownLatch> holdNextValidated = new AtomicReference<>();
+    private final CountDownLatch validated = new CountDownLatch(1);
+    private MllpTcpServerConsumer consumer;
+
+    @AfterEach
+    void stopConsumer() {
+        CountDownLatch hold = holdNextValidated.getAndSet(null);
+        if (hold != null) {
+            hold.countDown();
+        }
+        if (consumer != null) {
+            consumer.shutdown();
+        }
     }
 
     @Test
     void testConnectionValidatedDuringStopIsNotServed() throws Exception {
-        MllpTcpServerConsumer consumer = (MllpTcpServerConsumer) context.getRoute(ROUTE_ID).getConsumer();
-        try (Socket client = connectAndStopDuringValidation()) {
-            // the validation read (500 ms) ends after the stop: the connection is reset, not served
+        consumer = new HeldConsumer(endpoint(), exchange -> {
+        });
+        consumer.start();
+        CountDownLatch release = new CountDownLatch(1);
+        try (Socket client = connectAndHoldAfterValidation(release)) {
+            consumer.stop();
+            release.countDown();
+
+            // the validation read ended before the stop, and startConsumer runs after it: the connection is reset
             await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerConsumerValidationRunnable") == 0);
             assertEquals(0, threads("TcpSocketConsumerRunnable"));
             assertTrue(consumer.getConsumerRunnables().isEmpty());
-            assertEquals("", sendAndReadAck(client), "the stopped route must not answer");
+            assertEquals("", sendAndReadAck(client), "the stopped consumer must not answer");
         }
     }
 
     @Test
     void testConnectionValidatedDuringStopIsNotServedAfterRestart() throws Exception {
-        try (Socket client1 = connectAndStopDuringValidation()) {
+        consumer = new HeldConsumer(endpoint(), exchange -> {
+        });
+        consumer.start();
+        CountDownLatch release = new CountDownLatch(1);
+        try (Socket client1 = connectAndHoldAfterValidation(release)) {
+            consumer.stop();
+            release.countDown();
             await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerConsumerValidationRunnable") == 0);
-            context.getRouteController().startRoute(ROUTE_ID);
+            consumer.start();
 
             // a new connection is served after the restart, and the old one is not (maxConcurrentConsumers=1)
             try (Socket client2 = new Socket("localhost", port.getPort())) {
@@ -86,23 +108,128 @@ class MllpTcpServerConsumerStopTest extends CamelTestSupport {
     }
 
     @Test
+    void testConnectionValidatedDuringRestartIsNotServedAfterRestart() throws Exception {
+        consumer = new HeldConsumer(endpoint(), exchange -> {
+        });
+        consumer.start();
+        CountDownLatch release = new CountDownLatch(1);
+        try (Socket client1 = connectAndHoldAfterValidation(release)) {
+            // the consumer stops and starts again (such as a suspend and resume by a route policy) before the
+            // connection of the previous start reaches startConsumer, so the consumer is run-allowed again by then
+            consumer.stop();
+            consumer.start();
+            release.countDown();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpServerConsumerValidationRunnable") == 0);
+
+            // it is not served next to the connections of the new start, nor counted against its maxConcurrentConsumers
+            assertEquals(0, threads("TcpSocketConsumerRunnable"));
+            assertTrue(consumer.getConsumerRunnables().isEmpty());
+            try (Socket client2 = new Socket("localhost", port.getPort())) {
+                assertTrue(sendAndReadAck(client2).contains("MSA|AA"));
+                assertEquals("", sendAndReadAck(client1), "the connection of the previous start must not be served");
+                assertEquals(1, threads("TcpSocketConsumerRunnable"));
+            }
+        }
+    }
+
+    @Test
     void testConnectionServedBeforeStopEndsWithinReceiveTimeout() throws Exception {
+        consumer = new HeldConsumer(endpoint(), exchange -> {
+        });
+        consumer.start();
         try (Socket client = new Socket("localhost", port.getPort())) {
             assertTrue(sendAndReadAck(client).contains("MSA|AA"));
             assertEquals(1, threads("TcpSocketConsumerRunnable"));
 
-            context.getRouteController().stopRoute(ROUTE_ID);
+            consumer.stop();
 
             await().atMost(10, TimeUnit.SECONDS).until(() -> threads("TcpSocketConsumerRunnable") == 0);
         }
     }
 
-    private Socket connectAndStopDuringValidation() throws Exception {
-        // connect without sending: the accept thread hands the socket to a validation runnable (500 ms read)
+    @Test
+    void testShutdownInterruptsTheRunnableServingAConnection() throws Exception {
+        CountDownLatch processing = new CountDownLatch(1);
+        CountDownLatch interrupted = new CountDownLatch(1);
+        consumer = new HeldConsumer(endpoint(), exchange -> {
+            processing.countDown();
+            try {
+                Thread.sleep(20000);
+            } catch (InterruptedException e) {
+                interrupted.countDown();
+                Thread.currentThread().interrupt();
+            }
+        });
+        consumer.start();
+        try (Socket client = new Socket("localhost", port.getPort())) {
+            send(client);
+            assertTrue(processing.await(10, TimeUnit.SECONDS), "the message must be processed");
+
+            // the stop shuts the executors down without interrupting the runnables, the shutdown must interrupt them
+            // (with virtual threads, the interrupt also closes the socket of a connection blocked in its read)
+            consumer.stop();
+            consumer.shutdown();
+            assertTrue(interrupted.await(5, TimeUnit.SECONDS),
+                    "the shutdown must interrupt the runnable that serves the connection");
+        }
+    }
+
+    private MllpEndpoint endpoint() {
+        return context.getEndpoint(
+                "mllp://localhost:" + port.getPort()
+                                   + "?maxConcurrentConsumers=1&reuseAddress=true&receiveTimeout=2000&autoAck=true",
+                MllpEndpoint.class);
+    }
+
+    /**
+     * Connects without sending: the accept thread hands the socket to a validation runnable, whose read (500 ms) ends
+     * without data. It then waits for the latch before it calls startConsumer, so the test can stop (and start) the
+     * consumer in between, standing in for a stop that lands during the validation read.
+     */
+    private Socket connectAndHoldAfterValidation(CountDownLatch release) throws Exception {
+        holdNextValidated.set(release);
         Socket client = new Socket("localhost", port.getPort());
-        await().atMost(5, TimeUnit.SECONDS).until(() -> threads("TcpServerConsumerValidationRunnable") == 1);
-        context.getRouteController().stopRoute(ROUTE_ID);
+        assertTrue(validated.await(10, TimeUnit.SECONDS), "the validation read must end");
         return client;
+    }
+
+    private final class HeldConsumer extends MllpTcpServerConsumer {
+
+        HeldConsumer(MllpEndpoint endpoint, Processor processor) {
+            super(endpoint, processor);
+        }
+
+        @Override
+        public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer, ExecutorService executor) {
+            CountDownLatch hold = holdNextValidated.getAndSet(null);
+            if (hold != null) {
+                validated.countDown();
+                awaitUninterruptibly(hold);
+            }
+            super.startConsumer(clientSocket, mllpBuffer, executor);
+        }
+    }
+
+    private static void awaitUninterruptibly(CountDownLatch latch) {
+        // the shutdown of the validation executor at the end of a test interrupts the thread that waits here
+        boolean interrupted = false;
+        while (true) {
+            try {
+                if (latch.await(10, TimeUnit.SECONDS)) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private static ConditionFactory await() {
+        // the tests of the module run in parallel: an exception in a thread of another test must not fail the wait
+        return Awaitility.await().dontCatchUncaughtExceptions();
     }
 
     private long threads(String prefix) {
@@ -118,12 +245,7 @@ class MllpTcpServerConsumerStopTest extends CamelTestSupport {
     private static String sendAndReadAck(Socket socket) throws IOException {
         ByteArrayOutputStream ack = new ByteArrayOutputStream();
         try {
-            OutputStream out = socket.getOutputStream();
-            out.write(0x0b);
-            out.write(MESSAGE.getBytes(StandardCharsets.ISO_8859_1));
-            out.write(0x1c);
-            out.write(0x0d);
-            out.flush();
+            send(socket);
             socket.setSoTimeout(5000);
             InputStream in = socket.getInputStream();
             int b;
@@ -137,5 +259,14 @@ class MllpTcpServerConsumerStopTest extends CamelTestSupport {
             return "";
         }
         return ack.toString(StandardCharsets.ISO_8859_1);
+    }
+
+    private static void send(Socket socket) throws IOException {
+        OutputStream out = socket.getOutputStream();
+        out.write(0x0b);
+        out.write(MESSAGE.getBytes(StandardCharsets.ISO_8859_1));
+        out.write(0x1c);
+        out.write(0x0d);
+        out.flush();
     }
 }

@@ -116,8 +116,9 @@ public class TcpServerBindThread extends Thread {
                     .build();
 
             if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
-                // closes the socket instead when the consumer stopped in the meantime
-                consumer.startAcceptThread(serverSocket);
+                // closes the socket instead when the consumer stopped in the meantime, or was started again (then this
+                // is no longer the bind thread of the current start)
+                consumer.startAcceptThread(serverSocket, this);
             } else {
                 log.error("Failed to bind to address {} within timeout {}", socketAddress,
                         consumer.getConfiguration().getBindTimeout());
