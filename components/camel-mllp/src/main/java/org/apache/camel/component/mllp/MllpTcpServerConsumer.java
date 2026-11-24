@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -55,6 +57,7 @@ import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +76,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     ExecutorService consumerExecutor;
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
+    // the bind thread starts the accept thread, doStop stops it: the lock makes the check of the consumer state (and of
+    // the bind thread of the current start) in startAcceptThread and the start atomic with respect to doStop and doStart
+    private final Lock acceptThreadLock = new ReentrantLock();
 
     Map<TcpSocketConsumerRunnable, Long> consumerRunnables = new ConcurrentHashMap<>();
 
@@ -137,15 +143,26 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerClientSocketThread.stop();
         }
 
-        if (acceptThread != null) {
-            acceptThread.interrupt();
-            acceptThread = null;
+        acceptThreadLock.lock();
+        try {
+            if (acceptThread != null) {
+                acceptThread.interrupt();
+                acceptThread = null;
+            }
+            // under the same lock: a bind thread of this start that did not start its accept thread yet no longer owns
+            // the consumer, also when the consumer is started again before it gets there
+            if (bindThread != null) {
+                bindThread.interrupt();
+                bindThread = null;
+            }
+        } finally {
+            acceptThreadLock.unlock();
         }
 
-        if (bindThread != null) {
-            bindThread.interrupt();
-            bindThread = null;
-        }
+        // the executors of this start (doStart creates new ones): running runnables end on their own, and a connection
+        // still being validated is reset by startConsumer
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(validationExecutor);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(consumerExecutor);
 
         super.doStop();
     }
@@ -172,14 +189,20 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 .newThreadPool(this, "MllpConsumer", consumerProfile);
 
         if (bindThread == null || !bindThread.isAlive()) {
-            bindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
+            TcpServerBindThread newBindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
+            acceptThreadLock.lock();
+            try {
+                bindThread = newBindThread;
+            } finally {
+                acceptThreadLock.unlock();
+            }
 
             if (getConfiguration().isLenientBind()) {
                 log.debug("doStart() - starting bind thread");
-                bindThread.start();
+                newBindThread.start();
             } else {
                 log.debug("doStart() - attempting to bind to port {}", getEndpoint().getPort());
-                bindThread.run();
+                newBindThread.run();
 
                 if (this.acceptThread == null) {
                     throw new BindException("Failed to bind to port " + getEndpoint().getPort());
@@ -193,8 +216,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
+        // doStop already shut the executors down, so the shutdownNow of the ExecutorServiceManager does nothing for them:
+        // the JDK shutdownNow still interrupts the running runnables (with virtual threads, this closes their sockets)
         if (consumerExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(consumerExecutor);
+            consumerExecutor.shutdownNow();
             consumerExecutor = null;
         }
         if (acceptThread != null) {
@@ -202,6 +228,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
         if (validationExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(validationExecutor);
+            validationExecutor.shutdownNow();
             validationExecutor = null;
         }
     }
@@ -224,7 +251,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     public void validateConsumer(Socket clientSocket) {
         MllpSocketBuffer mllpBuffer = new MllpSocketBuffer(getEndpoint());
-        TcpServerConsumerValidationRunnable client = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
+        // the consumer executor of this start: when the consumer stops and starts again during the validation read, the
+        // connection is submitted to this executor, which doStop shut down, so it is reset and not served next to the
+        // connections of the new start
+        TcpServerConsumerValidationRunnable client
+                = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer, consumerExecutor);
 
         try {
             log.debug("validateConsumer({}) - submitting client for validation", clientSocket);
@@ -236,8 +267,33 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startAcceptThread(ServerSocket serverSocket) {
-        acceptThread = new TcpServerAcceptThread(this, serverSocket);
-        acceptThread.start();
+        startAcceptThread(serverSocket, null);
+    }
+
+    /**
+     * Starts the accept thread on the server socket the bind thread bound.
+     *
+     * @param serverSocket the bound server socket
+     * @param owner        the bind thread that bound it: when it is not the bind thread of the current start (the
+     *                     consumer was stopped and started again in the meantime), the server socket is closed instead;
+     *                     <tt>null</tt> to only check that the consumer is not stopping or stopped
+     */
+    public void startAcceptThread(ServerSocket serverSocket, TcpServerBindThread owner) {
+        acceptThreadLock.lock();
+        try {
+            if (!isRunAllowed() || owner != null && owner != bindThread) {
+                // with lenientBind the bind thread can bind while the consumer stops, after doStop looked for an
+                // accept thread to stop: do not start one after the stop (nor for the next start), and release the port
+                log.debug("startAcceptThread({}) - the consumer is stopping or stopped, closing the server socket",
+                        serverSocket);
+                IOHelper.close(serverSocket);
+                return;
+            }
+            acceptThread = new TcpServerAcceptThread(this, serverSocket);
+            acceptThread.start();
+        } finally {
+            acceptThreadLock.unlock();
+        }
     }
 
     /**
@@ -249,16 +305,39 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
+        startConsumer(clientSocket, mllpBuffer, consumerExecutor);
+    }
+
+    /**
+     * Serves a validated connection.
+     *
+     * @param clientSocket the connection
+     * @param mllpBuffer   the data of the validation read
+     * @param executor     the consumer executor of the start that accepted the connection: it is shut down when that
+     *                     start was stopped, and the connection is then reset
+     */
+    public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer, ExecutorService executor) {
         TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(
                 this, clientSocket, mllpBuffer, hl7Util, logPhi);
 
         consumerRunnables.put(client, System.currentTimeMillis());
+        if (!isRunAllowed()) {
+            // the consumer is stopping or stopped (the connection was accepted just before): do not serve it. The check
+            // comes after the put, so the runnable is either seen by the loop of doStop, or not started here
+            consumerRunnables.remove(client);
+            mllpBuffer.resetSocket(clientSocket, "Consumer is stopped");
+            return;
+        }
         try {
             log.info("startConsumer({}) - starting consumer", clientSocket);
-            consumerExecutor.submit(client);
+            executor.submit(client);
             getEndpoint().updateLastConnectionEstablishedTicks();
         } catch (RejectedExecutionException rejectedExecutionEx) {
-            log.warn("startConsumer({}) - cannot start consumer - max consumers already active", clientSocket);
+            if (executor.isShutdown()) {
+                log.debug("startConsumer({}) - cannot start consumer - the start that accepted it was stopped", clientSocket);
+            } else {
+                log.warn("startConsumer({}) - cannot start consumer - max consumers already active", clientSocket);
+            }
             // the runnable never runs, so it does not remove itself
             consumerRunnables.remove(client);
             mllpBuffer.resetSocket(clientSocket);
