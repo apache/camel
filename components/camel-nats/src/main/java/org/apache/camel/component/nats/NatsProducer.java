@@ -19,6 +19,8 @@ package org.apache.camel.component.nats;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,9 +32,12 @@ import io.nats.client.Connection.Status;
 import io.nats.client.JetStream;
 import io.nats.client.JetStreamApiException;
 import io.nats.client.JetStreamManagement;
+import io.nats.client.JetStreamOptions;
 import io.nats.client.Message;
 import io.nats.client.api.PublishAck;
+import io.nats.client.api.ServerInfo;
 import io.nats.client.api.StreamConfiguration;
+import io.nats.client.api.StreamInfo;
 import io.nats.client.impl.Headers;
 import io.nats.client.impl.NatsMessage;
 import org.apache.camel.AsyncCallback;
@@ -54,6 +59,8 @@ public class NatsProducer extends DefaultAsyncProducer {
     private final ExecutorServiceManager executorServiceManager;
     private ScheduledExecutorService scheduler;
     private Connection connection;
+    // the JetStream context of the connection, with the requestTimeout of the endpoint
+    private volatile JetStream jetStream;
 
     public NatsProducer(NatsEndpoint endpoint) {
         super(endpoint);
@@ -180,6 +187,84 @@ public class NatsProducer extends DefaultAsyncProducer {
         this.connection = this.getEndpoint().getConfiguration().getConnection() != null
                 ? this.getEndpoint().getConfiguration().getConnection()
                 : this.getEndpoint().getConnection();
+
+        final NatsConfiguration config = this.getEndpoint().getConfiguration();
+        final ServerInfo serverInfo = this.connection.getServerInfo();
+        // a restarted producer has a new connection
+        this.jetStream = null;
+        if (config.isJetstreamEnabled() && serverInfo != null && serverInfo.isJetStreamAvailable()) {
+            // the JetStream context belongs to the connection, which stays the same object when jnats reconnects
+            this.jetStream = createJetStream(config);
+            if (ObjectHelper.isNotEmpty(config.getJetstreamName())) {
+                ensureStream(config);
+            }
+        }
+    }
+
+    private JetStream createJetStream(NatsConfiguration config) throws IOException {
+        // jnats uses its own request timeout (the connection timeout) for the acknowledgement of a publish, unless the
+        // JetStream context has one
+        final JetStreamOptions.Builder options = JetStreamOptions.builder();
+        if (config.getRequestTimeout() > 0) {
+            options.requestTimeout(Duration.ofMillis(config.getRequestTimeout()));
+        }
+        return this.connection.jetStream(options.build());
+    }
+
+    private JetStream getJetStream(NatsConfiguration config) throws IOException {
+        JetStream js = this.jetStream;
+        if (js == null) {
+            // JetStream was not available when the producer started
+            js = createJetStream(config);
+            this.jetStream = js;
+        }
+        return js;
+    }
+
+    /**
+     * Creates the stream named by jetstreamName with the subject of the topic, as the consumer does, when it does not
+     * exist and no other stream takes in the subject. A failure is logged and does not stop the producer from starting:
+     * the publish itself fails when no stream takes in the subject.
+     */
+    private void ensureStream(NatsConfiguration config) {
+        final String streamName = config.getJetstreamName();
+        final String topic = config.getTopic();
+        try {
+            final JetStreamManagement jsm = this.connection.jetStreamManagement();
+            if (lookupStream(jsm, streamName) != null) {
+                LOG.debug("JetStream stream '{}' already exists. Skipping creation.", streamName);
+                return;
+            }
+            final List<String> others = jsm.getStreamNames(topic);
+            if (others != null && !others.isEmpty()) {
+                LOG.info("JetStream stream '{}' does not exist, and is not created: the messages to subject {} are stored"
+                         + " by the stream {}",
+                        streamName, topic, others);
+                return;
+            }
+            LOG.debug("Creating JetStream stream '{}' for subject {}", streamName, topic);
+            jsm.addStream(StreamConfiguration.builder()
+                    .name(streamName)
+                    .subjects(topic)
+                    .build());
+            LOG.info("JetStream stream '{}' created successfully.", streamName);
+        } catch (Exception e) {
+            LOG.warn("Cannot check or create the JetStream stream '{}' for subject {} due to: {}",
+                    streamName, topic, e.getMessage());
+            LOG.debug("JetStream stream failure", e);
+        }
+    }
+
+    private static StreamInfo lookupStream(JetStreamManagement jsm, String streamName)
+            throws IOException, JetStreamApiException {
+        try {
+            return jsm.getStreamInfo(streamName);
+        } catch (JetStreamApiException e) {
+            if (e.getErrorCode() == 404) {
+                return null;
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -223,19 +308,10 @@ public class NatsProducer extends DefaultAsyncProducer {
 
     private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) throws Exception {
         LOG.debug("JetStream is available");
-        JetStreamManagement jsm;
-        JetStream js;
+        final JetStream js;
         try {
-            jsm = this.connection.jetStreamManagement();
-            js = jsm.jetStream();
-            if (js == null) {
-                jsm.addStream(StreamConfiguration.builder()
-                        .name(config.getJetstreamName())
-                        .subjects(config.getTopic())
-                        .build());
-                js = jsm.jetStream();
-            }
-        } catch (IOException | JetStreamApiException e) {
+            js = getJetStream(config);
+        } catch (IOException e) {
             throw new Exception("Failed to initialize JetStream: " + e.getMessage(), e);
         }
 
@@ -255,7 +331,22 @@ public class NatsProducer extends DefaultAsyncProducer {
             CompletableFuture<PublishAck> future = js.publishAsync(jetStreamMessage);
             try {
                 pa = future.get(config.getRequestTimeout(), TimeUnit.MILLISECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            } catch (TimeoutException e) {
+                throw new Exception(
+                        "No acknowledgement from JetStream for subject " + config.getTopic() + " within "
+                                    + config.getRequestTimeout() + " ms",
+                        e);
+            } catch (CancellationException e) {
+                throw noAcknowledgement(config, e);
+            } catch (ExecutionException e) {
+                // jnats completes the future of the acknowledgement with a CancellationException (or a TimeoutException)
+                // when it gives up on it, which the future of the PublishAck wraps
+                if (e.getCause() instanceof CancellationException || e.getCause() instanceof TimeoutException) {
+                    throw noAcknowledgement(config, e.getCause());
+                }
+                throw new Exception("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new Exception("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
             }
             LOG.debug("Publish Sequence async: {}", pa.getSeqno());
@@ -267,6 +358,16 @@ public class NatsProducer extends DefaultAsyncProducer {
             }
             LOG.debug("Publish Sequence synchronously: {}", pa.getSeqno());
         }
+    }
+
+    private static Exception noAcknowledgement(NatsConfiguration config, Throwable cause) {
+        // jnats gives up on the acknowledgement of an asynchronous publish at its next request cleanup after
+        // requestCleanupInterval, whatever the requestTimeout
+        return new Exception(
+                "No acknowledgement from JetStream for subject " + config.getTopic() + ": " + cause.getMessage()
+                             + " (with jetstreamAsync=true the NATS client gives up on the acknowledgement after"
+                             + " requestCleanupInterval, " + config.getRequestCleanupInterval() + " ms, to twice that)",
+                cause);
     }
 
     private void publishWithoutJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) {
