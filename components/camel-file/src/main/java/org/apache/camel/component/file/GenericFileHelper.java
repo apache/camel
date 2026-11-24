@@ -26,6 +26,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.MessageHelper;
@@ -34,7 +35,7 @@ import org.apache.camel.util.FileUtil;
 public final class GenericFileHelper {
 
     // the separators that split a path into segments when compacting it for a containment check
-    private static final String SEPARATORS = "[/\\\\]";
+    private static final Pattern SEPARATORS = Pattern.compile("[/\\\\]");
 
     private GenericFileHelper() {
     }
@@ -253,7 +254,7 @@ public final class GenericFileHelper {
      * on the server and that platform, unless its backslashes are replaced by / before it is used.
      *
      * @param  path the path
-     * @return      <tt>true</tt> if the path has both a backslash and a {@code ..} segment
+     * @return      {@code true} if the path has both a backslash and a {@code ..} segment
      */
     public static boolean isAmbiguousRemotePath(String path) {
         return path != null && path.indexOf('\\') != -1 && hasParentSegment(path);
@@ -278,7 +279,7 @@ public final class GenericFileHelper {
         }
         boolean absolute = !path.isEmpty() && (path.charAt(0) == '/' || path.charAt(0) == '\\');
         Deque<String> segments = new ArrayDeque<>();
-        for (String segment : path.split(SEPARATORS)) {
+        for (String segment : SEPARATORS.split(path)) {
             if (segment.isEmpty() || ".".equals(segment)) {
                 continue;
             }
@@ -293,7 +294,7 @@ public final class GenericFileHelper {
     }
 
     private static boolean hasParentSegment(String path) {
-        for (String segment : path.split(SEPARATORS)) {
+        for (String segment : SEPARATORS.split(path)) {
             if ("..".equals(segment)) {
                 return true;
             }
