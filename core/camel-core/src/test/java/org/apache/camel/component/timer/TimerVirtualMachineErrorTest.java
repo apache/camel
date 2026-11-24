@@ -24,6 +24,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -42,15 +44,33 @@ public class TimerVirtualMachineErrorTest extends ContextTestSupport {
     private volatile boolean routeAHasThrown;
     /** Open once route B fires at least once after route A has already thrown its Error. */
     private final CountDownLatch routeBFiredAfterError = new CountDownLatch(1);
+    /** Counts how many times route B has fired. */
+    private final AtomicInteger routeBFireCount = new AtomicInteger();
 
     @Test
-    public void sharedTimerSurvivesStackOverflowErrorInSiblingRoute() throws InterruptedException {
+    public void sharedTimerSurvivesStackOverflowErrorInSiblingRoute() throws Exception {
         // Wait up to 5 seconds for route B to fire at least once after route A has thrown.
         // Before the fix this never happens: the StackOverflowError escapes run() and kills
         // the shared java.util.Timer thread, which silently cancels both timer tasks.
         boolean firedAfterError = routeBFiredAfterError.await(5, TimeUnit.SECONDS);
         assertTrue(firedAfterError,
                 "route B must keep firing after a StackOverflowError in route A (shared timer must survive)");
+
+        // the timer task of route A is cancelled: while route B fires several more times, route A does not fire again
+        int routeBCount = routeBFireCount.get();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> routeBFireCount.get() >= routeBCount + 5);
+        assertEquals(3, routeAFireCount.get());
+
+        // restarting route A makes it fire again
+        context.getRouteController().stopRoute("route-a");
+        context.getRouteController().startRoute("route-a");
+        await().atMost(5, TimeUnit.SECONDS).until(() -> routeAFireCount.get() > 3);
+    }
+
+    @Override
+    protected int getShutdownTimeout() {
+        // the exchange that failed with a VirtualMachineError can stay inflight (CAMEL-27515)
+        return 1;
     }
 
     @Override
@@ -58,13 +78,13 @@ public class TimerVirtualMachineErrorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // Route A: throws a StackOverflowError on its third exchange.
+                // Route A: throws a StackOverflowError on its third exchange only, so that it fires again once restarted.
                 // Uses synchronous=true so the error propagates synchronously through the timer task.
                 from("timer:" + TIMER_NAME + "?period=50&synchronous=true")
                         .routeId("route-a")
                         .process(exchange -> {
                             int count = routeAFireCount.incrementAndGet();
-                            if (count >= 3) {
+                            if (count == 3) {
                                 routeAHasThrown = true;
                                 throw new StackOverflowError("simulated StackOverflowError in route A");
                             }
@@ -76,6 +96,7 @@ public class TimerVirtualMachineErrorTest extends ContextTestSupport {
                 from("timer:" + TIMER_NAME + "?period=50&synchronous=true")
                         .routeId("route-b")
                         .process(exchange -> {
+                            routeBFireCount.incrementAndGet();
                             if (routeAHasThrown) {
                                 routeBFiredAfterError.countDown();
                             }
