@@ -59,6 +59,23 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * When consumeAsClient is set to true, a text message to send to the
+         * server each time the consumer connects: when it starts and after each
+         * reconnect. For example a subscribe request, for a server that only
+         * sends messages to a client that asked for them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param connectMessage the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder connectMessage(String connectMessage) {
+            doSetProperty("connectMessage", connectMessage);
+            return this;
+        }
+        /**
          * When set to true, the consumer acts as a WebSocket client, creating
          * exchanges on each received WebSocket event.
          * 

@@ -24,12 +24,13 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(25);
+        Set<String> props = new HashSet<>(26);
         props.add("allowOriginHeader");
         props.add("allowedOriginPattern");
         props.add("bridgeErrorHandler");
         props.add("clientOptions");
         props.add("clientSubProtocols");
+        props.add("connectMessage");
         props.add("consumeAsClient");
         props.add("exceptionHandler");
         props.add("exchangePattern");
