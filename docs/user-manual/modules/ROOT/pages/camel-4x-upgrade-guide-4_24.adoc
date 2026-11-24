@@ -11412,6 +11412,11 @@ Many Kamelets have new options. They change nothing when they are not set:
   has `ceph-event-id`. The header is set with `getObject` and `getBlob` too. To skip the copies, put an
   `idempotentConsumer` on that header after the Kamelet, with a shared repository (such as camel-infinispan or
   camel-sql) when several replicas run. `google-storage-event-based-source` now declares `camel:jsonpath`.
+* `elasticsearch-index-sink`: `sslContextParameters`, for TLS settings that `certificate` cannot give, such as a client
+  certificate (mutual TLS), a trust store or a TLS version. `opensearch-index-sink` already had it.
+* `elasticsearch-index-sink` and `opensearch-index-sink`: `apiKey`, to log in with an API key instead of `user` and
+  `password`: for Elasticsearch, the encoded key or `id:api_key`; for OpenSearch 3.7 or later, the `os_` API token. Set
+  either `apiKey` or `user`, not both. The new search actions have it too.
 
 === Kamelets - new Kamelets
 
@@ -11444,11 +11449,15 @@ The Kamelet catalog 4.24 adds these Kamelets:
   header line (`Content-Type: text/csv`), on the Camel `csv` data format. Without `columns`, the keys of the first `Map`
   row are the columns of all the rows (CAMEL-27371): a key that only a later row has is left out, and a missing key is
   empty.
-* `soap-source` and `soap-action` (Preview) serve a SOAP web service from a WSDL, with the reply of the route as the
-  response and SOAP faults from headers or a `<soap:Fault>` reply as XML text, or call an operation of a SOAP service
-  from its WSDL (at `address`, or the address in the WSDL), with XML text in and out and no generated Java code.
-  Requests with a DOCTYPE are refused. `wsSecurityUsername`, `wsSecurityPassword` and `wsSecurityPasswordType` send or
-  require a WS-Security UsernameToken; they need `--dep=mvn:org.apache.cxf:cxf-rt-ws-security:<CXF version of Camel>`.
+* `soap-source` and `soap-action` (Preview) serve a SOAP web service from a WSDL at a `path` on the HTTP server of the
+  integration, under `/services` (such as `http://localhost:8080/services/orders` with Camel JBang; CAMEL-27389), with
+  the reply of the route as the response and SOAP faults from headers or a `<soap:Fault>` reply as XML text, or call an
+  operation of a SOAP service from its WSDL (at `address`, or the address in the WSDL), with XML text in and out and no
+  generated Java code. Requests with a DOCTYPE are refused. `wsSecurityUsername`, `wsSecurityPassword` and
+  `wsSecurityPasswordType` send or require a WS-Security UsernameToken; Camel JBang downloads `cxf-rt-ws-security` for
+  them (CAMEL-27395). With `bodyFormat: json` (CAMEL-27375), the route works with JSON typed by the XML schema of the
+  WSDL (numbers, booleans, arrays for repeating elements) instead of XML text, with `ignoreUnknownFields`, and
+  `requestElement` on `soap-action`.
 * `kafka-share-source` (Preview) reads Kafka topics through a share group (KIP-932, Kafka 4.2 or newer), so that more
   consumers than partitions share the records like a queue. Each record is acknowledged on its own, and one whose
   handling fails is delivered again (`onFailure`, `kafka-delivery-count`). `autoOffsetReset` (`earliest`, `latest` or
@@ -11457,3 +11466,34 @@ The Kamelet catalog 4.24 adds these Kamelets:
 * `jms-apache-activemq-source` and `jms-apache-activemq-sink` send and receive messages on ActiveMQ Classic over
   OpenWire (`tcp://`, `ssl://` or `failover:`), with queues or topics, durable subscriptions, selectors and
   transactions. The sink pools its connections and removes the `CamelJms*` headers before sending.
+* `debezium-postgresql-source`, `debezium-mysql-source` and `debezium-sqlserver-source` (Preview) send the row changes
+  of PostgreSQL, MySQL and SQL Server tables as they happen (change data capture with Debezium), one JSON message per
+  insert, update or delete, with the `debezium-operation`, `debezium-table` and `debezium-key` headers. PostgreSQL needs
+  `wal_level=logical`. The position (and for MySQL and SQL Server the schema history) is saved in files, whose folder
+  must exist and be writable (CAMEL-27398), or in Kafka topics. When the Debezium engine cannot start, such as with a
+  server not set up for it, the Kamelet fails to start. Camel JBang downloads the MySQL JDBC driver by itself.
+* `openai-chat-action` (Preview) sends the body as a question to a chat model of OpenAI or of any OpenAI-compatible
+  server (`baseUrl`, such as Ollama, which needs no `apiKey`) and gives back the answer as text, or as JSON text that
+  follows `jsonSchema` (with `jsonSchemaStrict: true`, the model must follow it exactly). The model cannot call tools,
+  and the `CamelOpenAI*` headers are removed from the message first. A request that gets 408, 409, 429 or 5xx is sent
+  again `maxRetries` times (2 by default).
+* `ai-tool-source` (Preview) offers the steps that follow it as a tool that an AI agent can call, such as an MCP client,
+  with the arguments of each call as JSON in the body and as headers. Set `camel.server.mcp-enabled=true` and
+  `camel.server.mcp-tags` to serve it with `camel-mcp-server` (added by Camel JBang). Only the arguments that
+  `argSchema` declares are accepted (Camel adds `additionalProperties: false`), and the MCP endpoint has no login by
+  default: protect it with OAuth (`camel.server.mcp-oauth-profile`) or network rules.
+* `xpath-filter-action` (Preview) keeps the XML messages that match an XPath expression and drops the others. Namespaces
+  are declared with `namespacePrefix` and `namespaceUri`, or several at once with `namespaces` (`prefix=uri` separated
+  by commas, CAMEL-27486). A body that is not XML, or that has a DOCTYPE, fails the message.
+* `websocket-source` and `websocket-sink` (Preview) receive the messages a WebSocket server pushes, and send messages to
+  a WebSocket server, over `ws://` or `wss://`, with an optional `Authorization` header and reconnects.
+  `websocket-source` passes the messages on in the order they arrive, and can send a `connectMessage`, such as a
+  subscription, when it connects and again after each reconnect. A query value in `url` with `+`, `&` or `%`, such as a
+  token, goes inside `RAW()`.
+* `elasticsearch-search-action` and `opensearch-search-action` (Preview) search an index of Elasticsearch or OpenSearch
+  as a step of a route. The body is the search (Query DSL as JSON, or plain words), and the result is a JSON array of
+  the documents found, with the number of matches in the `CamelElasticsearchTotalHits` / `CamelOpensearchTotalHits`
+  header. Each document has its id added as `_id`. With `queryDsl: false`, every body is searched for as words, for
+  untrusted input or AI agents. A vector (`knn`) search works too.
+* `pgp-encrypt-action` and `pgp-decrypt-action` (Preview) encrypt and sign a message body with OpenPGP, and decrypt it
+  and check its signature, with key rings given as `file:`, `classpath:` or `base64:` resources.
