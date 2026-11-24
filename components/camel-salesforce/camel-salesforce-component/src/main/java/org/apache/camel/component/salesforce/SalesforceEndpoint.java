@@ -158,7 +158,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private final OperationName operationName;
 
-    @UriPath(label = "consumer,producer", description = "The name of the topic/channel to use")
+    @UriPath(label = "common", description = "The name of the topic/channel to use")
     private final String topicName;
 
     @UriParam

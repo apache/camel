@@ -44,6 +44,38 @@ public interface IgniteMessagingEndpointBuilderFactory {
             return (AdvancedIgniteMessagingEndpointConsumerBuilder) this;
         }
         /**
+         * The cluster group expression.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointConsumerBuilder clusterGroupExpression(org.apache.camel.component.ignite.ClusterGroupExpression clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
+         * The cluster group expression.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointConsumerBuilder clusterGroupExpression(String clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -248,6 +280,38 @@ public interface IgniteMessagingEndpointBuilderFactory {
         }
 
         /**
+         * The cluster group expression.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(org.apache.camel.component.ignite.ClusterGroupExpression clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
+         * The cluster group expression.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(String clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -440,6 +504,38 @@ public interface IgniteMessagingEndpointBuilderFactory {
             return (AdvancedIgniteMessagingEndpointBuilder) this;
         }
 
+        /**
+         * The cluster group expression.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointBuilder clusterGroupExpression(org.apache.camel.component.ignite.ClusterGroupExpression clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
+         * The cluster group expression.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
+         */
+        default IgniteMessagingEndpointBuilder clusterGroupExpression(String clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
         /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.

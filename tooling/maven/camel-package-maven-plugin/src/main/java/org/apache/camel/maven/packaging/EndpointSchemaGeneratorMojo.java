@@ -350,6 +350,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         SchemaHelper.addModelMetadata(componentModel, classElement.getAnnotation(Metadata.class));
         addBodyTypes(componentModel, classElement);
         findDstWorlds(scheme).forEach(componentModel::addDstWorld);
+        validateLabels(componentModel);
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
@@ -364,6 +365,35 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
 
         return componentModel;
+    }
+
+    /**
+     * Fails when an option or header has both the consumer and the producer label. An option that both sides use is
+     * labelled common (a header gets no label), otherwise it gets the label of the side that uses it. With both labels
+     * the endpoint DSL has no method for the option (CAMEL-27410).
+     */
+    static void validateLabels(ComponentModel componentModel) throws MojoExecutionException {
+        List<String> invalid = new ArrayList<>();
+        Stream.of(componentModel.getComponentOptions(), componentModel.getEndpointOptions(),
+                componentModel.getEndpointHeaders())
+                .flatMap(List::stream)
+                .filter(option -> hasConsumerAndProducerLabel(option.getLabel()))
+                .forEach(option -> invalid.add(option.getKind() + " " + option.getName()));
+        if (!invalid.isEmpty()) {
+            throw new MojoExecutionException(
+                    "The " + componentModel.getScheme() + " component has options or headers labelled both consumer and"
+                                             + " producer. Label each with common when both sides use it, or with the"
+                                             + " one side that uses it: "
+                                             + String.join(", ", invalid));
+        }
+    }
+
+    private static boolean hasConsumerAndProducerLabel(String label) {
+        if (isNullOrEmpty(label)) {
+            return false;
+        }
+        List<String> labels = Arrays.stream(label.split(",")).map(String::trim).toList();
+        return labels.contains("consumer") && labels.contains("producer");
     }
 
     /**
