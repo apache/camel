@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import com.azure.core.exception.HttpResponseException;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.file.datalake.DataLakeFileSystemClient;
 import com.azure.storage.file.datalake.models.DataLakeStorageException;
 import com.azure.storage.file.datalake.models.PathItem;
@@ -70,8 +72,9 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 exchanges = createBatchExchangesFromPath(dataLakeFileSystemClient);
             }
             result = processBatch(CastUtils.cast(exchanges));
-        } catch (DataLakeStorageException e) {
-            if (NOT_FOUND == e.getStatusCode()) {
+        } catch (DataLakeStorageException | BlobStorageException e) {
+            if (isNotFound(e)) {
+                // the file of the fileName option does not exist (yet)
                 result = 0;
             } else {
                 throw e;
@@ -103,8 +106,8 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 // files are consumed, and a later poll tries it again
                 try {
                     exchanges.add(createExchangeFromFile(pathItem.getName(), dataLakeFileSystemClient));
-                } catch (DataLakeStorageException e) {
-                    if (NOT_FOUND == e.getStatusCode()) {
+                } catch (DataLakeStorageException | BlobStorageException e) {
+                    if (isNotFound(e)) {
                         // deleted (for example by another consumer) after it was listed
                         LOG.debug("Skipping file {} as it no longer exists", pathItem.getName());
                     } else {
@@ -134,6 +137,17 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
             }
         }
         return exchanges;
+    }
+
+    /**
+     * Whether the exception is the answer of the service to a file that does not exist. Reading a file goes through the
+     * blob endpoint ({@code DataLakeFileClient.openInputStream} reads with a {@code BlockBlobClient} and does not
+     * translate its exception), so a missing file is a {@link BlobStorageException}, not a
+     * {@link DataLakeStorageException}.
+     */
+    private static boolean isNotFound(final HttpResponseException e) {
+        return e instanceof DataLakeStorageException d && NOT_FOUND == d.getStatusCode()
+                || e instanceof BlobStorageException b && NOT_FOUND == b.getStatusCode();
     }
 
     private static void rethrow(final Exception e) throws IOException {
