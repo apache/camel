@@ -236,7 +236,8 @@ public interface SpringRabbitmqComponentBuilderFactory {
         
         /**
          * How many times a Rabbitmq consumer will retry the same message if
-         * Camel failed to process the message.
+         * Camel failed to process the message. The first try is not counted, so
+         * 5 means up to 6 tries.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
