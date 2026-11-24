@@ -352,14 +352,12 @@ class OAuthHttpSecuritySupportTest {
 
     @Test
     void insufficientUserAuthenticationChallengeIncludesAcrValues() {
-        OAuthTokenValidationResult result = OAuthTokenValidationResult.invalid(
-                ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, "acr mismatch");
         OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
                 .setRequiredAcr(Set.of("2"))
                 .setMaxAuthAgeSeconds(300);
 
         OAuthHttpSecuritySupport.Validation validation
-                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(result, config);
+                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(config);
 
         assertFalse(validation.isAuthenticated());
         assertEquals(OAuthHttpSecuritySupport.UNAUTHORIZED, validation.getRejectionStatusCode());
@@ -373,13 +371,11 @@ class OAuthHttpSecuritySupportTest {
 
     @Test
     void insufficientUserAuthenticationChallengeWithAcrOnly() {
-        OAuthTokenValidationResult result = OAuthTokenValidationResult.invalid(
-                ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, "acr mismatch");
         OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
                 .setRequiredAcr(Set.of("gold", "silver"));
 
         OAuthHttpSecuritySupport.Validation validation
-                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(result, config);
+                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(config);
 
         String wwwAuth = validation.getWwwAuthenticate();
         assertNotNull(wwwAuth);
@@ -390,13 +386,11 @@ class OAuthHttpSecuritySupportTest {
 
     @Test
     void insufficientUserAuthenticationChallengeWithMaxAgeOnly() {
-        OAuthTokenValidationResult result = OAuthTokenValidationResult.invalid(
-                ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, "auth_time too old");
         OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
                 .setMaxAuthAgeSeconds(600);
 
         OAuthHttpSecuritySupport.Validation validation
-                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(result, config);
+                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(config);
 
         String wwwAuth = validation.getWwwAuthenticate();
         assertNotNull(wwwAuth);
@@ -407,11 +401,8 @@ class OAuthHttpSecuritySupportTest {
 
     @Test
     void insufficientUserAuthenticationChallengeWithNullConfig() {
-        OAuthTokenValidationResult result = OAuthTokenValidationResult.invalid(
-                ErrorCode.INSUFFICIENT_USER_AUTHENTICATION, "step-up required");
-
         OAuthHttpSecuritySupport.Validation validation
-                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(result, null);
+                = OAuthHttpSecuritySupport.Validation.insufficientUserAuthentication(null);
 
         String wwwAuth = validation.getWwwAuthenticate();
         assertNotNull(wwwAuth);

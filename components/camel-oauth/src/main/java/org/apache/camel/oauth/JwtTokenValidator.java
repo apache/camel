@@ -208,7 +208,8 @@ final class JwtTokenValidator {
 
         Map<String, Object> allClaims = claims.getClaims();
 
-        OAuthTokenValidationResult stepUpResult = checkStepUpClaims(claims, now, requiredAcr, maxAuthAgeSeconds);
+        OAuthTokenValidationResult stepUpResult
+                = checkStepUpClaims(claims, now, requiredAcr, maxAuthAgeSeconds, clockSkewSeconds);
         if (stepUpResult != null) {
             return stepUpResult;
         }
@@ -225,10 +226,11 @@ final class JwtTokenValidator {
      * @param  now               the current time in epoch seconds
      * @param  requiredAcr       accepted acr values; null or empty means no check
      * @param  maxAuthAgeSeconds maximum authentication age in seconds; 0 means no check
+     * @param  clockSkewSeconds  clock skew leeway in seconds for the auth_time check
      * @return                   an invalid result when step-up requirements are not met, or null when they pass
      */
     private static OAuthTokenValidationResult checkStepUpClaims(
-            JWTClaimsSet claims, long now, Set<String> requiredAcr, int maxAuthAgeSeconds) {
+            JWTClaimsSet claims, long now, Set<String> requiredAcr, int maxAuthAgeSeconds, int clockSkewSeconds) {
         if (requiredAcr != null && !requiredAcr.isEmpty()) {
             Object acrClaim = claims.getClaim("acr");
             String acr = acrClaim instanceof String ? (String) acrClaim : null;
@@ -256,7 +258,7 @@ final class JwtTokenValidator {
                         ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
                         "Insufficient authentication context: auth_time claim is not a number");
             }
-            if (now - authTime > maxAuthAgeSeconds) {
+            if (now - authTime > maxAuthAgeSeconds + clockSkewSeconds) {
                 return OAuthTokenValidationResult.invalid(
                         ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
                         "Insufficient authentication context: user authentication is too old (auth_time="

@@ -182,7 +182,7 @@ public final class OAuthHttpSecuritySupport {
         if (!result.isValid()) {
             LOG.debug("OAuth token rejected: {}", result.getError());
             if (result.getErrorCode() == OAuthTokenValidationResult.ErrorCode.INSUFFICIENT_USER_AUTHENTICATION) {
-                return Validation.insufficientUserAuthentication(result, validationConfig);
+                return Validation.insufficientUserAuthentication(validationConfig);
             }
             return Validation.invalidToken();
         }
@@ -471,8 +471,7 @@ public final class OAuthHttpSecuritySupport {
          *
          * @since 4.24
          */
-        static Validation insufficientUserAuthentication(
-                OAuthTokenValidationResult result, OAuthTokenValidationConfig config) {
+        static Validation insufficientUserAuthentication(OAuthTokenValidationConfig config) {
             String challenge = buildStepUpChallenge(config);
             return new Validation(UNAUTHORIZED, challenge, UNAUTHORIZED_BODY, null);
         }
