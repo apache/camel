@@ -300,11 +300,11 @@ public class OpenFgaAuthorizer {
             String resolvedRelation = resolveRelation(exchange);
             String resolvedObject = resolveObject(exchange);
             if (resolvedUser == null || resolvedRelation == null || resolvedObject == null) {
-                return () -> denied(observation);
+                return denied(observation);
             }
             List<ClientTupleKey> contextual = resolveContextualTuples(exchange);
             if (contextual == null) {
-                return () -> denied(observation);
+                return denied(observation);
             }
             ClientCheckRequest request
                     = new ClientCheckRequest().user(resolvedUser).relation(resolvedRelation)._object(resolvedObject);
@@ -315,7 +315,7 @@ public class OpenFgaAuthorizer {
                 request.context(AuthorizationAsyncExecutor.snapshotValue(conditionContext));
             }
             var options = checkOptions();
-            return () -> interruptedOnCancel(
+            return observedAction(() -> interruptedOnCancel(
                     awaitAsync(executor, exchange, "check " + resolvedRelation + " on " + resolvedObject,
                             () -> client.check(request, options)).handle((response, error) -> {
                                 if (error != null) {
@@ -348,7 +348,7 @@ public class OpenFgaAuthorizer {
                                 observation.complete(allowed ? Outcome.ALLOW : Outcome.DENY, Failure.NONE);
                                 return allowed;
                             }),
-                    observation);
+                    observation), observation);
 
         } catch (RuntimeException e) {
             // a subject, relation, object or contextual tuple that cannot be evaluated is an error of this decision,
@@ -380,9 +380,37 @@ public class OpenFgaAuthorizer {
         return stage;
     }
 
-    private static CompletableFuture<Boolean> denied(AuthorizationObservation observation) {
+    /**
+     * The decision is final when the subject, relation, object or a contextual tuple does not resolve: publish it now.
+     */
+    private static AuthorizationAsyncExecutor.Action denied(AuthorizationObservation observation) {
         observation.complete(Outcome.DENY, Failure.NONE);
-        return CompletableFuture.completedFuture(false);
+        return () -> CompletableFuture.completedFuture(false);
+    }
+
+    /**
+     * Records the end of a check the executor ended on its own: a deadline is the decision point not answering in time,
+     * as on the synchronous path; a stop or a caller's cancel is an interrupted decision.
+     */
+    private static AuthorizationAsyncExecutor.Action observedAction(
+            AuthorizationAsyncExecutor.Action action, AuthorizationObservation observation) {
+        return new AuthorizationAsyncExecutor.Action() {
+            @Override
+            public CompletableFuture<?> run() throws Exception {
+                return action.run();
+            }
+
+            @Override
+            public void abandoned(Throwable failure) {
+                if (failure instanceof TimeoutException) {
+                    observation.complete(Outcome.UNAVAILABLE, Failure.UNAVAILABLE);
+                } else if (failure instanceof CancellationException || AuthorizationObservation.interrupted(failure)) {
+                    observation.complete(Outcome.ERROR, Failure.INTERRUPTED);
+                } else {
+                    recordFailure(observation, failure);
+                }
+            }
+        };
     }
 
     <T> CompletableFuture<T> awaitAsync(

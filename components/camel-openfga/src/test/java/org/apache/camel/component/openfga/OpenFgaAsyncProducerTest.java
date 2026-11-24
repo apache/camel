@@ -54,6 +54,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -493,7 +494,7 @@ class OpenFgaAsyncProducerTest {
     }
 
     @Test
-    void cancelledAsynchronousCheckPublishesAnInterruptedDecision() throws Exception {
+    void deadlineOnAnAsynchronousCheckPublishesAnUnavailableDecision() throws Exception {
         OpenFgaClient client = mock(OpenFgaClient.class);
         CompletableFuture<ClientCheckResponse> never = new CompletableFuture<>();
         when(client.check(any(), any())).thenReturn(never);
@@ -502,17 +503,18 @@ class OpenFgaAsyncProducerTest {
             Exchange exchange = fixture.exchange();
             fixture.producer.processAsync(exchange).get(5, TimeUnit.SECONDS);
             assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
-            // the deadline cancelled the stage before its decision function ran: the observation still publishes
+            // the deadline ended the task before the SDK answered: the decision point was unavailable, as on the
+            // synchronous path, and the observation opened at admission still publishes
             assertThat(events).hasSize(1);
             assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.DECISION);
-            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
-            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.INTERRUPTED);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.UNAVAILABLE);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.UNAVAILABLE);
             assertThat(never.isCancelled()).isTrue();
         }
     }
 
     @Test
-    void cancelledAsynchronousBatchPublishesAnInterruptedBatch() throws Exception {
+    void deadlineOnAnAsynchronousBatchPublishesAnUnavailableBatch() throws Exception {
         OpenFgaClient client = mock(OpenFgaClient.class);
         CompletableFuture<List<ClientBatchCheckClientResponse>> never = new CompletableFuture<>();
         when(client.clientBatchCheck(anyList(), any())).thenReturn(never);
@@ -526,9 +528,49 @@ class OpenFgaAsyncProducerTest {
             assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
             assertThat(events).hasSize(1);
             assertThat(events.get(0).getOperation()).isEqualTo(AuthorizationDecisionEvent.Operation.BATCH);
-            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
-            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.INTERRUPTED);
-            assertThat(events.get(0).getCounts().errors()).isEqualTo(2);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.UNAVAILABLE);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.UNAVAILABLE);
+            assertThat(events.get(0).getCounts().unavailable()).isEqualTo(2);
+        }
+    }
+
+    @Test
+    void queuedCheckThatTimesOutBeforeItRunsPublishesOneUnavailableDecision() throws Exception {
+        OpenFgaClient client = mock(OpenFgaClient.class);
+        CountDownLatch entered = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        // the first call blocks inside the SDK, holding the only worker, so the second check never reaches it
+        when(client.check(any(), any())).thenAnswer(invocation -> {
+            entered.countDown();
+            release.await(5, TimeUnit.SECONDS);
+            return new CompletableFuture<ClientCheckResponse>();
+        });
+        try (Fixture fixture = new Fixture(client, configuration -> {
+            configuration.setAsyncPoolSize(1);
+            configuration.setAsyncQueueSize(1);
+            configuration.setAsyncTimeout(300);
+        })) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
+            Exchange first = fixture.exchange();
+            Exchange second = fixture.exchange();
+            CompletableFuture<Exchange> firstDone = fixture.producer.processAsync(first);
+            assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+            CompletableFuture<Exchange> secondDone = fixture.producer.processAsync(second);
+            firstDone.get(5, TimeUnit.SECONDS);
+            secondDone.get(5, TimeUnit.SECONDS);
+            assertThat(first.getException()).isInstanceOf(TimeoutException.class);
+            assertThat(second.getException()).isInstanceOf(TimeoutException.class);
+            // the second check never reached a worker: its observation, opened at admission, is published anyway
+            verify(client, times(1)).check(any(), any());
+            await().atMost(5, TimeUnit.SECONDS).until(() -> events.size() == 2);
+            assertThat(events).allSatisfy(event -> {
+                assertThat(event.getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.UNAVAILABLE);
+                assertThat(event.getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.UNAVAILABLE);
+            });
+            assertThat(events).extracting(AuthorizationDecisionEvent::getExchangeId)
+                    .containsExactlyInAnyOrder(first.getExchangeId(), second.getExchangeId());
+        } finally {
+            release.countDown();
         }
     }
 

@@ -45,6 +45,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Managed bounded authorization work. Cancelled tasks cannot commit a late result, and downstream routing does not
@@ -53,10 +55,23 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
  * @since 4.24
  */
 public final class AuthorizationAsyncExecutor implements AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthorizationAsyncExecutor.class);
+
     /** The authorization request: runs on a worker thread and returns the future of the remote decision. */
     @FunctionalInterface
     public interface Action {
         CompletableFuture<?> run() throws Exception;
+
+        /**
+         * Called once, on the continuation pool, when the executor ends the task on its own, before or after
+         * {@link #run()} started: the deadline passed, the executor stopped, a caller cancelled the task, or the action
+         * failed before it returned a future. {@code failure} is the executor's reason, such as a
+         * {@link TimeoutException}, a {@link CancellationException} or the caller's {@link InterruptedException}. A
+         * result the action produces later cannot reach the exchange any more, so an observation opened while the
+         * action was prepared records its end here.
+         */
+        default void abandoned(Throwable failure) {
+        }
     }
 
     /** Builds the {@link Action} for a snapshot of the exchange; runs on the admitting thread. */
@@ -392,7 +407,7 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
                     future.cancel(true);
                     return;
                 }
-                future.whenComplete((value, failure) -> finish(failure, false));
+                future.whenComplete((value, failure) -> end(failure, false, false));
             } catch (Exception e) {
                 submissionReturned = true;
                 if (e instanceof InterruptedException) {
@@ -420,6 +435,15 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
         }
 
         void finish(Throwable error, boolean doneSync) {
+            end(error, doneSync, true);
+        }
+
+        /**
+         * Ends the task once. {@code executorEnded} says whether the executor ends it (deadline, stop, a failure before
+         * the action returned a future), in which case the action hears about it through {@link Action#abandoned}; the
+         * completion of the action's own future needs no such notice.
+         */
+        private void end(Throwable error, boolean doneSync, boolean executorEnded) {
             if (!finished.compareAndSet(false, true)) {
                 return;
             }
@@ -446,6 +470,9 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
                         }
                     } else {
                         original.setException(unwrap(failure));
+                        if (executorEnded) {
+                            notifyAbandoned(unwrap(failure));
+                        }
                         cancelRequest();
                     }
                 } finally {
@@ -483,12 +510,21 @@ public final class AuthorizationAsyncExecutor implements AutoCloseable {
             }
             completions.execute(() -> {
                 try {
+                    notifyAbandoned(unwrap(failure));
                     cancelRequest();
                 } finally {
                     release();
                 }
             });
             return true;
+        }
+
+        private void notifyAbandoned(Throwable failure) {
+            try {
+                action.abandoned(failure);
+            } catch (Throwable e) {
+                LOG.warn("Error notifying the authorization action of its end. This exception is ignored.", e);
+            }
         }
 
         private void cancelRequest() {

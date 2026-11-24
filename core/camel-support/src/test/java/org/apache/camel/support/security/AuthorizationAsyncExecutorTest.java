@@ -136,14 +136,24 @@ class AuthorizationAsyncExecutorTest {
             Exchange exchange = new DefaultExchange(context);
             // what the await manager records when the thread waiting for the decision is interrupted
             InterruptedException interrupted = new InterruptedException("caller interrupted");
+            List<Throwable> abandoned = new CopyOnWriteArrayList<>();
             try {
-                assertThat(executor.process(exchange, doneSync -> callbacks.incrementAndGet(), snapshot -> () -> {
-                    entered.countDown();
-                    awaitIgnoringInterrupt(release);
-                    snapshot.getMessage().setHeader("late", "must-not-escape");
-                    workerDone.countDown();
-                    return CompletableFuture.completedFuture(null);
-                })).isFalse();
+                assertThat(executor.process(exchange, doneSync -> callbacks.incrementAndGet(),
+                        snapshot -> new AuthorizationAsyncExecutor.Action() {
+                            @Override
+                            public CompletableFuture<?> run() throws Exception {
+                                entered.countDown();
+                                awaitIgnoringInterrupt(release);
+                                snapshot.getMessage().setHeader("late", "must-not-escape");
+                                workerDone.countDown();
+                                return CompletableFuture.completedFuture(null);
+                            }
+
+                            @Override
+                            public void abandoned(Throwable failure) {
+                                abandoned.add(failure);
+                            }
+                        })).isFalse();
                 assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
                 exchange.setException(interrupted);
                 assertThat(executor.cancel(exchange, interrupted)).isTrue();
@@ -153,6 +163,9 @@ class AuthorizationAsyncExecutorTest {
                 release.countDown();
             }
             assertThat(workerDone.await(5, TimeUnit.SECONDS)).isTrue();
+            // the action hears the caller's reason, once, on the continuation pool
+            await().atMost(5, TimeUnit.SECONDS).until(() -> abandoned.size() == 1);
+            assertThat(abandoned.get(0)).isSameAs(interrupted);
             // the capacity comes back when the worker returns from the action, not with the continuation
             await().atMost(5, TimeUnit.SECONDS).until(() -> executor.availableCapacity() == 2);
             // the capacity of one worker and one queued admission is back without the callback: two more fit
@@ -168,6 +181,84 @@ class AuthorizationAsyncExecutorTest {
             assertThat(callbacks).hasValue(0);
             assertThat(exchange.getException()).isSameAs(interrupted);
             assertThat(exchange.getMessage().getHeader("late")).isNull();
+        }
+    }
+
+    @Test
+    void abandonedHookHearsTheExecutorsReasonWhetherOrNotTheActionStarted() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 300)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch callbacks = new CountDownLatch(2);
+            List<Throwable> firstAbandoned = new CopyOnWriteArrayList<>();
+            List<Throwable> secondAbandoned = new CopyOnWriteArrayList<>();
+            AtomicInteger secondRuns = new AtomicInteger();
+            Exchange first = new DefaultExchange(context);
+            Exchange second = new DefaultExchange(context);
+            try {
+                // the first action blocks in its SDK call and holds the only worker; the second task waits in the queue
+                executor.process(first, doneSync -> callbacks.countDown(), snapshot -> new AuthorizationAsyncExecutor.Action() {
+                    @Override
+                    public CompletableFuture<?> run() throws Exception {
+                        entered.countDown();
+                        awaitIgnoringInterrupt(release);
+                        return new CompletableFuture<>();
+                    }
+
+                    @Override
+                    public void abandoned(Throwable failure) {
+                        firstAbandoned.add(failure);
+                    }
+                });
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> callbacks.countDown(),
+                        snapshot -> new AuthorizationAsyncExecutor.Action() {
+                            @Override
+                            public CompletableFuture<?> run() {
+                                secondRuns.incrementAndGet();
+                                return CompletableFuture.completedFuture(null);
+                            }
+
+                            @Override
+                            public void abandoned(Throwable failure) {
+                                secondAbandoned.add(failure);
+                            }
+                        });
+                assertThat(callbacks.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(first.getException()).isInstanceOf(TimeoutException.class);
+                assertThat(second.getException()).isInstanceOf(TimeoutException.class);
+                await().atMost(5, TimeUnit.SECONDS).until(() -> firstAbandoned.size() + secondAbandoned.size() == 2);
+                assertThat(firstAbandoned).singleElement().isInstanceOf(TimeoutException.class);
+                assertThat(secondAbandoned).singleElement().isInstanceOf(TimeoutException.class);
+                assertThat(secondRuns).hasValue(0);
+            } finally {
+                release.countDown();
+            }
+        }
+    }
+
+    @Test
+    void completionOfTheActionsOwnFutureDoesNotCountAsAbandonment() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch callback = new CountDownLatch(1);
+            AtomicInteger abandoned = new AtomicInteger();
+            Exchange exchange = new DefaultExchange(context);
+            executor.process(exchange, doneSync -> callback.countDown(), snapshot -> new AuthorizationAsyncExecutor.Action() {
+                @Override
+                public CompletableFuture<?> run() {
+                    return CompletableFuture.failedFuture(new IllegalStateException("decision point said no"));
+                }
+
+                @Override
+                public void abandoned(Throwable failure) {
+                    abandoned.incrementAndGet();
+                }
+            });
+            assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class);
+            assertThat(abandoned).hasValue(0);
         }
     }
 

@@ -28,6 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
@@ -222,7 +223,17 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                 return authorizer.prepareCheckAsync(snapshot, executor);
             }
             PreparedOperation operation = prepareOperation(snapshot, authorizer, true);
-            return () -> operation.runAsync(executor);
+            return new AuthorizationAsyncExecutor.Action() {
+                @Override
+                public CompletableFuture<?> run() {
+                    return operation.runAsync(executor);
+                }
+
+                @Override
+                public void abandoned(Throwable failure) {
+                    operation.abandoned(failure);
+                }
+            };
         });
     }
 
@@ -429,6 +440,19 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
                     }
                 });
                 return completed;
+            }
+
+            @Override
+            public void abandoned(Throwable failure) {
+                // a deadline is the decision point not answering in time, as on the synchronous path; a stop or a
+                // caller's cancel is an interrupted batch. The objects without an answer count as such
+                if (failure instanceof TimeoutException) {
+                    observation.failure(Outcome.UNAVAILABLE, Failure.UNAVAILABLE);
+                } else if (failure instanceof CancellationException || AuthorizationObservation.interrupted(failure)) {
+                    observation.failure(Outcome.ERROR, Failure.INTERRUPTED);
+                } else {
+                    recordBatchFailure(observation, failure);
+                }
             }
         };
     }
@@ -1319,6 +1343,12 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
         void runSync() throws Exception;
 
         CompletableFuture<?> runAsync(AuthorizationAsyncExecutor executor);
+
+        /**
+         * The executor ended the asynchronous run on its own, before or after it started; see {@code Action#abandoned}.
+         */
+        default void abandoned(Throwable failure) {
+        }
     }
 
     private static final PreparedOperation NOOP = new PreparedOperation() {

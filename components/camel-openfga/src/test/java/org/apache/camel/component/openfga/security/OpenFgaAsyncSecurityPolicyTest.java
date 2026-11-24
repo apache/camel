@@ -129,6 +129,7 @@ class OpenFgaAsyncSecurityPolicyTest {
             return checks.getAndIncrement() == 0 ? pending : CompletableFuture.completedFuture(allowed);
         });
         try (Fixture fixture = new Fixture(client)) {
+            List<AuthorizationDecisionEvent> events = observe(fixture.context);
             Exchange exchange = new DefaultExchange(fixture.context);
             AtomicReference<Throwable> thrown = new AtomicReference<>();
             Thread caller = new Thread(() -> {
@@ -160,6 +161,11 @@ class OpenFgaAsyncSecurityPolicyTest {
             assertThat(fixture.forwarded.get()).isSameAs(next);
             assertThat(pending.isCancelled()).isTrue();
             assertThat(exchange.getException()).isSameAs(failure);
+            // the claimed task told the check it was abandoned: one interrupted decision, then the next one's event
+            assertThat(events).hasSize(2);
+            assertThat(events.get(0).getOutcome()).isEqualTo(AuthorizationDecisionEvent.Outcome.ERROR);
+            assertThat(events.get(0).getFailure()).isEqualTo(AuthorizationDecisionEvent.Failure.INTERRUPTED);
+            assertThat(events.get(0).getExchangeId()).isEqualTo(exchange.getExchangeId());
         } finally {
             pending.cancel(true);
         }

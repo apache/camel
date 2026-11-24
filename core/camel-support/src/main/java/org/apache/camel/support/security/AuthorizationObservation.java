@@ -121,8 +121,14 @@ public final class AuthorizationObservation {
     }
 
     public void failure(Outcome outcome, Failure failure) {
+        if (!claim()) {
+            return;
+        }
         remainingItems(outcome, expectedItems);
-        complete(outcome, failure);
+        if (operation != Operation.BATCH) {
+            item(outcome);
+        }
+        publish(outcome, failure);
     }
 
     public void remainingItems(Outcome outcome, int total) {
@@ -142,7 +148,7 @@ public final class AuthorizationObservation {
     }
 
     public void complete(Outcome outcome, Failure failure) {
-        if (!isEnabled()) {
+        if (!claim()) {
             return;
         }
         if (operation != Operation.BATCH) {
@@ -152,7 +158,7 @@ public final class AuthorizationObservation {
     }
 
     public void completeBatch() {
-        if (!isEnabled()) {
+        if (!claim()) {
             return;
         }
         Outcome outcome = counts[Outcome.FAILED_OPEN.ordinal()] > 0 ? Outcome.FAILED_OPEN
@@ -166,12 +172,16 @@ public final class AuthorizationObservation {
         publish(outcome, failure);
     }
 
+    /**
+     * An observation publishes once. The completion that claims it builds the event; a cancellation listener firing
+     * after the decision, a late second completion, or a loser in a race between two completions changes nothing, not
+     * even the counts the winner is reading.
+     */
+    private boolean claim() {
+        return isEnabled() && published.compareAndSet(false, true);
+    }
+
     private void publish(Outcome outcome, Failure failure) {
-        // an observation publishes once: a cancellation listener that fires after the decision, or a second completion
-        // from a late stage, must not report the same authorization twice
-        if (!published.compareAndSet(false, true)) {
-            return;
-        }
         AuthorizationDecisionEvent event = new AuthorizationDecisionEvent(
                 engine, operation, outcome, failure,
                 Math.max(0, System.nanoTime() - started), poolWaitNanos,
