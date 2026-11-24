@@ -297,6 +297,17 @@ synchronous step did:
 * With `ignoreInvalidEndpoints`, an endpoint whose producer cannot be created is ignored also when it is the last one of
   the slip. Before, the message failed with a `FailedToCreateProducerException`.
 
+=== camel-core - String converts to OffsetDateTime, ZonedDateTime and Instant
+
+Camel now has type converters from `String` to `java.time.OffsetDateTime`, `java.time.ZonedDateTime` and
+`java.time.Instant`. They read ISO-8601 only, such as `2026-11-18T23:00:00+01:00`, `2026-11-18T22:00:00Z` or
+`2026-11-18T23:00:00+01:00[Europe/Paris]` (zone id for `ZonedDateTime` only), and an empty string converts to `null`.
+A space is read as `+`, as an endpoint URI decodes the `+` of a positive offset to a space; `%2B` and `RAW(...)` work
+too. Endpoint options of these types, such as `scheduledEnqueueTime` of `azure-servicebus`, `modifiedSince` of `minio`
+or `timestamp` of `aws2-cw`, can now be set in an endpoint URI or as a property; before, this failed with
+`No type converter available`. An expression such as `${headerAs(when, java.time.Instant)}` on an ISO-8601 string now
+gives the converted value instead of `null`, and a value that is not ISO-8601 now fails the conversion.
+
 === camel-kamelet - the output data type of a Kamelet is applied when it hands the message on
 
 A Kamelet that declares a default output data type (`spec.dataTypes.out.default`) now gives the message that type
