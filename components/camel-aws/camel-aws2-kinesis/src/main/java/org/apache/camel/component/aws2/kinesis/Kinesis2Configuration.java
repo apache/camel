@@ -66,10 +66,17 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
               description = "The message timestamp to start polling from. Required if iteratorType is set to AT_TIMESTAMP")
     private String messageTimestamp = "";
     @UriParam(label = "consumer", defaultValue = "ignore",
-              description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
-                            + " In case of ignore a WARN message will be logged once and the consumer will not process new messages until restarted,"
-                            + "in case of silent there will be no logging and the consumer will not process new messages until restarted,"
-                            + "in case of fail a ReachedClosedStateException will be thrown")
+              description = "Define what the consumer does when a shard it reads is closed, after it read all the records of"
+                            + " the shard. A split or a merge of shards closes the parent shards, which stay listed for the"
+                            + " retention period of the stream. Possible values are ignore, silent and fail."
+                            + " With ignore a WARN message is logged once and the shard is skipped,"
+                            + " with silent the shard is skipped without logging,"
+                            + " with fail a ReachedClosedStatusException is reported once to the exception handler of the"
+                            + " consumer (logged as a WARN, or routed to the error handler of the route with"
+                            + " bridgeErrorHandler=true) and the shard is then skipped."
+                            + " Without shardId the consumer goes on with the other shards of the stream, which include the"
+                            + " child shards of the closed shard. With shardId the consumer reads only that shard, so it"
+                            + " has no more messages to read once the shard is closed.")
     private Kinesis2ShardClosedStrategyEnum shardClosed = Kinesis2ShardClosedStrategyEnum.ignore;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Kinesis client")
