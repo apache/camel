@@ -147,7 +147,7 @@ public class MinaSftpStreamDownloadIT extends MinaSftpServerTestSupport {
             public void configure() {
                 String baseUri = "mina-sftp://localhost:" + service.getPort() + "/" + service.getFtpRootDir()
                                  + "?username=admin&password=admin&strictHostKeyChecking=no&useUserKnownHostsFile=false"
-                                 + "&delay=10000&disconnect=true&noop=true&fileName=streamtest.txt";
+                                 + "&disconnect=true&noop=true&fileName=streamtest.txt";
 
                 // Route for testing streamDownload=true
                 from(baseUri + "&streamDownload=true&stepwise=false")
