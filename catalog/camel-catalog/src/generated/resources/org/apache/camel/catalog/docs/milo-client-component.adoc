@@ -237,7 +237,8 @@ Once communication is restored, every node delivers its current value, also when
 existing session, Camel asks the server to send the current values again with the `ResendData` method; when the
 server does not provide it, Camel creates the subscription again, and the values the server queued during the loss
 are not delivered. Values can arrive more than once after a loss, and a value received before Camel rebuilt the
-connection can arrive after the first value of the new connection. A route that counts values, computes differences
+connection can arrive after the first value of the new connection, but not after a loss report of the new connection:
+the node keeps that status until the new connection delivers a value. A route that counts values, computes differences
 or detects changes must tolerate this. A value that did not change during the loss keeps its earlier timestamps.
 
 Routes run while communication is lost. An OPC UA request that a route makes while the client reconnects, for example

@@ -42,12 +42,14 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -72,12 +74,19 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
+    private static final String DIRECT_START_2 = "direct:start2";
+
+    private static final String MILO_SERVER_ITEM_2 = "milo-server:myitem2";
+
     private static final String MILO_CLIENT_BASE = "milo-client:opc.tcp://foo:bar@localhost:@@relay@@"
                                                    + "?allowedSecurityPolicies=None&overrideHost=true&overridePort=true"
                                                    + "&samplingInterval=50&requestedPublishingInterval=100";
 
     private static final String MILO_CLIENT_ITEM_1
             = MILO_CLIENT_BASE + "&node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1");
+
+    private static final String MILO_CLIENT_ITEM_2
+            = MILO_CLIENT_BASE + "&node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem2");
 
     private static final String MOCK_ITEM_1 = "mock:item1";
 
@@ -104,6 +113,9 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     @Produce(DIRECT_START_1)
     protected ProducerTemplate producer1;
+
+    @Produce(DIRECT_START_2)
+    protected ProducerTemplate producer2;
 
     @RegisterExtension
     AvailablePortFinder.Port relayPort = AvailablePortFinder.find();
@@ -136,6 +148,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             @Override
             public void configure() {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
+                from(DIRECT_START_2).to(MILO_SERVER_ITEM_2);
 
                 // the consumers deliver the current values while they start, so the tests start these routes
                 from(throughRelay(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false).to(MOCK_ITEM_1);
@@ -399,6 +412,98 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             reconnectExecutor.shutdownNow();
             executor.shutdownNow();
         }
+    }
+
+    /**
+     * A value that a connection still had queued for delivery when it was replaced does not end the loss report of the
+     * connection that replaced it: the node keeps the status of the current connection, whose communication is lost.
+     * Another node holds the delivery queue of the first connection (a slow route), so the value of the node waits
+     * behind it until the second connection has delivered its values and lost its session.
+     */
+    @Test
+    @Timeout(value = 90, unit = TimeUnit.SECONDS)
+    void valueOfAReplacedConnectionDoesNotEndTheLossReportOfItsReplacement() throws Exception {
+        producer1.sendBody("Foo");
+        producer2.sendBody("Slow");
+
+        // a connection of its own through the relay, whose requests time out after a second
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                throughRelay(MILO_CLIENT_ITEM_1) + "&requestTimeout=1000", MiloClientEndpoint.class);
+        final MiloClientEndpoint slowEndpoint = context.getEndpoint(
+                throughRelay(MILO_CLIENT_ITEM_2) + "&requestTimeout=1000", MiloClientEndpoint.class);
+        final ScheduledExecutorService reconnectExecutor = Executors.newSingleThreadScheduledExecutor();
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final SubscriptionManager manager
+                = new SubscriptionManager(endpoint.getConfiguration(), reconnectExecutor, executor, 1000);
+        final CountDownLatch slowRouteBusy = new CountDownLatch(1);
+        final CountDownLatch slowRouteDone = new CountDownLatch(1);
+        Thread registering = null;
+        try {
+            final ExpandedNodeId item = ExpandedNodeId.parse(endpoint.getNode());
+            final ExpandedNodeId slowItem = ExpandedNodeId.parse(slowEndpoint.getNode());
+            final List<DataValue> values = new CopyOnWriteArrayList<>();
+            manager.registerItems(Map.of(item, values::add), 50.0, null, new MonitorFilterConfiguration());
+            final List<UInteger> slowHandles = manager.registerItems(Map.of(slowItem, value -> {
+                if ("Busy".equals(value.getValue().getValue())) {
+                    slowRouteBusy.countDown();
+                    try {
+                        slowRouteDone.await(60, TimeUnit.SECONDS);
+                    } catch (final InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }), 50.0, null, new MonitorFilterConfiguration());
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !values.isEmpty());
+            final OpcUaClient client = manager.getOpcUaClient();
+            final OpcUaSubscription subscription = client.getSubscriptions().get(0);
+
+            // the slow route holds the delivery queue of the first connection, and the new value of the node is queued
+            // behind it
+            producer2.sendBody("Busy");
+            assertTrue(slowRouteBusy.await(10, TimeUnit.SECONDS), "The slow route did not receive its value");
+            producer1.sendBody("Bar");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> subscription.getDeliveryQueue().getQueueSize() >= 1);
+            // the slow consumer stops, so the second connection does not wait for its route
+            manager.unregisterItems(slowHandles);
+
+            // the link drops silently: the CreateMonitoredItems call of the next consumer times out, which tears the
+            // first connection down (its loss report is queued behind the value) and builds the second one
+            relay.silence();
+            final int before = values.size();
+            registering = new Thread(
+                    () -> manager.registerItems(Map.of(slowItem, value -> {
+                    }), 50.0, null, new MonitorFilterConfiguration()),
+                    "register-item");
+            registering.start();
+            await().atMost(30, TimeUnit.SECONDS)
+                    .until(manager::getOpcUaClient, current -> current != null && current != client);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> values.size() > before);
+            assertGoodValue("Bar").accept(values.get(values.size() - 1));
+
+            // the second connection loses its session and gets no new one: the node reports the loss
+            relay.stop();
+            await().atMost(30, TimeUnit.SECONDS).until(() -> isNoCommunication(values.get(values.size() - 1)));
+
+            // the slow route completes, and the first connection delivers what it still had queued
+            slowRouteDone.countDown();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> subscription.getDeliveryQueue().getQueueSize() == 0
+                    && subscription.getDeliveryQueue().getPending() == 0);
+
+            assertTrue(isNoCommunication(values.get(values.size() - 1)),
+                    "The node ends with a value of the replaced connection while communication is lost: " + values);
+        } finally {
+            slowRouteDone.countDown();
+            manager.dispose();
+            reconnectExecutor.shutdownNow();
+            executor.shutdownNow();
+            if (registering != null) {
+                registering.join(10000);
+            }
+        }
+    }
+
+    private static boolean isNoCommunication(final DataValue value) {
+        return value.getStatusCode().getValue() == StatusCodes.Bad_NoCommunication;
     }
 
     /**
