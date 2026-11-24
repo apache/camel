@@ -113,4 +113,33 @@ public class DebeziumTypeConverterTest {
 
         return value;
     }
+
+    @Test
+    void testToMapKeepsTheOrderOfTheFields() {
+        // the order of the columns of the table, which a HashMap would lose
+        Schema detailsSchema = SchemaBuilder.struct()
+                .field("zip", SchemaBuilder.STRING_SCHEMA)
+                .field("city", SchemaBuilder.STRING_SCHEMA)
+                .field("country", SchemaBuilder.STRING_SCHEMA)
+                .build();
+        Schema valueSchema = SchemaBuilder.struct()
+                .field("id", SchemaBuilder.INT32_SCHEMA)
+                .field("name", SchemaBuilder.STRING_SCHEMA)
+                .field("price", SchemaBuilder.FLOAT64_SCHEMA)
+                .field("added", SchemaBuilder.STRING_SCHEMA)
+                .field("address", detailsSchema)
+                .field("lines", SchemaBuilder.array(detailsSchema).build())
+                .build();
+        Struct address = new Struct(detailsSchema).put("zip", "8000").put("city", "Aarhus").put("country", "DK");
+        Struct inputValue = new Struct(valueSchema)
+                .put("id", 1).put("name", "camel").put("price", 9.95).put("added", "2026-11-22")
+                .put("address", address).put("lines", List.of(address));
+
+        Map<String, Object> outputValue = DebeziumTypeConverter.toMap(inputValue);
+
+        assertEquals(List.of("id", "name", "price", "added", "address", "lines"), List.copyOf(outputValue.keySet()));
+        assertEquals(List.of("zip", "city", "country"), List.copyOf(((Map<?, ?>) outputValue.get("address")).keySet()));
+        Map<?, ?> line = (Map<?, ?>) ((List<?>) outputValue.get("lines")).get(0);
+        assertEquals(List.of("zip", "city", "country"), List.copyOf(line.keySet()));
+    }
 }

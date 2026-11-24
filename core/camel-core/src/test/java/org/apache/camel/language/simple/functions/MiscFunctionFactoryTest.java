@@ -93,6 +93,42 @@ public class MiscFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         assertFalse((Boolean) evaluate("isNumeric(${body})"));
     }
 
+    // --- isValidXml / isValidJson ---
+
+    @Test
+    public void testIsValidXml() {
+        exchange.getIn().setBody("<order id=\"1\"><item>Camel</item></order>");
+        assertTrue((Boolean) evaluate("isValidXml()"));
+        assertTrue((Boolean) evaluate("isValidXml(${body})"));
+        assertFalse((Boolean) evaluate("isValidXml('<order><item></order>')"));
+        assertFalse((Boolean) evaluate("isValidXml('Hello')"));
+
+        exchange.getIn().setBody(null);
+        assertFalse((Boolean) evaluate("isValidXml()"));
+    }
+
+    @Test
+    public void testIsValidXmlRejectsDoctype() {
+        // well-formed, but DTDs and entities are never processed: a DOCTYPE is not accepted
+        exchange.getIn().setBody("<!DOCTYPE a [<!ENTITY e SYSTEM \"file:///etc/passwd\">]><a>&e;</a>");
+        assertFalse((Boolean) evaluate("isValidXml()"));
+        exchange.getIn().setBody("<!DOCTYPE a><a/>");
+        assertFalse((Boolean) evaluate("isValidXml()"));
+    }
+
+    @Test
+    public void testIsValidJson() {
+        exchange.getIn().setBody("{\"id\": 1, \"tags\": [\"a\", \"b\"]}");
+        assertTrue((Boolean) evaluate("isValidJson()"));
+        exchange.getIn().setHeader("json", "{\"id\": 1,}");
+        assertFalse((Boolean) evaluate("isValidJson(${header.json})"));
+        assertTrue((Boolean) evaluate("isValidJson('123')"));
+        assertFalse((Boolean) evaluate("isValidJson('Hello')"));
+
+        exchange.getIn().setBody(null);
+        assertFalse((Boolean) evaluate("isValidJson()"));
+    }
+
     // --- not ---
 
     @Test

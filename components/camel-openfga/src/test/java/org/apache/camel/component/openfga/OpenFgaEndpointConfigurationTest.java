@@ -118,12 +118,12 @@ class OpenFgaEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    void doesNotSupportConsumingFromOpenFga() throws Exception {
+    void doesNotSupportConsumingFromCheck() throws Exception {
         OpenFgaEndpoint endpoint = endpoint("openfga:check?openFgaClient=#fgaClient&storeId=" + STORE
                                             + "&user=user:anne&relation=reader&object=document:budget");
 
         assertThatThrownBy(() -> endpoint.createConsumer(e -> {
-        })).isInstanceOf(UnsupportedOperationException.class);
+        })).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Only readChanges");
     }
 
     @Test

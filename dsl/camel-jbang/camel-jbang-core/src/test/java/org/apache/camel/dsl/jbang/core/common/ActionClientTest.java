@@ -388,4 +388,17 @@ class ActionClientTest {
     private static JsonObject json(String text) {
         return (JsonObject) Jsoner.deserialize(text, (JsonObject) null);
     }
+
+    @Test
+    void theKameletsVersionOfAnIntegration() {
+        // camel run --kamelets-version, which the TUI and the route-structure tools look the Kamelets up in (CAMEL-27475)
+        JsonObject status = (JsonObject) Jsoner.deserialize("""
+                {"properties": {"properties": [
+                  {"key": "camel.main.name", "value": "csv-to-db"},
+                  {"key": "camel.jbang.kameletsVersion", "value": "4.24.0-SNAPSHOT"}]}}
+                """, (JsonObject) null);
+        assertThat(ActionClient.kameletsVersionOf(status)).isEqualTo("4.24.0-SNAPSHOT");
+        JsonObject none = (JsonObject) Jsoner.deserialize("{\"properties\": {\"properties\": []}}", (JsonObject) null);
+        assertThat(ActionClient.kameletsVersionOf(none)).isNull();
+    }
 }

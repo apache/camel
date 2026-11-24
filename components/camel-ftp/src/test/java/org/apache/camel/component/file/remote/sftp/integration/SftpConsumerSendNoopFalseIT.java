@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -25,10 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
-import org.apache.sshd.common.channel.RequestHandler;
-import org.apache.sshd.common.session.ConnectionService;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
+import org.apache.sshd.sftp.common.SftpConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,31 +34,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * With sendNoop=false the sftp consumer does not send a keep-alive request before each poll, and stays connected
- * between polls.
+ * Verifies that sendNoop controls whether a keep-alive REALPATH round-trip is sent before each poll.
+ * <p>
+ * Both sendNoop=true and sendNoop=false cause REALPATH requests (JSch resolves "." before every {@code ls}), but
+ * sendNoop=true adds an extra REALPATH per poll for the noop check. The test runs both modes in sequence against the
+ * same embedded server and asserts that the sendNoop=true run produces strictly more REALPATH requests <em>per
+ * poll</em> than the sendNoop=false baseline (comparing per-poll rates avoids a flaky failure if the two runs complete
+ * a different number of polls within the minimum-5 window).
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
-    private final AtomicInteger keepAlives = new AtomicInteger();
     private final AtomicInteger logins = new AtomicInteger();
 
     @RegisterExtension
-    protected SftpEmbeddedService service = new SftpEmbeddedService() {
+    protected SftpEmbeddedService service = new SftpExistsFileIT.CountingSftpEmbeddedService() {
         @Override
         public void setUpServer() throws Exception {
             super.setUpServer();
-            // count the keep-alive requests and the logins the server sees
-            List<RequestHandler<ConnectionService>> handlers = new ArrayList<>();
-            handlers.add((connectionService, request, wantReply, buffer) -> {
-                if (request.startsWith("keepalive@")) {
-                    keepAlives.incrementAndGet();
-                }
-                // let the default handlers answer the request
-                return RequestHandler.Result.Unsupported;
-            });
-            handlers.addAll(sshd.getGlobalRequestHandlers());
-            sshd.setGlobalRequestHandlers(handlers);
+            // count the logins the server sees
             sshd.addSessionListener(new SessionListener() {
                 @Override
                 public void sessionEvent(Session session, Event event) {
@@ -73,6 +64,10 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         }
     };
 
+    private SftpExistsFileIT.CountingSftpEmbeddedService countingService() {
+        return (SftpExistsFileIT.CountingSftpEmbeddedService) service;
+    }
+
     private String getSftpUrl() {
         return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/sendnoop?username=admin&password=admin"
                + "&knownHostsFile=" + service.getKnownHostsFile()
@@ -80,26 +75,47 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
     }
 
     @Test
-    public void testSendNoopFalse() throws Exception {
-        consumeFileAndPollAgain("sendNoopFalse");
+    public void testSendNoopDifference() throws Exception {
+        // --- Run with sendNoop=false (baseline) ---
+        MockEndpoint mockFalse = consumeFileAndPollAgain("sendNoopFalse");
+        // Stop the route before reading the counter: the consumer polls every 100 ms and may
+        // still be in flight. Reading the counter while the route is running risks a race where
+        // sendNoop=false accumulates extra REALPATH requests from JSch's internal cd/ls calls
+        // between assertIsSatisfied() returning and the route actually stopping.
+        context.getRouteController().stopRoute("sendNoopFalse");
+        // Divide by the number of polls to get a per-poll rate: JSch sends several REALPATH
+        // requests per poll (for cd/ls), so an extra poll in one run would skew the raw count.
+        int pollsFalse = mockFalse.getReceivedCounter();
+        double realpathPerPollFalse = (double) countingService().requests(SftpConstants.SSH_FXP_REALPATH) / pollsFalse;
+        assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=false)");
 
-        assertEquals(0, keepAlives.get(), "The consumer should not send a keep-alive before a poll when sendNoop=false");
-        assertEquals(1, logins.get(), "The consumer should stay connected between polls");
+        // reset counters and login count for the second run
+        countingService().reset();
+        logins.set(0);
+
+        // --- Run with sendNoop=true (default) ---
+        MockEndpoint mockTrue = consumeFileAndPollAgain("sendNoopDefault");
+        // Stop the route before reading, same reason as for the sendNoop=false run above.
+        context.getRouteController().stopRoute("sendNoopDefault");
+        int pollsTrue = mockTrue.getReceivedCounter();
+        double realpathPerPollTrue = (double) countingService().requests(SftpConstants.SSH_FXP_REALPATH) / pollsTrue;
+        assertEquals(1, logins.get(), "The consumer should stay connected between polls (sendNoop=true)");
+
+        // sendNoop=true sends an extra REALPATH round-trip before every poll, so it must produce
+        // strictly more REALPATH per poll. Comparing per-poll rates avoids a flaky failure when
+        // the two runs complete a different number of polls within the minimum-5 window.
+        assertTrue(realpathPerPollTrue > realpathPerPollFalse,
+                "sendNoop=true should send more REALPATH requests per poll (" + realpathPerPollTrue
+                                                               + ") than sendNoop=false ("
+                                                               + realpathPerPollFalse + ")");
     }
 
-    @Test
-    public void testSendNoopDefault() throws Exception {
-        consumeFileAndPollAgain("sendNoopDefault");
-
-        assertTrue(keepAlives.get() > 0, "The consumer should send a keep-alive before a poll by default");
-        assertEquals(1, logins.get(), "The consumer should stay connected between polls");
-    }
-
-    private void consumeFileAndPollAgain(String routeId) throws Exception {
+    private MockEndpoint consumeFileAndPollAgain(String routeId) throws Exception {
         template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/sendnoop", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
         // the file, and then an empty message for each poll that finds no new file
         mock.expectedMinimumMessageCount(5);
         mock.message(0).body(String.class).isEqualTo("Hello World");
@@ -107,6 +123,7 @@ public class SftpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         context.getRouteController().startRoute(routeId);
 
         MockEndpoint.assertIsSatisfied(context);
+        return mock;
     }
 
     @Override

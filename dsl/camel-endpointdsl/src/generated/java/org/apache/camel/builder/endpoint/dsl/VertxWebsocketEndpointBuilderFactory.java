@@ -59,6 +59,23 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * When consumeAsClient is set to true, a text message to send to the
+         * server each time the consumer connects: when it starts and after each
+         * reconnect. For example a subscribe request, for a server that only
+         * sends messages to a client that asked for them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param connectMessage the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder connectMessage(String connectMessage) {
+            doSetProperty("connectMessage", connectMessage);
+            return this;
+        }
+        /**
          * When set to true, the consumer acts as a WebSocket client, creating
          * exchanges on each received WebSocket event.
          * 
@@ -218,6 +235,58 @@ public interface VertxWebsocketEndpointBuilderFactory {
          */
         default VertxWebsocketEndpointConsumerBuilder reconnectInterval(String reconnectInterval) {
             doSetProperty("reconnectInterval", reconnectInterval);
+            return this;
+        }
+        /**
+         * Whether the consumer routes each message synchronously. When true,
+         * the route runs on a thread of the Vert.x worker pool, which waits
+         * until the route is complete, so the size of the worker pool limits
+         * how many messages are routed at the same time. When false, the route
+         * starts on a worker thread with the asynchronous routing engine, and
+         * the worker thread is free as soon as the route continues on another
+         * thread (such as an asynchronous producer), so the worker pool no
+         * longer limits the messages in flight. Keep it false for a route that
+         * calls an asynchronous producer using the same Vert.x (such as
+         * vertx-http): with true, such messages can occupy every worker thread
+         * while their producers need a worker thread to complete, and then no
+         * message completes.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether the consumer routes each message synchronously. When true,
+         * the route runs on a thread of the Vert.x worker pool, which waits
+         * until the route is complete, so the size of the worker pool limits
+         * how many messages are routed at the same time. When false, the route
+         * starts on a worker thread with the asynchronous routing engine, and
+         * the worker thread is free as soon as the route continues on another
+         * thread (such as an asynchronous producer), so the worker pool no
+         * longer limits the messages in flight. Keep it false for a route that
+         * calls an asynchronous producer using the same Vert.x (such as
+         * vertx-http): with true, such messages can occupy every worker thread
+         * while their producers need a worker thread to complete, and then no
+         * message completes.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -468,6 +537,42 @@ public interface VertxWebsocketEndpointBuilderFactory {
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exchangePattern(String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true, whether the received messages
+         * are routed in parallel, on the threads of the Vert.x worker pool, in
+         * any order. By default (false), the messages of the WebSocket are
+         * routed one after the other, in the order they are received.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder parallelProcessing(boolean parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true, whether the received messages
+         * are routed in parallel, on the threads of the Vert.x worker pool, in
+         * any order. By default (false), the messages of the WebSocket are
+         * routed one after the other, in the order they are received.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder parallelProcessing(String parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
             return this;
         }
         /**

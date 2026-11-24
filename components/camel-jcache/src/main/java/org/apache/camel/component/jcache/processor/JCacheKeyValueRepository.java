@@ -33,6 +33,7 @@ import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.KeyValueRepositoryHelper;
@@ -57,7 +58,8 @@ import org.apache.camel.util.ObjectHelper;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based key-value repository")
-public class JCacheKeyValueRepository extends ServiceSupport implements CamelContextAware, KeyValueRepository {
+public class JCacheKeyValueRepository extends ServiceSupport
+        implements CamelContextAware, KeyValueRepository, InMemoryStrategy {
 
     private CamelContext camelContext;
     private Cache<String, KeyValueTtlValue> cache;
@@ -237,6 +239,15 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     @ManagedOperation(description = "Clear all entries")
     public void clear() {
         cache.clear();
+    }
+
+    /**
+     * Whether the entries are kept only in memory; see {@link JCacheHelper#isInMemory(Cache)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return JCacheHelper.isInMemory(cache);
     }
 
     @Override

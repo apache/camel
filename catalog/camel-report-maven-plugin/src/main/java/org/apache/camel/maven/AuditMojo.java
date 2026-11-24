@@ -38,11 +38,13 @@ import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.catalog.cve.Dependency;
 import org.apache.camel.catalog.cve.HttpProxy;
+import org.apache.camel.catalog.cve.OnlineAdvisories;
 import org.apache.camel.catalog.cve.OsvClient;
 import org.apache.camel.catalog.cve.OsvDatabase;
 import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenProxy;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
@@ -110,7 +112,8 @@ public class AuditMojo extends AbstractMojo {
     private boolean failOnError;
 
     /**
-     * Checks the Apache Camel security advisories of the catalog only, without OSV.dev.
+     * Checks the Apache Camel security advisories of the catalog only, without OSV.dev and without checking the
+     * advisories online.
      */
     @Parameter(property = "camel.audit.offline", defaultValue = "false")
     private boolean offline;
@@ -135,6 +138,21 @@ public class AuditMojo extends AbstractMojo {
      */
     @Parameter(property = "camel.audit.osvDatabaseCache", defaultValue = "${user.home}/.camel/osv")
     private File osvDatabaseCache;
+
+    /**
+     * Where the Apache Camel security advisories are checked online, once a day, and merged with those of the catalog
+     * of the plugin: the GitHub contents API of camel-website (default:
+     * https://api.github.com/repos/apache/camel-website/contents/content/security), a mirror of it, or the URL or file
+     * of a JSON array in the format of the catalog. Not with offline.
+     */
+    @Parameter(property = "camel.audit.advisoriesUrl")
+    private String advisoriesUrl;
+
+    /**
+     * Where the advisories checked online are kept, shared with the Camel CLI.
+     */
+    @Parameter(property = "camel.audit.advisoriesCache", defaultValue = "${user.home}/.camel/advisories")
+    private File advisoriesCache;
 
     /**
      * The groupIds that are not checked, and not sent to OSV.dev, such as those of the internal libraries of a company,
@@ -207,8 +225,16 @@ public class AuditMojo extends AbstractMojo {
                 source = new OsvClient(proxy(OsvClient.API_URL));
             }
         }
+        List<SecurityAdvisoryModel> camelAdvisories = CveAudit.advisories(catalog);
+        OnlineAdvisories.Result online = null;
+        if (!offline) {
+            String url = advisoriesUrl != null && !advisoriesUrl.isBlank() ? advisoriesUrl : OnlineAdvisories.DEFAULT_URL;
+            online = OnlineAdvisories.load(url, advisoriesCache.toPath(), OnlineAdvisories.DEFAULT_MAX_AGE, proxy(url),
+                    camelAdvisories);
+            camelAdvisories = online.advisories();
+        }
         CveAudit.Result result = CveAudit.audit(collected.deps(), Map.of(), declared, collected.via(), null, catalog,
-                source);
+                camelAdvisories, source);
 
         Map<String, String> suppressed = readSuppressions();
         Map<CveFinding, String> hidden = new LinkedHashMap<>();
@@ -229,6 +255,9 @@ public class AuditMojo extends AbstractMojo {
         }
         if (database != null && database.warning() != null) {
             getLog().warn(database.warning());
+        }
+        if (online != null && online.warning() != null) {
+            getLog().warn(online.warning());
         }
         String note = database != null && database.updated() != null
                 ? " (offline OSV database, updated " + database.updated().toString().substring(0, 10) + ")" : "";

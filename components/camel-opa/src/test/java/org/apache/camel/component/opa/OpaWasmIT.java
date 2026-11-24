@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -39,7 +40,10 @@ import org.apache.camel.component.opa.security.OpaSecurityPolicy;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.security.AuthorizationDecisionEvent;
 import org.apache.camel.test.infra.opa.services.OpaWasmBundleBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -145,6 +149,33 @@ public class OpaWasmIT extends CamelTestSupport {
         // producer health checks are disabled globally by default, so enable the repository to read them back
         repository.setEnabled(true);
         return repository.stream().toList();
+    }
+
+    @Test
+    void wasmEvaluationPublishesOneDecisionEventWithItsPoolWait() throws Exception {
+        var events = new ArrayList<AuthorizationDecisionEvent>();
+        var observer = new EventNotifierSupport() {
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof AuthorizationDecisionEvent;
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+                events.add((AuthorizationDecisionEvent) event);
+            }
+        };
+        context.getManagementStrategy().addEventNotifier(observer);
+        try {
+            Exchange out = template.request(wasm("authz/allow"), exchange -> exchange.getMessage().setHeader("user", "alice"));
+            assertThat(out.getException()).isNull();
+            assertThat(events).hasSize(1);
+            assertThat(events.getFirst().getEngine())
+                    .isEqualTo(AuthorizationDecisionEvent.Engine.OPA_WASM);
+            assertThat(events.getFirst().getPoolWaitNanos()).isNotNegative();
+        } finally {
+            context.getManagementStrategy().removeEventNotifier(observer);
+        }
     }
 
     /**

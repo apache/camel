@@ -545,6 +545,9 @@ public class ModelWriter extends BaseWriter {
     public void writeXMLSecurityDataFormat(XMLSecurityDataFormat def) throws IOException {
         doWriteXMLSecurityDataFormat("xmlSecurity", def);
     }
+    public void writeXsdJsonDataFormat(XsdJsonDataFormat def) throws IOException {
+        doWriteXsdJsonDataFormat("xsdJson", def);
+    }
     public void writeYAMLDataFormat(YAMLDataFormat def) throws IOException {
         doWriteYAMLDataFormat("yaml", def);
     }
@@ -1241,6 +1244,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
+                case "XsdJsonDataFormat" -> doWriteXsdJsonDataFormat("xsdJson", (XsdJsonDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2040,6 +2044,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
+                case "XsdJsonDataFormat" -> doWriteXsdJsonDataFormat("xsdJson", (XsdJsonDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2293,6 +2298,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("escape", def.getEscape(), null);
         doWriteAttribute("headerDisabled", def.getHeaderDisabled(), null);
         doWriteAttribute("header", def.getHeader(), null);
+        doWriteAttribute("headerFromMapKeys", def.getHeaderFromMapKeys(), null);
         doWriteAttribute("allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
         doWriteAttribute("ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
         doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
@@ -2372,6 +2378,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
+                case "XsdJsonDataFormat" -> doWriteXsdJsonDataFormat("xsdJson", (XsdJsonDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2619,9 +2626,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("armored", def.getArmored(), "false");
         doWriteAttribute("integrity", def.getIntegrity(), "true");
         doWriteAttribute("provider", def.getProvider(), null);
-        doWriteAttribute("algorithm", def.getAlgorithm(), null);
+        doWriteAttribute("algorithm", def.getAlgorithm(), "9");
         doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
-        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), "8");
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         endElement(name);
@@ -2822,6 +2829,18 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
         doWriteAttribute("mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
         doWriteAttribute("addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
+        endElement(name);
+    }
+    protected void doWriteXsdJsonDataFormat(String name, XsdJsonDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("schema", def.getSchema(), null);
+        doWriteAttribute("element", def.getElement(), null);
+        doWriteAttribute("includeRoot", def.getIncludeRoot(), "false");
+        doWriteAttribute("attributePrefix", def.getAttributePrefix(), null);
+        doWriteAttribute("textName", def.getTextName(), "value");
+        doWriteAttribute("ignoreUnknown", def.getIgnoreUnknown(), "false");
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "false");
         endElement(name);
     }
     protected void doWriteYAMLDataFormat(String name, YAMLDataFormat def) throws IOException {
@@ -3036,6 +3055,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteNamespaceAwareExpressionAttributes(NamespaceAwareExpression def) throws IOException {
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute("namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(NamespaceAwareExpression def) throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
@@ -3571,6 +3591,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
+                case "XsdJsonDataFormat" -> doWriteXsdJsonDataFormat("xsdJson", (XsdJsonDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);

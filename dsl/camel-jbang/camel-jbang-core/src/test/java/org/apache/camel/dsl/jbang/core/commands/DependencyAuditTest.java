@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.cve.CveAudit;
 import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
@@ -34,6 +36,7 @@ import org.apache.camel.catalog.cve.Dependency;
 import org.apache.camel.catalog.cve.OsvDatabase;
 import org.apache.camel.catalog.cve.VulnerabilitySource;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -192,5 +195,30 @@ class DependencyAuditTest {
         // --offline wins
         audit.offline = true;
         assertThat(audit.vulnerabilitySource(null)).isNull();
+    }
+
+    @Test
+    void theCamelAdvisoriesOfAMirrorAreMergedWithThoseOfTheCatalog(@TempDir Path dir) throws IOException {
+        // CAMEL-27348: a file in the format of the catalog, with an advisory the catalog does not know
+        Path file = Files.writeString(dir.resolve("advisories.json"), """
+                [{"cve": "CVE-2099-12345", "severity": "HIGH", "affected": "From 4.0.0 before 9.0.0",
+                  "components": ["camel-kafka"]}]""");
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        int known = CveAudit.advisories(catalog).size();
+        DependencyAudit audit = new DependencyAudit();
+        audit.advisoriesUrl = file.toString();
+
+        List<SecurityAdvisoryModel> advisories = audit.camelAdvisories(null, catalog);
+
+        assertThat(advisories).hasSize(known + 1);
+        assertThat(advisories).extracting(SecurityAdvisoryModel::getCve).contains("CVE-2099-12345");
+        CveAudit.Result result = new CveAudit.Result(List.of(), List.of(), null);
+        JsonObject adv = (JsonObject) audit.jsonReport("project", 1, result, List.of(), List.of()).get("camelAdvisories");
+        assertThat(adv.getInteger("online")).isEqualTo(1);
+        assertThat(adv.getInteger("total")).isEqualTo(known + 1);
+
+        // --offline: the catalog only
+        audit.offline = true;
+        assertThat(audit.camelAdvisories(null, catalog)).hasSize(known);
     }
 }

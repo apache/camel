@@ -747,6 +747,10 @@ dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you 
 want to instrument a few selected routes.
 ====
 
+The `MicrometerRoutePolicy` cannot be combined with the `OpenTelemetryRoutePolicy` of the
+xref:components::opentelemetry-metrics-component.adoc[OpenTelemetry Metrics] component:
+a route that has both fails to start.
+
 From Java, you add the factory to the `CamelContext` as shown below:
 
 ._Java-only: adding MicrometerRoutePolicyFactory to the CamelContext_
@@ -978,6 +982,13 @@ camel.metrics.enableMessageHistory=true
 camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
 
+
+=== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.
 
 === Using Camel Micrometer with Spring Boot
 

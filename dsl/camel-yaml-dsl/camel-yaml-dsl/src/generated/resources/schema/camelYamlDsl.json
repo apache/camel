@@ -2898,6 +2898,7 @@
           "univocityFixed" : { },
           "univocityTsv" : { },
           "xmlSecurity" : { },
+          "xsdJson" : { },
           "yaml" : { },
           "zipDeflater" : { },
           "zipFile" : { }
@@ -3277,6 +3278,14 @@
             "properties" : {
               "xmlSecurity" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "xsdJson" ],
+            "properties" : {
+              "xsdJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
               }
             }
           }, {
@@ -7528,6 +7537,7 @@
           "univocityFixed" : { },
           "univocityTsv" : { },
           "xmlSecurity" : { },
+          "xsdJson" : { },
           "yaml" : { },
           "zipDeflater" : { },
           "zipFile" : { }
@@ -7907,6 +7917,14 @@
             "properties" : {
               "xmlSecurity" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "xsdJson" ],
+            "properties" : {
+              "xsdJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
               }
             }
           }, {
@@ -8959,6 +8977,12 @@
               "description" : "Whether to disable headers.",
               "default" : false
             },
+            "headerFromMapKeys" : {
+              "type" : "boolean",
+              "title" : "Header From Map Keys",
+              "description" : "When marshalling a Map, or a List of Maps, and no header is configured, whether to write a header line with the keys of the first Map. The keys of the first Map are then the columns of all the rows, as with the header option: a key that only later rows have is not written.",
+              "default" : false
+            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -9239,6 +9263,9 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
+          },
+          "xsdJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
@@ -10300,7 +10327,8 @@
           "algorithm" : {
             "type" : "number",
             "title" : "Algorithm",
-            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags. Only relevant for encrypting."
+            "description" : "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 9 (= AES_256), 8 (= AES_192), 7 (= AES_128), 3 (= CAST5). Only relevant for encrypting.",
+            "default" : 9
           },
           "armored" : {
             "type" : "boolean",
@@ -10316,7 +10344,8 @@
           "hashAlgorithm" : {
             "type" : "number",
             "title" : "Hash Algorithm",
-            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags. Only relevant for signing."
+            "description" : "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (= SHA224), 2 (= SHA1). Only relevant for signing.",
+            "default" : 8
           },
           "id" : {
             "type" : "string",
@@ -11330,6 +11359,59 @@
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
+      },
+      "org.apache.camel.model.dataformat.XsdJsonDataFormat" : {
+        "title" : "XSD JSON",
+        "description" : "Unmarshal XML to JSON and marshal JSON to XML, driven by an XML Schema (an XSD, or the types of a WSDL), which gives the types, arrays, order and namespaces.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "attributePrefix" : {
+            "type" : "string",
+            "title" : "Attribute Prefix",
+            "description" : "A prefix for the JSON fields of XML attributes, such as _. By default attributes and child elements share the JSON object without a prefix."
+          },
+          "element" : {
+            "type" : "string",
+            "title" : "Element",
+            "description" : "The root element: a global element of the schema, as {namespace}name or as a local name that is unique in the schema. Needed to marshal (JSON to XML) unless includeRoot is enabled. On unmarshal the XML document names its root element, and this option only restricts it. The header CamelXsdJsonElement overrides it per message."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "ignoreUnknown" : {
+            "type" : "boolean",
+            "title" : "Ignore Unknown",
+            "description" : "Whether to skip XML elements and attributes, or JSON fields, that the schema does not declare, instead of failing.",
+            "default" : false
+          },
+          "includeRoot" : {
+            "type" : "boolean",
+            "title" : "Include Root",
+            "description" : "Whether the JSON holds the root element as its single field, such as {getOrder: {...}}, instead of the content of the root element.",
+            "default" : false
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to indent the output, the JSON on unmarshal and the XML on marshal.",
+            "default" : false
+          },
+          "schema" : {
+            "type" : "string",
+            "title" : "Schema",
+            "description" : "The XML Schema to use: an .xsd file, or a .wsdl file whose types (every xs:schema in wsdl:types) are read. A resource such as classpath:orders.xsd, file:schemas/orders.wsdl or an https URL. Imports and includes are resolved relative to it, with the same scheme only."
+          },
+          "textName" : {
+            "type" : "string",
+            "title" : "Text Name",
+            "description" : "The JSON field of the text of an element with simple content and attributes, such as {currency: EUR, value: 9.95}.",
+            "default" : "value"
+          }
+        },
+        "required" : [ "schema" ]
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "title" : "YAML",
@@ -13155,6 +13237,11 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
+            },
             "namespacesRef" : {
               "type" : "string",
               "title" : "Namespaces Ref",
@@ -13228,6 +13315,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
             },
             "namespacesRef" : {
               "type" : "string",
@@ -13321,6 +13413,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespaceMappings" : {
+              "type" : "string",
+              "title" : "Namespace Mappings",
+              "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
             },
             "namespacesRef" : {
               "type" : "string",
@@ -15674,6 +15771,8 @@
               }, {
                 "required" : [ "xmlSecurity" ]
               }, {
+                "required" : [ "xsdJson" ]
+              }, {
                 "required" : [ "yaml" ]
               }, {
                 "required" : [ "zipDeflater" ]
@@ -16051,6 +16150,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "xsdJson" ],
+            "properties" : {
+              "xsdJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XsdJsonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "yaml" ],
             "properties" : {
               "yaml" : {
@@ -16143,6 +16250,7 @@
           "univocityFixed" : { },
           "univocityTsv" : { },
           "xmlSecurity" : { },
+          "xsdJson" : { },
           "yaml" : { },
           "zipDeflater" : { },
           "zipFile" : { }

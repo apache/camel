@@ -414,7 +414,8 @@ abstract class Exporter {
                 }
             } else if (line.startsWith(DEPENDENCIES_MAIN + "=") && request.runtime == RuntimeType.main) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_MAIN + "="), answer);
-            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=") && request.runtime == RuntimeType.springBoot) {
+            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=")
+                    && (request.runtime == RuntimeType.springBoot)) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_SPRING_BOOT + "="), answer);
             } else if (line.startsWith(DEPENDENCIES_QUARKUS + "=") && request.runtime == RuntimeType.quarkus) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_QUARKUS + "="), answer);
@@ -1089,6 +1090,19 @@ abstract class Exporter {
     }
 
     /**
+     * The path that camel-cxf-platform-http serves the SOAP services of cxf consumers under (camel-main), which is
+     * {@code cxf.path} on Spring Boot and {@code quarkus.cxf.path} on Quarkus.
+     */
+    protected static final String CXF_PATH = "camel.cxf.path";
+
+    /**
+     * Whether the key is the option of camel-cxf-platform-http that reads the X-Forwarded headers (camel-main).
+     */
+    protected static boolean isCxfUseXForwardedHeaders(String key) {
+        return "camel.cxf.useXForwardedHeaders".equals(key) || "camel.cxf.use-x-forwarded-headers".equals(key);
+    }
+
+    /**
      * Gets the maven repositories
      *
      * @param  prop         settings
@@ -1567,6 +1581,7 @@ abstract class Exporter {
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
         model.put("AppRuntimeJar", appJar);
+        model.put("War", request.isWarPackaging());
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);

@@ -21,30 +21,35 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.debezium.config.Configuration;
 import io.debezium.util.IoUtil;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDebeziumConfiguration;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The embedded engine runs on its own thread and reports a failure only through its completion callback, so without
- * that callback a connector that cannot start leaves the route started, healthy and silent.
+ * The embedded engine runs on its own thread and reports a failure only through its completion callback. A failure
+ * while the engine starts, here an offset store it cannot read, must fail the start of the route instead of leaving the
+ * route started and silent.
  */
 public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
 
@@ -53,6 +58,12 @@ public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
             = Paths.get("target/data", "camel-debezium-engine-failure-input.txt").toAbsolutePath();
     private static final Path TEST_OFFSET_STORE_PATH
             = Paths.get("target/data", "camel-debezium-engine-failure-offset-store.txt").toAbsolutePath();
+
+    @BeforeAll
+    static void createFolder() throws IOException {
+        // the folder of the offset file must exist when the endpoint is created, which is before beforeEach
+        Files.createDirectories(TEST_OFFSET_STORE_PATH.getParent());
+    }
 
     @BeforeEach
     public void beforeEach() throws IOException {
@@ -70,22 +81,44 @@ public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
     }
 
     @Test
-    void engineFailureIsReportedToTheExceptionHandlerAndTheHealthCheck() throws Exception {
+    void engineFailureWhileStartingFailsTheStartOfTheRoute() throws Exception {
         final DebeziumConsumer consumer = (DebeziumConsumer) context.getRoute(ROUTE_ID).getConsumer();
 
         final CapturingExceptionHandler exceptionHandler = new CapturingExceptionHandler();
         consumer.setExceptionHandler(exceptionHandler);
 
-        context.getRouteController().startRoute(ROUTE_ID);
+        final Exception e = assertThrows(Exception.class, () -> context.getRouteController().startRoute(ROUTE_ID));
 
-        assertTrue(exceptionHandler.latch.await(30, TimeUnit.SECONDS),
-                "the engine failure should be handed to the consumer exception handler");
-        assertNotNull(exceptionHandler.captured.get(), "the failure cause should be reported");
+        final Throwable failure = findStartFailure(e);
+        assertNotNull(failure, "the start should fail with the failure of the engine, but got: " + e);
+        assertTrue(failure.getMessage().contains("route: " + ROUTE_ID), failure.getMessage());
+        assertNotNull(failure.getCause(), "the failure of the engine should be the cause");
+        assertTrue(failure.getMessage().contains(failure.getCause().getMessage()),
+                "the message should carry the failure of the engine: " + failure.getMessage());
+        // the offset store cannot be read: the root cause from Kafka Connect is in the message
+        assertTrue(failure.getMessage().contains("invalid stream header"), failure.getMessage());
 
-        final HealthCheck healthCheck = consumer.getHealthCheck();
-        assertNotNull(healthCheck, "the consumer should expose a health check");
-        assertEquals(HealthCheck.State.DOWN, healthCheck.call().getState(),
-                "a consumer whose engine has died should not report as healthy");
+        assertNotEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus(ROUTE_ID));
+        assertNull(exceptionHandler.captured.get(),
+                "a failure that fails the start should not also be handed to the exception handler");
+        assertNotNull(consumer.getEngineFailure(), "the failure should be kept for the health check");
+    }
+
+    @Test
+    void theStartWaitsAsLongAsTheEngineWaitsForItsTasks() {
+        assertEquals(80000L, DebeziumConsumer.startTimeout(Configuration.empty()),
+                "by default 40 seconds for the task and as much for the connector");
+        assertEquals(4000L, DebeziumConsumer.startTimeout(Configuration.from(
+                Map.of("internal.task.management.timeout.ms", "1000", "tasks.max", "3"))));
+    }
+
+    private static Throwable findStartFailure(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t.getMessage() != null && t.getMessage().startsWith("Debezium engine failed to start")) {
+                return t;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -125,7 +158,6 @@ public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
 
     private static final class CapturingExceptionHandler implements ExceptionHandler {
 
-        private final CountDownLatch latch = new CountDownLatch(1);
         private final AtomicReference<Throwable> captured = new AtomicReference<>();
 
         @Override
@@ -141,7 +173,6 @@ public class DebeziumConsumerEngineFailureTest extends CamelTestSupport {
         @Override
         public void handleException(String message, Exchange exchange, Throwable exception) {
             captured.compareAndSet(null, exception);
-            latch.countDown();
         }
     }
 }

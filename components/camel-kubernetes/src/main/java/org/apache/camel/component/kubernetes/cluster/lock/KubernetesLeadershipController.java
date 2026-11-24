@@ -382,9 +382,12 @@ public class KubernetesLeadershipController implements Service {
             return;
         }
 
-        this.leaderNotifier.refreshLeadership(Optional.ofNullable(this.latestLeaderInfo.getLeader()),
-                System.currentTimeMillis(), this.lockConfiguration.getLeaseDurationMillis(),
-                this.latestLeaderInfo.getMembers());
+        // the lease can still name the current pod here only when the pod is not a valid leader (not ready): it must not
+        // report itself as leader (a valid holder waits in BECOMING_LEADER before its leadership takes effect)
+        Optional<String> leader = Optional.ofNullable(this.latestLeaderInfo.getLeader())
+                .filter(l -> !l.equals(this.lockConfiguration.getPodName()));
+        this.leaderNotifier.refreshLeadership(leader, System.currentTimeMillis(),
+                this.lockConfiguration.getLeaseDurationMillis(), this.latestLeaderInfo.getMembers());
         rescheduleAfterDelay();
     }
 

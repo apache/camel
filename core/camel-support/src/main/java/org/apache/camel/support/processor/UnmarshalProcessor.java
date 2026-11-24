@@ -153,7 +153,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                 ? "Cannot unmarshal using " + name + ": the variable " + variableSend + " is null, so there is nothing to"
                   + " unmarshal. Set the variable " + variableSend + " first, or set allowNullBody=true to skip a null body."
                 : "Cannot unmarshal using " + name + ": " + BodyFacts.describe(exchange)
-                  + ", so there is nothing to unmarshal: " + BodyFacts.hint(exchange, BodyFacts.Need.A_BODY)
+                  + ", so there is nothing to unmarshal: " + BodyFacts.hint(exchange, BodyFacts.Need.A_BODY, name)
                   + "; or set allowNullBody=true to skip a null body.";
         NoTypeConversionAvailableException answer = new NoTypeConversionAvailableException(message, null, ntc.getToType());
         answer.initCause(e);

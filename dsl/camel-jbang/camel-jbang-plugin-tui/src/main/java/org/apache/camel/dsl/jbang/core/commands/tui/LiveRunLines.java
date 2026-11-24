@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
+
 /**
  * The live run data of a source file: what the processors of a running integration on each line of it did, read from
  * the routes and processors of the status (their source location, file:line), for the Source tab to show at the end of
@@ -59,25 +61,32 @@ final class LiveRunLines {
             answer.put(line, t == null
                     ? new SourceLiveColumn.LiveLine(s[0], s[1], s[0] > 0 ? s[2] / s[0] : 0)
                     : new SourceLiveColumn.LiveLine(
-                            s[0], s[1], s[0] > 0 ? s[2] / s[0] : 0, List.copyOf(t.types), List.copyOf(t.kinds), t.mixed));
+                            s[0], s[1], s[0] > 0 ? s[2] / s[0] : 0, List.copyOf(t.types), List.copyOf(t.kinds),
+                            List.copyOf(t.formats), t.kameletInput, t.mixed));
         });
         return answer;
     }
 
-    /** The body types of the processors on a line, and whether one of them was reached with more than one kind. */
+    /**
+     * The body types of the processors on a line, the formats of their payloads, and whether one of them was reached
+     * with more than one kind or format.
+     */
     private static final class LineTypes {
         final Set<String> types = new LinkedHashSet<>();
         final Set<String> kinds = new LinkedHashSet<>();
+        final Set<String> formats = new LinkedHashSet<>();
+        // the data type of the Kamelet a step on the line calls (CAMEL-27475)
+        KameletInput kameletInput;
         boolean mixed;
     }
 
     /**
-     * Adds the body types a processor has been reached with to its line (CAMEL-25897): the types and the kinds of all
-     * the processors on the line, which is mixed when one of them was reached with bodies of more than one kind, not
-     * when two of them each had their own kind.
+     * Adds the body types a processor has been reached with to its line (CAMEL-25897): the types, the kinds and the
+     * formats of all the processors on the line, which is mixed when one of them was reached with bodies of more than
+     * one kind or payloads of more than one format (CAMEL-27468), not when two of them each had their own.
      */
     private static void addBodyTypes(Map<Integer, LineTypes> types, String name, ProcessorInfo p) {
-        if (p.bodyTypes == null || p.bodyTypes.isEmpty()) {
+        if ((p.bodyTypes == null || p.bodyTypes.isEmpty()) && p.kameletInput == null) {
             return;
         }
         int line = lineOf(p.source, name);
@@ -89,7 +98,15 @@ final class LiveRunLines {
         if (p.bodyKinds != null) {
             t.kinds.addAll(p.bodyKinds);
         }
-        t.mixed |= BodyTypes.mixed(p.bodyKinds);
+        if (p.bodyFormats != null) {
+            t.formats.addAll(p.bodyFormats);
+        }
+        t.mixed |= BodyTypes.marked(p.bodyKinds, p.bodyFormats);
+        if (p.kameletInput != null) {
+            t.kameletInput = p.kameletInput;
+            // a body the transformer of the Kamelet does not take needs attention
+            t.mixed |= Boolean.FALSE.equals(p.kameletInput.takes(p.bodyTypes, p.bodyKinds));
+        }
     }
 
     /** Adds what a processor did to its line: totals and failures summed, the mean time weighted by the exchanges. */

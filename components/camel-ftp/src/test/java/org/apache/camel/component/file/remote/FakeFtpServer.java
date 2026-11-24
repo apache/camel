@@ -69,6 +69,8 @@ final class FakeFtpServer implements Closeable {
     });
     private final Map<String, byte[]> files = new ConcurrentHashMap<>();
     private final Set<String> directories = ConcurrentHashMap.newKeySet();
+    private final Map<String, List<String>> listedDirectories = new ConcurrentHashMap<>();
+    private volatile boolean absoluteNames;
     private final List<Connection> connections = new CopyOnWriteArrayList<>();
     private final List<String> commands = new CopyOnWriteArrayList<>();
     private final AtomicInteger connectionIds = new AtomicInteger();
@@ -94,6 +96,19 @@ final class FakeFtpServer implements Closeable {
             parent = parentOf(parent);
         }
         files.put(file, content);
+    }
+
+    /** Lists the absolute path of each file, as some servers do, instead of its name. */
+    void listAbsoluteNames() {
+        absoluteNames = true;
+    }
+
+    /**
+     * Lists a directory entry with the given name in the listing of the directory, whatever the name is, as a server
+     * can.
+     */
+    void addListedDirectory(String directory, String name) {
+        listedDirectories.computeIfAbsent(normalize(directory), d -> new CopyOnWriteArrayList<>()).add(name);
     }
 
     Map<String, byte[]> files() {
@@ -289,13 +304,20 @@ final class FakeFtpServer implements Closeable {
             StringBuilder listing = new StringBuilder();
             for (Map.Entry<String, byte[]> e : new TreeMap<>(files).entrySet()) {
                 if (parentOf(e.getKey()).equals(dir)) {
-                    String name = e.getKey().substring(e.getKey().lastIndexOf('/') + 1);
+                    String name = absoluteNames ? e.getKey() : e.getKey().substring(e.getKey().lastIndexOf('/') + 1);
                     if (cmd.equals("NLST")) {
                         listing.append(name).append("\r\n");
                     } else {
                         listing.append("-rw-r--r-- 1 camel camel ").append(e.getValue().length)
                                 .append(" Jan 01  2025 ").append(name).append("\r\n");
                     }
+                }
+            }
+            for (String name : listedDirectories.getOrDefault(dir, List.of())) {
+                if (cmd.equals("NLST")) {
+                    listing.append(name).append("\r\n");
+                } else {
+                    listing.append("drwxr-xr-x 1 camel camel 0 Jan 01  2025 ").append(name).append("\r\n");
                 }
             }
             transfer(listing.toString().getBytes(StandardCharsets.UTF_8));

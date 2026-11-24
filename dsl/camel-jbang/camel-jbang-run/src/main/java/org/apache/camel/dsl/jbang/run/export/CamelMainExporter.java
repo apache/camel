@@ -342,6 +342,16 @@ class CamelMainExporter extends Exporter {
             answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
         }
 
+        // a cxf consumer is served on the platform-http server, as in camel run, which adds camel-cxf-platform-http
+        // (since 4.24) for an integration with a cxf consumer, not for cxf producers only
+        if (hasCamelArtifact(answer, "camel-cxf-platform-http")) {
+            if (request.camelVersion != null && !VersionHelper.isGE(request.camelVersion, "4.24.0")) {
+                removeCamelArtifact(answer, "camel-cxf-platform-http");
+            } else if (!hasCamelArtifact(answer, "camel-platform-http-main")) {
+                answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            }
+        }
+
         boolean main = hasCamelArtifact(answer, "camel-platform-http-main");
         if (hasOpenapi(answer) && !main) {
             // include http server if using openapi

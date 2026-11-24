@@ -191,3 +191,7 @@ context.addService(service);
 
 from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders");
 ----
+
+NOTE: All the namespaces of a node share one Raft member: the `JGroupsRaftClusterService` connects one `RaftHandle`
+(with the raft id of the service) for the cluster views of all namespaces. So the Raft leader is the leader of every
+namespace, and the master routes of all namespaces run on that node. Raft does not elect a leader per namespace.

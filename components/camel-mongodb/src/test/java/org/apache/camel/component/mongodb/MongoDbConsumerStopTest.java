@@ -247,7 +247,9 @@ class MongoDbConsumerStopTest {
 
         assertNull(failure.get());
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("mongo"));
-        assertTrue(interruptedWhileReading.get(), "the consumer thread left behind is interrupted");
+        // the stop returns once it interrupted the thread, which sets the flag when it wakes up from the interrupt
+        await("the consumer thread left behind is interrupted").atMost(10, TimeUnit.SECONDS)
+                .until(interruptedWhileReading::get);
         List<String> warnings = events.stream().filter(e -> e.getLevel() == Level.WARN)
                 .map(e -> e.getMessage().getFormattedMessage()).toList();
         assertEquals(1, warnings.size(), "one WARN for the consumer thread left behind: " + warnings);

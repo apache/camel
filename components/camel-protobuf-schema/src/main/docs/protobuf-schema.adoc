@@ -52,7 +52,7 @@ A YAML route that turns JSON text into a Protobuf message of the type `Order`, a
 
 == Supported schemas
 
-`proto2` and `proto3` files with nested messages, enums, maps, `oneof` and repeated fields. A schema may import these well-known types of `google/protobuf`, which are read in their JSON form (a `Timestamp` as RFC 3339 text): `any.proto`, `descriptor.proto`, `duration.proto`, `empty.proto`, `struct.proto`, `timestamp.proto` and `wrappers.proto`. Other imports are not supported, including `api.proto`, `source_context.proto` and `type.proto`.
+`proto2` and `proto3` files with nested messages, enums, maps, `oneof` and repeated fields. A schema may import these well-known types of `google/protobuf`, which are read in their JSON form (a `Timestamp` as RFC 3339 text): `any.proto`, `descriptor.proto`, `duration.proto`, `empty.proto`, `struct.proto`, `timestamp.proto` and `wrappers.proto`. Other imports are not supported, including `api.proto`, `field_mask.proto`, `source_context.proto` and `type.proto`: the schema is one file, and a schema that imports another file (such as `import "shop/common.proto";`) fails with a message that names the import. Put the types of the imported file in the schema itself.
 
 == Your own parser
 

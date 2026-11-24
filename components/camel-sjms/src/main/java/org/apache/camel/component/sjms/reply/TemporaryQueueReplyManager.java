@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,6 +30,8 @@ import jakarta.jms.Session;
 import jakarta.jms.TemporaryQueue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.MessageListenerContainer;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 
@@ -45,12 +49,36 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     public Destination getReplyTo() {
         try {
-            destResolver.destinationReady();
+            // wait at most the request timeout, as the request is not registered yet, so neither its timeout nor the
+            // stop of the reply manager would complete it
+            long timeout = endpoint.getRequestTimeout();
+            if (!destResolver.destinationReady(timeout)) {
+                if (destResolver.isStopped()) {
+                    // the same exception as a request that reaches the stopped reply manager when it registers
+                    throw new RejectedExecutionException(
+                            "The reply manager was stopped while waiting for a new temporary JMSReplyTo queue."
+                                                         + " The request was not sent.");
+                }
+                // ExchangeTimedOutException is checked: SjmsProducer completes the exchange with the cause
+                throw new RuntimeCamelException(
+                        new ExchangeTimedOutException(
+                                null, timeout,
+                                "to no new temporary JMSReplyTo queue being created after the connection of the reply"
+                                               + " listener failed. The request was not sent."));
+            }
         } catch (InterruptedException e) {
             log.warn("Interrupted while waiting for JMSReplyTo destination refresh", e);
             Thread.currentThread().interrupt();
         }
         return super.getReplyTo();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // release the requests waiting for a new temporary queue: the listener container is stopped next, so no new
+        // queue would be created for them
+        destResolver.stop();
+        super.doStop();
     }
 
     @Override
@@ -116,6 +144,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private final Condition condition = lock.newCondition();
         private TemporaryQueue queue;
         private volatile boolean refreshWanted;
+        private volatile boolean stopped;
 
         @Override
         public Destination createDestination(Session session, String name, boolean topic) throws JMSException {
@@ -145,18 +174,50 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             refreshWanted = true;
         }
 
-        public void destinationReady() throws InterruptedException {
-            if (refreshWanted) {
-                lock.lock();
-                try {
-                    //check if requestWanted is still true
-                    if (refreshWanted) {
-                        log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
+        /**
+         * Waits until no refresh of the temporary queue is wanted any more.
+         *
+         * @param  timeoutMillis the longest time to wait, zero or negative to wait until the queue is refreshed or the
+         *                       reply manager is stopped
+         * @return               {@code true} when the queue is ready, {@code false} when the time ran out or the reply
+         *                       manager was stopped
+         */
+        public boolean destinationReady(long timeoutMillis) throws InterruptedException {
+            if (!refreshWanted) {
+                return true;
+            }
+            lock.lock();
+            try {
+                long nanos = TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
+                // check if refreshWanted is still true
+                while (refreshWanted) {
+                    if (stopped || (timeoutMillis > 0 && nanos <= 0)) {
+                        return false;
+                    }
+                    log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
+                    if (timeoutMillis > 0) {
+                        nanos = condition.awaitNanos(nanos);
+                    } else {
                         condition.await();
                     }
-                } finally {
-                    lock.unlock();
                 }
+                return true;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        public boolean isStopped() {
+            return stopped;
+        }
+
+        public void stop() {
+            lock.lock();
+            try {
+                stopped = true;
+                condition.signalAll();
+            } finally {
+                lock.unlock();
             }
         }
 

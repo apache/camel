@@ -698,6 +698,7 @@ public class KafkaFetchRecords implements Runnable {
 
         @Override
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            discardPendingRecords(partitions);
             delegate.onPartitionsRevoked(partitions);
         }
 
@@ -718,7 +719,17 @@ public class KafkaFetchRecords implements Runnable {
 
         @Override
         public void onPartitionsLost(Collection<TopicPartition> partitions) {
+            discardPendingRecords(partitions);
             delegate.onPartitionsLost(partitions);
+        }
+
+        private void discardPendingRecords(Collection<TopicPartition> partitions) {
+            // the records of these partitions that are held for an incomplete batch must not be processed and committed
+            // by this consumer: the new owner of a partition reads them again from the committed offset
+            KafkaRecordProcessorFacade facade = recordProcessorFacade;
+            if (facade != null) {
+                facade.discardPendingRecords(partitions);
+            }
         }
     }
 }

@@ -61,13 +61,14 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             @Metadata(description = "Whether the endpoint is remote (only present when true)") Boolean remote,
             @Metadata(description = "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)") List<String> bodyTypes,
             @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)") List<String> bodyKinds,
+            @Metadata(description = "The formats of the payloads this processor has been reached with, from their Content-Type header, in the order first seen: json, xml, csv, yaml, text or binary, or the media type as it is for any other. More than one means the format varied (only present when the message history recorded a payload with a Content-Type)") List<String> bodyFormats,
             @Metadata(description = "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)") Map<String, Object> statistics) {
     }
 
     /**
-     * The body types and kinds a line of the route structure has been reached with.
+     * The body types and kinds a line of the route structure has been reached with, and the formats of its payloads.
      */
-    record LineBodyTypes(List<String> types, List<String> kinds) {
+    record LineBodyTypes(List<String> types, List<String> kinds, List<String> formats) {
     }
 
     public record RouteEntry(
@@ -275,7 +276,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             LineBodyTypes types = bodyTypes.get(counter - 1);
             code.add(new CodeEntry(
                     idx, line.type(), line.id(), line.level(), line.description(), Jsoner.escape(line.code()), uri,
-                    remote, types != null ? types.types() : null, types != null ? types.kinds() : null, statistics));
+                    remote, types != null ? types.types() : null, types != null ? types.kinds() : null,
+                    types != null && !types.formats().isEmpty() ? types.formats() : null, statistics));
         }
         return code;
     }
@@ -295,7 +297,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             if (registry != null && i >= 2 && id != null) {
                 List<String> found = registry.getBodyTypes(routeId, id);
                 if (!found.isEmpty()) {
-                    types = new LineBodyTypes(found, kindNames(registry.getBodyKinds(routeId, id)));
+                    types = new LineBodyTypes(
+                            found, kindNames(registry.getBodyKinds(routeId, id)), registry.getBodyFormats(routeId, id));
                 }
             }
             answer.add(types);
@@ -315,8 +318,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     }
 
     /**
-     * The body types by their simple class names, such as {@code String | LinkedHashMap}, followed by the kinds when
-     * there is more than one: {@code String | LinkedHashMap (payload and data)}.
+     * The body types by their simple class names, such as {@code String | LinkedHashMap}, followed by the formats of
+     * the payloads ({@code byte[] · json}), and by the kinds when there is more than one:
+     * {@code String | LinkedHashMap (payload and data)}.
      */
     static String bodyTypesText(LineBodyTypes types) {
         StringJoiner sj = new StringJoiner(" | ");
@@ -324,6 +328,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             sj.add(StringHelper.afterLast(type, ".", type));
         }
         String answer = sj.toString();
+        if (types.formats() != null && !types.formats().isEmpty()) {
+            answer += " · " + String.join(" | ", types.formats());
+        }
         if (types.kinds().size() > 1) {
             answer += " (" + mixedKindsText(types.kinds()) + ")";
         }

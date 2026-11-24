@@ -53,7 +53,7 @@ public class EmbeddedDebeziumConfigurationTest {
         final TestEmbeddedDebeziumConfiguration configuration = new TestEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setOffsetStorageReplicationFactor(2);
-        configuration.setOffsetStorageFileName("/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
 
         // not all required fields being set
         assertFalse(configuration.validateConfiguration().isValid());

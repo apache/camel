@@ -80,6 +80,9 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         OpenFeatureComponent component = new OpenFeatureComponent();
         component.getConfiguration().setFlagsResource(FLAGS_RESOURCE);
+        // The in-process (file-based) provider waits deadline * 2 ms for initialization;
+        // raise it so loaded CI agents don't hit the 1 s timeout that causes the flakiness.
+        component.getConfiguration().setDeadline(5000);
         camelContext.addComponent("openfeature", component);
         return camelContext;
     }

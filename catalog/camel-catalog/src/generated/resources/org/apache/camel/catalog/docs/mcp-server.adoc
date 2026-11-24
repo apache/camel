@@ -218,7 +218,16 @@ Tag patterns support wildcards: use `+*+` to expose all tagged tools, or a
 prefix pattern like `+crm*+` to expose all tags starting with `crm`:
 
 The MCP endpoint is then served at `http://<host>:<port>/mcp` on the Camel
-main HTTP server. Any MCP client can connect over streamable HTTP, for
+main HTTP server.
+
+On Camel JBang (`camel run`), `camel.server.mcp-enabled = true` turns the HTTP server on by itself, so
+`camel.server.enabled = true` can be left out, and `camel-mcp-server` and `camel-platform-http-main` are downloaded on
+demand. As `camel.server.enabled`, the `camel.server.mcp-*` options work from every property source:
+`application.properties`, `--prop`, JVM system properties (`-D`) and environment variables, for example
+`camel run tools.yaml --prop camel.server.mcp-enabled=true --mcp-tags=crm`. To keep the HTTP server off, set
+`camel.server.enabled = false`.
+
+On Camel Main, the HTTP server is not turned on by itself: set `camel.server.enabled = true` as shown above. Any MCP client can connect over streamable HTTP, for
 example another Camel integration using the
 xref:ROOT:openai-component.adoc[camel-openai] MCP client:
 
@@ -254,13 +263,14 @@ camel run tools.yaml --mcp-stdio --mcp-tags=crm,agent
 ----
 
 NOTE: `--mcp-tags` configures the ai-tool MCP server (`camel.server.mcp-tags`) and works with
-`--mcp-stdio` or HTTP transport when `camel.server.mcp-enabled` is set in properties. It is
+`--mcp-stdio` or HTTP transport when `camel.server.mcp-enabled` is set (in properties, with `--prop`, as a JVM system
+property or an environment variable). It is
 not used by `--mcp`, which exposes dev/diagnostics MCP tools on the management HTTP server.
 
 Logging and startup summaries are routed to stderr so stdout carries MCP
 JSON-RPC only. Camel JBang configures a stderr Log4j2 appender automatically
 when `--mcp-stdio` is used or when `camel.server.mcp-transport=stdio` is set
-in the profile. On Camel Main, configure logging to stderr yourself (for
+(in the profile, with `--prop`, as a JVM system property or an environment variable). On Camel Main, configure logging to stderr yourself (for
 example using the `log4j2-mcp-stdio.properties` resource shipped in
 `camel-mcp-server`). Anything else written to `System.out` while the MCP server runs, such as
 a `stream:out` endpoint or a `System.out.println` in a bean, goes to stderr as well.

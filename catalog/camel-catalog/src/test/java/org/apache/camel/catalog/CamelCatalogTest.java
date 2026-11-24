@@ -1620,6 +1620,39 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaMns() {
+        // only the producer uses operation and topicName
+        String uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+                     + "&operation=sendMessage&topicName=myTopic";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("operation"));
+        assertTrue(result.getNotConsumerOnly().contains("topicName"));
+
+        // only the consumer uses waitSeconds
+        uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+              + "&waitSeconds=10";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("waitSeconds"));
+
+        // both sides use the priority header
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-mns").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelAlibabaMnsPriority"));
+    }
+
+    @Test
     public void testValidateApiEndpoint() {
         // there is a type converter that converts from and to to phone number
         String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
@@ -1748,6 +1781,41 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaOss() {
+        // a client that is set replaces the region and the AccessKey pair
+        String uri = "alibaba-oss:myBucket?ossClient=#ossClient";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // serviceKeys replaces accessKey and secretKey
+        uri = "alibaba-oss:myBucket?region=cn-hangzhou&serviceKeys=#serviceKeys";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the producer uses prefix and maxKeys for listObjects
+        uri = "alibaba-oss:myBucket?operation=listObjects&prefix=logs/&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer uses prefix, but neither objectName nor maxKeys
+        uri = "alibaba-oss:myBucket?prefix=logs/&objectName=a.txt&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("objectName"));
+        assertTrue(result.getNotConsumerOnly().contains("maxKeys"));
+
+        // only the producer reads these six headers, and both sides set the key of the object
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-oss").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        for (String name : List.of("Operation", "ObjectName", "SourceBucketName", "SourceObjectName", "Prefix", "MaxKeys")) {
+            assertEquals("producer", groups.get("CamelAlibabaOss" + name), name);
+        }
+        assertEquals("common", groups.get("CamelAlibabaOssObjectKey"));
+    }
+
+    @Test
     public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
@@ -1774,6 +1842,42 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointCxfSynchronous() {
+        // the consumer and the producer of cxf use synchronous
+        String uri = "cxf:bean:orderEndpoint?synchronous=true";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses defaultOperationName
+        uri = "cxf:bean:orderEndpoint?synchronous=true&defaultOperationName=getOrder";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("defaultOperationName"));
+
+        // the consumer and the producer of cxfrs use synchronous too
+        uri = "cxfrs:bean:rsServer?synchronous=true";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the component options have the group advanced, with no side
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("cxf").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+
+        groups.clear();
+        catalog.componentModel("cxfrs").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+    }
+
+    @Test
     public void testValidateEndpointSpringWsConsumerOptions() {
         String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
                      + "&outputAction=http://example.com/GetFooResponse&faultAction=http://example.com/GetFooFault";
@@ -1788,6 +1892,38 @@ public class CamelCatalogTest {
         assertEquals(2, result.getNotProducerOnly().size());
         assertTrue(result.getNotProducerOnly().contains("outputAction"));
         assertTrue(result.getNotProducerOnly().contains("faultAction"));
+    }
+
+    @Test
+    public void testValidateEndpointSpringWsLabelsAndType() {
+        // both sides use messageSender
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&messageSender=#messageSender";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses sslContextParameters
+        uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+              + "&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("sslContextParameters"));
+
+        uri = "spring-ws:http://example.com/ws?messageSender=#messageSender&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer sets the SOAP header too
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("spring-ws").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelSpringWebserviceSoapHeader"));
+
+        // the endpoint uri takes the type soapaction, which is not the name of the enum constant
+        uri = "spring-ws:soapaction:urn:GetFoo?endpointMapping=#endpointMapping";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
     }
 
     @Test

@@ -39,11 +39,23 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
         </dependency>
+        <!-- SecurityAdvisoryParser reads the YAML front matter of the advisories; optional, as only it needs it -->
+        <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+            <version>${snakeyaml-engine-version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

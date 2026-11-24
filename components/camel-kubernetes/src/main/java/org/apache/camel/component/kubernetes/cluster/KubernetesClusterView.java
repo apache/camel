@@ -47,6 +47,9 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
     private CamelContext camelContext;
     private final KubernetesClusterService kubernetesCluster;
     private KubernetesClient kubernetesClient;
+    // whether the view created kubernetesClient (closed when the view stops), or the client was set on the
+    // configuration (owned by the user, and shared with the other views of the cluster service)
+    private boolean closeClient;
     private KubernetesConfiguration configuration;
     private KubernetesLockConfiguration lockConfiguration;
     private KubernetesClusterMember localMember;
@@ -103,6 +106,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
     @Override
     protected void doStart() throws Exception {
         if (controller == null) {
+            this.closeClient = configuration.getKubernetesClient() == null;
             this.kubernetesClient = KubernetesHelper.getKubernetesClient(configuration);
             final long gen;
             synchronized (leaderLock) {
@@ -188,7 +192,9 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
                 }
                 stopping.releaseLeadership();
             } finally {
-                kubernetesClient.close();
+                if (closeClient) {
+                    kubernetesClient.close();
+                }
                 kubernetesClient = null;
                 if (sharedTimeLeft != null) {
                     kubernetesCluster.sharedStopTimeSpent(System.nanoTime() - stopStart);

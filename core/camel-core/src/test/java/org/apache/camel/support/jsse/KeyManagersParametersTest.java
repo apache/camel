@@ -145,6 +145,23 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
+    public void testCustomKeyManager() throws Exception {
+        KeyManager myKm = new KeyManager() {
+            // noop
+        };
+
+        // a key store with a wrong key password fails if the KeyManagerFactory is used, so the
+        // existing key manager must be returned without reading the key store
+        KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
+        kmp.setKeyPassword("");
+        kmp.setKeyManager(myKm);
+
+        KeyManager[] kms = kmp.createKeyManagers();
+        assertEquals(1, kms.length);
+        assertSame(myKm, kms[0]);
+    }
+
+    @Test
     public void testAliasedKeyManager() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
 

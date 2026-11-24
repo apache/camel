@@ -19,9 +19,11 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,9 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
 
     private Map<String, ResourceLockSimulator<T>> simulators;
 
+    // the clients created by createClient: a cluster view does not close a client set on its configuration
+    private final List<NamespacedKubernetesClient> clients = new CopyOnWriteArrayList<>();
+
     public LockTestServer() {
         this(Collections.emptySet());
     }
@@ -109,7 +114,15 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
         RequestConfig requestConfig = namespacedKubernetesClient.getConfiguration().getRequestConfig();
         requestConfig.setRequestRetryBackoffInterval(1000);
         requestConfig.setRequestRetryBackoffLimit(0);
+        clients.add(namespacedKubernetesClient);
         return namespacedKubernetesClient;
+    }
+
+    @Override
+    public void destroy() {
+        clients.forEach(NamespacedKubernetesClient::close);
+        clients.clear();
+        super.destroy();
     }
 
     public void addSimulator(ResourceLockSimulator<?> paramLockSimulator) {

@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
+
 class ProcessorInfo {
     String id;
     /** The prefix of the ids of the steps of a route template or kamelet (only when it has one). */
@@ -53,4 +55,11 @@ class ProcessorInfo {
     List<String> bodyTypes = List.of();
     /** The kinds of those bodies: null, payload, data or collection. More than one needs attention. */
     List<String> bodyKinds = List.of();
+    /** The formats of the payloads, from their Content-Type (CAMEL-27468): json, xml, csv, yaml, text, binary. */
+    List<String> bodyFormats = List.of();
+    /**
+     * The data type the Kamelet the step calls turns the body into (CAMEL-27475), such as json for postgresql-sink;
+     * null when the step calls no Kamelet, it has no default in data type, or it is still looked up (KameletInputs).
+     */
+    KameletInput kameletInput;
 }

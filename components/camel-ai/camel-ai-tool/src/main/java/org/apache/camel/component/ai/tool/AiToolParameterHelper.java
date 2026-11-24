@@ -185,6 +185,11 @@ public final class AiToolParameterHelper {
 
     /**
      * Resolves, validates, and normalizes a raw JSON Schema for tool input.
+     * <p>
+     * When the schema does not set {@code additionalProperties}, {@code additionalProperties: false} is added, the same
+     * as the schema generated from {@code parameter.*}: the tool route receives only the declared top-level arguments,
+     * and a client that validates the input (such as the MCP server) refuses a call with an undeclared argument instead
+     * of having it dropped silently. A schema that sets {@code additionalProperties} itself is kept as written.
      */
     public static String resolveArgSchema(CamelContext camelContext, String argSchema) {
         if (argSchema == null || argSchema.isBlank()) {
@@ -199,6 +204,9 @@ public final class AiToolParameterHelper {
 
         JsonObject root = parseJsonObject(resolved, argSchema);
         validateRootSchemaObject(root);
+        if (!root.containsKey("additionalProperties")) {
+            root.put("additionalProperties", false);
+        }
         return root.toJson();
     }
 

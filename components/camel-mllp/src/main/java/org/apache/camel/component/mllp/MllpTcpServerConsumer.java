@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -55,6 +57,8 @@ import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +76,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     ExecutorService consumerExecutor;
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
+    // the bind thread starts the accept thread, doStop stops it: the lock makes the check of the consumer state (and of
+    // the bind thread of the current start) in startAcceptThread and the start atomic with respect to doStop and doStart
+    private final Lock acceptThreadLock = new ReentrantLock();
 
     Map<TcpSocketConsumerRunnable, Long> consumerRunnables = new ConcurrentHashMap<>();
 
@@ -136,15 +143,26 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerClientSocketThread.stop();
         }
 
-        if (acceptThread != null) {
-            acceptThread.interrupt();
-            acceptThread = null;
+        acceptThreadLock.lock();
+        try {
+            if (acceptThread != null) {
+                acceptThread.interrupt();
+                acceptThread = null;
+            }
+            // under the same lock: a bind thread of this start that did not start its accept thread yet no longer owns
+            // the consumer, also when the consumer is started again before it gets there
+            if (bindThread != null) {
+                bindThread.interrupt();
+                bindThread = null;
+            }
+        } finally {
+            acceptThreadLock.unlock();
         }
 
-        if (bindThread != null) {
-            bindThread.interrupt();
-            bindThread = null;
-        }
+        // the executors of this start (doStart creates new ones): running runnables end on their own, and a connection
+        // still being validated is reset by startConsumer
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(validationExecutor);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(consumerExecutor);
 
         super.doStop();
     }
@@ -164,18 +182,27 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         consumerProfile.setMaxQueueSize(0);
         consumerProfile.setKeepAliveTime((long) getConfiguration().getAcceptTimeout());
         consumerProfile.setTimeUnit(TimeUnit.MILLISECONDS);
+        // reject a connection above maxConcurrentConsumers, so startConsumer resets it; without a policy the default
+        // profile's CallerRuns would serve it on the validation thread, and the limit would not apply
+        consumerProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
         consumerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newThreadPool(this, "MllpConsumer", consumerProfile);
 
         if (bindThread == null || !bindThread.isAlive()) {
-            bindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
+            TcpServerBindThread newBindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
+            acceptThreadLock.lock();
+            try {
+                bindThread = newBindThread;
+            } finally {
+                acceptThreadLock.unlock();
+            }
 
             if (getConfiguration().isLenientBind()) {
                 log.debug("doStart() - starting bind thread");
-                bindThread.start();
+                newBindThread.start();
             } else {
                 log.debug("doStart() - attempting to bind to port {}", getEndpoint().getPort());
-                bindThread.run();
+                newBindThread.run();
 
                 if (this.acceptThread == null) {
                     throw new BindException("Failed to bind to port " + getEndpoint().getPort());
@@ -189,8 +216,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
+        // doStop already shut the executors down, so the shutdownNow of the ExecutorServiceManager does nothing for them:
+        // the JDK shutdownNow still interrupts the running runnables (with virtual threads, this closes their sockets)
         if (consumerExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(consumerExecutor);
+            consumerExecutor.shutdownNow();
             consumerExecutor = null;
         }
         if (acceptThread != null) {
@@ -198,6 +228,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
         if (validationExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(validationExecutor);
+            validationExecutor.shutdownNow();
             validationExecutor = null;
         }
     }
@@ -220,7 +251,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     public void validateConsumer(Socket clientSocket) {
         MllpSocketBuffer mllpBuffer = new MllpSocketBuffer(getEndpoint());
-        TcpServerConsumerValidationRunnable client = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
+        // the consumer executor of this start: when the consumer stops and starts again during the validation read, the
+        // connection is submitted to this executor, which doStop shut down, so it is reset and not served next to the
+        // connections of the new start
+        TcpServerConsumerValidationRunnable client
+                = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer, consumerExecutor);
 
         try {
             log.debug("validateConsumer({}) - submitting client for validation", clientSocket);
@@ -232,8 +267,33 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startAcceptThread(ServerSocket serverSocket) {
-        acceptThread = new TcpServerAcceptThread(this, serverSocket);
-        acceptThread.start();
+        startAcceptThread(serverSocket, null);
+    }
+
+    /**
+     * Starts the accept thread on the server socket the bind thread bound.
+     *
+     * @param serverSocket the bound server socket
+     * @param owner        the bind thread that bound it: when it is not the bind thread of the current start (the
+     *                     consumer was stopped and started again in the meantime), the server socket is closed instead;
+     *                     <tt>null</tt> to only check that the consumer is not stopping or stopped
+     */
+    public void startAcceptThread(ServerSocket serverSocket, TcpServerBindThread owner) {
+        acceptThreadLock.lock();
+        try {
+            if (!isRunAllowed() || owner != null && owner != bindThread) {
+                // with lenientBind the bind thread can bind while the consumer stops, after doStop looked for an
+                // accept thread to stop: do not start one after the stop (nor for the next start), and release the port
+                log.debug("startAcceptThread({}) - the consumer is stopping or stopped, closing the server socket",
+                        serverSocket);
+                IOHelper.close(serverSocket);
+                return;
+            }
+            acceptThread = new TcpServerAcceptThread(this, serverSocket);
+            acceptThread.start();
+        } finally {
+            acceptThreadLock.unlock();
+        }
     }
 
     /**
@@ -245,16 +305,41 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
+        startConsumer(clientSocket, mllpBuffer, consumerExecutor);
+    }
+
+    /**
+     * Serves a validated connection.
+     *
+     * @param clientSocket the connection
+     * @param mllpBuffer   the data of the validation read
+     * @param executor     the consumer executor of the start that accepted the connection: it is shut down when that
+     *                     start was stopped, and the connection is then reset
+     */
+    public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer, ExecutorService executor) {
         TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(
                 this, clientSocket, mllpBuffer, hl7Util, logPhi);
 
         consumerRunnables.put(client, System.currentTimeMillis());
+        if (!isRunAllowed()) {
+            // the consumer is stopping or stopped (the connection was accepted just before): do not serve it. The check
+            // comes after the put, so the runnable is either seen by the loop of doStop, or not started here
+            consumerRunnables.remove(client);
+            mllpBuffer.resetSocket(clientSocket, "Consumer is stopped");
+            return;
+        }
         try {
             log.info("startConsumer({}) - starting consumer", clientSocket);
-            consumerExecutor.submit(client);
+            executor.submit(client);
             getEndpoint().updateLastConnectionEstablishedTicks();
         } catch (RejectedExecutionException rejectedExecutionEx) {
-            log.warn("startConsumer({}) - cannot start consumer - max consumers already active", clientSocket);
+            if (executor.isShutdown()) {
+                log.debug("startConsumer({}) - cannot start consumer - the start that accepted it was stopped", clientSocket);
+            } else {
+                log.warn("startConsumer({}) - cannot start consumer - max consumers already active", clientSocket);
+            }
+            // the runnable never runs, so it does not remove itself
+            consumerRunnables.remove(client);
             mllpBuffer.resetSocket(clientSocket);
         }
     }
@@ -270,9 +355,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 hl7MessageBytes == null ? -1 : hl7MessageBytes.length, consumerRunnable.getSocket());
         Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
-        if (getConfiguration().hasCharsetName()) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
-        }
         try {
             createUoW(exchange);
 
@@ -303,15 +385,20 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             populateHl7DataHeaders(exchange, message, hl7MessageBytes);
 
             if (getConfiguration().isStringPayload()) {
+                // the String body is not tied to a charset: the CamelCharsetName exchange property is not set, so the
+                // charset of this endpoint does not leak to other endpoints of the route, such as an mllp producer
                 if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
                     message.setBody(
                             new String(
                                     hl7MessageBytes,
-                                    MllpCharsetHelper.getCharset(exchange, hl7MessageBytes, hl7Util, charset)));
+                                    MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, charset)));
                 } else {
                     message.setBody("", String.class);
                 }
             } else {
+                // the charset of the byte array body, for converting it to text later in the route
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+                        MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, charset).name());
                 message.setBody(hl7MessageBytes, byte[].class);
             }
 
@@ -405,7 +492,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.warn("Population of message headers failed - unable to find the end of the MSH segment");
             } else {
                 log.debug("Populating the HL7 message headers");
-                Charset charset = MllpCharsetHelper.getCharset(exchange, this.charset);
+                Charset charset = MllpCharsetHelper.getMsh18Charset(hl7MessageBytes, hl7Util, this.charset);
 
                 for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
                     int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(i - 1);
@@ -453,11 +540,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 continue;
                         }
 
-                        String headerValue = (i == 17 && getConfiguration().hasCharsetName())
-                                ? getConfiguration().getCharsetName()
-                                : new String(
-                                        hl7MessageBytes, startingFieldSeparatorIndex + 1,
-                                        endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
+                        String headerValue = new String(
+                                hl7MessageBytes, startingFieldSeparatorIndex + 1,
+                                endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
 
                         message.setHeader(headerName, headerValue);
 
@@ -480,6 +565,18 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     }
 
+    /**
+     * The acknowledgement in an exchange property as a byte array, with text encoded in the charset of MSH-18 of the
+     * acknowledgement, or the charset of the exchange, or charsetName.
+     */
+    private byte[] getAcknowledgementBytes(Exchange exchange, String propertyName) {
+        Object acknowledgement = exchange.getProperty(propertyName);
+        if (acknowledgement instanceof CharSequence text) {
+            return MllpCharsetHelper.encode(text.toString(), hl7Util, MllpCharsetHelper.getCharset(exchange, charset));
+        }
+        return exchange.getProperty(propertyName, byte[].class);
+    }
+
     void sendAcknowledgement(byte[] originalHl7MessageBytes, Exchange exchange, TcpSocketConsumerRunnable consumerRunnable) {
         log.trace("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - entering",
                 originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
@@ -488,9 +585,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         getEndpoint().checkBeforeSendProperties(exchange, consumerRunnable.getSocket(), log);
 
         // Find the acknowledgement body
-        byte[] acknowledgementMessageBytes = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT, byte[].class);
+        byte[] acknowledgementMessageBytes = getAcknowledgementBytes(exchange, MllpConstants.MLLP_ACKNOWLEDGEMENT);
         if (acknowledgementMessageBytes == null) {
-            acknowledgementMessageBytes = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, byte[].class);
+            acknowledgementMessageBytes = getAcknowledgementBytes(exchange, MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
         }
 
         String acknowledgementMessageType = null;

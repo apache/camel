@@ -273,6 +273,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             camelContext.getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
+        // a timeout task the executor did not run (a forced shutdown drops the queued ones) must still complete its
+        // exchange, which would otherwise never complete
+        if (correlation != null) {
+            correlation.completePendingEvictions();
+        }
     }
 
 }

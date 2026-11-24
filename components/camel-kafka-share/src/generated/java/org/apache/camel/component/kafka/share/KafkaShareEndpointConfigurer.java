@@ -149,6 +149,8 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sendbufferbytes":
         case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": target.getConfiguration().setShareAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "specificavroreader":
@@ -317,6 +319,8 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityProtocol": return java.lang.String.class;
         case "sendbufferbytes":
         case "sendBufferBytes": return java.lang.Integer.class;
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": return java.lang.String.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
         case "specificavroreader":
@@ -486,6 +490,8 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityProtocol": return target.getConfiguration().getSecurityProtocol();
         case "sendbufferbytes":
         case "sendBufferBytes": return target.getConfiguration().getSendBufferBytes();
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": return target.getConfiguration().getShareAutoOffsetReset();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
         case "specificavroreader":

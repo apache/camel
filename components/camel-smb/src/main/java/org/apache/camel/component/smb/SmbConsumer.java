@@ -90,9 +90,10 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         if (absoluteFilePath == null) {
             return false;
         }
+        // SMB takes \ as the path separator, and a / is sent as one, so both separate segments
         return GenericFileHelper.isWithinDirectory(
-                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR),
-                FileUtil.compactPath(endpointPath, REMOTE_PATH_SEPARATOR), REMOTE_PATH_SEPARATOR);
+                GenericFileHelper.compactPathForContainment(absoluteFilePath, REMOTE_PATH_SEPARATOR),
+                GenericFileHelper.compactPathForContainment(endpointPath, REMOTE_PATH_SEPARATOR), REMOTE_PATH_SEPARATOR);
     }
 
     @Override

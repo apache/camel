@@ -53,6 +53,20 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         return name;
     }
 
+    /**
+     * The ftp, ftps and sftp operations replace a backslash in the name of the file they store by / when the separator
+     * option is UNIX (the default). They use the name as given to check, delete or rename a file, and to write a
+     * checksum file, so not when the producer writes a temp file, a done file or a checksum file. A producer whose
+     * operations send the name as given, such as scp, overrides this.
+     */
+    @Override
+    protected boolean isBackslashNormalized() {
+        RemoteFileEndpoint<T> endpoint = getEndpoint();
+        return endpoint.getConfiguration().getSeparator() == RemoteFileConfiguration.PathSeparator.UNIX
+                && endpoint.getTempFileName() == null && endpoint.getDoneFileName() == null
+                && !(endpoint.isChecksumWriteFile() && endpoint.getChecksumFileAlgorithm() != null);
+    }
+
     @Override
     protected void doProcess(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate

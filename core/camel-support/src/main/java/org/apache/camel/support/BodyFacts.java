@@ -156,8 +156,17 @@ public final class BodyFacts {
         A_BODY
     }
 
+    /** The file in the hint to read the data first, when the data format is not known. */
+    private static final String DATA_FILE = "data.json";
+
     /** At most this many keys of a Map are listed. */
     private static final int MAX_KEYS = 20;
+
+    /** The longest media type kept as a format: the names of real ones are short, the value comes from the message. */
+    private static final int MAX_MEDIA_TYPE_LENGTH = 64;
+
+    /** The longest Content-Type that is parsed for its format, parameters such as the charset included. */
+    private static final int MAX_CONTENT_TYPE_LENGTH = 256;
 
     /** The usual data formats, named when nothing names the one of the payload. */
     private static final String USUAL_UNMARSHAL = "unmarshal: json, unmarshal: jacksonXml or unmarshal: csv";
@@ -183,14 +192,15 @@ public final class BodyFacts {
     /**
      * What to write so that the failing step gets the body it needs; null when the body is not why it failed. For
      * {@link Need#BYTES}, target is what the step writes: its Content-Type, or the name of the file, which names the
-     * data format to marshal to; it is not used for the other needs.
+     * data format to marshal to. For {@link Need#A_BODY}, target is the name of the data format that reads the body
+     * (csv), so the file in the hint is one of its data (data.csv); it is not used for {@link Need#DATA}.
      */
     public static String hint(Exchange exchange, Need need, String target) {
         Object body = exchange.getMessage().getBody();
         String answer = switch (need) {
             case DATA -> dataHint(exchange, body);
             case BYTES -> bytesHint(body, target);
-            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body) : null;
+            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body, dataFile(target)) : null;
         };
         return answer != null ? answer + otherBodies(exchange, body) : null;
     }
@@ -216,9 +226,99 @@ public final class BodyFacts {
         return null;
     }
 
+    /**
+     * The format of a payload from its {@code Content-Type}, by the names of the catalog and of the Kamelet data types
+     * (CAMEL-27468): json for application/json and the +json types, xml for application/xml, text/xml and the +xml
+     * types, csv for text/csv, yaml for application/yaml, text for the other text types, and binary for
+     * application/octet-stream. Any other media type is given as it is, without its parameters and in lower case.
+     *
+     * @param  contentType the value of the {@code Content-Type} header, or null
+     * @return             the format, or null when there is no Content-Type or it is not a media type
+     */
+    public static String formatOf(Object contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String value = contentType.toString();
+        // the ones the Kamelet data types and most components set, as they write them: no parsing for every message
+        switch (value) {
+            case "application/json":
+                return "json";
+            case "application/xml", "text/xml":
+                return "xml";
+            case "text/plain":
+                return "text";
+            case "application/octet-stream":
+                return "binary";
+            default:
+                break;
+        }
+        if (value.length() > MAX_CONTENT_TYPE_LENGTH) {
+            // the value comes from the message: no parsing of a long one for every node it reaches
+            return null;
+        }
+        String type = StringHelper.before(value, ";", value).trim().toLowerCase(Locale.ROOT);
+        int slash = type.indexOf('/');
+        if (slash <= 0 || slash == type.length() - 1 || type.length() > MAX_MEDIA_TYPE_LENGTH || !isMediaType(type)) {
+            // the value comes from the message: show only what is a media type
+            return null;
+        }
+        String subtype = type.substring(slash + 1);
+        if (subtype.equals("json") || subtype.endsWith("+json")) {
+            return "json";
+        } else if (subtype.equals("xml") || subtype.endsWith("+xml")) {
+            return "xml";
+        } else if (subtype.equals("csv")) {
+            return "csv";
+        } else if (subtype.equals("yaml") || subtype.equals("x-yaml") || subtype.endsWith("+yaml")) {
+            return "yaml";
+        } else if (type.startsWith("text/")) {
+            return "text";
+        } else if (type.equals("application/octet-stream")) {
+            return "binary";
+        }
+        return type;
+    }
+
+    /**
+     * Whether a type/subtype has only the characters a media type has (RFC 6838), such as no spaces or control
+     * characters.
+     */
+    private static boolean isMediaType(String type) {
+        for (int i = 0; i < type.length(); i++) {
+            char ch = type.charAt(i);
+            boolean ok = ch >= 'a' && ch <= 'z' || ch >= '0' && ch <= '9' || ch == '/' || "!#$&-^_.+".indexOf(ch) >= 0;
+            if (!ok) {
+                return false;
+            }
+        }
+        return type.indexOf('/') == type.lastIndexOf('/');
+    }
+
+    /**
+     * A file of the data that a data format reads, for the hint: data.csv for csv; data.json when the data format is
+     * not known, or reads json.
+     */
+    static String dataFile(String dataFormat) {
+        if (dataFormat == null) {
+            return DATA_FILE;
+        }
+        String name = dataFormat.toLowerCase(Locale.ROOT);
+        if (name.contains("csv")) {
+            return "data.csv";
+        } else if (name.contains("tsv")) {
+            return "data.tsv";
+        } else if (name.contains("xml") || name.equals("jaxb")) {
+            return "data.xml";
+        } else if (name.contains("yaml")) {
+            return "data.yaml";
+        }
+        return DATA_FILE;
+    }
+
     private static String dataHint(Exchange exchange, Object body) {
         if (isEmpty(body)) {
-            return readTheDataFirst(exchange, body);
+            return readTheDataFirst(exchange, body, DATA_FILE);
         }
         if (isPayload(body)) {
             String marshal = marshalledData(exchange, body);
@@ -320,13 +420,13 @@ public final class BodyFacts {
      * route emptied it, as the message history says, read what is needed before that step. r23 (http-client s1): the
      * route set the body to ${null} and then read ${body[sku]}, and "read the data first" did not fit.
      */
-    private static String readTheDataFirst(Exchange exchange, Object body) {
+    private static String readTheDataFirst(Exchange exchange, Object body, String dataFile) {
         String emptiedBy = emptiedBy(exchange, body);
         if (emptiedBy != null) {
             return "the " + emptiedBy + " emptied it: read what is needed before that step, for example into a variable"
                    + " with setVariable, or write a fixed value as a constant where it is used";
         }
-        return readTheDataFirst();
+        return readTheDataFirst(dataFile);
     }
 
     /** The setBody or transform that left the body null or empty, from the message history; or null. */
@@ -348,8 +448,8 @@ public final class BodyFacts {
         return null;
     }
 
-    private static String readTheDataFirst() {
-        return "read the data first - setBody with constant: resource:file:data.json for a known file, or poll:,"
+    private static String readTheDataFirst(String dataFile) {
+        return "read the data first - setBody with constant: resource:file:" + dataFile + " for a known file, or poll:,"
                + " pollEnrich or a from: consumer for one that is not (a route reached with direct: has the body of its"
                + " caller)";
     }
@@ -391,8 +491,9 @@ public final class BodyFacts {
 
     /**
      * The step that set the body, from the message history: the last node reached with a body of another type, which
-     * ran on it and left this one. When every node was reached with this type, the consumer gave it. Empty when the
-     * message history is off.
+     * ran on it and left this one. When every node was reached with this type, the consumer gave it; or, for an item of
+     * a split, the split, as the split gives each item a message history of its own, which starts inside the split.
+     * Empty when the message history is off.
      */
     private static String setBy(Exchange exchange, Object body) {
         List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
@@ -414,7 +515,24 @@ public final class BodyFacts {
         if (!recorded || exchange.getFromEndpoint() == null) {
             return "";
         }
+        NamedNode split = splitAround(history.get(0).getNode());
+        if (split != null) {
+            return ", set by " + step(split);
+        }
         return ", unchanged since from: " + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+    }
+
+    /**
+     * The nearest split among the parents of a node, or null. The node itself does not count: a message that reached a
+     * split had its body before the split ran on it.
+     */
+    private static NamedNode splitAround(NamedNode node) {
+        for (NamedNode parent = node != null ? node.getParent() : null; parent != null; parent = parent.getParent()) {
+            if ("split".equals(parent.getShortName())) {
+                return parent;
+            }
+        }
+        return null;
     }
 
     /**

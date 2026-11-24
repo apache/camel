@@ -137,6 +137,12 @@ public class AsyncCommitManager extends AbstractCommitManager {
         offsetCache.recordOffset(partition, partitionLastOffset);
     }
 
+    @Override
+    public void discardRecordedOffset(TopicPartition partition) {
+        requestedOffsets.remove(partition);
+        offsetCache.remove(partition);
+    }
+
     private void postCommitCallback(Map<TopicPartition, OffsetAndMetadata> committed, Exception exception) {
         if (exception == null) {
             if (offsetRepository != null) {

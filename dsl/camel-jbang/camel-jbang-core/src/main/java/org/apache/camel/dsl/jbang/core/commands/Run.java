@@ -198,6 +198,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
     @Option(name = "spring-boot-version", description = "Spring Boot version", defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
+    @Option(name = "packaging", description = "Project packaging (jar or war; WAR requires --runtime=spring-boot)",
+            defaultValue = "jar")
+    String packaging = "jar";
+
     @Option(name = "profile", description = "Profile to run (${COMPLETION-CANDIDATES}).", defaultValue = "dev",
             inherited = true, completer = ProfileCompletionCandidates.class)
     String profile = "dev";
@@ -853,6 +857,12 @@ public class Run extends CamelCommand implements CommandLifecycle {
         sourceDir = request.sourceDir;
         runtime = request.runtime;
 
+        String packagingError = request.packagingError();
+        if (packagingError != null) {
+            printer().printErr(packagingError);
+            return 1;
+        }
+
         if (RuntimeType.quarkus == runtime) {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
@@ -1194,6 +1204,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         request.packageScanJars = packageScanJars;
         request.camelVersion = camelVersion;
         request.springBootVersion = springBootVersion;
+        request.packaging = packaging;
         request.camelSpringBootVersion = camelSpringBootVersion;
         request.quarkusPlatform = quarkusPlatform != null ? quarkusPlatform.toPlatform() : null;
         request.kameletsVersion = kameletsVersion;

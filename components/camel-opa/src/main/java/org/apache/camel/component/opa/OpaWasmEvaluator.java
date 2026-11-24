@@ -28,6 +28,7 @@ import com.styra.opa.wasm.OpaPolicy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -196,9 +197,27 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
-        // serialized before borrowing, so an input that cannot be serialized costs no pooled instance
+        return evaluateDecision(input, null);
+    }
+
+    @Override
+    protected Engine observationEngine() {
+        return Engine.OPA_WASM;
+    }
+
+    @Override
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
+        // Serialization failures do not consume a pooled policy instance.
         String json = MAPPER.writeValueAsString(input);
-        OpaWasmPolicyPool.Lease lease = pool.borrow();
+        long started = poolWaitNanos != null ? System.nanoTime() : 0;
+        OpaWasmPolicyPool.Lease lease;
+        try {
+            lease = pool.borrow();
+        } finally {
+            if (poolWaitNanos != null) {
+                poolWaitNanos[0] = System.nanoTime() - started;
+            }
+        }
         String result;
         try {
             result = lease.policy().evaluate(json);

@@ -42,21 +42,28 @@ final class NodeScopedCredentialsProvider implements CredentialsProvider {
 
     @Override
     public Credentials getCredentials(AuthScope authScope, HttpContext context) {
-        if (authScope != null && authScope.getProtocol() != null && authScope.getHost() != null) {
-            for (HttpHost node : nodes.get()) {
-                if (sameAuthority(node, authScope)) {
-                    return credentials;
-                }
-            }
+        if (authScope != null
+                && isNode(nodes.get(), authScope.getProtocol(), authScope.getHost(), authScope.getPort())) {
+            return credentials;
         }
         return null;
     }
 
-    private static boolean sameAuthority(HttpHost node, AuthScope authScope) {
-        return node.getSchemeName().equalsIgnoreCase(authScope.getProtocol())
-                && node.getHostName().equalsIgnoreCase(authScope.getHost())
-                && effectivePort(node.getSchemeName(), node.getPort())
-                   == effectivePort(authScope.getProtocol(), authScope.getPort());
+    /**
+     * Whether the scheme, host name (in any case) and port are those of one of the nodes.
+     */
+    static boolean isNode(Collection<HttpHost> nodes, String scheme, String host, int port) {
+        if (nodes == null || scheme == null || host == null) {
+            return false;
+        }
+        for (HttpHost node : nodes) {
+            if (node.getSchemeName().equalsIgnoreCase(scheme)
+                    && node.getHostName().equalsIgnoreCase(host)
+                    && effectivePort(node.getSchemeName(), node.getPort()) == effectivePort(scheme, port)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int effectivePort(String scheme, int port) {

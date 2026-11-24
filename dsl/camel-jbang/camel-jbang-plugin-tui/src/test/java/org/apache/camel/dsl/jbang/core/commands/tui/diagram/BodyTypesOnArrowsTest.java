@@ -60,6 +60,28 @@ class BodyTypesOnArrowsTest {
     }
 
     @Test
+    void theDataTypeOfTheKameletAStepCalls() {
+        // CAMEL-27475: the Map of a row becomes the JSON that postgresql-sink takes
+        RouteInfo route = route();
+        NodeInfo db = node("to", "to1", 1, List.of("java.util.LinkedHashMap"), List.of("data"));
+        db.kameletInput = new RouteDiagramLayoutEngine.KameletInputInfo(
+                "postgresql-sink", "json", "application-json", null, true);
+        route.nodes.add(db);
+        // not reached yet: what the Kamelet takes
+        NodeInfo csv = node("to", "to2", 1, List.of(), List.of());
+        csv.kameletInput = new RouteDiagramLayoutEngine.KameletInputInfo(
+                "csv-deserialize-action", "text", "text-plain", null, null);
+        route.nodes.add(csv);
+
+        Buffer buffer = render(route, true);
+
+        int[] map = find(buffer, "LinkedHashMap → json");
+        assertThat(map).isNotNull();
+        assertThat(symbol(buffer, map[0] - 2, map[1] + 1)).isEqualTo("▼");
+        assertThat(find(buffer, "→ text")).isNotNull();
+    }
+
+    @Test
     void theArrowsOfABranchSideBySideCutTheTypes() {
         RouteInfo route = route();
         route.nodes.add(node("multicast", "multicast1", 1, List.of(), List.of()));

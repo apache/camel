@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -64,17 +64,19 @@ class DebeziumConsumerReadinessTest extends CamelTestSupport {
         for (int i = 0; i < 2; i++) {
             starting = new CountDownLatch(1);
             release = new CountDownLatch(1);
-            consumer.start();
+            // the start waits until the engine has started its task, so it runs on another thread here
+            CompletableFuture<Void> start = CompletableFuture.runAsync(consumer::start);
             try {
                 assertTrue(starting.await(30, TimeUnit.SECONDS), "the source task should enter startup");
+                assertFalse(start.isDone(), "the start should wait for the source task to start");
                 assertEquals(initialState, check.call().getState());
                 check.setEnabled(false);
                 assertEquals(HealthCheck.State.UNKNOWN, check.call().getState());
                 check.setEnabled(true);
                 release.countDown();
-                await().atMost(30, TimeUnit.SECONDS).until(consumer::isEngineReady);
-                await().atMost(30, TimeUnit.SECONDS)
-                        .untilAsserted(() -> assertEquals(HealthCheck.State.UP, check.call().getState()));
+                start.get(30, TimeUnit.SECONDS);
+                assertTrue(consumer.isEngineReady(), "the start should return once the engine polls");
+                assertEquals(HealthCheck.State.UP, check.call().getState());
                 assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(),
                         "readiness must not require a change event");
             } finally {
@@ -89,8 +91,9 @@ class DebeziumConsumerReadinessTest extends CamelTestSupport {
         DebeziumConsumer consumer = (DebeziumConsumer) context.getRoute("readiness").getConsumer();
         starting = new CountDownLatch(1);
         release = new CountDownLatch(1);
-        // no setHealthCheck() here: starting the consumer runs doBuild(), which creates the check itself
-        consumer.start();
+        // no setHealthCheck() here: starting the consumer runs doBuild(), which creates the check itself; the start
+        // waits until the engine has started its task, so it runs on another thread here
+        CompletableFuture<Void> start = CompletableFuture.runAsync(consumer::start);
         try {
             assertTrue(starting.await(30, TimeUnit.SECONDS), "the source task should enter startup");
             HealthCheck check = consumer.getHealthCheck();
@@ -100,8 +103,8 @@ class DebeziumConsumerReadinessTest extends CamelTestSupport {
             // DOWN is the registry initial state stubbed in createCamelContext, read when doBuild() ran
             assertEquals(HealthCheck.State.DOWN, check.call().getState());
             release.countDown();
-            await().atMost(30, TimeUnit.SECONDS)
-                    .untilAsserted(() -> assertEquals(HealthCheck.State.UP, check.call().getState()));
+            start.get(30, TimeUnit.SECONDS);
+            assertEquals(HealthCheck.State.UP, check.call().getState());
         } finally {
             release.countDown();
             consumer.stop();

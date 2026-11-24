@@ -90,6 +90,14 @@ final class KafkaSchemaRegistry {
      * format the vendor does not support.
      */
     static String vendor(String vendor, String format) {
+        return vendor(vendor, format, hasJsonSchemaValidator3x());
+    }
+
+    /**
+     * Like {@link #vendor(String, String)} but with an explicit flag for the json-schema-validator version check, which
+     * allows unit tests to cover both the rejection and the happy path without depending on the classpath.
+     */
+    static String vendor(String vendor, String format, boolean jsonSchemaValidator3x) {
         if (ObjectHelper.isEmpty(vendor)) {
             return null;
         }
@@ -107,7 +115,32 @@ final class KafkaSchemaRegistry {
                                                + ": the Azure Schema Registry serde for Kafka "
                                                + "(com.microsoft.azure:azure-schemaregistry-kafka-avro) is for Avro only.");
         }
+        if (APICURIO.equals(v) && JSON.equals(f) && jsonSchemaValidator3x) {
+            throw new IllegalArgumentException(
+                    "schemaRegistryVendor apicurio with schemaFormat json fails at runtime with an IncompatibleClassChangeError:"
+                                               + " com.networknt:json-schema-validator 3.x is on the classpath, while the Apicurio Registry JSON Schema"
+                                               + " serde (io.apicurio:apicurio-registry-jsonschema-serde-kafka 3.x) depends on"
+                                               + " com.networknt:json-schema-validator 1.5.x. In 3.x, SchemaLoader changed from an interface to a class,"
+                                               + " so the serde classes fail to link against the 3.x classes already loaded."
+                                               + " For example, camel-yaml-dsl-validator, camel-json-validator and Camel JBang bring 3.x."
+                                               + " Use schemaFormat avro or protobuf with apicurio, or use schemaRegistryVendor confluent with"
+                                               + " schemaFormat json (the Confluent compatible API of Apicurio Registry works with confluent).");
+        }
         return v;
+    }
+
+    /**
+     * Returns true when com.networknt:json-schema-validator 3.x is on the classpath. In 3.x, SchemaLoader changed from
+     * an interface to a class. The Apicurio Registry JSON Schema serde depends on 1.5.x (where it is an interface), so
+     * loading it on a classpath with 3.x throws an IncompatibleClassChangeError.
+     */
+    static boolean hasJsonSchemaValidator3x() {
+        try {
+            ClassLoader cl = KafkaSchemaRegistry.class.getClassLoader();
+            return !Class.forName("com.networknt.schema.resource.SchemaLoader", false, cl).isInterface();
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     private static String format(String format) {

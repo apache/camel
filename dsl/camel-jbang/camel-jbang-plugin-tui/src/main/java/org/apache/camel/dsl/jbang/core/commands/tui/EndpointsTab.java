@@ -47,6 +47,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -61,6 +62,8 @@ class EndpointsTab extends AbstractTableTab {
 
     private static final int PANEL_CHART = 0;
     private static final int PANEL_DETAIL = 1;
+    // the WSDL of a cxf endpoint, in the place of the detail panel
+    private static final int PANEL_WSDL = 2;
 
     private final Map<String, LinkedList<Long>> endpointInHistory;
     private final Map<String, LinkedList<Long>> endpointOutHistory;
@@ -78,6 +81,7 @@ class EndpointsTab extends AbstractTableTab {
     private int filter;
     private int chartMode = CHART_ALL;
     private int panelMode = PANEL_CHART;
+    private final WsdlView wsdlView = new WsdlView();
     private int detailScroll;
     private boolean detailFocused;
     private int chartPanelHeight = 16;
@@ -122,7 +126,12 @@ class EndpointsTab extends AbstractTableTab {
         if (ke.isChar('!') && ChaosHere.handleKey(ke, ctx, info, ChaosHere.forEndpoint(selectedEndpoint(info), info))) {
             return true;
         }
-        if (ke.isKey(KeyCode.TAB) && panelMode == PANEL_DETAIL) {
+        if (ke.isCharIgnoreCase('w') && wsdlUrl(info) != null) {
+            panelMode = panelMode == PANEL_WSDL ? PANEL_DETAIL : PANEL_WSDL;
+            detailScroll = 0;
+            return true;
+        }
+        if (ke.isKey(KeyCode.TAB) && isTextPanel()) {
             detailFocused = !detailFocused;
             return true;
         }
@@ -140,7 +149,7 @@ class EndpointsTab extends AbstractTableTab {
             detailFocused = false;
             return true;
         }
-        if (panelMode == PANEL_DETAIL && detailFocused) {
+        if (isTextPanel() && detailFocused) {
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 detailScroll = Math.max(0, detailScroll - 10);
                 return true;
@@ -155,7 +164,7 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        if (panelMode == PANEL_DETAIL && lastDetailArea != null && lastDetailArea.contains(me.x(), me.y())) {
+        if (isTextPanel() && lastDetailArea != null && lastDetailArea.contains(me.x(), me.y())) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 detailScroll = Math.max(0, detailScroll - 3);
                 return true;
@@ -295,7 +304,7 @@ class EndpointsTab extends AbstractTableTab {
         widths.add(Constraint.length(8));
         widths.add(Constraint.fill());
 
-        boolean showDetailFocus = panelMode == PANEL_DETAIL;
+        boolean showDetailFocus = isTextPanel();
         Style tableBorderStyle = ctx.paneBorder(!(showDetailFocus && detailFocused));
         Style tableTitleStyle = showDetailFocus && detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         String tableTitle = " Endpoints"
@@ -324,11 +333,11 @@ class EndpointsTab extends AbstractTableTab {
             hasSizeHistory = false;
         }
 
-        boolean showPanel = panelMode == PANEL_DETAIL
+        boolean showPanel = isTextPanel()
                 || (chartMode != CHART_OFF && ctx.shellPercent < 50);
         List<Rect> chunks;
         if (showPanel) {
-            if (panelMode == PANEL_DETAIL) {
+            if (isTextPanel()) {
                 // doc panel gets 60% of area
                 int detailH = Math.max(5, area.height() * 60 / 100);
                 chunks = Layout.vertical().constraints(Constraint.fill(), Constraint.length(detailH)).split(area);
@@ -347,10 +356,14 @@ class EndpointsTab extends AbstractTableTab {
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
         renderScrollbar(frame, table, sortedEndpoints.size());
 
-        if (showPanel && panelMode == PANEL_DETAIL) {
+        if (showPanel && isTextPanel()) {
             hSplit.clearBorderPos();
             lastDetailArea = chunks.get(1);
-            renderDetail(frame, chunks.get(1), sortedEndpoints, info);
+            if (panelMode == PANEL_WSDL) {
+                renderWsdl(frame, chunks.get(1), info);
+            } else {
+                renderDetail(frame, chunks.get(1), sortedEndpoints, info);
+            }
         } else if (showPanel) {
             lastDetailArea = null;
             // Determine selected endpoint URI for single-endpoint chart
@@ -396,7 +409,10 @@ class EndpointsTab extends AbstractTableTab {
         String[] filterLabels = { "all", "remote", "remote+stub" };
         List<SubViewBar.View> views = List.of(
                 new SubViewBar.View("Chart", panelMode == PANEL_CHART, true, () -> pressKey('d')),
-                new SubViewBar.View("Detail", panelMode == PANEL_DETAIL, true, () -> pressKey('d')));
+                new SubViewBar.View("Detail", panelMode == PANEL_DETAIL, true, () -> pressKey('d')),
+                new SubViewBar.View(
+                        "WSDL", panelMode == PANEL_WSDL, wsdlUrl(ctx.findSelectedIntegration()) != null,
+                        () -> pressKey('w')));
         List<SubViewBar.Toggle> toggles = new ArrayList<>();
         toggles.add(new SubViewBar.Toggle("f", "filter", filterLabels[filter]));
         if (panelMode == PANEL_CHART) {
@@ -413,8 +429,11 @@ class EndpointsTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
-        if (panelMode == PANEL_DETAIL) {
+        if (isTextPanel()) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
+        }
+        if (wsdlUrl(ctx.findSelectedIntegration()) != null) {
+            hint(spans, "w", panelMode == PANEL_WSDL ? "detail" : "wsdl");
         }
         ChaosHere.hint(spans, ctx.findSelectedIntegration());
     }
@@ -445,6 +464,53 @@ class EndpointsTab extends AbstractTableTab {
             }
             filter = 0;
         }
+    }
+
+    /** Whether the bottom panel is the detail or the WSDL of the endpoint (text with focus and scroll). */
+    private boolean isTextPanel() {
+        return panelMode == PANEL_DETAIL || panelMode == PANEL_WSDL;
+    }
+
+    /**
+     * The wsdlURL of the selected endpoint when it is a cxf endpoint (a SOAP service or client), else null.
+     */
+    private String wsdlUrl(IntegrationInfo info) {
+        EndpointInfo ep = selectedEndpoint(info);
+        if (ep == null || ep.uri == null || !"cxf".equals(ep.component)) {
+            return null;
+        }
+        try {
+            Object url = URISupport.parseQuery(URISupport.extractQuery(ep.uri), false, true).get("wsdlURL");
+            return url != null && !url.toString().isBlank() ? url.toString() : null;
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    private void renderWsdl(Frame frame, Rect area, IntegrationInfo info) {
+        String url = wsdlUrl(info);
+        String md;
+        if (url == null) {
+            md = "*The selected endpoint is not a cxf endpoint with a wsdlURL*";
+        } else {
+            String location = WsdlView.location(url, info.directory);
+            md = location != null
+                    ? wsdlView.markdown(url, location)
+                    : "*The WSDL " + WsdlView.escape(url) + " is not found in the folder of the integration*";
+        }
+        Style borderStyle = ctx.paneBorder(detailFocused);
+        Style titleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+        frame.renderWidget(
+                MarkdownView.builder()
+                        .source(md)
+                        .scroll(detailScroll)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(borderStyle)
+                                .title(Title.from(Line.from(Span.styled(" WSDL ", titleStyle)))).build())
+                        .styles(Theme.markdownStyles())
+                        .syntaxTheme(Theme.syntaxTheme())
+                        .build(),
+                area);
     }
 
     /** The endpoint selected in the table, as filtered and sorted. */
@@ -771,7 +837,7 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     public Boolean isDetailFocused() {
-        if (panelMode != PANEL_DETAIL) {
+        if (!isTextPanel()) {
             return null;
         }
         return detailFocused;

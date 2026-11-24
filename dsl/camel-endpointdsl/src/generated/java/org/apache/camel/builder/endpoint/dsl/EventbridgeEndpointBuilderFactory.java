@@ -223,7 +223,10 @@ public interface EventbridgeEndpointBuilderFactory {
         }
         /**
          * Whether to delete the auto-created SQS queue and remove the
-         * EventBridge target on shutdown.
+         * EventBridge target on shutdown. When false, the queue and its target
+         * are kept, so the queue collects the events while the consumer is
+         * stopped, and the queue name is derived from the event bus and the
+         * rule name, so the next start reuses the queue.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -239,7 +242,10 @@ public interface EventbridgeEndpointBuilderFactory {
         }
         /**
          * Whether to delete the auto-created SQS queue and remove the
-         * EventBridge target on shutdown.
+         * EventBridge target on shutdown. When false, the queue and its target
+         * are kept, so the queue collects the events while the consumer is
+         * stopped, and the queue name is derived from the event bus and the
+         * rule name, so the next start reuses the queue.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

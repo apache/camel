@@ -19,6 +19,7 @@ camel dependency audit [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--advisories-url` | Where the Apache Camel security advisories are checked online, once a day, and merged with those of the catalog: the GitHub contents API of camel-website (default: \https://api.github.com/repos/apache/camel-website/contents/content/security), a mirror of it, or the URL or file of a JSON array in the format of the catalog |  | String
 | `--build-property` | Maven build properties, ex. --build-property=prop1=foo |  | List
 | `--by-artifact` | One row per vulnerable JAR, with the version that fixes all its CVEs |  | boolean
 | `--camel-spring-boot-version` | Camel version to use with Spring Boot |  | String
@@ -57,7 +58,7 @@ camel dependency audit [options]
 | `--maven-wrapper` | Include Maven Wrapper files in exported project | true | boolean
 | `--name` | The integration name. Use this when the name should not get derived otherwise. |  | String
 | `--observe` | Enable observability services | false | boolean
-| `--offline` | Checks the Apache Camel security advisories of the catalog only, without OSV.dev |  | boolean
+| `--offline` | Checks the Apache Camel security advisories of the catalog only, without OSV.dev and without checking the advisories online |  | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--osv-database` | Checks with the offline OSV database instead of the OSV.dev API: the export of all the Maven vulnerabilities of OSV.dev, downloaded once a day and matched locally, so no coordinates of the project leave the machine |  | boolean
 | `--osv-database-url` | Where the offline OSV database is downloaded from, such as a mirror on the repository manager of the company, or a ZIP file on disk (default: \https://osv-vulnerabilities.storage.googleapis.com/Maven/all.zip). Implies --osv-database |  | String

@@ -73,10 +73,15 @@ class SftpStepwiseRequestsIT extends CamelTestSupport {
         }
 
         // an OPEN, a WRITE and a CLOSE per file: no REALPATH and STAT to change directory and back, and no listing or
-        // attributes to check that the directory exists
+        // attributes to check that the directory exists. sendNoop=true (the default) adds a REALPATH before each upload
+        // to check that the connection is alive, via SftpOperations.sendNoop() — but isRecentlyUsed() skips the noop
+        // when the previous upload completed less than a second ago, so back-to-back uploads like these see 0 REALPATHs.
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_OPEN));
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_WRITE));
         assertEquals(10, service.requests(SftpConstants.SSH_FXP_CLOSE));
+        // 0 REALPATHs holds only while each upload starts less than a second after the previous one,
+        // so that isRecentlyUsed() returns true and sendNoop() is skipped. If the loop were slower
+        // (e.g. because of a debugger or a loaded CI), some uploads would trigger a noop REALPATH.
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_REALPATH));
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_STAT));
         assertEquals(0, service.requests(SftpConstants.SSH_FXP_LSTAT));

@@ -82,6 +82,25 @@ public interface VertxWebsocketComponentBuilderFactory {
     
         
         /**
+         * Whether the consumers route each message synchronously, as the
+         * default for the endpoints of this component. See the synchronous
+         * endpoint option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -274,6 +293,7 @@ public interface VertxWebsocketComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((VertxWebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "synchronous": ((VertxWebsocketComponent) component).setSynchronous((boolean) value); return true;
             case "lazyStartProducer": ((VertxWebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowOriginHeader": ((VertxWebsocketComponent) component).setAllowOriginHeader((boolean) value); return true;
             case "autowiredEnabled": ((VertxWebsocketComponent) component).setAutowiredEnabled((boolean) value); return true;

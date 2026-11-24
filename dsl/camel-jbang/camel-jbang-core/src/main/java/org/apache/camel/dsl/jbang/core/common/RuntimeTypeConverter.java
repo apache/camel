@@ -25,6 +25,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 public class RuntimeTypeConverter extends StringConverter<RuntimeType> {
 
     public RuntimeType convert(String value) throws Exception {
-        return RuntimeType.fromValue(value).exportRuntime();
+        RuntimeType runtime = RuntimeType.fromValue(value);
+        return runtime.exportRuntime();
     }
 }

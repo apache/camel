@@ -18,13 +18,30 @@
 package org.apache.camel.component.rocketmq.reply;
 
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.support.DefaultTimeoutMap;
 
+/**
+ * The handlers of the requests that wait for a reply, by message key. Every handler that is added to the map is
+ * completed once: by its reply, by its timeout, or when the map stops. Once the map has stopped, no handler is added
+ * any more: a handler that is added then (the send of its request succeeded after the stop) is completed at once.
+ */
 public class ReplyTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
+    // the lock of the map, which also guards closed
+    private final Lock lock;
+    // set when the map stops, before the drain, so a handler can no longer be added after the drain
+    private boolean closed;
+
     public ReplyTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
-        super(executor, requestMapPollTimeMillis);
+        this(executor, requestMapPollTimeMillis, new ReentrantLock());
+    }
+
+    private ReplyTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, Lock lock) {
+        super(executor, requestMapPollTimeMillis, lock);
+        this.lock = lock;
         addListener(this::listener);
     }
 
@@ -41,31 +58,79 @@ public class ReplyTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
                 log.trace("Removed messageKey: {}", key);
                 break;
             case Evict:
-                try {
-                    handler.onTimeout(key);
-                } catch (Exception e) {
-                    log.warn("Error processing onTimeout for messageKey: {} due: {}. This exception is ignored.",
-                            key, e.getLocalizedMessage(), e);
-                }
+                onTimeout(key, handler);
                 log.trace("Evicted messageKey: {}", key);
                 break;
             default:
         }
     }
 
+    private void onTimeout(String key, ReplyHandler handler) {
+        try {
+            handler.onTimeout(key);
+        } catch (Exception e) {
+            log.warn("Error processing onTimeout for messageKey: {} due: {}. This exception is ignored.",
+                    key, e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        lock.lock();
+        try {
+            closed = false;
+        } finally {
+            lock.unlock();
+        }
+        super.doStart();
+    }
+
     @Override
     protected void doStop() throws Exception {
+        // close the map before the drain: a handler added after the drain would be cleared by super.doStop() (or stay
+        // in the stopped map), and its exchange would never complete
+        lock.lock();
+        try {
+            closed = true;
+        } finally {
+            lock.unlock();
+        }
         drainAndEvictAll();
         super.doStop();
     }
 
     @Override
     public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
-        return super.put(key, value, encode(timeoutMillis));
+        lock.lock();
+        try {
+            if (!closed) {
+                return super.put(key, value, encode(timeoutMillis));
+            }
+        } finally {
+            lock.unlock();
+        }
+        completeClosed(key, value);
+        return null;
     }
 
     @Override
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
-        return super.putIfAbsent(key, value, encode(timeoutMillis));
+        lock.lock();
+        try {
+            if (!closed) {
+                return super.putIfAbsent(key, value, encode(timeoutMillis));
+            }
+        } finally {
+            lock.unlock();
+        }
+        completeClosed(key, value);
+        return null;
+    }
+
+    private void completeClosed(String key, ReplyHandler handler) {
+        // the map has stopped and was drained: the request has been sent, but this handler is in no map, so it is
+        // completed here as the drain would have done
+        log.debug("Cannot add messageKey: {} as the reply manager is stopped. Completing its exchange.", key);
+        onTimeout(key, handler);
     }
 }

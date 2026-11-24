@@ -1436,6 +1436,13 @@ YAML::
 ----
 ====
 
+The `url` is the URL of the SSE endpoint of the server, path included, for example
+`http://mcp-server:3001/sse` or `https://example.com/api/sse`. When the URL has no path, such as
+`http://mcp-server:3001`, the component uses `/sse`. The messages go to the endpoint that the server sends on the
+stream, resolved against the scheme, host and port of the URL. An absolute path, as the MCP SDK servers and
+quarkus-mcp-server send, works; a path-relative one such as `message?sessionId=...` from a server on `/custom/sse` goes
+to `/message`, while some other clients resolve it against the SSE URL (`/custom/message`).
+
 ==== Multiple MCP Servers
 
 [tabs]

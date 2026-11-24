@@ -43,7 +43,48 @@ public final class MllpCharsetHelper {
     }
 
     public static Charset getCharset(Exchange exchange, byte[] hl7Bytes, Hl7Util hl7Util, Charset defaultCharset) {
+        Charset msh18Charset = findMsh18Charset(hl7Bytes, hl7Util, defaultCharset);
+        if (msh18Charset != null) {
+            return msh18Charset;
+        }
 
+        return getCharset(exchange, defaultCharset);
+    }
+
+    /**
+     * The charset of an HL7 message: the charset named in MSH-18, or the given charset when the message has no MSH-18
+     * or MSH-18 names a charset that is not supported. The CamelCharsetName header and exchange property are not used,
+     * as they may come from another endpoint.
+     *
+     * @param  hl7Bytes       the HL7 message
+     * @param  hl7Util        the HL7 utility to find MSH-18 with
+     * @param  defaultCharset the charset to use when the message has no (supported) MSH-18
+     * @return                the charset of the message
+     */
+    public static Charset getMsh18Charset(byte[] hl7Bytes, Hl7Util hl7Util, Charset defaultCharset) {
+        Charset msh18Charset = findMsh18Charset(hl7Bytes, hl7Util, defaultCharset);
+        return msh18Charset != null ? msh18Charset : defaultCharset;
+    }
+
+    /**
+     * Encodes an HL7 message in its charset: the charset named in MSH-18, or the given charset when the message has no
+     * MSH-18 or MSH-18 names a charset that is not supported.
+     *
+     * @param  hl7Message     the HL7 message
+     * @param  hl7Util        the HL7 utility to find MSH-18 with
+     * @param  defaultCharset the charset to use when the message has no (supported) MSH-18
+     * @return                the encoded message
+     */
+    public static byte[] encode(String hl7Message, Hl7Util hl7Util, Charset defaultCharset) {
+        byte[] hl7Bytes = hl7Message.getBytes(defaultCharset);
+        Charset msh18Charset = findMsh18Charset(hl7Bytes, hl7Util, defaultCharset);
+        if (msh18Charset != null && !msh18Charset.equals(defaultCharset)) {
+            hl7Bytes = hl7Message.getBytes(msh18Charset);
+        }
+        return hl7Bytes;
+    }
+
+    private static Charset findMsh18Charset(byte[] hl7Bytes, Hl7Util hl7Util, Charset defaultCharset) {
         String msh18 = hl7Util.findMsh18(hl7Bytes, defaultCharset);
         if (msh18 != null && !msh18.isEmpty()) {
             if (MllpProtocolConstants.MSH18_VALUES.containsKey(msh18)) {
@@ -57,18 +98,7 @@ public final class MllpCharsetHelper {
                 // ignore
             }
         }
-
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-            } catch (Exception charsetEx) {
-                // ignore
-            }
-        }
-        return defaultCharset;
+        return null;
     }
 
 }

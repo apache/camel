@@ -329,6 +329,18 @@ class QuarkusExporter extends Exporter {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
+        if (key.startsWith("camel.cxf.")) {
+            // the options of camel-cxf-platform-http (camel-main) are those of the CXF extension and the HTTP server of
+            // Quarkus
+            if (CXF_PATH.equals(key)) {
+                return super.applicationPropertyLine("quarkus.cxf.path", value);
+            }
+            if (isCxfUseXForwardedHeaders(key)) {
+                return super.applicationPropertyLine("quarkus.http.proxy.proxy-address-forwarding", value) + "\n"
+                       + super.applicationPropertyLine("quarkus.http.proxy.enable-forwarded-host", value);
+            }
+            return null;
+        }
         if (key.startsWith("camel.server.") || key.startsWith("camel.management.")) {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
@@ -575,6 +587,9 @@ class QuarkusExporter extends Exporter {
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
+        // camel run serves a cxf consumer with camel-cxf-platform-http (camel-main); the runtime serves it with its
+        // CXF starter or extension
+        removeCamelArtifact(answer, "camel-cxf-platform-http");
 
         if (request.hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");

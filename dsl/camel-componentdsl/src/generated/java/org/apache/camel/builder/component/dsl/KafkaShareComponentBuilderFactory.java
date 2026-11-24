@@ -732,6 +732,32 @@ public interface KafkaShareComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Sets the group configuration share.auto.offset.reset of the share
+         * group when the consumer starts, through the Kafka Admin client:
+         * earliest, latest, or by_duration: followed by an ISO-8601 duration
+         * (such as by_duration:PT1H). It decides where a share-partition starts
+         * when the group first consumes it, so earliest lets a new share group
+         * read the records already in the topic (a new share group starts at
+         * the latest records). It is a setting of the group, so it applies to
+         * all the consumers of the group, and it does not move a
+         * share-partition that the group already consumes. The principal of the
+         * consumer needs the ALTER_CONFIGS permission on the group, and the
+         * consumer fails to start when the configuration cannot be set. When
+         * not set, the group configuration is left as it is.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param shareAutoOffsetReset the value to set
+         * @return the dsl builder
+         */
+        default KafkaShareComponentBuilder shareAutoOffsetReset(java.lang.String shareAutoOffsetReset) {
+            doSetProperty("shareAutoOffsetReset", shareAutoOffsetReset);
+            return this;
+        }
+    
         
         /**
          * This enables the use of a specific Avro reader for use with the in
@@ -1744,6 +1770,7 @@ public interface KafkaShareComponentBuilderFactory {
             case "pollOnError": getOrCreateConfiguration((KafkaShareComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaShareComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
             case "preValidateHostAndPort": getOrCreateConfiguration((KafkaShareComponent) component).setPreValidateHostAndPort((boolean) value); return true;
+            case "shareAutoOffsetReset": getOrCreateConfiguration((KafkaShareComponent) component).setShareAutoOffsetReset((java.lang.String) value); return true;
             case "specificAvroReader": getOrCreateConfiguration((KafkaShareComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaShareComponent) component).setValueDeserializer((java.lang.String) value); return true;
             case "acquireMode": getOrCreateConfiguration((KafkaShareComponent) component).setAcquireMode((java.lang.String) value); return true;

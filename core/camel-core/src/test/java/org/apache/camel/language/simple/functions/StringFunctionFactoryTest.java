@@ -320,6 +320,47 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
                 () -> createFactory().createFunction(context, "escape()", 0));
     }
 
+    // --- unescape ---
+
+    @Test
+    public void testUnescape() {
+        exchange.getIn().setBody("Monday &amp; Tuesday &lt;b&gt;&quot;quoted&quot;&lt;/b&gt; &#39;x&#39;");
+        assertEquals("Monday & Tuesday <b>\"quoted\"</b> 'x'", evaluate("unescape(html)", String.class));
+        exchange.getIn().setHeader("title", "Tom &amp; Jerry&apos;s &lt;Show&gt;");
+        assertEquals("Tom & Jerry's <Show>", evaluate("unescape(xml, ${header.title})", String.class));
+        exchange.getIn().setBody("say \\\"hi\\\"\\nbye");
+        assertEquals("say \"hi\"\nbye", evaluate("unescape(json)", String.class));
+        assertEquals("it's </script>", evaluate("unescape(js, 'it\\'s <\\/script>')", String.class));
+        exchange.getIn().setHeader("name", "O''Reilly");
+        assertEquals("O'Reilly", evaluate("unescape(sql,${header.name})", String.class));
+        assertEquals("Camel in Action?", evaluate("unescape(url, 'Camel%20in%20Action%3F')", String.class));
+        assertEquals("a & b", evaluate("unescape(HTML, 'a &amp; b')", String.class));
+    }
+
+    @Test
+    public void testUnescapeOfEscape() {
+        exchange.getIn().setBody("Tom & Jerry's \"<Show>\"\n100% a+b");
+        for (String kind : new String[] { "html", "xml", "json", "js", "sql", "url" }) {
+            assertEquals(exchange.getIn().getBody(), evaluate("unescape(" + kind + ", ${escape(" + kind + ")})", String.class),
+                    kind);
+        }
+    }
+
+    @Test
+    public void testUnescapeNullBody() {
+        exchange.getIn().setBody(null);
+        assertNull(evaluate("unescape(xml)", String.class));
+    }
+
+    @Test
+    public void testUnescapeUnknownKind() {
+        SimpleParserException e = assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "unescape(csv)", 0));
+        assertTrue(e.getMessage().contains("Unknown unescape kind: csv"));
+        assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "unescape()", 0));
+    }
+
     @Test
     void testEmptyArgumentIsKept() {
         // an empty argument is kept, so the next argument does not take its place

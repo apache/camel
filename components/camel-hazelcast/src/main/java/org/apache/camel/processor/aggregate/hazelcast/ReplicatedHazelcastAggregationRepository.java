@@ -28,6 +28,7 @@ import com.hazelcast.map.IMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
+import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -303,6 +304,15 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     @Override
     public Set<String> getKeys() {
         return Collections.unmodifiableSet(replicatedCache.keySet());
+    }
+
+    /**
+     * Whether the aggregates are kept only in memory: a replicated map has a copy on every data member, so only a
+     * member alone in its cluster loses them; see {@link HazelcastUtil#isReplicatedInMemory(HazelcastInstance)}.
+     */
+    @Override
+    public boolean isInMemory() {
+        return replicatedCache != null && HazelcastUtil.isReplicatedInMemory(hazelcastInstance);
     }
 
     @Override

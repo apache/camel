@@ -42,7 +42,7 @@ public final class FtpUtils {
     public static String extractDirNameFromAbsolutePath(String path) {
         // default is unix so try with '/'
         // otherwise force File.separator
-        if (path.endsWith("/") || path.endsWith("\\")) {
+        while (path.length() > 1 && (path.endsWith("/") || path.endsWith("\\"))) {
             path = path.substring(0, path.length() - 1);
         }
         return FileUtil.stripPath(path);
@@ -140,6 +140,39 @@ public final class FtpUtils {
             configuration.setDirectory(relativePath);
             configuration.setDirectoryName(relativePath);
         }
+    }
+
+    /**
+     * Whether a directory name from a listing of the server is the name of one directory in the listed directory: not
+     * blank, not . or .., and without a / or a \, once any trailing / is removed, as some servers list a directory with
+     * a trailing /. A stepwise recursive poll changes into such a directory one segment at a time, and back to its
+     * parent afterwards, so a name such as sub/.. or a\b would leave the poll in another directory than the listed one.
+     *
+     * @param  name the name of the directory, as listed
+     * @return      {@code true} if the poll can change into the directory
+     */
+    public static boolean isSubDirectoryName(String name) {
+        if (name == null) {
+            return false;
+        }
+        String directory = name;
+        while (directory.length() > 1 && directory.endsWith("/")) {
+            directory = directory.substring(0, directory.length() - 1);
+        }
+        return !directory.isBlank() && !".".equals(directory) && !"..".equals(directory) && directory.indexOf('/') == -1
+                && directory.indexOf('\\') == -1;
+    }
+
+    /**
+     * Whether a path is a directory itself or one of its parent directories. A path that only starts with the same
+     * characters, such as /home/cam for /home/camel, is not.
+     *
+     * @param  path      the path
+     * @param  directory the directory
+     * @return           {@code true} if the path is the directory or one of its parent directories
+     */
+    public static boolean isDirectoryOrParentOf(String path, String directory) {
+        return directory.equals(path) || directory.startsWith(path.endsWith("/") ? path : path + "/");
     }
 
     public static String absoluteFilePath(String absolutePath, String name) {

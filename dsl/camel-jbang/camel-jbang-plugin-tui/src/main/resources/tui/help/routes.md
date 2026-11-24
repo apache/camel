@@ -27,7 +27,7 @@ Below the routes are the steps of the selected route, with the same numbers:
 - **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
 - **REDEL** — The redeliveries of the error handler at this step: an exchange that failed here and was tried again, whether the next attempt succeeded or not. The route row counts the exchanges that completed after a redelivery. Shown when the error handler redelivered an exchange of the route, or handled one
 - **HAND** — The failures the error handler handled, such as an exchange moved to a dead letter channel: the route counts them as done, not failed, so FAIL stays 0
-- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
+- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on), and the format of the payload from its Content-Type, such as `byte[] · json`; for a step that calls a Kamelet, the data type the Kamelet takes, such as `LinkedHashMap → json`
 
 ## Percentile Latency (P50/P95/P99)
 

@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class AlibabaEventBridgeProducer extends DefaultProducer {
 
-    private EventBridgeClient eventBridgeClient;
-
     public AlibabaEventBridgeProducer(AlibabaEventBridgeEndpoint endpoint) {
         super(endpoint);
     }
@@ -45,17 +43,15 @@ public class AlibabaEventBridgeProducer extends DefaultProducer {
             throw new IllegalArgumentException("Operation name not found");
         }
 
-        if (eventBridgeClient == null) {
-            eventBridgeClient = endpoint.initClient();
-        }
+        EventBridgeClient eventBridgeClient = endpoint.initClient();
 
         switch (configuration.operation()) {
-            case AlibabaEventBridgeOperations.PUT_EVENTS -> putEvents(exchange, configuration);
+            case AlibabaEventBridgeOperations.PUT_EVENTS -> putEvents(exchange, configuration, eventBridgeClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
-    private void putEvents(Exchange exchange, ClientConfigurations configuration) {
+    private void putEvents(Exchange exchange, ClientConfigurations configuration, EventBridgeClient eventBridgeClient) {
         AlibabaEventBridgeEndpoint endpoint = getEndpoint();
         List<CloudEvent> events = AlibabaEventBridgeUtils.resolveCloudEvents(
                 exchange, configuration, endpoint.getEventSourceCache(), eventBridgeClient);

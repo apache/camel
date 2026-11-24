@@ -993,12 +993,13 @@ The `schemaRegistryURL` option is set as the registry URL of the vendor.
 |===
 | schemaRegistryVendor | schemaFormat | What Camel sets
 | confluent | avro, json, protobuf | The `KafkaAvroSerializer`, `KafkaJsonSchemaSerializer` or `KafkaProtobufSerializer` (and the matching deserializer) of Confluent, and `schema.registry.url`. The producer registers the schemas (the Confluent default). Several registries implement the Confluent registry API, such as Karapace, the Redpanda schema registry and the Confluent compatible API of Apicurio Registry, so `confluent` works for them too.
-| apicurio | avro, json, protobuf | The `AvroKafkaSerializer`, `JsonSchemaKafkaSerializer` or `ProtobufKafkaSerializer` (and the matching deserializer) of Apicurio Registry 3.x, `apicurio.registry.url`, and on the producer `apicurio.registry.auto-register=true`.
+| apicurio | avro, json, protobuf | The `AvroKafkaSerializer`, `JsonSchemaKafkaSerializer` or `ProtobufKafkaSerializer` (and the matching deserializer) of Apicurio Registry 3.x, `apicurio.registry.url`, and on the producer `apicurio.registry.auto-register=true`. JSON Schema (`schemaFormat=json`) fails at startup when `com.networknt:json-schema-validator` 3.x is on the classpath (<<apicurio-json-incompatibility,see below>>).
 | aws-glue | avro, json, protobuf | The `GlueSchemaRegistryKafkaSerializer` and `GlueSchemaRegistryKafkaDeserializer`, `dataFormat`, on the producer `schemaAutoRegistrationEnabled=true`, and on the consumer of Avro `avroRecordType=GENERIC_RECORD`. The `schemaRegistryURL` is optional and is set as `endpoint` (to override the endpoint of the Glue service).
 | azure | avro | The `KafkaAvroSerializer` and `KafkaAvroDeserializer` of the Azure Schema Registry, `schema.registry.url` (the fully qualified namespace of the Event Hubs namespace), `use.azure.credential=true`, and on the producer `auto.register.schemas=true`.
 |===
 
-The `schemaFormat` is `avro` by default. A format that the vendor does not support, such as `azure` with `protobuf`, fails when the producer or consumer starts.
+The `schemaFormat` is `avro` by default. A format that the vendor does not support fails when the producer or consumer starts:
+`azure` with `json` or `protobuf`, and `apicurio` with `json` when `com.networknt:json-schema-validator` 3.x is on the classpath (see the note in the Apicurio section).
 The `specificAvroReader` option is set under the property of the vendor.
 
 What you set yourself takes precedence: a `valueSerializer` or `valueDeserializer` other than the default, and any `additionalProperties`, such as a property of the vendor that Camel also sets.
@@ -1083,7 +1084,13 @@ YAML::
 
 *Apicurio Registry*
 
+[[apicurio-json-incompatibility]]
 NOTE: Supports Avro, JSON Schema and Protobuf, with the serdes of Apicurio Registry 3.x. The 2.x serdes have other artifact names and property names, and are not set up by `apicurio`.
+JSON Schema (`schemaFormat=json`) fails at startup when `com.networknt:json-schema-validator` 3.x is on the classpath:
+the Apicurio JSON Schema serde (`io.apicurio:apicurio-registry-jsonschema-serde-kafka` 3.x) depends on `com.networknt:json-schema-validator` 1.5.x, while for example `camel-yaml-dsl-validator`, `camel-json-validator` and Camel JBang use `com.networknt:json-schema-validator` 3.x (upgraded for Jackson 3 in CAMEL-23172).
+In 3.x, `SchemaLoader` changed from an interface to a class, so the 1.5.x classes of the serde fail to link against the 3.x classes already loaded, with an `IncompatibleClassChangeError`.
+Use `schemaFormat=avro` or `schemaFormat=protobuf` with `apicurio`, or use `schemaRegistryVendor=confluent` with `schemaFormat=json`
+(the Confluent compatible API of Apicurio Registry works with `confluent`).
 
 The URL is the URL of the registry API of Apicurio Registry 3.x, which ends with `/apis/registry/v3`.
 

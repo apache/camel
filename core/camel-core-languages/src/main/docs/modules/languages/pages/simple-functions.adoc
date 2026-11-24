@@ -553,6 +553,8 @@ The string functions is various functions to work with values that are String an
 |`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
+|`unescape(kind)` | `String` | Unescapes the message body: the inverse of `escape`. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
+|`unescape(kind,exp)` | `String` | Unescapes the expression: the inverse of `escape`. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
 |`unquote()` | `String` | Returns the message body with any leading/ending quotes removed
 |`unquote(exp)` | `String` | Returns the expression with any leading/ending quotes removed
 |`quote()` | `String` | Returns the message body as a double-quoted string
@@ -597,6 +599,21 @@ then `${escape(html)}` returns `Monday &amp; Tuesday`. The kind is case-insensit
 
 TIP: Prefer parameterized queries over `escape(sql)`; the SQL kind is meant as a last resort for
 components where parameters cannot be used.
+
+The `unescape` function is the inverse of `escape`, and takes the same kinds, so `${unescape(xml, 'Tom &amp; Jerry')}`
+returns `Tom & Jerry`, and `${unescape(url, 'Camel%20in%20Action')}` returns `Camel in Action`:
+
+[width="100%",cols="10%,90%",options="header",]
+|====
+|Kind |Unescaping
+|`html`, `xml` | the five predefined entities `&amp;` `&lt;` `&gt;` `&quot;` `&apos;`, and numeric character references such as `&#39;` or `&#x27;`. Other named entities, such as the HTML `&nbsp;`, are kept as they are.
+|`json` | the backslash escapes `\"` `\\` `\/` `\b` `\f` `\n` `\r` `\t` and `\uXXXX`
+|`js` | as `json`, and also `\'`
+|`sql` | doubled single quotes become one
+|`url` | percent-encoded sequences (decoded as UTF-8), and a `+` becomes a space as in a URL query
+|====
+
+A sequence that is not a valid escape of the kind, such as `&foo;` or `%zz`, is kept as it is.
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
@@ -695,12 +712,20 @@ Functions to work with XML and JSON payloads.
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
+|`canonicalXml(exp)` | `String` | Canonicalizes the expression as XML (Exclusive XML Canonicalization), so two XML documents that differ only in formatting give the same value.
+|`canonicalXml(exp,mode)` | `String` | Canonicalizes the expression as XML, where the mode is `exclusive` (default) or `inclusive` (Canonical XML 1.0).
+|`compact(exp)` | `String` | Converts the expression to a `String`, and removes the whitespace between the elements (if XML) or the tokens (if JSON), so the value is on a single line: the inverse of `pretty`. Otherwise the value is returned as-is.
+|`isValidJson(exp)` | `boolean` | Whether the expression is valid JSON.
+|`isValidXml(exp)` | `boolean` | Whether the expression is well-formed XML (without a DOCTYPE declaration).
 |`jq(exp)` | `Object` | When working with JSON data, then this allows using the JQ language, for example, to extract data from the message body (in JSON format). This requires having camel-jq JAR on the classpath.
 |`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSON document.
 |`jsonpath(exp)` | `Object` | When working with JSON data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSON format). This requires having camel-jsonpath JAR on the classpath.
 |`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
 |`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
 |`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`stripXmlComments(exp)` | `String` | Removes the comments from the expression as XML.
+|`stripXmlDeclaration(exp)` | `String` | Removes the XML declaration (`<?xml version="1.0"?>`) from the expression.
+|`stripXmlNamespaces(exp)` | `String` | Removes the namespace declarations and the namespace prefixes of elements and attributes from the expression as XML.
 |`simpleJsonpath(exp)` | `Object` | When working with JSON data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSON format).
 |`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
 |`toJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
@@ -1065,6 +1090,72 @@ then `$\{pretty}` will output this nicely formatted:
   "name": "scott"
 }
 ----
+
+The `compact` function is the inverse of `pretty`: it removes the whitespace between the elements of XML, or the tokens
+of JSON, so the payload is on a single line, for example before logging it. Text with other characters than whitespace,
+CDATA sections and JSON strings are kept as they are. Given the payload above, `${compact()}` returns
+`{"id":123,"age":42,"name":"scott"}`. A value that is not XML or JSON, or not well-formed, is returned as-is.
+
+The `stripXmlDeclaration`, `stripXmlComments` and `stripXmlNamespaces` functions remove parts of an XML payload:
+
+[width="100%",cols="20%,80%",options="header",]
+|====
+|Function |What is removed
+|`stripXmlDeclaration` | the `<?xml version="1.0" encoding="UTF-8"?>` declaration, such as before wrapping the XML inside another element. The rest of the value is kept exactly as written.
+|`stripXmlComments` | the `<!-- ... -->` comments, such as before sending the XML to a partner.
+|`stripXmlNamespaces` | the namespace declarations (`xmlns` and `xmlns:prefix`) and the prefixes of elements and attributes, so `<ns1:Order xmlns:ns1="http://example.com" ns1:id="1">` becomes `<Order id="1">`, and XPath expressions do not need `local-name()`. Attributes in the `xml:` namespace, such as `xml:lang`, are kept. Prefixes inside attribute values or text, such as in `xsi:type="ns1:Item"`, are not changed. When two attributes of an element have the same local name, the first one is kept.
+|====
+
+For example, to remove the SOAP envelope namespaces before using XPath:
+
+[source,java]
+----
+from("direct:soap")
+    .setBody(simple("${stripXmlNamespaces()}"))
+    .log("Price of ${xpath(/Envelope/Body/GetPrice/Item/text())}");
+----
+
+The `canonicalXml` function returns the W3C canonical form of XML (C14N, without comments): the attributes are sorted,
+empty elements are written with a start and end tag, quotes and namespace declarations are normalized, and the XML
+declaration and comments are removed. Two XML documents that differ only in formatting have the same canonical form, which
+is useful for an idempotency check or a test assertion:
+
+[source,java]
+----
+from("direct:compare")
+    .choice()
+        .when(simple("${canonicalXml()} == ${canonicalXml(${variable.expected})}"))
+            .to("direct:same")
+        .otherwise()
+            .to("direct:changed");
+----
+
+The mode is `exclusive` (the default, Exclusive XML Canonicalization, where namespace declarations that are not used
+are removed) or `inclusive` (Canonical XML 1.0), such as `${canonicalXml(inclusive)}` for the message body or
+`${canonicalXml($\{header.xml},inclusive)}`. The canonicalizer is the one of the JDK, so no extra JAR is needed. A value
+that is not well-formed XML fails the evaluation, as a value returned as-is would compare as different.
+
+The `isValidXml` and `isValidJson` functions check that a payload is well-formed XML or valid JSON, such as in a
+content-based router, without a `doTry` around an unmarshal or XPath expression:
+
+[source,java]
+----
+from("direct:in")
+    .choice()
+        .when(simple("${isValidXml()}"))
+            .to("direct:xml")
+        .when(simple("${isValidJson()}"))
+            .to("direct:json")
+        .otherwise()
+            .to("direct:invalid");
+----
+
+`isValidJson` follows RFC 8259 strictly, so a trailing comma or single quotes are not valid. A single value, such as
+`123` or `"text"`, is valid JSON.
+
+NOTE: The XML functions never process a DTD: XML with a `<!DOCTYPE>` declaration is not accepted, so no entity is
+expanded and no file or URL is read, whoever sent the message. `isValidXml` returns `false` for it, `canonicalXml` fails,
+and `compact`, `stripXmlComments` and `stripXmlNamespaces` return it as-is.
 
 
 === Attachment Functions

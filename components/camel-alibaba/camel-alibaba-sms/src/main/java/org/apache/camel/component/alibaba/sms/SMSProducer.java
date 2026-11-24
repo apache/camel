@@ -28,8 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SMSProducer extends DefaultProducer {
 
-    private Client smsClient;
-
     public SMSProducer(SMSEndpoint endpoint) {
         super(endpoint);
     }
@@ -43,17 +41,15 @@ public class SMSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Operation name not found");
         }
 
-        if (smsClient == null) {
-            smsClient = endpoint.initClient();
-        }
+        Client smsClient = endpoint.initClient();
 
         switch (configuration.operation()) {
-            case SMSOperations.SEND_SMS -> sendSms(exchange, configuration);
+            case SMSOperations.SEND_SMS -> sendSms(exchange, configuration, smsClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
-    private void sendSms(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void sendSms(Exchange exchange, ClientConfigurations configuration, Client smsClient) throws Exception {
         if (ObjectHelper.isEmpty(configuration.phoneNumbers())
                 || ObjectHelper.isEmpty(configuration.signName())
                 || ObjectHelper.isEmpty(configuration.templateCode())) {
