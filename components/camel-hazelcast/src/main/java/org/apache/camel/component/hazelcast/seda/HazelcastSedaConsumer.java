@@ -176,6 +176,21 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 waitOnErrorDelay();
+            } catch (Error e) {
+                // Errors from deserialization (e.g. NoClassDefFoundError) must not kill the consumer thread;
+                // VirtualMachineError (OutOfMemoryError, StackOverflowError, ...) are re-thrown as unrecoverable
+                if (e instanceof VirtualMachineError) {
+                    throw e;
+                }
+                if (transactionCtx != null) {
+                    LOG.trace("Rollback transaction: {}", transactionCtx.getTxnId());
+                    try {
+                        transactionCtx.rollbackTransaction();
+                    } catch (Exception ignore) {
+                    }
+                }
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                waitOnErrorDelay();
             } finally {
                 if (transacted) {
                     releaseExchange(exchange, false);
