@@ -3001,6 +3001,7 @@ Whether to use a scheduled thread pool. Default value: false
         <xs:attribute name="keyPassword" type="xs:string"/>
         <xs:attribute name="provider" type="xs:string"/>
         <xs:attribute name="algorithm" type="xs:string"/>
+        <xs:attribute name="keyManager" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

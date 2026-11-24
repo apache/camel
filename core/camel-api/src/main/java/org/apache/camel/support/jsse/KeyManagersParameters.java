@@ -39,12 +39,17 @@ public class KeyManagersParameters extends JsseParameters {
     protected @Nullable String keyPassword;
     protected @Nullable String provider;
     protected @Nullable String algorithm;
+    protected @Nullable KeyManager keyManager;
 
     /**
      * Creates {@link KeyManager}s based on this instance's configuration and the {@code KeyStore} produced by the
      * configuration returned from {@link #getKeyStore()}. The {@code KeyManager}s are produced from a factory created
      * by using the provider and algorithm identifiers returned by {@link #getProvider()} and {@link #getAlgorithm()},
      * respectively. If either of these methods returns null, the default JSSE value is used instead.
+     * <p>
+     * If an existing {@code KeyManager} is set with {@link #setKeyManager(KeyManager)}, it is returned instead, and the
+     * key store, key password, provider and algorithm are not used. The cert alias of {@link SSLContextParameters}, if
+     * set, still applies to an {@code X509KeyManager}.
      *
      * @return                          the initialized {@code KeyManager}s
      * @throws GeneralSecurityException if there is an error creating the {@code KeyManager}s or in creating the
@@ -54,6 +59,15 @@ public class KeyManagersParameters extends JsseParameters {
      * @see                             KeyStoreParameters#createKeyStore()
      */
     public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
+        if (keyManager != null) {
+            if (keyStore != null || keyPassword != null || provider != null || algorithm != null) {
+                LOG.debug("Using the existing KeyManager [{}]: the keyStore, keyPassword, provider and algorithm"
+                          + " of KeyManagersParameters [{}] are not used.",
+                        keyManager, this);
+            }
+            return new KeyManager[] { keyManager };
+        }
+
         LOG.trace("Creating KeyManager[] from KeyManagersParameters [{}].", this);
         KeyManager[] keyManagers;
 
@@ -150,10 +164,38 @@ public class KeyManagersParameters extends JsseParameters {
         this.algorithm = value;
     }
 
+    /**
+     * The existing key manager to use instead of creating one with a {@link KeyManagerFactory}.
+     *
+     * @since 4.24
+     */
+    public @Nullable KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    /**
+     * To use an existing configured key manager instead of using {@link KeyManagerFactory} to get the
+     * {@link KeyManager}. When set, the key store, key password, provider and algorithm are not used. The cert alias of
+     * {@link SSLContextParameters}, if set, still applies to an {@code X509KeyManager}.
+     *
+     * @param keyManager the key manager to use. Vert.x based components and the cert alias require an
+     *                   {@code X509KeyManager}
+     * @since            4.24
+     */
+    public void setKeyManager(@Nullable KeyManager keyManager) {
+        this.keyManager = keyManager;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("KeyManagersParameters[keyStore=");
+        builder.append("KeyManagersParameters[");
+        if (keyManager != null) {
+            builder.append("keyManager=");
+            builder.append(keyManager);
+            builder.append(", ");
+        }
+        builder.append("keyStore=");
         builder.append(keyStore);
         builder.append(", keyPassword=");
         builder.append("********");
