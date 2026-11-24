@@ -74,7 +74,7 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> received.size() >= 2);
         // nothing more arrives: the poll does not list the inbox again through sub/..
-        TimeUnit.MILLISECONDS.sleep(500);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS).until(() -> received.size() == 2);
 
         assertEquals(2, received.size(), received.toString());
         assertTrue(received.contains("hello.txt"), received.toString());
@@ -111,7 +111,7 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
 
         // the poll changes into each listed directory by its name, and downloads its file
         await().atMost(10, TimeUnit.SECONDS).until(() -> received.size() >= 5);
-        TimeUnit.MILLISECONDS.sleep(500);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS).until(() -> received.size() == 5);
         assertEquals(List.of("fifth/five.txt=five", "fourth/four.txt=four", "real/deep.txt=deep", "second/two.txt=two",
                 "third/three.txt=three"), received.stream().sorted().toList());
     }
@@ -126,6 +126,25 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
     }
 
     @Test
+    void pollsListedRelativeDirectoryWithTrailingSeparatorStepwise() throws Exception {
+        // a server can list a directory with a trailing /, which a stepwise poll changes into by its name
+        server.addFile("/inbox/child/report.txt", "report".getBytes(StandardCharsets.UTF_8));
+        server.addListedDirectory("/inbox", "child/");
+        List<String> received = new CopyOnWriteArrayList<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ftp://camel@127.0.0.1:" + server.port() + "/inbox?password=secret&passiveMode=true"
+                     + "&recursive=true&noop=true&initialDelay=0&delay=600000")
+                        .process(e -> received.add(e.getMessage().getHeader(Exchange.FILE_NAME, String.class)));
+            }
+        });
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !received.isEmpty());
+        assertEquals(List.of("child/report.txt"), received);
+    }
+
+    @Test
     void entersListedAbsoluteDirectoryByItsNameInTheListedDirectory() throws Exception {
         // /x/inbox/real ends like /inbox/real, but the poll changes into real in the listed directory
         server.listAbsoluteNames();
@@ -135,7 +154,7 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
         List<String> received = pollInbox("");
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> !received.isEmpty());
-        TimeUnit.MILLISECONDS.sleep(500);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS).until(() -> received.size() == 1);
         assertEquals(List.of("real/deep.txt=deep"), received);
     }
 
@@ -195,7 +214,7 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
         });
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> received.contains("hello.txt"));
-        TimeUnit.MILLISECONDS.sleep(500);
+        await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS).until(() -> received.size() == 1);
 
         assertEquals(List.of("hello.txt"), received);
         assertFalse(listed.contains("secret.txt"), listed.toString());
@@ -246,5 +265,41 @@ class FtpConsumerListedDirectoryNameTest extends CamelTestSupport {
         assertFalse(FtpUtils.isSubDirectoryName("\\sub"));
         assertFalse(FtpUtils.isSubDirectoryName("a\\b"));
         assertFalse(FtpUtils.isSubDirectoryName(" "));
+        // a trailing / is not part of the name, as some servers list a directory that way
+        assertTrue(FtpUtils.isSubDirectoryName("sub/"));
+        assertTrue(FtpUtils.isSubDirectoryName("sub//"));
+        assertFalse(FtpUtils.isSubDirectoryName("/"));
+        assertFalse(FtpUtils.isSubDirectoryName("//"));
+        assertFalse(FtpUtils.isSubDirectoryName("./"));
+        assertFalse(FtpUtils.isSubDirectoryName("../"));
+        assertFalse(FtpUtils.isSubDirectoryName(" /"));
+        assertFalse(FtpUtils.isSubDirectoryName("sub/../"));
+        assertFalse(FtpUtils.isSubDirectoryName("sub\\"));
+        assertFalse(FtpUtils.isSubDirectoryName("sub\\/"));
+    }
+
+    @Test
+    void listedAbsolutePathsInTheListedDirectory() {
+        assertTrue(FtpConsumer.isListedIn("/data/in/sub", "data/in", "sub"));
+        assertTrue(FtpConsumer.isListedIn("/x/data/in/sub", "data/in", "sub"));
+        assertTrue(FtpConsumer.isListedIn("C:/data/in/sub", "data/in", "sub"));
+        // the listed directory starts with the same drive as the listed path
+        assertTrue(FtpConsumer.isListedIn("C:/data/in/sub", "C:/data/in", "sub"));
+        assertTrue(FtpConsumer.isListedIn("C:\\data\\in\\sub\\", "C:/data/in", "sub"));
+        assertFalse(FtpConsumer.isListedIn("D:/data/in/sub", "C:/data/in", "sub"));
+        assertFalse(FtpConsumer.isListedIn("/data/other/sub", "data/in", "sub"));
+        // a path whose .. goes above its drive is not an absolute path in the listed directory
+        assertFalse(FtpConsumer.isListedIn("C:/../sub", "", "sub"));
+        assertFalse(FtpConsumer.isListedIn("C:/../data/in/sub", "data/in", "sub"));
+    }
+
+    @Test
+    void directoryOrParentOf() {
+        assertTrue(FtpUtils.isDirectoryOrParentOf("/home/camel", "/home/camel"));
+        assertTrue(FtpUtils.isDirectoryOrParentOf("/home", "/home/camel"));
+        assertTrue(FtpUtils.isDirectoryOrParentOf("/home/", "/home/camel"));
+        assertTrue(FtpUtils.isDirectoryOrParentOf("/", "/home/camel"));
+        assertFalse(FtpUtils.isDirectoryOrParentOf("/home/cam", "/home/camel"));
+        assertFalse(FtpUtils.isDirectoryOrParentOf("/home/camel/sub", "/home/camel"));
     }
 }

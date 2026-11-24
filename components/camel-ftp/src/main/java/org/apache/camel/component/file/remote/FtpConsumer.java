@@ -234,16 +234,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     /**
      * Whether a directory entry, as listed by the server, is in the directory being listed. A server that lists the
      * absolute path of each entry (handleDirectoryParserAbsoluteResult) lists the entries of the listed directory, so
-     * the absolute path ends with the path of the listed directory and the name of the entry. A relative name must be
-     * the name of the entry, followed by / at most, as a relative path of more than one name is not an entry of the
-     * listed directory. Both paths are compacted first.
+     * the absolute path ends with the path of the listed directory and the name of the entry, or is that path when the
+     * path of the listed directory starts with a drive, such as C:/data/in. A relative name must be the name of the
+     * entry, followed by / at most, as a relative path of more than one name is not an entry of the listed directory.
+     * Both paths are compacted first.
      *
      * @param  listed        the name of the entry as listed
      * @param  absolutePath  the path of the listed directory
      * @param  directoryName the name of the entry
-     * @return               <tt>true</tt> if the entry is in the listed directory
+     * @return               {@code true} if the entry is in the listed directory
      */
-    private static boolean isListedIn(String listed, String absolutePath, String directoryName) {
+    static boolean isListedIn(String listed, String absolutePath, String directoryName) {
         if (!isAbsolute(listed)) {
             // one name, which may end with a /, as a relative path of more than one name is not an entry of the listed
             // directory
@@ -257,7 +258,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         String directory = FileUtil.stripLeadingSeparator(
                 GenericFileHelper.compactPathForContainment(absolutePath != null ? absolutePath : "", '/'));
         String expected = directory.isEmpty() ? directoryName : directory + "/" + directoryName;
-        return path.endsWith("/" + expected);
+        // a path with a drive is the path of the listed directory and the name of the entry when that directory starts
+        // with the same drive, so it does not start with a /
+        return path.endsWith("/" + expected) || !path.isEmpty() && isAbsolute(path) && path.equals(expected);
     }
 
     /**
