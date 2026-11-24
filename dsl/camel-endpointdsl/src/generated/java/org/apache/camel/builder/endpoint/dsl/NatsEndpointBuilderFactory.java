@@ -3049,8 +3049,8 @@ public interface NatsEndpointBuilderFactory {
             return "CamelNatsStatusError";
         }
         /**
-         * Number of times this message has been delivered (1 = first, 1 then
-         * message has been redelivered).
+         * Number of times this message has been delivered (1 = first, &gt; 1
+         * then message has been redelivered).
          * 
          * The option is a: {@code long} type.
          * 

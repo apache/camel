@@ -214,8 +214,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         }
         /**
          * Allows to set a timeout in millis when using Jetty as consumer
-         * (server). By default Jetty uses 30000. You can use a value of = 0 to
-         * never expire. If a timeout occurs then the request will be expired
+         * (server). By default Jetty uses 30000. You can use a value of &lt;= 0
+         * to never expire. If a timeout occurs then the request will be expired
          * and Jetty will return back a http error 503 to the client. This
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
@@ -234,8 +234,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         }
         /**
          * Allows to set a timeout in millis when using Jetty as consumer
-         * (server). By default Jetty uses 30000. You can use a value of = 0 to
-         * never expire. If a timeout occurs then the request will be expired
+         * (server). By default Jetty uses 30000. You can use a value of &lt;= 0
+         * to never expire. If a timeout occurs then the request will be expired
          * and Jetty will return back a http error 503 to the client. This
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
