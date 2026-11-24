@@ -2661,8 +2661,9 @@ thread dumps and JMX change:
   the size of the default thread pool profile (10 threads by default).
 - A thread pool given with `timeoutExecutorService` now runs only the calls, not the timeouts. A thread pool that was
   sized to cover both can be made smaller.
-- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a `CircuitBreakerTimeout`
-  thread. Keep them non-blocking, or give that thread pool enough threads (see the Resilience4j EIP page).
+- After a timeout, the fallback and the rest of the route after the Circuit Breaker run on a thread of one more thread
+  pool of the Circuit Breaker, a cached thread pool named `CircuitBreakerFallback`, so a fallback that blocks does not
+  hold a `CircuitBreakerTimeout` thread.
 - A Circuit Breaker with `timeoutEnabled` (asynchronous or not) keeps the thread pools that Camel created for it while
   its route is stopped, and shuts them down when the route is removed or the CamelContext stops. Before, stopping the
   route shut the thread pool of the calls down, and after the route was started again, the calls through the Circuit
