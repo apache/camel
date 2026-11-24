@@ -11107,6 +11107,9 @@ for the Jira sinks or `key` for `redis-sink`), or call the Camel component direc
 * The passwords, keys and tokens that 31 Kamelets put into the address of an endpoint are passed in `RAW()`, so a value
   with `&`, `+` or `=` is sent whole. Before, it was cut or changed. A value that was URL-encoded to work around this,
   such as `%2B` for `+`, is now sent literally and must be changed back to the plain value.
+* `crypto-encrypt-action` and `crypto-decrypt-action` remove the `CamelCrypto*` headers from the incoming message. A
+  `CamelCryptoKey` header set before the Kamelet no longer changes the key: use the `key` option, or the `crypto` data
+  format directly for a key that differs for each message. The new `mode` option accepts only `CBC`.
 
 === Kamelets - Jackson 3
 
