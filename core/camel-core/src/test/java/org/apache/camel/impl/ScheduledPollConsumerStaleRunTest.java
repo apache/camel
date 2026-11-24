@@ -64,6 +64,8 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         private volatile CountDownLatch pollHeld;
         // set to hold the next call of addLastErrorDetail (after the generation check of the poll)
         private volatile CountDownLatch detailHeld;
+        // set to hold the next isSuspended() check of a run on the stale-poll thread (when the run has started)
+        private volatile CountDownLatch runStartHeld;
         private volatile CountDownLatch release;
 
         StaleConsumer(Endpoint endpoint) {
@@ -98,6 +100,17 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
                 awaitRelease(release);
             }
             super.addLastErrorDetail(key, value);
+        }
+
+        @Override
+        public boolean isSuspended() {
+            CountDownLatch held = runStartHeld;
+            if (held != null && "stale-poll".equals(Thread.currentThread().getName())) {
+                runStartHeld = null;
+                held.countDown();
+                awaitRelease(release);
+            }
+            return super.isSuspended();
         }
 
         Map<String, Object> lastErrorDetails() {
@@ -281,5 +294,47 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         assertTrue(consumer.isStarted());
         assertTrue(scheduler.isSchedulerStarted(), "the restarted consumer lost its scheduled task");
         assertEquals(0, consumer.getCounter());
+    }
+
+    @Test
+    void backoffOfPollFromBeforeStopIsNotKept() throws Exception {
+        newConsumer();
+        consumer.setBackoffMultiplier(2);
+        consumer.setBackoffErrorThreshold(1);
+        consumer.exceptionToThrowOnPoll = new MyHttpException();
+        consumer.start();
+
+        // the consumer is failing
+        consumer.run();
+        assertEquals(1, consumer.getErrorCounter());
+
+        // the next run has started, and is held before its backoff check
+        CountDownLatch runStartHeld = new CountDownLatch(1);
+        consumer.runStartHeld = runStartHeld;
+        startPoller();
+        assertTrue(runStartHeld.await(10, TimeUnit.SECONDS));
+
+        consumer.stop();
+        consumer.start();
+        assertEquals(0, consumer.getErrorCounter());
+
+        // the first poll of the restarted consumer fails too
+        consumer.run();
+        assertEquals(1, consumer.getCounter());
+        assertEquals(1, consumer.getErrorCounter());
+        assertEquals(0, consumer.getBackoffCounter());
+
+        // the run from before the stop goes on
+        release.countDown();
+        joinPoller();
+        assertEquals(0, consumer.getBackoffCounter(), "the run from before the stop changed the backoff counter");
+        assertEquals(1, consumer.getCounter());
+        assertEquals(1, consumer.getErrorCounter());
+
+        // the next run of the restarted consumer backs off after its first error, as configured (the error base of
+        // the backoff is still 0)
+        consumer.run();
+        assertEquals(1, consumer.getBackoffCounter());
+        assertEquals(1, consumer.getCounter(), "the restarted consumer polled instead of backing off");
     }
 }
