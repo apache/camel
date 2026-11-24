@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.github.dockerjava.api.exception.DockerClientException;
+import com.github.dockerjava.api.exception.DockerException;
 import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
@@ -139,6 +140,17 @@ class HostArchitectureImagePullPolicyTest {
     }
 
     @Test
+    void retriesWhenTheRegistryRepliesTooManyRequests() {
+        StubOperations operations = new StubOperations("ppc64le");
+        // docker-java maps the HTTP codes it does not know to a plain DockerException
+        operations.failures.add(new DockerException("rate limited", 429));
+
+        assertFalse(policy(operations, "ppc64le", true).shouldPull(IMAGE));
+
+        assertEquals(2, operations.pulls.size());
+    }
+
+    @Test
     void retriesWhenThePullMadeNoProgress() {
         StubOperations operations = new StubOperations("ppc64le");
         operations.interruptions = 1;
@@ -171,6 +183,7 @@ class HostArchitectureImagePullPolicyTest {
 
         assertEquals(1, operations.pulls.size());
         assertTrue(e.getMessage().contains("skipITs.ppc64le"), e.getMessage());
+        assertTrue(e.getMessage().contains("skipTests.ppc64le"), e.getMessage());
         assertNull(operations.localArch);
     }
 
