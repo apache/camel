@@ -10842,6 +10842,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
           },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
+          },
           "namespacesRef" : {
             "type" : "string",
             "title" : "Namespaces Ref",
@@ -10911,6 +10916,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
           },
           "namespacesRef" : {
             "type" : "string",
@@ -11000,6 +11010,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespaceMappings" : {
+            "type" : "string",
+            "title" : "Namespace Mappings",
+            "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder."
           },
           "namespacesRef" : {
             "type" : "string",

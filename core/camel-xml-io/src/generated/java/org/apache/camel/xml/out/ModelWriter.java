@@ -3055,6 +3055,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteNamespaceAwareExpressionAttributes(NamespaceAwareExpression def) throws IOException {
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("namespacesRef", def.getNamespacesRef(), null);
+        doWriteAttribute("namespaceMappings", def.getNamespaceMappings(), null);
     }
     protected void doWriteNamespaceAwareExpressionElements(NamespaceAwareExpression def) throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);

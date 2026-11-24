@@ -16423,6 +16423,11 @@
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
       }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
+      }, {
         "name" : "namespacesRef",
         "type" : "string",
         "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
@@ -16487,6 +16492,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
       }, {
         "name" : "namespacesRef",
         "type" : "string",
@@ -16571,6 +16581,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespaceMappings",
+        "type" : "string",
+        "description" : "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings are separated by commas or new lines, and the prefix and the uri by the first =. This allows to configure several namespaces from one property placeholder.",
+        "title" : "Namespace Mappings"
       }, {
         "name" : "namespacesRef",
         "type" : "string",

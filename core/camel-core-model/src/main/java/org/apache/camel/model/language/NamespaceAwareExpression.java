@@ -46,6 +46,12 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     @XmlTransient
     private Map<String, String> namespaces;
     @XmlAttribute
+    @Metadata(label = "common",
+              description = "The XML Namespaces of prefix to uri mappings in one string, such as p1=uri1,p2=uri2. The mappings"
+                            + " are separated by commas or new lines, and the prefix and the uri by the first =. This allows"
+                            + " to configure several namespaces from one property placeholder.")
+    private String namespaceMappings;
+    @XmlAttribute
     @Metadata(label = "advanced",
               description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.")
     private String namespacesRef;
@@ -57,6 +63,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
         super(source);
         this.namespace = ProcessorDefinitionHelper.deepCopyDefinitions(source.namespace);
         this.namespaces = source.namespaces != null ? new LinkedHashMap<>(source.namespaces) : null;
+        this.namespaceMappings = source.namespaceMappings;
         this.namespacesRef = source.namespacesRef;
     }
 
@@ -68,6 +75,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
         super(builder);
         this.namespace = builder.namespace;
         this.namespaces = builder.namespaces;
+        this.namespaceMappings = builder.namespaceMappings;
         this.namespacesRef = builder.namespacesRef;
     }
 
@@ -91,6 +99,14 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
 
     public void setNamespace(List<PropertyDefinition> namespace) {
         this.namespace = namespace;
+    }
+
+    public String getNamespaceMappings() {
+        return namespaceMappings;
+    }
+
+    public void setNamespaceMappings(String namespaceMappings) {
+        this.namespaceMappings = namespaceMappings;
     }
 
     public String getNamespacesRef() {
@@ -127,6 +143,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
 
         private List<PropertyDefinition> namespace;
         private Map<String, String> namespaces;
+        private String namespaceMappings;
         private String namespacesRef;
 
         /**
@@ -154,6 +171,17 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
          */
         public T namespace(List<PropertyDefinition> namespace) {
             this.namespace = namespace;
+            return (T) this;
+        }
+
+        /**
+         * The XML Namespaces of prefix -> uri mappings in one string, such as {@code p1=uri1,p2=uri2}, separated by
+         * commas or new lines.
+         *
+         * @param namespaceMappings the mappings, such as {@code p1=uri1,p2=uri2}
+         */
+        public T namespaceMappings(String namespaceMappings) {
+            this.namespaceMappings = namespaceMappings;
             return (T) this;
         }
 
