@@ -171,8 +171,29 @@ public class DisruptorReference {
 
     private void start() throws Exception {
         LOGGER.debug("Starting disruptor {}", this);
-        Disruptor<ExchangeEvent> newDisruptor = createDisruptor();
+        Disruptor<ExchangeEvent> newDisruptor = null;
+        try {
+            newDisruptor = createDisruptor();
+            startDisruptor(newDisruptor);
+        } catch (Exception | Error e) {
+            // the reference was cleared and marked as being reconfigured, so producers wait for the new Disruptor: mark
+            // it as not started instead, so they fail (as when no Disruptor was started) instead of waiting forever
+            disruptor.set(null, false);
+            // and do not run the event processors of this Disruptor later on the executor (the next start would
+            // hand them over with its own), nor keep running the ones already handed over
+            delayedExecutor.clear();
+            if (newDisruptor != null) {
+                newDisruptor.halt();
+            }
+            handlers = new LifecycleAwareExchangeEventHandler[0];
+            LOGGER.warn("Failed to start disruptor {}, producers fail until it is started again ({} buffered exchanges are"
+                        + " kept until then): {}",
+                    uri, temporaryExchangeBuffer.size(), e.toString());
+            throw e;
+        }
+    }
 
+    private void startDisruptor(Disruptor<ExchangeEvent> newDisruptor) throws Exception {
         newDisruptor.start();
 
         if (executor != null) {
@@ -566,6 +587,10 @@ public class DisruptorReference {
             while ((command = delayedCommands.poll()) != null) {
                 actualExecutor.execute(command);
             }
+        }
+
+        public void clear() {
+            delayedCommands.clear();
         }
     }
 }
