@@ -139,7 +139,7 @@ public class KMSEndpoint extends DefaultEndpoint {
                             + " this client when the producer processes its first message.",
               displayName = "KMS Client", label = "advanced")
     @Metadata(autowired = true)
-    private Client kmsClient;
+    private volatile Client kmsClient;
 
     private boolean autowiredKmsClient;
 
@@ -162,17 +162,35 @@ public class KMSEndpoint extends DefaultEndpoint {
     }
 
     public Client initClient() throws Exception {
-        if (kmsClient != null) {
-            return kmsClient;
+        Client answer = kmsClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = kmsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    kmsClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        kmsClient = KMSUtils.createClient(this);
-        return kmsClient;
+        return answer;
+    }
+
+    Client createClient() throws Exception {
+        return KMSUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (kmsClient != null && !autowiredKmsClient) {
-            kmsClient = null;
+        lock.lock();
+        try {
+            if (kmsClient != null && !autowiredKmsClient) {
+                kmsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -270,7 +288,12 @@ public class KMSEndpoint extends DefaultEndpoint {
     }
 
     public void setKmsClient(Client kmsClient) {
-        this.kmsClient = kmsClient;
-        this.autowiredKmsClient = kmsClient != null;
+        lock.lock();
+        try {
+            this.kmsClient = kmsClient;
+            this.autowiredKmsClient = kmsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

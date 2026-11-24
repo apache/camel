@@ -1236,21 +1236,26 @@ public class XmlConverter {
         return sfactory;
     }
 
+    /**
+     * Logs warnings and recoverable errors of the parser at DEBUG, and throws a fatal error: a body that is not
+     * well-formed XML fails the conversion with the exception, which the route can handle (doTry, onException), so it
+     * is not logged here as well. Without an error handler, the JDK prints the errors to the standard error.
+     */
     private static class DocumentBuilderLoggingErrorHandler implements ErrorHandler {
 
         @Override
         public void warning(SAXParseException exception) throws SAXException {
-            LOG.warn(exception.getMessage(), exception);
+            LOG.debug("XML parser warning: {}", exception.getMessage(), exception);
         }
 
         @Override
         public void error(SAXParseException exception) throws SAXException {
-            LOG.error(exception.getMessage(), exception);
+            LOG.debug("XML parser error: {}", exception.getMessage(), exception);
         }
 
         @Override
         public void fatalError(SAXParseException exception) throws SAXException {
-            LOG.error(exception.getMessage(), exception);
+            throw exception;
         }
     }
 

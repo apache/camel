@@ -34,6 +34,7 @@ public class OpensearchConfiguration {
     private List<HttpHost> hostAddressesList;
     private String user;
     private String password;
+    private String apiKey;
 
     @UriPath
     @Metadata(required = true)
@@ -210,6 +211,17 @@ public class OpensearchConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * API key to authenticate with, instead of a user and password
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     /**

@@ -107,6 +107,23 @@ If an expression declares namespaces inline as well, then the inline namespaces 
 The `namespacesRef` option is also available on the xref:xquery-language.adoc[XQuery] and
 xref:xtokenize-language.adoc[XML Tokenize] languages.
 
+=== Several namespaces from one string
+
+A `Namespaces` bean can also be created from a single string of `prefix=uri` mappings, separated by commas or new
+lines. This lets one property, such as a Kamelet option, carry any number of namespaces:
+
+[source,yaml]
+----
+- beans:
+    - name: myNamespaces
+      type: org.apache.camel.support.builder.Namespaces
+      constructors:
+        0: "{{namespaces}}"
+----
+
+With `namespaces=c=http://acme.com/cheese,w=http://acme.com/wine`, an xpath with `namespacesRef: "myNamespaces"` can
+use both the `c` and the `w` prefix. A mapping without a prefix or a URI fails when the bean is created.
+
 == Variables
 
 Variables in XPath are defined in different namespaces.

@@ -120,7 +120,7 @@ public class FCEndpoint extends DefaultEndpoint {
                             + " creates this client when the producer processes its first message.",
               displayName = "FC Client", label = "advanced")
     @Metadata(autowired = true)
-    private Client fcClient;
+    private volatile Client fcClient;
 
     private boolean autowiredFcClient;
 
@@ -143,17 +143,35 @@ public class FCEndpoint extends DefaultEndpoint {
     }
 
     public Client initClient() throws Exception {
-        if (fcClient != null) {
-            return fcClient;
+        Client answer = fcClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = fcClient;
+                if (answer == null) {
+                    answer = createClient();
+                    fcClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        fcClient = FCUtils.createClient(this);
-        return fcClient;
+        return answer;
+    }
+
+    Client createClient() throws Exception {
+        return FCUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (fcClient != null && !autowiredFcClient) {
-            fcClient = null;
+        lock.lock();
+        try {
+            if (fcClient != null && !autowiredFcClient) {
+                fcClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -243,7 +261,12 @@ public class FCEndpoint extends DefaultEndpoint {
     }
 
     public void setFcClient(Client fcClient) {
-        this.fcClient = fcClient;
-        this.autowiredFcClient = fcClient != null;
+        lock.lock();
+        try {
+            this.fcClient = fcClient;
+            this.autowiredFcClient = fcClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }
