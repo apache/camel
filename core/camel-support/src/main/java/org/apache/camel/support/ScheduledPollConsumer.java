@@ -231,104 +231,115 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         int polledMessages = 0;
 
         while (!done) {
+            // an Error is caught around the whole attempt, so also an Error that the poll strategy (such as on rollback)
+            // or the exception handler (such as a bridged error handler whose route throws a StackOverflowError) throws
+            // is kept and ends this task, as one thrown by the poll itself
             try {
-                // eager assume we are done
-                done = true;
-                if (isPollAllowed()) {
-
-                    if (retryCounter == -1) {
-                        LOG.trace("Starting to poll: {}", this.getEndpoint());
-                    } else {
-                        LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
-                    }
-
-                    // mark we are polling which should also include the begin/poll/commit
-                    // (the watch first, so whoever sees the counter sees the watch of this poll or a later one)
-                    pollStopWatch = new StopWatch();
-                    pollingCounter.incrementAndGet();
-                    try {
-                        boolean begin = pollStrategy.begin(this, getEndpoint());
-                        if (begin) {
-                            retryCounter++;
-                            int polled = 0;
-                            pollGeneration.set(currentGeneration);
-                            try {
-                                polled = poll();
-                            } finally {
-                                pollGeneration.remove();
-                                // also a poll that failed, so a consumer that keeps failing is seen polling
-                                onPolled(currentGeneration, polled);
-                            }
-                            polledMessages = polled;
-                            LOG.trace("Polled {} messages", polledMessages);
-
-                            if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
-                                // send an "empty" exchange
-                                processEmptyMessage();
-                            }
-
-                            pollStrategy.commit(this, getEndpoint(), polledMessages);
-
-                            if (polledMessages > 0 && isGreedy()) {
-                                done = false;
-                                retryCounter = -1;
-                                LOG.trace("Greedy polling after processing {} messages", polledMessages);
-
-                                stateLock.lock();
-                                try {
-                                    if (currentGeneration == generation.get()) {
-                                        // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
-                                        // consumer to be unhealthy
-                                        errorCounter.set(0);
-                                        backoffErrorBase.set(0);
-                                        lastError = null;
-                                        lastErrorDetails = null;
-
-                                        // setting firstPollDone to true if greedy polling is enabled
-                                        firstPollDone = true;
-                                    }
-                                } finally {
-                                    stateLock.unlock();
-                                }
-                            }
-                        } else {
-                            LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
-                        }
-                    } finally {
-                        pollingCounter.decrementAndGet();
-                    }
-                }
-
-                LOG.trace("Finished polling: {}", this.getEndpoint());
-            } catch (Exception e) {
                 try {
-                    boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
-                    if (retry) {
-                        // do not set cause as we retry
-                        done = false;
-                    } else {
-                        cause = e;
+                    // eager assume we are done
+                    done = true;
+                    if (isPollAllowed()) {
+
+                        if (retryCounter == -1) {
+                            LOG.trace("Starting to poll: {}", this.getEndpoint());
+                        } else {
+                            LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
+                        }
+
+                        // mark we are polling which should also include the begin/poll/commit
+                        // (the watch first, so whoever sees the counter sees the watch of this poll or a later one)
+                        pollStopWatch = new StopWatch();
+                        pollingCounter.incrementAndGet();
+                        try {
+                            boolean begin = pollStrategy.begin(this, getEndpoint());
+                            if (begin) {
+                                retryCounter++;
+                                int polled = 0;
+                                pollGeneration.set(currentGeneration);
+                                try {
+                                    polled = poll();
+                                } finally {
+                                    pollGeneration.remove();
+                                    // also a poll that failed, so a consumer that keeps failing is seen polling
+                                    onPolled(currentGeneration, polled);
+                                }
+                                polledMessages = polled;
+                                LOG.trace("Polled {} messages", polledMessages);
+
+                                if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
+                                    // send an "empty" exchange
+                                    processEmptyMessage();
+                                }
+
+                                pollStrategy.commit(this, getEndpoint(), polledMessages);
+
+                                if (polledMessages > 0 && isGreedy()) {
+                                    done = false;
+                                    retryCounter = -1;
+                                    LOG.trace("Greedy polling after processing {} messages", polledMessages);
+
+                                    stateLock.lock();
+                                    try {
+                                        if (currentGeneration == generation.get()) {
+                                            // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                            // consumer to be unhealthy
+                                            errorCounter.set(0);
+                                            backoffErrorBase.set(0);
+                                            lastError = null;
+                                            lastErrorDetails = null;
+
+                                            // setting firstPollDone to true if greedy polling is enabled
+                                            firstPollDone = true;
+                                        }
+                                    } finally {
+                                        stateLock.unlock();
+                                    }
+                                }
+                            } else {
+                                LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
+                            }
+                        } finally {
+                            pollingCounter.decrementAndGet();
+                        }
+                    }
+
+                    LOG.trace("Finished polling: {}", this.getEndpoint());
+                } catch (Exception e) {
+                    // set before the rollback, so an Error that the rollback throws keeps this exception
+                    cause = e;
+                    try {
+                        boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
+                        if (retry) {
+                            // do not set cause as we retry
+                            cause = null;
+                            done = false;
+                        } else {
+                            done = true;
+                        }
+                    } catch (Exception t) {
+                        cause = t;
                         done = true;
                     }
-                } catch (Exception t) {
-                    cause = t;
-                    done = true;
+                }
+
+                if (cause != null && isRunAllowed()) {
+                    // let exception handler deal with the caused exception
+                    // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
+                    try {
+                        getExceptionHandler().handleException("Failed polling endpoint: " + getEndpoint()
+                                                              + ". Will try again at next poll",
+                                cause);
+                    } catch (Exception e) {
+                        LOG.warn("Error handling exception. This exception will be ignored.", e);
+                    }
                 }
             } catch (Error error) {
+                if (cause != null && cause != error) {
+                    // the Error was thrown while handling this exception, so keep it with the Error
+                    error.addSuppressed(cause);
+                }
                 cause = error;
                 done = true;
-            }
-
-            if (cause != null && isRunAllowed() && !(cause instanceof Error)) {
-                // let exception handler deal with the caused exception
-                // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
-                try {
-                    getExceptionHandler().handleException("Failed polling endpoint: " + getEndpoint()
-                                                          + ". Will try again at next poll",
-                            cause);
-                } catch (Exception e) {
-                    LOG.warn("Error handling exception. This exception will be ignored.", e);
-                }
             }
         }
 
