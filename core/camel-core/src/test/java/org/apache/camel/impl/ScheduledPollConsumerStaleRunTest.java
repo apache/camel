@@ -19,9 +19,11 @@ package org.apache.camel.impl;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.HttpResponseAware;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollConsumer;
@@ -32,6 +34,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -60,6 +63,7 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
 
         private volatile boolean forceReadyInPoll;
         private volatile Exception exceptionToThrowOnPoll;
+        private volatile Error errorToThrowOnPoll;
         // set to hold the next poll (the remote call of the poll is in progress)
         private volatile CountDownLatch pollHeld;
         // set to hold the next call of addLastErrorDetail (after the generation check of the poll)
@@ -83,6 +87,10 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
             if (forceReadyInPoll) {
                 // such as camel-aws2-sqs when its receive call returns
                 forceConsumerAsReady();
+            }
+            Error error = errorToThrowOnPoll;
+            if (error != null) {
+                throw error;
             }
             Exception e = exceptionToThrowOnPoll;
             if (e != null) {
@@ -187,7 +195,20 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
     }
 
     private void startPoller() {
-        poller = new Thread(consumer::run, "stale-poll");
+        startPoller(new AtomicReference<>());
+    }
+
+    /**
+     * Starts the poll in another thread, and keeps what the run threw (as the scheduler would see it).
+     */
+    private void startPoller(AtomicReference<Throwable> thrown) {
+        poller = new Thread(() -> {
+            try {
+                consumer.run();
+            } catch (Throwable t) {
+                thrown.set(t);
+            }
+        }, "stale-poll");
         poller.start();
     }
 
@@ -260,6 +281,37 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         assertFalse(consumer.isFirstPollDone(), "the restarted consumer has not polled yet");
         assertEquals(0, consumer.getErrorCounter());
         assertNull(consumer.lastErrorDetails());
+    }
+
+    @Test
+    void errorOfPollFromBeforeStopEndsItsTaskButDoesNotMarkRestartedConsumerDown() throws Exception {
+        newConsumer();
+        final OutOfMemoryError expectedError = new OutOfMemoryError("Simulated error on poll");
+        consumer.errorToThrowOnPoll = expectedError;
+        CountDownLatch pollHeld = new CountDownLatch(1);
+        consumer.pollHeld = pollHeld;
+        consumer.start();
+
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        startPoller(thrown);
+        assertTrue(pollHeld.await(10, TimeUnit.SECONDS));
+
+        // stop and start while the poll is in progress, which then throws the Error
+        consumer.stop();
+        consumer.start();
+        release.countDown();
+        joinPoller();
+
+        // the Error still ends the task of the stopped consumer (so the scheduler does not run it again)
+        assertSame(expectedError, thrown.get());
+        // but the restarted consumer has not polled yet, so the Error is not kept for it
+        assertNull(consumer.getFatalError());
+        assertEquals(0, consumer.getErrorCounter());
+
+        // a poll of the restarted consumer is healthy
+        consumer.errorToThrowOnPoll = null;
+        consumer.run();
+        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
     }
 
     @Test

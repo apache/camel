@@ -348,6 +348,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             if (currentGeneration != generation.get()) {
                 // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
                 LOG.trace("doRun() done after the consumer was stopped");
+                if (cause instanceof Error error) {
+                    // the task of the stopped consumer still ends, but the Error is not kept for the restarted consumer
+                    throw error;
+                }
                 return;
             }
 
