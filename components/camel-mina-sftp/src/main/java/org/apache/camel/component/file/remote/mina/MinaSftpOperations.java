@@ -67,6 +67,8 @@ import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.SshConstants;
+import org.apache.sshd.common.SshException;
 import org.apache.sshd.common.cipher.BuiltinCiphers;
 import org.apache.sshd.common.cipher.Cipher;
 import org.apache.sshd.common.compression.BuiltinCompressions;
@@ -217,6 +219,28 @@ public class MinaSftpOperations
                     LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
                 }
             }
+        } catch (SshException e) {
+            // SshException is thrown for two kinds of authentication failures:
+            //   * ClientUserAuthService.tryNext() — exhausted all auth methods; carries
+            //     disconnect code SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE (14).
+            //   * DefaultAuthFuture.verify() — saw false instead of true; carries no
+            //     disconnect code but the message contains "Authentication failed".
+            // In both cases the credentials are definitively rejected and retrying will not
+            // help; the server may lock the account after repeated failures. Rethrow
+            // immediately so the reconnect loop does not keep sending the bad credentials.
+            //
+            // SshException is also thrown for transient failures (e.g. connection refused via
+            // ConnectFuture) that should be retried; check the disconnect code / message.
+            String msg = e.getMessage();
+            if (e.getDisconnectCode() == SshConstants.SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE
+                    || (msg != null && msg.contains("Authentication failed"))) {
+                throw new GenericFileOperationFailedException(
+                        "Login rejected by " + payload.configuration.remoteServerInformation()
+                                                              + ": " + msg,
+                        e);
+            }
+            payload.exception = e;
+            return false;
         } catch (IOException e) {
             payload.exception = e;
             return false;

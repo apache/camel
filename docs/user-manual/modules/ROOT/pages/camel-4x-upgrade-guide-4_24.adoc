@@ -937,6 +937,15 @@ Apache MINA SSHD leaves it off by default, so a small request, such as one that 
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
 
+=== camel-mina-sftp - a rejected login is not retried
+
+When the SFTP server rejects the credentials, `mina-sftp` now throws `GenericFileOperationFailedException` immediately
+instead of retrying the connection `maximumReconnectAttempts` times (default 3). Retrying a rejected login sends the
+wrong password to the server repeatedly, which may trigger an account lockout. This change aligns `mina-sftp` with the
+`sftp` component (see CAMEL-27019).
+
+Transient connection failures (server unreachable, network error) are still retried as before.
+
 === camel-mllp - maxConcurrentConsumers limits the connections again
 
 The MLLP consumer resets a new connection when `maxConcurrentConsumers` connections are already being served, as the
